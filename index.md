@@ -6,7 +6,7 @@ This page will contain both software and hardware projects. Software projects ar
 
 [logistic map](https://github.com/blbadger/logistic-map)
 
-![image of logistic map](https://github.com/blbadger/blbadger.github.io/blob/master/Logistic_zoom.png/ 'logistic_map')
+Logistic map
 
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
 
