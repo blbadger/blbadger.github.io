@@ -1,8 +1,8 @@
 ## Overview and about
 
-This page will contain both software and hardware projects. Software projects are posted with more detailed explanation, other projects have less
+Software and hardware projects. Individual posts for the software projects are forthcoming.
 
-### Links to github with source code
+### Software projects with links to source code
 
 [logistic map](https://github.com/blbadger/logistic-map)
 
@@ -16,5 +16,9 @@ Clifford map
 
 Clifford vectors 
 
-![clifford map image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
  	
+### Hardware projects
+
+Big tesla coils
+![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
