@@ -13,3 +13,8 @@ Logistic map
 Clifford map
 
 ![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
+
+Clifford vectors 
+
+![clifford map image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+ 	
