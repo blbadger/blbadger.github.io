@@ -4,4 +4,6 @@ This page will contain both software and hardware projects. Software projects ar
 
 ### Links to github with source code
 
+[logistic map](https://github.com/blbadger/logistic-map)
+
 
