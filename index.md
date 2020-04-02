@@ -8,4 +8,4 @@ This page will contain both software and hardware projects. Software projects ar
 
 ![image of logistic map](https://github.com/blbadger/blbadger.github.io/blob/master/Logistic_zoom.png)
 
-
+<img src="https://github.com/blbadger/blbadger.github.io/blob/master/Logistic_zoom.png" alt="MarineGEO circle logo" style="height: 300px; width:500px;"/>
