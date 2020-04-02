@@ -11,4 +11,5 @@ This page will contain both software and hardware projects. Software projects ar
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
 
 Clifford map
-![logistic map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
+
+![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
