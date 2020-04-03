@@ -1,6 +1,6 @@
 ## Overview and about
 
-Software and hardware projects. Individual posts for the software projects are forthcoming.
+Software and hardware projects. Individual posts for software projects are forthcoming.
 
 ### Software projects with links to source code
 
