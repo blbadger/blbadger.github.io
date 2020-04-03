@@ -20,6 +20,6 @@ Clifford vectors
  	
 ### Hardware projects
 
-[Tesla coils](https://github.com/blbadger/blbadger.github.io/blob/master/tesla-coils.md)
+[Tesla coils](/tesla-coils.md)
 
 ![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
