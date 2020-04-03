@@ -1,11 +1,11 @@
 ---
 title: Tesla coils
-layout:Cayman
+layout:Template
 filename: tesla-coils.md
 --- 
 
 
 
-### Tesla Coils
+## Tesla Coils
 
 High voltage sparks and arcs.  Very impressive to see!
