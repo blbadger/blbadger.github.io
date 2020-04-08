@@ -18,7 +18,7 @@ High voltage sparks and arcs.  Beautiful to see live!
 
 [TC video 1](http://www.youtube.com/watch?v=gwUA4ATNvRg)
 
-[TC video 2](http://img.youtube.com/vi/FyRCdSQW1GY/0.jpg)](http://www.youtube.com/watch?v=FyRCdSQW1GY)
+[TC video 2](http://www.youtube.com/watch?v=FyRCdSQW1GY)
 
 ### Earlier generation coil
 
