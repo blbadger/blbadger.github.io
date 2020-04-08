@@ -10,6 +10,6 @@ filename: tesla-coils.md
 
 ![Fusor: low power]({{https://blbadger.github.io}}fusor-2.png)
 
-![vacuum chamber assembly]({{https://blbadger.github.io}}fusor-3.png}})
+![vacuum chamber assembly]({{https://blbadger.github.io}}fusor-3.png)
 
 [Link to home](https://blbadger.github.io/)
