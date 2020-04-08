@@ -26,5 +26,5 @@ High voltage sparks and arcs.  Beautiful to see live!
 
 ![gen 1 tesla arcs]({{https://blbadger.github.io}}tesla_6.JPG)
 
-[back to main page](https://blbadger.github.io/)
+[back to home page](https://blbadger.github.io/)
 
