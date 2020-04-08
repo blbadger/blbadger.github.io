@@ -9,8 +9,8 @@ filename: tesla-coils.md
 ## Fusor under high power
 
 Fusors use electrostatic potential to confine plasma in order to accomplish nuclear fusion.
-This is a demo model, built only to display the plasma containment and without the deuterium 
-necessary for fusion.
+This is a demo model, built only to display the plasma containment and does not fuse nuclei
+to any extent.
 
 ![Fusor: high power]({{https://blbadger.github.io}}fusor-1-1.png)
 
