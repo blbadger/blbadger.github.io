@@ -8,7 +8,7 @@ filename: tesla-coils.md
 
 ## Tesla Coils
 
-High voltage sparks and arcs.  Very impressive to see!
+High voltage sparks and arcs.  Beautiful to see live!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
 
@@ -16,11 +16,11 @@ High voltage sparks and arcs.  Very impressive to see!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_4.jpg)
 
+## Low-res videos of the coil above
+
 [![TC video 1](http://img.youtube.com/vi/gwUA4ATNvRg/0.jpg)](http://www.youtube.com/watch?v=gwUA4ATNvRg  "Tesla coil 1")
 
 [![TC video 2](http://img.youtube.com/vi/FyRCdSQW1GY/0.jpg)](http://www.youtube.com/watch?v=FyRCdSQW1GY  "Tesla coil 2")
-
-
 
 ![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_5.JPG)
 
