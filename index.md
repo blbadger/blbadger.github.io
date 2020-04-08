@@ -17,7 +17,7 @@ Clifford vectors
 
 [Neural Network for image classification](https://github.com/blbadger/neural-network) 
 
-![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.pdf)
+![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.svg)
  	
 ## Hardware projects
 
