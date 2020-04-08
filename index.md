@@ -14,6 +14,10 @@ Clifford map
 Clifford vectors 
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+
+[Neural Network for image classification](//neural-network)
+
+![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.pdf)
  	
 ## Hardware projects
 
