@@ -22,7 +22,7 @@ Clifford vectors
 
 [Tesla coils](/tesla-coils.md)
 
-[![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)](/tesla-coils.md)
+[![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)](https://blbadger.github.io/tesla-coils.md)
 
 Fusor
 
