@@ -16,7 +16,7 @@ High voltage sparks and arcs.  Beautiful to see live!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_4.jpg)
 
-## Low-res videos of the coil above
+### Low-res videos of the coil shown above
 
 [![TC video 1](http://img.youtube.com/vi/gwUA4ATNvRg/0.jpg)](http://www.youtube.com/watch?v=gwUA4ATNvRg  "Tesla coil 1")
 
