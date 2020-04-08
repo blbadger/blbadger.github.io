@@ -1,7 +1,7 @@
 ---
 title: Fusor
 layout:Template
-filename: tesla-coils.md
+filename: fusor.md
 --- 
 
 ## Fusors: internal electrostatic containment devices
