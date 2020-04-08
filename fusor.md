@@ -27,4 +27,4 @@ vacuum coupling on the left and the inner grid is front and center.
 
 ![vacuum chamber assembly]({{https://blbadger.github.io}}fusor-3.png)
 
-[Link to home](https://blbadger.github.io/)
+[Back to home page](https://blbadger.github.io/)
