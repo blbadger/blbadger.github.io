@@ -1,8 +1,5 @@
-## Overview and about
 
-Software and hardware projects. Individual posts for software projects are forthcoming.
-
-### Software projects with links to source code
+## Software projects 
 
 [logistic map](https://github.com/blbadger/logistic-map)
 
@@ -18,7 +15,7 @@ Clifford vectors
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
  	
-### Hardware projects
+## Hardware projects
 
 [Tesla coils](/tesla-coils.md)
 
@@ -29,3 +26,4 @@ Fusor
 [Fusor](/fusor.md)
 
 ![fusor image]({{https://blbadger.github.io}}fusor-1-1.png)
+
