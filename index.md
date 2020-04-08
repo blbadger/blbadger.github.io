@@ -26,4 +26,6 @@ Clifford vectors
 
 Fusor
 
+[Fusor](/fusor.md)
+
 ![fusor image]({{https://blbadger.github.io}}fusor-1-1.png)
