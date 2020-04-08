@@ -1,10 +1,8 @@
 ---
 title: Tesla coils
-layout: Minimal
+layout: Cayman
 filename: tesla-coils.md
 --- 
-
-
 
 ## Tesla Coils
 
