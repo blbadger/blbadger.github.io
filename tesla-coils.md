@@ -1,8 +1,9 @@
 ---
-title: Tesla coils
-layout: Template
+title: Tesla Coil
+layout:Template
 filename: tesla-coils.md
 --- 
+
 
 ## Tesla Coils
 
