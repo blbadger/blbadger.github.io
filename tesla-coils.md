@@ -16,9 +16,9 @@ High voltage sparks and arcs.  Beautiful to see live!
 
 ### Low-res videos of the coil shown above
 
-[TC video 1](http://www.youtube.com/watch?v=gwUA4ATNvRg)
+[![TC video 1](http://img.youtube.com/vi/gwUA4ATNvRg/0.jpg)](http://www.youtube.com/watch?v=gwUA4ATNvRg  "Tesla coil 1")
 
-[TC video 2](http://www.youtube.com/watch?v=FyRCdSQW1GY)
+[![TC video 2](http://img.youtube.com/vi/FyRCdSQW1GY/0.jpg)](http://www.youtube.com/watch?v=FyRCdSQW1GY  "Tesla coil 2")
 
 ### Earlier generation coil
 
