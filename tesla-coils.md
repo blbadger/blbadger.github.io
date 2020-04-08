@@ -1,6 +1,6 @@
 ---
 title: Tesla coils
-layout: Cayman
+layout: Template
 filename: tesla-coils.md
 --- 
 
