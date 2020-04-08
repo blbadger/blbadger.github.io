@@ -1,6 +1,6 @@
 ---
 title: Tesla coils
-layout:Template
+layout: Minimal
 filename: tesla-coils.md
 --- 
 
