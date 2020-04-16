@@ -1,9 +1,7 @@
 
 ## Software projects 
 
-[logistic map](https://github.com/blbadger/logistic-map)
-
-### Logistic map
+### [logistic map code](https://github.com/blbadger/logistic-map)
 
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
 
@@ -13,15 +11,15 @@
 
 ### Clifford vectors 
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+### ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
-[Neural Network for image classification](https://github.com/blbadger/neural-network) 
+### [Neural Network for image classification code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
  	
 ## Hardware projects
 
-### [Tesla coils](/tesla-coils.md)
+### [Tesla coil](/tesla-coils.md)
 
 ![tesla coil arcs](https://blbadger.github.io/newtesla.jpg)
 
