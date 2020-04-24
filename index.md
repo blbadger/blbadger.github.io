@@ -1,7 +1,7 @@
 
-## Software projects with links to code
+## Software projects 
 
-### [logistic map](https://github.com/blbadger/logistic-map)
+### [logistic map code](https://github.com/blbadger/logistic-map)
 
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
 
@@ -9,9 +9,9 @@
 
 ![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
 
-### Clifford vectors 
+### [Clifford vectors](https://github.com/blbadger/quiver-plots)
 
-### ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
 ### [Neural Network for image classification](https://github.com/blbadger/neural-network) 
 
