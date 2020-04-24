@@ -13,7 +13,8 @@
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
-### [Neural Network for image classification](https://github.com/blbadger/neural-network) 
+### Neural Network for image classification
+### [Neural Network code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
  	
