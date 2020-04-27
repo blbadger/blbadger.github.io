@@ -1,7 +1,7 @@
 <head>
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
 </head>
-## Software projects 
+## Software projects: [Check out my Github repositories for more code](https://github.com/blbadger)
 
 ### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
 
@@ -20,9 +20,6 @@
 ### [Neural Network code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
-
-## [Check out my Github repositories for more code](https://github.com/blbadger)
-
  	
 ## Hardware projects
 
