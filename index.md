@@ -1,5 +1,6 @@
+<head>
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
-
+</head/
 ## Software projects 
 
 ### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
