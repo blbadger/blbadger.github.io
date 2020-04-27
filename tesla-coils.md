@@ -14,7 +14,7 @@ ASRG spark gap running at ~500 bps. Power supply is 4 microwave oven
 transformers, primaries wired in parallel with secondaries in series
 (floating cores, all submerged in oil) for a power ouput of 10 kV
 at 400mA.  Power controlled with a variable autotransformer, up to 
-145V output with 120V input.
+145V output with 120V input. Topload is of two aluminum dryer ducts.
 
 ![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
 
@@ -36,6 +36,9 @@ current during capacitor firing!
 
 
 ### Earlier generation coil
+
+Same primary circuit as described above.  Secondary coil is4" diameter PVC wound 
+with 1300 turns of AWG 26 magnet wire. 3kVA input, smaller dryer duct toroids.
 
 ![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_5.JPG)
 
