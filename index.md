@@ -19,6 +19,8 @@
 ### [Neural Network code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
+
+### [Check out my Github repositories for more!](https://github.com/blbadger)
  	
 ## Hardware projects
 
