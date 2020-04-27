@@ -1,7 +1,6 @@
 <head>
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
 </head>
-<body bgcolor='#f8f9f9'>
 ## Software projects: 
 
 ### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
@@ -33,5 +32,5 @@
 ### [Fusor](/fusor.md)
 
 ![fusor image]({{https://blbadger.github.io}}fusor-1-1.png)
-</body>
+
 
