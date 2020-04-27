@@ -5,17 +5,30 @@ filename: tesla-coils.md
 --- 
 
 
-## Tesla Coils
+## Tesla Coils: high voltage resonant transformers
 
 High voltage sparks and arcs.  Beautiful to see live!
 
+Specs: 4 kVA power input with a 120nF primary capacitor and an
+ASRG spark gap running at ~500 bps. Power supply is 4 microwave oven 
+transformers, primaries wired in parallel with secondaries in series
+(floating cores, all submerged in oil) for a power ouput of 10 kV
+at 400mA.  Power controlled with a variable autotransformer, up to 
+145V output with 120V input.
+
 ![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
+
+Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
+is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete 
+forming tube coated in polyurethane. Inner turns of the primary get 
+warm during operation, not suprising with an estimated 18.9 kA instantaneous 
+current during capacitor firing!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_3.jpg)
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_4.jpg)
 
-### Low-res videos of the coil shown above
+### Low-res videos 
 
 [TC video 1](http://www.youtube.com/watch?v=gwUA4ATNvRg)
 
