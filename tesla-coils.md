@@ -1,9 +1,3 @@
----
-title: Tesla Coil
-layout:Template
-filename: tesla-coils.md
---- 
-
 
 ## Tesla Coils: high voltage resonant transformers
 
