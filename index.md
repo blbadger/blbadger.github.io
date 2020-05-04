@@ -28,7 +28,7 @@
 
 ### [Tesla coil](/tesla-coils.md)
 
-![tesla coil arcs](https://blbadger.github.io/newtesla.jpg)
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
 
 ### [Fusor](/fusor.md)
 
