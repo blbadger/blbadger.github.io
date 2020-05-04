@@ -10,7 +10,7 @@ transformers, primaries wired in parallel with secondaries in series
 at 400mA.  Power controlled with a variable autotransformer, up to 
 145V output with 120V input. Topload is two aluminum dryer ducts.
 
-![tesla coil arcs]({{https://blbadger.github.io}}newtesla.jpg)
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
 
 Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
 is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete 
@@ -18,9 +18,9 @@ forming tube coated in polyurethane. Inner turns of the primary get
 warm during operation, not suprising with an estimated 18.9 kA instantaneous 
 current during capacitor firing!
 
-![tesla coil arcs]({{https://blbadger.github.io}}tesla_3.jpg)
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_3.jpg)
 
-![tesla coil arcs]({{https://blbadger.github.io}}tesla_4.jpg)
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_4.jpg)
 
 ### Low-res videos 
 
@@ -34,9 +34,9 @@ current during capacitor firing!
 Same primary circuit as described above.  Secondary coil is a 4" diameter PVC wound 
 with 1300 turns of AWG 26 magnet wire. 3kVA input, smaller dryer duct toroids.
 
-![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_5.JPG)
+![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_images/tesla_5.JPG)
 
-![gen 1 tesla arcs]({{https://blbadger.github.io}}tesla_6.JPG)
+![gen 1 tesla arcs]({{https://blbadger.github.io}}tesla_images/tesla_6.JPG)
 
 [back to home page](https://blbadger.github.io/)
 
