@@ -1,4 +1,4 @@
-## [About Me]
+## About Me
 
 My name is Benjamin Badger and I hope you have enjoyed perusing these pages as much as I did making them.  Currently writing my thesis.
 
