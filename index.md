@@ -34,7 +34,7 @@
 
 ![fusor image]({{https://blbadger.github.io}}fusor-1-1.png)
 
-## [About Me](https://blbadger.github.io/about_me.md)
+## [About Me](/about_me.md)
 
 
 
