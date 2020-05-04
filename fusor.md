@@ -1,5 +1,4 @@
-
-title: Fusor
+### Fusors: internal electrostatic containment
 
 ### Fusor under high power 
 
