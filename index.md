@@ -32,7 +32,7 @@
 
 ### [Fusor](/fusor.md)
 
-![fusor image]({{https://blbadger.github.io}}fusor-1-1.png)
+![fusor image]({{https://blbadger.github.io}}fusor_images/fusor-1-1.png)
 
 ### [About Me](/about-me.md)
 
