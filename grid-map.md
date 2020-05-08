@@ -3,8 +3,11 @@
 ### A demonstration of semicontinuous mapping of a 2D chaotic system
 
 The differential system:
-  x_next = x_current + 0.1 * cos(y_current) * delta_t
-  y_next = y_current + 0.1 * sin(x_current) * delta_t
+
+x_next = x_current + 0.1 * cos(y_current) * delta_t
+
+y_next = y_current + 0.1 * sin(x_current) * delta_t
+  
   
 The vector map
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
