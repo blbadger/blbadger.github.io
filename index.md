@@ -16,6 +16,10 @@
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
+### Grid map
+
+![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
+
 ### neural network for image classification
 
 ### [Neural Network](https://github.com/blbadger/neural-network) 
