@@ -16,7 +16,7 @@
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
-### Grid map
+### [Grid map](/grid_map.md)
 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
