@@ -4,15 +4,15 @@
 
 ## Software projects: 
 
-### [logistic map](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
+### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
 
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
 
-### [semicontinuous Clifford attractor](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
+### [semicontinuous Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
 
 ![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
 
-### [Clifford vectors](https://github.com/blbadger/quiver-plots/blob/master/clifford_vectors.py)
+### [Clifford vectors code](https://github.com/blbadger/quiver-plots/blob/master/clifford_vectors.py)
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
 
@@ -22,7 +22,7 @@
 
 ### neural network for image classification
 
-### [Neural Network](https://github.com/blbadger/neural-network) 
+### [Neural Network code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
