@@ -23,7 +23,7 @@ if the starting x coordinate is shifted by a factor of one billionth (to 1.00000
 ![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t_shifted.png)
 
 
-Euler's formula has been used to estimate the trajectory of unsolvable differential equaitons.  Here it is used with dliberately large values of delta_t in order to demonstrate a mapping that changes from a continuous trajectory to a discrete-like map. Observe what happens with increases in the step size:
+Euler's formula has been used to estimate the trajectory of unsolvable differential equaitons.  Here it is used with deliberately large values of delta_t in order to demonstrate a mapping that changes from a continuous trajectory to a discrete-like map. Observe what happens with increases in the step size:
 
 delta_t = 0.05
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_0.05t.png)
