@@ -2,13 +2,18 @@
 
 ### A demonstration of semicontinuous mapping of a 2D chaotic system
 
-
 The differential system:
+```python
+dx = 0.1 * cos(y)
+dy = 0.1 * sin(x) 
+```
 
-x_next = x_current + 0.1 * cos(y_current) * delta_t
+To evaluate this equation with Euler's method:
 
-y_next = y_current + 0.1 * sin(x_current) * delta_t
-  
+```python
+x_next = x_current + delta_t * dx
+y_next = y_current + delta_t * dy
+```
 
 Chaotic mathematical systems are deterministic but deeply unpredictable: small changes to the starting values of a chaotic system will lead to large changes in the output. The equation system above is chaotic for a large enough delta_t.  For example, take delta_t to be 0.8 and the starting x, y coordinates to be 1, 0. The following map is produced:
 
