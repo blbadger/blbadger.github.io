@@ -8,7 +8,7 @@
 
 ![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
 
-### [semicontinuous Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
+### [Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
 
 ![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
 
@@ -20,7 +20,7 @@
 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
-### [Semicontinuous Pendulum](/pendulum-map.md)
+### [Pendulum phase space](/pendulum-map.md)
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover.jpg)
 
 
