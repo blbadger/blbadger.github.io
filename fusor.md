@@ -1,11 +1,11 @@
 ### Fusors: internal electrostatic containment
 
-### Fusor under high power 
-
 Fusors use electrostatic potential to confine plasma in order to accomplish nuclear fusion.
 This is a demo model, built only to display the plasma containment and does not fuse nuclei
 to any extent.  The small vacuum chamber self-rectifies, and the fusor is running here on a
 14 kV @ 70mA AC input.  
+
+### Fusor under high power 
 
 ![Fusor: high power]({{https://blbadger.github.io}}fusor_images/fusor-1-1.png)
 
