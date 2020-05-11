@@ -20,18 +20,17 @@
 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
-### Semicontinuous Pendulum
+### [Semicontinuous Pendulum](/pendulum-map.md)
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_covor.png)
 
-## Software projects
 
-### neural network for image classification
+## Software projects
 
 ### [Neural Network code](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
-## [Check out my Github repositories for more code](https://github.com/blbadger)
+### [More codes](https://github.com/blbadger)
  	
 ## Hardware projects
 
