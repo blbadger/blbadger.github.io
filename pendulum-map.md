@@ -1,6 +1,6 @@
 ## Pendulum phase map
 
-Imagine a pendulum swinging back and forth. We can plot the position of its tip on the x-axis and the velocity of the tip on the y-axis.  This xy plane is now called a phase space, and although it does not correspond to physical space it does tell us interesting information about the system it represents.  An excellent summary of modeling differential equations by 3B1B may be found [here](https://www.youtube.com/watch?v=p_di4Zn4wz4)
+Imagine a pendulum swinging back and forth. We can plot the position of its tip on the x-axis and the velocity of the tip on the y-axis.  This xy plane is now called a phase space, and although it does not correspond to physical space it does tell us interesting information about the system it represents.  An excellent summary of modeling differential equations by 3B1B may be found [here](https://www.youtube.com/watch?v=p_di4Zn4wz4). 
 
 By setting up a pendulum to obey Newton's laws, we can model how the pendulum will swing using Euler's formula to model the trajectory through phase space of the differential equations governing pendulum motion as it is slowed by friction:
 
@@ -9,8 +9,12 @@ dx = y
 dy = - a * y - b * sin(x)
 ```
 
-Where the constant 'a' denotes friction and the constant 'b' represents the constant of gravity divided by the lenght of the pendulum.
+Where the constant 'a' denotes friction and the constant 'b' represents the constant of gravity divided by the lenght of the pendulum.  It is helpful to view the vector plot for this differential system to get an idea of where a point moves at any given (x,y) coordinate
 
+![pendulum vectors]({{https://blbadger.github.io}}pendulum_map/pendulum_vectors.png)
+
+If delta_t is small, the following map is produced:
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 
 ## Nonlinearity leads to a fractal pattern and a change in dimension
