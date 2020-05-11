@@ -4,7 +4,7 @@ Imagine a pendulum swinging back and forth. We can plot the position of its tip 
 
 By setting up a pendulum to obey Newton's laws, we can model how the pendulum will swing using Euler's formula to model the trajectory through phase space of the differential equations governing pendulum motion as it is slowed by friction:
 
-'''
+'''python
 dx = y
 dy = - a * y - b * sin(x)
 '''
@@ -18,14 +18,14 @@ Where the constant 'a' denotes friction and the constant 'b' represents the cons
 
 There are a number of deep similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
-'''
+'''python
 x_dot = np.sin(a*y) + c*np.cos(a*x) 
 y_dot = np.sin(b*x) + d*np.cos(b*y)
 '''
 
 This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously, setting
 
-'''
+'''python
 a=-0.3, b=0.2, c=0.5, d=0.3, delta_t = 0.9
 (x[0], y[0]) = (90, 90)
 '''
