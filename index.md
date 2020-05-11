@@ -21,7 +21,7 @@
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
 ### [Pendulum phase space](/pendulum-map.md)
-![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover.jpg)
+![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
 
 ## Software projects
