@@ -13,11 +13,12 @@ Where the constant 'a' denotes friction and the constant 'b' represents the cons
 
 ![pendulum vectors]({{https://blbadger.github.io}}pendulum_map/pendulum_vectors.png)
 
-If delta_t is small, the following map is produced:
+If delta_t is small (0.01 in this case), the following map is produced:
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 
 ## Nonlinearity leads to a fractal pattern and a change in dimension
+Now lets increase delta_t a little bit, not enough to send the system towards infinity. 
 
 
 ## Reduction of a Clifford system to the pendulum map, iterated semicontinuously
