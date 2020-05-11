@@ -19,8 +19,8 @@ Where the constant 'a' denotes friction and the constant 'b' represents the cons
 There are a number of deep similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
 '''python
-x_dot = np.sin(a*y) + c*np.cos(a*x) 
-y_dot = np.sin(b*x) + d*np.cos(b*y)
+x_dot = sin(a*y) + c*cos(a*x) 
+y_dot = sin(b*x) + d*cos(b*y)
 '''
 
 This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously, setting
