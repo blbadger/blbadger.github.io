@@ -52,6 +52,9 @@ With a slightly larger delta_t (0.04088), the waves have become more pronounced 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04088t.png)
 
 
+And by dt = 0.045, the attractor is now a ring
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.045t.png)
 
 
 
@@ -77,25 +80,5 @@ a=-0.3, b=0.2, c=0.5, d=0.3, delta_t = 0.9
 We have a (slightly oblong) pendulum map!
 
 ![clifford pendulum image]({{https://blbadger.github.io}}pendulum_map/clifford_pendulum.png)
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following images are interesting examples of what appear to be floating-point computation inaccuracies.  If we zoom far in on the center of a semicontinuous pendulum map with just-larger-than-accurate t sizes, we can find interesting accretion-disk like patterns.  These patterns do not form if the pendulum phase map spiral is centered on the origin where errors proportional to the size of the numbers being computed remains small at arbitrary scale.  Node the X-offset in all images corresponding to the off-origin center of these maps.
-
-These particular computational artefacts are interresting because they demonstrate sensitivity to initial conditions in a deterministic system that is characteristic of chaotic systems. 
-
-For a certain starting system:
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_accretion.png)
-
-If we shift the value of G by a factor of one trillionth, a very different pattern appears:
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_accretion_g-shifted.png)
-
-If we then take this new G value and shift the starting X value by a factor of one trillionth, again a new pattern is seen:
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_shifted_g_and_y.png)
-
-Linear systems can also produce these patterns:
-![linear pendulum image]({{https://blbadger.github.io}}pendulum_map/linear_swirl_accretion.png)
-
 
 
