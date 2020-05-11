@@ -21,7 +21,7 @@
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
 ### [Semicontinuous Pendulum](/pendulum-map.md)
-![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_covor.png)
+![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover.jpg)
 
 
 ## Software projects
