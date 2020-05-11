@@ -2,11 +2,14 @@
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
 </head>
 
-## Software projects: 
+## Mathematical models: 
 
 ### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
 
 ![logistic map image]({{https://blbadger.github.io}}/Logistic_zoom.png)
+
+### Semicontinuous Pendulum
+![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_covor.png)
 
 ### [semicontinuous Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
 
@@ -19,6 +22,8 @@
 ### [Grid map](/grid-map.md)
 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
+
+## Software projects
 
 ### neural network for image classification
 
