@@ -61,7 +61,7 @@ And by dt = 0.045, the attractor is now a ring
 
 At this point, the attractor is a line, and thus an increase in delta_t leads to the transformation of a 0-dimensional attractor to a 1-dimensional one. 
 
-## Reduction of a Clifford system to the pendulum map, iterated semicontinuously
+## Reduction of a Clifford system to the pendulum map
 
 There are a number of deep similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
