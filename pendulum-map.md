@@ -4,12 +4,14 @@ Imagine a pendulum swinging back and forth. We can plot the position of its tip 
 
 By setting up a pendulum to obey Newton's laws, we can model how the pendulum will swing using Euler's formula to model the trajectory through phase space of the differential equations governing pendulum motion as it is slowed by friction:
 
-```python
+```python3
 dx = y
 dy = - a * y - b * sin(x)
 ```
 
 Where the constant 'a' denotes friction and the constant 'b' represents the constant of gravity divided by the lenght of the pendulum.
+
+
 
 ## Nonlinearity leads to a fractal pattern and a change in dimension
 
