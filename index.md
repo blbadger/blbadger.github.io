@@ -6,7 +6,7 @@
 
 ### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
 
-![logistic map image]({{https://blbadger.github.io}}/logistic_zoom2.png)
+![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
 
 ### [semicontinuous Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
 
