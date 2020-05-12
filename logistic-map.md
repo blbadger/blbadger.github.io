@@ -47,7 +47,6 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 And so on ad infinitum.  An infinite number of smaller images of the original are found nested in the tiny logistic equation!  
 Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity.
 
-
 What does this mean with regards to chaotic systems? Impossible to solve, but in certain respects scale invariant such that the same patterns reappear at different scales. Unpredictable, but a certain kind of order comes out of this version of chaos. 
 
 ### A logistic map from the Henon attractor
@@ -68,7 +67,9 @@ If iterated using Euler's formula with *dt* = 0.047, the following map is produc
 It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic map.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
 
+Why is this?  The reason is that the logistic map displays the roots of an equation with a constant and a x^2 factor, and after tweaking the inputs to the Henon map we can cause it to do the same.  Think of the logistic map being embedded in any differential system with an x^2 factor.  
 
+Why does an x^2 factor produce such intricate patterns?  The answer seems to be that roots of power two may be **irrational**. Irrational numbers are numbers that cannot be expressed as a fraction, and have an infinite number of decimal digits that never repeat, and thus each next digit is unpredictable. Nonlinear transformations (sine(x), x^n, ln(x)) commonly contain irrational roots.  There is a deep connection between nonlinear systems that are unsolveable, problems that are not computable, the spontaneous formation of structure, and irrational numbers.
 
 
 
