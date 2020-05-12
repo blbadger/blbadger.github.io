@@ -129,7 +129,7 @@ We have a (slightly oblong) pendulum map!
 
 There are some physically relevant reasons to increase a *dt* value: 
 
-1. The case of periodic forcing, where external energy is applied to a physical system in regular intervals.  The *dt* value may be thought of as a direct measure of this energy, as a large enough *dt* will send this system towards infinity (ie infitie velocity). 
+1. The case of periodic forcing, where external energy is applied to a physical system in regular intervals.  The *dt* value may be thought of as a direct measure of this energy, as a large enough *dt* will send this system towards infinity (ie infinite velocity). 
 
 2. When a field is intermittent: if a particle moves smoothly but only interacts with a field at regular time intervals, the same effect is produced.
 
