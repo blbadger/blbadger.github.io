@@ -83,10 +83,10 @@ Only at *dt* = 1 is there a 1-dimensional , but this is unstable: at small value
 
 Take *dt* to be 0.04087, which produces a similar map to that found above for *dt* = 0.04088 .  Now let's zoom in on the upper part of the map:
 
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom1.png)
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom2.png)
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom3.png)
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom4.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom1.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom2.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom3.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom4.png)
 
 Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  
 
