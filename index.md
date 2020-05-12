@@ -2,9 +2,9 @@
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
 </head>
 
-## Mathematical models: 
+## Nonlinear dynamics: 
 
-### [logistic map code](https://github.com/blbadger/logistic-map/blob/master/logistic_map.py)
+### [logistic map](/logistic-map.md)
 
 ![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
 
