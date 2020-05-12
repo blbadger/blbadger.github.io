@@ -45,7 +45,9 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
 
 And so on ad infinitum.  An infinite number of smaller images of the original are found nested in the tiny logistic equation!  
+Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity.
 
+What does this mean with regards to chaotic systems? Impossible to solve, but in certain respects scale invariant such that the same patterns reappear at different scales. 
 
 
 ### A logistic map from the Henon attractor
@@ -55,7 +57,7 @@ The Henon map equation describes a simplified Poincare section of the Lorenz att
 dx = 1 - a * x ** 2 + y
 dy = b * x
 
-in this case,
+# in this case,
 a =  0.1 
 b =  0.03
 ```
@@ -63,7 +65,7 @@ b =  0.03
 If iterated using Euler's formula with *dt* = 0.047, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
-It looks like the bifurcation diagram from the logistic attractor! Closer inspection reveals a similar chaotic pattern as well:
+It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic map.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
 
 
