@@ -36,14 +36,14 @@ which at *dt* = 0.1 yeilds
 In either case, the trajectory heads asymptotically towards the origin.  This is also true for any initial point in the vicinity of the origin, making the point (0,0) an **attractor** of the system.  As the attractor is a point, it is a 0-dimensional attractor or point attractor.
 
 
-## Increasing timestep size leads to an increase in attractor dimension
+### Increasing timestep size leads to an increase in attractor dimension
 
 Now let's increase *dt* little by little.  At *dt* = 0.02 the map looks similar to the one above just with more space betwen each point on the spiral.  This makes sense, as an increase in timestep size would lead to more motion between iterations provided a particle is in motion.
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.2t.png)
 
 
-Increasing *dt* to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these **waves**.  
+Increasing *dt* to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these **waves**.  Another way to think about these waves is to see that they exist between apparent changes in spiral direction.
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.37t.png)
 
@@ -62,26 +62,45 @@ Thus an increase in *dt* leads to the transformation of the pendulum map from a 
 
 What happens to the linear spiral system when *dt* increases? At *dt* = 0.5, the points along the spiral are slightly more spaced out
 
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.5t.png)
+![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.5t.png)
 
 When *dt* = 0.9, there is less space between (x, y) coordinates of different rotations than of consecutive iterations:
 
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9t.png)
+![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9t.png)
 
 And when *dt* = 0.9999, this effect is so pronounced that there appears to be a ring attractor,
 
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9999t.png)
+![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9999t.png)
 
 But this is not so!  Closer inspection of this ring reveals that there is no change in point density between the starting and ending ring: instead, meaning that the points are still moving towards the origin at a constant rate.
 
-![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_zoom.png)
+![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_zoom.png)
 
 
-Only at *dt* = 1 is there a 1-dimensional attractor, but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. 
+Only at *dt* = 1 is there a 1-dimensional , but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. 
 
-## Reduction of a Clifford system to the pendulum map
+###  Pendulum maps with 1-dimensional attractors have fractal wave patterns
 
-There are a number of deep similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
+Take *dt* to be 0.04087, which produces a similar map to that found above for *dt* = 0.04088 .  Now let's zoom in on the upper part of the map:
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom1.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom2.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom3.png)
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04087t_zoom4.png)
+
+Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  
+
+Where do these waves come from? They are not observed for the linear map at any *dt* size (here at 0.9999):
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/swirl_map_zoom.png)
+
+and therefore are not an inevitable result of increasing *dt* for any spiral system.  Instead, they are the result of irrational numbers (or at least finiate approximations of irrationals) generated by repeated iterations of applying the trigonometric sine function to rational numbers. The same waves (more spaced out, and better thought of as spaces between changes in apparent winding direction) are seen when integers are plotted on the polar coordinates (see [this](https://www.youtube.com/watch?v=EK32jo7i5LQ) video for more). 
+
+The appearance of a change in attractor dimension, self-similar fractal patterns, and irrational numbers is no coincidence, as there are deep connections between these ideas.
+
+
+### Reduction of a Clifford system to the pendulum map
+
+There are a number of similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
 ```python
 x_dot = sin(a*y) + c*cos(a*x) 
