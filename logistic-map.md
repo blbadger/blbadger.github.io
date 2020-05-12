@@ -69,7 +69,9 @@ It looks like the bifurcation diagram from the logistic attractor! Closer inspec
 
 Why is this?  The reason is that the logistic map displays the roots of an equation with a constant and a x^2 factor, and after tweaking the inputs to the Henon map we can cause it to do the same.  Think of the logistic map being embedded in any differential system with an x^2 factor.  
 
-Why does an x^2 factor produce such intricate patterns?  The answer seems to be that roots of power two may be **irrational**. Irrational numbers are numbers that cannot be expressed as a fraction, and have an infinite number of decimal digits that never repeat, and thus each next digit is unpredictable. Nonlinear transformations (sine(x), x^n, ln(x)) commonly contain irrational roots.  There is a deep connection between nonlinear systems that are unsolveable, problems that are not computable, the spontaneous formation of structure, and irrational numbers.
+Why does an x^2 factor produce such intricate patterns?  The answer seems to be that roots of power two may be **irrational**. Irrational numbers are numbers that cannot be expressed as a fraction, and have an infinite number of decimal digits that never repeat, and thus each next digit is unpredictable. Nonlinear transformations (sine(x), x^n, ln(x)) commonly contain irrational roots.  
+
+Like nonlinear differential systems that can only be expressed as a changing function, irrational numbers can only be expressed as a nonlinear function with respect to a rational number (square root of two ect., ignoring the names pi, e and so on). There is a deep connection between nonlinear systems that are unsolveable, decision problems that are not computable, the spontaneous formation of structure, and irrational numbers.  Nearly all numbers on the real line are irrational, nearly all problems are not computable, and nearly all possible dynamical systems are unsolveable.
 
 
 
