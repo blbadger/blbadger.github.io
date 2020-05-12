@@ -1,6 +1,6 @@
 ## Logistic Map
 
-The logistic equation was derived from a differential equation describing population growth. The equation is as follows:
+The logistic equation was derived from a differential equation describing population growth, studied by Robert May. The equation is as follows:
 
 ```python
 x_next = r * x_current (1 - x_current)
@@ -47,8 +47,8 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 And so on ad infinitum.  An infinite number of smaller images of the original are found nested in the tiny logistic equation!  
 Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity.
 
-What does this mean with regards to chaotic systems? Impossible to solve, but in certain respects scale invariant such that the same patterns reappear at different scales. 
 
+What does this mean with regards to chaotic systems? Impossible to solve, but in certain respects scale invariant such that the same patterns reappear at different scales. Unpredictable, but a certain kind of order comes out of this version of chaos. 
 
 ### A logistic map from the Henon attractor
 
