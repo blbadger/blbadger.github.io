@@ -19,7 +19,7 @@ x_next = x_current + delta_t * dx
 y_next = y_current + delta_t * dy
 ```
 
-If delta_t is small (0.01 in this case), the following map is produced:
+If delta_t (hereafter *dt*) is small (0.01 in this case), the following map is produced:
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 Now note that we can achieve a similar map with a linear differential system
@@ -29,25 +29,26 @@ dx = -a * y
 dy = -b * y + x 
 ```
 
-which yeilds
+which at *dt* = 0.1 yeilds
 
 ![swirl image]({{https://blbadger.github.io}}pendulum_map/linear_swirl.png)
 
 In either case, the trajectory heads asymptotically towards the origin.  This is also true for any initial point in the vicinity of the origin, making the point (0,0) an **attractor** of the system.  As the attractor is a point, it is a 0-dimensional attractor or point attractor.
 
 
-## Increasing timestep size leads to a fractal pattern and an increase in attractor dimension
+## Increasing timestep size leads to an increase in attractor dimension
 
-Now let's increase delta_t little by little.  At delta_t = 0.02 the map looks similar to the one above just with more space betwen each point on the spiral.  This makes sense, as an increase in timestep size would lead to more motion between iterations provided a particle is in motion.
+Now let's increase *dt* little by little.  At *dt* = 0.02 the map looks similar to the one above just with more space betwen each point on the spiral.  This makes sense, as an increase in timestep size would lead to more motion between iterations provided a particle is in motion.
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.2t.png)
 
-Increasing delta_t to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these **waves**.  
+
+Increasing *dt* to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these **waves**.  
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.37t.png)
 
 
-With a slightly larger delta_t (0.04088), the waves have become more pronounced and an empty space appears around the origin (picture is zoomed slightly).
+With a slightly larger *dt* (0.04088), the waves have become more pronounced and an empty space appears around the origin (picture is zoomed slightly).
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04088t.png)
 
@@ -57,9 +58,26 @@ And by dt = 0.045, the attractor is now a ring
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.045t.png)
 
 
+Thus an increase in *dt* leads to the transformation of the pendulum map from a 0-dimensional attractor to a 1-dimensional one. Further increases in *dt* leads to explosion towards infinity.
+
+What happens to the linear spiral system when *dt* increases? At *dt* = 0.5, the points along the spiral are slightly more spaced out
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.5t.png)
+
+When *dt* = 0.9, there is less space between (x, y) coordinates of different rotations than of consecutive iterations:
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9t.png)
+
+And when *dt* = 0.9999, this effect is so pronounced that there appears to be a ring attractor,
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.9999t.png)
+
+But this is not so!  Closer inspection of this ring reveals that there is no change in point density between the starting and ending ring: instead, meaning that the points are still moving towards the origin at a constant rate.
+
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/spiral_map_zoom.png)
 
 
-At this point, the attractor is a line, and thus an increase in delta_t leads to the transformation of a 0-dimensional attractor to a 1-dimensional one. 
+Only at *dt* = 1 is there a 1-dimensional attractor, but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. 
 
 ## Reduction of a Clifford system to the pendulum map
 
