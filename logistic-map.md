@@ -70,10 +70,10 @@ It looks like the bifurcation diagram from the logistic attractor! Closer inspec
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
 
 As this system is being iterated semicontinuously, we can observe the vectorfield behind the motion of the points:
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver.png)
+![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver2.png)
 
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom.png)
+![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
 Why is this?  The reason is that the logistic map displays the roots of an equation with a constant and a x^2 factor, and after tweaking the inputs to the Henon map we can cause it to do the same.  Think of the logistic map being embedded in many differential systems with an x^2 factor.  
 
