@@ -13,7 +13,7 @@ Nonlinear systems are nearly all unsolveable, and though deterministic are unpre
 
 ### [Clifford attractor](/clifford-attractor.md)
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_cover.png)
 
 ### [Grid map](/grid-map.md)
 
