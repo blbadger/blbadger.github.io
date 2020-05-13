@@ -52,7 +52,7 @@ And for b = 0.9818, a slightly-larger-than 1D attractor is produced
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1d2.png)
 
 And when b = 1.7, a nearly-2d attractor is produced
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_2d1.png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_2d.png)
 
 ### Semi-continuous mapping
 
