@@ -8,6 +8,10 @@ dx = 0.1 * cos(y)
 dy = 0.1 * sin(x) 
 ```
 
+The vector map of this equation is as follows:
+![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
+
+
 To evaluate this equation with Euler's method:
 
 ```python
@@ -19,22 +23,19 @@ Chaotic mathematical systems are deterministic but deeply unpredictable: small c
 
 ![t=0.8 map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t.png)
 
-
 If the starting x coordinate is shifted by a factor of one billionth (to 1.000000001), a completely different map is produced:
 
 ![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t_shifted.png)
 
 
-Euler's formula has been used to estimate the trajectory of unsolvable differential equaitons.  Here it is used with deliberately large values of delta_t in order to demonstrate a mapping that changes from a continuous trajectory to a discrete-like map. 
+Euler's formula has been used to estimate the trajectory of unsolvable differential equations.  Here it is employed with deliberately large values of delta_t in order to demonstrate a mapping that is not quite continuous but not a classic recurrence (discrete) mapping either.
 
-  
-The vector map
-![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
+This idea becomes clearer when the vector map is added to the trajectory.  Observe how the particles are influenced by the vectors, as is the case for a continuous trajectory, but that there are gaps between particle location that corresponds to vector size.
+
+![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers.png)
 
 
-Imagine a ball moving in a fluid that flows in directions shown in the vector map above. With a small delta_t size, Euler's formula acts as a fairly accurate approximation of the trajectory of this ball. But as delta_t increases, the ball begins to bounce around at discrete step sizes rather than flow smoothly.  
-
-Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the step size:
+Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
 delta_t = 0.05
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_0.05t.png)
