@@ -11,13 +11,9 @@ Nonlinear systems are nearly all unsolveable, and though deterministic are unpre
 
 ![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
 
-### [Clifford attractor code](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor_semicontinouous.py)
+### [Clifford attractor](/clifford-attractor.md)
 
-![clifford map image]({{https://blbadger.github.io}}clifford_attractor(9,9).png)
-
-### [Clifford vectors code](https://github.com/blbadger/quiver-plots/blob/master/clifford_vectors.py)
-
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor_vectors(9,9).png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/)
 
 ### [Grid map](/grid-map.md)
 
