@@ -30,9 +30,12 @@ If the starting x coordinate is shifted by a factor of one billionth (to 1.00000
 
 Euler's formula has been used to estimate the trajectory of unsolvable differential equations.  Here it is employed with deliberately large values of delta_t in order to demonstrate a mapping that is not quite continuous but not a classic recurrence (discrete) mapping either.
 
-This idea becomes clearer when the vector map is added to the trajectory.  Observe how the particles are influenced by the vectors, as is the case for a continuous trajectory, but that there are gaps between particle location that corresponds to vector size.
+This idea becomes clearer when the vector map is added to the trajectory.  Observe how the particles are influenced by the vectors, as is the case for a continuous trajectory, 
 
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers.png)
+
+and that on close inspection there are gaps between successive iterations, like a discrete recursive map
+![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers_zoom.png)
 
 
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
