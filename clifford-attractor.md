@@ -57,7 +57,7 @@ And when b = 1.7, a nearly-2d attractor is produced
 ### Semi-continuous mapping
 
 Say you want to 
-at *dt* = 0.01, a smooth path along the vectors is made
+at *dt* = 0.01, a smooth path along the vectors is made.  The path is 1D, and the attractor is a point (0D).
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.01t.png)
 
 at *dt* = 0.1
