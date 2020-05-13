@@ -40,7 +40,7 @@ There are two paths visible at higher magnification:
 ### Clifford attractors can shift between one and two (or more) dimensions
 
 For a = 2.1, b = 0.8, c = -0.5, d = -1, the attractor is three points:
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_0d1.png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_0d.png)
 
 For b = 0.95, more points:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_0d2.png)
@@ -57,9 +57,20 @@ And when b = 1.7, a nearly-2d attractor is produced
 ### Semi-continuous mapping
 
 Say you want to 
+at *dt* = 0.01, a smooth path along the vectors is made
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.01t.png)
 
+at *dt* = 0.1
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.1t.png)
 
+at *dt* = 0.8
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.8t.png)
+
+*dt* = 1.1
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.1t.png)
+
+*dt* = 1.15
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.15t.png)
 
 
 
