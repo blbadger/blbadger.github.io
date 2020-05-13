@@ -3,9 +3,9 @@
 </head>
 
 ## Nonlinear dynamics: 
-Dynamical systems are systems that change with time.  Linear dynamical systems are described by linear transformations that are additive and scaling.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it, but may be nearly-scaling such that small parts resemble the whole in some respect (fractals).  Nearly all possible systems are nonlinear. 
+Dynamical systems are systems that change.  Linear dynamical systems are described by linear transformations that are additive and scaling.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it, but may be nearly-scaling such that small parts resemble the whole in some respect (fractals).  Nearly all possible systems are nonlinear. 
 
-Nonlinear systems are nearly all unsolveable, and nonlinear systems of even extremely simple equations may be infinitely complex with both repeating patterns and patterns that look random and do not repeat in finite time.  Because of this, these systems are deterministic and yet unpredictable.  These systems can form beautiful shapes...
+Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  Many form beautiful shapes, and a few classic and a few novel systems are shown here.
 
 ### [logistic map](/logistic-map.md)
 
