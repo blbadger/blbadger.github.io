@@ -2,7 +2,7 @@
 
 The logistic equation was derived from a differential equation describing population growth, studied by Robert May. The equation is as follows:
 
-$$x_n+1 = r x_n (1 - x_n)$$
+$$x_{n+1} = rx_n (1 - x_n)$$
 
 ```python
 x_next = r * x_current (1 - x_current)
