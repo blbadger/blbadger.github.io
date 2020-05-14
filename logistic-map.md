@@ -59,12 +59,48 @@ The behavior is identical to the unshifted population for a while, until it chan
 
 ### The relationship between chaotic systems and fractals
 
-This information may be compiled in what is called an orbit map, which displays the stable points at each value of r.  These may also be though of as the roots of the equation with specific r values. 
+This information may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
 
-On the x-axis is r, on the y-axis is the stable point value. By looking at how many points there are at a given r value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a near-universal feature of the transition from periodicity to chaos.
+To do this, let's have the output of the logistic equation on the y-axis and the possible values of $r$ on the x-axis, incremented in small units.  
+```python
+#Import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
 
+def logistic_map(x, y):
+	'''a function to calculate the next step of the discrete map.  Inputs
+	x and y are transformed to x_next, y_next respectively'''
+	y_next = y * x * (1 - y)
+	x_next = x + 0.0000001
+	yield x_next, y_next
+```
+For high resolution, lets use millions of iterations.  Note that the logistic equation explodes to infinity for $r > 4$, so starting at $r = 1$ lets use 3 million iterations with step sizes of 1/100,000 (as above)
+```python
+steps = 3000000
 
+Y = np.zeros(steps + 1)
+X = np.zeros(steps + 1)
+
+X[0], Y[0] = 1, 0.5
+
+# map the equation to array step by step using the logistic_map function above
+for i in range(steps):
+	x_next, y_next = next(logistic_map(X[i], Y[i])) # calls the logistic_map function on X[i] as x and Y[i] as y
+	X[i+1] = x_next
+	Y[i+1] = y_next
+```
+
+Lets plot the result! A dark background is used for clarity.
+```python
+lt.style.use('dark_background')
+plt.figure(figsize=(10, 10))
+plt.plot(X, Y, '^', color='white', alpha=0.4, markersize = 0.013)
+plt.axis('on')
+plt.show()
+```
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
+
+By looking at how many points there are at a given $r$ value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a near-universal feature of the transition from periodicity to chaos.
 
 Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
