@@ -6,7 +6,7 @@ $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
 where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
 
-Let's see what happens to population over time at a fixed r value.  To do this, we will employ numpy and matplotlib, two indispensable python libraries.
+Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries.
 
 ```python
 # import third-party libraries
@@ -33,22 +33,22 @@ ax.set(xlabel='Time (years)', ylabel='Population (fraction of max)')
 plt.show()
 ```
 
-When r is small (< 1), the population heads towards 0:
+When $r$ is small (0.5), the population heads towards 0:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
 
-As r is increased to 2.5, a stable population is reached:
+As $r$ is increased to 2.5, a stable population is reached:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
 
-If r = 3.1, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
+If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
-at r = 3.5, the population is period 4, as it takes 4 iterations for the population to return to its original position:
+at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
-and at r=3.55, the population is period 8:
+and at $r=3.55$, the population is period 8:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
-and at r=3.7, the period is longer than the iterations plotted (actually it is infinite).  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is called mathematical chaos.
+and at $r=3.7$, the period is longer than the iterations plotted (actually it is infinite).  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is called mathematical chaos.
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
 A fundamental feature of aperiodicity is extreme sensitivity to initial conditions, such that long-range behavior is impossible to predict.  Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth:
@@ -66,7 +66,7 @@ On the x-axis is r, on the y-axis is the stable point value. By looking at how m
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
 
-Let's take a closer look at the fuzzy region of the right. This corresponds to the values of r which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
+Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
 One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.  Observe what happens when we zoom in on the upper left section: A smaller copy of the original image is found.
@@ -86,12 +86,14 @@ $$x_{n+1} = 1-ax_n^2 + y \\
 y_{n+1} = bx_n \tag{2}$$
 
 When
+
 $$a = 1.4 \\
 b = 0.3$$
+
 The following map is produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
-This system is discrete, but may be iterated using Euler's method.  With larger-than-accurate values of $\Delta t$, we have a not-quite-continuous map that can be made as follows:
+This system is discrete, but may be iterated using Euler's method (see Clifford attractor page for details). With larger-than-accurate values of $\Delta t$, we have a not-quite-continuous map that can be made as follows:
 
 ```python
 # import third-party libraries
@@ -130,10 +132,10 @@ plt.axis('on')
 plt.show()
 ```
 
-If iterated using Euler's formula with *dt* = 0.047, the following map is produced:
+If iterated using Euler's formula with $\Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
-It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic map.
+It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic-like map.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
 
 As this system is being iterated semicontinuously, we can observe the vectorfield behind the motion of the points:
@@ -142,11 +144,8 @@ As this system is being iterated semicontinuously, we can observe the vectorfiel
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
-Why is this?  The reason is that the logistic map displays the roots of an equation with a constant and a x^2 factor, and after tweaking the inputs to the Henon map we can cause it to do the same.  Think of the logistic map being embedded in many differential systems with an x^2 factor.  
+Why is this?  The henon map has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity). The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.
 
-There is an interesting connection between nonlinear systems that are unsolveable, decision problems that are not computable, the spontaneous formation of structure, and irrational numbers.  
-
-Nearly all numbers on the real line are irrational, nearly all problems are not computable, and nearly all possible dynamical systems are unsolveable.
 
 
 
