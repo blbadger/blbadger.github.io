@@ -85,13 +85,37 @@ The Henon map equation describes a simplified Poincare section of the Lorenz att
 $$x_{n+1} = 1-ax_n^2 + y \\
 y_n+1 = bx_n \tag{2}$$
 
-```python
-dx = 1 - a * x ** 2 + y
-dy = b * x
+This system is discrete, but may be iterated using Euler's method.  With larger-than-accuracte values of $dt$, we have a not-quite-continuous map that can be made as follows:
 
-# in this case,
-a =  0.1 
-b =  0.03
+```python
+# import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+plt.style.use('dark_background')
+
+def henon_attractor(x, y, a=.1, b=0.03):
+	'''Computes the next step in the Henon 
+	map for arguments x, y with kwargs a and
+	b as constants.
+	'''
+	dx = 1 - a * x ** 2 + y
+	dy = b * x
+	return dx, dy
+	
+# number of iterations
+steps = 5000000
+delta_t = 0.0047
+
+X = np.zeros(steps + 1)
+Y = np.zeros(steps + 1)
+
+# starting point
+X[0], Y[0] = 1, 1
+
+for i in range(steps):
+	x_dot, y_dot = henon_attractor(X[i], Y[i])
+	X[i+1] = X[i] + x_dot * delta_t
+	Y[i+1] = Y[i] + y_dot * delta_t
 ```
 
 If iterated using Euler's formula with *dt* = 0.047, the following map is produced:
