@@ -83,7 +83,7 @@ And so on ad infinitum.  An infinite number of smaller images of the original ar
 The Henon map equation describes a simplified Poincare section of the Lorenz attractor:
 
 $$x_{n+1} = 1-ax_n^2 + y \\
-y_n+1 = bx_n \tag{2}$$
+y_{n+1} = bx_n \tag{2}$$
 
 This system is discrete, but may be iterated using Euler's method.  With larger-than-accuracte values of $dt$, we have a not-quite-continuous map that can be made as follows:
 
