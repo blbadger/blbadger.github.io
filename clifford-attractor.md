@@ -223,7 +223,7 @@ For example, take the semicontinuous map with the same constants as before,  $a=
 
 and at $(x, y) = (90, 90)$:
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(90, 90).png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(90,90).png)
 
 
 
