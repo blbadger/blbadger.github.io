@@ -39,7 +39,7 @@ Now let's increase $\Delta t$ little by little.  At $\Delta t = 0.02$ the map lo
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.2t.png)
 
 
-Increasing *dt* to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these **waves**.  Another way to think about the waves is to see that they are locations of apparent changes in spiral direction.
+Increasing $\Delta t$ to 0.037 leads to the appearance of ripples in the trajectory path, where the ratio between the distance between consecutive iteration (x, y) coordinates compared to the (x, y) coordinates of the next nearest neighbor changes depending on where in the trajectory the particle is.  For lack of a better word, let's call these waves.  Another way to think about the waves is to see that they are locations of apparent changes in spiral direction.
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.37t.png)
 
@@ -49,7 +49,7 @@ With a slightly larger $\Delta t$ (0.04088), the waves have become more pronounc
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.04088t.png)
 
 
-And by dt = 0.045, the attractor is now a ring
+And by $\Delta t = 0.045$, the attractor is now a ring
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.045t.png)
 
@@ -80,7 +80,7 @@ Only at $\Delta t = 1$ is there a 1-dimensional attractor, but this is unstable:
 
 ###  Pendulum maps with 1-dimensional attractors have fractal wave patterns
 
-Take *dt* to be 0.04087, which produces a similar map to that found above for *dt* = 0.04088 .  Now let's zoom in on the upper part of the map:
+Take $\Delta t$ to be 0.04087, which produces a similar map to that found above for $\Delta t= 0.04088$.  Now let's zoom in on the upper part of the map:
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom1.png)
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom2.png)
@@ -89,7 +89,7 @@ Take *dt* to be 0.04087, which produces a similar map to that found above for *d
 
 Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  
 
-Waves are not observed for the linear map at any *dt* size (here at 0.9999):
+Waves are not observed for the linear map at any $\Delta t$ size (here at 0.9999):
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/swirl_map_zoom.png)
 
 ### Reduction of a Clifford system to the pendulum map
@@ -104,8 +104,9 @@ y_{n+1} = sin(bx) + d \cdot cos(by)
 This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously, setting
 
 $$
-a=-0.3, b=0.2, c=0.5, d=0.3, delta_t = 0.9
+a=-0.3, b=0.2, c=0.5, d=0.3, \Delta t = 0.9 \\
 (x_0, y_0) = (90, 90)
+$$
 
 We have a (slightly oblong) pendulum map!
 
