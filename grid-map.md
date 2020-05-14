@@ -51,4 +51,4 @@ $\Delta t = 15$
 $\Delta t = 18$
 ![t=18 map]({{https://blbadger.github.io}}/grid_map/cossin_18t.png)
 
-With increases in $\Delta_t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
+With increases in $\Delta t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
