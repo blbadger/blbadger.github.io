@@ -129,7 +129,14 @@ b = 0.3$$
 The following map is produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
-This system is discrete, but may be iterated using Euler's method (see Clifford attractor page for details). With larger-than-accurate values of $\Delta t$, we have a not-quite-continuous map that can be made as follows:
+This system is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
+$$
+x_{n+1} \approx x_n + dx \cdot \Delta t \\
+y_{n+1} \approx y_n + dy \cdot \Delta t 
+\tag{3}
+$$
+
+With larger-than-accurate values of $\Delta t$, we have a not-quite-continuous map that can be made as follows:
 
 ```python
 # import third-party libraries
