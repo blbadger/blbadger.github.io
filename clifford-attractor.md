@@ -76,7 +76,7 @@ $$
 With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
 
 $$
-x_{next} = n_{current} + dx \Delta_t \, as \,  \Delta_t \to \infty
+x_{next} = n_{current} + dx \Delta_t \quad as \, \Delta_t \to 0
 $$
 
 For a two dimensional equation, the approximations can be made in each dimension:
