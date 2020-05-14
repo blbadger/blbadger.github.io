@@ -6,7 +6,7 @@ $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
 where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
 
-Let's see what happens to population over time at a fixed r value.  To do this, we will employ numpy and matplotlib, two indespensible python libraries.
+Let's see what happens to population over time at a fixed r value.  To do this, we will employ numpy and matplotlib, two indispensable python libraries.
 
 ```python
 # import third-party libraries
