@@ -3,8 +3,8 @@
 ### A demonstration of semicontinuous mapping of a 2D chaotic system
 
 The differential system
-$$ dx = a * cos(y) \\
-dy = b * sin(x) \tag{1} $$
+$$ dx = a \cdot cos(y) \\
+dy = b \cdot sin(x) \tag{1} $$
 
 The vector map of this equation is as follows:
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
@@ -12,15 +12,15 @@ The vector map of this equation is as follows:
 To evaluate this equation with Euler's method:
 
 $$
-x_{n+1} = x_n + \Delta t dx \\
-y_{n+1} = y_n + \Delta t dy \tag{2}
+x_{n+1} = x_n + \Delta t \cdot dx \\
+y_{n+1} = y_n + \Delta t \cdot dy \tag{2}
 $$
 
-Chaotic mathematical systems are deterministic but deeply unpredictable: small changes to the starting values of a chaotic system will lead to large changes in the output. The equation system above is chaotic for a large enough delta_t.  For example, take delta_t to be 0.8 and the starting x, y coordinates to be 1, 0. The following map is produced:
+Chaotic mathematical systems are deterministic but deeply unpredictable: small changes to the starting values of a chaotic system will lead to large changes in the output. The equation system above is chaotic for a large enough $\Delta t$.  For example, take $\Delta t = 0.8$ and the starting $x, y$ coordinates to be $1, 0$. The following map is produced:
 
 ![t=0.8 map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t.png)
 
-If the starting x coordinate is shifted by a factor of one billionth (to 1.000000001), a completely different map is produced:
+If the starting $x$ coordinate is shifted by a factor of one billionth (to 1.000000001), a completely different map is produced:
 
 ![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t_shifted.png)
 
@@ -36,19 +36,19 @@ and that on close inspection there are gaps between successive iterations, like 
 
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
-delta_t = 0.05
+$\Delta t = 0.05$
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_0.05t.png)
 
-delta_t = 0.5
+$\Delta t = 0.5$
 ![t=0.5 map]({{https://blbadger.github.io}}/grid_map/cossin_0.5t.png)
 
-delta_t = 13
+$\Delta t = 13$
 ![t=13 map]({{https://blbadger.github.io}}/grid_map/cossin_13t.png)
 
-delta_t = 15
+$\Delta t = 15$
 ![t=15 map]({{https://blbadger.github.io}}/grid_map/cossin_15t.png)
 
-delta_t = 18
+$\Delta t = 18$
 ![t=18 map]({{https://blbadger.github.io}}/grid_map/cossin_18t.png)
 
-With increases in delta_t, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
+With increases in $\Delta_t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
