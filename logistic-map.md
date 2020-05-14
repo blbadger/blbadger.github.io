@@ -2,13 +2,37 @@
 
 The logistic equation was derived from a differential equation describing population growth, studied by Robert May. The equation is as follows:
 
-$$x_{n+1} = rx_n (1 - x_n)$$
+$$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
+
+where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
+
+Let's see what happens to population over time at a fixed r value.  To do this, we will employ numpy and matplotlib, two indespensible python libraries.
 
 ```python
-x_next = r * x_current (1 - x_current)
-```
+# import third-party libraries
+import matplotlib
+import matplotlib.pyplot as plt 
+import numpy as np 
 
-where r can be considered akin to a growth rate, x_next is the population next year, and x_current is the current population.
+# initialize an array of 0s and specify starting values and r constant
+steps = 50
+x = np.zeros(steps + 1)
+y = np.zeros(steps + 1)
+x[0], y[0] = 0, 0.4
+
+r = 0.5
+
+# loop over the steps and replace array values with calculations
+for i in range(steps):
+	y[i+1] = r * y[i] * (1 - y[i])
+	x[i+1] = x[i] + 1
+
+# plot the figure!
+fig, ax = plt.subplots()
+ax.plot(x, y, alpha=0.5)
+ax.set(xlabel='Time (years)', ylabel='Population (fraction of max)')
+plt.show()
+```
 
 When r is small (< 1), the population heads towards 0:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
