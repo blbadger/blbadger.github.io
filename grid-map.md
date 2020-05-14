@@ -12,7 +12,7 @@ The vector map of this equation is as follows:
 To evaluate this equation with Euler's method:
 
 $$
-x_{n+1} = x_n + \Delta t dx
+x_{n+1} = x_n + \Delta t dx \\
 y_{n+1} = y_n + \Delta t dy \tag{2}
 $$
 
