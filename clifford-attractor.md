@@ -86,7 +86,7 @@ x_{n+1} \approx x_n + dx \cdot \Delta t \\
 y_{n+1} \approx y_n + dy \cdot \Delta t
 $$
 
-To make these calculations and plotting them in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function:
+To make these calculations and plotting them in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function with constants $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$:
 ```python
 # import third party libraries
 import numpy as np 
@@ -102,7 +102,7 @@ def clifford_attractor(x, y, a=-1.4, b=1.7, c=1.0, d=0.7):
 	y_next = np.sin(b*x) + d*np.cos(b*y)
 	return x_next, y_next
 ```
-Setting up the number of iterations and the time step size, we then initialize the numpy array with 0s and add a starting $x, y$ coordinate:
+Setting up the number of iterations and the time step size, we then initialize the numpy array with 0s and add a starting $(x, y)$ coordinate:
 
 ```python
 # number of iterations
@@ -173,7 +173,7 @@ at $\Delta t = 0.1$
 at $\Delta t = 0.8$ (points are connected for clarity)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.8t.png)
 
-$\Delta t = 1.1$
+$\Delta t = 1.1$ the point attractor continues to unwind
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.1t.png)
 
 $\Delta t = 1.15$
@@ -182,10 +182,10 @@ $\Delta t = 1.15$
 $\Delta t = 1.2$, the first few iterations reveal four slowly rotating lattice points
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t_lines.png)
 
-with more iterations at $\Delta t$ = 1.2, it is clear that the attractor is now 1 dimensional
+with more iterations at $\Delta t$ = 1.2, it is clear that the attractor is now 1 dimensional, and that the path is 0-dimensional.  We have swapped a dimension in path for attractor!
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t.png)
 
-$\Delta t = 1.3$
+$\Delta t = 1.3$ there are now 4 point attractors, and successive iterations come closer and closer to bouncing between these points. 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.3t.png)
 
 $\Delta t = 1.35$
@@ -194,7 +194,7 @@ $\Delta t = 1.35$
 $\Delta t = 1.35$, a shape similar to the discrete map has formed.
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t.png)
 
-### Is this a fractal? 
+### Is the attractor for $\Delta t = 1.35$ a fractal? 
 
 Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
@@ -209,9 +209,28 @@ Discrete differential systems are recurrence relations: a point's next position 
 I call Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
 
 ### Semicontinuous maps share features of both continuous discrete differential systems
+
 As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractal, as is the case for discrete maps. 
 
-### Semicontinuous Clifford maps are rich: one parameter combination yeilds many attractors
+
+### Semicontinuous Clifford maps are rich: one parameter combination yeilds many possible attractors
+
+To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x, y)$ coordinate, many (possibly infinitely many) attractors are possible. 
+
+For example, take the semicontinuous map with the same constants as before,  $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$ and with $\Delta t=1.35$.  If the starting position is changed from $(x, y) = (10.75, 8.2)$ to $(x, y) = (25, 25)$, the following attractor is produced:
+
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(25,25).png)
+
+and at $(x, y) = (90, 90)$:
+
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(90, 90).png)
+
+
+
+
+
+
+
 
 
 
