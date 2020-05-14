@@ -4,35 +4,28 @@ Imagine a pendulum swinging back and forth. We can plot the position of its tip 
 
 By setting up a pendulum to obey Newton's laws, we can model how the pendulum will swing using Euler's formula to model the trajectory through phase space of the differential equations governing pendulum motion as it is slowed by friction:
 
-```python
-dx = y
-dy = - a * y - b * sin(x)
-```
-Where the constant **a** denotes friction and the constant **b** represents the constant of gravity divided by the length of the pendulum.  THis system of equations is nonlinear (due to the sine term) and dissipative (from the friction, -a * y) which means that it takes a 2D area of starting points down to a 0 area.  
+$$
+dx = y \\
+dy = -ay - b \cdot sin(x) 
+\tag{1} $$
+
+Where the constant $a$ denotes friction and the constant $b$ represents the constant of gravity divided by the length of the pendulum.  THis system of equations is nonlinear (due to the sine term) and dissipative (from the friction, $-ay$) which means that it takes a 2D area of starting points down to a 0 area.  
 
 
 It is helpful to view the vector plot for this differential system to get an idea of where a point moves at any given (x,y) coordinate:
 
 ![pendulum vectors]({{https://blbadger.github.io}}pendulum_map/pendulum_vectors.png)
 
-Imagine a ball rolling around on a plane that is directed by the vectors above. We can calculate this rolling using Euler's formula, 
-
-```python
-x_next = x_current + delta_t * dx
-y_next = y_current + delta_t * dy
-```
-
-If delta_t (hereafter *dt*) is small (0.01 in this case), the following map is produced:
+Imagine a ball rolling around on a plane that is directed by the vectors above. We can calculate this rolling using Euler's formula (see [here](https://blbadger.github.io/clifford-attractor.html)) the change in time step $\Delta t$ is small (0.01 in this case), the following map is produced:
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 Now note that we can achieve a similar map with a linear dissipative differential system
+$$
+dx = -ay \\
+dy = -by + x \tag{2}
+$$
 
-```python
-dx = -a * y
-dy = -b * y + x 
-```
-
-which at *dt* = 0.1 yeilds
+which at $\Delta t = 0.1 $ yeilds
 
 ![swirl image]({{https://blbadger.github.io}}pendulum_map/linear_swirl.png)
 
