@@ -2,22 +2,19 @@
 
 ### A demonstration of semicontinuous mapping of a 2D chaotic system
 
-The differential system:
-```python
-dx = 0.1 * cos(y)
-dy = 0.1 * sin(x) 
-```
+The differential system
+$$ dx = acos(y) \\
+dy = bsin(x) \tag{1} $$
 
 The vector map of this equation is as follows:
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
 
-
 To evaluate this equation with Euler's method:
 
-```python
-x_next = x_current + delta_t * dx
-y_next = y_current + delta_t * dy
-```
+$$
+x_{n+1} = x_n + \Delta t dx
+y_{n+1} = y_n + \Delta t dy \tag{2}
+$$
 
 Chaotic mathematical systems are deterministic but deeply unpredictable: small changes to the starting values of a chaotic system will lead to large changes in the output. The equation system above is chaotic for a large enough delta_t.  For example, take delta_t to be 0.8 and the starting x, y coordinates to be 1, 0. The following map is produced:
 
@@ -28,7 +25,7 @@ If the starting x coordinate is shifted by a factor of one billionth (to 1.00000
 ![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t_shifted.png)
 
 
-Euler's formula has been used to estimate the trajectory of unsolvable differential equations.  Here it is employed with deliberately large values of delta_t in order to demonstrate a mapping that is not quite continuous but not a classic recurrence (discrete) mapping either.
+Euler's formula is used to (not very accurately) estimate the trajectory of unsolvable differential equations.  Here it is employed with deliberately large values of delta_t in order to demonstrate a mapping that is not quite continuous but not a classic recurrence (discrete) mapping either.
 
 This idea becomes clearer when the vector map is added to the trajectory.  Observe how the particles are influenced by the vectors, as is the case for a continuous trajectory, 
 
@@ -36,7 +33,6 @@ This idea becomes clearer when the vector map is added to the trajectory.  Obser
 
 and that on close inspection there are gaps between successive iterations, like a discrete recursive map
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers_zoom.png)
-
 
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
