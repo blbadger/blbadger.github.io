@@ -70,13 +70,13 @@ $$
 then 
 
 $$
-x_{next} \approx x_{current} + dx \cdot \Delta t
+x_{next} \approx x_{current} + dx/dt \cdot \Delta t
 $$
 
 With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
 
 $$
-x_{next} = n_{current} + dx \Delta_t \quad as \, \Delta_t \to 0
+x_{next} = x_{current} + dx/dt \Delta_t \quad as \, \Delta_t \to 0
 $$
 
 For a two dimensional equation, the approximations can be made in each dimension:
