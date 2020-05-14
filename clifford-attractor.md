@@ -1,6 +1,6 @@
 ## Semicontinuous Clifford attractor
 
-The clifford attractor, also known as the fractal dream attractor, is the system of equations:
+The Clifford attractor, also known as the fractal dream attractor, is the system of equations:
 
 $$
 x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
@@ -125,14 +125,41 @@ for i in range(iterations-1):
 	X[i+1] = X[i] + x_next * delta_t
 	Y[i+1] = Y[i] + y_next * delta_t
 ```
+For continuous differential systems, one can follow a path along a vector grid in order to get an intuitive understanding of how the differential system influences a point's path.  To get a vector grid started, we define a grid using numpy with minimum, maximum, and intervals in the $(x,y)$ plane:
 
-Now let's plot the graph! 
+```python
+# Vector plot initialization
+x = np.arange(10.7, 11.2, 1/110)
+y = np.arange(7.6, 8.4, 1/30)
+
+X2, Y2 = np.meshgrid(x, y)
+```
+The next step is to calculate the size and direction of each vector at the designated grid points according to the clifford map, and assign each value a color.
+
+```python
+# calculate each vector's size and direction
+a = -1.4
+b = 1.7
+c = 1.0
+d = 0.7
+
+dx = np.sin(a*Y2) + c*np.cos(a*X2)
+dy = np.sin(b*X2) + d*np.cos(b*Y2)
+
+color_array = (np.abs(dx) + np.abs(dy))**0.7
+```
+
+Now let's plot the graph, adding both vector plot and differential iterations to the same plot.
+
 ```python
 # make and display figure
 plt.figure(figsize=(10, 10))
 
 # differential trajectory
 plt.plot(X, Y, ',', color='white', alpha = 0.2, markersize = 0.05)
+
+# vector plot
+plt.quiver(X2, Y2, dx, dy, color_array, scale = 20, width=0.0018)
 plt.axis('on')
 plt.show()
 ```
@@ -174,7 +201,18 @@ Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
 
+
 ### In what way is this mapping semi-continuous?
+
+Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given. In contrast, both a point's next position almost entirely determines its current position alone, and only the direction of change is influenced by the given equation system.  
+
+I call Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
+
+### Semicontinuous maps share features of both continuous discrete differential systems
+As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractal, as is the case for discrete maps. 
+
+### Semicontinuous Clifford maps are rich: one parameter combination yeilds many attractors
+
 
 
 
