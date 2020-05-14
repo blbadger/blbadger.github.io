@@ -85,7 +85,13 @@ The Henon map equation describes a simplified Poincare section of the Lorenz att
 $$x_{n+1} = 1-ax_n^2 + y \\
 y_{n+1} = bx_n \tag{2}$$
 
-This system is discrete, but may be iterated using Euler's method.  With larger-than-accuracte values of $dt$, we have a not-quite-continuous map that can be made as follows:
+When
+$$a = 1.4 \\
+b = 0.3$$
+The following map is produced:
+![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
+
+This system is discrete, but may be iterated using Euler's method.  With larger-than-accurate values of $\Delta t$, we have a not-quite-continuous map that can be made as follows:
 
 ```python
 # import third-party libraries
@@ -102,7 +108,7 @@ def henon_attractor(x, y, a=.1, b=0.03):
 	dy = b * x
 	return dx, dy
 	
-# number of iterations
+# number of iterations and step size
 steps = 5000000
 delta_t = 0.0047
 
@@ -112,10 +118,16 @@ Y = np.zeros(steps + 1)
 # starting point
 X[0], Y[0] = 1, 1
 
+# compute using Euler's formula
 for i in range(steps):
 	x_dot, y_dot = henon_attractor(X[i], Y[i])
 	X[i+1] = X[i] + x_dot * delta_t
 	Y[i+1] = Y[i] + y_dot * delta_t
+
+# display plot
+plt.plot(X, Y, ',', color='white', alpha = 0.1, markersize=0.1)
+plt.axis('on')
+plt.show()
 ```
 
 If iterated using Euler's formula with *dt* = 0.047, the following map is produced:
