@@ -102,7 +102,7 @@ def clifford_attractor(x, y, a=-1.4, b=1.7, c=1.0, d=0.7):
 	y_next = np.sin(b*x) + d*np.cos(b*y)
 	return x_next, y_next
 ```
-Setting up the number of iterations and the time step size, we then initialize the numpy array with 0s and add a starting $(x, y)$ coordinate:
+Setting up the number of iterations and the time step size, we then initialize the numpy array with 0s and add a starting $(x_0, y_0)$ coordinate:
 
 ```python
 # number of iterations
@@ -215,13 +215,13 @@ As is the case for continuous systems (and unlike that for discrete systems), on
 
 ### Semicontinuous Clifford maps are rich: one parameter combination yeilds many possible attractors
 
-To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x, y)$ coordinate, many (possibly infinitely many) attractors are possible. 
+To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x_0, y_0)$ coordinate, many (possibly infinitely many) attractors are possible. 
 
-For example, take the semicontinuous map with the same constants as before,  $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$ and with $\Delta t=1.35$.  If the starting position is changed from $(x, y) = (10.75, 8.2)$ to $(x, y) = (25, 25)$, the following attractor is produced:
+For example, take the semicontinuous map with the same constants as before,  $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$ and with $\Delta t=1.35$.  If the starting position is changed from $(x, y) = (10.75, 8.2)$ to $(x_0, y_0) = (25, 25)$, the following attractor is produced:
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(25,25).png)
 
-and at $(x, y) = (90, 90)$:
+and at $(x_0, y_0) = (90, 90)$:
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(90,90).png)
 
