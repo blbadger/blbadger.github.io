@@ -62,6 +62,8 @@ The behavior is identical to the unshifted population for a while, until it chan
 This information may be compiled in what is called an orbit map, which displays the stable points at each value of r.  These may also be though of as the roots of the equation with specific r values. 
 
 On the x-axis is r, on the y-axis is the stable point value. By looking at how many points there are at a given r value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a near-universal feature of the transition from periodicity to chaos.
+
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
 
 Let's take a closer look at the fuzzy region of the right. This corresponds to the values of r which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
@@ -79,6 +81,10 @@ And so on ad infinitum.  An infinite number of smaller images of the original ar
 ### A logistic map from the Henon attractor
 
 The Henon map equation describes a simplified Poincare section of the Lorenz attractor:
+
+$$x\dot = 1-ax^2 + y
+y\dot = bx \tag{2}$$
+
 ```python
 dx = 1 - a * x ** 2 + y
 dy = b * x
