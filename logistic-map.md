@@ -175,7 +175,7 @@ plt.axis('on')
 plt.show()
 ```
 
-If iterated using Euler's formula with $\Delta t = 0.047 $, the following map is produced:
+If iterated using Euler's formula with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
 It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic-like map.
