@@ -2,7 +2,6 @@
 
 The clifford attractor, also known as the fractal dream attractor, is the system of equations:
 
-
 $$
 x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
 y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
@@ -10,7 +9,7 @@ y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
 
 
 where a, b, c, and d are constants of choice.  It is an attractor because at given values of a, b, c, and d,
-any starting point $(x_0, y_0)$ will wind up in the same pattern. 
+any starting point $(x_0, y_0)$ will wind up in the same pattern. See Vedran Sekara's post [here](https://vedransekara.github.io/2016/11/14/strange_attractors.html) for a good summary on how to use Python to make a plot of the Clifford attractor.
 
 with $a = 2, b = 2, c = 1, d = -1$ the following map is made:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.png)
@@ -60,16 +59,78 @@ And when $b = 1.7$, a nearly-2d attractor is produced
 
 ### Semi-continuous mapping
 
-Say you want to model a continuous differential equation.  If the equation is nonlinear, chances are that there is no analytic solution.  What to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
-Given 
-$
-dy / dx = f(x, y), \\
-x(0) = y_0
-$
+Say you want to model a continuous ordinary differential equation.  If the equation is nonlinear, chances are that there is no analytic solution.  What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
+If 
+$$
+dx / dt = f(x), \\
+x(0) = C
+$$
+
+then 
+$$
+x_{n+1} \approx x_n + dx \cdot \Delta t
+$$
+With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
+$$
+x_{n+1} = n_n + dx \Delta_t as \Delta_t \to \infty
+$$
+
+For a two dimensional equation, the approximations can be made in each dimension:
 
 $$
-x_{n+1} = x_n + dx * \Delta t
+x_{n+1} \approx x_n + dx \cdot \Delta t \\
+y_{n+1} \approx y_n + dy \cdot \Delta t
 $$
+
+To make these calculations in python, we use numpy and define the Clifford attractor function:
+```python
+# import third party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+plt.style.use('dark_background')
+
+def clifford_attractor(x, y, a=-1.4, b=1.7, c=1.0, d=0.7):
+	'''Returns the change in arguments x and y according to 
+	the Clifford map equation. Kwargs a, b, c, and d are specified
+	as constants.
+	'''
+	x_next = np.sin(a*y) + c*np.cos(a*x) 
+	y_next = np.sin(b*x) + d*np.cos(b*y)
+	return x_next, y_next
+```
+Setting up the number of iterations and the time step size, we then initialize the numpy array with 0s and add a starting $x, y$ coordinate:
+
+```python
+# number of iterations
+iterations = 1000000
+delta_t = 0.01
+
+# initialization
+X = np.zeros(iterations)
+Y = np.zeros(iterations)
+
+# starting point
+(X[0], Y[0]) = (10.75, 8.2)
+```
+
+For computing Euler's formula let's loop over the clifford function, adding in each next computed value to the numpy array.
+```python 
+# euler's method for tracking differential equations
+for i in range(iterations-1):
+	x_next, y_next = clifford_attractor(X[i], Y[i])
+	X[i+1] = X[i] + x_next * delta_t
+	Y[i+1] = Y[i] + y_next * delta_t
+```
+Now let's plot the graph! 
+```python
+# make and display figure
+plt.figure(figsize=(10, 10))
+
+# differential trajectory
+plt.plot(X, Y, ',', color='white', alpha = 0.2, markersize = 0.05)
+plt.axis('on')
+plt.show()
+```
 
 at $\Delta t = 0.01$, a smooth path along the vectors is made.  The path is 1D, and the attractor is a point (0D).
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.01t.png)
