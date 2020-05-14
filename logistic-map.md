@@ -59,7 +59,7 @@ The behavior is identical to the unshifted population for a while, until it chan
 
 ### The relationship between chaotic systems and fractals
 
-This information may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
+Information from iterating (1) at different values of $r$ may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
 
 To do this, let's have the output of the logistic equation on the y-axis and the possible values of $r$ on the x-axis, incremented in small units.  
 ```python
