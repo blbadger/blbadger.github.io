@@ -1,13 +1,16 @@
 ## Semicontinuous Clifford attractor
 
 The clifford attractor, also known as the fractal dream attractor, is the system of equations:
+
+
 $$
 x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
 y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
 \tag{1}$$
 
+
 where a, b, c, and d are constants of choice.  It is an attractor because at given values of a, b, c, and d,
-any starting point $(x_0, y_0) will wind up in the same pattern. 
+any starting point $(x_0, y_0)$ will wind up in the same pattern. 
 
 with $a = 2, b = 2, c = 1, d = -1$ the following map is made:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.png)
@@ -57,7 +60,17 @@ And when $b = 1.7$, a nearly-2d attractor is produced
 
 ### Semi-continuous mapping
 
-Say you want to 
+Say you want to model a continuous differential equation.  If the equation is nonlinear, chances are that there is no analytic solution.  What to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
+Given 
+$
+dy / dx = f(x, y), \\
+x(0) = y_0
+$
+
+$$
+x_{n+1} = x_n + dx * \Delta t
+$$
+
 at $\Delta t = 0.01$, a smooth path along the vectors is made.  The path is 1D, and the attractor is a point (0D).
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.01t.png)
 
@@ -87,6 +100,8 @@ $\Delta t = 1.35$
 
 $\Delta t = 1.35$, a shape similar to the discrete map has formed.
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t.png)
+
+What is the utility of using large $\Deleta t$ values if this is not an accurate
 
 Is this a fractal? Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
