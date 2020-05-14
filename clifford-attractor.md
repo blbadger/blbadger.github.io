@@ -63,7 +63,7 @@ at *dt* = 0.01, a smooth path along the vectors is made.  The path is 1D, and th
 at *dt* = 0.1
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.1t.png)
 
-at *dt* = 0.8
+at *dt* = 0.8 (points are connected for clarity)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_0.8t.png)
 
 *dt* = 1.1
@@ -71,6 +71,26 @@ at *dt* = 0.8
 
 *dt* = 1.15
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.15t.png)
+
+*dt* = 1.2, the first few iterations reveal four slowly rotating lattice points
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t_lines.png)
+
+with more iterations at *dt* = 1.2, it is clear that the attractor is now 1 dimensional
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t.png)
+
+*dt* = 1.3
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.3t.png)
+
+*dt* = 1.35
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t_lines.png)
+
+*dt* = 1.35, a shape similar to the discrete map has formed.
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t.png)
+
+Is this a fractal? Zooming in on the bottom right section suggests that it is:
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
 
 
 
