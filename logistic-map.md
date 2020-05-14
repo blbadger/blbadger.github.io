@@ -10,8 +10,7 @@ Let's see what happens to population over time at a fixed r value.  To do this, 
 
 ```python
 # import third-party libraries
-import matplotlib
-import matplotlib.pyplot as plt 
+from matplotlib import pyplot as plt 
 import numpy as np 
 
 # initialize an array of 0s and specify starting values and r constant
