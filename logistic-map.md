@@ -82,8 +82,8 @@ And so on ad infinitum.  An infinite number of smaller images of the original ar
 
 The Henon map equation describes a simplified Poincare section of the Lorenz attractor:
 
-$$\dotx = 1-ax^2 + y \\
-\doty = bx \tag{2}$$
+$$x_{n+1} = 1-ax_n^2 + y \\
+y_n+1 = bx_n \tag{2}$$
 
 ```python
 dx = 1 - a * x ** 2 + y
