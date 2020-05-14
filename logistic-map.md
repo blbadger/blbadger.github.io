@@ -1,6 +1,7 @@
 ## Logistic Map
 
 The logistic equation was derived from a differential equation describing population growth, studied by Robert May. The equation is as follows:
+$a^2 + b^2 = c^2$
 
 ```python
 x_next = r * x_current (1 - x_current)
