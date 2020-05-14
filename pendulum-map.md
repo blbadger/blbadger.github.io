@@ -97,8 +97,8 @@ Waves are not observed for the linear map at any $\Delta t$ size (here at 0.9999
 There are a number of similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
 $$
-x_{n+1} = sin(ay) + c \cdot cos(ax) \\
-y_{n+1} = sin(bx) + d \cdot cos(by) 
+x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
+y_{n+1} = sin(bx_n) + d \cdot cos(by_n) 
 \tag{3} $$
 
 This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously, setting
