@@ -70,13 +70,13 @@ $$
 then 
 
 $$
-x_{n+1} \approx x_n + dx \cdot \Delta t
+x_{next} \approx x_{current} + dx \cdot \Delta t
 $$
 
 With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
 
 $$
-x_{n+1} = n_n + dx \Delta_t as \Delta_t \to \infty
+x_{next} = n_{current} + dx \Delta_t \, as \,  \Delta_t \to \infty
 $$
 
 For a two dimensional equation, the approximations can be made in each dimension:
