@@ -61,16 +61,20 @@ And when $b = 1.7$, a nearly-2d attractor is produced
 
 Say you want to model a continuous ordinary differential equation.  If the equation is nonlinear, chances are that there is no analytic solution.  What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
 If 
+
 $$
 dx / dt = f(x), \\
 x(0) = C
 $$
 
 then 
+
 $$
 x_{n+1} \approx x_n + dx \cdot \Delta t
 $$
+
 With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
+
 $$
 x_{n+1} = n_n + dx \Delta_t as \Delta_t \to \infty
 $$
@@ -82,7 +86,7 @@ x_{n+1} \approx x_n + dx \cdot \Delta t \\
 y_{n+1} \approx y_n + dy \cdot \Delta t
 $$
 
-To make these calculations in python, we use numpy and define the Clifford attractor function:
+To make these calculations and plotting them in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function:
 ```python
 # import third party libraries
 import numpy as np 
@@ -121,6 +125,7 @@ for i in range(iterations-1):
 	X[i+1] = X[i] + x_next * delta_t
 	Y[i+1] = Y[i] + y_next * delta_t
 ```
+
 Now let's plot the graph! 
 ```python
 # make and display figure
@@ -150,7 +155,7 @@ $\Delta t = 1.15$
 $\Delta t = 1.2$, the first few iterations reveal four slowly rotating lattice points
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t_lines.png)
 
-with more iterations at *dt* = 1.2, it is clear that the attractor is now 1 dimensional
+with more iterations at $\Delta t$ = 1.2, it is clear that the attractor is now 1 dimensional
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.2t.png)
 
 $\Delta t = 1.3$
@@ -162,12 +167,16 @@ $\Delta t = 1.35$
 $\Delta t = 1.35$, a shape similar to the discrete map has formed.
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t.png)
 
-What is the utility of using large $\Deleta t$ values if this is not an accurate
+### Is this a fractal? 
 
-Is this a fractal? Zooming in on the bottom right section suggests that it is:
+Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
+
+### In what way is this mapping semi-continuous?
+
+
 
 
 
