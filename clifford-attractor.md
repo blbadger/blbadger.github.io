@@ -90,6 +90,9 @@ $$
 For a two dimensional equation, the approximations can be made in each dimension:
 
 $$
+\cfrac{dx}{dt} = sin(ay_n) + c \cdot cos(ax_n) \\
+\cfrac{dy}{dt} = sin(bx_n) + d \cdot cos(by_n) \\ 
+\\
 x_{n+1} \approx x_n + \cfrac{dx}{dt} \cdot \Delta t \\
 y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t 
 \tag{2}
