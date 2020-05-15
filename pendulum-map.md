@@ -20,6 +20,7 @@ Imagine a ball rolling around on a plane that is directed by the vectors above. 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 Now note that we can achieve a similar map with a linear dissipative differential system
+
 $$
 \cfrac{dx}{dt} = -ay \\
 \cfrac{dy}{dt} = -by + x \tag{2}
