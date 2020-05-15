@@ -5,8 +5,8 @@ Imagine a pendulum swinging back and forth. We can plot the position of its tip 
 By setting up a pendulum to obey Newton's laws, we can model how the pendulum will swing using Euler's formula to model the trajectory through phase space of the differential equations governing pendulum motion as it is slowed by friction:
 
 $$
-dx = y \\
-dy = -ay - b \cdot sin(x) 
+\cfrac{dx}{dt} = y \\
+\cfrac{dy}{dt} = -ay - b \cdot sin(x) 
 \tag{1} $$
 
 Where the constant $a$ denotes friction and the constant $b$ represents the constant of gravity divided by the length of the pendulum.  THis system of equations is nonlinear (due to the sine term) and dissipative (from the friction, $-ay$) which means that it takes a 2D area of starting points down to a 0 area.  
@@ -21,8 +21,8 @@ Imagine a ball rolling around on a plane that is directed by the vectors above. 
 
 Now note that we can achieve a similar map with a linear dissipative differential system
 $$
-dx = -ay \\
-dy = -by + x \tag{2}
+\cfrac{dx}{dt} = -ay \\
+\cfrac{dy}{dt} = -by + x \tag{2}
 $$
 
 which at $\Delta t = 0.1 $ yeilds
@@ -120,15 +120,5 @@ There are some physically relevant reasons to increase a $\Delta t$ value:
 
 1. The case of periodic forcing, where external energy is applied to a physical system in regular intervals.  The *dt* value may be thought of as a direct measure of this energy, as a large enough *dt* will send this system towards infinity (ie infinite velocity). 
 
-2. When a field is intermittent: if a particle moves smoothly but only interacts with a field at regular time intervals, the same effect is produced.
-
-
-The real utility in increasing $\Delta t$ is to reveal the intricacies of nonlinear systems in two dimensions.  
-
-
-
-
-
-
-
+2. When a field is intermittent: if a particle moves smoothly but only interacts with a field at regular time intervals, the same effect is produced. 
 
