@@ -56,7 +56,7 @@ And by $\Delta t = 0.045$, the attractor is now a ring
 
 Thus an increase in $\Delta t$ leads to the transformation of the pendulum map from a 0-dimensional attractor to a 1-dimensional one. Further increases in $\Delta t$ leads to explosion towards infinity.
 
-What happens to the linear spiral system when $\Delta t$ increases? At $\Delta t = 0.5$, the points along the spiral are slightly more spaced out
+What happens to the linear system (2) when $\Delta t$ increases? At $\Delta t = 0.5$, the points along the spiral are slightly more spaced out
 
 ![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.5t.png)
 
@@ -101,7 +101,7 @@ x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
 y_{n+1} = sin(bx_n) + d \cdot cos(by_n) 
 \tag{3} $$
 
-This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously, setting
+This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously (see [here](/clifford-attractor.md) for more information), setting
 
 $$
 a=-0.3, b=0.2, c=0.5, d=0.3, \Delta t = 0.9 \\
@@ -118,7 +118,7 @@ We have a (slightly oblong) pendulum map!
 
 There are some physically relevant reasons to increase a $\Delta t$ value: 
 
-1. The case of periodic forcing, where external energy is applied to a physical system in regular intervals.  The *dt* value may be thought of as a direct measure of this energy, as a large enough *dt* will send this system towards infinity (ie infinite velocity). 
+1. The case of periodic forcing, where external energy is applied to a physical system in regular intervals.  The *dt* value may be thought of as a direct measure of this energy, as a large enough $\Delta t$ will send this system towards infinity (ie infinite velocity). 
 
 2. When a field is intermittent: if a particle moves smoothly but only interacts with a field at regular time intervals, the same effect is produced. 
 
