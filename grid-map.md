@@ -12,8 +12,8 @@ The vector map of this equation is as follows:
 To evaluate this equation with Euler's method:
 
 $$
-x_{n+1} = x_n + \Delta t \cdot dx \\
-y_{n+1} = y_n + \Delta t \cdot dy \tag{2}
+x_{n+1} = x_n + \cfrac{dx}{ct} \Delta t \\
+y_{n+1} = y_n + \cfrac{dy}{dt} \Delta t  \tag{2}
 $$
 
 Chaotic mathematical systems are deterministic but deeply unpredictable: small changes to the starting values of a chaotic system will lead to large changes in the output. The equation system above is chaotic for a large enough $\Delta t$.  For example, take $\Delta t = 0.8$ and the starting $x, y$ coordinates to be $1, 0$. The following map is produced:
