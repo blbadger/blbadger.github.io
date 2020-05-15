@@ -90,8 +90,8 @@ $$
 For a two dimensional equation, the approximations can be made in each dimension:
 
 $$
-x_{n+1} \approx x_n + dx \cdot \Delta t \\
-y_{n+1} \approx y_n + dy \cdot \Delta t
+x_{n+1} \approx x_n + \cfrac{dx}{dt} \cdot \Delta t \\
+y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t
 $$
 
 To make these calculations and plotting them in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function with constants $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$:
