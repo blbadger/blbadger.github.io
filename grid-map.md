@@ -3,8 +3,8 @@
 ### A demonstration of semicontinuous mapping of a 2D chaotic system
 
 The differential system
-$$ dx = a \cdot cos(y) \\
-dy = b \cdot sin(x) \tag{1} $$
+$$ \cfrac{dx}{dt} = a \cdot cos(y) \\
+\cfrac{dy}{dt} = b \cdot sin(x) \tag{1} $$
 
 The vector map of this equation is as follows:
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
