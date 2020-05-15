@@ -59,24 +59,32 @@ And when $b = 1.7$, a nearly-2d attractor is produced
 
 ### Semi-continuous mapping
 
-Say you want to model a continuous ordinary differential equation.  If the equation is nonlinear, chances are that there is no analytic solution.  What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
-If 
+Say you want to model an ordinary differential equation:
 
 $$
-dx / dt = f(x), \\
-x(0) = C
+cfrac{dx}{dt} = f(x), \\
 $$
 
-then 
+such that the change in the variable $x$ over time $t$ is defined by a function $f(x)$, starting at an initial time point:
 
 $$
-x_{next} \approx x_{current} + dx/dt \cdot \Delta t
+x(t_0) = C
+$$
+
+where $C$ is an arbitrary constant.
+
+If the equation is nonlinear, chances are that there is no analytic solution.  
+
+What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
+
+$$
+x_{next} \approx x_{current} + cfrac{dx}{dt} \cdot \Delta t
 $$
 
 With smaller and smaller values of $\Delta t$, the approximation becomes better and better but more and more computations are required for the same desired time interval:
 
 $$
-x_{next} = x_{current} + dx/dt \cdot \Delta_t \quad as \, \Delta_t \to 0
+x_{next} = x_{current} + cfrac{dx}{dt} \cdot \Delta_t \quad as \, \Delta_t \to 0
 $$
 
 For a two dimensional equation, the approximations can be made in each dimension:
