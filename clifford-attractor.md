@@ -11,7 +11,7 @@ y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
 where a, b, c, and d are constants of choice.  It is an attractor because at given values of a, b, c, and d,
 any starting point $(x_0, y_0)$ will wind up in the same pattern. See Vedran Sekara's post [here](https://vedransekara.github.io/2016/11/14/strange_attractors.html) for a good summary on how to use Python to make a plot of the Clifford attractor.
 
-with $a = 2, b = 2, c = 1, d = -1$ the following map is made:
+with $a = 2, b = 2, c = 1, d = -1$ the following map of (1) is made:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.png)
 
 with $a = 2, b = 1, c = -0.5, d = -1.01$ , 
@@ -91,10 +91,11 @@ For a two dimensional equation, the approximations can be made in each dimension
 
 $$
 x_{n+1} \approx x_n + \cfrac{dx}{dt} \cdot \Delta t \\
-y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t
+y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t 
+\tag{2}
 $$
 
-To make these calculations and plotting them in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function with constants $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$:
+To make these calculations and plot the results in python, the wonderful numpy and matplotlib libraries are used and we define the Clifford attractor function with constants $a=-1.4, \; b=1.7, \; c=1, \; d=0.7$:
 ```python
 # import third party libraries
 import numpy as np 
@@ -125,7 +126,7 @@ Y = np.zeros(iterations)
 (X[0], Y[0]) = (10.75, 8.2)
 ```
 
-For computing Euler's formula let's loop over the clifford function, adding in each next computed value to the numpy array.
+For computing (2), let's loop over the clifford function, adding in each next computed value to the numpy array.
 ```python 
 # euler's method for tracking differential equations
 for i in range(iterations-1):
