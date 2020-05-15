@@ -129,7 +129,7 @@ b = 0.3$$
 The following map is produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
-This system is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
+This system (2) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
 $$
 \cfrac{dx}{dt} = x_{n+1} = 1-ax^2 + y \\
 \cfrac{dy}{dt} = y_{n+1} = bx_n\\
@@ -177,7 +177,7 @@ plt.axis('on')
 plt.show()
 ```
 
-If iterated using Euler's formula with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
+If iterate (3) with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
 It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic-like map.
