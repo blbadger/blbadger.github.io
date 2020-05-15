@@ -65,17 +65,15 @@ $$
 \cfrac{dx}{dt} = f(x), \\
 $$
 
-such that the change in the variable $x$ over time $t$ is defined by a function $f(x)$, starting at an initial time point:
+such that the change in the variable $x$ over time $t$ is defined by a function $f(x)$, starting at an initial point:
 
 $$
-x(t_0) = C
+x(0) = x_0
 $$
 
-where $C$ is an arbitrary constant.
+ie the position of x at time 0 is some constant equal to $x_0$. 
 
-If the equation is nonlinear, chances are that there is no analytic solution.  
-
-What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
+If the equation is nonlinear, chances are that there is no analytic solution.  What is one to do? Do an approximation! Perhaps the simplest way of doing this is by using discrete approximations to estimate where a point will go given its current position and its derivative.  This is known as Euler's method, and can be expressed as follows:
 
 $$
 x_{next} \approx x_{current} + \cfrac{dx}{dt} \cdot \Delta t
