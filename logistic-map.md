@@ -34,37 +34,48 @@ plt.show()
 ```
 
 When $r$ is small (0.5), the population heads towards 0:
+
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
 
 As $r$ is increased to 2.5, a stable population is reached:
+
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
 
 If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
+
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
 at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
+
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
 and at $r=3.55$, the population is period 8:
+
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
 and at $r=3.7$, the period is longer than the iterations plotted (actually it is infinite).  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is called mathematical chaos.
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
 As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.    
 
 Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
 
 The behavior is similar to the unshifted population for a while, until it changes and becomes wildly different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
 
 In contrast, a relatively large shift of a factor of one hundreth (3 to 3.03) in initial population leads to no change to periodicity or exact values at $r=2.5$ (period 1):
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_2.5_hundreth.png)
 
+
 or at $r=3.5$, period 4, the same change does not alter the pattern produced:
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
 
 even a large change in starting value at $r=3.55$ (period 8), from %y=0.3% to $y=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
 
@@ -109,16 +120,32 @@ plt.plot(X, Y, '^', color='white', alpha=0.4, markersize = 0.013)
 plt.axis('on')
 plt.show()
 ```
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
 
 By looking at how many points there are at a given $r$ value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a [near-universal feature](https://www.ioc.ee/~dima/mittelindyn/paper4.pdf) of the transition from periodicity to chaos.
 
 Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
-Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take % r \approx 3.68%, where the orbit diagram exhibits higher point density at $y \approx 0.74$.  If we count the number of iterations near each population value, we find that there are indeed more iterations that exist near 0.74:
+Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take % r \approx 3.68%, where the orbit diagram exhibits higher point density at $y \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
+
+```R
+# data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=4
+library(ggplot2)
+data1 = read.csv('~/Desktop/logistic_0.3_4.csv', header=T)
+a <- ggplot(data1, aes(value))
+
+a + geom_dotplot('binwidth' = 0.01, col='blue', fill='red') +
+    xlim(0, 1) +
+    theme_bw(base_size = 14) 
+```
+
+we find that there are indeed more iterations that exist near 0.74:
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
 This also holds for $r = 4$: at this value, the orbit diagram suggests that there is more point density at $y=1$ and $y=0$ than anywhere else.  Is this the case while holding $r$ constant and iterating many times over different starting population values? It is indeed!
@@ -126,15 +153,23 @@ This also holds for $r = 4$: at this value, the orbit diagram suggests that ther
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
 
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $y \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
 A fundamental feature of chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  
 
-At the outset these appear to be very different ideas, but consider this: there is nothing special about our initial value relative to the others obtained by iterating an equation.  So any value that is iterated from (1) can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value 
-$$ y_0 = y_0 + \mathcal{E} $$
+At the outset these appear to be very different ideas, but consider this: there is nothing special about our initial value relative to the others obtained by iterating an equation.  So any value that is iterated from (1) can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value
+
+$$ x_{n} =  x_n + \textepsilon - \textepsilon $$
+
+where $\textepsilon$ is an arbitrarily small finite number. What would happen if this small change did not change future values, such that for any iteration number $i$,
+$$x_{n+i} = x + \textepsilon_{n+i} - \textepsilon $$
+
+If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\textepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. 
 
 
-Thus chaotic systems are unstable everywhere.  But they are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ above provide a graphical example of a certain value ($y \approx 0.74$) than others.  This illustrates a second feature of chaos that differs from its English usage: mathematical chaos is not completely unordered. A more descriptive word might be 'mysterious' because these systems are unsolveable and unpredictable, even if they are partially ordered or even bring about spectacularly intricate ordering, as seen in the next section.
+
+Thus chaotic systems are unstable everywhere.  But they are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ above provide a graphical example of a certain value ($y \approx 0.74$) than others.  This illustrates a second feature of chaos that differs from its English usage: mathematical chaos is not completely unordered. A more descriptive word might be 'mysterious' because these systems are unsolveable and unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the next section.
 
 
 ### The relationship between chaotic systems and fractals
@@ -151,7 +186,7 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
 
-And so on ad infinitum.  An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
+An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
 
 
 ### A logistic map from the Henon attractor
