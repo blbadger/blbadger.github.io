@@ -164,12 +164,13 @@ $$ x_n^* =  x_n + \varepsilon  $$
 
 where $\varepsilon$ is an arbitrarily small finite number. Now suppose that this small change does not change future values, such that for any iteration number $i$,
 
-$$x_{n+i} - x_{n+i}^* \le \varepsilon $$ 
+$$\lvert x_{n+i} - x_{n+i}^* \rvert \le \varepsilon $$ 
 
 ie $x_{n+i}$ and $x_{n+i}^*$ stay arbitrarily close to each other for all iterations.
 
-If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  Therefore periodicity implies insensitivity to $x_n$, which we take as our initial value.  Taking the contrapositive of this statement, we have it that sensitivity to initial conditions implies aperiodicity.
+If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  This means that periodicity implies insensitivity to $x_n$, which we take as our initial value.  Taking the contrapositive of this statement, we have it that sensitivity to initial conditions implies aperiodicity.
 
+This can be stated more informally: say that points close together are stable if they stay close together in the future, or are unstable if they diverge.  Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.   
 
 Thus chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
