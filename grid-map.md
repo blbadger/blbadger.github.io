@@ -34,6 +34,10 @@ This idea becomes clearer when the vector map is added to the trajectory.  Obser
 and that on close inspection there are gaps between successive iterations, like a discrete recursive map
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers_zoom.png)
 
+Systems of ordinary differential equations have one independent variable: time.  This leads to all trajectories being unique.  This being the case, how is this map possible given that each vertex point seems to lead to multiple trajectories?  The answer is that the trajectories get very close to each other but do not touch.  At a smaller scale, an intersection of grids is revealed to not be an intersection at all.
+
+![t=0.05 map]({{https://blbadger.github.io}}/grid_map/grid_map_intersection.png)
+
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
 $\Delta t = 0.05$
