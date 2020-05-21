@@ -141,7 +141,7 @@ Let's take a closer look at the fuzzy region of the right. This corresponds to t
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
-Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take % r \approx 3.68%, where the orbit diagram exhibits higher point density at $y \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
+Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take % r \approx 3.68%, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
 
 ```R
 # data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=4
@@ -154,17 +154,17 @@ a + geom_dotplot('binwidth' = 0.01, col='blue', fill='red') +
     theme_bw(base_size = 14) 
 ```
 
-we find that there are indeed more iterations that exist near 0.74:
+we find that there are indeed more iterations that exist near $0.74$. Here the x-axis denotes the population size, and the y-axis denotes the number of iterations:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
 
-This also holds for $r = 4$: at this value, the orbit diagram suggests that there is more point density at $y=1$ and $y=0$ than anywhere else.  Is this the case while holding $r$ constant and iterating many times over different starting population values? It is indeed!
+This also holds for $r = 4$: at this value, the orbit diagram suggests that there is more point density at population size $p=1$ and $p=0$ than anywhere else.  Is this the case while holding $r$ constant and iterating many times over different starting population values? It is indeed! 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
 
 
-Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $y \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
+Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $p \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
