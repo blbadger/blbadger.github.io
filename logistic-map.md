@@ -82,7 +82,7 @@ or at $r=3.5$, period 4, the same change does not alter the pattern produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
 
 
-even a large change in starting value at $r=3.55$ (period 8), from %y=0.3% to $y=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
+even a large change in starting value at $r=3.55$ (period 8), from population $p=0.3$ to $p=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
@@ -141,7 +141,7 @@ Let's take a closer look at the fuzzy region of the right. This corresponds to t
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
-Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take % r \approx 3.68%, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
+Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
 
 ```R
 # data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=4
@@ -204,7 +204,7 @@ If the system contains unique trajectories (ie if any given point of the system 
 
 Let's call locations where close-together points eventually diverge in time.  Chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
-But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($y \approx 0.74$) than others.  This illustrates a second feature of chaos that differs from its English usage: mathematical chaos is not completely unordered. A more descriptive word might be 'mysterious' because these systems are unsolveable and unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the next section.
+But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($x_n \approx 0.74$) than others.  This illustrates a second feature of chaos that differs from its English usage: mathematical chaos is not completely unordered. A more descriptive word might be 'mysterious' because these systems are unsolveable and unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the next section.
 
 
 ### The relationship between chaotic systems and fractals
