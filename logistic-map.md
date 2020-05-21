@@ -172,11 +172,12 @@ Why are certain points more common than others, given that these systems are inh
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
 Both values of $r$ lead to aperiodic behavior (for almost all starting values if $r=4$), but there is a notable difference in the potential range of population sizes reached at each value: it appears that at $r=3.6$, population values are restricted to two regions (around 0.3 to 0.6 and around 0.8 to 0.9), whereas at $r=4$ the population values span the entire interval $(0, 1]$.  
 
 Also in contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible (see above).  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
+
 $r=3.6$
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.6_small.png)
 
@@ -200,7 +201,7 @@ $$\lvert x_{n+i} - x_{n+i}^* \rvert \le \varepsilon $$
 
 ie $x_{n+i}$ and $x_{n+i}^*$ stay arbitrarily close to each other for all iterations.
 
-If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  This means that insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values $\square$.
+If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  This means that insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values $\square$
 
 Let's call locations where close-together points eventually diverge in time.  Chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
@@ -222,6 +223,33 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
 
 An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
+
+### Patterned entrances and exits from chaos
+
+As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity, which can be most clearly seen if we focus on a smaller region of chaotic behavior:
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom3.png)
+
+
+What about the transition from aperiodicity back to periodicity? There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. 
+
+Recall that areas with higher point density correspond to population values that appear more often over many iterations.  With increases in $r$, these populations that are more probable, the 'favored' populations, change.  There is always more than one favored population size, and occasionally with increases in $r$ two different favored sizes can converge to become one.  If the difference between two favored sizes goes to 0 at a decreasing rate, increasing $r$ leads to periodicity from aperiodicity. 
+
+This can be clearly seen with a look at the map: if lines of higher density in chaotic regions approach but do not cross, there is a region of periodicity immediately following.  If these lines approach and cross (if they approach at a rate that does not decrease to 0), then aperiodicity remains for subsequent, slightly larger values of $r$. 
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom4.png)
+
+In other words, let's call the set favored values, $\mathbf A$, obtained for any value of $r$ while iterating (1) to be
+
+$$\mathbf A = \{x_1, x_2, ..., x_i\}$$ 
+
+where $i$ is the index of the favored, most probable value. 
+
+For any pair of elements $(x_1, x_2) \in \mathbf A$, if $x_1 - x_2 \to 0$ and $d/frac{dr} (x_1 - x_2) \to 0$ as $r$ increases, then succsessively larger values of $r$ move from aperiodicity to periodicity.
+
+It appears that tangentially intersecting and crossing of favored values are mutally exclusive, such that for any region of $r$ there is either tangential or nontangential approach for all pairs of elements $(x_1, x_2) \in \mathbf A$. 
+
+The idea that tangential approaching of two 'favored' populations implying soon-to-be periodicity is conjectural at this point.
 
 
 ### A logistic map from the Henon attractor
