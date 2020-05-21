@@ -247,7 +247,7 @@ where $i$ is the index of the favored, most probable value.
 
 For all pair of elements $(x_i, x_j) \in \mathbf A$, if 
 
-$x_i - x_j \to 0$ and $d\frac{dr} (x_i - x_j) \to 0$ as $r$ increases, 
+$x_i - x_j \to 0$ and $\frac{d}{dr} (x_i - x_j) \to 0$ as $r$ increases, 
 
 then succsessively larger values of $r$ move (1) from aperiodic to periodic iterations.
 
