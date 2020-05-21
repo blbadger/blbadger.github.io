@@ -37,31 +37,38 @@ When $r$ is small (0.5), the population heads towards 0:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
 
+
 As $r$ is increased to 2.5, a stable population is reached:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
+
 
 If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
+
 at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
+
 
 and at $r=3.55$, the population is period 8:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
+
 and at $r=3.7$, the period is longer than the iterations plotted (actually it is infinite).  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is called mathematical chaos.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
+
 
 As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.    
 
 Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
+
 
 The behavior is similar to the unshifted population for a while, until it changes and becomes wildly different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
 
@@ -73,6 +80,7 @@ In contrast, a relatively large shift of a factor of one hundreth (3 to 3.03) in
 or at $r=3.5$, period 4, the same change does not alter the pattern produced:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
+
 
 even a large change in starting value at $r=3.55$ (period 8), from %y=0.3% to $y=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
 
@@ -123,11 +131,13 @@ plt.show()
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
 
+
 By looking at how many points there are at a given $r$ value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a [near-universal feature](https://www.ioc.ee/~dima/mittelindyn/paper4.pdf) of the transition from periodicity to chaos.
 
 Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible, highlighting a key difference between mathematical chaos and the normal English word (OED: a state of complete confusion and lack of order). 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
+
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
@@ -148,17 +158,20 @@ we find that there are indeed more iterations that exist near 0.74:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
+
 This also holds for $r = 4$: at this value, the orbit diagram suggests that there is more point density at $y=1$ and $y=0$ than anywhere else.  Is this the case while holding $r$ constant and iterating many times over different starting population values? It is indeed!
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
+
 
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $y \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
+
 A fundamental feature of chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  
 
-At the outset these appear to be very different ideas, but consider this: there is nothing special about our initial value relative to the others obtained by iterating an equation.  So any value that is iterated from (1) can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value $x_n$ to produce $x_n^*$
+There is nothing special about our initial value relative to the others obtained by iterating an equation.  So any value that is iterated from (1) can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value $x_n$ to produce $x_n^*$
 
 $$ x_n^* =  x_n + \varepsilon  $$
 
@@ -168,9 +181,10 @@ $$\lvert x_{n+i} - x_{n+i}^* \rvert \le \varepsilon $$
 
 ie $x_{n+i}$ and $x_{n+i}^*$ stay arbitrarily close to each other for all iterations.
 
-If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  This means that periodicity implies insensitivity to $x_n$, which we take as our initial value.  Taking the contrapositive of this statement, we have it that sensitivity to initial conditions implies aperiodicity.
+If the system contains unique trajectories (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat. The period may be very large, in this it may take many iterations of (1) to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  As any ordinary differential equation contains only one independent variable (time), all trajectories are unique.  This means that insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values $\square$.
 
-This can be stated more informally: say that points close together are stable if they stay close together in the future, or are unstable if they diverge.  Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor, each inital value has a unique trajectory.  As there are an infinite number of possible starting values on the interval $(0,1]$ there are an infinite number of possible trajectories.  Infinite periodicity is equivalent to aperiodicity, so sensitivity to initial conditions implies aperiodicity. 
+
+The same statement can also be reasoned as follows: say that points close together are stable if they stay close together in the arbitraty future, or are unstable if they diverge.  Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, there is an uncountably infinite number of possible trajectories.  We can establish a one-to-one correspondence between periodic trajectories and rational numbers, and there are countably many rational numbers and thus countably many periodic trajectories if trajectories are periodic. But we have earlier seen that there must be uncountably many trajectories, thus trajectories must be aperiodic.  Therefore instability (sensitivity) at all initial points is equivalent to aperiodicity $\square$.  
 
 Thus chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
@@ -211,8 +225,8 @@ The following map is produced:
 
 This system (2) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
 $$
-\cfrac{dx}{dt} = x_{n+1} = 1-ax^2 + y \\
-\cfrac{dy}{dt} = y_{n+1} = bx_n\\
+\cfrac{dx}{dt} = 1-ax^2 + y \\
+\cfrac{dy}{dt} = bx_n\\
 x_{n+1} \approx x_n + \cfrac{dx}{dt} \cdot \Delta t \\
 y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t 
 \tag{3}
