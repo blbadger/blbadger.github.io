@@ -228,7 +228,7 @@ An infinite number of smaller images of the original are found with increasing s
 
 As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity, which can be most clearly seen if we focus on a smaller region of chaotic behavior:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom3.png)
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_3.png)
 
 
 What about the transition from aperiodicity back to periodicity? There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. 
@@ -237,7 +237,7 @@ Recall that areas with higher point density correspond to population values that
 
 This can be clearly seen with a look at the map: if lines of higher density in chaotic regions approach but do not cross, there is a region of periodicity immediately following.  If these lines approach and cross (if they approach at a rate that does not decrease to 0), then aperiodicity remains for subsequent, slightly larger values of $r$. 
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom4.png)
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_4.png)
 
 In other words, let's call the set favored values, $\mathbf A$, obtained for any value of $r$ while iterating (1) to be
 
