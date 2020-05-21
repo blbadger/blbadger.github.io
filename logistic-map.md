@@ -245,9 +245,13 @@ $$\mathbf A = \{x_1, x_2, ..., x_i\}$$
 
 where $i$ is the index of the favored, most probable value. 
 
-For any pair of elements $(x_1, x_2) \in \mathbf A$, if $x_1 - x_2 \to 0$ and $d/frac{dr} (x_1 - x_2) \to 0$ as $r$ increases, then succsessively larger values of $r$ move from aperiodicity to periodicity.
+For all pair of elements $(x_i, x_j) \in \mathbf A$, if 
 
-It appears that tangentially intersecting and crossing of favored values are mutally exclusive, such that for any region of $r$ there is either tangential or nontangential approach for all pairs of elements $(x_1, x_2) \in \mathbf A$. 
+$x_i - x_j \to 0$ and $d\frac{dr} (x_i - x_j) \to 0$ as $r$ increases, 
+
+then succsessively larger values of $r$ move (1) from aperiodic to periodic iterations.
+
+It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then a region of periodicity will ensue. 
 
 The idea that tangential approaching of two 'favored' populations implying soon-to-be periodicity is conjectural at this point.
 
