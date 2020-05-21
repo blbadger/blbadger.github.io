@@ -1,4 +1,4 @@
-## Aperiodic systems and irrational numbers
+## Periodicity and rationality
 
 This section uses a one-to-one correspondance between irrational numbers and aperiodic systems to examine the nature of aperiodicity.
 
@@ -8,15 +8,25 @@ $$ \Bbb I = \{ x \vert x \in \Bbb R \land x \notin \Bbb Q\} $$
 
 Rational numbers are expressible as fractions, whereas irrationals are not.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that nearly every possible number is irrational. 
 
-Take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  For each iteration of the aperiodic system, add the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, the 
+Take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $f$ such that each iteration of the aperiodic system, add the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$
+
+Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $f$ is equivalent to an irrational number, and only one irrational number for any given starting value (as each starting value leads to a unique aperiodic trajectory).  Thus there is a one-to-one correspondence between the set of outputs of aperiodic systems and the set of irrational numbers $\Bbb I$
+
 
 ### An alternative proof that aperiodicity is equivalent to sensitivity to initial conditions
 
-The equivalence between aperiodicity and irrational numbers may be used in a proof for Lorenz's observation that aperiodic ordinary differential equation systems are sensitive to changes in initial values:
+The correspondence between aperiodicity and irrational numbers may be used in a proof for Lorenz's observation that aperiodic ordinary differential equation systems are sensitive to changes in initial values:
 
-Say that points close together are stable if they stay close together in the arbitraty future, or are unstable if they diverge.  Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, there is an uncountably infinite number of possible trajectories.  We can establish a one-to-one correspondence between periodic trajectories and rational numbers, and there are countably many rational numbers and thus countably many periodic trajectories if trajectories are periodic. But we have earlier seen that there must be uncountably many trajectories, thus trajectories must be aperiodic.  Therefore instability (sensitivity) at all initial points is equivalent to aperiodicity $\square$.  
+Say that points close together are stable if they stay close together in the arbitraty future, or are unstable if they diverge.  Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, there is an uncountably infinite number of possible trajectories.  
+
+As there is a one-to-one correspondence between periodic trajectories and rational numbers, and there are countably many rational numbers and thus countably many periodic trajectories if trajectories are periodic. But we have earlier seen that there must be uncountably many trajectories, thus trajectories must be aperiodic.  Therefore instability (sensitivity) at all initial points is equivalent to aperiodicity $\square$.  
+
 
 ### A proof for why chaotic systems are unsolveable
+
+Let's define solveable equations to be those that are computable in finite time.  There exists and elegent proof for the idea that nearly every decision problem (that outputs one of two options) is not computable in finite time [here](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/lecture-videos/lecture-23-computational-complexity/).  This proof establishes a one-to-one correspondence between unsolveable (by a finite algorithm) problems and irrational numbers.  Now as we have just established a one-to-one correspondence between irrational numbers and aperiodic (chaotic) systems, by transitivity we can establish a one-to-one correxpondence between the set of unsolveable decision problems and the set of all outputs of chaotic systems.  Thus chaotic systems are unsolveable in finite time.
+
+
 
 
 
