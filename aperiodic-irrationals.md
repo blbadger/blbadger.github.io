@@ -14,10 +14,10 @@ $$
 
 WLOG, take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $f_{a1}(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
 
-$$ \mathbf A = \{ f_{a_i}(x) \} \; for \; all \; i \in \Bbb N}
+$$ \mathbf A = \{ f_{a_i}(x) \} \; for \; all \; i \in \Bbb N \}
 $$
 
-For each function $f_{a_i}(x)$, we introduce a new function $g(x).  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $g(x)$ such that for each iteration of $f(x)$, the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$ 
+For each function $f_{a_i}(x)$, we introduce a new function $g(x)$.  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $g(x)$ such that for each iteration of $f(x)$, the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$ 
 
 Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $g(f(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  As there are uncountably many initial values in the interval $(0, 1]$, there are uncountably many unique aperiodic trajectories for $f(x)$ and
 
