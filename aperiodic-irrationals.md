@@ -2,7 +2,7 @@
 
 This section uses a one-to-one correspondance between irrational numbers and aperiodic systems to examine the nature of aperiodicity.
 
-As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \BbbR - \Bbb Q$, or equivalently
+As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \Bbb R - \Bbb Q$, or equivalently
 
 $$ \Bbb I = \{ x \vert x \in \Bbb R \land x \notin \Bbb Q\} $$
 
@@ -10,8 +10,9 @@ Rational numbers are expressible as fractions, whereas irrationals are not.  As 
 
 Take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $f$ such that each iteration of the aperiodic system, add the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$
 
-Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $f$ is equivalent to an irrational number, and only one irrational number for any given starting value (as each starting value leads to a unique aperiodic trajectory).  Thus there is a one-to-one correspondence between the set of outputs of aperiodic systems and the set of irrational numbers $\Bbb I$
+Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $f$ is equivalent to an irrational number, and only one irrational number for any given starting value (as each starting value leads to a unique aperiodic trajectory).  
 
+Thus there is a one-to-one correspondence between the set of outputs of aperiodic systems and the set of irrational numbers $\Bbb I$
 
 ### An alternative proof that aperiodicity is equivalent to sensitivity to initial conditions
 
