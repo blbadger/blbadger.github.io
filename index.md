@@ -22,7 +22,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
-$$ \Bbb R - \Bbb Q \equiv f(x) != f(x+n) 
+$$ \Bbb R - \Bbb Q \equiv f(x) \neq f(x+n) for \; all \; n
 $$
 
 
