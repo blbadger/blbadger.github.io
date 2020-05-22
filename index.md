@@ -22,19 +22,22 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
-$$ \Bbb R - \Bbb Q \supset \{x | x \in g(f(x))\} \; | \; f(x) \neq f(x+n) \; \; for \; all \; n
+$$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \; | \; f(x) \neq f(x+n) \; \forall \; n
 $$
 
 
-## Software projects
+## Softwares
 
-### [Neural Network code](https://github.com/blbadger/neural-network) 
+### [Neural Network](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
-### [More codes](https://github.com/blbadger)
+### [Some puzzles](/puzzle-projects.md)
+
+### [Small math projects](/math-projects.md)
+
  	
-## Hardware projects
+## Hardwares
 
 ### [Tesla coil](/tesla-coils.md)
 
