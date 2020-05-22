@@ -6,13 +6,26 @@ As there is no universally-agreed upon notation for the set of irrational number
 
 $$ \Bbb I = \{ x \vert x \in \Bbb R \land x \notin \Bbb Q\} $$
 
-Rational numbers are expressible as fractions, whereas irrationals are not.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that nearly every possible number is irrational. 
+Rational numbers are expressible as fractions, whereas irrationals are not.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that nearly every possible number is irrational, or
 
-Take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $f$ such that each iteration of the aperiodic system, add the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$
+$$
+|\Bbb I | >> |\Bbb Q|
+$$
 
-Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $f$ is equivalent to an irrational number, and only one irrational number for any given starting value (as each starting value leads to a unique aperiodic trajectory).  
+WLOG, take an aperiodic iterative system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $f_{a1}(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
 
-Thus there is a one-to-one correspondence between the set of outputs of aperiodic systems and the set of irrational numbers $\Bbb I$
+$$ \mathbf A = \{ f_{a_i}(x) \} \; for \; all \; i \in \Bbb N}
+$$
+
+For each function $f_{a_i}(x)$, we introduce a new function $g(x).  Now randomly assign each point on the interval $(0, 1]$ a digit from 0 to 9.  Now let's define a function $g(x)$ such that for each iteration of $f(x)$, the digit corresponding to the point that is the ouput to the end of $0.$.  As the number of iterations goes to infinity, a never-repeating sequence of digits appears: for example, $f(x) = 0.9385727050013 ...$ 
+
+Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat, because for every division by a rational number there must be a remainder. Thus $g(f(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  As there are uncountably many initial values in the interval $(0, 1]$, there are uncountably many unique aperiodic trajectories for $f(x)$ and
+
+$$\{g(f_{a_i}(x))\} = \Bbb I
+$$
+
+Thus the outputs of the set of functions with aperiodic iterations, $\{ f_a(x) \}$ when transformed using $g(x)$ is equal to the set of all irrational numbers $\Bbb I$. 
+
 
 ### An alternative proof that aperiodicity is equivalent to sensitivity to initial conditions
 
