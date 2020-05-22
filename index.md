@@ -22,7 +22,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
-$$ \Bbb R - \Bbb Q \equiv \{x | x \in g(f(x))\} \; | \; f(x) \neq f(x+n) \; \; for \; all \; n
+$$ \Bbb R - \Bbb Q \supset \{x | x \in g(f(x))\} \; | \; f(x) \neq f(x+n) \; \; for \; all \; n
 $$
 
 
