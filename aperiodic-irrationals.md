@@ -15,14 +15,14 @@ $$
 Take an aperiodic function system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $f_{a_1}(x)$.  Another aperiodic function mapping to the same interval may be calles $f_{a_2}(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
 
 $$ 
-\Bbb A = \{ f_{a_i}(x) \} \forall i \in \Bbb N 
+\Bbb A = \{ f_{a_i}(x) \} \; \forall \; i \in \Bbb N 
 $$
 
 For each function $f \in \Bbb A$, we introduce a new function $g(y)$.  Each point on the interval $(0, 1]$ is randomly assigned a digit from 0 to 9.  $g(y)$ takes the outputs of infinite iterations of $f(x)$ and maps them to a sequence of digits after $0.$, ie $0.738510279...$. 
 
 Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat.  Thus $g(f_{a_i}(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  If we take the set of all outputs of $ \Bbb A $ 
 
-$$\{g(f_{a_i}(x))\} \forall i \in \Bbb N = \Bbb I \\
+$$\{g(f_{a_i}(x))\} \; \forall \; i \in \Bbb N = \Bbb I \\
 \Bbb A \approx \Bbb I
 $$
 
@@ -32,13 +32,13 @@ Thus the outputs of the set of functions with aperiodic iterations, $\{ f_a(x) \
 Conversely, take the set of all functions that map onto the interval $(0, 1]$, 
 
 $$
-\Bbb B = \{ h_{a_i}(x) \} \forall i \in \Bbb N
+\Bbb B = \{ h_{a_i}(x) \} \; \forall \; i \in \Bbb N
 $$
 
 Map the outputs of any element of $\Bbb B$ to a sequence of digits after $0.$ with $g(y)$ as above.  For any starting value $x_0$, the output of a single function mapped to digits, $g(h_{a_i}(x))$, is only guaranteed to yeild a periodic digit sequence for all iterations if $h_{a_i}(x)$ is periodic.  Thus 
 
 $$
-\{g(h_{a_i}(x))\} \;for\;all\;i \in \Bbb N = \Bbb Q \\
+\{g(h_{a_i}(x))\} \; \forall \;i \in \Bbb N = \Bbb Q \\
 \Bbb B \approx \Bbb Q
 $$
 
@@ -58,17 +58,23 @@ where $\epsilon$ is an arbitrarily small number and iterations of $f(x)$ are den
 Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, 
 
 $$
-| \{ x \forall x \in (0, 1] \} | = |\Bbb R|
+| \{ x \; \forall \; x \in (0, 1] \} | = |\Bbb R|
 $$
 
 there is an uncountably infinite number of possible trajectories if trajectories no two trajectories are the same (they diverge).  
 
-As we have established an approximate equivalence functions with periodic trajectories and rational numbers, ie
+As we have established an approximate equivalence between functions with periodic trajectories and rational numbers, ie
 $$
 \Bbb B \approx \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic.  By contradiction, instability (sensitivity) at all initial points is equivalent to aperiodicity $\square$.
+and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic.  By contradiction, instability (sensitivity) at all initial points cannot lead to periodic trajectories. Instead this is equivalent to aperiodicity as
+
+$$
+|\Bbb B| = |\Bbb I|
+$$
+
+$\square$.
 
 This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs must be equivalent.
 
