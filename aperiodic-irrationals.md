@@ -47,9 +47,13 @@ or in other words, periodic functions correspond to the set of all rational numb
 
 ### Aperiodicity is equivalent to sensitivity to initial conditions
 
-Say that points close together are stable if they stay close together in the arbitraty future, or are unstable if they diverge.  
+Say that points close together are stable if they stay close together in the arbitrary future, or are unstable if they diverge.  
 
+$$
+stable \Rightarrow |f(x_n) - f({x+\epsilon}_n) | \leq |f(x_{n+i}) - f({x+\epsilon}_{n+i}) \; \forall \; i \in \Bbb N|
+$$
 
+where $\epsilon$ is an arbitrarily small number and iterations of $f(x)$ are denoted $f(x_n)$. 
 
 Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, there is an uncountably infinite number of possible trajectories.  
 
