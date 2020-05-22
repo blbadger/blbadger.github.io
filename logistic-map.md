@@ -245,11 +245,13 @@ $$\mathbf A = \{x_1, x_2, ..., x_i\}$$
 
 where $i$ is the index of the favored value. 
 
-For all pair of elements $(x_i, x_j) \in \mathbf A$, if 
+For any pair of elements $(x_i, x_j) \in \mathbf A$, if 
 
 $x_i - x_j \to 0$ and $\frac{d}{dr} (x_i - x_j) \to 0$ as $r$ increases, 
 
-then succsessively larger values of $r$ move (1) from aperiodic to periodic iterations.  It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then a region of periodicity will ensue. 
+then succsessively larger values of $r$ move (1) from aperiodic to periodic iterations.  These periodic iterations are found at population sizes equal to the value of $x_i$ as $x_i - x_j \to 0$.
+
+It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then further increases of $r$ will lead to periodicity.
 
 The idea that tangential approaching of two 'favored' populations implying soon-to-be periodicity is conjectural at this point.
 
