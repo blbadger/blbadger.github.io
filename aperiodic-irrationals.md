@@ -58,7 +58,7 @@ where $\epsilon$ is an arbitrarily small number and iterations of $f(x)$ are den
 Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, 
 
 $$
-| \{ x \; \forall \; x \in (0, 1] \} | = |\Bbb R|
+| \{ x \; | \; x \in (0, 1] \} | = |\Bbb R|
 $$
 
 there is an uncountably infinite number of possible trajectories if trajectories no two trajectories are the same (they diverge).  
@@ -79,13 +79,13 @@ Let's define solvable equations to be those that are computable in finite time f
 
 Any program to compute a decision may be represented as a binary string of finite length, which is also a representation for any natural number.  
 
-$$ program \approx binary string \approx x \in \Bbb N
+$$ program \approx binary \; string \approx x \in \Bbb N
 $$
 
 Now rational numbers are just two natural numbers divided by each other so any finite program can be represented by a rational number.
 
 $$ x \in \Bbb Q \;if \; x= \frac{a}{b}, \; |\; a, b \in \Bbb N \\
-program \approx binary string \approx x \in \Bbb Q
+program \approx binary \; string \approx x \in \Bbb Q
 $$
 
 The solution to any decision problem may be denoted as an infinite string of bits, 1 for 'yes' or 0 for 'no' for any number of infinite inputs, which corresponds to any real number.  As any program to compute a decicision is finite, and as this program may be represented by a rational number then only infinite strings of bits that are also representations of rationals may be computable. All other problems are unsolvable in finite time (with a finite program), and as any member of this set of problems is not rational but in the real numbers
