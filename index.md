@@ -20,6 +20,11 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 ### [Pendulum phase space](/pendulum-map.md)
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
+### [Aperiodic maps and irrational numbers](/aperiodic-irationals.md)
+
+$$ \Bbb R - \Bbb Q \equiv aperiodic \;functions
+$$
+
 
 ## Software projects
 
