@@ -68,12 +68,7 @@ $$
 \Bbb B \approx \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic.  By contradiction, instability (sensitivity) at all initial points cannot lead to periodic trajectories. Instead this is equivalent to aperiodicity as
-
-$$
-|\Bbb B| = |\Bbb I|
-$$
-
+and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere leads to aperiodic trajectories.
 $\square$.
 
 This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs must be equivalent.
