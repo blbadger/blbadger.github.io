@@ -25,6 +25,11 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 $$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \; | \; f(x) \neq f(x+n) \; \forall \; n
 $$
 
+## Fractals
+Objects that have characteristics of multiple dimensions.  In some respect scale invariant; most objects in nature are fractals.
+
+![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_extended_final.gif)
+
 
 ## Softwares
 
