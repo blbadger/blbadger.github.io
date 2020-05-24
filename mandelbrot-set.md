@@ -1,10 +1,19 @@
 ## Julia and Mandelbrot sets with variations
 
+The Julia set is the boundary of the sets of unbounded and bounded iterates of
+
+$$
+f_a(x) = x^2 + a 
+/tag{1}
+$$
+
+where $a$ is fixed and $x_0$ varies about the complex plane $x + yi$.  This means that any number in the complex plane is in the Julia set if it borders another number $u$ such that $f^k_a(u) \to infty \; \mathbf {as} \; k \to \infty$ as well as a number $c$ where $f^k_a(c) \not\to infty \; \mathbf {as} \; k \to \infty$.
+
 The Mandelbrot set $\mathscr M$ is the set of points $a$ in the complex plane for which the Julia sets are connected.  This happens to be the same set of points that iterations of the equation
 
 $$
 z = z^2 + a
-\index(2)
+\tag{2}
 $$
 
 do not diverge (go to positive or negative infinity) but instead are bounded upon many iterations at a starting value of $z = 0$.  Thus the Mandelbrot set is very similar to the Julia set but instead of fixing $a$ and ranging about $z$, the starting value of $z$ is fixed at 0 and the value of $a$ is ranged about the complex plane.  
