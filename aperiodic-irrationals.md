@@ -18,9 +18,9 @@ $$
 \Bbb A = \{ a_i(x) \} \; \forall \; i \in \Bbb N 
 $$
 
-For each function $f \in \Bbb A$, we introduce a new function $g(y)$.  Each point on the interval $(0, 1]$ is randomly assigned a digit from 0 to 9.  $g(y)$ takes the outputs of infinite iterations of $f(x)$ and maps them to a sequence of digits after $0.$, ie $0.738510279...$. 
+For all functions $a \in \Bbb A$, we introduce a new function $g(a)$.  Each point on the interval $(0, 1]$ is randomly assigned a digit from 0 to 9.  $g(a)$ takes the outputs of infinite iterations of $f(x)$ and maps them to a sequence of digits after $0.$, ie $0.738510279...$. 
 
-Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat.  Thus $g(f_{a_i}(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  If we take the set of all outputs of $ \Bbb A $ 
+Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat.  Thus $g(a_i(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  If we take the set of all outputs of $ \Bbb A $ 
 
 $$\{g(a_i(x))\} \; \forall \; i \in \Bbb N = \Bbb I \\
 \Bbb A \approx \Bbb I
@@ -35,14 +35,14 @@ $$
 \Bbb B = \{ h_i(x) \} \; \forall \; i \in \Bbb N
 $$
 
-Map the outputs of any element of $\Bbb B$ to a sequence of digits after $0.$ with $g(y)$ as above.  For any starting value $x_0$, the output of a single function mapped to digits, $g(h_i(x))$, is only guaranteed to yeild a periodic digit sequence for all iterations if $h_i(x)$ is periodic.  Thus 
+Map the outputs of any element of $\Bbb B$ to a sequence of digits after $0.$ with $g(h)$ as above.  For any starting value $x_0$, the output of a single function mapped to digits, $g(h_i(x))$, is only guaranteed to yeild a periodic digit sequence for all iterations if $h_i(x)$ is periodic.  Thus 
 
 $$
 \{g(h_i(x))\} \; \forall \;i \in \Bbb N = \Bbb Q \\
 \Bbb B \approx \Bbb Q
 $$
 
-or in other words, periodic functions correspond to the set of all rational numbers when transformed by $g(y)$. 
+or in other words, periodic functions correspond to the set of all rational numbers when transformed by $g(h)$. 
 
 
 ### Aperiodicity is equivalent to sensitivity to initial conditions
