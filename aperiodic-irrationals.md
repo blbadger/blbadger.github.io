@@ -12,17 +12,17 @@ $$
 |\Bbb I | >> |\Bbb Q|
 $$
 
-Take an aperiodic function system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $f_{a_1}(x)$.  Another aperiodic function mapping to the same interval may be calles $f_{a_2}(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
+Take an aperiodic function system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $a_1(x)$.  Another aperiodic function mapping to the same interval may be calles $a_2(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
 
 $$ 
-\Bbb A = \{ f_{a_i}(x) \} \; \forall \; i \in \Bbb N 
+\Bbb A = \{ a_i(x) \} \; \forall \; i \in \Bbb N 
 $$
 
 For each function $f \in \Bbb A$, we introduce a new function $g(y)$.  Each point on the interval $(0, 1]$ is randomly assigned a digit from 0 to 9.  $g(y)$ takes the outputs of infinite iterations of $f(x)$ and maps them to a sequence of digits after $0.$, ie $0.738510279...$. 
 
 Every irrational number can be expressed as a sequence of digits after $0.$ that does not repeat.  Thus $g(f_{a_i}(x))$ is equivalent to a unique irrational number for any given starting value $x_0$.  If we take the set of all outputs of $ \Bbb A $ 
 
-$$\{g(f_{a_i}(x))\} \; \forall \; i \in \Bbb N = \Bbb I \\
+$$\{g(a_i(x))\} \; \forall \; i \in \Bbb N = \Bbb I \\
 \Bbb A \approx \Bbb I
 $$
 
@@ -32,13 +32,13 @@ Thus the outputs of the set of functions with aperiodic iterations, $\{ f_a(x) \
 Conversely, take the set of all functions that map onto the interval $(0, 1]$, 
 
 $$
-\Bbb B = \{ h_{a_i}(x) \} \; \forall \; i \in \Bbb N
+\Bbb B = \{ h_i(x) \} \; \forall \; i \in \Bbb N
 $$
 
-Map the outputs of any element of $\Bbb B$ to a sequence of digits after $0.$ with $g(y)$ as above.  For any starting value $x_0$, the output of a single function mapped to digits, $g(h_{a_i}(x))$, is only guaranteed to yeild a periodic digit sequence for all iterations if $h_{a_i}(x)$ is periodic.  Thus 
+Map the outputs of any element of $\Bbb B$ to a sequence of digits after $0.$ with $g(y)$ as above.  For any starting value $x_0$, the output of a single function mapped to digits, $g(h_i(x))$, is only guaranteed to yeild a periodic digit sequence for all iterations if $h_i(x)$ is periodic.  Thus 
 
 $$
-\{g(h_{a_i}(x))\} \; \forall \;i \in \Bbb N = \Bbb Q \\
+\{g(h_i(x))\} \; \forall \;i \in \Bbb N = \Bbb Q \\
 \Bbb B \approx \Bbb Q
 $$
 
