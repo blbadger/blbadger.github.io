@@ -28,6 +28,7 @@ $$
 ## Fractals
 Objects that have characteristics of multiple dimensions.  In some respect scale invariant; most objects in nature are fractals.
 
+###[mandelbrot variations](/mandelbrot-set.md)
 ![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
 
 
