@@ -18,6 +18,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
 
 ### [Pendulum phase space](/pendulum-map.md)
+
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
@@ -28,7 +29,8 @@ $$
 ## Fractals
 Objects that have characteristics of multiple dimensions.  In some respect scale invariant; most objects in nature are fractals.
 
-### [mandelbrot variations](/mandelbrot-set.md)
+### [Mandelbrot theme and variations](/mandelbrot-set.md)
+
 ![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
 
 
