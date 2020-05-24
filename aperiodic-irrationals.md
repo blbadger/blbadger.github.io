@@ -12,7 +12,13 @@ $$
 |\Bbb I | >> |\Bbb Q|
 $$
 
-Take an aperiodic function system such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $a_1(x)$.  Another aperiodic function mapping to the same interval may be calles $a_2(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
+Take an aperiodic iterated function such as the [logistic map](\logistic-map.md) at $r=4$ that outputs values between $(0, 1]$, and let's call this function $a_1(x)$.  Aperiodicity for iterated functions means that values never return to previous iterations:
+
+$$
+a^n(x_0) \neq a^k(x_0) \forall x, k \in \Bbb N \mathbf {if} k > x
+$$
+
+Another aperiodic function mapping to the same interval may be called $a_2(x)$.  Any system with finite outputs can be transformed linearly such that it maps onto this interval.  Now the set of all iterative functions with aperiodic outputs on the interval $(0, 1]$ can be called 
 
 $$ 
 \Bbb A = \{ a_i(x) \} \; \forall \; i \in \Bbb N 
