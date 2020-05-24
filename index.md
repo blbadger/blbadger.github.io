@@ -1,5 +1,5 @@
 ---
-image: /misc_images/orchard.png
+image: /assets/images/orchard.png
 ---
 
 <head>
