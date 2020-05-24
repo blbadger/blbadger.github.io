@@ -1,4 +1,4 @@
-## Complex plane divergence fractals
+## Julia and Mandelbrot sets with variations
 
 What happens when we start adding small amounts to $a$? Let's find out, going from 0 to 1.3:
 
