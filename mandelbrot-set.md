@@ -20,10 +20,12 @@ do not diverge (go to positive or negative infinity) but instead are bounded upo
 
 The Mandelbrot set is a very rich fractal.
 
-What happens if we add a small amount $b$ to $a$?  Then we have $x = x^2 + a + b$, and intuitively one can guess that the bounded set size will decrease as $b$ gets farther from the origin because there is less bounded area far from the origin in the Mandelbrot set. Let's look at many values of a real $b$, going from $b=0 \to b=1.3 \to b=0$ and back again:
+What happens if we add a small amount $b$ to $a$?  Then we have $x = x^2 + a + b$, and intuitively one can guess that the bounded set size will decrease as $b$ gets farther from the origin because there is less bounded area far from the origin in the Mandelbrot set. Let's look at many values of a real $b$, going from $b=0 \to b=1.3 \to b=0$:
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared.gif)
 
-How about a complex number? Here we go from $b = 0 \to b = 1 - i$
+
+How about a complex number? The set from $b = 0 \to b = 1 - i$ looks like
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
+
