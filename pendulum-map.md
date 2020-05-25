@@ -57,6 +57,10 @@ And by $\Delta t = 0.045$, the attractor is now a ring
 
 Thus an increase in $\Delta t$ leads to the transformation of the pendulum map from a 0-dimensional attractor to a 1-dimensional one. Further increases in $\Delta t$ leads to explosion towards infinity.
 
+Here is a video of the transition from $\Delta t = 0.03 \to \Delta t = 0.045$:
+
+![pendulum gif]({{https://blbadger.github.io}}pendulum_map/pendulum1.gif)
+
 What happens to the linear system (2) when $\Delta t$ increases? At $\Delta t = 0.5$, the points along the spiral are slightly more spaced out
 
 ![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_0.5t.png)
