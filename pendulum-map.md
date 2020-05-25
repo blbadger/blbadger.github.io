@@ -82,6 +82,10 @@ But this is not so!  Closer inspection of this ring reveals that there is no cha
 
 Only at $\Delta t = 1$ is there a 1-dimensional attractor, but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. The linear system yeilds a 1-dimensional ring map only when the starting coordinate is already on the ring, and thus it is incapable of forming a 1-dimensional attractor (ie a stable set) as was the case for the nonlinear system.
 
+From $\Delta t = 0.9 \to \Delta t = 0.999$, 
+
+![spiral image]({{https://blbadger.github.io}}pendulum_map/swirl1.gif)
+
 
 ###  Pendulum maps with 1-dimensional attractors have fractal wave patterns
 
