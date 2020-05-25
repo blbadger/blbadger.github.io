@@ -43,16 +43,26 @@ There are two paths visible at higher magnification:
 ### Clifford attractors can shift between one and two (or more) dimensions
 
 For $a = 2.1, b = 0.8, c = -0.5, d = -1$, the attractor is three points:
+
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_0d.png)
 
 For $b = 0.95$, more points:
+
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_0d2.png)
 
 For $b = 0.981$, the points being to connect to form line segments
+
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1d1.png)
 
 And for $b = 0.9818$, a slightly-larger-than 1D attractor is produced
+
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1d2.png)
+
+From $b=0.95$ to $b \approx 1.18$, incremented evenly:
+
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.gif)
+
+The flashes are not a result of video artefacts, but instead represent small changes that lead to the attractor shifting back to points.  Observe that the transition between a 0 and >1 dimensional attractor is not completely smooth!
 
 And when $b = 1.7$, a nearly-2d attractor is produced
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_2d.png)
