@@ -86,6 +86,10 @@ even a large change in starting value at $r=3.55$ (period 8), from population $p
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
+Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
+
 
 ### A closer look at chaos with an orbit map
 
