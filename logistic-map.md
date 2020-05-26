@@ -63,6 +63,11 @@ and at $r=3.7$, the period is longer than the iterations plotted (actually it is
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
 
+Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
+
+
 As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.    
 
 Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
@@ -85,10 +90,6 @@ or at $r=3.5$, period 4, the same change does not alter the pattern produced:
 even a large change in starting value at $r=3.55$ (period 8), from population $p=0.3$ to $p=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
-
-Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
-
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
 
 
 ### A closer look at chaos with an orbit map
