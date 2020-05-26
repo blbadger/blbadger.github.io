@@ -186,6 +186,17 @@ $r=4$
 
 Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
 
+To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $x_01 = 3, x_02 = 3.0003$:
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
+
+Prediction ability (in length until divergence) tends to decrease with increasing $r$, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
+
+Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
+
+Prediction power does increase with better initial measurements! At least it usually does, but the exact benefit seems unpredictable.
 
 ### Aperiodicity implies sensitivity to initial conditions
 
