@@ -186,17 +186,54 @@ $r=4$
 
 Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
 
-To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $x_01 = 3, x_02 = 3.0003$:
+To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $p_01 = 3, p_02 = 3.0003$.
+To do this, the first step is to initialize an array to record $r$ values from 3.5 to 4, taking 500 steps.
+```python
+from matplotlib import pyplot as plt 
+import numpy as np 
+
+steps = 500
+y = np.zeros(steps + 1)
+r = np.zeros(steps + 1)
+r[0] = 3.5
+y[0] = 100
+```
+THe next step is to count the number of iterations it takes to diverge (with a maximum interation number of 100 in this case).  Arbitrarily setting divergence to be a difference in value greater than 0.15, 
+```python
+for i in range(500):
+	X1 = 0.3
+	X2 = 0.3 + 0.3**(t/30)
+
+	for j in range(100):
+		X1 = r[i] * X1 * (1-X1)
+		X2 = r[i] * X2 * (1-X2)
+
+		if np.abs(X1 - X2) > 0.15:
+			break
+
+	y[i+1] = j + 1
+	r[i+1] = r[i] + 0.001
+```
+and now plot the results,
+```python
+fig, ax = plt.subplots()
+ax.plot(r, y)
+ax.set(xlabel='r value', ylabel='First iteration of divergence')
+plt.show()
+plt.close()
+```
+
+which yeilds
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
 
 Prediction ability (in length until divergence) tends to decrease with increasing $r$, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
 
-Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$
-
+Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
 
-Prediction power does increase with better initial measurements! At least it usually does, but the exact benefit seems unpredictable.
+Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.
+
 
 ### Aperiodicity implies sensitivity to initial conditions
 
