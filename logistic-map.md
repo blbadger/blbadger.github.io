@@ -235,6 +235,7 @@ which yeilds
 Prediction ability (in length until divergence) tends to decrease with increasing $r$, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
 
 Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
+
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
 
 Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.
