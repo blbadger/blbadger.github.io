@@ -26,12 +26,11 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 $$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \; \mathbf{if} \; f^n(x(0)) \neq f^k(x(0)) \; \mathbf{given} \; n, k \in \Bbb N \; \mathbf{,} \; k \neq n
 $$
 
-## Fractals
-Objects that have characteristics of multiple dimensions.  In some respect scale invariant; most objects in nature are fractals.
+## Nonlinear dynamics of the complex plane
 
-### [Mandelbrot theme and variations](/mandelbrot-set.md)
+### [Mandelbrot set](/mandelbrot-set.md)
 
-![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
+![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
 
 
 ## Softwares
