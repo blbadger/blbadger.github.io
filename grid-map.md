@@ -59,10 +59,12 @@ $\Delta t = 15$
 $\Delta t = 18$
 ![t=18 map]({{https://blbadger.github.io}}/grid_map/cossin_18t.png)
 
-which has a trajectory of
+Which has a trajectory that is formed as follows
+![t=18 map]({{https://blbadger.github.io}}/grid_map/grid_18.gif)
 
+and still remains extremely sensitive to inital values ($x_0 = 1$ in red, $x_0 = 1.000000001$ in blue).
 
-and still remains extremely sensitive to inital values:
+![t=18 map]({{https://blbadger.github.io}}/grid_map/grid_18_comp.png)
 
 
 With increases in $\Delta t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
