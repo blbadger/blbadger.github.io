@@ -22,11 +22,11 @@ current during capacitor firing!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_4.jpg)
 
-### Low-res videos 
+### Low-res videos of the coil above
 
-[TC video 1](http://www.youtube.com/watch?v=gwUA4ATNvRg)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gwUA4ATNvRg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-[TC video 2](http://www.youtube.com/watch?v=FyRCdSQW1GY)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FyRCdSQW1GY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 ### Earlier generation coil
