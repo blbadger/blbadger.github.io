@@ -276,9 +276,9 @@ If we take this image and again zoom in on the upper left hand corner, again we 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
 
-Zooming in by a factor of $2^15$ on the point $(3.56995, 0.8925)$, we have
+Zooming in by a factor of $2^{15}$ on the point $(3.56995, 0.8925)$, we have
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom.gif)
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom2.gif)
 
 An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
 
