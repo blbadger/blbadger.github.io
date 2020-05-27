@@ -22,7 +22,7 @@ The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_zoom1.gif)
 
-And here is the same point, increasing scale to a factor of one trillion!
+And here is the same point, increasing scale to a factor o $2^40$ which is over a trillion!
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/0qrordbf7WE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
