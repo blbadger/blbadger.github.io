@@ -89,14 +89,15 @@ From $\Delta t = 0.9 \to \Delta t = 0.999$,
 
 ###  Pendulum maps with 1-dimensional attractors have fractal wave patterns
 
-Take $\Delta t$ to be 0.04087, which produces a similar map to that found above for $\Delta t= 0.04088$.  Now let's zoom in on the upper part of the map:
+Take $\Delta t$ to be 0.04087.  Now let's zoom in on the upper part of the map:
 
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom1.png)
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom2.png)
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom3.png)
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom4.png)
 
-Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  
+Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  At a small spatial scale, many waves are seen over a very small in $\Delta t=0.040865 \to \Delta t=0.040877$:
+![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_zoom.gif)
 
 Waves are not observed for the linear map at any $\Delta t$ size (here at 0.9999):
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/swirl_map_zoom.png)
