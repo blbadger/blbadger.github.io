@@ -24,6 +24,10 @@ If the starting $x$ coordinate is shifted by a factor of one billionth (to 1.000
 
 ![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t_shifted.png)
 
+Animating the trajectory of both of these maps with $x_{01} = 1$ in red and $x_{02} = 1.000000001$ in blue, we have 
+
+![t=0.5 shifted map]({{https://blbadger.github.io}}/grid_map/grid_vid.gif)
+
 
 Euler's formula is used to (not very accurately) estimate the trajectory of unsolvable differential equations.  Here it is employed with deliberately large values of delta_t in order to demonstrate a mapping that is not quite continuous but not a classic recurrence (discrete) mapping either.
 
