@@ -35,7 +35,7 @@ This idea becomes clearer when the vector map is added to the trajectory.  Obser
 
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers.png)
 
-and that on close inspection there are gaps between successive iterations, like a discrete recursive map
+and that on close inspection there are gaps between successive iterations, as for a discrete recursive map
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_quivers_zoom.png)
 
 Systems of ordinary differential equations have one independent variable: time.  This leads to all trajectories being unique.  This being the case, how is this map possible given that each vertex point seems to lead to multiple trajectories?  The answer is that the trajectories get very close to each other but do not touch.  At a smaller scale, an intersection of grids is revealed to not be an intersection at all.
@@ -58,5 +58,11 @@ $\Delta t = 15$
 
 $\Delta t = 18$
 ![t=18 map]({{https://blbadger.github.io}}/grid_map/cossin_18t.png)
+
+which has a trajectory of
+
+
+and still remains extremely sensitive to inital values:
+
 
 With increases in $\Delta t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
