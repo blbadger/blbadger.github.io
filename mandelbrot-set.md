@@ -18,11 +18,11 @@ $$
 
 do not diverge (go to positive or negative infinity) but instead are bounded upon many iterations at a starting value of $z = 0$.  Thus the Mandelbrot set is very similar to the Julia set but instead of fixing $a$ and ranging about $z$, the starting value of $z$ is fixed at 0 and the value of $a$ is ranged about the complex plane.  
 
-The Mandelbrot set is a very rich fractal. Here is a small zoom
+The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 + 0.072500001i.  
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_zoom1.gif)
 
-And here is a zoom by a factor of one trillion
+And here is the same point, increasing scale to a factor of one trillion!
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/0qrordbf7WE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
