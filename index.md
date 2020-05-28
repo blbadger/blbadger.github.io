@@ -11,7 +11,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ### [Clifford attractor](/clifford-attractor.md)
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_cover.png)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
 
 ### [Grid map](/grid-map.md)
 
