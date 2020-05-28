@@ -216,6 +216,11 @@ $\Delta t = 1.35$
 $\Delta t = 1.35$, a shape similar to the discrete map has formed.
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_1.35t.png)
 
+From $\Delta t = 0.1 \to \Delta t = 1.35$,
+
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
+
+
 ### Is the attractor for $\Delta t = 1.35$ a fractal? 
 
 Zooming in on the bottom right section suggests that it is:
