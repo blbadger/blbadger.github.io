@@ -15,7 +15,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ### [Grid map](/grid-map.md)
 
-![Grid map image]({{https://blbadger.github.io}}grid_map/cossin_0.5t.png)
+![Grid map image]({{https://blbadger.github.io}}grid_map/grid_vid.gif)
 
 ### [Pendulum phase space](/pendulum-map.md)
 
