@@ -52,10 +52,11 @@ a_{10} & a_{11} & a_{12} & \cdots & a_{1n} \\
 \vdots & \vdots & \vdots & \ddots & \vdots \\
 a_{n0} & a_{n1} & a_{n2} & \cdots & a_{nn} \\
 \end{vmatrix}
+$$
 
 $$ 
-5! = 120 (base \; 10) \to 1 \\
-20! = 2432902008176640000 (base \; 10) \to 4 \\
+5!_{10} = 12\mathbf{0} \to 1 \\
+20!_{10} = 243290200817664\mathbf{0000} \to 4 \\
 n! (base \; k) \to ?
 $$
 
