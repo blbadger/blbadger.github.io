@@ -253,6 +253,11 @@ and at $(x_0, y_0) = (90, 90)$:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_(90,90).png)
 
 
+and as $\Delta t = 0.1 \to \Delta t = 1.35$ the attractor changes from point to line to fractal, but once again not smoothly: 
+
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_9090.gif)
+
+
 
 
 
