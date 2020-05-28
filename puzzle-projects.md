@@ -2,6 +2,8 @@
 
 ### Connect Four winner decider
 
+![connect four]({{https://blbadger.github.io}}/assets/images/connect_four.png)
+
 Let's take a series of moves and determine a winner for the classic turn-based game Connect Four. This was one of my favorite games growing up!  It is played by dropping colored disks into a vertical 7 x 6 board such that each disk played rests on the disks (or base) below.  The winner is the first player to connect four disks of their color in a vertical, horizontal, or diagonal row. 
 
 For the list of moves, a series of moves by each player may be represented by a list of strings as follows:
@@ -136,4 +138,8 @@ we see that the final board indeed has a diagonal four for red, in fact it has t
 ```
 
 ### Sudoku solver
+
+![sudoku]({{https://blbadger.github.io}}/assets/images/sudoku.png)
+
+
 
