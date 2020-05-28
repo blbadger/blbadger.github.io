@@ -39,9 +39,20 @@ $$
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
-### [Some puzzles](/puzzle-projects.md)
+### [Puzzles](/puzzle-projects.md)
 
-### [Small math projects](/math-projects.md)
+![puzzles]({{https://blbadger.github.io}}/assets/images/games.png)
+
+### [Programs to compute things](/math-projects.md)
+
+$$
+\begin{vmatrix}
+a_{00} & a_{01} & a_{02} & \cdots & a_{0n} \\
+a_{10} & a_{11} & a_{12} & \cdots & a_{1n} \\
+\vdots & \vdots & \vdots & \ddtos & \vdots \\
+a_{n0} & a_{n1} & a_{n2} & \cdots & a_{nn} \\
+\end{vmatrix}
+$$
 
  	
 ## Hardwares
