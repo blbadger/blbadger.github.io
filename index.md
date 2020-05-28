@@ -21,10 +21,13 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
+
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
+
 
 $$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \; \mathbf{if} \; f^n(x(0)) \neq f^k(x(0)) \; \mathbf{given} \; n, k \in \Bbb N \; \mathbf{,} \; k \neq n
 $$
+
 
 ## Nonlinear dynamics of the complex plane
 
@@ -42,6 +45,7 @@ $$
 ### [Puzzles](/puzzle-projects.md)
 
 ![puzzles]({{https://blbadger.github.io}}/assets/images/games.png)
+
 
 ### [Programs to compute things](/math-projects.md)
 
