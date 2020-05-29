@@ -25,7 +25,8 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
 
-$$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \; \mathbf{if} \; f^n(x(0)) \neq f^k(x(0)) \; \mathbf{given} \; n, k \in \Bbb N \; \mathbf{,} \; k \neq n
+$$ \Bbb R - \Bbb Q \approx \{x | x \in g(f(x))\} \\
+\; \mathbf{if} \; f^n(x(0)) \neq f^k(x(0)) \; \mathbf{given} \; n, k \in \Bbb N \; \mathbf{and} \; k \neq n
 $$
 
 
