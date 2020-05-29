@@ -256,7 +256,7 @@ If no digit 1-9 is a legal move at the given position the 'count' variable stays
 return backtrack(puzzle, ls)
 ```
 
-The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py).
+Markdown is not good a tracking spaces between code entries, so make sure to line up each if/else and loop The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py).
 
 Now let's test the solver!  Pretty printing (each element of a list is given its own line) is helpful here to make the matrix readable, so let's add the input and pprint it).  
 
@@ -300,7 +300,7 @@ The output looks good! No 0s remaining and no obvious errors in digit placement.
 
 real	0m0.183s
 user	0m0.144s
-sys	    0m0.021s
+sys	0m0.021s
 ```
 
 ### Battleship placement validator
