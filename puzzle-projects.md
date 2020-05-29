@@ -2,7 +2,7 @@
 
 ### Connect Four winner decider
 
-![connect four]({{https://blbadger.github.io}}/assets/images/connect_four.png)
+![connect four]({{https://blbadger.github.io}}/assets/images/connect_4.png)
 
 Let's take a series of moves and determine a winner for the classic turn-based game Connect Four. This was one of my favorite games growing up!  It is played by dropping colored disks into a vertical 7 x 6 board such that each disk played rests on the disks (or base) below.  The winner is the first player to connect four disks of their color in a vertical, horizontal, or diagonal row. 
 
@@ -137,9 +137,177 @@ we see that the final board indeed has a diagonal four for red, in fact it has t
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 ```
 
+The full code is available ]here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/connect_four.py)
+
 ### Sudoku solver
 
 ![sudoku]({{https://blbadger.github.io}}/assets/images/sudoku.png)
+
+Let's write a program to solve a sudoku puzzle!  Sudoku puzzles involve placing numbers 1-9 in squares on a 9x9 grid with some numbers filled in (above) such that every row or column contains one of each digit, and every smaller 3x3 square in bold also contains only one digit (ie no two 9s or two 1s). 
+
+There are a number of advanced strategies that once can use for this puzzle, but if time is not a limiting factor then we can use a very simple method to solve any given puzzle.  The method is guess and check: for each empty grid space, let's add a number between 1 and 9 and see if the puzzle is OK.  If so, we continue on to the next grid but if not we simply increment the number tried (if 1 did not work, we try 2 etc.).  If none of the numbers work, we go backwards and increment the number in the previous grid, and if none of those work we go backwards until a number does work.  This method is often called backtracking, and there are a number of useful animations online for observing how this works.  
+
+The reason this algorithm works is because it potentially tries every combination of digits in the empty boxes, so if there is a possible solution then the solution will eventually be found!  The program we will write here usually runs in a matter of tens to hundreds of milliseconds on challenging puzzles, but can take up to half a minute or more on extremely difficult ones. The sample problem here is challenging, and takes approximately a second to solve.
+
+Let's represent the Sudoku board as a matrix, which we can specify as a list of lists (1-dimensional arrays, to be precise) without having to resort to a library like numpy to make fancy two-dimensional arrays.  Here is the representation of the puzzle above:
+
+```python
+puzzle = [
+ [0, 0, 4, 0, 0, 1, 7, 0, 0],
+ [0, 8, 0, 0, 2, 0, 0, 0, 0],
+ [2, 0, 0, 0, 7, 0, 0, 0, 0],
+ [0, 0, 0, 5, 0, 3, 0, 7, 8],
+ [0, 0, 5, 0, 0, 0, 4, 0, 0],
+ [9, 6, 0, 1, 0, 4, 0, 0, 0],
+ [0, 0, 0, 0, 5, 0, 0, 0, 9],
+ [0, 0, 0, 0, 1, 0, 0, 6, 0],
+ [0, 0, 1, 7, 0, 0, 2, 0, 0]]
+```
+
+Now is the time to define a function, remembering a doc string that specifies valid inputs and expected outputs:
+
+```python
+def solve(puzzle):
+	'''A function that takes a list of lists denoting sudoku
+	puzzle clues and places to guess (0s) and returns the completed
+	puzzle as a list of lists. Expects a solveable puzzle, and will 
+	return only solution if multiple exist.
+	'''
+```
+
+It is helpful to know which positions on the puzzle we need to try numbers, and which positions are given.  With a nested loop, we can make a list named ```python ls ``` of all coordinates of positions of to-be-found values as follows:
+
+```python
+	# make list of all positions to be determined
+	ls = []
+	for x in range(9):
+		for y in range(9):
+			if puzzle[x][y] == 0:
+				ls.append([x,y])
+```
+Now let's apply the backtracking algorithm to the puzzle, but only on the positions of values to be found, by indexing over the list '''python ls'''.  One can define another function within the first to do so, which is not absolutely necessary but provides clarity.
+
+```python
+	# backtracking algorithm with validation tests
+	def backtrack(puzzle, ls):
+		'''Solves the sudoku puzzle by iterating through the 
+		positions in ls and entering possible values into 
+		the puzzle array.  Backtracking occurs when no entry
+		is possible for a given space.
+		'''
+		i = 0
+		while i in range(len(ls)):
+			a, b = ls[i]
+```
+
+so now (a, b) is set to the coordinates of the first unknown space.  This is a good time to initialize a variable 'count' to be 0, which will change to 1 if a digit cannot be inserted at the unknown space.  If there are no legal moves in the first unknown space, the puzzle is not solveable!  The 'count' becomes important in subsequent spaces, and signals the need to backtrack: if no digit can be insterted at a space, then count stays 0 and we will add a clause to initiate backtracking if that is the case.  Let's also initiate the variable 'c', which will store the next number to be tested as follows:
+
+```python
+    count = 0
+
+    if puzzle[a][b] == 0: 
+	    c = 0
+
+	else: 
+		c = puzzle[a][b]
+
+	c += 1
+```
+
+Now come the tests: first the row (which is equal to ```python puzzle[a]```), then the column (ls2), and finally the 3x3 box (ls3) are tested to see if c is different than every element of these three lists.
+
+```python
+       while c < 10:
+		    if c not in puzzle[a]:
+				ls2 = []
+				for q in range(9):
+					ls2.append(puzzle[q][b])
+		
+				if c not in ls2:
+					ls3 = []
+					x, y = a // 3, b // 3
+					for k in range(3*x, 3*x+3):
+						for l in range(3*y, 3*y+3):
+							ls3.append(puzzle[k][l])
+
+					if c not in ls3:
+```
+
+If 'c' is a unique element, it is a possible move!  If so, we add it to the puzzle by assigment, increment our variable 'count', and increment the index of the list of coordinates to be solved ('i') and break out of the while loop.  If any of these tests fail, 'c' cannot be a valid move for the position ```python ls[i]```, so we increment c and continue the loop to test the next larger digit.
+
+```python
+                            puzzle[a][b] = c
+							count += 1
+							i += 1
+							break
+
+						else: c += 1
+					else: c += 1
+				else: c += 1
+```
+If no digit 1-9 is a legal move at the given position the 'count' variable stays 0 and we use this to test whether a backtrack needs to be made.  If so, we return the current position to 0 and decrement the index of the list of coordinates to be solved ('i').  If all elements of this list have been iterated, we must have filled in a number at all positions so we can return the solved puzzle. Finally we call the intertior function 'backtrack()' in the exterior function 'solve()' with the arguments of the puzzle and the list of places to fill in.
+
+```python
+		    if count == 0:
+				puzzle[a][b] = 0
+				i -= 1
+		return puzzle
+	
+	return backtrack(puzzle, ls)
+```
+
+
+Now let's test the solver!  Pretty printing (each element of a list is given its own line) is helpful here to make the matrix readable, so let's add the input and pprint it).  
+
+```python
+# example of an input
+puzzle = [
+ [0, 0, 4, 0, 0, 1, 7, 0, 0],
+ [0, 8, 0, 0, 2, 0, 0, 0, 0],
+ [2, 0, 0, 0, 7, 0, 0, 0, 0],
+ [0, 0, 0, 5, 0, 3, 0, 7, 8],
+ [0, 0, 5, 0, 0, 0, 4, 0, 0],
+ [9, 6, 0, 1, 0, 4, 0, 0, 0],
+ [0, 0, 0, 0, 5, 0, 0, 0, 9],
+ [0, 0, 0, 0, 1, 0, 0, 6, 0],
+ [0, 0, 1, 7, 0, 0, 2, 0, 0]]
+
+# example function call
+import pprint
+pprint.pprint (solve(puzzle))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[[5, 9, 4, 8, 3, 1, 7, 2, 6],
+ [7, 8, 3, 4, 2, 6, 9, 1, 5],
+ [2, 1, 6, 9, 7, 5, 8, 3, 4],
+ [1, 4, 2, 5, 9, 3, 6, 7, 8],
+ [8, 3, 5, 2, 6, 7, 4, 9, 1],
+ [9, 6, 7, 1, 8, 4, 3, 5, 2],
+ [3, 7, 8, 6, 5, 2, 1, 4, 9],
+ [4, 2, 9, 3, 1, 8, 5, 6, 7],
+ [6, 5, 1, 7, 4, 9, 2, 8, 3]]
+ 
+[Finished in 0.9s]
+```
+
+The output looks good! No 0s remaining and no obvious errors in digit placement. Running this program on pypy for speed, the time is down to 183 ms.
+
+```bash
+(base) bbadger@bbadger:~/Desktop$ time pypy sudoku_solver.py
+
+... (matrix shown here) ...
+
+real	0m0.183s
+user	0m0.144s
+sys	    0m0.021s
+```
+The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py)
+
+### Battleship placement validator
+
+![connect four]({{https://blbadger.github.io}}/assets/images/battleship.png)
+
+Say you are playing battleship the old fashioned way: with paper and a grid.  At the end of the game, you wonder if there was some kind of mistake: is it possible that the hits and misses you marked cannot correspond to a read battleship grid? 
 
 
 
