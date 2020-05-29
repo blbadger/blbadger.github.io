@@ -137,7 +137,7 @@ we see that the final board indeed has a diagonal four for red, in fact it has t
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 ```
 
-The full code is available ]here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/connect_four.py)
+The full code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/connect_four.py)
 
 ### Sudoku solver
 
