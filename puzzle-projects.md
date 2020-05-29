@@ -1,4 +1,4 @@
-## Puzzle Projects
+## Puzzles
 
 ### Connect Four winner decider
 
