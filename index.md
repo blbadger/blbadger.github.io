@@ -32,6 +32,10 @@ $$
 
 ## Nonlinear dynamics of the complex plane
 
+### [Julia sets](/julia-sets.md)
+
+![julia set image]({{https://blbadger.github.io}}fractals/julia_set_cover.png)
+
 ### [Mandelbrot set](/mandelbrot-set.md)
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
