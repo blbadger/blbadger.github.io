@@ -203,13 +203,13 @@ Now let's apply the backtracking algorithm to the puzzle, but only on the positi
 so now (a, b) is set to the coordinates of the first unknown space.  This is a good time to initialize a variable 'count' to be 0, which will change to 1 if a digit cannot be inserted at the unknown space.  If there are no legal moves in the first unknown space, the puzzle is not solveable!  The 'count' becomes important in subsequent spaces, and signals the need to backtrack: if no digit can be insterted at a space, then count stays 0 and we will add a clause to initiate backtracking if that is the case.  Let's also initiate the variable 'c', which will store the next number to be tested as follows:
 
 ```python
-    count = 0
+   	count = 0
 
-    if puzzle[a][b] == 0: 
-	    c = 0
+    	if puzzle[a][b] == 0: 
+	    	c = 0
 
 	else: 
-		c = puzzle[a][b]
+	   	c = puzzle[a][b]
 
 	c += 1
 ```
@@ -218,44 +218,45 @@ Now come the tests: first the row (which is equal to ```python puzzle[a]```), th
 
 ```python
        while c < 10:
-		    if c not in puzzle[a]:
-				ls2 = []
-				for q in range(9):
-					ls2.append(puzzle[q][b])
+		if c not in puzzle[a]:
+			ls2 = []
+			for q in range(9):
+				ls2.append(puzzle[q][b])
 		
-				if c not in ls2:
-					ls3 = []
-					x, y = a // 3, b // 3
-					for k in range(3*x, 3*x+3):
-						for l in range(3*y, 3*y+3):
-							ls3.append(puzzle[k][l])
+			if c not in ls2:
+				ls3 = []
+				x, y = a // 3, b // 3
+				for k in range(3*x, 3*x+3):
+					for l in range(3*y, 3*y+3):
+						ls3.append(puzzle[k][l])
 
-					if c not in ls3:
+				if c not in ls3:
 ```
 
 If 'c' is a unique element, it is a possible move!  If so, we add it to the puzzle by assigment, increment our variable 'count', and increment the index of the list of coordinates to be solved ('i') and break out of the while loop.  If any of these tests fail, 'c' cannot be a valid move for the position ```python ls[i]```, so we increment c and continue the loop to test the next larger digit.
 
 ```python
-                            puzzle[a][b] = c
-							count += 1
-							i += 1
-							break
+                            		puzzle[a][b] = c
+					count += 1
+					i += 1
+					break
 
-						else: c += 1
-					else: c += 1
 				else: c += 1
+			else: c += 1
+		else: c += 1
 ```
 If no digit 1-9 is a legal move at the given position the 'count' variable stays 0 and we use this to test whether a backtrack needs to be made.  If so, we return the current position to 0 and decrement the index of the list of coordinates to be solved ('i').  If all elements of this list have been iterated, we must have filled in a number at all positions so we can return the solved puzzle. Finally we call the intertior function 'backtrack()' in the exterior function 'solve()' with the arguments of the puzzle and the list of places to fill in.
 
 ```python
-		    if count == 0:
-				puzzle[a][b] = 0
-				i -= 1
-		return puzzle
+	if count == 0:
+		puzzle[a][b] = 0
+		i -= 1
+	return puzzle
 	
-	return backtrack(puzzle, ls)
+return backtrack(puzzle, ls)
 ```
 
+The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py).
 
 Now let's test the solver!  Pretty printing (each element of a list is given its own line) is helpful here to make the matrix readable, so let's add the input and pprint it).  
 
@@ -301,7 +302,6 @@ real	0m0.183s
 user	0m0.144s
 sys	    0m0.021s
 ```
-The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py)
 
 ### Battleship placement validator
 
