@@ -27,7 +27,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 $$ \Bbb R - \Bbb Q \approx \{x : x \in f(x)\} \\
 \; \text{if} \; f^n(x(0)) \neq f^k(x(0)) \\
-\text{given} \; n, k \in \Bbb N \; \mathbf{and} \; k \neq n
+\text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n
 $$
 
 
