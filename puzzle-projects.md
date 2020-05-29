@@ -30,7 +30,7 @@ The next step is to initialize a board by using a matrix.  The game board is 7 s
         [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0], 
         [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0,0,0]]
 ```
-Now let's add each move to the board, one by one.  Abitrarily classifying 'Red' as player 1 and 'Yellow' as player 2, each move in the list of moves is positioned by determining who moved.
+Now let's add each move to the board, one by one.  Abitrarily classifying `'Red'` as player 1 and `'Yellow'` as player 2, each move in the list of moves is positioned by determining who moved.
 ```python
     for move in moves_list:
         if move[2:] == 'Red':
@@ -38,7 +38,7 @@ Now let's add each move to the board, one by one.  Abitrarily classifying 'Red' 
         else: 
             piece = 2
 ```
-To determine where each player's piece lands, the letter corresponding to the row played is counted and the piece is added to the first open slot (open slots are denoted '0') in that row.  Our board is upside down, being filled top to bottom!  This does not matter for determining the winner, however.  The code above is omitted using '...' for clarity.
+To determine where each player's piece lands, the letter corresponding to the row played is counted and the piece is added to the first open slot (open slots are denoted `'0'`) in that row.  Our board is upside down, being filled top to bottom!  This does not matter for determining the winner, however.  The code above is omitted using `'...'` for clarity.
 
 ```python
      for move in moves_list:
@@ -50,7 +50,7 @@ To determine where each player's piece lands, the letter corresponding to the ro
                         board[k][i] = piece
                         break
 ```
-Note that pieces are added to the 7x6 slots in the lower left hand corner of the entire 10x9 board.  Now it is clear why this is: after adding each piece to the board as above, it is easy to check if there are four slots of a color occupied in a row, column, or diagonal by iterating accross every position of the 7x6 board as a starting point.  10x9 comes from adding 3 to both width and height of the board, such that there are not index errors as one traverses each position of the real board.  The slots outside the real board remain empty ('0'), and so do not influence whether or not a player wins.
+Note that pieces are added to the 7x6 slots in the lower left hand corner of the entire 10x9 board.  Now it is clear why this is: after adding each piece to the board as above, it is easy to check if there are four slots of a color occupied in a row, column, or diagonal by iterating accross every position of the 7x6 board as a starting point.  10x9 comes from adding 3 to both width and height of the board, such that there are not index errors as one traverses each position of the real board.  The slots outside the real board remain empty (`'0'`), and so do not influence whether or not a player wins.
 
 ```python
      for move in moves_list:
@@ -94,7 +94,7 @@ Note that pieces are added to the 7x6 slots in the lower left hand corner of the
     return 'Draw'
 ```
 
-The trickiest part here is finding backwards diagonals, ie pieces arranged in a \ pattern.  If we start at [0,0], an index error will be thrown because there is no -1 index in this list of lists! Instead, we offset the starting horizontal value by 3 such that all 4 slots tested are within the matrix size.  Looking at a physical board should make it clear why this is a valid way to test for diagonals, even if not all pieces of the 'real' board are being tested.  If there is no winner after all moves are made, 'Draw' is returned.
+The trickiest part here is finding backwards diagonals, ie pieces arranged in a \ pattern.  If we start at [0,0], an index error will be thrown because there is no -1 index in this list of lists! Instead, we offset the starting horizontal value by 3 such that all 4 slots tested are within the matrix size.  Looking at a physical board should make it clear why this is a valid way to test for diagonals, even if not all pieces of the 'real' board are being tested.  If there is no winner after all moves are made, `'Draw'` is returned.
 ```python
       for move in moves_list:
          ...
@@ -175,7 +175,7 @@ def solve(puzzle):
 	'''
 ```
 
-It is helpful to know which positions on the puzzle we need to try numbers, and which positions are given.  With a nested loop, we can make a list named ```python ls ``` of all coordinates of positions of to-be-found values as follows:
+It is helpful to know which positions on the puzzle we need to try numbers, and which positions are given.  With a nested loop, we can make a list named  `ls`  of all coordinates of positions of to-be-found values as follows:
 
 ```python
 	# make list of all positions to be determined
@@ -185,7 +185,7 @@ It is helpful to know which positions on the puzzle we need to try numbers, and 
 			if puzzle[x][y] == 0:
 				ls.append([x,y])
 ```
-Now let's apply the backtracking algorithm to the puzzle, but only on the positions of values to be found, by indexing over the list '''python ls'''.  One can define another function within the first to do so, which is not absolutely necessary but provides clarity.
+Now let's apply the backtracking algorithm to the puzzle, but only on the positions of values to be found, by indexing over the list `ls`.  One can define another function within the first to do so, which is not absolutely necessary but provides clarity.
 
 ```python
 	# backtracking algorithm with validation tests
@@ -200,7 +200,7 @@ Now let's apply the backtracking algorithm to the puzzle, but only on the positi
 			a, b = ls[i]
 ```
 
-so now (a, b) is set to the coordinates of the first unknown space.  This is a good time to initialize a variable 'count' to be 0, which will change to 1 if a digit cannot be inserted at the unknown space.  If there are no legal moves in the first unknown space, the puzzle is not solveable!  The 'count' becomes important in subsequent spaces, and signals the need to backtrack: if no digit can be insterted at a space, then count stays 0 and we will add a clause to initiate backtracking if that is the case.  Let's also initiate the variable 'c', which will store the next number to be tested as follows:
+so now (a, b) is set to the coordinates of the first unknown space.  This is a good time to initialize a variable `count` to be 0, which will change to 1 if a digit cannot be inserted at the unknown space.  If there are no legal moves in the first unknown space, the puzzle is not solveable!  The `count` becomes important in subsequent spaces, and signals the need to backtrack: if no digit can be insterted at a space, then count stays 0 and we will add a clause to initiate backtracking if that is the case.  Let's also initiate the variable `c`, which will store the next number to be tested as follows:
 
 ```python
    	count = 0
@@ -214,7 +214,7 @@ so now (a, b) is set to the coordinates of the first unknown space.  This is a g
 	c += 1
 ```
 
-Now come the tests: first the row (which is equal to ```python puzzle[a]```), then the column (ls2), and finally the 3x3 box (ls3) are tested to see if c is different than every element of these three lists.
+Now come the tests: first the row (which is equal to `puzzle[a]`), then the column (`ls2`), and finally the 3x3 box (`ls3`) are tested to see if `c` is different than every element of these three lists.
 
 ```python
        while c < 10:
@@ -233,7 +233,7 @@ Now come the tests: first the row (which is equal to ```python puzzle[a]```), th
 				if c not in ls3:
 ```
 
-If 'c' is a unique element, it is a possible move!  If so, we add it to the puzzle by assigment, increment our variable 'count', and increment the index of the list of coordinates to be solved ('i') and break out of the while loop.  If any of these tests fail, 'c' cannot be a valid move for the position ```python ls[i]```, so we increment c and continue the loop to test the next larger digit.
+If `c` is a unique element, it is a possible move!  If so, we add it to the puzzle by assigment, increment our variable 'count', and increment the index of the list of coordinates to be solved (`i`) and break out of the while loop.  If any of these tests fail, `c` cannot be a valid move for the position `ls[i]`, so we increment c and continue the loop to test the next larger digit.
 
 ```python
                             		puzzle[a][b] = c
@@ -245,7 +245,7 @@ If 'c' is a unique element, it is a possible move!  If so, we add it to the puzz
 			else: c += 1
 		else: c += 1
 ```
-If no digit 1-9 is a legal move at the given position the 'count' variable stays 0 and we use this to test whether a backtrack needs to be made.  If so, we return the current position to 0 and decrement the index of the list of coordinates to be solved ('i').  If all elements of this list have been iterated, we must have filled in a number at all positions so we can return the solved puzzle. Finally we call the intertior function 'backtrack()' in the exterior function 'solve()' with the arguments of the puzzle and the list of places to fill in.
+If no digit 1-9 is a legal move at the given position the 'count' variable stays 0 and we use this to test whether a backtrack needs to be made.  If so, we return the current position to 0 and decrement the index of the list of coordinates to be solved (`i`).  If all elements of this list have been iterated, we must have filled in a number at all positions so we can return the solved puzzle. Finally we call the intertior function `backtrack()` in the exterior function `solve()` with the arguments of the puzzle and the list of places to fill in.
 
 ```python
 	if count == 0:
