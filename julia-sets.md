@@ -28,7 +28,7 @@ import matplotlib.pyplot as plt
 ```
 and then define a function to find the values of a Julia set for a certain value of $a$, with a docstring specifying the inputs and outputs of the function.  To view a Julia set, we want an array corresponding to the complex plane with values that border diverging and non-diverging values specially denoted.  One way to do this is to count the number of iterations of (1) any given point in the complex plane takes to start heading towards infinity, and if after a sufficiently large number of iterations the point is still bounded then we can assume that the value will not diverge in the future. 
 
-To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using ```ogrid```, remembering that imaginary values are specified with ```j``` in python.  The array corresponding to the complex plane section is stored as ```z_array```, and the value of $a$ is specified (the programs presented here are designed with a value of $ |a| < 2 $ in mind, but can be modified for larger $a$ s).  This will allow us to keep track of the values of subsequent iterations of (1) for each point $z$ in the complex plane.  Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
+To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using `ogrid`, remembering that imaginary values are specified with `j` in python.  The array corresponding to the complex plane section is stored as `z_array`, and the value of $a$ is specified (the programs presented here are designed with a value of $ |a| < 2 $ in mind, but can be modified for larger $a$ s).  This will allow us to keep track of the values of subsequent iterations of (1) for each point $z$ in the complex plane.  Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
 
 ```python3
 def julia_set(h_range, w_range, max_iterations):
@@ -44,7 +44,7 @@ def julia_set(h_range, w_range, max_iterations):
   
 ```
 
-To find the number of iterations until divergence of each point in our array of complex numbers, we can simply loop through the array 'z_array' such that each point in the array is 
+To find the number of iterations until divergence of each point in our array of complex numbers, we can simply loop through the array `z_array` such that each point in the array is 
 
 ```python
   for h in range(h_range):
@@ -53,7 +53,11 @@ To find the number of iterations until divergence of each point in our array of 
           z = z_array[h][w]
 ```
 
-It can be shown that values where $|z| > 2$ and $|z| > |a|$, future iterations of (1) inevitably head towards positive or negative infinity. This makes it simple to find the number of iterations ```i``` until divergence: all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index.  
+It can be shown that values where $|z| > 2$ and $|z| > |a|$, future iterations of (1) inevitably head towards positive or negative infinity. 
+
+This makes it simple to find the number of iterations `i` until divergence: 
+
+all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index.  
 ```python
           for i in range(max_iterations):
             z = z**2 + a
@@ -63,9 +67,9 @@ It can be shown that values where $|z| > 2$ and $|z| > |a|$, future iterations o
               
 	return iterations_till_divergence
 ```
-This will give us an iteration number for each point in 'z_array'.  What if (1) does not diverge for any given value? The final array 'iterations_till_divergence' is initialized with the maximum number of iterations everywhere, such that if this value is not replaced then it remains after the loops, which signifies that the maximum number of iterations performed was not enough to cause the value to diverge.  Outside all these loops, we return the array of iterations taken.
+This will give us an iteration number for each point in `z_array`.  What if (1) does not diverge for any given value? The final array `iterations_till_divergence` is initialized with the maximum number of iterations everywhere, such that if this value is not replaced then it remains after the loops, which signifies that the maximum number of iterations performed was not enough to cause the value to diverge.  Outside all these loops, we return the array of iterations taken.
 
-Now we can plot the 'iterations_till_divergence' array!  It is a list of lists of numbers between 0 and 'max_iterations', so we can assign it to a color map (see [here](https://matplotlib.org/3.2.1/tutorials/colors/colormaps.html) for an explanation of matplotlib color maps).  Remembering that the Julia set is the border between bounded and unbounded iterates of (1), a cyclical colormap emphasizing intermediate values (ie points that do not diverge quickly but do eventually diverge) is useful. 
+Now we can plot the `iterations_till_divergence` array!  It is a list of lists of numbers between 0 and 'max_iterations', so we can assign it to a color map (see [here](https://matplotlib.org/3.2.1/tutorials/colors/colormaps.html) for an explanation of matplotlib color maps).  Remembering that the Julia set is the border between bounded and unbounded iterates of (1), a cyclical colormap emphasizing intermediate values (ie points that do not diverge quickly but do eventually diverge) is useful. 
 
 ```python
 plt.imshow(julia_set(500, 500, 70), cmap='twilight_shifted')
@@ -78,9 +82,9 @@ Now we can plot the image!
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set1.png)
 
-The resolution is not very high because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
+The resolution settings (determined by h_range and w_range) are not very high in the image above because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
 
-Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of 'z_array' at once, and make a boolean array corresponding to the elements of 'z_array' that have diverged at each iteration.  The complex number array setup is the same as above:
+Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above:
 
 ```python
 import numpy as np 
@@ -98,14 +102,16 @@ def julia_set(h_range, w_range, max_iterations):
 	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
 ```
 
-Instead of examining each element of 'z_array' individually, we can use a single loop to iterate (1) as follows:
+Instead of examining each element of ```z_array``` individually, we can use a single loop to iterate (1) as follows:
  
  ```python
 	for i in range(max_iterations):
 		z_array = z_array**2 + a
  ```
 
-In this loop, we can check if any element of 'z_array' has diverged (ie $|z| > 2, z(z^* ) > 2^2 = 4$), and make a boolean array, with a 'True' for each position in 'z_array' that has diverged.  Then we add the iteration number to our 'iterations_till_divergence' array if that position has diverged, as noted in our 'divergent_array' boolean array. 
+In this loop, we can check if any element of ```z_array``` has diverged,
+$|z| > 2, z(z^* ) > 2^2 = 4$
+and make a boolean array, with a `True` for each position in `z_array` that has diverged.  Then we add the iteration number to our `iterations_till_divergence` array if that position has diverged, as noted in our `divergent_array` boolean array. 
 
 ```python
 		z_size_array = z_array * np.conj(z_array)
@@ -114,7 +120,7 @@ In this loop, we can check if any element of 'z_array' has diverged (ie $|z| > 2
 		iterations_till_divergence[divergent_array] = i
  ```
 
-If a position has a magnitude greater than 2, we can set its to be 0 to prevent that element from going to infinity by assigning each position of the 'z_array' that has a  'True' value for the 'divergent_array' to be 0.  Finally the array of the number of iterations at each position is returned and an image is made, 
+If a position has a magnitude greater than 2, we can set its to be 0 to prevent that element from going to infinity by assigning each position of the `z_array` that has a `True` value for the `divergent_array` to be 0.  Finally the array of the number of iterations at each position is returned and an image is made, 
 
 ```python
 		z_array[divergent_array] = 0 
@@ -133,7 +139,7 @@ which yeilds
 
 This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using an inverse of this color map, we have 
 
-![julia set1]({{https://blbadger.github.io}}fractals/julia_set_inverted.png)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
 
 
