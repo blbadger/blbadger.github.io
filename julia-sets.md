@@ -26,9 +26,10 @@ What happens when we allow $a$ and iterates of (1) to range over the complex pla
 import numpy as np 
 import matplotlib.pyplot as plt 
 ```
+
 and then define a function to find the values of a Julia set for a certain value of $a$, with a docstring specifying the inputs and outputs of the function.  To view a Julia set, we want an array corresponding to the complex plane with values that border diverging and non-diverging values specially denoted.  One way to do this is to count the number of iterations of (1) any given point in the complex plane takes to start heading towards infinity, and if after a sufficiently large number of iterations the point is still bounded then we can assume that the value will not diverge in the future. 
 
-To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using `ogrid`, remembering that imaginary values are specified with `j` in python.  The array corresponding to the complex plane section is stored as `z_array`, and the value of $a$ is specified (the programs presented here are designed with a value of $ \left|a \right| < 2 $ in mind, but can be modified for larger $a$ s).  This will allow us to keep track of the values of subsequent iterations of (1) for each point $z$ in the complex plane.  Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
+To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using `ogrid`, remembering that imaginary values are specified with `j` in python.  The array corresponding to the complex plane section is stored as `z_array`, and the value of $a$ is specified (the programs presented here are designed with a value of $ \abs{a} < 2 $ in mind, but can be modified for larger $a$ s).  This will allow us to keep track of the values of subsequent iterations of (1) for each point $z$ in the complex plane.  Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
 
 ```python3
 def julia_set(h_range, w_range, max_iterations):
@@ -53,11 +54,12 @@ To find the number of iterations until divergence of each point in our array of 
           z = z_array[h][w]
 ```
 
-It can be shown that values where $\left| z\right | > 2$ and $\left| z\right | > \left|a \right|$, future iterations of (1) inevitably head towards positive or negative infinity. 
+It can be shown that values where $\abs{a} > 2$ and $\abs{z} > abs{a}$, future iterations of (1) inevitably head towards positive or negative infinity. 
 
 This makes it simple to find the number of iterations `i` until divergence: 
 
-all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index.  
+all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index. 
+
 ```python
           for i in range(max_iterations):
             z = z**2 + a
@@ -67,6 +69,7 @@ all we have to do is to keep iterating (1) until either the resulting value has 
               
 	return iterations_till_divergence
 ```
+
 This will give us an iteration number for each point in `z_array`.  What if (1) does not diverge for any given value? The final array `iterations_till_divergence` is initialized with the maximum number of iterations everywhere, such that if this value is not replaced then it remains after the loops, which signifies that the maximum number of iterations performed was not enough to cause the value to diverge.  Outside all these loops, we return the array of iterations taken.
 
 Now we can plot the `iterations_till_divergence` array!  It is a list of lists of numbers between 0 and 'max_iterations', so we can assign it to a color map (see [here](https://matplotlib.org/3.2.1/tutorials/colors/colormaps.html) for an explanation of matplotlib color maps).  Remembering that the Julia set is the border between bounded and unbounded iterates of (1), a cyclical colormap emphasizing intermediate values (ie points that do not diverge quickly but do eventually diverge) is useful. 
@@ -133,6 +136,7 @@ plt.axis('off')
 plt.show()
 plt.close()
 ```
+
 which yeilds
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set2.png)
