@@ -9,13 +9,16 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
 
+
 ### [Clifford attractor](/clifford-attractor.md)
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
 
+
 ### [Grid map](/grid-map.md)
 
 ![Grid map image]({{https://blbadger.github.io}}grid_map/grid_vid.gif)
+
 
 ### [Pendulum phase space](/pendulum-map.md)
 
@@ -33,9 +36,11 @@ $$
 
 ## Nonlinear dynamics of the complex plane
 
+
 ### [Julia sets](/julia-sets.md)
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+
 
 ### [Mandelbrot set](/mandelbrot-set.md)
 
@@ -47,6 +52,7 @@ $$
 ### [Neural Network](https://github.com/blbadger/neural-network) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
+
 
 ### [Puzzles](/puzzle-projects.md)
 
@@ -77,6 +83,7 @@ $$
 ### [Tesla coil](/tesla-coils.md)
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
+
 
 ### [Fusor](/fusor.md)
 
