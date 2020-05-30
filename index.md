@@ -35,7 +35,7 @@ $$
 
 ### [Julia sets](/julia-sets.md)
 
-![julia set image]({{https://blbadger.github.io}}fractals/julia_set_cover.png)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
 ### [Mandelbrot set](/mandelbrot-set.md)
 
