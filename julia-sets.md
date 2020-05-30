@@ -141,9 +141,11 @@ which yeilds
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set2.png)
 
-This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using an inverse of this color map, we have 
+This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using `cmap='twilight'`, we have
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+
+
 
 
 
