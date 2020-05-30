@@ -145,6 +145,21 @@ This is much faster: it takes less than a second for my computer to make the low
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
+As Gaston Julia found long ago, these sets bounded but are nearly all of infinite length.  Nowadays we call them fractals because they have characteristics of multiple dimensions: like 1-dimensional lines they don't seem to have width, but like 2-dimensional surfaces they have infinite length in a finite area.  Fractals are defined by having a counting dimension (Hausdorff, box, self-similarity etc) greater then their topological dimension, and nearly all fractals have fractional dimension (3/2, 0.616 etc). 
+
+To put it in another way, fractals stay irregular over different size scales.  They can be spectacularly self-similar (where small pieces are geometrically similar to the whole) like many Julia sets and the Mandelbrot set, but most are not (see this excellent video by 3B1B on the definition of a fractal [here](https://www.youtube.com/watch?v=gB9n2gHsHN4).  The fractals formed by the [Clifford attractor](/clifford-attractor.md) and [pendulum maps](/pendulum-map.md) are not self-similar in the strictest sense.
+
+How can a bounded line possibly have infinite length? If we zoom in on a point, we can see why this is: the set stays irregular at arbitrary scale.  Take the Julia set with $a = -0.29609091 + 0.62491i$.  If we zoom in (with more iterations as scale decreases) on the point at $x = 0.041100001 + -0.6583867i$, we have
+
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+
+The bounded line stays irregular as we zoom in, and if this irregularity continues ad infinitum then any two points on this set are infinitely far from each other.
+
+The Julia set above looks like a coastline, and it turns out that real coastlines are fractals too!  Here is a photo of the Chesapeake bay hanging in the Smithsonian.  Note how it is rough and irregular at a large scale as well as at much smaller scales!  If one tries to estimate the length of the coastline, the result depends very much on the length of the 'ruler' used to determine the path from point a to b. 
+
+![julia set1]({{https://blbadger.github.io}}fractals/chesapeake_bay.png)
+
+
 
 
 
