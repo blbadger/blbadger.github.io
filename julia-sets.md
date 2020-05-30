@@ -151,7 +151,7 @@ To put it in another way, fractals stay irregular over different size scales.  T
 
 How can a bounded line possibly have infinite length? If we zoom in on a point, we can see why this is: the set stays irregular at arbitrary scale.  Take the Julia set with $a = -0.29609091 + 0.62491i$.  If we zoom in (with more iterations as scale decreases) on the point at $x = 0.041100001 + -0.6583867i$, we have
 
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_zoom1.gif)
 
 The bounded line stays irregular as we zoom in, and if this irregularity continues ad infinitum then any two points on this set are infinitely far from each other.
 
