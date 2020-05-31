@@ -19,6 +19,8 @@ $f^k_a(c) \not\to \infty \; \mathbf {as} \; k \to \infty$
 
 If we restrict ourselves to the real line, such that $a$ and $x$ are elements of $\Bbb R$, iterations of (1) have a number of interesting features.  Some values of $a$ form Cantor sets (fractal dusts), which may be expected as (1) is a nonlinear equation similar in form to the logistic and Henon maps (see [here](https://blbadger.github.io/logistic-map.html)).   
 
+### Plotting Julia sets with Python
+
 What happens when we allow $a$ and iterates of (1) to range over the complex plane?  Let's find out! To start with, import the indespensable libraries numpy and matplotlib
 
 ```python
@@ -145,6 +147,8 @@ This is much faster: it takes less than a second for my computer to make the low
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
+### Julia sets are fractals
+
 As Gaston Julia found long ago, these sets bounded but are nearly all of infinite length.  Nowadays we call them fractals because they have characteristics of multiple dimensions: like 1-dimensional lines they don't seem to have width, but like 2-dimensional surfaces they have infinite length in a finite area.  Fractals are defined by having a counting dimension (Hausdorff, box, self-similarity etc) greater then their topological dimension, and nearly all fractals have fractional dimension (3/2, 0.616 etc). 
 
 To put it in another way, fractals stay irregular over different size scales.  They can be spectacularly self-similar (where small pieces are geometrically similar to the whole) like many Julia sets and the Mandelbrot set, but most are not (see this excellent video by 3B1B on the definition of a fractal [here](https://www.youtube.com/watch?v=gB9n2gHsHN4).  The fractals formed by the [Clifford attractor](/clifford-attractor.md) and [pendulum maps](/pendulum-map.md) are not self-similar in the strictest sense.
@@ -157,10 +161,16 @@ The bounded line stays irregular as we zoom in, and if this irregularity continu
 
 The Julia set above looks like a coastline, and it turns out that real coastlines are fractals too!  Here is a photo of the Chesapeake bay hanging in the Smithsonian.  Note how it is rough and irregular at a large scale as well as at much smaller scales!  If one tries to estimate the length of the coastline, the result depends very much on the length of the 'ruler' used to determine the path from point a to b. 
 
-![julia set1]({{https://blbadger.github.io}}fractals/chesapeake_bay.png)
+![bay]({{https://blbadger.github.io}}fractals/chesapeake_bay.png)
 
 
+### Slow divergence in a Julia set
 
+The appearance of more diverged area (ie the purple 'river') in the zoom above suggests that this particular Julia set ($a = -0.29609091 + 0.62491i$) contains values that eventually diverge, but do so very slowly.  Which values are these?  To see this, let's see what happens when we go from 10 to 2500 maximum iterations:
+
+![julia set1]({{https://blbadger.github.io}}fractals/julia_set_iterations.gif)
+
+There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of points that eventually tend towards infinity if the iteration number is high enough, as well as apparently stable points. 
 
 
 
