@@ -46,7 +46,7 @@ plt.show()
 plt.close()
 ```
 
-![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_zoom1.gif)
+![mandelbrot image]({{https://blbadger.github.io}}fractals/mandelbrot_custom_800x800x30.png)
   
 This method is perfectly good, but slow.  Luckily we can use the numpy `ogrid` to compute divergence much faster! (see the [Julia sets page](/julia-sets.html) for more information)
 
