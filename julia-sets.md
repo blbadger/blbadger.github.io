@@ -44,7 +44,7 @@ def julia_set(h_range, w_range, max_iterations):
 	'''
 	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.4: 1.4: w_range*1j]
 	z_array = x + y*1j
-  a = -0.744 + 0.148j
+  	a = -0.744 + 0.148j
 	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
   
 ```
