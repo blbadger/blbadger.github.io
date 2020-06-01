@@ -117,7 +117,7 @@ What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1
 ![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
 
 
-What happens if we add a small amount $b$ to $a$?  Then we have $x = x^2 + a + b$, and intuitively one can guess that the bounded set size will decrease as $b$ gets farther from the origin because there is less bounded area far from the origin in the Mandelbrot set. Let's look at many values of a real $b$, going from $b=0 \to b=1.3 \to b=0$:
+What happens if we add a small amount $b$ to $a$?  Then we have $z = z^2 + a + b$, and intuitively one can guess that the bounded set size will decrease as $b$ gets farther from the origin because there is less bounded area far from the origin in the Mandelbrot set. Let's look at many values of a real $b$, going from $b=0 \to b=1.3 \to b=0$:
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared.gif)
 
