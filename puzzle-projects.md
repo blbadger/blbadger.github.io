@@ -307,7 +307,149 @@ sys	0m0.021s
 
 ![connect four]({{https://blbadger.github.io}}/assets/images/battleship.png)
 
-Say you are playing battleship the old fashioned way: with paper and a grid.  At the end of the game, you wonder if there was some kind of mistake: is it possible that the hits and misses you marked cannot correspond to a read battleship grid? 
+Say you are playing battleship the old fashioned way: with paper and a drawn 10x10 grid.  You mark the positions of your ships with '1's, but after doing so wonder if you made a mistake.  Is your battleship field valid according to the rules that ships may be touching each other, and ships comprise of one carrier size 4 square, two battleships size 3, three destroyers size 2, and four subs of size 1?
 
+We can represent the battleship grid with a list of lists corresponding to a matrix:
 
+```python
+field = [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
+         [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+         [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [1, 1, 0, 0, 0, 0, 0, 0, 1, 0],
+         [1, 1, 0, 0, 1, 1, 1, 0, 0, 0],
+         [1, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+```
 
+How do we go about determining if this is a valid field? A simple test that comes to mind is to count the number of positions and determine if this number exceeds or falls short of what it should be (20), which can be accomplished by nesting two loops and incrementing a counter for each position with a ship (denoted `1`).
+
+```python
+    # preliminary check for the correct number of spaces
+    count = 0
+    for lst in field:
+        for element in lst:
+            if element == 1:
+                count += 1
+    if count != 20:
+        return False
+```
+
+But for all the combinations of placements where there are the correct number of positions marked, how do we tell which ones are valid and which are not?
+
+Suppose there was only one ship, a carrier.  Then the problem is easier, and it is a simple task to see if the field is valid: simply loop over each element of the field (left to right and top to bottom is the order for two nested loops) and for the first `1`, see if there are three other `1`s to the right or below.  The trailing `1`s will not be above or behind because then we would not be observing the first `1`!  If there are indeed three `1`s behind or below the first but no more `1`s anywhere else, we have a valid board and vice versa.  
+
+With two ships this becomes more difficult.  To which ship does the first `1` belong to? If we ignore this question and assume that the `1` belongs to one particular type of ship, we may mistakenly classify an invalid board as valid (or the opposite) because ships can be touching. But it is impossible to know which `1` belongs to which ship, so how do we proceed?
+
+Making the problem smaller certainly helped, and this is a sign that recursion is the way forward with this problem.  Using recursion, we can start with a grid with many `1`s and eliminate them as we guess which pieces belong to which ship.  We work around the problem of not knowing which ship is associated with each `1` by simply trying every option possible, and if any are valid then we have a valid board setup!
+
+Let's define a function and attach a docstring.  A list of ships will be useful, so we define a list `ships` using the ship size as the names for each ship.  As we will be checking each position to determine if it is a part of the ship, it is helpful to add `0`s along the right and lower borders of our matrix such that we avoid index errors while checking all `1`s.  Here we include a layer of `0`s along the upper and left borders of the matrix for visual clarity.  Our preliminary check for the correct number of ship spots is added here too.
+
+```python
+def validate_battlefield(field):
+    '''A function that takes a 10x10 list of lists corresponding to a 
+    battleship board as an argument and returns True if the field is
+    a legal arrangement of ships or False if not.  Ships are standard
+    (1 carrier size 4, 2 battleships size 3, 3 destroyers size 2, 4 subs
+    size 1) and ships may be touching each other.  Only the location of 
+    hits are known, not the identity of each hit.  
+    '''
+    ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+
+    # make a wrapper for the field for ease of iteration
+    for i in field:
+        i.insert(0, 0)
+        i.append(0)
+    field.insert(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+    
+    # preliminary check for the correct number of spaces
+    ...
+```
+
+Now comes the recursion.  To avoid re-wrapping the field with `0`s and re-checking to see if the correct number of spots are filled, we can define another function in this larger one and simply call this one.  The strategy will be iterate along the original field until we see a `1`, and then test if it can be the largest ship in the vertical direction.  If so, we remove all `1`s corresponding to this ship on the field, remove the largest ship from the list `ships`, and copy the ships list (to avoid errors during recursion).  
+
+We then test whether this copied list is valid by calling the `validate` function on this list with the copied ships `ships2`, which causes the function `validate` to be called over and over until either the list `ships` has been exhausted, or until there are no other options for piece placement.  If the former is true, the board is valid and the function returns `True`, otherwise `False` is returned up the stack.
+
+When `False` reaches the first `if validate()` statement, it causes the program to skip to `else`, where we add back the ship we earlier erased from the board.  Otherwise many invalid boards will be classified as valid!  The horizontal direction must also be considered at each stage, so the code above is repeated but for check along each list. At the end, a last check for any remaining ships is made, and this function is called inside `validate_battlefield()`. 
+
+```python
+    def validate(field, ships):
+        '''Assesses the validity of a given field (field), with a 
+        list of ships that are yet to be accounted for (ships).  The
+        method is to remove ships, largest to smallest, using recursion
+        '''
+        for i in range(12):
+            for j in range(12):
+                if field[i][j] == 1:
+
+                    k = 0
+		    # test vertical area for ship
+                    while field[i+k][j] == 1:
+                        k += 1
+
+                        if k == ships[0]:
+                            del ships[0]
+
+                            for m in range(k):
+                                field[i+m][j] = 0
+                            
+                            if len(ships) == 0: 
+                                y = 1
+                                return True
+
+                            ships2 = ships[:]
+                            if validate(field, ships2):
+                                return True
+                            
+                            else:
+                                for x in range(k):
+                                    field[i+x][j] = 1
+                                ships = [k] + ships
+                            
+                    w = 0
+		    # test horizontal area for ship
+                    while field[i][j+w] == 1:
+                        w += 1
+
+                        if w == ships[0]:
+                            del ships[0]
+
+                            for n in range(w):
+                                field[i][j+n] = 0
+                
+                            if len(ships)==0:
+                                y = 1
+                                return True
+			
+                            ships3 = ships[:]
+
+                            if validate(field, ships3):
+                                return True
+
+                            else:
+                                for n in range(w):
+                                    field[i][j+n] = 1
+                                ships = [w] + ships
+                            
+        if len(ships)==0:
+            return True
+        else:
+            return False
+
+    return validate(field, ships)
+```
+
+Let's test this out! With the battlefield shown above, we get
+
+```python
+# example function call
+print (validate_battlefield(field))
+~~~~~~~~~~~~~~~~~~~~~~~~
+True
+[Finished in 0.0s]
+```
+
+Manually trying to put ships in place should convince you that the field is indeed valid! 
