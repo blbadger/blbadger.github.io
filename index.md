@@ -28,8 +28,7 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
 
-$$ \Bbb R - \Bbb Q \approx \{x : x \in f(x)\} \\
-\; \text{if} \; f^n(x(0)) \neq f^k(x(0)) \\
+$$ \Bbb R - \Bbb Q \approx \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
 \text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n
 $$
 
@@ -54,12 +53,12 @@ $$
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
 
-### [Puzzles](/puzzle-projects.md)
+### [Game puzzles](/puzzle-projects.md)
 
 ![puzzles]({{https://blbadger.github.io}}/assets/images/games.png)
 
 
-### [Programs to compute things](/math-projects.md)
+### [Programs to compute things](/computing-projects.md)
 
 $$
 \begin{vmatrix}
