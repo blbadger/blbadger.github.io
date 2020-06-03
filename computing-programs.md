@@ -68,7 +68,8 @@ Now comes the recursion: using the rule that every other determinant is added (a
 Let's test the program out on our large matrix!  By printing out the results using `print (determinant(matrix))`, we get
 ```python
 355329
-[Finished in 0.4s]```
+[Finished in 0.4s]
+```
 
 Which can be checked against software to compute determinants on the web!  Although this program can theoretically compute the determinant of a matrix of any size, it is practically limited to matricies smaller than 11x11 due to time.
 
@@ -77,7 +78,22 @@ Which can be checked against software to compute determinants on the web!  Altho
 
 The factorial $n!$ is equal to the product of all the natural numbers (not including 0) the same size or smaller than the number in question.  The factorial grows extremely large as $n$ increases, such that the factorial of large numbers are practically uncomputable in a reasonable amount of time!  
 
-But say that we are not interested in the exact value of the factorial, merely how many zeros it has at the end.  
+But say that we are not interested in the exact value of the factorial, instead the quetions is how many zeros the number has at the end.  To make this as general as possible, let's extend this question to how many zeros the factorial of a number `n` has at the end, in a given base `base`. For example, 5 factorial in base ten is 120, which has one trailing zero.
+
+$$ 
+5!_{10} = 12\mathbf{0} \to 1 
+$$
+
+whereas 20 facotorial in base 3 has 8 trailing zeros
+
+$$
+20!_{3} = 1210121221100100101120122022221\mathbf{00000000} \to 8 
+n!_k \to ?
+$$
+
+
+
+
 
 
 
