@@ -88,7 +88,6 @@ whereas 20 facotorial in base 3 has 8 trailing zeros
 
 $$
 20!_{3} = 1210121221100100101120122022221\mathbf{00000000} \to 8 
-n!_k \to ?
 $$
 
 How is one to find the number of trailing zeros of a factorial without calculating the entire number?  Every natural number is composed of prime numbers, so looking at primes might be a good idea.  Let's start in base 10, which is the most familiar for many of us.  Every number in base 10 may be represented by a string of digits 0-9.  Taking a factorial of a number is the same as multiplying all smaller natural numbers together, so we are interested in how to get 0s at the end of a number as the result of multiplication. 
