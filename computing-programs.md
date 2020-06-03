@@ -91,15 +91,126 @@ $$
 n!_k \to ?
 $$
 
+How is one to find the number of trailing zeros of a factorial without calculating the entire number?  Every natural number is composed of prime numbers, so looking at primes might be a good idea.  Let's start in base 10, which is the most familiar for many of us.  Every number in base 10 may be represented by a string of digits 0-9.  Taking a factorial of a number is the same as multiplying all smaller natural numbers together, so we are interested in how to get 0s at the end of a number as the result of multiplication. 
 
+So multiplication is the key transformation we are applying to a pair of numbers at a time, but which digits contribute to trailing 0s?  The last digit of each number is important here, because if the last digits do not multiply together to make 0 then there are no trailing 0s!  Now we can ask: which primes in range 0-9 (ie which digits) multiply to make a 0?  The answer is 2 and 5, and although 0 is not a prime it can be included in this list because it will also yeild a 0. 
 
+Now the question is slightly different: how do we find the number of 5, 2, and 0s that will be multiplied together in the last non-zero digit of the factors of $n!$?  Fortunately for us, there exists a formula for determining the largest power of any given prime number of the factorial of a number: [Legendre's formula](https://en.wikipedia.org/wiki/Legendre%27s_formula).  This formula is wonderful because it allows us to bypass calculating the trailing zeros factor by factor and simply focus on the single factorial number itself.  Legendres formula is as follows: for a prime number $p$ and factorial $n!$, $v_p(n!)$ is the exponent of the largest power of prime $p$ that divides $n$ without remainder and is computed as follows:
 
+$$
+v_p(n!) = \sum_{i = 1}^\infty \lfloor\frac{n}{p^i}\rfloor
+$$
 
+For the general case in any base $p$, the formula becomes
 
+$$
+v_p(n!) = \frac{n - s_p(n)}{p-1}
+$$
 
+Where $s_p(n)$ is the sum of the digits of the base-$p$ version of $n$.
 
+Now we are ready to tackle the problem of trailing zeros!  First we will need to define a function (including a doc string) and in this function, make a helper method to determine if a number is prime. The library `math` is also imported, as it contains many useful mathematical functions.  The function to test whether a number is prime or not is fairly straightforward: going from 2 up to the square root of the number in question, if this number is divisible by any of these smaller ones then it is not prime. We can stop at the square root of the number in question because any larger number that is a factor of our original must also have a factor smaller than the square root as well, and this was already checked.
 
+```python
+# Import standard library
+import math
 
+def zeros(base, n):
+    '''Returns the number of 0s trailing the factorial of a number (n) supplied in any given base (argument base)
+    using Legendre's method.  This allows for the number of trailing zeros to be computed for inputs whose factorial
+    is not computable in any reasonable amount of time.
+    '''
 
+    def is_prime(number):
+        '''Determines if the argument number is prime.
+        Outputs True if prime, else False.
+        '''
+        if number == 2:
+            return True
+        for i in range(2, int(number**0.5) + 1):
+            if number % i == 0:
+                return False
+        return True
+```
+
+Now let's consider the base we are trying to compute the number in. Using our `is_prime()` function, let's chang the base to be a prime number!  
+
+```python
+
+    exponent = 1
+    ls = []
+    if not is_prime(base):
+        for i in range(2, base//2 + 1):
+            if is_prime(i) and base%i == 0:
+                j = 1
+                while base % (i ** j) == 0:
+                    j += 1
+                exponent = j - 1
+                ls.append([i, exponent])
+    else:
+        ls.append([base, 1])
+```
+
+Now it is time for another helper function. We want to find the sum of the digits of $n$ for the general Legendre's formula, so the function `sum_digits(base, n)` is made to compute the sum of the digits of $n$ in the base $base$ provided. 
+
+```python
+  def sum_digits(base, n):
+        '''A helper function that adds the digits 
+        of the argument n in the base provided.
+        '''
+        number_ls = []
+
+        while n >= base:
+            remainder = n % base
+            number_ls.append(remainder)
+            n -= remainder
+            n = int(n // base)
+        number_ls.append(n)
+        return sum(number_ls)
+```
+
+Now we can put these pieces together and apply Legendre's formula!
+
+```python
+    # Legendre's method for computing trailing zeros 
+    power_ls = []
+    for pair in ls:
+        power = int((n-sum_digits(pair[0], n))/(pair[0] - 1))
+        power_ls.append(power // pair[1])
+
+    if not power_ls: return 0
+    
+    return min(power_ls)
+```
+
+Let's check the work we have done.
+
+```python
+# example inputs
+base = 3
+n = 20
+
+# example function call
+print (zeros(base, n))
+
+~~~~~~~
+8
+[Finished in 0.1s]
+```
+
+It checks out for $20!$ in base $3$.  More tests can be done (unit testing is particularly useful here) to convince us that this function does what it says it does.  Does it run in reasonable time for large values of n?  It does!
+
+```python
+# example inputs
+base = 7
+n = 1349182374091283740932184
+
+# example function call
+print (zeros(base, n))
+
+~~~~~~~~~~~~
+224863729015213959151616
+[Finished in 0.0s]
+```
 
 
