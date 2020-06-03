@@ -58,7 +58,7 @@ $$
 ![puzzles]({{https://blbadger.github.io}}/assets/images/games.png)
 
 
-### [Programs to compute things](/computing-projects.md)
+### [Programs to compute things](/computing-programs.md)
 
 $$
 \begin{vmatrix}
