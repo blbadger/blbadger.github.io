@@ -270,7 +270,9 @@ if $x_0, y_0 = (1,1)$, the following map is produced:
 
 ![lightning image]({{https://blbadger.github.io}}clifford_attractor/lightning_0.png)
 
-This map shares resemblance to a lightning bolt! We can see that small changes in $x_0$ cause noticeable changes in the shape of the bolt, but do not change its general direction: adding 0.000001 to $x_0$ successively yeilds
+This map shares resemblance to a lightning bolt!  See [here](/tesla-coils.md) for some man-made lightning.
+
+We can see that small changes in $x_0$ cause noticeable changes in the shape of the bolt, but do not change its general direction: adding 0.000001 to $x_0$ successively yeilds
 
 ![lightning image]({{https://blbadger.github.io}}clifford_attractor/lightning_1.png)
 
