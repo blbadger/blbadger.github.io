@@ -132,10 +132,11 @@ def zeros(base, n):
         return True
 ```
 
-Now let's consider the base we are trying to compute the number in. Using our `is_prime()` function, let's chang the base to be a prime number!  
+Now let's consider the effect of different bases on the number of trailing zeros.  Say we are in base 10.  Digits 5 and 2 multiply to make 10, and so add a zero. But in base 7, no smaller primes compose 7 because it is prime and so the only digit that can make more zeros in this base is 7 and 1.  We assign an empty list to `ls`, which will store the primes that compose our base and the number of times they are multiplited to make the base. 
+
+If the base is not prime, we find its composition.  Ranging from 2 to half the base, we can use our `is_prime()` function to determine if a digit smaller than `base` is prime.  If it divides `base` evenly (with no remainder), then we incrementing `j` until it no longer does.  We then assign the value of `j` (minus one to account for the initial value of 1) to the variable `exponent`, and add the prime `i` with the exponent associated with this prime we just found by dividing `base` repeatedly.  At the end of the `for` loop, we have a `ls` with all primes that compose the `base` together with the exponents that multiply these primes.  Adding each prime `i` to the power of its `exponent` should return our `base`.  If the base is prime, we add only the `base` with `1` to the list.
 
 ```python
-
     exponent = 1
     ls = []
     if not is_prime(base):
@@ -149,6 +150,8 @@ Now let's consider the base we are trying to compute the number in. Using our `i
     else:
         ls.append([base, 1])
 ```
+
+So now we have the composition of our base, in the form of a list `ls`.  
 
 Now it is time for another helper function. We want to find the sum of the digits of $n$ for the general Legendre's formula, so the function `sum_digits(base, n)` is made to compute the sum of the digits of $n$ in the base $base$ provided. 
 
@@ -168,7 +171,7 @@ Now it is time for another helper function. We want to find the sum of the digit
         return sum(number_ls)
 ```
 
-Now we can put these pieces together and apply Legendre's formula!
+Now we can put these pieces together and apply Legendre's formula!  First we can assign a variable `power_ls` to an empty list.  Then loop over `ls`, storing the exponent of each prime in `base` (`pair[0]`) for this prime in $n1$ as determined by the general Legendre's formula.  This number is assigned to the variable `power`, which is then divided by the exponent of that prime in the composition of `base` (`pair[1]`).  We use floor division here because the interest is in the maximum number of times the prime composition `pair[1]` can fit in `power`.  This result is added to `power_ls`, and the loop continues for all values in `ls`.  The minimum of `power_ls` is returned because each zero in the factorial requires at least one of each prime factor, so the minimum power of these factors gives us the number of trailing zeros in our base of interest.  
 
 ```python
     # Legendre's method for computing trailing zeros 
@@ -182,7 +185,7 @@ Now we can put these pieces together and apply Legendre's formula!
     return min(power_ls)
 ```
 
-Let's check the work we have done.
+And now we are done! Let's check the work.
 
 ```python
 # example inputs
