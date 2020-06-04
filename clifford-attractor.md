@@ -233,9 +233,7 @@ Zooming in on the bottom right section suggests that it is:
 
 Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given. In contrast, both a point's next position almost entirely determines its current position alone, and only the direction of change is influenced by the given equation system.  
 
-I call Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
-
-### Semicontinuous maps share features of both continuous discrete differential systems
+One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
 
 As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractal, as is the case for discrete maps. 
 
@@ -258,8 +256,25 @@ and as $\Delta t = 0.1 \to \Delta t = 1.35$ the attractor changes from point to 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_9090.gif)
 
 
+### Familiar shapes from a semicontinuous Clifford map
 
+Say we iterate (2) with $\Delta t = 11$ and 
+$$
+a = -0.3
+b = 0.2
+c = 0.5
+d = 0.3
+$$
 
+if $x_0, y_0 = (1,1)$, the following map is produced:
+
+![lightning image]({{https://blbadger.github.io}}clifford_attractor/lightning_0.png)
+
+This map shares resemblance to a lightning bolt! We can see that small changes in $x_0$ cause noticeable changes in the shape of the bolt, but do not change its general direction: adding 0.000001 to $x_0$ successively yeilds
+
+![lightning image]({{https://blbadger.github.io}}clifford_attractor/lightning_1.png)
+
+![lightning image]({{https://blbadger.github.io}}clifford_attractor/lightning_2.png)
 
 
 
