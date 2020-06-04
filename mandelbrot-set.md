@@ -9,7 +9,7 @@ $$
 
 do not diverge (go to positive or negative infinity) but instead are bounded upon many iterations at a starting value of $z = 0$.  Thus the Mandelbrot set is very similar to the Julia set but instead of fixing $a$ and ranging about $z$, the starting value of $z$ is fixed at 0 and the value of $a$ is ranged about the complex plane. 
 
-Let's compute $\mathscr M$! As for the [Julia sets](/julia-sets.html), the simplest way to do this is to initialize a complex plane as an `ogrid` array in numpy, with the difference being that `a` is assigned to this array, not `z`, which is instead asigned to an identically sized array of 0s.
+Let's compute $\mathscr M$. As for the [Julia sets](/julia-sets.html), the simplest way to do this is to initialize a complex plane as an `ogrid` array in numpy, with the difference being that `a` is assigned to this array, not `z`, which is instead asigned to an identically sized array of 0s.
 
 ```python
 #! python3
@@ -83,7 +83,6 @@ plt.savefig('mandelbrot.png', dpi=300)
 plt.close()
 ```
 
-
 This code is perfectly valid for mapping $\mathscr M$, itself (the dark region), but the colors look strange: there is a banding pattern that is not seen in the plot from the other program for $\mathscr M$.  
 
 ![ mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_diverging2.png)
@@ -104,7 +103,7 @@ The colors are accurate now! The above code yeilds
 ![mandelbrot_set]({{https://blbadger.github.io}}fractals/mandelbrot_corrected.png)
 
 
-The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 + 0.072500001i.  
+The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 + 0.072500001i (see [here](/julia-sets.md) for a description of how to make the video)
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_zoom1.gif)
 
@@ -121,8 +120,32 @@ What happens if we add a small amount $b$ to $a$?  Then we have $z = z^2 + a + b
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared.gif)
 
+In the other direction, $b=0 \to b = -2.5$ yeilds
 
-How about a complex number? The set from $b = 0 \to b = 1 - i$ looks like
+![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared_reversed.gif)
+
+
+How about if we move to a complex number? The set from $b = 0 \to b = 1 - i$ looks like
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
+
+Instead of moving from the origin to a given point $b$, let's try rotating about the origin at a radius $r$.  Luckily we are already working with complex numbers so this can be done using the identity
+
+$$
+e^{i \pi} = -1
+$$
+
+so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page),
+```python
+...
+	...
+
+	for i in range(max_iterations):
+		# mandelbrot equation
+		z_array = z_array**2 + a_array + np.exp(3.1415j * (t/150))
+```
+
+which yeilds
+
+![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_swirl_0.3r.gif)
 
