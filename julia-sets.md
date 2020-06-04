@@ -3,7 +3,7 @@
 A Julia (named after Gaston Julia) set is the boundary of the sets of unbounded and bounded iterates of the family of functions
 
 $$
-f_a(x) = x^2 + a \; \text{given} \; a, x \in \Bbb C
+f_a(x) = x^2 + a 
 \tag{1}
 $$
 
