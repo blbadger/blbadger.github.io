@@ -147,22 +147,83 @@ This is much faster: it takes less than a second for my computer to make the low
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
+There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  
+
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged1.png)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged2.png)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged3.png)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged4.png)
+
 ### Julia sets are fractals
 
 As Gaston Julia found long ago, these sets bounded but are nearly all of infinite length.  Nowadays we call them fractals because they have characteristics of multiple dimensions: like 1-dimensional lines they don't seem to have width, but like 2-dimensional surfaces they have infinite length in a finite area.  Fractals are defined by having a counting dimension (Hausdorff, box, self-similarity etc) greater then their topological dimension, and nearly all fractals have fractional dimension (3/2, 0.616 etc). 
 
 To put it in another way, fractals stay irregular over different size scales.  They can be spectacularly self-similar (where small pieces are geometrically similar to the whole) like many Julia sets and the Mandelbrot set, but most are not (see this excellent video by 3B1B on the definition of a fractal [here](https://www.youtube.com/watch?v=gB9n2gHsHN4).  The fractals formed by the [Clifford attractor](/clifford-attractor.md) and [pendulum maps](/pendulum-map.md) are not self-similar in the strictest sense.
 
-How can a bounded line possibly have infinite length? If we zoom in on a point, we can see why this is: the set stays irregular at arbitrary scale.  Take the Julia set with $a = -0.29609091 + 0.62491i$.  If we zoom in (with more iterations as scale decreases) on the point at $x = 0.041100001 + -0.6583867i$, we have
+How can a bounded line possibly have infinite length? If we zoom in on a point on the set, we can see why this is: the set stays irregular at arbitrary scale.  Let's make a video of the Julia set zoom!  Videos are composed of sequences of images that replace each other rapidly (usually around 30 times per second) in order to create an approximation of motion.  So to make a zooming-in video, we just need to iterate over the Julia set function defined above many times, decreasing the scale as we go!
+
+The first thing to do is to pick a point in the complex plane to focus on, and to decide how fast the zoom should be.  For an zoom that does not appear to slow down or speed up, an exponential function must be used.  As magnifying an image by a power of two provides a clear image of what to think about, let's use exponents with base 2.  Say one wanted to increase scale by a factor of two over one second, with 30 individual images being shown in that second.  Then each frame should be scaled by a factor of $ \frac{1}{2 ^{1/30}}$, and the way I chose to do this is by multiplying the exponent $1/30$ by the frame number `t`.  I prefer a 4x zoom each second, so the exponent used is $t/15$.  
+
+If the scale is mostly symmetrical (nearly equal x and y ranges), that is all for the magnification process!  Next we need to decide which point to increase in scale.  For the Julia set defined by $a = -0.29609091 + 0.62491i$, let's look at  $x = -0.6583867 + 0.041100001i$.  Each component is added to it's 
+
+```python
+def julia_set(h_range, w_range, max_iterations, t):
+	y, x = np.ogrid[-1.4/(2**(t/15)) + 0.041100001: 1.4 / (2**(t/15)) + 0.041100001:h_range*1j, \
+			-1.4/(2**(t/15)) -0.6583867: 1.4/(2**(t/15)) -0.6583867:w_range*1j]
+
+```
+
+The `julia_set()` function needs to be called for every time step `t`, and one way to do this is to put it in a loop and save each image that results, with the intention of compiling the images later into a movie.  I prefer to do this rather than compile images into a movie without seeing them first.  The following code yeilds all 300 images being added to whatever directory the `.py` file running is held in, with the name of the image being the image's sequence number.  An important step here is to increase the `max_iterations` argument for `julia_set()` with each increase in scale!  If this is not done, no increased resolution will occur beyond a certain point even if we increase the scale of the image of interest.  To see why this is, consider what the `max_iterations` value for the true Julia set is: it is infinite!  If a value diverges after any number of iterations, then we consider it to diverge.  But at large scale, there may not be a significatn change upon increase in `max_iterations` (although this turns out to not be the case for this particular Julia set), so to save time we can simply start with a smaller `max_iterations` and increase as we go, taking more and more time per image.  The true Julia set is uncomputable: it would take an infinite number of iterations to determine which $x + yi$ values diverge, and this would take infinite time.   
+
+```python
+for t in range(300):
+	plt.imshow(julia_set(2000, 2000, 50 + t*3, t), cmap='twilight')
+	plt.axis('off')
+	plt.savefig('{}.png'.format(t), dpi = 300)
+	plt.close()
+```
+Now we have all the images ready for assembly into a movie!  For my file system, the images have to be renamed in order to be in order upon assembly.  To see if this is the case in your file system, have the folder containing the images listed.
+
+```bash
+(base) bbadger@bbadger:~/Desktop/julia_zoom1$ ls
+```
+
+My list was out of order (because some names were one digit and some 3 digits long), so I wrote a quick script to correct this.
+
+```python
+# renames files with a name that is easily indexed for future iteration
+import os
+
+path = '/home/bbadger/Desktop/file_name_here'
+
+files = os.listdir(path)
+
+for index, file in enumerate(files):
+	name = ''
+	for i in file:
+		if i != '.':
+			name += i
+		else:
+			break
+
+	if len(name) == 2:
+		os.rename(os.path.join(path, file), os.path.join(path, ''.join(['0', str(name), '.png'])))
+	elif len(name) == 1:
+		os.rename(os.path.join(path, file), os.path.join(path, ''.join(['00', str(name), '.png'])))
+
+```
+
+Now that the images are in order, we can assemble them into a movie!  This can be done many ways but I find `ffmpeg` to be very fast and stable.  Here we specify a mp4 video to be made with 30 frames per second, from in order matching `*.png` (read 'something'.png) and the resulting .mp4 file name is specified.
+
+```bash
+(base) bbadger@bbadger:~/Desktop/julia_zoom1$ ffmpeg -f image2 -r 30 -pattern_type glob -i '*.png' julia_zoom.mp4
+
+```
+And now we are done!  Conversion of this mp4 to a .gif using an online web app, we have
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_zoom1.gif)
 
-The bounded line stays irregular as we zoom in, and if this irregularity continues ad infinitum then any two points on this set are infinitely far from each other.
-
-The Julia set above looks like a coastline, and it turns out that real coastlines are fractals too!  Here is a photo of the Chesapeake bay hanging in the Smithsonian.  Note how it is rough and irregular at a large scale as well as at much smaller scales!  If one tries to estimate the length of the coastline, the result depends very much on the length of the 'ruler' used to determine the path from point a to b. 
-
-![bay]({{https://blbadger.github.io}}fractals/chesapeake_bay.png)
-
+The bounded line stays irregular as we zoom in (with an increased `max_iterations` value), and if this irregularity continues ad infinitum then any two points on this set are infinitely far from each other.
 
 ### Slow divergence in a Julia set
 
@@ -170,7 +231,7 @@ The appearance of more diverged area (ie the purple 'river') in the zoom above s
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set_iterations.gif)
 
-There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of points that eventually tend towards infinity if the iteration number is high enough, as well as apparently stable points. 
+There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of points that eventually tend towards infinity if the iteration number is high enough.  
 
 
 
