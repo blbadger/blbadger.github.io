@@ -149,10 +149,10 @@ This is much faster: it takes less than a second for my computer to make the low
 
 There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  
 
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged1.png)
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged2.png)
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged3.png)
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_ranged4.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged1.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged2.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged3.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged4.png)
 
 ### Julia sets are fractals
 
