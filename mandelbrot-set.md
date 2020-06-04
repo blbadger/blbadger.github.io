@@ -98,7 +98,7 @@ A little retrospection can convince us that there is a problem with how we compu
 		a_array[divergent_array] = 0 
 ```
 
-The colors are accurate now! The above code yeilds
+The colors are accurate now! The above code (with slightly larger x and y ranges) yeilds
 
 ![mandelbrot_set]({{https://blbadger.github.io}}fractals/mandelbrot_corrected.png)
 
@@ -135,14 +135,14 @@ $$
 e^{i \pi} = -1
 $$
 
-so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page),
+so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page) of a point centered at a radius of $1/3$,
 ```python
 ...
 	...
 
 	for i in range(max_iterations):
 		# mandelbrot equation
-		z_array = z_array**2 + a_array + np.exp(3.1415j * (t/150))
+		z_array = z_array**2 + a_array + np.exp(3.1415j * (t/150))/3
 ```
 
 which yeilds
