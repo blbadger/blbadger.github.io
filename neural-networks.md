@@ -45,6 +45,57 @@ for i in range(1, 348):
 ```
 
 
+Next let's make the neural network program.  This will call on external APIs, so the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) is important to anyone wishing to set up a network on these libraries.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
+
+
+```python
+
+"""
+Tensorflow_sequential_deep.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Implementation of a Keras sequential neural network using a 
+Tensorflow backend, combined with modules to display pre- classified
+images before the network trains as well as a subset of test images
+with classification and % confidence for each image.  The latter script
+is optimized for binary classification but can be modified for more than
+two classes.
+"""
+
+### Libraries
+# Standard library
+from __future__ import absolute_import, division, print_function, unicode_literals
+import os
+import pathlib
+
+# Third-party libraries
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from PIL import Image 
+import numpy as np 
+import matplotlib.pyplot as plt 
+
+```
+
+Now we can assign the directories storing the training and test datasets assembled above to variables that will be called later.  Here `data_dir` is our training dataset and `data_dir2` and `data_dir3` are test datasets, which link to folders I have on my Desktop.
+
+```python
+data_dir = pathlib.Path('/home/bbadger/Desktop/neural_network_images',  fname='Combined')
+data_dir2 = pathlib.Path('/home/bbadger/Desktop/neural_network_images2', fname='Combined')
+data_dir3 = pathlib.Path('/home/bbadger/Desktop/neural_network_images3', fname='Combined')
+```
+
+Now comes a troubleshooting step.  In both Ubuntu and MacOSX, I have encountered 
+
+```python
+image_count = len(list(data_dir.glob('*/*.png')))
+
+CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') if item.name not in ['._.DS_Store', '._DS_Store', '.DS_Store']])
+
+print (CLASS_NAMES)
+print (image_count)
+```
 
 
 
