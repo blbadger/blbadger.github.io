@@ -48,7 +48,7 @@ $$
 
 ## Softwares
 
-### [Neural Network](https://github.com/blbadger/neural-network) 
+### [Neural Network](/neural-networks.py) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
