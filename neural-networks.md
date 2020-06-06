@@ -86,7 +86,7 @@ data_dir2 = pathlib.Path('/home/bbadger/Desktop/neural_network_images2', fname='
 data_dir3 = pathlib.Path('/home/bbadger/Desktop/neural_network_images3', fname='Combined')
 ```
 
-Now comes a troubleshooting step.  In both Ubuntu and MacOSX, I have encountered 
+Now comes a troubleshooting step.  In both Ubuntu and MacOSX, `pathlib.Path` sometimes recognizes folders or files ending in `._.DS_Store` or a variation on this pattern.  These folders are empty and appear to be an artefact of using `pathlib`, as they are not present if the directory is listed in a terminal, and these interfere with proper classification by the neural network.  To see if there are any of these phantom files,
 
 ```python
 image_count = len(list(data_dir.glob('*/*.png')))
@@ -96,15 +96,131 @@ CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') if item.name no
 print (CLASS_NAMES)
 print (image_count)
 ```
+prints out the number of files and the names of the folders in the `data_dir` directory of choice.  If the number of files does not match what is observed by listing in terminal, or if there are any folders or files with the `._.DS_Store` ending then one strategy is to simply copy all files of the relevant directory into a new folder and check again.
+
+Now the images can be rescaled (if they haven't been already), as all images will need to be the same size. Here all images are scaled to a heightxwidth of 256x256 pixels.  Then a batch size is specified.  This number determines the number of images seen for each training epoch.
+
+```python
+### Rescale image bit depth to 8 (if image is 12 or 16 bits) and resize images to 256x256, if necessary
+image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+IMG_HEIGHT, IMG_WIDTH = 256, 256
+
+### Determine a batch size, ie the number of image per training epoch
+BATCH_SIZE = 400
+
+```
+From the training dataset images located in `data_dir`, a training dataset `train_data_1` is made by calling `image_generator` on `data_dir`.  The batch size specified above is entered, as well as the `target_size` and `classes` and `subset` kwargs.  If shuffling is to be performed between epochs, `shuffle` is set to `True`.  
+
+`image_generator` also has kwargs to specifiy rotations and translations to expand the training dataset, although neither of these functions are used in this example because the dataset has already been expanded via rotations.
+
+```python
+train_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir),
+	batch_size=BATCH_SIZE, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH), 
+		classes=list(CLASS_NAMES), subset = 'training')
+```
+
+The same process is repeated for the other directories, which in this case contain test image datasets.
+
+```python
+CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
+
+print (CLASS_NAMES)
+
+test_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir2), 
+    batch_size=783, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
+        classes=list(CLASS_NAMES))
 
 
+CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
 
+print (CLASS_NAMES)
 
+test_data_gen2 = image_generator.flow_from_directory(directory=str(data_dir3), 
+    batch_size=719, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
+        classes=list(CLASS_NAMES))
+```
 
+An image set generation may be checked with s simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
 
+```python
+def show_batch(image_batch, label_batch):
+    """Takes a set of images (image_batch) and an array of labels (label_batch)
+    from the tensorflow preprocessing modules above as arguments and subsequently
+    returns a plot of a 25- member subset of the image set specified, complete
+    with a classification label for each image.  
+    """
+    plt.figure(figsize=(10,10))
+    for n in range(25):
+        ax = plt.subplot(5, 5, n+1)
+        plt.imshow(image_batch[n])
+        plt.title(CLASS_NAMES[label_batch[n]==1][0].title())
+        plt.axis('off')
+    plt.show()
 
+### calls show_batch on a preprocessed dataset to view classified images
 
+image_batch, label_batch = next(train_data_gen1)
+show_batch(image_batch, label_batch)
+```
+Assigning the pair of 
 
+```python
+(x_train, y_train) = next(train_data_gen1)
 
+(x_test1, y_test1) = next(test_data_gen1)
 
+(x_test2, y_test2) = next(test_data_gen2)
+```
+
+Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching architectures or other fancy neural network models, in which case the more flexible functional Keras module shouldb be used.
+
+After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
+
+```python
+model = tf.keras.models.Sequential([
+    Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(IMG_HEIGHT, IMG_WIDTH , 3)),
+    MaxPooling2D(),
+    Conv2D(16, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(16, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(32, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(32, 3, padding='same', activation='relu'),
+    Conv2D(32, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(64, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(64, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Conv2D(64, 3, padding='same', activation='relu'),
+    MaxPooling2D(),
+    Flatten(),
+    Dense(512, activation='relu'),
+    Dense(50, activation='relu'),
+    Dense(2, activation='softmax')
+])
+```
+
+Now the network can be compiled, trained, and evaluated on the test datasets. I also include `model.summary()` in order to have the specific of the model printed.
+
+```python
+model.compile(optimizer='Adam', 
+	loss = 'categorical_crossentropy', 
+	metrics=['accuracy'])
+
+### Displays details of each layer output in the model 
+
+model.summary()
+
+### Trains the neural network, and print the progress at the end of each epoch
+### (signified by verbose=2)
+
+model.fit(x_train, y_train, epochs=9, batch_size = 20, verbose=2)
+
+### Evaluates neural network on test datasets and print the results
+
+model.evaluate(x_test1, y_test1, verbose=2)
+model.evaluate(x_test2, y_test2, verbose=2)
+```
 
