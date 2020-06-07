@@ -294,7 +294,7 @@ plt.show()
 
 which yields
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
 
 Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7' after the protein depleted in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
