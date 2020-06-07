@@ -325,11 +325,17 @@ which yields
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_3.png)
 
 
-### Overfitting in a network 
+### Overfitting (memorization) versus learning
+
+Why does the network confidently predict incorrect answers for the Snf7 dataset?  This is the effect of overfitting.
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_4.png)
 
 
+### Neural network learning does not equate to global minimization of the cost function
 
 
+### Neural networks, like any program, are not universal
 
 
 
