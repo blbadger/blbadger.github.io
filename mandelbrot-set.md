@@ -98,7 +98,7 @@ A little retrospection can convince us that there is a problem with how we compu
 		a_array[divergent_array] = 0 
 ```
 
-The colors are accurate now! The above code (with slightly larger x and y ranges) yeilds
+The colors are accurate now! The above code (with slightly larger x and y ranges) yields
 
 ![mandelbrot_set]({{https://blbadger.github.io}}fractals/mandelbrot_corrected.png)
 
@@ -120,7 +120,7 @@ What happens if we add a small amount $b$ to $a$?  Then we have $z = z^2 + a + b
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared.gif)
 
-In the other direction, $b=0 \to b = -2.5$ yeilds
+In the other direction, $b=0 \to b = -2.5$ yields
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared_reversed.gif)
 
@@ -145,7 +145,7 @@ so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual
 		z_array = z_array**2 + a_array + np.exp(3.1415j * (t/150))/3
 ```
 
-which yeilds
+which yields
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_swirl_0.3r.gif)
 
