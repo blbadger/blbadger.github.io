@@ -237,11 +237,11 @@ model.evaluate(x_test1, y_test1, verbose=2)
 model.evaluate(x_test2, y_test2, verbose=2)
 ```
 
-### The network recapitulates expert human image classification
+### The network mimics expert human image classification capability
 
 Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation globs of fluorescent protein in 'Snap29' cells.
 
-The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively, as follows:
+The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  This can be achieved as follows:
 
 ```python
 ### Creates a panel of images classified by the trained neural network.
@@ -299,10 +299,35 @@ which yields
 
 Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7' after the protein depleted in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
 
-It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %. 
+It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %, both slightly lower than my manual classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence is incorrect on the identity of many.
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_2.png)
+
+Each time a network is trained, there is variability in how effective the training is even with the same datasets as inputs.  Because of this, it is helpful to observe a network's performance over many training runs (each run starting with a naive network and ending with a trained one)  The statistical language R (with ggplot) can be used to make a box plot of the test accuracies achieved over many training runs for these datasets, once this data has been saved as text file. Here I use a csv file in the directory shown to compare the test accuracies of Snap29 compared to Snf7 datasets
+
+```R
+library(ggplot2)
+
+data1 = read.csv('~/Desktop/snf7_vs_snap29color_deep.csv')
+attach(data1)
+fix(data1)
+l <- ggplot(data1, aes(comparison, test_accuracy, fill=comparison))
+l + geom_boxplot(width=0.4) +
+    geom_jitter(alpha=0.5, position=position_jitter(0.1)) +
+    theme_bw(base_size=14) + 
+    ylim(50, 100) +
+    ylab('Test accuracy') +
+    xlab('Dataset')
+```
+
+which yields
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_3.png)
 
 
-### 
+### Overfitting in a network 
+
+
 
 
 
