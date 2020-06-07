@@ -174,7 +174,7 @@ Assigning the pair of
 
 Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching architectures or other fancy neural network models, in which case the more flexible functional Keras module shouldb be used.
 
-After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
+The input shape must match the dataset image size, and the output must be the same number of possible classifications.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons.  After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
 
 ```python
 model = tf.keras.models.Sequential([
@@ -195,6 +195,19 @@ model = tf.keras.models.Sequential([
     MaxPooling2D(),
     Conv2D(64, 3, padding='same', activation='relu'),
     MaxPooling2D(),
+    Flatten(),
+    Dense(512, activation='relu'),
+    Dense(2, activation='softmax')
+])
+```
+Which may be represented graphically as
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+
+For optimal test classification accuracy at the expense of longer training times, an extra dense layer of 50 neurons was added as follows:
+
+```python
+...
     Flatten(),
     Dense(512, activation='relu'),
     Dense(50, activation='relu'),
@@ -223,4 +236,75 @@ model.fit(x_train, y_train, epochs=9, batch_size = 20, verbose=2)
 model.evaluate(x_test1, y_test1, verbose=2)
 model.evaluate(x_test2, y_test2, verbose=2)
 ```
+
+### The network recapitulates expert human image classification
+
+Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation globs of fluorescent protein in 'Snap29' cells.
+
+The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively, as follows:
+
+```python
+### Creates a panel of images classified by the trained neural network.
+
+image_batch, label_batch = next(test_data_gen1)
+
+test_images, test_labels = image_batch, label_batch
+
+predictions = model.predict(test_images)
+
+def plot_image(i, predictions, true_label, img):
+    """ returns a test image with a predicted class, prediction
+    confidence, and true class labels that are color coded for accuracy.
+    """
+    prediction, true_label, img = predictions[i], true_label[i], img[i]
+    plt.grid(False)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(img)
+    predicted_label = np.argmax(predictions)
+    if prediction[0] >=0.5 and true_label[0]==1:
+        color = 'green'
+    elif prediction[0] <=0.5 and true_label[0]==0:
+        color = 'green'
+    else:
+        color = 'red'
+    plt.xlabel("{} % {}, {}".format(int(100*np.max(prediction)), 
+        'Snap29' if prediction[0]>=0.5 else 'Control', 
+        'Snap29' if true_label[0]==1. else 'Control'), color = color)
+
+### I am not sure why the num_cols and num_rows do not add up to the total figsize, 
+### but keep this in mind when planning for a new figure size and shape
+
+num_rows = 4
+num_cols = 3
+num_images = 24
+
+### Plot initialization
+
+plt.figure(figsize = (num_rows, num_cols))
+
+### Plot assembly and display
+
+for i in range(num_images):
+  plt.subplot(num_rows, 2*num_cols, i+1)
+  plot_image(i+1, predictions, test_labels, test_images)
+
+plt.show() 
+```
+
+which yields
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+
+
+Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7' after the protein depleted in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
+
+It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %. 
+
+
+### 
+
+
+
+
 
