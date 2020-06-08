@@ -393,7 +393,7 @@ As we have seen in the case for Snf7 dataset images, this conception is accurate
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-To see why this matters, imagine
+To see why this matters, imagine 
 
 ### Neural networks are not universal
 
@@ -421,7 +421,7 @@ $$
 {f \in \mathbf C^1(X, Y)}
 $$
 
-Using fundemental set theory, it can be shown that
+Using fundamental set theory, it can be shown that
 
 $$
 \lvert {f \in \mathbf C^1(X, Y)} \rvert << \lvert {f \in \mathbf C(X, Y)} \rvert << \lvert {f \in (X, Y)} \rvert
@@ -436,20 +436,20 @@ Could it be that a better neural network will be made in the future, and this wi
 The answer is no: no matter what program we use, we cannot solve most decision problems.  To see why, first note that any program, from a simple `print (Hello World!)` to a complicated neural network, is conveyed to a computer as a finite string of bits (a list of 1s and 0s).  Natural numbers are also defined by a finite string of bits and so we can establish an equivalence between finite programs and natural numbers.  The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite)
 
 $$
-{\mathtt finite \; \mathtt programs} \approx {\mathtt finite \; \mathtt string\; \mathtt of\; \mathtt bits} = \Bbb N 
+{\mathtt {finite} \; \mathtt {programs}} \approx {finite \; string\; of\; bits} = \Bbb N 
 $$
 
 The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite), so
 
 $$
-{\mathtt finite \; \mathtt programs} \approx \Bbb N \approx \Bbb Q
+{\mathtt {finite \; \mathtt {programs}} \approx \Bbb N \approx \Bbb Q
 $$
 
 Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there are infinite inputs for any given decision problem, this string of bits is infinite.  
 
 
 $$
-{\mathtt {decision} \; \mathtt {problems}} \approx {\mathtt {infinite} \; \mathtt {string}\; \mathtt {of}\; \mathtt {bits}} = {x \in (0, 1]}
+{decision\; problems} \approx {infinite \; string\; of\; bits} = {x \in (0, 1]}
 $$
 
 
@@ -457,7 +457,7 @@ As the size of the set of all numbers in $(0, 1]$ is equivalent to the size of t
 
 
 $$
-{\mathtt {decision} \; \mathtt {problems}} \approx \Bbb R
+{decision \; problems} \approx \Bbb R
 $$
 
 
@@ -465,14 +465,18 @@ and as the size of the set of all real numbers is uncountably infinite wheras th
 
 
 $$
-{\mathtt {decision} \; \mathtt {problems}} \approx \Bbb R >> \Bbb Q \approx {\mathtt {finite} \; \mathtt {programs}}
+{decision \; problems} \approx \Bbb R >> \Bbb Q \approx {\mathtt {finite} \; \mathtt {programs}}
 $$
 
 
-This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems.
+This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems.  
 
 
-### Neural networks are systems of dimension reduction: implications for the presence of adversarial negatives
+### Neural networks are systems of dimension reduction: implications for the presence of adversarial examples
+
+Neural networks, like any statistical learning procedure, are in the business of dimensional reduction.  This is because they take in inputs that are necessarily larger than outputs, which may seem counterintuitive if the inputs are small images and the outputs are choices between thousands of options.  Even then, dimensional reduction holds: to see this, suppose that each image were classified into its own category.  Then the network would not reduce dimension but the classification would be trivial: any program could do just as well by classifying any image to its own category.  In the process of assigning multiple inputs to the same category, dimensional reduction occurs.
+
+As seen for the nonlinear attractors [here](\clifford_attractor.md), changes in dimension are rarely smooth: small changes in inputs lead to large changes in attractor shape. This is important because it also applies to neural networds, and is evidenced by the existence of [adversarial negatives](https://arxiv.org/abs/1312.6199), images that are by eye indistinguishable from each other but are seen by a network to be completely different.  
 
 
 
