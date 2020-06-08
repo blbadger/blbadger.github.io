@@ -406,25 +406,25 @@ To see this, imagine that we were trying to use a neural network to approximate 
 Formally, we can define the set of all functions $f$ that map $x$ into $y$ ($f: X \to Y$):
 
 $$
-{f \in (X, Y)}
+\{f \in (X, Y)\}
 $$
 
 with the set of all continuous functions being
 
 $$
-{f \in \mathbf C(X, Y)}
+\{f \in \mathbf C(X, Y)\}
 $$
 
 and continuous, differentiable functions as
 
 $$
-{f \in \mathbf C^1(X, Y)}
+\{f \in \mathbf C^1(X, Y)\}
 $$
 
 Using fundamental set theory, it can be shown that
 
 $$
-\lvert {f \in \mathbf C^1(X, Y)} \rvert << \lvert {f \in \mathbf C(X, Y)} \rvert << \lvert {f \in (X, Y)} \rvert
+\lvert \{f \in \mathbf C^1(X, Y)\} \rvert << \lvert \{f \in \mathbf C(X, Y)\} \rvert << \lvert \{f \in (X, Y)\} \rvert
 $$
 
 in words, the size of the set of all continuous and differentiable functions is far smaller than the size of the set of all continuous functions, which is in turn far smaller than the set of all functions.  The usage of 'far smaller' does not quite do justice to the idea that each set is vanishingly smaller (really infinitely smaller) than the next.
@@ -436,20 +436,20 @@ Could it be that a better neural network will be made in the future, and this wi
 The answer is no: no matter what program we use, we cannot solve most decision problems.  To see why, first note that any program, from a simple `print (Hello World!)` to a complicated neural network, is conveyed to a computer as a finite string of bits (a list of 1s and 0s).  Natural numbers are also defined by a finite string of bits and so we can establish an equivalence between finite programs and natural numbers.  The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite)
 
 $$
-{\mathtt {finite} \; \mathtt {programs}} \approx {finite \; string\; of\; bits} = \Bbb N 
+\{\mathtt {finite} \; \mathtt {programs}\} \approx \{finite \; string\; of\; bits\} = \Bbb N 
 $$
 
 The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite), so
 
 $$
-{\mathtt {finite \; \mathtt {programs}} \approx \Bbb N \approx \Bbb Q
+\{\mathtt {finite} \; \mathtt {programs}\} \approx \Bbb N \approx \Bbb Q
 $$
 
 Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there are infinite inputs for any given decision problem, this string of bits is infinite.  
 
 
 $$
-{decision\; problems} \approx {infinite \; string\; of\; bits} = {x \in (0, 1]}
+\{decision\; problems\} \approx \{infinite \; string\; of\; bits\} = \{x \in (0, 1]\}
 $$
 
 
@@ -457,7 +457,7 @@ As the size of the set of all numbers in $(0, 1]$ is equivalent to the size of t
 
 
 $$
-{decision \; problems} \approx \Bbb R
+\{decision \; problems\} \approx \Bbb R
 $$
 
 
@@ -465,7 +465,7 @@ and as the size of the set of all real numbers is uncountably infinite wheras th
 
 
 $$
-{decision \; problems} \approx \Bbb R >> \Bbb Q \approx {\mathtt {finite} \; \mathtt {programs}}
+\{decision \; problems\} \approx \Bbb R >> \Bbb Q \approx \{\mathtt {finite} \; \mathtt {programs}\}
 $$
 
 
