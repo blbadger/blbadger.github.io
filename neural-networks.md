@@ -360,19 +360,110 @@ Overfitting is intuitively similar to memorization: both lead to an assimilation
 
 Thus the network overfits (memorizes) Snf7 images but is able to effectively differentiate Snap29 images.  This makes sense from the perspective of manual classification as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
 
-A slower learning process for generalizable learning is observed compared to that for memorization, but perhaps some other feature could be causing this delay in training accuracy rather than simply an 
-
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_6.png)
+A slower learning process for generalizable learning is observed compared to that which led to overfitting, but perhaps some other feature could be causing this delay in training accuracy.  The datasets used are noticeably different: Snap29 is in two colors whereas Snf7 is monocolor.  If a deeper network (with the extra layer of 50 dense neurons before the output layer) is trained on a monocolor version of the Snap29 or Snf7 datasets, the test accuracy achieved is nearly identical to what was found before,
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_5.png)
 
+And we see that this deeper network continues to confidently predict incorrect classifications for Snf7
 
-### Neural network learning does not equate to global minimization of the cost function
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_6.png)
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_7.png)
+
+Once again Snap29 training accuracy lags behind that of Snf7.
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_8.png)
+
+Even when the Snap29 and Snf7 datasets are matched in size, the sharp increase in training accuracy seen for Snf7 is seen once again, suggesting that this effect does not result from differences in dataset size.
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_9.png)
+
+To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture I used, I designed a network that mimics the groundbreaking AlexNet, and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poor for both datasets).  This suggests that the faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_10.png)
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
 
+### Learning is not global minimization of the cost function
+
+Neural networks learn by adjusting the weights and biases of the neurons in order to miminize a cost function, which is a continuous and differentiable representation of the accuracy of the output of the network. This is usually done with a variant on stochastic gradient descent, which involves calculating the gradient (direction of largest change) using a randomly chosen subset of images (which is why it is 'stochastic').  This is conceptually similar to rolling a ball representing the network down a surface representing the multidimensional weights and biases of the neurons.  The height of the ball represents the cost function, so the goal is to roll it to the lowest spot during training.  
+
+As we have seen in the case for Snf7 dataset images, this conception is accurate for increases in training accuracy but not not necessarily for general learning: reaching a global minimum for the cost function (100 % accuracy, corresponding to a cost function of less than 1E-4) led to severe overfitting and confident prediction of incorrect classifications.  This phenomenon of overfitting stemming from a global minimum in the cost function during training is not peculiar to this dataset either, as it has also been observed [elsewhere](http://proceedings.mlr.press/v38/choromanska15.pdf).  
+
+If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
+
+To see why this matters, imagine
 
 ### Neural networks are not universal
 
+An oft-quoted feature of neural networks is that they are universal, meaning that they can compute any function (see [here](https://www.sciencedirect.com/science/article/abs/pii/0893608090900056) for a proof of this).  A good geometrical explanation of this is found in [Neilsen](http://neuralnetworksanddeeplearning.com/).  Being that many everyday tasks can be thought of as some kind of function, and  as neural networks are very good at a wide range of tasks (playing chess, recognizing images, language processing etc.) it can be tempting to see them as universal panacea for any problem.  This view is mistaken, however, and to see why it is best to understand what exactly universality entails before exploring the limits of any program.
+
+There is an important qualification to the proof that neural networks can compute (more precisely, can arbitrarily approximate) any function: it only applies to continuous and differentiable functions.  This means that neural networks should be capable of approximating any smooth and connected function, at least in theory.  The first issue with this is whether or not a certain function is 'trainable', meaning whether or not a network is able to learn to approximate a function that is it theoretically capable of approximating.  Putting this aside, the need for differentiability and continuity brings a far larger qualification to the statement of universality.  
+
+To see this, imagine that we were trying to use a neural network to approximate an arbitrary function.  What are the chances of this function being continuous and differentiable?  Let's see how many functions belong to one of three categories: differentiable (and continuous, as differentiability implies continuity), continuous but not necessarily differentiable, or not necessarily continuous or differentiable.  Visually, differentiable functions are smooth with no sharp edges or squiggles and continuous functions may have sharp edges but must be connected.  
+
+Formally, we can define the set of all functions $f$ that map $x$ into $y$ ($f: X \to Y$):
+
+$$
+{f \in (X, Y)}
+$$
+
+with the set of all continuous functions being
+
+$$
+{f \in \mathbf C(X, Y)}
+$$
+
+and continuous, differentiable functions as
+
+$$
+{f \in \mathbf C^1(X, Y)}
+$$
+
+Using fundemental set theory, it can be shown that
+
+$$
+\lvert {f \in \mathbf C^1(X, Y)} \rvert << \lvert {f \in \mathbf C(X, Y)} \rvert << \lvert {f \in (X, Y)} \rvert
+$$
+
+in words, the size of the set of all continuous and differentiable functions is far smaller than the size of the set of all continuous functions, which is in turn far smaller than the set of all functions.  The usage of 'far smaller' does not quite do justice to the idea that each set is vanishingly smaller (really infinitely smaller) than the next.
+
+What does this mean? If we restrict ourselves to differentiable and continuous function then neural networks are indeed universal, but they are hardly so for all possible functions.  
+
+Could it be that a better neural network will be made in the future, and this will allow us to approximate nondifferentiable functions as well as differentiable ones?  Using more concrete terms, perhaps we will be able to engineer a neural network that is arbitrarily precise at decision problems (which is equivalent to classification) in the future.  This thinking can be used to represent the idea that although not perfect not, some sort of machine learning will be able to be arbitrarily good at decision making in the future.  If not neural networks then perhaps decision trees: can some sort of machine learning program get so good at classification that it can learn how to classify anything, to arbitrary precision?
+
+The answer is no: no matter what program we use, we cannot solve most decision problems.  To see why, first note that any program, from a simple `print (Hello World!)` to a complicated neural network, is conveyed to a computer as a finite string of bits (a list of 1s and 0s).  Natural numbers are also defined by a finite string of bits and so we can establish an equivalence between finite programs and natural numbers.  The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite)
+
+$$
+{\mathtt finite \; \mathtt programs} \approx {\mathtt finite \; \mathtt string\; \mathtt of\; \mathtt bits} = \Bbb N 
+$$
+
+The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite), so
+
+$$
+{\mathtt finite \; \mathtt programs} \approx \Bbb N \approx \Bbb Q
+$$
+
+Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there are infinite inputs for any given decision problem, this string of bits is infinite.  
+
+$$
+{\mathtt decision \; \mathtt problems} \approx {\mathtt infinite \; \mathtt string\; \mathtt of\; \mathtt bits} = {x \in (0, 1]}
+$$
+
+As the size of the set of all numbers in $(0, 1]$ is equivalent to the size of the set of all real numbers, 
+
+$$
+{\mathtt decision \; \mathtt problems} \approx \Bbb R
+$$
+
+and as the size of the set of all real numbers is uncountably infinite wheras the size of the set of all rational numbers is countably infinite,
+
+$$
+{\mathtt decision \; \mathtt problems} \approx \Bbb R >> \Bbb Q \approx {\mathtt finite \; \mathtt programs}
+$$
+
+This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems.
 
 
 ### Neural networks are systems of dimension reduction: implications for the presence of adversarial negatives
