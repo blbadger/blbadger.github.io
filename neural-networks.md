@@ -393,7 +393,6 @@ As we have seen in the case for Snf7 dataset images, this conception is accurate
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-To see why this matters, imagine 
 
 ### Neural networks are not universal
 
@@ -403,7 +402,7 @@ There is an important qualification to the proof that neural networks can comput
 
 To see this, imagine that we were trying to use a neural network to approximate an arbitrary function.  What are the chances of this function being continuous and differentiable?  Let's see how many functions belong to one of three categories: differentiable (and continuous, as differentiability implies continuity), continuous but not necessarily differentiable, or not necessarily continuous or differentiable.  Visually, differentiable functions are smooth with no sharp edges or squiggles and continuous functions may have sharp edges but must be connected.  
 
-Formally, we can define the set of all functions $f$ that map $x$ into $y$ ($f: X \to Y$):
+Formally, we can define the set of all functions $f$ that map $X$ into $Y$, $f: X \to Y$:
 
 $$
 \{f \in (X, Y)\}
@@ -436,7 +435,7 @@ Could it be that a better neural network will be made in the future, and this wi
 The answer is no: no matter what program we use, we cannot solve most decision problems.  To see why, first note that any program, from a simple `print (Hello World!)` to a complicated neural network, is conveyed to a computer as a finite string of bits (a list of 1s and 0s).  Natural numbers are also defined by a finite string of bits and so we can establish an equivalence between finite programs and natural numbers.  The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite)
 
 $$
-\{\mathtt {finite} \; \mathtt {programs}\} \approx \{finite \; string\; of\; bits\} = \Bbb N 
+\{\mathtt {finite} \; \mathtt {programs}\} \approx \{finite \; strings\; of\; bits\} = \Bbb N 
 $$
 
 The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite), so
@@ -449,7 +448,7 @@ Now let's examine the set of all possible decision problems.  We can restrict ou
 
 
 $$
-\{decision\; problems\} \approx \{infinite \; string\; of\; bits\} = \{x \in (0, 1]\}
+\{decision\; problems\} \approx \{infinite \; strings\; of\; bits\} = \{x \in (0, 1]\}
 $$
 
 
