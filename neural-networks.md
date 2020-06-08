@@ -447,21 +447,27 @@ $$
 
 Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there are infinite inputs for any given decision problem, this string of bits is infinite.  
 
+
 $$
-{\mathtt decision \; \mathtt problems} \approx {\mathtt infinite \; \mathtt string\; \mathtt of\; \mathtt bits} = {x \in (0, 1]}
+{\mathtt {decision} \; \mathtt {problems}} \approx {\mathtt {infinite} \; \mathtt {string}\; \mathtt {of}\; \mathtt {bits}} = {x \in (0, 1]}
 $$
+
 
 As the size of the set of all numbers in $(0, 1]$ is equivalent to the size of the set of all real numbers, 
 
+
 $$
-{\mathtt decision \; \mathtt problems} \approx \Bbb R
+{\mathtt {decision} \; \mathtt {problems}} \approx \Bbb R
 $$
+
 
 and as the size of the set of all real numbers is uncountably infinite wheras the size of the set of all rational numbers is countably infinite,
 
+
 $$
-{\mathtt decision \; \mathtt problems} \approx \Bbb R >> \Bbb Q \approx {\mathtt finite \; \mathtt programs}
+{\mathtt {decision} \; \mathtt {problems}} \approx \Bbb R >> \Bbb Q \approx {\mathtt {finite} \; \mathtt {programs}}
 $$
+
 
 This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems.
 
