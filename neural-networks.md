@@ -327,15 +327,63 @@ which yields
 
 ### Overfitting (memorization) versus learning
 
-Why does the network confidently predict incorrect answers for the Snf7 dataset?  This is the effect of overfitting.
+Why does the network confidently predict incorrect answers for the Snf7 dataset?  Let's see what happens during training.  One way to gain insight into neural network training is to compare the accuracy of training image classification at the end of each epoch.  This can be done in R as follows:
+
+```R
+library(ggplot2)
+data7 = read.csv('~/Desktop/snf_training_deep.csv')
+data6 = read.csv('~/Desktop/snap29_training_deep_2col.csv')
+
+q <- ggplot() +
+  # snf7
+  geom_smooth(data=data7, aes(epoch, training.accuracy), fill='blue', col='blue', alpha=0.2) +
+  geom_jitter(data=data7, aes(epoch, training.accuracy), col='blue', alpha=0.4, position=position_jitter(0.15)) +
+  # snap29
+  geom_smooth(data=data6, aes(epoch, training.accuracy), fill='red', col='red', alpha=0.2) +
+  geom_jitter(data=data6, aes(epoch, training.accuracy), col='red', alpha=0.4, position=position_jitter(0.15))
+
+q + 
+  theme_bw(base_size=14) +
+  ylab('Training accuracy') +
+  xlab('Epoch') +
+  ylim(50, 105) + 
+  scale_x_continuous(breaks = seq(1, 9, by = 1))
+```
+
+As backpropegation lowers the cost function, we would expect for the classification accuracy to increase for each epoch trained. For the network trained on the Snap29 dataset, this is indeed the case: the average training accuracy increases in each epoch and reaches ~94 % after the last epoch.  But something very different is observed for the network trained on Snf7 images: a rapid increase to 100 % training accuracy by the third epoch is observed, and subsequent epochs maintain the 100 % accuracy.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_4.png)
+
+The high training accuracy (100%) but low test accuracy (62 %) for the network on Snf7 dataset images is indicative of a phenomenon in statistical learning called overfitting.  Overfitting signifies that a statistical learning procedure is able to accurately fit the training data but is not generalizable such that it fails to achieve such accuracy on test datasets.  Statistical learning models (such as neural networks) with many degrees of freedom are somewhat prone to overfitting because small variations in the training data are able to be captured by the model regardless of whether or not they are important for true classification.  
+
+Overfitting is intuitively similar to memorization: both lead to an assimilation of information previously seen, without this assimilation necessarily helping the prediction power in the future.  One can memorize exactly how letters look in a serif font, but without the ability to generalize then one would be unable to indentify many letters in a sans-serif font.  The goal for statistical learning is to make predictions on hitherto unseen datasets, and thus to avoid memorization which does not guarantee this ability.
+
+Thus the network overfits (memorizes) Snf7 images but is able to effectively differentiate Snap29 images.  This makes sense from the perspective of manual classification as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
+
+A slower learning process for generalizable learning is observed compared to that for memorization, but perhaps some other feature could be causing this delay in training accuracy rather than simply an 
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_6.png)
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_5.png)
 
 
 ### Neural network learning does not equate to global minimization of the cost function
 
 
-### Neural networks, like any program, are not universal
+
+### Neural networks are not universal
+
+
+
+### Neural networks are systems of dimension reduction: implications for the presence of adversarial negatives
+
+
+
+
+
+
+
+
 
 
 
