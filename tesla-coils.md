@@ -21,7 +21,7 @@ current during capacitor discharge.
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_4.jpg)
 
-![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_7.jpg)
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_7.png)
 
 ### Low-res videos of the coil above
 
