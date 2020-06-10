@@ -39,13 +39,13 @@ A small proof for this is as follows: continuous real functions map the real lin
 $$
 \lvert \{f \in \mathbf C(X, Y)\} \rvert = \lvert \Bbb R ^ \Bbb Q \rvert = \lvert \Bbb R \rvert
 $$
-
+ 
+ 
 Whereas real functions map the real line onto any point in this line (not necessarily rational points), so
-
+ 
 $$
 \lvert \{f \in \mathbf (X, Y)\} \rvert = \lvert \Bbb R ^ \Bbb R \rvert
 $$
-
 
 Furthermore, as a consequence of Baire's theorem, it can be shown that the set of somewhere-differentiable functions $\{f \in \mathbf C^1(X, Y)\}$ is of the first category (negligably small, specifically a union of countably many nowhere dense subsets) in Banach space (see Hewitt & Stromberg's Real and Abstract analysis for a proof).  Thus
 
