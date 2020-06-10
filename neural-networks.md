@@ -2,7 +2,7 @@
 
 ### Preface: Neural networks are useful but not universal
 
-This sort of qualifier is usually placed near the end of work on a program or type of program, but I think it is important enough to include before the main body of work.  All we need to know here is that neural networks are effective codes of finite length used for decision problems.
+This sort of qualifier is usually placed near the end of work on a program or type of program, but I think it is important enough to include before the main body of work.  All we need to know here is that neural networks are effective codes of finite length used for decision problems.  This section may be skipped if one is already convinced that neural networks do not provide the solution to every problem.
 
 An oft-quoted feature of neural networks is that they are universal, meaning that they can compute any function (see [here](https://www.sciencedirect.com/science/article/abs/pii/0893608090900056) for a proof of this).  A good geometrical explanation of this is found in [Neilsen](http://neuralnetworksanddeeplearning.com/).  Being that many everyday tasks can be thought of as some kind of function, and  as neural networks are very good at a wide range of tasks (playing chess, recognizing images, language processing etc.) it can be tempting to see them as universal panacea for any problem.  This view is mistaken, however, and to see why it is best to understand what exactly universality entails before exploring the limits of any program.
 
@@ -10,7 +10,7 @@ There is an important qualification to the proof that neural networks can comput
 
 To see this, imagine that we were trying to use a neural network to approximate an arbitrary function.  What are the chances of this function being continuous and differentiable?  Let's see how many functions belong to one of three categories: differentiable (and continuous, as differentiability implies continuity), continuous but not necessarily differentiable, or not necessarily continuous or differentiable.  Visually, differentiable functions are smooth with no sharp edges or squiggles and continuous functions may have sharp edges but must be connected.  
 
-Formally, we can define the set of all functions $f$ that map $X$ into $Y$, $f: X \to Y$:
+Formally, we can define the set of all functions $f$ that map $X$ into $Y$, $f: X \to Y given X, Y \in \Bbb R$:
 
 $$
 \{f \in (X, Y)\}
@@ -22,21 +22,46 @@ $$
 \{f \in \mathbf C(X, Y)\}
 $$
 
-and continuous, differentiable functions as
+and the set of continuous and (somewhere) differentiable functions as
 
 $$
 \{f \in \mathbf C^1(X, Y)\}
 $$
 
-Using fundamental set theory, it can be shown that
+The cardinality of the set of all functions is equivalent to $ \Bbb R^{\Bbb R}$ and the cardinality of the set of all continuous functions is $\Bbb R$, so
+
+$$
+\lvert \{f \in \mathbf C(X, Y)\} \rvert = \lvert \Bbb R \rvert << \lvert \Bbb R^{\Bbb R} \rvert = \lvert \{f \in (X, Y)\} \rvert
+$$
+
+A small proof for this is as follows: continuous real functions map the real line onto the rationals and as the rationals are countable, the set of all continuous real functions is countable. In symbols,
+
+$$
+\lvert \{f \in \mathbf C(X, Y)\} \rvert = \lvert \Bbb R ^ \Bbb Q \rvert = \lvert \Bbb R \rvert
+$$
+
+Whereas real functions map the real line onto any point in this line (not necessarily rational points), so
+
+$$
+\lvert \{f \in \mathbf (X, Y)\} \rvert = \lvert \Bbb R ^ \Bbb R \rvert
+$$
+
+
+Furthermore, as a consequence of Baire's theorem, it can be shown that the set of somewhere-differentiable functions $\{f \in \mathbf C^1(X, Y)\}$ is of the first category (negligably small, specifically a union of countably many nowhere dense subsets) in Banach space (see Hewitt & Stromberg's Real and Abstract analysis for a proof).  Thus
+
+$$
+\lvert \{f \in \mathbf C^1(X, Y)\} \rvert << \lvert \{f \in \mathbf C(X, Y)\} \rvert
+$$
+
+and therefore
 
 $$
 \lvert \{f \in \mathbf C^1(X, Y)\} \rvert << \lvert \{f \in \mathbf C(X, Y)\} \rvert << \lvert \{f \in (X, Y)\} \rvert
 $$
 
-in words, the size of the set of all continuous and differentiable functions is far smaller than the size of the set of all continuous functions, which is in turn far smaller than the set of all functions.  The usage of 'far smaller' does not quite do justice to the idea that each set is vanishingly smaller (really infinitely smaller) than the next.
+Thus size of the set of all continuous and differentiable functions is far smaller than the size of the set of all continuous functions, which is in turn far smaller than the set of all functions.  The usage of 'far smaller' does not quite do justice to the idea that each set is vanishingly tiny compared to the next.
 
-What does this mean? If we restrict ourselves to differentiable and continuous function then neural networks are indeed universal, but they are hardly so for all possible functions.  
+What does this mean? If we restrict ourselves to differentiable and continuous function then neural networks are indeed universal, but they are hardly so for all possible functions because differentiable and continuous functions are a tiny subset of all functions.
 
 Could it be that a better neural network will be made in the future, and this will allow us to approximate nondifferentiable functions as well as differentiable ones?  Using more concrete terms, perhaps we will be able to engineer a neural network that is arbitrarily precise at decision problems (which is equivalent to classification) in the future.  This thinking can be used to represent the idea that although not perfect not, some sort of machine learning will be able to be arbitrarily good at decision making in the future.  If not neural networks then perhaps decision trees: can some sort of machine learning program get so good at classification that it can learn how to classify anything, to arbitrary precision?
 
