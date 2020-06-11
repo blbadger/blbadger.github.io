@@ -156,7 +156,7 @@ Let's see what happens to the basin of attraction and the attractor itself when 
 
 The attractor is visible as long as it remains in the basin of attraction.  This intuitively makes sense: there is nothing special about the original points compared to subsequent iterations.  If points in an attractor were drawn to a region that then blew up to infinity, the attractor would be no more no matter where the starting point was located. Focusing on the transition from smooth to fractal form in the basin of attraction, we can see this coincides with the disappearence of the attractor itself:
 
-![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1.41_to_1.5.gif)
+![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1.4_to_1.49.gif)
 
 At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
 
