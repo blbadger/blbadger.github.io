@@ -14,9 +14,10 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
 
+
 ### [Henon map](/henon-map.md)
 
-![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
+![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1.41_to_1.45.gif)
 
 
 ### [Grid map](/grid-map.md)
