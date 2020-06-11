@@ -1,19 +1,50 @@
 ## The Henon map
 
-The Henon map equation describes a simplified Poincare section of the Lorenz attractor:
+Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space
+
+Henon investigated the following discrete system ([here](https://projecteuclid.org/euclid.cmp/1103900150)), which is now referred to as the Henon map:
 
 $$x_{n+1} = 1-ax_n^2 + y \\
-y_{n+1} = bx_n \tag{2}$$
+y_{n+1} = bx_n \tag{1}$$
 
 When
 
 $$a = 1.4 \\
-b = 0.3$$
+b = 0.3 \\
+x_0, y_0 = 0, 0
+$$
 
-The following map is produced:
+Successive iterations jump around unpredictably but are attracted to a distinctive curved shape.  For the first thousand iterations:
+![map]({{https://blbadger.github.io}}/henon_map/henon_dev.gif)
+
+After many iterations, the following map is produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
-This system (2) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
+
+### The Henon map is a strange (fractal) attractor
+
+For certain starting values $x_0, y_0$, (1) with a=1.4 and b=0.3 does not head towards infinity but is instead attracted to the region shown above.  This shape is called an attractor because regardless of where $x_0, y_0$ is placed, if subsequent iterations do not diverge then they are drawn to the shape above.  
+
+Let's examine this attractor.  If we increase magnification on the top line in the center, we find that it is not a line at all!  With more and more magnification (and more iterations of (1)), what at first appears to be
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_zoom1.png)
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_zoom2.png)
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_zoom3.png)
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_zoom4.png)
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_zoom.gif)
+
+
+### The boundary of the basin of attraction for the Henon map 
+
+
+
+### A semicontinuous iteration of the Henon map reveals period doubling 
+
+This map (1) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
 $$
 \cfrac{dx}{dt} = 1-ax^2 + y \\
 \cfrac{dy}{dt} = bx_n\\
@@ -62,8 +93,6 @@ plt.show()
 ```
 
 
-### A semicontinuous iteration of the Henon map reveals period doubling 
-
 If iterate (3) with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
@@ -76,5 +105,9 @@ As this system is being iterated semicontinuously, we can observe the vectorfiel
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
-Why is this?  The henon map has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity). The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.
+Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity). The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.
+
+### Pendulum map from the Henon attractor
+
+This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the pendulum map, explained [here](/pendulum-map.md).
 
