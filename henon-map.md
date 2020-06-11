@@ -150,6 +150,14 @@ plt.savefig('{}.png'.format(i), dpi=300)
 plt.close()
 ```
 
+Let's see what happens to the basin of attraction and the attractor itself when $a$ is increased from $1$ to $1.48$ (constant  $b=0.3$):
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1_to_1.48.gif)
+
+The attractor is visible as long as it remains in the basin of attraction.  This intuitively makes sense: there is nothing special about the original points compared to subsequent iterations.  If points in an attractor were drawn to a region that then blew up to infinity, the attractor would be no more no matter where the starting point was located. Focusing on the transition from smooth to fractal form in the basin of attraction, we can see this coincides with the disappearence of the attractor itself:
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1.41_to_1.5.gif)
+
 At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
 
 ```python
@@ -184,7 +192,8 @@ for t in range(300):
 	plt.savefig('{}.png'.format(t), dpi=300)
 	plt.close()
 ```
-Increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541) we have
+
+When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541) we have
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
 ### A semicontinuous iteration of the Henon map reveals period doubling 
@@ -237,7 +246,6 @@ plt.axis('on')
 plt.show()
 ```
 
-
 If iterate (3) with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
@@ -255,4 +263,6 @@ Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transi
 ### Pendulum map from the Henon attractor
 
 This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the pendulum map, explained [here](/pendulum-map.md).
+
+
 
