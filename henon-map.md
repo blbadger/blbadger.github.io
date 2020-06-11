@@ -25,7 +25,7 @@ After many iterations, the following map is produced:
 
 For certain starting values $x_0, y_0$, (1) with a=1.4 and b=0.3 does not head towards infinity but is instead attracted to the region shown above.  This shape is called an attractor because regardless of where $x_0, y_0$ is placed, if subsequent iterations do not diverge then they are drawn to the shape above.  
 
-Let's examine this attractor.  If we increase magnification on the top line in the center, we find that it is not a line at all!  With more and more magnification (and more iterations of (1)), what at first appears to be
+Let's examine this attractor.  If we increase magnification on the top line in the center, we find that it is not a line at all!  With successive increases in magnification (and more iterations of (1)), we can see that each top line is actually many lines close together, in a self-similar pattern.  This is indicative of a fractal shape called the Cantor set.
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_zoom1.png)
 
@@ -35,8 +35,10 @@ Let's examine this attractor.  If we increase magnification on the top line in t
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_zoom4.png)
 
+As a video,
 ![map]({{https://blbadger.github.io}}/henon_map/henon_zoom.gif)
 
+In general terms, the Henon map is a fractal because it looks similar at widely different scales.  
 
 ### The boundary of the basin of attraction for the Henon map 
 
