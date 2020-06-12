@@ -193,7 +193,8 @@ for t in range(300):
 	plt.close()
 ```
 
-When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541) we have
+When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541)$, we have
+
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
 ### A semicontinuous iteration of the Henon map reveals period doubling 
