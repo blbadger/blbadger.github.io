@@ -238,12 +238,13 @@ Increasing the accuracy of the initial measurement would be expected to increase
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
 
-Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.
+Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.  Notice that for certain values of $r$ the number of iterations until divergence actually increases with a decrease in $\Delta x_0$: this means that paradoxically increased accuracy can lead to decreased prediction accuracy!  
 
+In the real world, no measurement is perfect but is merely an estimation: the gravitational constant is not 9.8 meters per second squared but simply close to this value.  Necessarily imperfect measurements mean that not only would one have to take infinitely long to predict something at arbitrarily (infinitely) far in the future, but beyond a certain point our predictions will be hopelessly inaccurate.
 
 ### Aperiodicity implies sensitivity to initial conditions
 
-A fundamental feature of chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  
+As we have just seen, small changes in the starting values of the logistic map lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  
 
 There is nothing special about our initial value relative to the others obtained by iterating an equation.  So any value that is iterated from (1) can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value $x_n$ to produce $x_n^*$
 
