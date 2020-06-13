@@ -2,7 +2,7 @@
 
 Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space
 
-Henon investigated the following discrete system ([here](https://projecteuclid.org/euclid.cmp/1103900150)), which is now referred to as the Henon map:
+Henon investigated the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
 
 $$x_{n+1} = 1-ax_n^2 + y \\
 y_{n+1} = bx_n \tag{1}$$
@@ -95,11 +95,12 @@ In general terms, the Henon map is a fractal because it looks similar at widely 
 
 ### The boundary of the basin of attraction for the Henon map 
 
-Some experimentation can convince us that not all starting points head towards the attractor upon successive iterations of (1) with $a=1.4$ and $b=0.3$: instead, some head towards positive or negative infinity!  The collection of points that do not diverge (head towards infinity) for a given dynamical system is called the basin of attraction.  Basins of attraction may be fractal or else smooth as shown by Yorke [here](http://yorke.umd.edu/Yorke_papers_most_cited_and_post2000/1985_05_McDonald_GOY_Fractal_basin_boundaries.pdf).  Does the Henon map (with $a=1.4, b=0.3$) have a smooth or fractal basin?
+Some experimentation can convince us that not all starting points head towards the attractor upon successive iterations of (1) with $a=1.4$ and $b=0.3$: instead, some head towards positive or negative infinity!  The collection of points that do not diverge (head towards infinity) for a given dynamical system is called the basin of attraction.  Basins of attraction may be fractal or else smooth as shown by [Yorke](https://projecteuclid.org/download/pdf_1/euclid.cmp/1104248191).  Does the Henon map (with $a=1.4, b=0.3$) have a smooth or fractal basin?
 
-To find out, let's define a function
+To find out, let's import the necessary libraires and define a function `henon_boundary` as follows
 
 ```python
+#! python3
 # import third-party libraries
 import numpy as np 
 import matplotlib.pyplot as plt 
@@ -107,6 +108,15 @@ plt.style.use('dark_background')
 import copy
 
 def henon_boundary(max_iterations, a, b):
+	''' A function to show the basin of attraction for
+	the Henon map.  Takes in the desired number of maximum
+	iterations and the a and b values for the Henon equation,
+	returns an array of the number of iterations until divergence
+	'''
+```
+Now we can initialize the size of the image (in pixels) we want to make by specifying values for variables `x_range` and `y_range`. A list of points for each variable is made over this range, and x- and y- arrays (`array[0]` and `array[1]`) are formed using the `np.meshgrid` class.  This array will store the values of each point as (1) is iterated.  Next we need an array to store the number of iterations until divergence, which can be accomplished (not particularly efficiently) by making an array of 0s in the same shape as the `array` and then adding the maximum iteration number to each array element.
+
+```python
 	x_range = 2000
 	y_range = 2000
 
@@ -121,14 +131,16 @@ def henon_boundary(max_iterations, a, b):
 	for i in iterations_until_divergence:
 		for j in i:
 			j += max_iterations
+```
+Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  Diverging elements of x or y arrays are then assigned as 0 to prevent them from diverging again in the future (as long as the point (0, 0) does not diverge in the future).
 
+```python
 	for k in range(max_iterations):
 		array_copied = copy.deepcopy(array[0]) # copy array to prevent premature modification of x array
 
 		# henon map applied to array 
 		array[0] = 1 - a * array[0]**2 + array[1]
 		array[1] = b * array_copied
-
 
 		r = (array[0]**2 + array[1]**2)**0.5
 		diverging = r > 10
@@ -141,12 +153,13 @@ def henon_boundary(max_iterations, a, b):
 	return iterations_until_divergence[0]
 ```
 
-And now this may be plotted.
+And now this may be plotted.  To overlay the henon map with the attractor basin, the basin map must be scaled appropriately using the kwarg `extent`.
 
 ```python
-plt.imshow(henon_boundary(70 + 2*t, a=0.2, b=-1.1), extent=[-2, 2, -2, 2], cmap='twilight_shifted', alpha=1)
+plt.plot(X, Y, ',', color='white', alpha = 0.8, markersize=0.3)
+plt.imshow(henon_boundary(70, a=0.2, b=-0.909 - t/6000), extent=[-5, 5, -5, 5], cmap='twilight_shifted', alpha=1)
 plt.axis('off')
-plt.savefig('{}.png'.format(i), dpi=300)
+plt.savefig(Henon_boundary.png', dpi=300)
 plt.close()
 ```
 
@@ -158,44 +171,7 @@ The attractor is visible as long as it remains in the basin of attraction.  This
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_1.41_to_1.45.gif)
 
-At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
-
-```python
-def henon_map(max_iterations, a, b, x_range, y_range):
-	xl = -5/(2**(t/15)) + 0.459281
-	xr = 5/(2**(t/15)) + 0.459281
-	yl = 5/(2**(t/15)) -0.505541
-	yr = -5/(2**(t/15)) -0.505541
-
-	x_list = np.arange(xl, xr, (xr - xl)/x_range)
-	y_list = np.arange(yl, yr, -(yl - yr)/y_range)
-	array = np.meshgrid(x_list, y_list)
-```
-Now we can plot the images produced (adjusting the `extent` variable if the correct scale labels are desired) in a for loop.  I ran into a difficulty here that I could not completely debug: the `diverging` array in the `henon_map()` function occasionally experienced an off-by-one error in indexing: if the `array[0]` dimensions are 2000x2000, the `diverging` array would become 2001x2001 or 2002x2002 etc.  A try/except workaround is shown below that is quick and effective but does not really solve the fundamental problem.
-
-```python
-x_range = 2005
-y_range = 2005
-for t in range(300):
-	# There is a strange off-by-one error in making the diverging array (such that it is one larger than it should be)
-	# To address this, the original array is enlarged until the index error no longer occurs
-	while True:
-		end = True
-		try: plt.imshow(henon_map(70 + t, a=0.2, b=-1.1, x_range=x_range, y_range = y_range), extent=[-2/(2**(t/15)) + 0.459281, 2/(2**(t/15))+ 0.459281, -2/(2**(t/15))-0.505541,2/(2**(t/15)) -0.505541], cmap='twilight_shifted', alpha=1)
-		except IndexError:
-			x_range += 1
-			y_range += 1
-			end = False
-		if end: break
-
-	plt.axis('off')
-	plt.savefig('{}.png'.format(t), dpi=300)
-	plt.close()
-```
-
-When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541)$, we have
-
-![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
+This abrupt change between smooth and fractal attractor basin shape is called basin metamorphosis.
 
 ### A semicontinuous iteration of the Henon map reveals period doubling 
 
@@ -257,13 +233,75 @@ As this system is being iterated semicontinuously, we can observe the vectorfiel
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver2.png)
 
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
+![map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
 Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity). The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.
 
+
 ### Pendulum map from the Henon attractor
 
-This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the pendulum map, explained [here](/pendulum-map.md).
+This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
+
+Setting $a=0.2, b=-0.99994$ and $x_0, y_0 = -1.5, 1.5$ we have
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_spiral.png)
+
+The semicontinuous pendulum waves form as a spiral trajectory unwinds with increasing $\Delta t$.  Does this Henon map form the same way?  Let's find out by plotting (1) going from $b \approx 0.9 \to b \approx 1.05$, including the attractor basin.
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_b0.9_to_1.1.gif)
+
+
+Similarly, at $a=0.2, b=0.999448$ and $x_0, y_0 = 0, 0$, there are two pendulum-like maps
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_spiral2.png)
+
+which form as spirals unwind before the attractor basin collapses from $b=0.95 \to b\approx 1.05$:
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_double_0.95_to_1.1.gif)
+
+
+Thus the waves of the henon map form in a similar fashion to those seen in the pendulum phase space.  Unlike the case for $a=1.4, b=0.3$, the basin of attraction is a fractal while a stable attractor remains.  Notice that the fractal edge of the basin of attraction extends outward when the attractor remains (as for the spiral maps) but extends inward into the attractor space in the region of $a=1.4, b=0.3$.
+
+### Fractal zoom on a henon map divergence
+
+At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
+
+```python
+def henon_map(max_iterations, a, b, x_range, y_range):
+	xl = -5/(2**(t/15)) + 0.459281
+	xr = 5/(2**(t/15)) + 0.459281
+	yl = 5/(2**(t/15)) -0.505541
+	yr = -5/(2**(t/15)) -0.505541
+
+	x_list = np.arange(xl, xr, (xr - xl)/x_range)
+	y_list = np.arange(yl, yr, -(yl - yr)/y_range)
+	array = np.meshgrid(x_list, y_list)
+```
+Now we can plot the images produced (adjusting the `extent` variable if the correct scale labels are desired) in a for loop.  I ran into a difficulty here that I could not completely debug: the `diverging` array in the `henon_map()` function occasionally experienced an off-by-one error in indexing: if the `array[0]` dimensions are 2000x2000, the `diverging` array would become 2001x2001 or 2002x2002 etc.  A try/except workaround is shown below that is quick and effective but does not really solve the fundamental problem.
+
+```python
+x_range = 2005
+y_range = 2005
+for t in range(300):
+	# There is a strange off-by-one error in making the diverging array (such that it is one larger than it should be)
+	# To address this, the original array is enlarged until the index error no longer occurs
+	while True:
+		end = True
+		try: plt.imshow(henon_map(70 + t, a=0.2, b=-1.1, x_range=x_range, y_range = y_range), extent=[-2/(2**(t/15)) + 0.459281, 2/(2**(t/15))+ 0.459281, -2/(2**(t/15))-0.505541,2/(2**(t/15)) -0.505541], cmap='twilight_shifted', alpha=1)
+		except IndexError:
+			x_range += 1
+			y_range += 1
+			end = False
+		if end: break
+
+	plt.axis('off')
+	plt.savefig('{}.png'.format(t), dpi=300)
+	plt.close()
+```
+
+When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541)$, we have
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
 
 
