@@ -73,7 +73,7 @@ With increases in $\Delta t$, the map's fractal dimension increases. It is not i
 
 At $\Delta t = 18$, the trajectory is indistinguisheable from random walk, which is often modelled mathematically by a system called a ([Weiner process](https://en.wikipedia.org/wiki/Brownian_motion)).  This is not peculiar to the equation system (1) but is a feature of many nonlinear systems (see the logistic attractor or Clifford attractor pages) that are iterated discontinuously.  
 
-Why is this important?  It means that real observations that are normally ascribed to a stochastic (usually linear) model are equally ascribable deterministic nonlinear equation systems.  And this is important because once we have perfomed an inversion with respect to what can be ascribed to stochastic versus deterministic events, we can invert the reasoning on what is insignificant data ('noise') versus what is significant ('signal').  
+Why is this important?  It means that real observations that are normally ascribed to a stochastic (usually linear) model are equally ascribable deterministic nonlinear equation systems.  And this is important because once we have perfomed an inversion with respect to what can be ascribed to stochastic versus deterministic events, we can invert the reasoning on what is insignificant data ('noise') versus what is significant ('signal').  What we normally think of as signal may actually be far less importat to understanding an underlying physical process than what we normally think of as insignificant noise.
 
 
 
