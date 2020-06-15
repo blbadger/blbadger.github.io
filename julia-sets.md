@@ -266,7 +266,7 @@ If $a = 0.75$, the (2) leads to a different map with similar qualitative feature
 
 We can learn a few things from these maps.  The first is that non-differentiable regions (angular places) of the set experience a transition from a finite to an infinite number.  This means that the maps go from mostly smooth with a few sharp angles to being entirely composed of sharp bends and twists, which is a transition from differentiability most places to nowhere-differentiability.
 
-Another thing we can learn is that there are abrupt transitions between sets with connected areas and disconnected dusts.  This is explored more fully in the [Mandelbrot set](\mandelbrot-set.md), but just from these videos we can see that such changes are extremely unpredictable.
+Another thing we can learn is that there are abrupt transitions between sets with connected areas and disconnected dusts.  This is explored more fully in the [Mandelbrot set](/mandelbrot-set.md), but just from these videos we can see that such changes are extremely unpredictable.
 
 
 
