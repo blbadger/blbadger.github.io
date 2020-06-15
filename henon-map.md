@@ -267,7 +267,7 @@ Similarly, at $a=0.2, b=0.999448$ and $x_0, y_0 = 0, 0$, there are two pendulum-
 
 which form as spirals unwind before the attractor basin collapses from $b=0.95 \to b\approx 1.05$:
 
-![map]({{https://blbadger.github.io}}/henon_map/henon_double_0.95_to_1.1.gif)
+![map]({{https://blbadger.github.io}}/henon_map/henon_double_b0.95_to_1.1.gif)
 
 
 Thus the waves of the henon map form in a similar fashion to those seen in the pendulum phase space.  Unlike the case for $a=1.4, b=0.3$, the basin of attraction is a fractal while a stable attractor remains.  Notice that the fractal edge of the basin of attraction extends outward when the attractor remains (as for the spiral maps) but extends inward into the attractor space in the region of $a=1.4, b=0.3$.
