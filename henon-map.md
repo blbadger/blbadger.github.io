@@ -132,7 +132,14 @@ Now we can initialize the size of the image (in pixels) we want to make by speci
 		for j in i:
 			j += max_iterations
 ```
-Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  Diverging elements of x or y arrays are then assigned as 0 to prevent them from diverging again in the future (as long as the point (0, 0) does not diverge in the future).
+In an effort to prevent explosion of values to infinity, we will run into the possibility that some values can diverge more than once.  To prevent this, we can make a boolean array `not_alread_diverged` in which every element is set to `True` (because nothing has diverged yet).
+
+```python
+	# make an array with all elements set to 'True'
+	not_already_diverged = array[0] < 1000
+```
+
+Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  By using bitwise and, we make a new array `diverging_now` that checks whether divergence has already happened or not, and assigns `True` only to the diverging values that have not. The indicies of `iterations_until_divergence` that are currently diverging are assigned to the iteration number `k`, and the `not_already_diverged` array is updated. Finally, diverging elements of x or y arrays are then assigned as 0 to prevent them from exploding to infinity. 
 
 ```python
 	for k in range(max_iterations):
@@ -142,11 +149,14 @@ Now we iterate over the `array` to find when each position diverges towards infi
 		array[0] = 1 - a * array[0]**2 + array[1]
 		array[1] = b * array_copied
 
+		# note which array elements are diverging but have not already diverged 
 		r = (array[0]**2 + array[1]**2)**0.5
-		diverging = r > 10
-		iterations_until_divergence[0][diverging] = k
+		diverging = r > 10 
+		diverging_now = diverging & not_already_diverged
+		iterations_until_divergence[0][diverging_now] = k
+		not_already_diverged = np.invert(diverging_now) & not_already_diverged
 
-		# prevent future divergence
+		# prevent explosion to infinity
 		array[0][diverging] = 0
 		array[1][diverging] = 0
 
@@ -268,10 +278,10 @@ At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a p
 
 ```python
 def henon_map(max_iterations, a, b, x_range, y_range):
-	xl = -5/(2**(t/15)) + 0.459281
-	xr = 5/(2**(t/15)) + 0.459281
-	yl = 5/(2**(t/15)) -0.505541
-	yr = -5/(2**(t/15)) -0.505541
+	xl = -5/(2**(t/15)) + 0.4564
+	xr = 5/(2**(t/15)) + 0.4564
+	yl = 5/(2**(t/15)) - 0.50202
+	yr = -5/(2**(t/15)) - 0.50202
 
 	x_list = np.arange(xl, xr, (xr - xl)/x_range)
 	y_list = np.arange(yl, yr, -(yl - yr)/y_range)
@@ -287,7 +297,7 @@ for t in range(300):
 	# To address this, the original array is enlarged until the index error no longer occurs
 	while True:
 		end = True
-		try: plt.imshow(henon_map(70 + t, a=0.2, b=-1.1, x_range=x_range, y_range = y_range), extent=[-2/(2**(t/15)) + 0.459281, 2/(2**(t/15))+ 0.459281, -2/(2**(t/15))-0.505541,2/(2**(t/15)) -0.505541], cmap='twilight_shifted', alpha=1)
+		try: plt.imshow(henon_map(70 + t, a=0.2, b=-1.1, x_range=x_range, y_range = y_range), extent=[-2/(2**(t/15)) + 0.4564, 2/(2**(t/15))+ 0.4564, -2/(2**(t/15))-0.50202,2/(2**(t/15)) -0.50202], cmap='twilight_shifted', alpha=1)
 		except IndexError:
 			x_range += 1
 			y_range += 1
@@ -299,7 +309,7 @@ for t in range(300):
 	plt.close()
 ```
 
-When $a=0.2, b=1.1$, increasing the scale by a factor of $2^7$ around the point $(x, y) = (0.459281, -0.505541)$, we have
+When $a=0.2, b=1.1$, increasing the scale by a factor of $2^20$ (more than one million) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
