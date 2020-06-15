@@ -258,7 +258,8 @@ $$
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_1_to_4.gif)
 
 
-If $a = 0.75$, the same increase in exponent leads to
+If $a = 0.75$, the (2) leads to a different map with similar qualitative features:
+
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_0.75.gif)
 
