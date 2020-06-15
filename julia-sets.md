@@ -89,7 +89,7 @@ Now we can plot the image!
 
 The resolution settings (determined by h_range and w_range) are not very high in the image above because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
 
-Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above:
+Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere.  
 
 ```python
 import numpy as np 
@@ -105,9 +105,11 @@ def julia_set(h_range, w_range, max_iterations):
 	z_array = x + y*1j
 	a = -0.744 + 0.148j
 	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
+	
+	not_already_diverged = iterations_until_divergence < 10000
 ```
 
-Instead of examining each element of ```z_array``` individually, we can use a single loop to iterate (1) as follows:
+Instead of examining each element of `z_array` individually, we can use a single loop to iterate (1) as follows:
  
  ```python
 	for i in range(max_iterations):
@@ -116,16 +118,21 @@ Instead of examining each element of ```z_array``` individually, we can use a si
 
 In this loop, we can check if any element of ```z_array``` has diverged,
 $|z| > 2, z(z^* ) > 2^2 = 4$
-and make a boolean array, with a `True` for each position in `z_array` that has diverged.  Then we add the iteration number to our `iterations_till_divergence` array if that position has diverged, as noted in our `divergent_array` boolean array. 
+and make a boolean array, `diverging` is made, which contains a `True` for each position in `z_array` that is diverging at that iteration. To prevent values from diverging more than once (as the `z_array` is reset to 0 for diverging elements), we make another boolean array `diverging_now` by taking all elements of positions that are diverging but have not already diverged (denoted by boolean values in the `not_already_diverged` array).  Values of `iterations_till_divergence` that are diverging are assigned to the iteration `i`, and the `not_already_diverging` boolean array is updated.
 
 ```python
 		z_size_array = z_array * np.conj(z_array)
-		divergent_array = z_size_array > 4
-
-		iterations_till_divergence[divergent_array] = i
+		diverging = z_size_array > 4
+		
+		diverging_now = diverging & not_already_diverged
+		iterations_till_divergence[diverging_now] = i
+		
+		not_already_diverged = np.invert(diverging_now) & not_already_diverged
  ```
 
-If a position has a magnitude greater than 2, we can set its to be 0 to prevent that element from going to infinity by assigning each position of the `z_array` that has a `True` value for the `divergent_array` to be 0.  Finally the array of the number of iterations at each position is returned and an image is made, 
+If a position has a magnitude greater than 2, we can set its to be 0 to try to prevent that element from going to infinity by assigning each position of the `z_array` that has a `True` value for the `divergent_array` to be 0 (although if zero diverges then this position will go to inifity anyways).  Divergence may throw an exception but not slow or stop this program.
+
+Finally the array of the number of iterations at each position is returned and an image is made 
 
 ```python
 		z_array[divergent_array] = 0 
@@ -147,12 +154,10 @@ This is much faster: it takes less than a second for my computer to make the low
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
 
-There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  
+There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  We can make a video of the changes as we increment from $a=-0.29609091 + 0.62491i \to a = -0.20509091 + 0.71591i$ (how to do this is shown below)
 
-![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged1.png)
-![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged2.png)
-![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged3.png)
-![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged4.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged_a.gif)
+
 
 ### Julia sets are fractals
 
@@ -231,7 +236,7 @@ The bounded line stays irregular as we zoom in (with an increased `max_iteration
 
 The appearance of more diverged area (ie the purple 'river') in the zoom above suggests that this particular Julia set ($a = -0.29609091 + 0.62491i$) contains values that eventually diverge, but do so very slowly.  Which values are these?  To see this, let's see what happens when we go from 10 to 2500 maximum iterations:
 
-![julia set1]({{https://blbadger.github.io}}fractals/julia_set_iterations.gif)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_iterations.gif)
 
 There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of points that eventually tend towards infinity if the iteration number is high enough.  
 
