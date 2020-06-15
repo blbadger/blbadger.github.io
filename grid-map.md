@@ -42,6 +42,8 @@ Systems of ordinary differential equations have one independent variable: time. 
 
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/grid_map_intersection.png)
 
+### The grid map with larger $\Delta t$ values is indistinguisheable from a random walk browninan trajectory
+
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
 $\Delta t = 0.05$
@@ -68,3 +70,10 @@ and still remains extremely sensitive to inital values ($x_0 = 1$ in red, $x_0 =
 
 
 With increases in $\Delta t$, the map's fractal dimension increases. It is not impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.
+
+At $\Delta t = 18$, the trajectory is indistinguisheable from random walk, which is often modelled mathematically by a system called a ([Weiner process](https://en.wikipedia.org/wiki/Brownian_motion)).  This is not peculiar to the equation system (1) but is a feature of many nonlinear systems (see the logistic attractor or Clifford attractor pages) that are iterated discontinuously.  
+
+Why is this important?  It means that real observations that are normally ascribed to a stochastic (usually linear) model are equally ascribable deterministic nonlinear equation systems.  And this is important because once we have perfomed an inversion with respect to what can be ascribed to stochastic versus deterministic events, we can invert the reasoning on what is insignificant data ('noise') versus what is significant ('signal').  
+
+
+
