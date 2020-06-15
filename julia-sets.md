@@ -146,15 +146,22 @@ plt.show()
 plt.close()
 ```
 
-which yeilds
+which yeilds for $a = -0.744 + 0.148i$:
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set2.png)
 
-This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using `cmap='twilight'`, we have
+This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using `cmap='twilight'`, and scaling the image by using the kwarg `extent`.
 
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+```python
+plt.imshow(julia_set(2000, 2000, 200), cmap='twilight_shifted', extend=[-1.4, 1.4, -1.4, 1.4])
+plt.axis('on')
+plt.show()
+plt.close()
+```
 
-There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  We can make a video of the changes as we increment from $a=-0.29609091 + 0.62491i \to a = -0.20509091 + 0.71591i$ (how to do this is shown below)
+![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted_scaled.png)
+
+There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  We can make a video of the changes as we increment from $a=-0.29609091 + 0.62491i \to a = -0.20509091 + 0.71591i$ (how to do this is shown below) at the same scale as shown above.
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged_a.gif)
 
@@ -238,7 +245,33 @@ The appearance of more diverged area (ie the purple 'river') in the zoom above s
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_iterations.gif)
 
-There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of points that eventually tend towards infinity if the iteration number is high enough.  
+There is more and more area that diverges with an increasing number of maximum iterations.  What appears to be a solid area of no divergence at a small number of maximum iterations is revealed to be a mosaic of unconnected points, of area 0.
+
+### Discontinuous transition from linear to nonlinear complex maps
+
+Take the familiar example where $a = -0.744 + 0.148i$, but now let's see what happens when we move from 
+$$
+f(x) = x^1 + a \to \\
+f(x) = x^4 + a \tag{2}
+$$
+
+![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_1_to_4.gif)
+
+
+If $a = 0.75$, the same increase in exponent leads to
+
+![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_0.75.gif)
+
+
+We can learn a few things from these maps.  The first is that non-differentiable regions (angular places) of the set experience a transition from a finite to an infinite number.  This means that the maps go from mostly smooth with a few sharp angles to being entirely composed of sharp bends and twists, which is a transition from differentiability most places to nowhere-differentiability.
+
+Another thing we can learn is that there are abrupt transitions between sets with connected areas and disconnected dusts.  This is explored more fully in the [Mandelbrot set](\mandelbrot-set.md), but just from these videos we can see that such changes are extremely unpredictable.
+
+
+
+
+
+
 
 
 
