@@ -98,10 +98,18 @@ A little retrospection can convince us that there is a problem with how we compu
 		a_array[divergent_array] = 0 
 ```
 
-The colors are accurate now! The above code (with slightly larger x and y ranges) yields
+The colors are accurate now! The above code (except with slightly larger x and y ranges used to initialize the ogrid) may be called with the kwarg `extent` in order to provide accurate axes makers as follows:
+
+```python
+plt.imshow(mandelbrot_set(2000, 2000, 70), cmap='twilight_shifted', extent=[-2.2, 1, -1.6, 1.6])
+plt.axis('on')
+plt.show()
+```
+which yields 
 
 ![mandelbrot_set]({{https://blbadger.github.io}}fractals/mandelbrot_corrected.png)
 
+To reorient ourselves, the dark area in the center is composed of all the points that do not diverge (head towards positive or negative infinity) after the specified maximum number of iterations.  The light areas bordering this are the points that diverge but not immediately, and the purple region that surrounds the shape is the region that quickly diverges towards infinity.
 
 The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 + 0.072500001i (see [here](/julia-sets.md) for a description of how to make the video)
 
