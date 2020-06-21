@@ -337,10 +337,10 @@ What happens if we instead fix the starting point and allow $r$ to range about t
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
-And from $r=0 \to r=2$, 
+And from $x_0 = 0 \to x_0 = 2$, 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
 
-
+At $x_0, yi_0 = 0.5, 0$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes.
 
 
