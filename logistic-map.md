@@ -323,23 +323,23 @@ Complex plane equations (3).
 
 Let's try fixing $r$ in place, say at $3$ and seeing what happens to different starting points in the complex plane after iterations of (3).  
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_3_fixed_r.png)
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_3_fixed_r.png)
 
 The result is nearly identical to a [Julia set](/julia-sets.md)) for $a = -0.75 + 0i$, shown below.
 
-![map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
+![julia map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
 
 Moving from $r=2 \to r=4$, 
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
 
 What happens if we instead fix the starting point and allow $r$ to range about the complex plane? For the starting point $x_0, yi_0 = 0.5, 0$, we get 
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
 And from $x_0 = 0 \to x_0 = 2$, 
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
 
 At $x_0, yi_0 = 0.5, 0$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes.
 
