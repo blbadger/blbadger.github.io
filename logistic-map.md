@@ -315,8 +315,31 @@ It also appears that if there is (tangential) intersection between any element $
 The idea that tangential approaching of two 'favored' populations implying soon-to-be periodicity is conjectural at this point.
 
 
+### The boundary of the logistic equation
 
+Why aren't values for r>4 shown in any of the graphs above? This is because these values head towards infinity: they are unbounded.  Which values are bounded? 
 
+Complex plane equations (3). 
+
+Let's try fixing $r$ in place, say at $3$ and seeing what happens to different starting points in the complex plane after iterations of (3).  
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_3_fixed_r.png)
+
+The result is nearly identical to a [Julia set](/julia-sets.md)) for $a = -0.75 + 0i$, shown below.
+
+![map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
+
+Moving from $r=2 \to r=4$, 
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
+
+What happens if we instead fix the starting point and allow $r$ to range about the complex plane? For the starting point $x_0, yi_0 = 0.5, 0$, we get 
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
+
+And from $r=0 \to r=2$, 
+
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
 
 
 
