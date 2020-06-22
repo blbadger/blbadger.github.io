@@ -341,6 +341,17 @@ And from $x_0 = 0 \to x_0 = 2$,
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
 
-At $x_0, yi_0 = 0.5, 0$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes.
+At $(x_0, yi_0) = (0.5, 0i)$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  This intuitively makes sense: the Mandelbrot set is what we get when we iterate 
+
+$$
+z_{next} = z^2 + c
+$$
+in the complex plane and find which positions ($c$) head towards infinity and which do not for a given starting point $z_0$.  This is analagous to fixing the starting point for the logistic equation (at $(x_0, y_0) = (0.5, 0i)$ in this case) and then looking at which $r$ values cause iterations of the logistic equation in the complex plane
+
+$$
+z_{next} = rz(1-z) = rz - rz^2
+$$
+
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_zoom.gif)
 
 
