@@ -346,6 +346,7 @@ At $(x_0, yi_0) = (0.5, 0) = 0.5 + 0i$ figure resembles a double-sided [Mandelbr
 $$
 z_{next} = z^2 + c
 $$
+
 in the complex plane and find which positions ($c$) head towards infinity and which do not for a given starting point $z_0$.  This is analagous to fixing the starting point for the logistic equation (at $(x_0, y_0) = (0.5, 0i)$ in this case) and then looking at which $r$ values cause iterations of the logistic equation in the complex plane
 
 $$
