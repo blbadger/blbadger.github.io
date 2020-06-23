@@ -329,7 +329,7 @@ The result is nearly identical to a [Julia set](/julia-sets.md)) for $a = -0.75 
 
 ![julia map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
 
-Just for fun, let's zoom in on the origin.  For most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^20 = 1048576$.
+Just for fun, let's zoom in on the origin.  For most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
