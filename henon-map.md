@@ -309,7 +309,7 @@ for t in range(300):
 	plt.close()
 ```
 
-When $a=0.2, b=1.1$, increasing the scale by a factor of $2^20$ (more than one million) around the point $(x, y) = (0.4564, -0.50202)$, we have
+When $a=0.2, b=1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
