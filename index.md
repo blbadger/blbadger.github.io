@@ -51,7 +51,7 @@ $$
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
 
 
-## Softwares
+## Other software
 
 ### [Neural Network](/neural-networks.md) 
 
@@ -82,7 +82,7 @@ n!_k \to ?
 $$
 
  	
-## Hardwares
+## Hardware
 
 ### [Tesla coil](/tesla-coils.md)
 
