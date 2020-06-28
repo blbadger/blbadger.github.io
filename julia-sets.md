@@ -153,7 +153,7 @@ which yeilds for $a = -0.744 + 0.148i$:
 This is much faster: it takes less than a second for my computer to make the low-resolution image that previously took nearly ten minutes! Using `cmap='twilight'`, and scaling the image by using the kwarg `extent`.
 
 ```python
-plt.imshow(julia_set(2000, 2000, 200), cmap='twilight_shifted', extend=[-1.4, 1.4, -1.4, 1.4])
+plt.imshow(julia_set(2000, 2000, 200), cmap='twilight_shifted', extent=[-1.4, 1.4, -1.4, 1.4])
 plt.axis('on')
 plt.show()
 plt.close()
