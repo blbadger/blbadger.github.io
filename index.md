@@ -2,8 +2,8 @@
 <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
 </head>
 
-## Nonlinear dynamics: 
-Dynamical systems are systems that change.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+## Nonlinear dynamics: trajectories and attractors
+Dynamical systems are systems that change over time.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [logistic map](/logistic-map.md)
 
@@ -13,11 +13,6 @@ Dynamical systems are systems that change.  Nonlinear systems are not additive, 
 ### [Clifford attractor](/clifford-attractor.md)
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
-
-
-### [Henon map](/henon-map.md)
-
-![map]({{https://blbadger.github.io}}/henon_map/henon_cover.png)
 
 
 ### [Grid map](/grid-map.md)
@@ -38,7 +33,7 @@ $$ \Bbb R - \Bbb Q \approx \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
 $$
 
 
-## Nonlinear dynamics of the complex plane
+## Nonlinear dynamics: attractor boundaries
 
 
 ### [Julia sets](/julia-sets.md)
@@ -51,7 +46,17 @@ $$
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
 
 
-## Other software
+### [Henon map](/henon-map.md)
+
+![map]({{https://blbadger.github.io}}/henon_map/henon_cover.png)
+
+### [Clifford map](/clifford-boundary.md)
+
+
+### [Logistic map](/logistic-boundary.md)
+
+
+## Other softwares
 
 ### [Neural Network](/neural-networks.md) 
 
@@ -82,7 +87,7 @@ n!_k \to ?
 $$
 
  	
-## Hardware
+## High voltage hardware
 
 ### [Tesla coil](/tesla-coils.md)
 
