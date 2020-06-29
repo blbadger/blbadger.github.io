@@ -3,8 +3,9 @@
 The logistic equation
 
 $$
-x_{n+1} = rx_n (1 - x_n) \
-tag{1}$$
+x_{n+1} = rx_n (1 - x_n) \\
+\tag{1}
+$$
 
 is a model for growth rate that displays many features of nonlinear dynamics in a nice one-dimensional form. For a summary on some of these interesting properties, see [here](/logistic-map.md).
 
@@ -14,7 +15,8 @@ What if we iterate (1) but instead of $x$ existing on the real line, we allow it
 
 $$
 z_{n+1} = rz_n (1 - z_n) \\
-tag{2}$$
+\tag{2}
+$$
 
 Where $z_n$ (and $z_{n+a}$ for any $a$ and $r$ are points in the complex plane:
 
