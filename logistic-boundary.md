@@ -1,16 +1,32 @@
-
-
 ## The boundary of the logistic equation
 
-Why aren't values for r>4 shown in any of the graphs above? This is because these values head towards infinity: they are unbounded.  Which values are bounded? 
+The logistic equation
 
-Complex plane equations (3). 
+$$
+x_{n+1} = rx_n (1 - x_n) \
+tag{1}$$
 
-Let's try fixing $r$ in place, say at $3$ and seeing what happens to different starting points in the complex plane after iterations of (3).  
+is a model for growth rate that displays many features of nonlinear dynamics in a nice one-dimensional form. For a summary on some of these interesting properties, see [here](/logistic-map.md).
+
+Why aren't values for r>4 shown in any of the graphs for the logistic equation? This is because these values head towards infinity: they are unbounded.  Which values are bounded? This question is not too difficult to answer: for r values of 0 to 4, initial populations anywhere in the range $[0, 1]$ stay in this range.  
+
+What if we iterate (1) but instead of $x$ existing on the real line, we allow it to traverse the complex plane? Then we have
+
+$$
+z_{n+1} = rz_n (1 - z_n)\
+tag{2}$$
+
+Where $z_n$ (and $z_{n+a}$ for any a and $r$ are points in the complex plane:
+
+$$z_n = x + yi \
+r = x + yi
+$$
+
+Now which points remain bounded and which head towards infinity?  Let's try fixing $r$ in place, say at $3$ and seeing what happens to different starting points in the complex plane after iterations of (3).  
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_3_fixed_r.png)
 
-The result is nearly identical to a [Julia set](/julia-sets.md)) for $a = -0.75 + 0i$, shown below.
+The result is nearly identical to a [Julia set](/julia-sets.md) for $a = -0.75 + 0i$, shown below.
 
 ![julia map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
 
