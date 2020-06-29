@@ -13,12 +13,13 @@ Why aren't values for r>4 shown in any of the graphs for the logistic equation? 
 What if we iterate (1) but instead of $x$ existing on the real line, we allow it to traverse the complex plane? Then we have
 
 $$
-z_{n+1} = rz_n (1 - z_n)\
+z_{n+1} = rz_n (1 - z_n) \\
 tag{2}$$
 
-Where $z_n$ (and $z_{n+a}$ for any a and $r$ are points in the complex plane:
+Where $z_n$ (and $z_{n+a}$ for any $a$ and $r$ are points in the complex plane:
 
-$$z_n = x + yi \
+$$
+z_n = x + yi \\
 r = x + yi
 $$
 
