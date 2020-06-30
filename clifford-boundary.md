@@ -73,17 +73,29 @@ which when combined with iterations of (1) starting at $(x_0, y_0) = (10.75, 8.2
 
 The dark area around the attractor is a basin: points are attracted to the region of interest within one iterations.  The border of this region are the lighter points, but these form all kinds of fractal patterns such that it is very difficult to tell where exactly the boundary is.  With the intricacies of this attractor basin boundary in mind, it is little wonder why slowly moving from one starting point to another causes such drastic changes in which attractor the point heads toward.
 
-How does this fractal basin boundary form?  We can observe what happens when iterating (2) going from $\Delta t=1.05 \to \Delta t=1.35$:
+This basin seems quite complicated.  Is it a self-similar fractal?  Lets find out by zooming in on the point $(x, y) = (9.829945, 7.8592)$.
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_20.gif)
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom1.gif)
 
-What about the attractor for the starting point $x_0, y_0 = 90, 90$? We can see that it too has an extremely intricate fractal boundary
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.png)
+The basin boundary is indeed a self-similar fractal, at least at certain points.  How does this fractal basin boundary form?  We can observe what happens when iterating (2) going from $\Delta t=1.05 \to \Delta t=1.35$:
+
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_20.gif)
+
+What about the attractor for the starting point $x_0, y_0 = 90, 90$? We can see that it too has an extremely intricate boundary
+
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.png)
 
 and that this boundary changes from a smooth shape into a fractal as $\Delta t=0.5 \to \Delta t=1.5$:
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.gif)
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.gif)
 
+Is this boundary a fractal? We can zoom in to find out.  Increasing the scale near the point 
 
-### 
+$$
+(x, y) = (91.82168, 90.47914)
+$$
+
+yeilds
+
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom2.gif)
