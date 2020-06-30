@@ -1,16 +1,21 @@
-<head>
-<meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
- 
- <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171312398-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<!DOCTYPE html>
+<html>
+ <head>
 
-  gtag('config', 'UA-171312398-1');
-</script>
-</head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+ <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171312398-1"></script>
+ <script>
+   window.dataLayer = window.dataLayer || [];
+   function gtag(){dataLayer.push(arguments);}
+   gtag('js', new Date());
+
+   gtag('config', 'UA-171312398-1');
+ </script>
+
+ <meta charset="utf-8">
+ <meta name="Description" CONTENT="Author: Benjamin Badger, Category: Informational">
+ <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
+ </head>
 
 ## Nonlinear dynamics: trajectories and attractors
 Dynamical systems are systems that change over time.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
