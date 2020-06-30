@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html>
+
  <head>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -12,7 +11,6 @@
    gtag('config', 'UA-171312398-1');
  </script>
 
- <meta charset="utf-8">
  <meta name="Description" CONTENT="Author: Benjamin Badger, Category: Informational">
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
