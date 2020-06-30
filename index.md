@@ -46,7 +46,7 @@ $$ \Bbb R - \Bbb Q \approx \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
 $$
 
 
-## Nonlinear dynamics: attractor boundaries
+## Attractor boundaries of nonlinear equations
 
 
 ### [Julia sets](/julia-sets.md)
@@ -61,7 +61,7 @@ $$
 
 ### [Henon map](/henon-map.md)
 
-![map]({{https://blbadger.github.io}}/henon_map/henon_cover.png)
+![map]({{https://blbadger.github.io}}/henon_map/henon_cover2.png)
 
 
 ### [Clifford map](/clifford-boundary.md)
