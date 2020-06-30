@@ -77,8 +77,9 @@ This basin seems quite complicated.  Is it a self-similar fractal?  Lets find ou
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom1.gif)
 
+There are more and more lines visible as the scale increases.  These lines form an irregular Cantor set, a one-dimensional fractal.
 
-The basin boundary is indeed a self-similar fractal, at least at certain points.  How does this fractal basin boundary form?  We can observe what happens when iterating (2) going from $\Delta t=1.05 \to \Delta t=1.35$:
+So the basin boundary (or at least part of it) is indeed a self-similar fractal.  How does this fractal basin boundary form?  We can observe what happens when iterating (2) going from $\Delta t=1.05 \to \Delta t=1.35$:
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_20.gif)
 
