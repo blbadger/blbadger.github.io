@@ -63,11 +63,15 @@ $$
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_cover.png)
 
+
 ### [Clifford map](/clifford-boundary.md)
+
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_20.gif)
 
 
 ### [Logistic map](/logistic-boundary.md)
 
+![logistic map image]({{https://blbadger.github.io}}/logistic_bound_cover.png)
 
 ## Other softwares
 
