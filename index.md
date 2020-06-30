@@ -71,7 +71,8 @@ $$
 
 ### [Logistic map](/logistic-boundary.md)
 
-![logistic map image]({{https://blbadger.github.io}}/logistic_bound_cover.png)
+![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
+
 
 ## Other softwares
 
