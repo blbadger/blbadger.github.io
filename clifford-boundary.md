@@ -87,7 +87,7 @@ What about the attractor for the starting point $x_0, y_0 = 90, 90$? We can see 
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.png)
 
-and that this boundary changes from a smooth shape into a fractal as $\Delta t=0.5 \to \Delta t=1.5$:
+and that this boundary transforms from a smooth, relatively simple shape to this more complicated one as $\Delta t=0.5 \to \Delta t=1.5$.  
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_9090.gif)
 
