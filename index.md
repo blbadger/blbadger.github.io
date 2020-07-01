@@ -15,8 +15,8 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-## Nonlinear dynamics: trajectories and attractors
-Dynamical systems are systems that change over time.  Nonlinear systems are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+## Nonlinear trajectories and attractors
+Dynamical systems change over time, and nonlinear means they are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [logistic map](/logistic-map.md)
 
