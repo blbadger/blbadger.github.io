@@ -74,7 +74,7 @@ $$
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
-## Physical imlications of nonlinearity
+## Physical implications of nonlinearity
 
 ### [3 body problem](/3-body-problem.md)
 
