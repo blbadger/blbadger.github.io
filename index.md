@@ -74,6 +74,13 @@ $$
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
+## Physical imlications of nonlinearity
+
+### [3 body problem](/3-body-problem.md)
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
+
+
 ## Other softwares
 
 ### [Neural Network](/neural-networks.md) 
