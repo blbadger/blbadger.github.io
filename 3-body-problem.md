@@ -10,6 +10,14 @@ This statement seems logical at first glance.  The most accurate equations of fo
 
 If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. But what about 3 bodies, or more?  Newton attempted to find a similar solution to this problem but failed.  This did not deter others, and it seems that some investigators such as Laplace were confident of a solution being just around the corner, even if they could not find one themselves.
 
+And why shouldn't they be?  The three body problem may be formulated as follows:
+
+$$
+a_1 = -Gm_2\frac{p1 - p2}{\lvert p1 - p2 \rvert ^3} - Gm_3\frac{p1 - p3}{\lvert p1 - p3 \rvert^3} \\
+$$
+
+where $p_i = (x_i, y_i, z_i)$ and $a_i$ refers to the acceleration of $p_i$, or $a_i = (\ddot x_i, \ddot y_i, \ddot z_i)$
+
 ### Poincare and sensitivity to initial conditions
 
 After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is make it into a self-contained algebraic expression, because it is impossible to do so!  
@@ -24,10 +32,63 @@ Unfortunately for us, there is no general solution to the three body problem: we
 
 Why is there a solution to the two body problem but not three body problem?  One can imagine that a problem with thousands of objects would be much harder to deal with than two objects, but why does adding only one more object create such a difficult problem?
 
-One way to gain an appreciation for why is to simply plot some trajectories.  
+One way to gain an appreciation for why is to simply plot some trajectories. Let's do this using python. To start with, a docstring is added and the relevant libraries are imported.
+
+```python
+#! python3
+# A program that produces trajectories of three bodies
+# according to Netwon's laws of gravitation
+
+# import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+from mpl_toolkits.mplot3d import Axes3D
+plt.style.use('dark_background')
+```
+
+Next we can specify the initial conditions for our three bodies.  Here we have masses of 10, 20, and 30 which could correspond to a planet with very large moons, or a triple star system.
+```python
+# masses of planets
+m_1 = 10
+m_2 = 20
+m_3 = 30
+
+# starting coordinates for planets
+# p1_start = x_1, y_1, z_1
+p1_start = np.array([-10, 10, -11])
+v1_start = np.array([-3, 0, 0])
+
+# p2_start = x_2, y_2, z_2
+p2_start = np.array([0, 0, 0])
+v2_start = np.array([0, 0, 0])
+
+# p3_start = x_3, y_3, z_3
+p3_start = np.array([10, 10, 12])
+v3_start = np.array([3, 0, 0])
+```
+
+Now for a function that calculates the change in velocity (acceleration) for each body, referred to as `planet_1_dv` etc. that uses the three body formulas above.
+
+```python
+def accelerations(p1, p2, p3):
+	'''A function to calculate the derivatives of x, y, and z
+	given 3 object and their locations according to Newton's laws
+	'''
+	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt(np.sum([i**2 for i in p1 - p2]))**3) - 9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
+
+	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt(np.sum([i**2 for i in p2 - p3]))**3) - 9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
+
+	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt(np.sum([i**2 for i in p3 - p1]))**3) - 9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
+
+	return planet_1_dv, planet_2_dv, planet_3_dv
+```
 
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
 
+
+### Phase space portraits of three body trajectories are fractals
+
+"One must be struck with the complexity of this shape, which I do not even attempt to illustrate" (Mandelbrot 1982).
 
 ### The three body problem is general 
 
