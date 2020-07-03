@@ -168,7 +168,7 @@ With grid lines removed for clarity (`ax.set_xticks([]), ax.set_yticks([]), ax.s
 
 Over time and from a slightly different perspective, the trajectory is
 
-[insert gif]
+![3 body vid]({{https://blbadger.github.io}}/3_body_problem/3_body_full.gif)
 
 
 ### Poincare and sensitivity to initial conditions
@@ -184,7 +184,7 @@ If we compare the trajectory of the first body to it's trajectory (here red) in 
 
 from the side and over time, we can see that they are precisely aligned for a time but then diverge, first slowly then quickly.
 
-[insert gif]
+![3 body vid]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted.gif)
 
 The same is true of the second body (red for original trajectory, blue for the trajectory when the tiny shift to the third body's initial position has been made)
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_2.png)
