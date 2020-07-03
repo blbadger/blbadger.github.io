@@ -26,6 +26,8 @@ $$
 \lvert p_1 \rvert = \sqrt {x_1^2 + y_1^2 + z_1^2}
 $$
 
+The norm of the difference of two vectors may be understood as a distance between those vectors, if our distance function is an arbitrary dimension - extension of the function above.
+
 ### Poincare and sensitivity to initial conditions
 
 After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is make it into a self-contained algebraic expression, because it is impossible to do so!  
