@@ -252,6 +252,8 @@ for t in range(360):
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated.gif)
 
+One might raise a question: aren't trajectory crossings not possible for ordinary differential equations?  For the case of a single object moving in space, this is correct, because any trajectory crossing would imply that some point heads toward two different points next, an impossibility.  But as we have two objects, crossings can occur if the other object is in a different place than before.  What is now not possible is for both objects to revisit a previously-occuppied pair of points but then to travel to a new location.
+
 Now let's see what happens when we shift the starting value of one of the points by a little.  
 
 [insert image]
