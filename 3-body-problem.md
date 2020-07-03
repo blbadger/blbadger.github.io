@@ -168,7 +168,7 @@ With grid lines removed for clarity (`ax.set_xticks([]), ax.set_yticks([]), ax.s
 
 Over time and from a slightly different perspective, the trajectory is
 
-![3 body vid]({{https://blbadger.github.io}}/3_body_problem/3_body_full.gif)
+![3 body vid]({{https://blbadger.github.io}}/3_body_problem/three_body_full.gif)
 
 
 ### Poincare and sensitivity to initial conditions
@@ -180,17 +180,19 @@ What happens when we shift the starting position of one of the bodies by a minis
 The trajectories are different to what was observed before, but how so?  The new image has different x, y, and z-scales than before and individual trajectories are somewhat difficult to make out.  
 
 If we compare the trajectory of the first body to it's trajectory (here red) in the slightly shifted scenario (blue),
+
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_1.png)
 
 from the side and over time, we can see that they are precisely aligned for a time but then diverge, first slowly then quickly.
 
-![3 body vid]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted.gif)
+![3 body vid]({{https://blbadger.github.io}}/3_body_problem/three_body_shifted.gif)
 
 The same is true of the second body (red for original trajectory, blue for the trajectory when the tiny shift to the third body's initial position has been made)
+
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_2.png)
 
 And of the third as well.
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3_shifted_3.png)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_3.png)
 
 
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
