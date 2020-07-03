@@ -14,12 +14,11 @@ And why shouldn't they be?  The three body problem may be formulated as follows:
 
 $$
 a_1 = -Gm_2\frac{p_1 - p_2}{\lvert p_1 - p_2 \rvert ^3} - Gm_3\frac{p_1 - p_3}{\lvert p_1 - p_3 \rvert^3} \\
-\\
+ \\
 a_2 = -Gm_3\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert ^3} - Gm_1\frac{p_2 - p_1}{\lvert p_2 - p_1 \rvert^3} \\
-\\
+ \\
 a_3 = -Gm_3\frac{p_3 - p_1}{\lvert p_3 - p_1 \rvert ^3} - Gm_1\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert^3} 
 $$
- 
  
 where $p_i = (x_i, y_i, z_i)$ and $a_i$ refers to the acceleration of $p_i$, ie $a_i = (\ddot x_i, \ddot y_i, \ddot z_i)$.  Note that $\lvert p_1 \rvert$ signifies a vector norm, not absolute value or cardinality. The vector norm is the distance to the origin, calculated in three dimensions as
 
@@ -28,6 +27,8 @@ $$
 $$
 
 The norm of the difference of two vectors may be understood as a distance between those vectors, if our distance function is an arbitrary dimension - extension of the function above.
+
+This function does not seem too unwieldy.  
 
 ### Poincare and sensitivity to initial conditions
 
@@ -94,6 +95,67 @@ def accelerations(p1, p2, p3):
 	return planet_1_dv, planet_2_dv, planet_3_dv
 ```
 
+```python
+# parameters
+delta_t = 0.001
+steps = 200000
+
+# initialize trajectory array
+p1 = np.array([[0.,0.,0.] for i in range(steps)])
+v1 = np.array([[0.,0.,0.] for i in range(steps)])
+
+p2 = np.array([[0.,0.,0.] for j in range(steps)])
+v2 = np.array([[0.,0.,0.] for j in range(steps)])
+
+p3 = np.array([[0.,0.,0.] for k in range(steps)])
+v3 = np.array([[0.,0.,0.] for k in range(steps)])
+
+```
+
+```python
+# starting point
+p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
+
+v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
+```
+
+```python
+# evolution of the system
+for i in range(steps-1):
+	#calculate derivatives
+	dv1, dv2, dv3 = accelerations(p1[i], p2[i], p3[i])
+	dv1_prime, dv2_prime, dv3_prime = accelerations(p1_prime[i], p2_prime[i], p3_prime[i])
+
+	v1[i + 1] = v1[i] + dv1 * delta_t
+	v2[i + 1] = v2[i] + dv2 * delta_t
+	v3[i + 1] = v3[i] + dv3 * delta_t
+
+	p1[i + 1] = p1[i] + v1[i] * delta_t
+	p2[i + 1] = p2[i] + v2[i] * delta_t
+	p3[i + 1] = p3[i] + v3[i] * delta_t
+```
+
+```python
+fig = plt.figure(figsize=(8, 8))
+ax = fig.gca(projection='3d')
+plt.gca().patch.set_facecolor('black')
+
+plt.plot([i[0] for i in p1], [j[1] for j in p1], [k[2] for k in p1] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
+plt.plot([i[0] for i in p2], [j[1] for j in p2], [k[2] for k in p2] , '^', color='red', lw = 0.05, markersize = 0.01, alpha=0.5)
+plt.plot([i[0] for i in p3], [j[1] for j in p3], [k[2] for k in p3] , '^', color='blue', lw = 0.05, markersize = 0.01, alpha=0.5)
+
+plt.axis('on')
+
+# optional: use if reference axes skeleton is desired,
+# ie plt.axis is set to 'on'
+# ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
+
+# make pane's have the same colors as background
+ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
+ax.view_init(elev = 0, azim = 270)
+plt.show()
+plt.close()
+```
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
 
 
