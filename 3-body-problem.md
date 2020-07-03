@@ -40,7 +40,7 @@ For more information, see Wolfram's notes [here](https://www.wolframscience.com/
 
 Unfortunately for us, there is no general solution to the three body problem: we cannot actually tell where three bodies will be at an arbitrary time point in the future, let alone four or five bodies.  This is an inversion with respect to what is stated in the quotation above: armed with the power of Newton's laws, we cannot calculate, with arbitrary precision in finite time, the paths of any system of more than two objects.  
 
-### Trajectories of 3 objects are chaotic
+### Trajectories of 3 objects are (almost always) chaotic
 
 Why is there a solution to the two body problem but not three body problem?  One can imagine that a problem with thousands of objects would be much harder to deal with than two objects, but why does adding only one more object create such a difficult problem?
 
@@ -166,7 +166,15 @@ With grid lines removed for clarity (`ax.set_xticks([]), ax.set_yticks([]), ax.s
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3.png)
 
-Over time and from a slightly different perspective, the trajectory is
+The orientation of the view can be specified using the interactive matplotlib interface if `plt.show()` is called, and if images are saved directly then `plt.view_init()` should be used as follows:
+
+```python
+...
+ax.view_init(elev = 10, azim = 40)
+plt.savefig('{}'.format(3_body_image), dpi=300)
+```
+
+Over time (sped up for brevity) and from a slightly different perspective, the trajectory is
 
 ![3 body vid]({{https://blbadger.github.io}}/3_body_problem/three_body_full.gif)
 
@@ -197,9 +205,67 @@ And of the third as well.
 
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
 
+### A comparison: two body versus three body problems
+How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
+
+```python
+# masses of planets
+m_1 = 0
+m_2 = 20
+m_3 = 30
+
+...
+
+# p2_start = x_2, y_2, z_2
+p2_start = np.array([0, 0, 0])
+v2_start = np.array([-3, 0, 0])
+```
+Plotting the trajectories of p2 and p3, we have 
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1.png)
+
+This plot looks much more regular!  In fact it, like all other two body trajectories, lies along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop.
+
+```python
+...
+
+for t in range(360):
+	fig = plt.figure(figsize=(10, 10))
+	ax = fig.gca(projection='3d')
+	plt.gca().patch.set_facecolor('black')
+	
+	plt.plot([i[0] for i in p2], [j[1] for j in p2], [k[2] for k in p2] , '^', color='white', lw = 0.05, markersize = 0.01, alpha=0.5)
+	plt.plot([i[0] for i in p3], [j[1] for j in p3], [k[2] for k in p3] , '^', color='blue', lw = 0.05, markersize = 0.01, alpha=0.5)
+
+	plt.axis('on')
+	# optional: use if reference axes skeleton is desired,
+	# ie plt.axis is set to 'on'
+	ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
+
+	# make pane's have the same colors as background
+	ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
+	
+	ax.view_init(elev = 20, azim = t)
+	plt.savefig('{}'.format(t), dpi=300, bbox_inches='tight')
+	plt.close()
+```
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated.gif)
+
+Now let's see what happens when we shift the starting value of one of the points by a little.  
+
+[insert image]
+
+
+Coming back to the question of why the two body problem is different than the three, we have an answer now: three body but not two body motion may be aperiodic. Aperiodicity implies and is implied by sensitivity to initial conditions, and we have seen that certain trajectories of three objects but not two are sensitive to small changes in initial conditions. 
+
+But The first is that any two body trajectory will occupy only two dimensional space, and it turns out that two dimensional continuous equations cannot yeild aperiodic motion, any two body trajectory (if the equations of motion are differentiable) must be periodic.  This result is also due to Poincare, who is clearly a pioneer in these matters.
+
+
 ### Phase space portraits of three body trajectories are fractals
 
 "One must be struck with the complexity of this shape, which I do not even attempt to illustrate" (Mandelbrot 1982).
+
 
 ### The three body problem is general 
 
