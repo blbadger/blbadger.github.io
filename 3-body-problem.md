@@ -224,7 +224,7 @@ Plotting the trajectories of p2 and p3, we have
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1.png)
 
-This plot looks much more regular!  In fact it, like all other two body trajectories, lies along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop.
+This plot looks much more regular!  The trajectories form periodic orbits that, like other two body trajectories, lie along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop to show this.
 
 ```python
 ...
@@ -250,14 +250,18 @@ for t in range(360):
 	plt.close()
 ```
 
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated.gif)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated_2.gif)
 
 One might raise a question: aren't trajectory crossings not possible for ordinary differential equations?  For the case of a single object moving in space, this is correct, because any trajectory crossing would imply that some point heads toward two different points next, an impossibility.  But as we have two objects, crossings can occur if the other object is in a different place than before.  What is now not possible is for both objects to revisit a previously-occuppied pair of points but then to travel to a new location.
 
-Now let's see what happens when we shift the starting value of one of the points by a little.  
+Now let's see what happens when we shift the starting value of one of the points by the same amount as before ($z_3 = 12 \to z_3 = 12.000001$).
 
-[insert image]
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1_shifted.png)
 
+The trajectories looks the same!  When both original and shifted trajectories of the $p_2$ are plotted, it is clear to see that there is no separation
+($z_3 = 12$ in white and $z_3 = 12.000001$ in blue)
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1_shifted.png)
 
 Coming back to the question of why the two body problem is different than the three, we have an answer now: three body but not two body motion may be aperiodic. Aperiodicity implies and is implied by sensitivity to initial conditions, and we have seen that certain trajectories of three objects but not two are sensitive to small changes in initial conditions. 
 
