@@ -190,7 +190,7 @@ The same is true of the second body (red for original trajectory, blue for the t
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_2.png)
 
 And of the third as well.
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3_shifted_all.png)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3_shifted_3.png)
 
 
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
