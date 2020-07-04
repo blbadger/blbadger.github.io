@@ -289,7 +289,7 @@ Now let's see what happens when we shift the starting value of one of the points
 The trajectories looks the same!  When both original and shifted trajectories of the $p_2$ are plotted, it is clear to see that there is no separation
 ($z_3 = 12$ in white and $z_3 = 12.000001$ in blue)
 
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1_shifted_2.png)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_shifted_2.png)
 
 Coming back to the question of why the two body problem is different than the three, we have an answer now: three body but not two body motion may be aperiodic. Aperiodicity implies and is implied by sensitivity to initial conditions, and we have seen that certain trajectories of three objects but not two are sensitive to small changes in initial conditions. 
 
