@@ -158,7 +158,7 @@ ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0,
 plt.show()
 plt.close()
 ```
-And we are done!  This yeilds the following map of the trajectories in 3D space. 
+And we are done!  This yields the following map of the trajectories in 3D space. 
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3_axes.png)
 
@@ -181,7 +181,7 @@ Over time (sped up for brevity) and from a slightly different perspective, the t
 
 ### Poincare and sensitivity to initial conditions
 
-What happens when we shift the starting position of one of the bodies by a miniscule amount? Changing the z position of the third body from $12$ to $12.000001$ yeilds
+What happens when we shift the starting position of one of the bodies by a miniscule amount? Changing the z position of the third body from $12$ to $12.000001$ yields
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_3_shifted_all.png)
 
@@ -201,6 +201,34 @@ The same is true of the second body (red for original trajectory, blue for the t
 
 And of the third as well.
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_3.png)
+
+Plotting the distance between each point and its counterpart as follows
+```python
+distance_2 = []
+for i in range(steps):
+	distance_2.append(np.sqrt(np.sum([j**2 for j in p2[i] - p2_prime[i]])))
+
+distance_1 = []
+for i in range(steps):
+	distance_1.append(np.sqrt(np.sum([j**2 for j in p1[i] - p1_prime[i]])))
+
+distance_3 = []
+for i in range(steps):
+	distance_3.append(np.sqrt(np.sum([j**2 for j in p3[i] - p3_prime[i]])))
+
+fig, ax = plt.subplots()
+ax.plot(time, distance_1, alpha=0.5, color='red')
+ax.plot(time, distance_2, alpha=0.5, color='grey')
+ax.plot(time, distance_3, alpha=0.5, color='blue')
+plt.ylim(0, 120)
+ax.set(xlabel='time', ylabel='Distance')
+plt.show()
+plt.close()
+```
+
+yields
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/three_body_distance.png)
 
 
 In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
@@ -261,7 +289,7 @@ Now let's see what happens when we shift the starting value of one of the points
 The trajectories looks the same!  When both original and shifted trajectories of the $p_2$ are plotted, it is clear to see that there is no separation
 ($z_3 = 12$ in white and $z_3 = 12.000001$ in blue)
 
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1_shifted.png)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1_shifted_2.png)
 
 Coming back to the question of why the two body problem is different than the three, we have an answer now: three body but not two body motion may be aperiodic. Aperiodicity implies and is implied by sensitivity to initial conditions, and we have seen that certain trajectories of three objects but not two are sensitive to small changes in initial conditions. 
 
