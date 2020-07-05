@@ -309,6 +309,20 @@ for t in range(300):
 	plt.close()
 ```
 
+Edit: the root of the problem has been found, it is round off error in the array size calculation (here `10 / x_range`). Although the workaround above is effective, the simplest and most efficient way of addressing this is to simply take the correct number of indicies of the `x_list` and `y_list` arrays when making the two dimensional `array`. 
+
+```python
+...
+def henon_boundary(max_iterations, a, b):
+	x_range = 2000
+	y_range = 2000
+
+	x_list = np.arange(-5, 5, 10/x_range)
+	y_list = np.arange(5, -5, -10/y_range)
+	array = np.meshgrid(x_list[:2000], y_list[:2000])
+...
+```
+
 When $a=0.2, b=1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
