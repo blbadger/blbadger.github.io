@@ -291,26 +291,20 @@ The trajectories looks the same!  When both original and shifted trajectories of
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_shifted_2.png)
 
-Coming back to the question of why the two body problem is different than the three, we have an answer now: three body but not two body motion may be aperiodic. Aperiodicity implies and is implied by sensitivity to initial conditions, and we have seen that certain trajectories of three objects but not two are sensitive to small changes in initial conditions. 
-
-But The first is that any two body trajectory will occupy only two dimensional space, and it turns out that two dimensional continuous equations cannot yeild aperiodic motion, any two body trajectory (if the equations of motion are differentiable) must be periodic.  This result is also due to Poincare, who is clearly a pioneer in these matters.
-
-
-### Phase space portraits of three body trajectories are fractals
-
-"One must be struck with the complexity of this shape, which I do not even attempt to illustrate" (Mandelbrot 1982).
-
+This means that this trajectory of a two body problem is not sensitive to initial conditions: it is not chaotic.  It turns out that this is true for all two body problems: all are periodic or quasi-periodic, meaning that future trajectories are identical to past trajectories.  This means that we can remove (all but a negligable amount) of the time variable when we integrate these differential equations.  On the other hand, most three body trajectories are aperiodic.  This means that their future trajectories are never exactly like previous ones, meaning that we cannot remove time from the differential equations.  This makes them unsolveable, with respect to a solution that does not consist of adding up time steps from start to finish.
 
 ### The three body problem is general 
 
 One can hope that the three (or more) body problem is restricted to celestial mechanics, and that it does not find its way into other fields of study.  Great effort has been expended to learn about the orbitals an electron will make around the nucleus of a proton, so hopefully this knowledge is transferrable to an atom with more than one proton. This hope is in vain: any three-dimensional system with three or more objects that operates according to nonlinear equations reaches the same difficulties outlined above for planets. 
 
 
-### Does it matter that we cannot solve the three body problem, given that we can just 'solve' the problem on a computer?
+### Does it matter that we cannot solve the three body problem, given that we can just simulate the problem on a computer?
 
 When one hears about solutions to the three body problem, they are either restricted to a (miniscule) subset of initial conditions or else are references to the process of numerical integration by a computer.  The latter idea gives rise to the sometimes-held opinion that the three body problem is in fact solveable now that high speed computers are present, because one can simply use extremely precise numeric methods to provide a solution.  
 
 To gain an appreciation for why computers cannot solve our problem, let's first pretend that perfect observations were able to be made.  Would we then be able to use a program to calculate the future trajectory of a planetary system exactly?  We have seen that we cannot when small imperfections exist in observation, but what about if these imperfections do not exist?  Even then we cannot, because it appears that Newton's gravitational constant, like practically all other constants, is an irrational number.  This means that even a perfect measurement of G would not help because it would take infinite time to enter into a computer exactly.
+
+That said, computational methods are very good for determining short-term trajectories.  Furthermore, when certain bodies are much larger in mass than others (as is the case in the solar system where the sun is much more massive than all the planets combined), the ability to determine trajectories is substantially enhanced. But like any chaotic equations system, the ability to determine trajectories for all time is not possible.
 
 
 
