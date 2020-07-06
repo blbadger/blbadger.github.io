@@ -15,8 +15,8 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-## Nonlinear trajectories and attractors
-Dynamical systems change over time, and nonlinear means they are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most systems are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+## Nonlinear dynamics
+Dynamics studies change over time. Nonlinear equaions are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [logistic map](/logistic-map.md)
 
@@ -46,7 +46,7 @@ $$ \Bbb R - \Bbb Q \approx \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
 $$
 
 
-## Attractor boundaries of nonlinear equations
+## Boundaries of nonlinear dynamics
 
 
 ### [Julia sets](/julia-sets.md)
@@ -74,7 +74,7 @@ $$
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
-## Physical implications of nonlinearity
+## Physics
 
 ### [3 body problem](/3-body-problem.md)
 
