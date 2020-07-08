@@ -306,5 +306,3 @@ To gain an appreciation for why computers cannot solve our problem, let's first 
 
 That said, computational methods are very good for determining short-term trajectories.  Furthermore, when certain bodies are much larger in mass than others (as is the case in the solar system where the sun is much more massive than all the planets combined), the ability to determine trajectories is substantially enhanced. But like any chaotic equations system, the ability to determine trajectories for all time is not possible.
 
-
-
