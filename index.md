@@ -38,14 +38,6 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
 
-### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
-
-
-$$ \Bbb R - \Bbb Q \approx \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
-\text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n
-$$
-
-
 ## Boundaries of nonlinear dynamics
 
 
