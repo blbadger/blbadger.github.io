@@ -16,7 +16,7 @@
  </head>
 
 ## Nonlinear dynamics
-Dynamics studies change over time. Nonlinear equaions are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+Dynamics studies change over time. Nonlinear systems are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [logistic map](/logistic-map.md)
 
