@@ -66,6 +66,13 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
+### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
+
+$$ 
+\Bbb R - \Bbb Q \sim \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
+\text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n
+$$
+
 ## Physics
 
 ### [3 body problem](/3-body-problem.md)
