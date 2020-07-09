@@ -46,7 +46,7 @@ $$
 We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period,
 
 $$
-\Bbb P = \{ \mathbf (period} \; 1, \mathbf (period} \; 2, \mathbf (period} \; 3... \} \\
+\Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
 \Bbb N = \{1, 2, 3... \} \\
 \Bbb P \mapsto \Bbb N \\
 \Bbb P \sim \Bbb N
