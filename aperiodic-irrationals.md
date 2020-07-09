@@ -127,7 +127,7 @@ $$
 Now as we have established an equivalence between irrational numbers and aperiodic (chaotic) systems above, by transitivity we can establish an equivalence between the set of unsolvable decision problems and the set of all outputs of chaotic systems or 
 
 $$ 
-\Bbb A \sim \Bbb I \equivalencesim \{unsolvable \; problems\}
+\Bbb A \sim \Bbb I \sim \{unsolvable \; problems\}
 $$
 
 Thus chaotic systems are unsolvable in finite time.
