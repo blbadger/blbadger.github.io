@@ -43,11 +43,11 @@ $$
 \Bbb A + \Bbb P \sim \Bbb R
 $$
 
-We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period:
+We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period,
 
 $$
-\Bbb P = \{\mathbf (period} \; 1, \mathbf (period} \; 2, \mathbf (period} \; 3...\} \\
-\Bbb N = \{1, 2, 3...\} \\
+\Bbb P = \{ \mathbf (period} \; 1, \mathbf (period} \; 2, \mathbf (period} \; 3... \} \\
+\Bbb N = \{1, 2, 3... \} \\
 \Bbb P \mapsto \Bbb N \\
 \Bbb P \sim \Bbb N
 $$
@@ -66,7 +66,7 @@ $$
 \Bbb A \sim \Bbb I
 $$
 
-Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$ $\box$.
+Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$ $\square$.
 
 Let's see if the implications of this make sense.  In particular, can we also set up a one to one correspondance between aperiodic functions and natural numbers? This would be a contradiction if so, but it turns out we cannot: if we define functions based on their periodicity then consider that aperiodic functions have infinite periodicity, ie each has a period of $\infty$, which cannot map to the set of natural numbers, which are finite.
 
