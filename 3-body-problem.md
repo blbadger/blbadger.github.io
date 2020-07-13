@@ -14,9 +14,9 @@ And why shouldn't they be?  The three body problem may be formulated as follows:
 
 $$
 a_1 = -Gm_2\frac{p_1 - p_2}{\lvert p_1 - p_2 \rvert ^3} - Gm_3\frac{p_1 - p_3}{\lvert p_1 - p_3 \rvert^3} \\
- \\
+_\\
 a_2 = -Gm_3\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert ^3} - Gm_1\frac{p_2 - p_1}{\lvert p_2 - p_1 \rvert^3} \\
- \\
+_\\
 a_3 = -Gm_3\frac{p_3 - p_1}{\lvert p_3 - p_1 \rvert ^3} - Gm_1\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert^3} 
 $$
  
@@ -34,9 +34,9 @@ This function does not seem too unwieldy.
 
 After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is make it into a self-contained algebraic expression, because it is impossible to do so!  
 
-Is any solution possible?  Sundman found that there is an infinite power series that describes the three body problem, and in that sense there is.  But in the sense of actually predicting an orbit, the power series is no help because it cannot directly infer the position of any of the three bodies owing to round-off error propegation from extremely slow convergence [ref](https://arxiv.org/pdf/1508.02312.pdf).  From the point of a solution being one in which time is removed from the equation, the power series is more of a problem reformulation than a solution: the time variable is the power series base.  Rather than numerically integrate the differential equations of motion, one can instead add up the power series terms, but the latter option takes an extremely long time to do.  To give an appreciation for exactly how long, it has been estimated that more than $10^{8000000}$ terms are required for calculating the series for one short time step [ref](http://articles.adsabs.harvard.edu/pdf/1930BuAst...6..417B). 
+Is any solution possible?  Sundman found that there is an infinite power series that describes the three body problem, and in that sense there is.  But in the sense of actually predicting an orbit, the power series is no help because it cannot directly infer the position of any of the three bodies owing to round-off error propegation from extremely slow convergence ([ref](https://arxiv.org/pdf/1508.02312.pdf)).  From the point of a solution being one in which time is removed from the equation, the power series is more of a problem reformulation than a solution: the time variable is the power series base.  Rather than numerically integrate the differential equations of motion, one can instead add up the power series terms, but the latter option takes an extremely long time to do.  To give an appreciation for exactly how long, it has been estimated that more than $10^{8000000}$ terms are required for calculating the series for one short time step ([ref](http://articles.adsabs.harvard.edu/pdf/1930BuAst...6..417B)). 
 
-For more information, see Wolfram's notes [here](https://www.wolframscience.com/reference/notes/972d). 
+For more information, see [Wolfram's notes](https://www.wolframscience.com/reference/notes/972d). 
 
 Unfortunately for us, there is no general solution to the three body problem: we cannot actually tell where three bodies will be at an arbitrary time point in the future, let alone four or five bodies.  This is an inversion with respect to what is stated in the quotation above: armed with the power of Newton's laws, we cannot calculate, with arbitrary precision in finite time, the paths of any system of more than two objects.  
 
@@ -231,7 +231,7 @@ yields
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/three_body_distance.png)
 
 
-In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false). 
+In 1914, Poincare observed that "small differences in initial conditions produce very great ones in the final phenomena" (as quoted [here](https://books.google.com/books?id=vGuYDwAAQBAJ&pg=PA271&lpg=PA271&dq=Poincare+3+body+problem+impossibility+1880&source=bl&ots=yteTecRsK8&sig=ACfU3U2ngm5xUXygi-JdLzpU0bwORuOq7Q&hl=en&sa=X&ved=2ahUKEwiO4JT_86zqAhUlZjUKHYn5Dk8Q6AEwDHoECAwQAQ#v=onepage&q=Poincare%203%20body%20problem%20impossibility%201880&f=false)). 
 
 If we make slightly worse and worse initial measurements, does the inaccuracy of our prediction get worse too?  Surprisingly the answer to this question is often but not always.  To see how, here we iterate the distance measurement above but change the distance between planet 3 and its 'true' value to increase from $\Delta z = 0.00000001 \to \Delta z = 0.00001$ 
 
