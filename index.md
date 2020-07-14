@@ -75,6 +75,8 @@ $$
 
 ## Physics
 
+### [Entropy]
+
 ### [3 body problem](/3-body-problem.md)
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
@@ -82,9 +84,9 @@ $$
 
 ## Biology
 
-### [The developmental genetic problem](\dev-genetics-problem.md)
+### [The developmental genetic problem](\dev-genetic-problem.md)
 
-![coral image](({{https://blbadger.github.io}}/bio_images/acropora.png)
+![coral image]({{https://blbadger.github.io}}/bio_images/acropora.png)
 
 ### Homeostasis
 
@@ -109,15 +111,16 @@ a_{n0} & a_{n1} & a_{n2} & \cdots & a_{nn} \\
 \end{vmatrix}
 $$
 
-
 $$ 
+\; \\
 5!_{10} = 12\mathbf{0} \to 1 \\
 20!_{10} = 243290200817664\mathbf{0000} \to 4 \\
 n!_k \to ?
+\; \\
 $$
 
  	
-## High voltage hardware
+## High voltage 
 
 ### [Tesla coil](/tesla-coils.md)
 
