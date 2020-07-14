@@ -10,7 +10,7 @@ $$ \Bbb I = \{ x \; \vert \; x \in \Bbb R \land x \notin \Bbb Q\} $$
 Rational numbers are expressible as fractions, whereas irrationals are not, and all real numbers are either rational or irrational.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that the cardinality of the set of irrationals is much larger than the cardinality of rationals, or in other words nearly every possible number is irrational.
 
 $$
-card \; \Bbb I  >> card \; \Bbb Q
+card \; \( \Bbb I \)  >> card \; \( \Bbb Q \)
 $$
 
 Now let's consider continuous differential functions, which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never return to that of previous iterations:
@@ -43,12 +43,13 @@ $$
 \Bbb A + \Bbb P \sim \Bbb R
 $$
 
-We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period,
+We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one and onto (bijective) correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period but only one period.
 
 $$
 \Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
 \Bbb N = \{1, 2, 3... \} \\
 \Bbb P \mapsto \Bbb N \\
+\Bbb Nmapsto \Bbb P \\
 \Bbb P \sim \Bbb N
 $$
 
@@ -59,7 +60,7 @@ $$
 \Bbb P \sim \Bbb Q
 $$
 
-Recall that the set of all continuous functions (denoted here as $\Bbb F$ is equivalent to $\Bbb R$.  As functions may be periodic (quasiperiodic or asymptotically periodic functions are included) or aperiodic, and as the set of periodic functions is equivalent to the set of rational numbers,
+Recall that the set of all continuous functions (denoted here as $\Bbb F$) is equivalent to $\Bbb R$.  As functions may be periodic (quasiperiodic or asymptotically periodic functions are included) or aperiodic, and as the set of periodic functions is equivalent to the set of rational numbers,
 
 $$
 \Bbb A = \Bbb F - \Bbb P \sim \Bbb R - \Bbb Q = \Bbb I \\
@@ -97,9 +98,9 @@ $$
 \Bbb B \sim \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere leads to aperiodic trajectories.
+and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
 
-This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs must be equivalent.
+This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent $\square$.
 
 ### The set of chaotic (aperiodic) systems is equivalent to the set of unsolveable problems
 
@@ -108,14 +109,14 @@ Let's define solvable equations to be those that are computable in finite time f
 Any program to compute a decision may be represented as a binary string of finite length, which is also a representation for any natural number.  
 
 $$ 
-program \approx binary \; string \approx x \in \Bbb N
+program \approx binary \; string \sim x \in \Bbb N
 $$
 
 Now rational numbers are just two natural numbers divided by each other so any finite program can be represented by a rational number.
 
 $$ 
 x \in \Bbb Q \;if \; x = \frac{a}{b}, \; |\; a, b \in \Bbb N \\
-program \approx binary \; string \approx x \in \Bbb Q
+program \approx binary \; string \sim x \in \Bbb Q
 $$
 
 The solution to any decision problem may be denoted as an infinite string of bits, 1 for 'yes' or 0 for 'no' for any number of infinite inputs, which corresponds to any real number.  As any program to compute a decicision is finite, and as this program may be represented by a rational number then only infinite strings of bits that are also representations of rationals may be computable. All other problems are unsolvable in finite time (with a finite program), and as any member of this set of problems is not rational but in the real numbers
@@ -130,7 +131,7 @@ $$
 \Bbb A \sim \Bbb I \sim \{unsolvable \; problems\}
 $$
 
-Thus chaotic systems are unsolvable in finite time.
+Thus chaotic systems are unsolvable in finite time $\square$.
 
 
 
