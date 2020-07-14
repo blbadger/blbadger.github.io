@@ -49,7 +49,7 @@ $$
 \Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
 \Bbb N = \{1, 2, 3... \} \\
 \Bbb P \mapsto \Bbb N \\
-\Bbb \mapsto \Bbb P \\
+\Bbb N \mapsto \Bbb P \\
 \Bbb P \sim \Bbb N
 $$
 
