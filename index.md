@@ -80,17 +80,23 @@ $$
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
 
-## Other softwares
+## Biology
+
+### [The developmental genetic problem](\dev-genetics-problem.md)
+
+![coral image](({{https://blbadger.github.io}}/bio_images/acropora.png)
+
+### Homeostasis
 
 ### [Neural Network](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
+## Small projects
 
 ### [Game puzzles](/puzzle-projects.md)
 
 ![puzzles]({{https://blbadger.github.io}}/assets/images/games.png)
-
 
 ### [Programs to compute things](/computing-programs.md)
 
