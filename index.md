@@ -84,7 +84,7 @@ $$
 
 ## Biology
 
-### [The developmental genetic problem](\dev-genetic-problem.md)
+### [The developmental genetic problem](/dev-genetic-problem.md)
 
 ![coral image]({{https://blbadger.github.io}}/bio_images/acropora.png)
 
