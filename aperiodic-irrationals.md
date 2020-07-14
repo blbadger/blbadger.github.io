@@ -10,7 +10,7 @@ $$ \Bbb I = \{ x \; \vert \; x \in \Bbb R \land x \notin \Bbb Q\} $$
 Rational numbers are expressible as fractions, whereas irrationals are not, and all real numbers are either rational or irrational.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that the cardinality of the set of irrationals is much larger than the cardinality of rationals, or in other words nearly every possible number is irrational.
 
 $$
-card \; \( \Bbb I \)  >> card \; \( \Bbb Q \)
+card \; ( \Bbb I)  >> card \; ( \Bbb Q)
 $$
 
 Now let's consider continuous differential functions, which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never return to that of previous iterations:
