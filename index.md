@@ -75,7 +75,7 @@ $$
 
 ## Physics
 
-### [Entropy]
+### Entropy
 
 ### [3 body problem](/3-body-problem.md)
 
