@@ -86,7 +86,7 @@ Why does this help the genome specify a detailed three dimensional body from a s
 No, because the dynamical equation specifying the specific Julia set gives us all the information we need.  This is because dynamical systems are deterministic: one input yields one output, no chance involved.  All we need is to store this equation
 
 $$
-z_next = z_current^2 + a
+z_{next} = z_{current}^2 + a
 $$
 
 and then have a system that computes each iteration.  In text, this is only 25 bytes, but gives us the incredibly information-rich maps of the set.  In this sense, an extremely complicated structure may be stored in with a miniscule amount of information.
