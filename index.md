@@ -88,7 +88,8 @@ $$
 
 ![coral image]({{https://blbadger.github.io}}/bio_images/acropora.png)
 
-### Homeostasis
+### [Homeostasis](/homeostasis.md)
+
 
 ### [Neural Network](/neural-networks.md) 
 
