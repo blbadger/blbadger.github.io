@@ -1,4 +1,4 @@
-## The developmental genetic problem
+## The genetic information problem
 
 ### Background
 
@@ -10,7 +10,7 @@ When the human genome project was completed, the number of sections of DNA that 
 
 It could be hypothesized that the large amount of non-coding DNA is essential for the development of a complex body plan by providing extra regulatory regions.  But even this is doubtful: the pufferfish *Tetraodontidae rubripes* contains a compact genome an eighth of the size of ours, and being a chordate retains an intricate body.
 
-How then does the relatively small genome specify an incredibly detailed body of, for example, a vertebrate?  In Edelman's book Topobiology, the developmental genetic problem is laid out as follows: how can a one-dimensional molecule encode all the information necessary for a three-dimensional body plan, given the incredible level of detail in which it must act?
+How then does the relatively small genome specify an incredibly detailed body of, for example, a vertebrate?  In Edelman's book Topobiology, a problem is laid out as follows: how can a one-dimensional molecule encode all the information necessary for a three-dimensional body plan for complicated organisms like mammals, given the incredible level of detail of the body plan?
 
 Note that although the genome does have a three dimensional conformation that seems to be important to cell biology, any information stored in such shapes is lost between generations, that is, when egg and sperm nuclei fuse.  This means that information contained in the complex three dimensional structure of the genome is lost, implying that it is the genetic code itself which provides most information.
 
@@ -91,11 +91,34 @@ $$
 
 and then have a system that computes each iteration.  In text, this is only 25 bytes, but gives us the incredibly information-rich maps of the set.  In this sense, an extremely complicated structure may be stored in with a miniscule amount of information.
 
-### Traits of nonlinear dynamical systems: do they exist in organisms?
+### Traits of nonlinear dynamical systems in proteins?
 
-To the eye of someone used to thinking of the genome as a collection of genes that are 'read' during protein transcription, the idea that the genome does not directly encode information yielding a three dimensional product may be counterintuitive.  After all, this seems to be how proteins are made: the genetic code is read out almost like a tape by RNA polymerase, which then is read out again sequentially by the ribosome.  Is there any evidence for the idea that a body plan is stored as a nonlinear dynamical system?  
+To the eye of someone used to thinking of the genome as a collection of genes that are 'read' during protein transcription, the idea that the genome does not directly encode information yielding a three dimensional product may be counterintuitive.  After all, this seems to be how proteins are made: the genetic code is read out almost like a tape by RNA polymerase, which then is read out (again sequentially) by the ribosome.  The three-nucleotide genetic code for each amino acid has been deciphered and seems to point us to the idea that the genome is indeed a source of information that is stored as blueprints, or as a direct encoding.  Is there any evidence for the idea that information in genetic are stored as instead instructions for nonlinear dynamical systems?  
 
-It may be best to first consider 
+Let us consider the example of proteins (strings of amino acids) being encoded by genes more closely.  Ignoring alternative splicing events, the output of one gene is one strand of mRNA, and this yields one strand of amino acids.  But now remember that the strand of amino acids must fold to make a protein, and by doing so it changes from one dimension to three.  It is in this step that we can see the [usual traits of nonlinear dynamical systems](/index.md) come in to play, and these features deserve enumeration.
+
+First, protein folding is a slow process, on molecular timescales.  This means that there is an element of time that cannot be ignored.  As dynamical systems are those that change over time, we can define protein folding as a dynamical system.  Protein folding usually proceeds such that nonpolar amino acids collect in an interior whereas polar and charged amino acids end up on the exterior, and this takes between microseconds to seconds depending on the protein [ref](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2323684/), far longer than the picosecond time scales in which molecular bond angles change.  As it is dynamical, protein folding may be described as aperiodic, ie non-repeating, unless the folded protein is exactly the same as the unfolded amino acid chain. This means that an arrow representing time can be applied to
+
+Second, protein folding is sensitive to initial conditions. A chemically significant (nonpolar to ionic, for example) change in amino acid quality may be enough to drastically change the protein's final shape, an example of which is the E6V (charged glutamic acid to nonpolar valine) mutation of Hemoglobin. This is not surpising, given that a protein with a modest number of 101 amino acids has $3^100$ possible likely configurations (3 chemically probable orientations for 100 moveable bonds in a chain) [ref](https://www.pnas.org/content/pnas/89/1/20.full.pdf).  It is apparent that proteins do not visit each and every configuration while folding, for if they did then folding would take $10^27$ years, an observation known as Levinthal's paradox. It is clear that a folding protein does not visit every possible orientation, but instead only a subset of these before settling on a folded state.  The orientations that are visited are influenced by every amino acid: the folding is in this way nonlinear as it is not additive, meaning that the effects on the final protein of a change in one amino acid cannot be determined independantly of the other amino acids present.
+
+But note that this sensitivity does not seem to extend to the initial bond angles for a given amino acid chain, only to the amino acids found in the chain itself (otherwise thermal motion to identical chains would be expected to yield different folded conformations).  In this way protein folding resembles the formation of a strange attractor like the [Clifford attractor](clifford-boundary.md) where many starting points yield one final outcome, but these starting points are bounded by others that result in a far different outcome.
+
+Finally, protein folding is difficult to predict: given a sequence of DNA, one can be fairly certain as to what mRNA and thus what amino acid chain will be produced (ignoring splicing) even if that sequence of DNA has never been seen before.  But a similar task for predicting a protein's folded structure based on its
+amino acid chain starting point has proven extremely challenging for all but the smallest amino acid sequences.  The reason for this is often attributed to the vast number of possible orientations an amino acid may exist in, but it is important to note that there are a vast number of possible sequences of DNA for each gene (if there are 100 nucleotides, there are $4^100$ possiblilities) but that we can clearly predict the amino acid sequences from all these outcomes regardless.  If we instead view this problem from the lense of nonlinear dynamics, a different explanation comes about: sensitivity to initial conditions implies aperiodicity, and aperiodic dynamical systems are [intrinsically difficult to predict in the long term](/logistic-map.md). 
+
+### Implications for cellular and organismal biology
+
+We have seen how protein folding displays traits of change over time, aperiodicity, sensitivity to initial conditions and difficulties in long-term prediction.  These are traits of nonlinear dynamical systems, and the latter three are features of chaotic dynamical systems.  What about at a larger scale: can we see any features one would expect to find in a nonlinear dynamical system at the scale of the tissue or organism?
+
+
+
+
+
+
+
+
+
+
 
 
 
