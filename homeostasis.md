@@ -24,9 +24,12 @@ Dynamic means changing over time, therefore homeostasis is a dynamical system.  
 
 ### Homeostasis as an attractor in a nonlinear dynamical system
 
-What type of dynamical system would lead to continuous changes that preserve similar conditions over time, even when outside influences nudge them towards instability?  Any organism that ages does not re-enter precisely the same condition as it was in before, otherwise we could remove time from the system and the organism would last perpetually without some adverse outside influence.  But for nearly all organisms, this is not the case and ageing occurs, which can eventually disrupt homeostasis once and for all. Even among animals that have not yet found to show evidence of age (and do not exist in dormant conditions), none have been found to be older than a few thousand years meaning that eventually homeostasis is aperiodic for all organisms.
+What type of dynamical system would lead to continuous changes that preserve similar conditions over time, even when outside influences nudge them towards instability?  Any organism that ages does not re-enter precisely the same condition as it was in before, otherwise we could remove time from the system and the organism would last perpetually without some adverse outside influence.  But for nearly all organisms, this is not the case and ageing occurs, which can eventually disrupt homeostasis once and for all. 
 
 This means that homeostasis is not just any dynamical system: it is an [aperiodic dynamical system](/index.md), or one that does not precisely revisit a previous state as time passes.  As only nonlinear (or piecewise linear, which one can think of as being discontinuously nonlinear) dynamical systems exhibit attractors that are not points (with measure > 0) and are periodic, homeostasis is an attractor in a nonlinear dynamical system.
+
+### Implications for research
+
 
 
 
