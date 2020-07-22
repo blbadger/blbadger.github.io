@@ -1,14 +1,14 @@
 ## Homeostasis
 
-### Background: what is homeostasis and why is it important
+### Background
 
-Homeostasis is a fundamental feature of living organisms, and is defined by Britannica to be 
+Homeostasis is a fundamental feature of living organisms, and is defined by [Brittanica](https://www.britannica.com/science/homeostasis) to be 
 
 "Any self-regulating process by which biological systems tend to maintain stability while adjusting to conditions that are optimal for survival"
 
 although the conditions to which a biological system is subjected to are usually actually sub-optimal.  The next sentence is:
 
-"If homeostasis is successful, life continues; if unsuccessful, disaster or death ensues." [ref](https://www.britannica.com/science/homeostasis).  
+"If homeostasis is successful, life continues; if unsuccessful, disaster or death ensues." 
 
 The idea here is that if a living organism is moved from one environment to another, it must change its physiology such that some internal internal parameters are unchanged, or else the organism dies.  Exactly which parameters are important depends on the organism: warm-blooded endothermic animals cannot tolerate more than a few degrees of core temperature change, whereas ectotherms can tolerate a wide range of temperatures while still maintaining homeostasis and thefore stability (ie little change) in other parameters.  
 
@@ -26,12 +26,12 @@ Dynamic means changing over time, therefore homeostasis is a dynamical system.  
 
 What type of dynamical system would lead to continuous changes that preserve similar conditions over time, even when outside influences nudge them towards instability?  Any organism that ages does not re-enter precisely the same condition as it was in before, otherwise we could remove time from the system and the organism would last perpetually without some adverse outside influence.  But for nearly all organisms, this is not the case and ageing occurs, which can eventually disrupt homeostasis once and for all. 
 
-This means that homeostasis is not just any dynamical system: it is an [aperiodic dynamical system](/index.md), or one that does not precisely revisit a previous state as time passes.  As only nonlinear (or piecewise linear, which one can think of as being discontinuously nonlinear) dynamical systems exhibit attractors that are not points (with measure > 0) and are periodic, homeostasis is an attractor in a nonlinear dynamical system.
+This means that homeostasis is not just any dynamical system: it is an [aperiodic dynamical system](/index.md), or one that does not precisely revisit a previous state as time passes.  As only nonlinear (or piecewise linear, which one can think of as being discontinuously nonlinear) dynamical systems exhibit attractors that are not points (with measure > 0) and are periodic, homeostasis can be viewed as an attractor in a nonlinear dynamical system.
+
 
 ### Implications for research
 
-
-
+Why does this matter? 
 
 
 
