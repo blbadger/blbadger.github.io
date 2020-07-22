@@ -27,6 +27,12 @@ For the attractor of the starting point $(x_0, y_0) = (10.75, 8.2)$,
 import copy
 
 def clifford_boundary(max_iterations, a=-1.4, b=1.7, c=1.0, d=0.7):
+	''' A function to map the boundaries of attraction of the
+	Clifford system, iterated semicontinuously. Takes a number of
+	maximum iterations and Clifford constants as inputs, outputs
+	a color-coded map of which values end up in a given basin of
+	attraction over time.
+	'''
 	x_range = 3000
 	y_range = 3000
 
@@ -46,11 +52,11 @@ def clifford_boundary(max_iterations, a=-1.4, b=1.7, c=1.0, d=0.7):
 	for k in range(max_iterations):
 		array_copied = copy.deepcopy(array[0]) # copy array to prevent premature modification of x array
 
-		# henon map applied to array 
+		# clifford map applied to array 
 		array[0] = array[0] + (1.35*t)*(np.sin(a*array[1]) + c*np.cos(a*array[0]))
 		array[1] = array[1] + (1.35*t)*(np.sin(b*array_copied) + d*np.cos(b*array[1]))
 
-		# note which array elements are diverging, 
+		# note which array elements are enter the basin of attraction
 		in_basin = np.abs(array[0] - 10.95) + np.abs(array[1] - 8.1) < 1
 		entering_basin = in_basin & not_already_in_basin
 		iterations_until_in_basin[0][entering_basin] = k
