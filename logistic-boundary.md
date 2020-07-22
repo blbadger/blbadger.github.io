@@ -61,6 +61,19 @@ $$
 z_{next} = rz(1-z) = rz - rz^2
 $$
 
-For example, increasing the scale at the point $(3.58355 + 0i)$ yeilds
+For example, increasing the scale at the point 
+$$
+(3.58355 + 0i)
+$$
+
+yeilds
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_zoom.gif)
+
+Note the identical objects found in a Mandelbrot set zoom on the point 
+
+$$
+(-1.633 + 0i)
+$$
+
+![mandelbrot map]({{https://blbadger.github.io}}/logistic_map/mandelbrot_zoom_frame.gif)
