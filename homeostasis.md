@@ -2,7 +2,7 @@
 
 ### Background
 
-Homeostasis is a fundamental feature of living organisms, and is defined by [Brittanica](https://www.britannica.com/science/homeostasis) to be 
+Homeostasis is a fundamental feature of living organisms, and is defined by [Britannica](https://www.britannica.com/science/homeostasis) to be 
 
 "Any self-regulating process by which biological systems tend to maintain stability while adjusting to conditions that are optimal for survival"
 
@@ -28,10 +28,20 @@ What type of dynamical system would lead to continuous changes that preserve sim
 
 This means that homeostasis is not just any dynamical system: it is an [aperiodic dynamical system](/index.md), or one that does not precisely revisit a previous state as time passes.  As only nonlinear (or piecewise linear, which one can think of as being discontinuously nonlinear) dynamical systems exhibit attractors that are not points (with measure > 0) and are periodic, homeostasis can be viewed as an attractor in a nonlinear dynamical system.
 
+Another line of reasoning reaches the same conclusion.  Negative feedback is feedback that is used to decrease the distance from a desired state.  The classic example here is a home thermostat: if the temperature is too low, a heater is activated until it is within an acceptable margin.  If the temperature is too high, cooling is activated and both heating and cooling are negative feedback. 
 
-### Implications for research
+Homeostasis can be equated to the combination of negative feedback events.  Feedback can be stable, where Negative feedback can be linear, in which case it yields a stable or unstable outcome regardless of the inputs, or else it can be nonlinear in which case some inputs can yeild stability and some yield instability (see Pierce 1961).   The many instances of homeostatic feedback that takes a small and relatively harmless input and yields an undesirable output (for example take any allergy or the temperature fall during hypothermia, etc.) means that the feedback is not stable regardless of the inputs.  Thus the feedback must be nonlinear, meaning that homeostasis exists as an attractive state in a nonlinear system. 
 
-Why does this matter? 
+
+### Implications for biological research
+
+Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experiment via variable isolation and manipulation requires linearity.  This means that nonlinear systems are poorly understood by the methods which are almost exclusively used for biological study.  
+
+To see this, 
+
+
+
+
 
 
 
