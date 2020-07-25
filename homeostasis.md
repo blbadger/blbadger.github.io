@@ -20,7 +20,7 @@ Continuing our definition:
 
 "The stability attained is actually a dynamic equilibrium, in which continuous change occurs yet relatively uniform conditions prevail."
 
-Dynamic means changing over time, therefore homeostasis is a dynamical system.  The continuous changes that result in relatively uniform internal conditions can be thought of as the path, or trajectory, of the dynamical system.  Here the change in parameters of temperature, oxygen consumption etc. may be plotted over time in the same way that a phase space may be used to observe the changes in kinetic energy as position changes for a [pendulum](/pendulum-map.md).
+Dynamic means changing over time, therefore homeostasis exists in a dynamical system.  The continuous changes that result in relatively uniform internal conditions can be thought of as the path, or trajectory, of the dynamical system.  Here the change in parameters of temperature, oxygen consumption etc. may be plotted over time in the same way that a phase space may be used to observe the changes in kinetic energy as position changes for a [pendulum](/pendulum-map.md).
 
 ### Homeostasis as an attractor in a nonlinear dynamical system
 
@@ -35,9 +35,24 @@ Homeostasis can be equated to the combination of negative feedback events.  Feed
 
 ### Implications for biological research
 
-Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experiment via variable isolation and manipulation requires linearity.  This means that nonlinear systems are poorly understood by the methods which are almost exclusively used for biological study.  
+Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experimentation via variable isolation and manipulation assumes linearity (specifically additivity).  This means that nonlinear systems are poorly understood by the methods which are almost exclusively used for biological research.
 
-To see this, 
+To see why experimentation assumes linearity, imagine you want to understand how a mechanical watch works.  You open it up and see a little wheel spinning to and fro, many gears moving at various speeds, and a spring.  What does the spring do?  Remove it and all the gears stop: therefore the spring is necessary to cause the gears (and ultimately the hands) to move.  In mathematical logic terms, 'if X then Y' ( formally $X \implies Y$) means the same thing as 'Y is necessary for X' and so for our watch, if it is moving (X) then it must have a spring (Y).
+
+In order to learn this, the spring alone must be affected.  If removing the spring also causes all the gears to fall out then the conclusion above is no longer true.  Changing only the spring is an isolation of variables, and it is necessary for an experiment to yield any information.  But now imagine that the watch is nonlinear: the parts are not additive, meaning that they are not separable.  This means that whenever someone tries to remove the spring, the gears fall out.  Then the conclusion is that the spring is necessary to stop the watch hands from spinning freely would be made,in other words that $spinning freely \implies no spring$
+This is not accurate because it is actually the gears that prevent the hands from spinning freely. By failing to isolate the spring variable from the gear variable, an conclusion based on experimentation is not helpful.
+
+The above example may seem silly at first glance but consider that an analagous process occurs in any homeostatic organism.  Say we want to understand the function of protein X in a cell, so we induce some change to reduce it's number in the cell by a fifth.  Without knowning which protein this is, a molecular biologist could reasonably predict that nothing will happen.  Indeed, the majority of proteins in the cell are non-essential meaning that if all of one of these is removed, homeostasis remains.  Does this mean that none of these proteins do anything in the cell?  No, because living organisms are not additive: removing one part changes the rest, in this case perhaps causing other proteins to compensate for the loss of one. 
+
+The current reproducibility crisis of scientific fields investigating living organisms (biomedicine, psychology etc.) is likely a consequence of attempts to apply a method that assumes linearity to systems that are not linear.  Nonlinearity means that isolation of variables is not possible, and therefore experimentation leading to meaningful prediction is not possible.  
+
+Does nonlinearity always matter, ie can we ever study a nonlinear system by pretending that it is linear and using the scientific method of variable isolation and experimentation?  Sometimes yes, when any particular influence is large enough then we can view a system as approximately linear.  This is the case for the [three body problem](/three-body-problem.md), a nonlinear system of three astronomical bodies that are subject to the gravitational attraction of each other.  If the bodies are near in mass they cannot be approximated by a linear equation, but if one body is of negligeable mass compared to the other two then approximation is acceptable.  
+
+In a similar way, one can draw conclusions about a living system subjected to dramatic stimuli.  Removal of oxygen prevents respiration and kills nearly all animal cells because homeostasis is lost.  We can with reasonable confidence state that oxygen is necessary for respiration because these events cease completely when oxygen is removed.  We can approximate the system as a linear one with respect to oxygen removal because any attempt in a cell to cope with a lack of oxygen (and there are many such attempts) is ineffective.
+
+But what about when smaller effects are observed?  These effects are called phenotypes, and in the process of experimentation a phenotype is actively searched for.  A phenotype means that some manipulation performed to a protein causes some visible change to organismal biology, which equates to loss of homeostasis in some particular respect (ie loss for only one process, or loss for one cell type etc.), even if general homeostasis remains and the organism continues to live.  Can we be confident that the protein in question is what causes the phenotype? No, because variables (in this case proteins and their functions) cannot be sufficiently isolated.
+
+
 
 
 
