@@ -90,12 +90,15 @@ $$
 
 ### [Homeostasis](/homeostasis.md)
 
+![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
+
 
 ### [Neural Network](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
-## Small projects
+
+## Smaller software projects
 
 ### [Game puzzles](/puzzle-projects.md)
 
