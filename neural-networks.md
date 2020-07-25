@@ -103,6 +103,8 @@ $$
 
 This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems, only an extremely small subset of them.
 
+For one specific reason why neural networks in particular cannot compute decisions with arbitrary accuracy and how this is manifested in the presence of adversarial examples, see the bottom of this page.
+
 ### Using a neural network to classify fluorescent images of cells
 
 Perhaps image classification that can be done by humans falls into the category of problems that the neural network can at least partially solve. I have taken many images of biological specimens (usually fluorescence images of cells) over the last decade, and think I have gotten pretty good at determining which images are of what category.  Can an automated system perform this task as good or better than me?
@@ -488,7 +490,7 @@ To see if the faster increase in training accuracy for Snf7 was peculiar to the 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
 
-### Learning is not global minimization of the cost function
+### Learning (increased test accuracy) does not equate to global minimization of a cost function during training
 
 Neural networks learn by adjusting the weights and biases of the neurons in order to miminize a cost function, which is a continuous and differentiable representation of the accuracy of the output of the network. This is usually done with a variant on stochastic gradient descent, which involves calculating the gradient (direction of largest change) using a randomly chosen subset of images (which is why it is 'stochastic').  This is conceptually similar to rolling a ball representing the network down a surface representing the multidimensional weights and biases of the neurons.  The height of the ball represents the cost function, so the goal is to roll it to the lowest spot during training.  
 
@@ -497,11 +499,35 @@ As we have seen in the case for Snf7 dataset images, this conception is accurate
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
 
-### Neural networks are systems of dimension reduction: implications for the presence of adversarial examples
+### Neural networks are systems of dimension reduction: adversarial examples will always exist for neural networks
 
-Neural networks, like any statistical learning procedure, are in the business of dimensional reduction.  This is because they take in inputs that are necessarily larger than outputs, which may seem counterintuitive if the inputs are small images and the outputs are choices between thousands of options.  Even then, dimensional reduction holds: to see this, suppose that each image were classified into its own category.  Then the network would not reduce dimension but the classification would be trivial: any program could do just as well by classifying any image to its own category.  In the process of assigning multiple inputs to the same category, dimensional reduction occurs.
+Neural networks, like any statistical learning procedure, are in the business of dimensional reduction.  This is because they take in inputs that are necessarily larger than outputs, which may seem counterintuitive if the inputs are small images and the outputs are choices between thousands of options.  Even then, dimensional reduction holds: to see this, suppose that each image were classified into its own category.  Then the network would not reduce dimension but the classification would be trivial: any program could do just as well by classifying any image to its own category.  In the process of assigning multiple inputs to the same category, dimensional reduction occurs.  To be specific, the many-dimensional training space is reduced to a one-dimensional cost function, and this is then used to change the network in order to decrease this cost function. This reduction is equivalent to a mapping, where one point in many dimensions is mapped to one region in one dimension.
 
-As seen for the nonlinear attractors [here](\clifford_attractor.md), changes in dimension are rarely smooth: small changes in inputs lead to large changes in attractor shape. This is important because it also applies to neural networds, and is evidenced by the existence of [adversarial negatives](https://arxiv.org/abs/1312.6199), images that are by eye indistinguishable from each other but are seen by a network to be completely different.  
+As seen for the nonlinear attractors [such as the one here](\clifford_attractor.md), changes in dimension are not: small changes in inputs lead to large changes in attractor shape. Is a change in dimension always discontinuous?  We are most interested here in a change from many dimensions to one, so start by considering the change in dimension from two to one.
+
+The new question is as follows: can a mapping from a two dimensional surface to a one dimensional line be continuous?  It turns out no: any mapping from two to one dimensions (with the mapping being one-to-one and onto) is discontinuous, to be specific it is everywhere discontinuous.  Here 'continuous' as a property of functions is defined topologically as follows: in some metrix space $(X, d)$ where $f$ maps to another metric space $(Y, d')$, the function $f$ is continuous if and only if for any $\epsilon > 0$,
+
+$$
+\lvert b - a \rvert < \delta \implies \lvert f(b) - f(a) \rvert < \epsilon
+$$
+
+Where $\delta > 0$ is a distance in metrix space $(X, d)$ and $\epsilon$ is a distance in metric space $(Y, d')$.  A discontinuous function is one where the above expression is not true for some pair $(a, b) \in X$ and an everywhere discontinous function is one in which the above expression is not true for every pair $(a, b) \in X$.  
+
+The statement is that any one-to-one and onto mapping from two dimensions to one is everywhere discontinuous. To show this we will make use of an elegant proof found in Pierce's Introduction to Information Theory (p16-17).  
+
+Suppose we have arbitrary two points on a two dimensional surface, called $a$ and $b$.  We can connect these points with an arbitrary curve, and now we choose two other points $c$ and $d$ on the surface and connect them with a curve that travels through the curve $ab$ as follows. All four points are mapped to a line, and in particular $a \to a'$, $b\to b'$ etc.
+
+
+![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
+
+Now consider the intersection of $ab$ and $cd$.  This intersection lies between $a'$ and $b'$ because it is on $ab$.  But now note that all other points on $cd$ must lie outside $a'b'$ in order for this to be a one-to-one mapping.  Thus there is some number $\delta > 0$ that exists separating the intersection point from the rest of the mapping of $cd$, and therefore the mapping is not continuous.  To see that it is everywhere discontinous, observe that any point on the plane may be this intersection point, which maps to a discontinous region of the line.  Therefore a mapping of a two dimensional plane to a one dimensional line is nowhere continuous $\square$.   
+
+This theorem also extends to the mappings of more than two dimensions to a line.
+
+Now consider the existence of [adversarial examples](https://arxiv.org/abs/1312.6199), also called adversarial negatives, images that are by eye indistinguishable from each other but are seen by a network to be completely different.  The authors of the work cited suggest that the existence of these images suggests that the input-output mapping for a neural network is 'fairly discontinuous', and it is clear to see why: if two nearly-identical images are classified as very different, then two nearly-identical points in multidimensional input space end up being far from each other in output (cost function) space.  
+
+Neural networks map many-dimensional space to one dimension, and as the proof above demonstrates this mapping must be discontinuous everywhere.  This means that every image classified by a neural network will have an adversarial example, an image that is extremely close to one correctly classified but that will be incorrectly and confidently mis-classified.
+
 
 
 
