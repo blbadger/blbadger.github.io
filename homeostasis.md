@@ -37,9 +37,19 @@ Homeostasis can be equated to the combination of negative feedback events.  Feed
 
 Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experimentation via variable isolation and manipulation assumes linearity (specifically additivity).  This means that nonlinear systems are poorly understood by the methods which are almost exclusively used for biological research.
 
-To see why experimentation assumes linearity, imagine you want to understand how a mechanical watch works.  You open it up and see a little wheel spinning to and fro, many gears moving at various speeds, and a spring.  What does the spring do?  Remove it and all the gears stop: therefore the spring is necessary to cause the gears (and ultimately the hands) to move.  In mathematical logic terms, 'if X then Y' ( formally $X \implies Y$) means the same thing as 'Y is necessary for X' and so for our watch, if it is moving (X) then it must have a spring (Y).
+To see why experimentation assumes linearity, imagine you want to understand how a mechanical watch works.  You open it up and see a little wheel spinning to and fro, many gears moving at various speeds, and a spring.  What does the spring do?  Remove it and all the gears stop: therefore the spring is necessary to cause the gears (and ultimately the hands) to move.  In mathematical logic terms, 'if X then Y' or formally 
 
-In order to learn this, the spring alone must be affected.  If removing the spring also causes all the gears to fall out then the conclusion above is no longer true.  Changing only the spring is an isolation of variables, and it is necessary for an experiment to yield any information.  But now imagine that the watch is nonlinear: the parts are not additive, meaning that they are not separable.  This means that whenever someone tries to remove the spring, the gears fall out.  Then the conclusion is that the spring is necessary to stop the watch hands from spinning freely would be made,in other words that $spinning freely \implies no spring$
+$$
+X \implies Y
+$$
+
+means the same thing as 'Y is necessary for X' and so for our watch, if it is moving (X) then it must have a spring (Y).
+
+In order to learn this, the spring alone must be affected.  If removing the spring also causes all the gears to fall out then the conclusion above is no longer true.  Changing only the spring is an isolation of variables, and it is necessary for an experiment to yield any information.  But now imagine that the watch is nonlinear: the parts are not additive, meaning that they are not separable.  This means that whenever someone tries to remove the spring, the gears fall out.  Then the conclusion is that the spring is necessary to stop the watch hands from spinning freely would be made,in other words that 
+$$
+\mathbf{spinning \; freely} \implies \mathbf{no \; spring}
+$$
+
 This is not accurate because it is actually the gears that prevent the hands from spinning freely. By failing to isolate the spring variable from the gear variable, an conclusion based on experimentation is not helpful.
 
 The above example may seem silly at first glance but consider that an analagous process occurs in any homeostatic organism.  Say we want to understand the function of protein X in a cell, so we induce some change to reduce it's number in the cell by a fifth.  Without knowning which protein this is, a molecular biologist could reasonably predict that nothing will happen.  Indeed, the majority of proteins in the cell are non-essential meaning that if all of one of these is removed, homeostasis remains.  Does this mean that none of these proteins do anything in the cell?  No, because living organisms are not additive: removing one part changes the rest, in this case perhaps causing other proteins to compensate for the loss of one. 
