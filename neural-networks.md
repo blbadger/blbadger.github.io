@@ -68,20 +68,20 @@ Could it be that a better neural network will be made in the future, and this wi
 The answer is no: no matter what program we use, we cannot solve most decision problems.  To see why, first note that any program, from a simple `print (Hello World!)` to a complicated neural network, is conveyed to a computer as a finite string of bits (a list of 1s and 0s).  Natural numbers are also defined by a finite string of bits and so we can establish an equivalence between finite programs and natural numbers.  The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite)
 
 $$
-\{\mathtt {finite} \; \mathtt {programs}\} \approx \{finite \; strings\; of\; bits\} = \Bbb N 
+\{\mathtt {finite} \; \mathtt {programs}\} = \{finite \; strings\; of\; bits\} \sim \Bbb N 
 $$
 
 The size of the set of all natural numbers is equivalent to the size of the set of all rational numbers (both are countably infinite), so
 
 $$
-\{\mathtt {finite} \; \mathtt {programs}\} \approx \Bbb N \approx \Bbb Q
+\{\mathtt {finite} \; \mathtt {programs}\} \sim \Bbb N \sim \Bbb Q
 $$
 
-Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there are infinite inputs for any given decision problem, this string of bits is infinite.  
+Now let's examine the set of all possible decision problems.  We can restrict ourselves to binary classification without loss of generality, where we have two options: $1$ and $0$.  Now a binary decision problem has an ouput 1 or 0 for every input, and we can list the outputs as a string of bits in binary point, ie binary digits that define a number between 0 and 1.  As a decision problem must be defined for every possible input,  and as there may be infinite inputs for any given decision problem, this string of bits is infinite and can define a number between 0 and 1.
 
 
 $$
-\{decision\; problems\} \approx \{infinite \; strings\; of\; bits\} = \{x \in (0, 1]\}
+\{decision\; problems\} = \{infinite \; strings\; of\; bits\} \sim \{x \in (0, 1]\}
 $$
 
 
@@ -89,7 +89,7 @@ As the size of the set of all numbers in $(0, 1]$ is equivalent to the size of t
 
 
 $$
-\{decision \; problems\} \approx \Bbb R
+\{decision \; problems\} \sim \Bbb R
 $$
 
 
@@ -97,11 +97,11 @@ and as the size of the set of all real numbers is uncountably infinite wheras th
 
 
 $$
-\{decision \; problems\} \approx \Bbb R >> \Bbb Q \approx \{\mathtt {finite} \; \mathtt {programs}\}
+\{decision \; problems\} \sim \Bbb R >> \Bbb Q \sim \{\mathtt {finite} \; \mathtt {programs}\}
 $$
 
 
-This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems, only an extremely small subset of them.
+This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems, only a small subset of them.
 
 For one specific reason why neural networks in particular cannot compute decisions with arbitrary accuracy and how this is manifested in the presence of adversarial examples, see the bottom of this page.
 
