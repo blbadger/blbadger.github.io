@@ -35,17 +35,11 @@ Homeostasis can be equated to the combination of negative feedback events.  Feed
 
 ### Implications for biological research
 
-Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experimentation via variable isolation and manipulation assumes linearity (specifically additivity).  This means that nonlinear systems are poorly understood by the methods which are almost exclusively used for biological research.
+Why does it matter if homeostasis is a nonlinear dynamical attractor?  It matters because nonlinear systems are not additive, and the scientific method of experimentation via variable isolation and manipulation assumes linearity (specifically additivity).  This means that nonlinear systems are poorly understood by the methods which are normally used for biological research.
 
-To see why experimentation assumes linearity, imagine you want to understand how a mechanical watch works.  You open it up and see a little wheel spinning to and fro, many gears moving at various speeds, and a spring.  What does the spring do?  Remove it and all the gears stop: therefore the spring is necessary to cause the gears (and ultimately the hands) to move.  In mathematical logic terms, 'if X then Y' or formally 
+To see why experimentation assumes linearity, imagine you want to understand how a mechanical watch works.  You open it up and see a little wheel spinning to and fro, many gears moving at various speeds, and a spring.  What does the spring do?  Remove it and all the gears stop: therefore the spring is necessary to cause the gears (and ultimately the hands) to move.  In mathematical logic terms, 'if $X$ then $Y$' or formally $ X \implies Y $ means the same thing as '$Y$ is necessary for X' and so for our watch, if it is moving ($X$) then it must have a spring ($Y$).
 
-$$
-X \implies Y
-$$
-
-means the same thing as 'Y is necessary for X' and so for our watch, if it is moving (X) then it must have a spring (Y).
-
-In order to learn this, the spring alone must be affected.  If removing the spring also causes all the gears to fall out then the conclusion above is no longer true.  Changing only the spring is an isolation of variables, and it is necessary for an experiment to yield any information.  But now imagine that the watch is nonlinear: the parts are not additive, meaning that they are not separable.  This means that whenever someone tries to remove the spring, the gears fall out.  Then the conclusion is that the spring is necessary to stop the watch hands from spinning freely could be made.  This is not accurate because it is actually the gears that prevent the hands from spinning freely. By failing to isolate the spring variable from the gear variable, a conclusion based on experimentation is not helpful.
+In order to learn this, the spring alone must be affected.  If removing the spring also causes all the gears to fall out then the conclusion above is no longer necessarily true.  Changing only the spring is an isolation of variables, and it is necessary for an experiment to yield any information.  But now imagine that the watch is nonlinear: the parts are not additive, meaning that they are not separable.  This means that whenever someone tries to remove the spring, the gears fall out.  Then the conclusion is that the spring is necessary to stop the watch hands from spinning freely could be made.  This is not accurate because it is actually the gears that prevent the hands from spinning freely. By failing to isolate the spring variable from the gear variable, a conclusion based on experimentation is not helpful.
 
 The above example may seem silly at first glance but consider that an analagous process occurs in any homeostatic organism.  Say we want to understand the function of protein X in a cell, so we induce some change to reduce it's number in the cell by a fifth.  Without knowning which protein this is, a molecular biologist could reasonably predict that nothing will happen.  Indeed, the majority of proteins in the cell are non-essential meaning that if all of one of these is removed, homeostasis remains.  Does this mean that none of these proteins do anything in the cell?  No, because the variables are not separable: removing one changes the rest, in this case perhaps causing other proteins to compensate for the loss of one. 
 
@@ -57,7 +51,7 @@ Does nonlinearity always matter, ie can we ever study a nonlinear system by pret
 
 In a similar way, one can draw conclusions about a living system when one or a few factors dominates and removes homeostasis.  For example, removal of oxygen prevents respiration and kills nearly all animal cells because homeostasis is lost.  We can with reasonable confidence state that oxygen is necessary for respiration because these events cease completely when oxygen is removed.  We can approximate the system as a linear one with respect to oxygen removal because any attempt in a cell to cope with a lack of oxygen (and there are many such attempts) has little effect.
 
-It should be noted that this is only true for large effects that destroy homeostasis in some way, and even then approximations should be treated with care for anything other than extremely short-term prediction.
+It should be noted that this is only true for large effects that destroy homeostasis in some way, and even then approximations should be treated with care for anything other than extremely short-term prediction. Of course, with homeostasis lost there is likely no long term to think of.
 
 
 
