@@ -81,7 +81,7 @@ To begin, we add a dictionary that will store our computed results.
 import copy
 matrix_dictionary = {}
 ```
-we call the a function with the dictionary as an argument.  The base cases are the same (and omitted here for brevity) but then insteady of simply calling the smaller matrix determinant, we instead only do so if a tuple version of the matrix does not exist in our dictionary (it must be a tuple because lists are mutable and python dictionaries can only hash non-mutable datatypes like strings or tuples).  
+we call the a function with the dictionary as an argument.  The base cases are the same (and omitted here for brevity) but then insteady of simply calling the smaller matrix determinant, we instead only do so if a tuple version of the matrix does not exist in our dictionary (it must be a tuple because lists are mutable and python dictionaries can only hash non-mutable datatypes like strings or tuples).  The determinant of this smaller matrix is saved in the dictionary such that whenever we want to know what the determinant is of this matrix is in the future, we can just look it up instead of recalculating it. 
 
 ```python
 def determinant(matrix, matrix_dictionary):
