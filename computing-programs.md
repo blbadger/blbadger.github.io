@@ -73,6 +73,73 @@ Let's test the program out on our large matrix!  By printing out the results usi
 
 Which can be checked against software to compute determinants on the web!  Although this program can theoretically compute the determinant of a matrix of any size, it is practically limited to matricies smaller than 11x11 due to time.
 
+Can we make this program faster?  An 11x11 matrix is not really very big after all.  Thinking carefully about what the recursion is doing, we can see that the same computations will be performed over and over again.  This is a perfect opportunity to employ some heroic dynamic programming in order to save the computations we did previously in memory and simply refer to the answer we got last time we performed the computations.
+
+To begin, we add a dictionary that will store our computed results.
+```python
+# standard library
+import copy
+matrix_dictionary = {}
+```
+we call the a function with the dictionary as an argument.  The base cases are the same (and omitted here for brevity) but then insteady of simply calling the smaller matrix determinant, we instead only do so if a tuple version of the matrix does not exist in our dictionary (it must be a tuple because lists are mutable and python dictionaries can only hash non-mutable datatypes like strings or tuples).  
+```python
+def determinant(matrix, matrix_dictionary):
+    ... 
+    ...
+    # iterate through the values of the matrix, removing the row and 
+    # col of each value contributing to the determinant. Find the 
+    # value recursively only if it has not already been found and added to 
+    # matrix_dictionary.  If it has already been computed, it is added to 
+    # the dictionary.
+    else:
+        result = 0
+        for i in range(len(matrix)):
+            new_matrix = [matrix[j] for j in range(len(matrix)) if j != 0]
+            new_matrix2 = copy.deepcopy(new_matrix)
+            
+            for row in new_matrix2:
+                del row[i]
+
+            new_tuple = tuple(tuple(i) for i in new_matrix2)
+            if i % 2 == 0:
+                if new_tuple not in matrix_dictionary:
+                    new_matrix_det = determinant(new_matrix2, matrix_dictionary)
+                    result += matrix[0][i] * new_matrix_det
+                    matrix_dictionary[new_tuple] = new_matrix_det
+                else:
+                    result += matrix[0][i] * matrix_dictionary[new_tuple]
+            else:
+                if new_tuple not in matrix_dictionary:
+                    new_matrix_det = determinant(new_matrix2, matrix_dictionary)
+                    matrix_dictionary[new_tuple] = new_matrix_det
+                    result -= matrix[0][i] * new_matrix_det
+                else:
+                    result -= matrix[0][i] * matrix_dictionary[new_tuple]
+
+    return result
+```
+
+When we compare the running time of the pure recursive version with the 10x10 matrix:
+```bash
+(base) bbadger@bbadger:~/Desktop$ time python matrix_determinant.py
+18639282
+
+real	0m31.581s
+user	0m31.565s
+sys	0m0.012s
+
+```
+to the running time of the top-down dynamically programmed version (using memoized recursion),
+```
+(base) bbadger@bbadger:~/Desktop$ time python matrix_determinant_memoized.py
+18639282
+
+real	0m0.169s
+user	0m0.157s
+sys	0m0.012s
+```
+
+we get the same answer but the program is much faster! 
 
 ### Trailing factorial zeros
 
