@@ -120,6 +120,22 @@ def determinant(matrix, matrix_dictionary):
 ```
 
 When we compare the running time of the pure recursive version with the 10x10 matrix:
+```python
+matrix = [
+[1, 2, 1, 4, 3, -1, 4, 1, 5, 10], 
+[1, 2, 3, 2, 9, 1, 10, 2, 9, -4], 
+[1, 2, 1, 1, 9, 0, 15, 3, 5, -3], 
+[8, 0, 1, 0, 2, 3, 4, -8, 3, -8], 
+[2, 3, 4, 0, 1, 2, -1, 3, 1, -3], 
+[2, 1, 0, 0, 1, 1, -5, -6, 1, 1], 
+[5, -6, 3, 7, -4, 0, 0, 1, 2, 6],
+[1, 3, -5, 1, 7, 0, 4, -1, 3, 0], 
+[3, 4, 2, 7, 2, 1, 5, -9, 3, 13], 
+[6, 7, -4, 1, 0, 1, 9, -1, 3, 1],
+]
+```
+which yields
+
 ```bash
 (base) bbadger@bbadger:~/Desktop$ time python matrix_determinant.py
 18639282
@@ -139,7 +155,7 @@ user	0m0.157s
 sys	0m0.012s
 ```
 
-we get the same answer but the program is much faster! 
+we get the same answer, but the memoized version of the program is much faster! This one calculates matricies of under 19x19 in a reasonable amount of time, a substantial improvement over the standard recursive program.
 
 ### Trailing factorial zeros
 
