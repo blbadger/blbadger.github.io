@@ -73,7 +73,7 @@ Let's test the program out on our large matrix!  By printing out the results usi
 
 Which can be checked against software to compute determinants on the web!  Although this program can theoretically compute the determinant of a matrix of any size, it is practically limited to matricies smaller than 11x11 due to time.
 
-Can we make this program faster?  An 11x11 matrix is not really very big after all.  Thinking carefully about what the recursion is doing, we can see that the same computations will be performed over and over again.  This is a perfect opportunity to employ some heroic dynamic programming in order to save the computations we did previously in memory and simply refer to the answer we got last time we performed the computations.
+Can we make this program faster?  Thinking carefully about what the recursion is doing, we can see that the same computations will be performed over and over again.  This is a perfect opportunity to employ some heroic dynamic programming in order to save the computations we did previously in memory and simply refer to the answer we got last time we performed the computations.
 
 To begin, we add a dictionary that will store our computed results.
 ```python
@@ -82,6 +82,7 @@ import copy
 matrix_dictionary = {}
 ```
 we call the a function with the dictionary as an argument.  The base cases are the same (and omitted here for brevity) but then insteady of simply calling the smaller matrix determinant, we instead only do so if a tuple version of the matrix does not exist in our dictionary (it must be a tuple because lists are mutable and python dictionaries can only hash non-mutable datatypes like strings or tuples).  
+
 ```python
 def determinant(matrix, matrix_dictionary):
     ... 
