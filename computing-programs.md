@@ -147,7 +147,7 @@ sys	0m0.012s
 
 ```
 to the running time of the top-down dynamically programmed version (using memoized recursion),
-```
+```bash
 (base) bbadger@bbadger:~/Desktop$ time python matrix_determinant_memoized.py
 18639282
 
