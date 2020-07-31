@@ -499,7 +499,7 @@ As we have seen in the case for Snf7 dataset images, this conception is accurate
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
 
-### Neural networks are systems of dimension reduction: adversarial examples will always exist for neural networks
+### Neural networks are systems of dimension reduction: implications for adversarial examples
 
 Neural networks, like any statistical learning procedure, are in the business of dimensional reduction.  This is because they take in inputs that are necessarily larger than outputs, which may seem counterintuitive if the inputs are small images and the outputs are choices between thousands of options.  Even then, dimensional reduction holds: to see this, suppose that each image were classified into its own category.  Then the network would not reduce dimension but the classification would be trivial: any program could do just as well by classifying any image to its own category.  In the process of assigning multiple inputs to the same category, dimensional reduction occurs.  To be specific, the many-dimensional training space is reduced to a one-dimensional cost function, and this is then used to change the network in order to decrease this cost function. This reduction is equivalent to a mapping, where one point in many dimensions is mapped to one region in one dimension.
 
@@ -524,10 +524,29 @@ Now consider the intersection of $ab$ and $cd$.  This intersection lies between 
 
 This theorem also extends to the mappings of more than two dimensions to a line.
 
-Now consider the existence of [adversarial examples](https://arxiv.org/abs/1312.6199), also called adversarial negatives, images that are by eye indistinguishable from each other but are seen by a network to be completely different.  The authors of the work cited suggest that the existence of these images suggests that the input-output mapping for a neural network is 'fairly discontinuous', and it is clear to see why: if two nearly-identical images are classified as very different, then two nearly-identical points in multidimensional input space end up being far from each other in output (cost function) space.  
+Now consider the existence of [adversarial examples](https://arxiv.org/abs/1312.6199), also called adversarial negatives, images that are by eye indistinguishable from each other but are seen by a network to be completely different.  The authors of the work cited suggest that the existence of these images suggests that the input-output mapping for a neural network is 'fairly discontinuous', and it is clear to see why: if two nearly-identical images are classified as very different, then two nearly-identical points in multidimensional input space end up being far from each other in output (classification).  
 
-Neural networks map many-dimensional space to one dimension, and as the proof above demonstrates this mapping must be discontinuous everywhere.  This means that every image classified by a neural network will have an adversarial example, an image that is extremely close to one correctly classified but that will be incorrectly and confidently mis-classified.
+Neural networks map many-dimensional space to one dimension, and as the proof above demonstrates this mapping must be discontinuous everywhere if the mapping is one-to-one, meaning that each different image has a different cost function associated with it.  This means that every image classified by such a neural network will have an adversarial example, an image that is extremely close to one correctly classified but that will be incorrectly and confidently mis-classified.
 
+Can we avoid discontinuous mapping when moving from two (or more) to one dimensions? Consider the following function 
+
+$$
+f:\Bbb R^2 \to \Bbb R
+$$
+
+where
+
+$$
+f(x_1, x_2) = x_1 + x_2
+$$
+
+This mapping is continuous: arbitrarily small changes in the metric space $(R^2, d)$ result in arbitrarily small changes in the corresponding slace $(\Bbb R, d')$, and a sketch of a proof for this will be made apparent shortly.
+
+How is this possible, given that one-to-one functions cannot map a surface to a line continuously?  The above function is not one-to-one, instead an infinite number of starting points map to each point on $R$.  To see why this is, consider which values of $a, b | a \neq b$ are equal.  Here $x_1 + x_2$ means adding coordinate values of the cartesian plane (ie $x$ value $+$ $y$ value).  Which unique points on the plane would map to the same point on the real line using this function?
+
+Consider $a = (0, 1)$ and $b = (1, 0)$.  $f(a) = 1 = f(b)$, and indeed every point on the line $ab$ maps to the same value in $\Bbb R$, that is, $1$.  Thus this funciton divides up $\Bbb R^2$ into diagonal lines, each line mapping to one point in $\Bbb R$.  Now it should be easy to see why this function is continuous: it simply maps all points in $Bbb R^2$ to the nearest position on the line $y = x$.  An arbitrarily small change perpendicular to this line in two dimensions yields no change in output in one dimension, and an arbitrarily small change applied along this line in two dimensions yields an arbitrarily small change in one dimension.
+
+What does this means for neural networks?  One-to-one functions from two dimensions to one map discontinuously where as functions that are not one-to-one may map continously.  Now consider what happens when we try to increase the predictive power of a neural network (or any machine learning algorithm really): images that are closer in some characteristic to each other are better able to be distinguished.  But this means that the output must become more sensitive to small changes in the inputs, meaning that the function mapping inputs to outputs becomes closer and closer to a one-to-one mapping, leading to discontinuity.
 
 
 
