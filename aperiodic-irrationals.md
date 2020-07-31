@@ -67,7 +67,7 @@ $$
 \Bbb A \sim \Bbb I
 $$
 
-Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$ $\square$.
+Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$.
 
 Let's see if the implications of this make sense.  In particular, can we also set up a one to one correspondance between aperiodic functions and natural numbers? This would be a contradiction if so, but it turns out we cannot: if we define functions based on their periodicity then consider that aperiodic functions have infinite periodicity, ie each has a period of $\infty$, which cannot map to the set of natural numbers, which are finite.
 
@@ -100,7 +100,7 @@ $$
 
 and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
 
-This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent $\square$.
+This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent.
 
 ### The set of chaotic (aperiodic) systems is equivalent to the set of unsolveable problems
 
@@ -131,7 +131,7 @@ $$
 \Bbb A \sim \Bbb I \sim \{unsolvable \; problems\}
 $$
 
-Thus chaotic systems are unsolvable in finite time $\square$.
+Thus there are as many chaotic systems as there are unsolveable problems.
 
 
 
