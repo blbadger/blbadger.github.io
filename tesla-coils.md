@@ -14,19 +14,19 @@ Power supply is 4 microwave oven transformers, primaries wired in parallel with 
 at 400mA.  Power controlled with a variable autotransformer (for low power runs), up to 
 145V output with 120V input. 
 
-![variac]({{https://blbadger.github.io}}tesla_images/variac.png)
+![variac]({{https://blbadger.github.io}}tesla_images/variac.JPG)
 
 ![variac]({{https://blbadger.github.io}}tesla_images/variac_2.png)
 
+
 The topload is two aluminum dryer ducts forming a double stacked toroid, each stack 8" by 2.5'.
-
-![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
-
 Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
 is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete 
 forming tube coated in polyurethane. Inner turns of the primary get 
 warm during operation, not suprising with an estimated 18.9 kA instantaneous 
 current during capacitor discharge.
+
+![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/tesla_3.jpg)
 
