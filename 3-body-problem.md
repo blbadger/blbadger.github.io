@@ -2,15 +2,17 @@
 
 ### Newtonian mechanics
 
-When I was learning Newtonian mechanics in school, I thought that the subject is an open and shut matter: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  I was told that this is the case: indeed, consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
+Newtonian mechanics is often thought to render the motion of celestial bodies as an open and shut matter: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  Consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
 
 "Now armed with the tremendous power of Newton's laws, we can not only calculate such simple motions but also, given only a machine to handle the arithmetic, even the tremendously complex motions of the planets, to as high a degree of precision as we wish!"
 
-This statement seems logical at first glance.  The most accurate equations of force, momentum, gravitational acceleration etc. are all fairly simple and for most examples that were taught to me, there were solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to time as 'solved'.  The mechanics I learned were problems that were solveable with some calculus, usually by integrating over time to remove that variable.  
+This statement seems logical at first glance.  The most accurate equations of force, momentum, gravitational acceleration etc. are all fairly simple and for most examples that were taught to me, there were solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to time as 'solved'.  The mechanics most of us learned were problems that were solveable with some calculus, usually by integrating over time to remove that variable.  
 
-If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. But what about 3 bodies, or more?  Newton attempted to find a similar solution to this problem but failed.  This did not deter others, and it seems that some investigators such as Laplace were confident of a solution being just around the corner, even if they could not find one themselves.
+If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. 
 
-And why shouldn't they be?  The three body problem may be formulated as follows:
+But what about 3 bodies, or more?  Newton attempted to find a similar solution to this problem but failed.  This did not deter others, and it seems that some investigators (Laplace in particular) were confident of a solution being just around the corner, even if they could not find one themselves.
+
+The three body problem may be formulated as follows:
 
 $$
 a_1 = -Gm_2\frac{p_1 - p_2}{\lvert p_1 - p_2 \rvert ^3} - Gm_3\frac{p_1 - p_3}{\lvert p_1 - p_3 \rvert^3} \\
@@ -26,9 +28,8 @@ $$
 \lvert p_1 \rvert = \sqrt {x_1^2 + y_1^2 + z_1^2}
 $$
 
-The norm of the difference of two vectors may be understood as a distance between those vectors, if our distance function is an arbitrary dimension - extension of the function above.
+The norm of the difference of two vectors may be understood as a distance between those vectors, if our distance function is an arbitrary dimension -extension of the function above.
 
-This function does not seem too unwieldy.  
 
 ### Modelling the three body problem
 
@@ -96,6 +97,7 @@ def accelerations(p1, p2, p3):
 	return planet_1_dv, planet_2_dv, planet_3_dv
 ```
 A time step size `delta_t` is chosen, which should be small for accuracy, and the number of steps are specified and an array corresponding to the trajectory of each point is initialized.  Varying initial velocites are allowed, so both position and velocity require array initialization.
+
 ```python
 # parameters
 delta_t = 0.001
@@ -112,7 +114,9 @@ p3 = np.array([[0.,0.,0.] for k in range(steps)])
 v3 = np.array([[0.,0.,0.] for k in range(steps)])
 
 ```
+
 The first element of each position and velocity array is assigned to the variables denoting starting coordinates,
+
 ```python
 # starting point
 p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
@@ -203,6 +207,7 @@ And of the third as well.
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_3.png)
 
 Plotting the distance between each point and its counterpart as follows
+
 ```python
 distance_2 = []
 for i in range(steps):
