@@ -16,8 +16,6 @@ The second law may also be stated as follows: the universe becomes more disorder
 
 The source of the second law is important because it was derived using assumptions which, while useful, are not accurate.  Specifically, the ideal gas law ($PV = nRT$) was used to calculate isothermal gas expansion that was then used to calculate the change in entropy over time ([see here])(https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Supplemental_Modules_(Physical_and_Theoretical_Chemistry)/Thermodynamics/The_Four_Laws_of_Thermodynamics/Second_Law_of_Thermodynamics).  This is important because no gas is actually ideal: real gases all exhibit attractive forces that do not exist in the ideal gas equations.  
 
-### The second law: a guideline rather than an actual rule
-
 We can think of a simple thought experiment: an exothermic, negatively entropic reaction floating in the cold vacuum of space, billions of light years from any other matter.  Now the standard interpretation is that this reaction produces heat which spreads to the outside universe, thereby increasing total entropy.  So our floating reaction radiates heat into space but does this increase the universal entropy, in the statistical mechanical sense? Not unless the radiation encounters matter, which may never occur. Will the reaction still proceed even though there actually a decrease in universal entropy?   
 
 ### The strong nuclear, electromagnetic, and gravitational forces all decrease entropy
