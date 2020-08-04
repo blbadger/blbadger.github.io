@@ -12,7 +12,7 @@ $$
 
 spontaneous processes are those for which $\Delta G < 0$ for the system.  Therefore, either heat escapes into the surroundings (signified by a negative $\Delta H$) which increases the entropy of the surroundings ($\Delta S = \Delta q / T$), or else entropy increases in the system itself.
 
-The second law may also be stated as follows: the universe becomes more disordered over time. This sorts of definitions abound when entropy is discussed, but before proceeding to examine how accurate they are it is helpful to understand what thermodynamics is, and where entropy came from.  Thermodynamics is the study of heat change over time, just like the name implies.  This study got underway during the 19th century when engineers attempted to make steam engines more efficient, and so the theory of thermodynamics predates atomic theory by many decades.  
+The second law may also be stated as follows: the universe becomes more disordered over time. This sort of definitions abounds when entropy is discussed, but before proceeding to examine how accurate they are it is helpful to understand what thermodynamics is, and where entropy came from.  Thermodynamics is the study of heat change over time, just like the name implies.  This study got underway during the 19th century when engineers attempted to make steam engines more efficient, and so the theory of thermodynamics predates atomic theory by many decades.  
 
 The source of the second law is important because it was derived using assumptions which, while useful, are not accurate.  Specifically, the ideal gas law ($PV = nRT$) was used to calculate isothermal gas expansion that was then used to calculate the change in entropy over time ([see here])(https://chem.libretexts.org/Bookshelves/Physical_and_Theoretical_Chemistry_Textbook_Maps/Supplemental_Modules_(Physical_and_Theoretical_Chemistry)/Thermodynamics/The_Four_Laws_of_Thermodynamics/Second_Law_of_Thermodynamics).  This is important because no gas is actually ideal: real gases all exhibit attractive forces that do not exist in the ideal gas equations.  
 
@@ -20,19 +20,24 @@ We can think of a simple thought experiment: an exothermic, negatively entropic 
 
 ### The strong nuclear, electromagnetic, and gravitational forces all decrease entropy
 
-Now consider the statement "the universe becomes more disordered over time".  Is this true of the cosmos over the timescales we can observe, nearly 14 billion years?  It is not: large scale galactic structures (the ones we can see) have become less and not more chaotic over time.  
+Now consider the statement "the universe becomes more disordered over time".  Is this true of the cosmos over the timescales we can observe, nearly 14 billion years?  It is not: large scale galactic structures (the ones we can see) have become less, rather than more, chaotic over time.  
 
-The spontaneous expansion of gas (that can be used to do work) may be explained using entropy as follows: by increasing the volume each gas molecule can exist in, entropy increases. At our scale and temperatures, gas indeed expands.  But not consider our atmosphere: it does not expand, even though it is entropically favorable to do so. The force acting against expansion is gravity, and the cosmos is full of examples of this force acting to prevent and reverse the expansion of gas. This can occur isothermally
+The spontaneous expansion of gas (that can be used to do work) may be explained using entropy as follows: by increasing the volume each gas molecule can exist in, the number of available states to that molecule increases and so entropy increases. At our scale and temperatures, gas indeed expands.  But not consider our atmosphere: it does not expand, even though it is entropically favorable to do so. The force acting against expansion is gravity, and the cosmos is full of examples of this force acting to prevent and reverse the expansion of gas. If the contraction of gas occurs isothermally (as in some nebula), entropy of the universe is decreased by the work done by gravity.
 
-What about at scales more relavant to our existance: does an increase in entropy over time always occur?  At a scale slightly smaller than our own, there is indeed.
+At very small scale, the force of electromagnetism confines electrons to exist near nuclei in distinct cloud-like orbitals.  A freely moving electron and proton are confined to become a hydrogen atom by the electromagnetic force if they interact. This interaction will release a photon, 
+
+The same is true of the strong nuclear force: 
+
 
 ### Brownian motion converts heat to work, albeit briefly
+
+What about at scales more relavant to our existance: does an increase in entropy over time always occur?  At a scale slightly smaller than our own, there is indeed.
 
 The chaotic motion of small particles in fluid is called Brownian motion, after the naturalist who identified this as a process independant of life.  
 
 Over brief period of time and in a small scale, brownian motion is a conversion of heat energy to work.  
 
-### The negatively entropic plant 
+### The tree experiment
 
 For a final argument, consider a patch of soil that recieves radiation from the sun.  This patch acts as a black box, radiating heat.  Now we plant a tree and wait for it to grow.  Nearly all the mass of a tree comes from the atmosphere, and this decreases entropy substantially because a gas has been converted into a solid.  The energy necessary for this process originates in sunlight, but what happens if we did not plant a tree at all?  The black box soil converts sunlight into heat and radiates that to the rest of the universe. Thus not only does the tree capture carbon dioxide from the atmosphere, it reduces the amount of radiation as heat as it does so and both these processes decrease the entropy of the universe, relative to what it would have been if we had not planted the tree. 
 
