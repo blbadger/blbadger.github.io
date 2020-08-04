@@ -540,13 +540,22 @@ $$
 f(x_1, x_2) = x_1 + x_2
 $$
 
-This mapping is continuous: arbitrarily small changes in the metric space $(R^2, d)$ result in arbitrarily small changes in the corresponding slace $(\Bbb R, d')$, and a sketch of a proof for this will be made apparent shortly.
+This mapping is continuous: arbitrarily small changes in the metric space $(\Bbb R^2, d)$ result in arbitrarily small changes in the corresponding slace $(\Bbb R, d')$, and a sketch of a proof for this will be made apparent shortly.
 
-How is this possible, given that one-to-one functions cannot map a surface to a line continuously?  The above function is not one-to-one, instead an infinite number of starting points map to each point on $R$.  To see why this is, consider which values of $a, b \lvert a \neq b$ are equal when mapped by $f$.  Here $x_1 + x_2$ means adding coordinate values of the cartesian plane (ie $x$ value $+$ $y$ value).  Which unique points on the plane would map to the same point on the real line using this function?
+How is this possible, given that one-to-one functions cannot map a surface to a line continuously?  The above function is not one-to-one, instead an infinite number of starting points map to each point on $R$.  To see why this is, consider which values of $a, b \; \lvert \; a \neq b$ are equal when mapped by $f$.  Here $x_1 + x_2$ means adding coordinate values of the cartesian plane (ie $x$ value $+$ $y$ value).  Which unique points on the plane would map to the same point on the real line using this function?
 
-Consider $a = (0, 1)$ and $b = (1, 0)$.  $f(a) = 1 = f(b)$, and indeed every point on the line $ab$ maps to the same value in $\Bbb R$, that is, $1$.  Thus this funciton divides up $\Bbb R^2$ into diagonal lines, each line mapping to one point in $\Bbb R$.  Now it should be easy to see why this function is continuous: it simply maps all points in $Bbb R^2$ to the nearest position on the line $y = x$.  An arbitrarily small change perpendicular to this line in two dimensions yields no change in output in one dimension, and an arbitrarily small change applied along this line in two dimensions yields an arbitrarily small change in one dimension.
 
-What does this means for neural networks?  One-to-one functions from two dimensions to one map discontinuously where as functions that are not one-to-one may map continously.  Now consider what happens when we try to increase the predictive power of a neural network (or any machine learning algorithm really): images that are closer in some characteristic to each other are better able to be distinguished.  But this means that the output must become more sensitive to small changes in the inputs, meaning that the function mapping inputs to outputs becomes closer and closer to a one-to-one mapping, leading to discontinuity.
+Consider $a = (0, 1)$ and $b = (1, 0)$.  $f(a) = 1 = f(b)$, and indeed every point on the line $ab$ maps to the same value in $\Bbb R$, that is, $1$.  Thus this function divides up $\Bbb R^2$ into diagonal lines, each line mapping to one point in $\Bbb R$.  Now it should be easy to see why this function is continuous: it simply maps all points in $\Bbb R^2$ to the nearest position on the line $y = x$. 
+
+![continuous proof]({{https://blbadger.github.io}}/neural_networks/continuous_map.png)
+
+An arbitrarily small change perpendicular to this line in two dimensions yields no change in output in one dimension, and an arbitrarily small change applied along this line in two dimensions yields an arbitrarily small change in one dimension.
+
+In sum, one-to-one (and onto) functions from two dimensions to one map discontinuously where as functions that are not one-to-one may map two dimensions to one continously.  What does this mean for neural networks?
+
+If we judge neural networks by their ability to classify an arbitrary number of input images into a finite number of outputs, it is clear that the neural network cannot act as a one-to-one function. But the process of training a network is as yet poorly achieved by using percent accuracy for a cost function, so the relavent output for the network is the (more or less) continuous cost function.  With respect to this output, neural networks can map each individual image to a specific value on the cost function and therefore act as a one-to-one mapping algorithm.
+
+In summary, neural networks that use a continuous cost function map (more than) two dimensions to one in a one-to-one mannar, and thus the mapping itself must be discontinuous (which results in adversarial negatives).  Mappings that occur via discrete category selection are not one-to-one and therefore may be continuous, but such mappings are insufficient for training a network.
 
 
 
