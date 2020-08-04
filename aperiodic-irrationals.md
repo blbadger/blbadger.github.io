@@ -102,7 +102,7 @@ and as there are countably many rational numbers, there are countably many perio
 
 This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent.
 
-### The set of chaotic (aperiodic) systems is equivalent to the set of unsolveable problems
+### The set of chaotic (aperiodic) systems is equivalent to the set of unsolvable problems
 
 Let's define solvable equations to be those that are computable in finite time for all inputs.  There exists and elegent proof for the idea that nearly every decision problem (that outputs one of two options) is not computable in finite time [here](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/lecture-videos/lecture-23-computational-complexity/).  This proof establishes that nearly all decision (output 'yes' or 'no') problems are unsolveable in finite time, and can be tweaked to establish an equivalence between uncomputable (by a finite algorithm) problems and irrational numbers as follows:
 
@@ -119,7 +119,7 @@ x \in \Bbb Q \;if \; x = \frac{a}{b}, \; |\; a, b \in \Bbb N \\
 program \approx binary \; string \sim x \in \Bbb Q
 $$
 
-The solution to any decision problem may be denoted as an infinite string of bits, 1 for 'yes' or 0 for 'no' for any number of infinite inputs, which corresponds to any real number.  As any program to compute a decicision is finite, and as this program may be represented by a rational number then only infinite strings of bits that are also representations of rationals may be computable. All other problems are unsolvable in finite time (with a finite program), and as any member of this set of problems is not rational but in the real numbers
+The solution to any decision problem may be denoted as an infinite string of bits, 1 for 'yes' or 0 for 'no' for any number of infinite inputs, which corresponds to any real number.  As any program to compute a decision is finite, and as this program may be represented by a rational number then only infinite strings of bits that are also representations of rationals may be computable. All other problems are unsolvable in finite time (with a finite program), and as any member of this set of problems is not rational but in the real numbers
 
 $$
 \{unsolvable \; problems\} \sim \Bbb R - \Bbb Q \sim \Bbb I
