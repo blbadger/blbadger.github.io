@@ -10,7 +10,7 @@ There is an important qualification to the proof that neural networks can comput
 
 To see this, imagine that we were trying to use a neural network to approximate an arbitrary function.  What are the chances of this function being continuous and differentiable?  Let's see how many functions belong to one of three categories: differentiable (and continuous, as differentiability implies continuity), continuous but not necessarily differentiable, or not necessarily continuous or differentiable.  Visually, differentiable functions are smooth with no sharp edges or squiggles and continuous functions may have sharp edges but must be connected.  
 
-Formally, we can define the set of all functions $f$ that map $X$ into $Y$, $f: X \to Y given X, Y \in \Bbb R$:
+Formally, we can define the set of all functions $f$ that map $X$ into $Y$, $f: X \to Y \; given \; X, Y \in \Bbb R$:
 
 $$
 \{f \in (X, Y)\}
