@@ -31,7 +31,7 @@ At very small scale, the force of electromagnetism confines electrons to exist n
 Work can be defined as directed movement: when one does work to move a log, all molecules in the log move in approximately concerted motion.  In contrast, thermal motion is not directed: heat causes molecules to move faster but not in concerted motion.  In statistical mechanics, the number of internal states that a molecule can assume is used to calculate its entropy.  
 
 $$
-S = k ln W
+S = k \; ln W
 $$
 
 where $W$ signifies the number of microstates available in a collection of particles and $k$ is Boltzmann's constant.  
