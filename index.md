@@ -66,6 +66,8 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
+## Abstract nonlinearity
+
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
 $$ 
@@ -75,7 +77,9 @@ $$
 
 ## Physics
 
-### Entropy
+### [Entropy](/entropy.md)
+
+![malachite](({{https://blbadger.github.io}}/assets/images/malachite.png)
 
 ### [3 body problem](/3-body-problem.md)
 
