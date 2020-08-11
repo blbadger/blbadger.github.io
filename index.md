@@ -79,7 +79,7 @@ $$
 
 ### [Entropy](/entropy.md)
 
-![malachite](({{https://blbadger.github.io}}/assets/images/malachite.png)
+![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
 
 ### [3 body problem](/3-body-problem.md)
 
