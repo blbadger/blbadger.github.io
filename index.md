@@ -38,7 +38,7 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
 
-## Boundaries of nonlinear dynamics
+## Boundaries of nonlinear systems
 
 
 ### [Julia sets](/julia-sets.md)
@@ -66,13 +66,15 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
-## Abstract nonlinearity
+## Abstract 
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
-$$ 
+$$  
+\; \\
 \Bbb R - \Bbb Q \sim \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
-\text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n
+\text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n \\
+\; \\
 $$
 
 ## Physics
