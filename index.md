@@ -66,7 +66,7 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
-## Abstract 
+## Fundamental features of nonlinearity
 
 ### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
 
@@ -76,6 +76,10 @@ $$
 \text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n \\
 \; \\
 $$
+
+### Nonlinear maps are defined on irrationals
+
+### Discontinuity and aperiodicity
 
 ## Physics
 
