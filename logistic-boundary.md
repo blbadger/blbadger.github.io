@@ -62,6 +62,7 @@ z_{next} = rz(1-z) = rz - rz^2
 $$
 
 For example, increasing the scale at the point 
+
 $$
 (3.58355 + 0i)
 $$
@@ -75,5 +76,20 @@ Note the identical objects found in a Mandelbrot set zoom on the point
 $$
 (-1.633 + 0i)
 $$
+
+As an aside, the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
+
+```python
+def mandelbrot_set(h_range, w_range, max_iterations, t):
+	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.8: 1:w_range*1j] # note that the ogrid does not scale
+
+	a_array = x/(2**(t/15)) - 1.633 + y*1j / (2**(t/15)) # the array scales instead
+	z_array = np.zeros(a_array.shape)
+	iterations_till_divergence = max_iterations + np.zeros(a_array.shape)
+  
+  ...
+```
+
+This method requires far fewer iterations at a given scale for an arbitrary resolution relative to the method of scaling the ogrid directly, although more iterations are required for constant resolution as the scale decreases.  The fewer iterations is presumably due to decreased round-off error: centering the array and zooming in on the origin leads to approximately constant round-off error, whereas zooming in on a point far from the origin leads to significant error that requires more iterations to resolve.  I am not completely certain why a constant number of iterations are not sufficient for constant resolution using this method, however. 
 
 ![mandelbrot map]({{https://blbadger.github.io}}/logistic_map/mandelbrot_zoom_frame.gif)
