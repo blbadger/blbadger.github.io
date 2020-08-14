@@ -83,7 +83,7 @@ $$
 
 ## Statistics
 
-### [Additive transformations](/additivity-order.png)
+### [Additive transformations](/additivity-order.md)
 
 ## Physics
 
