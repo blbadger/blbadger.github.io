@@ -1,6 +1,6 @@
 ## Additivity and order
 
-### Probability
+### Probability and additivity
 
 Imagine tossing a fair coin and trying to predict the outcome. There exists a 50% chance of success, but there is no way to know with any certainty what will happen.  Now imagine tossing the coin thousands of times, and consider what you will be able to predict: each toss continues to be random and completely uncertain, so one's ability to predict the outcome of each individual toss does not change.  But now add the results of the tosses together, assigning an arbitrary value to heads and a different value to tails.  As the number of individual coin tosses increases, one is better able to predict what value the sum will take.  Moreover, if the same coin toss experiment is repeated many times (say repeating 1000 tosses 1000 times), we can predict what the sum of the tosses will be with even more accuracy. 
 
@@ -21,7 +21,7 @@ $$
 
 As n increases, the standard deviation shrinks with respect to the expected value: after 100 tosses the standard deviation is 10% of the expected value, and after 1000 tosses the standard deviation is ~3% of the expected value, whereas after 10000 tosses the standard deviation is only 1% of the expected value.  
 
-The second observation is perhaps more striking: the additive transformation on a coin toss leads to the gaussian distribution with arbitrarily close presicion.  Let's simulate this so that we don't have to actually toss a coin millions of times. 
+The second observation is perhaps more striking: the additive transformation on a coin toss leads to the gaussian distribution with arbitrarily close presicion.  Let's simulate this so that we don't have to actually toss a coin millions of times, assigning the value of $1$ to heads and $0$ to tails.  We can compare the resulting distribution of heads to the expected normal distribution using `scipy.stats.norm` as follows:
 
 ```python
 import numpy
@@ -77,16 +77,13 @@ and for $n=100, t=1 * 10^6$, there is almost no discernible difference between t
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_1mil.png)
 
 
-Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  Well, not completely random: digital computers actuqlly produe pseudo-random outputs that eventually repeat over time. But we do not need to worry about that here, as our output number is far less than what would be necessary for repitition.
+Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  (Well, not completely random: digital computers actuqlly produe pseudo-random outputs that eventually repeat over time. But we do not need to worry about that here, as our output number is far less than what would be necessary for repetition.)
 
-### Signal and noise
-
-
+This observation is general: individual random events such as a die roll or card shuffle cut are quite unpredictable, but adding together many random events yields a precise mapping to a gaussian curve centered at the expectation value.  Each individual event remains just as unpredictable as the last, but the sum is predictable to an arbitrary degree given enough events.  One way to look at these observations is to see that addition orders random events into a very non-random map, and if we were to find the sum of sums (ie integrate under the gaussian curve) then a number would be reached with arbitrary precision.
 
 ### White and Brown noise
 
 White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  
-   
 
 
 ### Brownian motion converts heat to work, albeit briefly
