@@ -81,6 +81,10 @@ $$
 
 ### Discontinuity and aperiodicity
 
+## Statistics
+
+### [Additive transformations](/additivity-order.png)
+
 ## Physics
 
 ### [Entropy](/entropy.md)
