@@ -77,7 +77,7 @@ and for $n=100, t=1 * 10^6$, there is almost no discernible difference between t
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_1mil.png)
 
 
-Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.
+Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  Well, not completely random: digital computers actuqlly produe pseudo-random outputs that eventually repeat over time. But we do not need to worry about that here, as our output number is far less than what would be necessary for repitition.
 
 ### Signal and noise
 
