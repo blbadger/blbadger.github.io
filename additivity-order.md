@@ -72,7 +72,7 @@ for $n=100, t=1 * 10^5$,
 
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_100k.png)
 
-and for $n=100, t=1 * 10^6$, there is almost no discernible difference between the Gaussian curve centered on the expectation value of $50$ and the actual distribution.
+and for $n=100, t=1 * 10^6$, there is almost no discernable difference between the Gaussian curve centered on the expectation value of $50$ and the actual distribution.
 
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_1mil.png)
 
@@ -80,12 +80,6 @@ and for $n=100, t=1 * 10^6$, there is almost no discernible difference between t
 Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  (Well, not completely random: digital computers actuqlly produe pseudo-random outputs that eventually repeat over time. But we do not need to worry about that here, as our output number is far less than what would be necessary for repetition.)
 
 This observation is general: individual random events such as a die roll or card shuffle cut are quite unpredictable, but adding together many random events yields a precise mapping to a gaussian curve centered at the expectation value.  Each individual event remains just as unpredictable as the last, but the sum is predictable to an arbitrary degree given enough events.  One way to look at these observations is to see that addition orders random events into a very non-random map, and if we were to find the sum of sums (ie integrate under the gaussian curve) then a number would be reached with arbitrary precision.
-
-
-### Brownian motion: a physical example of summation leading to ordered movement
-
-There is a common physical example of the idea above: Brownian motion, the everywhere-discontinuous motion of a small object (such as a pollen grain) in liquid.    Brownian motion is the result of the summation of thermal motions of many molecules of liquid pushing against a larger particle.  A particle the size of a pollen grain is surrounded by billions of water molecules while submerged, and thus for any movement to occur many molecules must be displaced.  When the total force of thermal motion of molecules on one side is significantly more than on the other side of the particle, it is moved.  The total force may be thought of as a summation of forces.
-
 
 ### White and Brown noise
 
