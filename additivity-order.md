@@ -81,15 +81,13 @@ Let's take a moment to appreciate what has happened here: a completely random in
 
 This observation is general: individual random events such as a die roll or card shuffle cut are quite unpredictable, but adding together many random events yields a precise mapping to a gaussian curve centered at the expectation value.  Each individual event remains just as unpredictable as the last, but the sum is predictable to an arbitrary degree given enough events.  One way to look at these observations is to see that addition orders random events into a very non-random map, and if we were to find the sum of sums (ie integrate under the gaussian curve) then a number would be reached with arbitrary precision.
 
+
+### Brownian motion: a physical example of summation leading to ordered movement
+
+There is a common physical example of the idea above: Brownian motion, the everywhere-discontinuous motion of a small object (such as a pollen grain) in liquid.    Brownian motion is the result of the summation of thermal motions of many molecules of liquid pushing against a larger particle.  A particle the size of a pollen grain is surrounded by billions of water molecules while submerged, and thus for any movement to occur many molecules must be displaced.  When the total force of thermal motion of molecules on one side is significantly more than on the other side of the particle, it is moved.  The total force may be thought of as a summation of forces.
+
+
 ### White and Brown noise
 
-White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  
+White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Brownian noise is defined here as any noise that is inversly frequency dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink of 1/f noise.
 
-
-### Brownian motion converts heat to work, albeit briefly
-
-What about at scales more relavant to our existance: does an increase in entropy over time always occur?  At a scale slightly smaller than our own, there is indeed. 
-
-The chaotic motion of small particles in fluid is called Brownian motion, after the naturalist who identified this as a process independant of life.  Brownian motion is the result of the summation of thermal motions of many molecules of liquid pushing against a larger particle. These molecular motions cause the particle to move through the surrounding liquid in a 
-
-Over brief period of time and in a small scale, brownian motion is a conversion of heat energy to work, or equivalently the conversion of undirected motion to directed motion.  
