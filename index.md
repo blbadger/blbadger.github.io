@@ -77,11 +77,7 @@ $$
 \; \\
 $$
 
-### Nonlinear maps are defined on irrationals
-
 ### Discontinuity and aperiodicity
-
-## Statistics
 
 ### [Additive transformations](/additivity-order.md)
 
