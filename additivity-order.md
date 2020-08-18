@@ -110,7 +110,7 @@ where $D$ is the counting dimension, $N$ is the ratio of the number of objects r
 
 If the counting dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails have a counting dimension of approximately $2$, meaning that they practically cover area even though they are topologically one-dimensional. The terms 'fractal dimension' and 'counting dimension' are used here to mean the same thing. 
 
-
+[add section on randomized fractal drawings]
 
 ### Aside: quantum mechanics and non-differentiable motion
  
