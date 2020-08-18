@@ -99,10 +99,10 @@ As noted by [Mandelbrot](https://books.google.com/books/about/The_Fractal_Geomet
 
 [generate Weierstrauss function animation]
 
-In general terms, Brownian motion is a fractal because it appears to trace paths that are rough and jagged at every scale until the atomic, meaning that at large scales the paths somewhat resemble the Weierstrauss function above.  Now imaging trying to measure the length of such a shape: the more you zoom in, the longer the measurement is!  Truly nowhere-differentiable paths are of infinite length and instead can be characterized by how many objects (a box or sphere or any other regular shape) it takes to cover the curve at smaller and smaller scales (either by making the shapes themselves smaller or by making the curve larger).  The ratio of the logarithm of the change in the number of objects necessary for covering the curve (a fraction) divided by the logarithm of the change in scale is the counting dimension.  In other words,
+In general terms, Brownian motion is a fractal because it appears to trace paths that are rough and jagged at every scale until the atomic, meaning that at large scales the paths somewhat resemble the Weierstrauss function above.  Now imaging trying to measure the length of such a shape: the more you zoom in, the longer the measurement is!  Truly nowhere-differentiable paths are of infinite length and instead can be characterized by how many objects (a box or sphere or any other regular shape) it takes to cover the curve at smaller and smaller scales (either by making the shapes themselves smaller or by making the curve larger).  The ratio of the logarithm of the change in the number of objects necessary for covering the curve (a fraction) divided by the logarithm of the change in scale is the counting dimension.  Equivalently,
 
 $$
-D = log(N) / log(e) //
+D = \frac{log(N)}{log(e)} //
 N = e^D
 $$
 
