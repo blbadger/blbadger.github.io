@@ -57,7 +57,8 @@ Let's assign $n$ as the number of tosses for each experiment and $t$ as the numb
 
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_10_10.png)
 
-As we go from 100 tries of 100 tosses each to 1000000 tries of 100 tosses each, the normal distribution is fit more and more perfectly.  For $n=100, t=100$,the distribution more closely approximates the normal curve.
+As we go from 100 tries of 100 tosses each to 1000000 tries of 100 tosses each, the normal distribution is fit more and more perfectly.  For $n=100, t=100$,the distribution more closely 
+approximates the normal curve.
 
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_100.png)
 
@@ -86,12 +87,29 @@ This observation is general: individual random events such as a die roll or card
 
 There is an interesting physical manifestation of the abstract statistical property of additive ordering: Brownian motion, the irregular motion of small (pollen grain size or smaller) particles in fluid.  Thermal motions (often thought of as random, or stochastic) of fluid molecules add together over time to result in a non-differentiable path of the particle, and movement along this path is termed Brownian motion, after the naturalist Brown who showed that this motion is not the result of a biological process (although it very much resembles the paths taken by small protists living in pond water). 
 
- In three dimensions, Browniam motion leads to a movement away from the initial particle position.  The direction of this movement is unpredictable, but over many experiments (or with many particles underging brownian motion at once), the distances of the particles away from the initial point together form a Gaussian distribution (see [here](https://en.wikipedia.org/wiki/Brownian_motion) for a good summary of this).  
- 
+In three dimensions, Browniam motion leads to a movement away from the initial particle position.  The direction of this movement is unpredictable, but over many experiments (or with many particles underging brownian motion at once), the distances of the particles away from the initial point together form a Gaussian distribution (see [here](https://en.wikipedia.org/wiki/Brownian_motion) for a good summary of this).  Regardless of the speed or trajectory of each individual particle undergoing Brownian motion an ensemble that start at the same location form a Gaussian distribution with arbitrary accuracy, given enough particles. 
 
-### White and Brown noise
+### White and fractional noise
 
-White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Brownian noise is defined here as any noise that is inversly frequency dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise, and here we are calling Brown noise any noise that has $1/f^n$ for $n > 0$. 
+Noise may signify the presence of sound, or it may mean everything that is not a signal. Both meanings are applicable here. White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Fractional noise is defined here as any noise that is inversly frequency dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise, and Brown noise any noise that has $1/f^n$ for $n > 0$.
+
+White noise is unpredictable, and 'purely' random: one cannot predict the frequency or intensity of a future signal any better than by chance.  But because fractional noise decays in total intensity with an increase in frequency, this type of noise is not completely random (meaning that it is somewhat predictable).  Consider one specific type of fractional noise, Brown noise, which is characterized by a $1/f^{~2}$ frequency vs. intensity spectrum.  This is the noise that results from Brownian motion (hence the name).  It may come as no surprise that another way to generate this noise is to integrate (sum) white noise, as the section above argues that Brownian motion itself acts to integrate random thermal motion.  
+
+As noted by [Mandelbrot](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) and [Bak](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.59.381), fractional noise results from fractal objects as they change over time.  Brownian noise coming from Brownian motion is simply a special case of this more general phenomenon: Brownian motion traces out fractal paths.  These paths are self-similar in that very small sections of the path resemble much larger sections, not that smaller portions exactly match the whole as is the case for certain geometric fractals.  This type of self-similarity is sometmies called statistical self-similarity, and is intimately linked to the property this motion exhibits of being nowhere-differentiable.
+
+[generate Weierstrauss function animation]
+
+In general terms, Brownian motion is a fractal because it appears to trace paths that are rough and jagged at every scale until the atomic, meaning that at large scales the paths somewhat resemble the Weierstrauss function above.  Now imaging trying to measure the length of such a shape: the more you zoom in, the longer the measurement is!  Truly nowhere-differentiable paths are of infinite length and instead can be characterized by how many objects (a box or sphere or any other regular shape) it takes to cover the curve at smaller and smaller scales (either by making the shapes themselves smaller or by making the curve larger).  The ratio of the logarithm of the change in the number of objects necessary for covering the curve (a fraction) divided by the logarithm of the change in scale is the counting dimension.  In other words,
+
+$$
+D = log(N) / log(e) //
+N = e^D
+$$
+
+where $D$ is the counting dimension, $N$ is the ratio of the number of objects required to cover the curve at the smaller vs. larger scale, and $e$ is the change in scale.  A line has a topological and counting dimension of 1: it takes twice as many objects to cover it when the scale has increased by a factor of two, and similarly a square in a plane has a topological and counting dimension of 2. 
+
+If the counting dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails have a counting dimension of approximately $2$, meaning that they practically cover area even though they are topologically one-dimensional. The terms 'fractal dimension' and 'counting dimension' are used here to mean the same thing. 
+
 
 
 ### Aside: quantum mechanics and non-differentiable motion
