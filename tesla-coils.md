@@ -5,16 +5,10 @@ High voltage arcs.  Beautiful to witness!
 
 Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps.
 
-The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors.
-
-![primary cap]({{https://blbadger.github.io}}tesla_images/capacitor.png)
-
-Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series
+The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series
 (floating cores, and all submerged in oil) for a power ouput of 10 kV
 at 400mA.  Power controlled with a variable autotransformer (for low power runs), up to 
 145V output with 120V input. 
-
-![variac]({{https://blbadger.github.io}}tesla_images/variac_2.png)
 
 The topload is two aluminum dryer ducts forming a double stacked toroid, each stack 8" by 2.5'.
 Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
