@@ -6,7 +6,7 @@ My name is Benjamin Badger and I hope you have enjoyed perusing these pages as m
 
 In my free time I enjoy playing music, spending time with friends, playing sports, reading, and occasionally fixing my car. 
 
-![skiing]({{https://blbadger.github.io}}/assets/images/skiing.JPG)
+![skiing]({{https://blbadger.github.io}}/assets/images/skiing.jpg)
 
 A playing a balanced game of smash bros. is a pleasure as well.
 
