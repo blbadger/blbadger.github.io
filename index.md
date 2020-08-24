@@ -81,6 +81,8 @@ $$
 
 ### [Additive transformations](/additivity-order.md)
 
+### [Fractal geometry](/fractal-geometry.md)
+
 ## Physics
 
 ### [Entropy](/entropy.md)
