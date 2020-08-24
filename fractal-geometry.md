@@ -12,6 +12,9 @@ In the late 19th century Cantor founded set theory, a study of abstract collecti
 
 Surprising results abound in set theory, but one of the most relavant here is that pertaining to measurment.  Firstly, not all infinities are equal: there are as many integers as there are rational numbers (an infinite amount of each) but there are far more real numbers than either.  The elegant diagonal proof for this is worth viewing elsewhere, as it recurs elsewhere in other forms (in Turing's computability theories, for example). 
 
+![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom.gif)
+
+![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom_vertical.gif)
 
 
 ### Fractals in the natural world
