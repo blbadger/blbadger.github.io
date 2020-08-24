@@ -4,7 +4,9 @@ My name is Benjamin Badger and I hope you have enjoyed perusing these pages as m
 
 ![writing in the orchard]({{https://blbadger.github.io}}orchard.JPG)
 
-In my free time I enjoy playing music, spending time with friends, playing sports, reading, and occasionally fixing my car.
+In my free time I enjoy playing music, spending time with friends, playing sports, reading, and occasionally fixing my car. 
+
+![skiing]({{https://blbadger.github.io}}/assets/images/skiing.JPG)
 
 A playing a balanced game of smash bros. is a pleasure as well.
 
