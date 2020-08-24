@@ -85,7 +85,8 @@ the video can be viewed and edited.  Here it is as a .gif (ffmpeg can convert di
 
 As the number of recursive calls increases, the Cantor set becomes invisible.  This should not come as a surprise, being that it is of measure $0$ as $n \to infty$, or more precisely the measure at step $n$ is ($(\frac{2}{3})^n$).  Thus in order to obtain a viewable map with more recursive steps, vertical lines are used to denote the position of each point in the set.  The following program accomplishes this by drawing alternating red and blue vertical lines at the start of where each set interval (at any given step) begins and so is only accurate with a relatively large value for the starting number of recursions (>4).  A black background is added for clarity, and once again the number of recursive steps increases with scale to maintain resolution.
 
-```python3
+```python
+
 from turtle import *
 import turtle
 
@@ -123,7 +124,7 @@ for i in range(300):
 
 	def cantor_set(size, recursive_steps):
 		if recursive_steps > 0:
-      # only proceed if not out of canvas bounds
+      			# only proceed if not out of canvas bounds
 			if turtle.pos()[0] < 1900:
 				cantor_set(size/3, recursive_steps-1)
 			turtle.pu()
@@ -155,6 +156,7 @@ for i in range(300):
 	turtle_screen = turtle.getscreen()
 	turtle_screen.getcanvas().postscript(file="cantor_set{0:03d}.eps".format(i))
 	turtle.reset()
+	
 ```
 
 ![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom_vertical.gif)
