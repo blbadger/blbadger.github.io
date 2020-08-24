@@ -81,7 +81,10 @@ $$
 
 ### [Additive transformations](/additivity-order.md)
 
+![3 body image]({{https://blbadger.github.io}}/assets/images/montipora.JPG)
+
 ### [Fractal geometry](/fractal-geometry.md)
+
 
 ## Physics
 
