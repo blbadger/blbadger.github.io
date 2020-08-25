@@ -205,9 +205,7 @@ def sierpinski_curve(size, recursive_steps, ls):
 ```
 
 
-![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinksi.gif)
-
-###
+![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski.gif)
 
 
 ### Fractals in the natural world
