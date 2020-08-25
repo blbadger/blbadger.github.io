@@ -14,15 +14,15 @@ A particularly interesting set is known as the middle thirds Cantor set $C$.  Th
 
 ![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
 
-Now repeat this process for each remaining closed interval,
+Now repeat this process for each remaining closed intervals,
 
-![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+![cantor]({{https://blbadger.github.io}}/fractals/cantor002.png)
 
 and again
 
-![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+![cantor]({{https://blbadger.github.io}}/fractals/cantor003.png)
 
-and so on.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $\frac{2}{3}^n$ total length remains.  Therefore $C$ has $0$ total length: $2/3^n \to 0 as n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
+and so on ad infinitum.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $\frac{2}{3}^n$ total length remains.  Therefore $C$ has $0$ total length: $2/3^n \to 0 as n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
 
 ```python
 from turtle import *
@@ -116,7 +116,6 @@ for i in range(300):
 	turtle.begin_fill()
 	width = 2200
 	height = 1200
-
 	turtle.forward(width+2)
 	turtle.left(90)
 	turtle.forward(height+2)
@@ -139,11 +138,9 @@ for i in range(300):
 			turtle.pu()
 			turtle.forward(size)
 			turtle.pd()
-			
 			# only proceed if not out of canvas bounds
 			if turtle.pos()[0] < 1900:
 				cantor_set(size/3, recursive_steps-1)
-
 		else:
 			turtle.color('blue')
 			turtle.left(90)
@@ -182,8 +179,7 @@ as is the [henon map](/henon-map.md), although here the pattern of $C$ is regula
 What is the dimension of the Cantor set?  Points or finite collections of points are of dimension $0$, whereas lines are of dimension $1$.  $C$ is totally disconnected and therefore would seem to be $0$ dimensional, and yet it is an infinite collection of points that are bounded to a specific region.  
 
 
-
-Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any 
+Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md)
 
 
 ### Self-similar fractals
