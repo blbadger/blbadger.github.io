@@ -1,7 +1,5 @@
 ## Fractal Geometry
 
-"Clouds are not spheres, mountains are not cones, and lightning does not travel in an straight line..."
-
 Images of dynamical systems, as seen in other pages of [this site](https://blbadger.github.io/), are often described as fractals.  This section explores the meaning of this term, its origins, and deep connections between fractals and nonlinear dynamics and other fields.
 
 ### Origin and Cantor's set
@@ -10,9 +8,21 @@ The term *Fractal* was chosen by Mandelbrot (after the Latin *Fractus*) to signi
 
 In the late 19th century Cantor founded set theory, a study of abstract collections of objects and the relations between these collections.  Other pages in this website make use of set theory, and for a good background on the subject see "Naive set theory" by Halmos.  From set theory, we find fascinating conclusions that lay a foundation for fractal geometry, so to understand the latter it is best to examine a few key aspects of the former. 
 
-Surprising results abound in set theory, but one of the most relavant here is that pertaining to measurment.  Firstly, not all infinities are equal: there are as many integers as there are rational numbers (an infinite amount of each) but there are far more real numbers than either.  The elegant diagonal proof for this is worth viewing elsewhere, as it reappears again elsewhere in other forms (in Turing's computability theories, for example). 
+Surprising results abound in set theory, but one of the most relevant here is that pertaining to measurment.  Firstly, not all infinities are equal: there are as many integers as there are rational numbers (an infinite amount of each) but there are far more real numbers than either.  The elegant diagonal proof for this is worth viewing elsewhere, as it reappears again in other forms (in Turing's computability theories, for example). 
 
+A particularly interesting set is known as the middle thirds Cantor set $C$.  This set will be considered in some detail because it illustrates many of the most important aspects of fractals but is relatively simple, existing on a line.  $C$ is made as follows: take the closed interval on the reals $[0, 1]$ and remove from this an open interval of the middle third, that is, $[0, 1] - (1/3, 2/3)$.  
 
+![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+
+Now repeat this process for each remaining closed interval,
+
+![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+
+and again
+
+![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+
+and so on.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $\frac{2}{3}^n$ total length remains.  Therefore $C$ has $0$ total length: $2/3^n \to 0 as n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
 
 ```python
 from turtle import *
@@ -83,7 +93,7 @@ the video can be viewed and edited.  Here it is as a .gif (ffmpeg can convert di
 
 ![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom1.gif)
 
-As the number of recursive calls increases, the Cantor set becomes invisible.  This should not come as a surprise, being that it is of measure $0$ as $n \to \infty$, or more precisely the measure at step $n$ is $(\frac{2}{3})^n$.  Thus in order to obtain a viewable map with more recursive steps, vertical lines are used to denote the position of each point in the set.  The following program accomplishes this by drawing alternating red and blue vertical lines at the start of where each set interval (at any given step) begins and so is only accurate with a relatively large value for the starting number of recursions (>4).  A black background is added for clarity, and once again the number of recursive steps increases with scale to maintain resolution.
+As the number of recursive calls increases, the Cantor set becomes invisible.  This should not come as a surprise, being that it is of measure $0$ as $n \to \infty$.  Thus in order to obtain a viewable map with more recursive steps, vertical lines are used to denote the position of each point in the set.  The following program accomplishes this by drawing alternating red and blue vertical lines at the start of where each set interval (at any given step) begins and so is only accurate with a relatively large value for the starting number of recursions (>4).  A black background is added for clarity, and once again the number of recursive steps increases with scale to maintain resolution.
 
 ```python
 from turtle import *
@@ -159,6 +169,49 @@ for i in range(300):
 ```
 
 ![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom_vertical.gif)
+
+
+Now this is one particular example of a Cantor set, but there are others: one coule remove middle halves instead of thirds etc.  The general definition of a Cantor set is any set that is closed, bounded, totally disconnected, and perfect.  The general Cantor set $C$ is a common occurence in nonlinear maps.  The following arrangement of stable versus unstable locations for the [Clifford attractor](/clifford-boundary.md) is a good example of an irregular Cantor set
+
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom1.gif)
+
+as is the [henon map](/henon-map.md), although here the pattern of $C$ is regular.
+
+### Space filling curves
+
+What is the dimension of the Cantor set?  Points or finite collections of points are of dimension $0$, whereas lines are of dimension $1$.  $C$ is totally disconnected and therefore would seem to be $0$ dimensional, and yet it is an infinite collection of points that are bounded to a specific region.  
+
+
+
+Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any 
+
+
+### Self-similar fractals
+
+Mandelbrot's [book](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) contains a number of classic fractals, and here are a few re-created.
+
+The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the recursion proceeds as follows:
+
+```python
+ls = [60, 60, -60, -60, -60, -60, 60, 60, 0]
+def sierpinski_curve(size, recursive_steps, ls):
+	if recursive_steps == 0:
+		turtle.forward(size)
+	else:
+		for i in range(len(ls)):
+			if i % 2 == 0:
+				sierpinski_curve(size, recursive_steps-1, [i for i in ls])
+				turtle.left(ls[i])
+			else:
+				sierpinski_curve(size, recursive_steps-1, [-i for i in ls])
+				turtle.left(ls[i])
+
+```
+
+
+![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinksi.gif)
+
+###
 
 
 ### Fractals in the natural world
