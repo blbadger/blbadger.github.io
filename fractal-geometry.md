@@ -22,7 +22,7 @@ and again
 
 ![cantor]({{https://blbadger.github.io}}/fractals/cantor003.png)
 
-and so on ad infinitum.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $\frac{2}{3}^n$ total length remains.  Therefore $C$ has $0$ total length: $2/3^n \to 0 as n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
+and so on ad infinitum.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $(\frac{2}{3})^n$ total length remains.  Therefore $C$ has $0$ total length: $(2/3)^n \to 0 \; as \; n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
 
 ```python
 from turtle import *
