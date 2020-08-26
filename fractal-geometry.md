@@ -12,13 +12,16 @@ Surprising results abound in set theory, but one of the most relevant here is th
 
 A particularly interesting set is known as the middle thirds Cantor set $C$.  This set will be considered in some detail because it illustrates many of the most important aspects of fractals but is relatively simple, existing on a line.  $C$ is made as follows: take the closed interval on the reals $[0, 1]$ and remove from this an open interval of the middle third, that is, $[0, 1] - (1/3, 2/3)$.  
 
-![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
+![cantor]({{https://blbadger.github.io}}/fractals/cantor000.png)
 
 Now repeat this process for each remaining closed intervals,
 
-![cantor]({{https://blbadger.github.io}}/fractals/cantor002.png)
+![cantor]({{https://blbadger.github.io}}/fractals/cantor001.png)
 
 and again
+
+![cantor]({{https://blbadger.github.io}}/fractals/cantor002.png)
+
 
 ![cantor]({{https://blbadger.github.io}}/fractals/cantor003.png)
 
