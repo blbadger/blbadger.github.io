@@ -85,6 +85,8 @@ $$
 
 ### [Fractal geometry](/fractal-geometry.md)
 
+![snowflake]({{https://blbadger.github.io}}/fractals/snowflake.gif)
+
 
 ## Physics
 
