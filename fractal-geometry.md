@@ -269,9 +269,9 @@ and the first recursive step, where each line segment of the curve above is repl
 
 ![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_2.gif)
 
-After a few more recursive steps (only 6 in total!) , the present resolution is no longer able to differentiate between one line and another and we have achieved something close to a space-filling curve.
+After a few more recursive steps (only 6 in total!) , the present resolution is no longer able to differentiate between one line and another and we have achieved something close to a space-filling curve. Notice how the curve drawing slows down as the surface area increases, this is due to the increased time spend saving the vector files during the process of making the video.
 
-![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_3.gif)
+![peano 1]({{https://blbadger.github.io}}/fractals/peano_surface.gif)
 
 Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
 
@@ -314,7 +314,7 @@ def peano_curve(size, steps, orientation):
 
 Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  
 
-Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
+Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
 
 ### Self-similar fractals
