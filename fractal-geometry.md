@@ -269,7 +269,7 @@ and the first recursive step, where each line segment of the curve above is repl
 
 ![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_2.gif)
 
-After a few more recursive steps (only 6 in total!) , the present resolution is no longer able to differentiate between one line and another and we have achieved something close to a space-filling curve. Notice how the curve drawing slows down as the surface area increases, this is due to the increased time spend saving the vector files during the process of making the video.
+After a few more recursive steps (only 5 in total!) , the present resolution is no longer able to differentiate between one line and another and we have achieved something close to a space-filling curve.
 
 ![peano 1]({{https://blbadger.github.io}}/fractals/peano_surface.gif)
 
