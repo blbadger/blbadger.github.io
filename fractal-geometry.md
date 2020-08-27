@@ -235,7 +235,7 @@ for i in range(300):
 
 ```
 
-We get the following image:
+which results in 
 
 ![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom_vertical.gif)
 
@@ -247,10 +247,74 @@ as is the [henon map](/henon-map.md), although here the pattern of $C$ is regula
 
 ### Space filling curves
 
-What is the dimension of the Cantor set?  Points or finite collections of points are of dimension $0$, whereas lines are of dimension $1$.  $C$ is totally disconnected and therefore would seem to be $0$ dimensional, and yet it is an infinite collection of points that are bounded to a specific region.  
+What is the dimension of the Cantor set?  Finite collections of points are of dimension $0$, whereas lines are of dimension $1$.  $C$ is totally disconnected and therefore would seem to be $0$ dimensional, and yet it is an infinite collection of points that are bounded to a specific region.  Thus $C$ has characteristics of both zero and one dimensions.  Do any other curves also exhibit properties of multiple dimensions?
+
+One can defined fractals as objects that exhibit properties of multiple dimensions, and in that respect every image on this page is an example of a curve that answers this question. But before exploring those, it may be useful to view some extreme cases: curves (1-dimensinal objects) that fill space (2 dimensions).  One of the first such curves to be discovered to do this by Peano in the late 19th century can be described in python as follows
+
+```python
+ls = [90, -90, -90, -90, 90, 90, 90, -90, 0]
+def peano_curve(size, recursive_steps, ls):
+	if recursive_steps > 0:
+		for i in range(len(ls)):
+			peano_curve(size, recursive_steps-1, [i for i in ls])
+			turtle.left(ls[i])
+	else:
+		turtle.forward(size)
+```
+where `recursive_steps` goes to infinity.  To understand how this fills space, observe the base case:
+
+![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_1.gif)
+
+and the first recursive step, where each line segment of the curve above is replaced with a smaller version of the whole curve:
+
+![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_2.gif)
+
+After a few more recursive steps (only 6 in total!) , the present resolution is no longer able to differentiate between one line and another and we have achieved something close to a space-filling curve.
+
+![peano 1]({{https://blbadger.github.io}}/fractals/peano_curve1_3.gif)
+
+Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
+
+```python
+def peano_curve(size, steps, orientation):
+	X = 'XFYFX+F+YFXFY-F-XFYFX'
+	Y = 'YFXFY-F-XFYFX+F+YFXFY'
+	l = r = 90
+
+	if steps == 0:
+		return
+
+	if orientation > 0:
+		for i in X:
+			if i == 'X':
+				peano_curve(size, steps-1, orientation)
+			elif i == 'Y':
+				peano_curve(size, steps-1, -orientation)
+			elif i == '+':
+				turtle.left(90)
+			elif i == '-':
+				turtle.right(90)
+			else:
+				turtle.forward(size)
+
+	else:
+		for i in Y:
+			if i == 'X':
+				peano_curve(size, steps-1, -orientation)
+			elif i == 'Y':
+				peano_curve(size, steps-1, orientation)
+			elif i == '+':
+				turtle.left(90)
+			elif i == '-':
+				turtle.right(90)
+			else:
+				turtle.forward(size)
+```   
 
 
-Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md)
+Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  
+
+Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is a non-differentiable angle.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
 
 ### Self-similar fractals
