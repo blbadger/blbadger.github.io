@@ -362,8 +362,8 @@ Now this curve evidently does not cover the plane like the Peano curves. But the
 A better understanding comes from the similarity dimension, also called the Hausdorff dimension. First note that Euclidean objects like a point, line, or surface have the same topological dimension as their similarity dimension: a point cannot be subdivided ($n^0 = 1$), a line of length n can be subdivided into $n^1 = n$ pieces, and a surface square of length n can be subdivided into $n^2$ pieces.  Now note that the Koch curve may be subdivided into four equal pieces, and that these pieces are $1/3$ the length of the total curve.  It's similarity dimension is
 
 $$
-D = \frac{log N}{log(1/r)} \\
-D = \frac{log 4}{log 3} \\
+D = \frac{log \; N}{log \; (1/r)} \\
+D = \frac{log \; 4}{log \; 3} \\
 D \approx 1.2618
 $$
 
@@ -396,8 +396,8 @@ The curve starts as follows:
 Let's calculate this curve's similarity dimension: there are 8 pieces that are smaller versions of the whole curve, and these pieces are $1/4$th the length of the whole so therefore
 
 $$
-D = \frac{log N}{log (1/r)} \\
-D = \frac{log 8}{log(1/4)} \\
+D = \frac{log \; N}{log \; (1/r)} \\
+D = \frac{log \; 8}{log \; (1/4)} \\
 D = 1.5
 $$
 
