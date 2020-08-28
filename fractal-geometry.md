@@ -327,7 +327,8 @@ As is the case in the first Peano curve, the true space-filling curve is the res
 
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
-### Fractals: objects with similarity dimension greater than their topological dimension
+
+### Fractals: objects of multiple dimensions
 
 The Koch curve may be drawn as follows
 
@@ -361,12 +362,12 @@ and 6th recursion:
 
 Now this curve evidently does not cover the plane like the Peano curves. But the curve does seem 'fuzzy', and that it might cover at least part of the plane. In this respect, it seems to be partway between dimensions. Is this the case?
 
-A better understanding comes from the similarity dimension, also called the Hausdorff dimension. First note that Euclidean objects like a point, line, or surface have the same topological dimension as their similarity dimension: a point cannot be subdivided ($n^0 = 1$), a line of length n can be subdivided into $n^1 = n$ pieces, and a surface square of length n can be subdivided into $n^2$ pieces.  Now note that the Koch curve may be subdivided into four equal pieces, and that these pieces are $1/3$ the length of the total curve.  It's similarity dimension is
+A better understanding comes from the similarity dimension, which is equivalent to the Hausdorff dimension for the following self-similar objects. First note that Euclidean objects like a point, line, or surface have the same topological dimension as their similarity dimension: a point cannot be subdivided ($n^0 = 1$), a line of length n can be subdivided into $n^1 = n$ pieces, and a surface square of length n can be subdivided into $n^2$ pieces.  Now note that the Koch curve may be subdivided into four equal pieces, and that these pieces are $1/3$ the length of the total curve.  It's similarity dimension is therefore
 
 $$
 D = \frac{log \; N}{log \; (1/r)} \\
-D = \frac{log \; 4}{log \; 3} \\
-D \approx 1.2618
+\; \\
+D = \frac{log \; 4}{log \; 3} \approx 1.2618
 $$
 
 Now consider the following curve, known as the quadric Koch curve:
@@ -397,28 +398,35 @@ in the first recursion,
 
 and after 5 recursive levels, 
 
-
 ![qkoch]({{https://blbadger.github.io}}/fractals/koch5.png)
-
 
 Let's calculate this curve's similarity dimension: there are 8 pieces that are smaller versions of the whole curve, and these pieces are $1/4$th the length of the whole so therefore
 
 $$
 D = \frac{log \; N}{log \; (1/r)} \\
-D = \frac{log \; 8}{log \; (1/4)} \\
-D = 1.5
+\; \\
+D = \frac{log \; 8}{log \; (4)} = 1.5 \\
 $$
 
-This curve has a slightly larger dimension than the other Koch curve, which could be interpreted as being that this curve is closer to a surface than the first Koch curve.  Visually, this results in the appearance of a rougher line, one that appears to cover more area than the first.  
+This curve has a slightly larger dimension than the other Koch curve, which could be interpreted as being that this curve is closer to a surface than the first Koch curve.  Visually, this results in the appearance of a rougher line, one that appears to cover more area than the first.  How long are these curves? Each recursion adds length so just like the space-filling curves, the total length is infinite.  
 
-How long are these curves? Each recursion adds length so just like the space-filling curves, the total length is infinite.  As an infinitely long curve bounded to a specific region in space fills this space, these curves may also be thought to fill space to some degree.
+We can also calculate the dimension of the Cantor set.  There are 2 collections of points that are identical in structure to the entire collection, which we can call L and R.  These collections take up a third of the original interval, and so the dimension of $C$ is
 
+$$
+D = \frac{log \; N}{log \; (1/r)} \\
+\; \\
+D = \frac{log \; 2}{log \; (3)} \approx 0.631
+$$
 
-### Self-similar fractals
+which is somewhere between $0$ and $1$, and this matches the observations that $C$ exhibits properties of both $0$ and $1$ dimensional objects.
+
+Fractals are defined as shapes that have a Hausdorff dimension greater than their topological dimension.  For the shapes presented on this page, Hausdorff and scaling dimensions are equal.  Thus the curves in this section are all fractals, as are the Cantor set and both space-filling Peano curves.  
+
+### More self-similar fractals
 
 Mandelbrot's [book](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) contains a number of classic fractals, and here are a few re-created.
 
-The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the recursion proceeds as follows:
+The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the drawing proceeds as follows:
 
 ```python
 ls = [60, 60, -60, -60, -60, -60, 60, 60, 0]
@@ -435,9 +443,20 @@ def sierpinski_curve(size, recursive_steps, ls):
 				turtle.left(ls[i])
 
 ```
+The starting point is
 
+![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski1.png)
+
+and each line becomes as smaller version of the whole upon the first recursion
+
+![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski2.png)
+
+![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski3.png)
+
+And after a few more recursive levels, the following curve is produced:
 
 ![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski.gif)
+
 
 
 ### Fractals in the natural world
