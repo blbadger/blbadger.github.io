@@ -323,6 +323,8 @@ at the fifth recursion level,
 
 ![peano 2]({{https://blbadger.github.io}}/fractals/peano_surface2.gif)
 
+As is the case in the first Peano curve, the true space-filling curve is the result of an infinite number of recursive steps.  This means that the curve is also infinitely long, as the length grows upon each recursive step.  Infinite length is a prerequisite for any space-filling curve.
+
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
 ### Fractals: objects with similarity dimension greater than their topological dimension
@@ -389,9 +391,15 @@ The curve starts as follows:
 
 ![qkoch]({{https://blbadger.github.io}}/fractals/koch1.png)
 
+in the first recursion,
+
 ![qkoch]({{https://blbadger.github.io}}/fractals/koch2.png)
 
-![qkoch]({{https://blbadger.github.io}}/fractals/koch3.png)
+and after 5 recursive levels, 
+
+
+![qkoch]({{https://blbadger.github.io}}/fractals/koch5.png)
+
 
 Let's calculate this curve's similarity dimension: there are 8 pieces that are smaller versions of the whole curve, and these pieces are $1/4$th the length of the whole so therefore
 
@@ -401,7 +409,9 @@ D = \frac{log \; 8}{log \; (1/4)} \\
 D = 1.5
 $$
 
-This curve has a slightly larger dimension than the other Koch curve: it is also appears to cover slighly more area. 
+This curve has a slightly larger dimension than the other Koch curve, which could be interpreted as being that this curve is closer to a surface than the first Koch curve.  Visually, this results in the appearance of a rougher line, one that appears to cover more area than the first.  
+
+How long are these curves? Each recursion adds length so just like the space-filling curves, the total length is infinite.  As an infinitely long curve bounded to a specific region in space fills this space, these curves may also be thought to fill space to some degree.
 
 
 ### Self-similar fractals
