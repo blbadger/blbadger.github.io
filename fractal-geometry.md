@@ -321,7 +321,7 @@ and first recursion
 
 at the fifth recursion level, 
 
-![peano 2]({{https://blbadger.github.io}}/fractals/peano_surface_2.gif)
+![peano 2]({{https://blbadger.github.io}}/fractals/peano_surface2.gif)
 
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
@@ -344,9 +344,11 @@ def koch_curve(size, recursive_steps, ls):
 	else:
 		turtle.forward(size)
 ```
+The curve starts as follows:
 
 ![koch]({{https://blbadger.github.io}}/fractals/koch_1.eps)
 
+There are 
 
 
 ### Self-similar fractals
