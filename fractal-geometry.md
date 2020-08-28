@@ -325,20 +325,61 @@ at the fifth recursion level,
 
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
-### Fractals: objects between dimension
+### Fractals: objects with similarity dimension greater than their topological dimension
 
 The Koch curve may be drawn as follows
+
 ```python
-ls = [90, -90, -90, 0, 90, 90, -90, 0]
+ls = [60, -120, 60, 0]
 def koch_curve(size, recursive_steps, ls):
 	if recursive_steps > 0:
 		for i in range(len(ls)):
+			koch_curve(size, recursive_steps-1, [i for i in ls])
+			turtle.left(ls[i])
+
+	else:
+		turtle.forward(size)
+```
+
+The curve starts as
+
+![koch]({{https://blbadger.github.io}}/fractals/koch_snowflake1.png)
+
+and at each recursion, each line segment is divided into parts that resemble the whole. At the 2nd,
+
+![koch]({{https://blbadger.github.io}}/fractals/koch_snowflake2.png)
+
+3rd,
+
+![koch]({{https://blbadger.github.io}}/fractals/koch_snowflake3.png)
+
+and 6th recursion:
+
+![koch]({{https://blbadger.github.io}}/fractals/koch_snowflake6.png)
+
+Now this curve evidently does not cover the plane like the Peano curves. But the curve does seem 'fuzzy', and that it might cover at least part of the plane. In this respect, it seems to be partway between dimensions. Is this the case?
+
+A better understanding comes from the similarity dimension, also called the Hausdorff dimension. First note that Euclidean objects like a point, line, or surface have the same topological dimension as their similarity dimension: a point cannot be subdivided ($n^0 = 1$), a line of length n can be subdivided into $n^1 = n$ pieces, and a surface square of length n can be subdivided into $n^2$ pieces.  Now note that the Koch curve may be subdivided into four equal pieces, and that these pieces are $1/3$ the length of the total curve.  It's similarity dimension is
+
+$$
+D = \frac{log N}{log(1/r)} \\
+D = \frac{log 4}{log 3} \\
+D \approx 1.2618
+$$
+
+Now consider the following curve, known as the quadric Koch curve:
+
+```python
+ls = [90, -90, -90, 0, 90, 90, -90, 0]
+def quadric_koch_curve(size, recursive_steps, ls):
+	if recursive_steps > 0:
+		for i in range(len(ls)):
 			if i % 2 == 0:
-				koch_curve(size, recursive_steps-1, [i for i in ls])
+				quadric_koch_curve(size, recursive_steps-1, [i for i in ls])
 				turtle.left(ls[i])
 				
 			else:
-				koch_curve(size, recursive_steps-1, [i for i in ls])
+				quadric_koch_curve(size, recursive_steps-1, [i for i in ls])
 				turtle.left(ls[i])
 
 	else:
@@ -346,9 +387,21 @@ def koch_curve(size, recursive_steps, ls):
 ```
 The curve starts as follows:
 
-![koch]({{https://blbadger.github.io}}/fractals/koch_1.eps)
+![qkoch]({{https://blbadger.github.io}}/fractals/koch1.png)
 
-There are 
+![qkoch]({{https://blbadger.github.io}}/fractals/koch2.png)
+
+![qkoch]({{https://blbadger.github.io}}/fractals/koch3.png)
+
+Let's calculate this curve's similarity dimension: there are 8 pieces that are smaller versions of the whole curve, and these pieces are $1/4$th the length of the whole so therefore
+
+$$
+D = \frac{log N}{log (1/r)} \\
+D = \frac{log 8}{log(1/4)} \\
+D = 1.5
+$$
+
+This curve has a slightly larger dimension than the other Koch curve: it is also appears to cover slighly more area. 
 
 
 ### Self-similar fractals
