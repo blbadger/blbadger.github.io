@@ -311,10 +311,42 @@ def peano_curve(size, steps, orientation):
 				turtle.forward(size)
 ```   
 
+The base case 
 
-Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  
+![peano 2]({{https://blbadger.github.io}}/fractals/peano_2_1.png)
+
+and first recursion 
+
+![peano 2]({{https://blbadger.github.io}}/fractals/peano_2_2.png)
+
+at the fifth recursion level, 
+
+![peano 2]({{https://blbadger.github.io}}/fractals/peano_surface_2.gif)
 
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
+
+### Fractals: objects between dimension
+
+The Koch curve may be drawn as follows
+```python
+ls = [90, -90, -90, 0, 90, 90, -90, 0]
+def koch_curve(size, recursive_steps, ls):
+	if recursive_steps > 0:
+		for i in range(len(ls)):
+			if i % 2 == 0:
+				koch_curve(size, recursive_steps-1, [i for i in ls])
+				turtle.left(ls[i])
+				
+			else:
+				koch_curve(size, recursive_steps-1, [i for i in ls])
+				turtle.left(ls[i])
+
+	else:
+		turtle.forward(size)
+```
+
+![koch]({{https://blbadger.github.io}}/fractals/koch_1.eps)
+
 
 
 ### Self-similar fractals
