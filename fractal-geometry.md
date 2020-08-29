@@ -331,6 +331,7 @@ These curves map a line of infinite length to a surface, and the mapping is cont
 
 $$
 d(p_1, p_2)_{r+1} = d(p_1, p_2)_{r} / 3 \\
+\frac{1}{3^n} \to 0 \; as n \to infty \\
 d(p_1, p_2) \to 0$ as $r \to infty
 $$.  
 
