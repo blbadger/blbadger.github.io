@@ -273,7 +273,7 @@ After a few more recursive steps (only 5 in total!) , the present resolution is 
 
 ![peano 1]({{https://blbadger.github.io}}/fractals/peano_surface.gif)
 
-Now this curve is simple to define but more difficult to treat with because it self-intersects. The following is a different curve Peano defined which does not self-intersect, but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
+The following is another space filling curve from Peano but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
 
 ```python
 def peano_curve(size, steps, orientation):
@@ -325,7 +325,11 @@ at the fifth recursion level,
 
 As is the case in the first Peano curve, the true space-filling curve is the result of an infinite number of recursive steps.  This means that the curve is also infinitely long, as the length grows upon each recursive step.  Infinite length is a prerequisite for any space-filling curve.
 
-Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-differentiable if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
+Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  
+
+These curves map a line of infinite length to a surface, and the mapping is continuous.  But importantly, this mapping is not one-to-one (injective): multiple points on the starting line end up at the same spots in the final surface. In fact no injective mapping exists between one and two dimensions exists, and a geometric proof of this in the second Peano curve is as follows: observe the point at the upper right corner of the curve $p_1$ and the point directly below it $p_1$ to be $p_2$. Upon each recursion, these points approach each other such that $d(p_1, p_2) \to 0$ as $r \to df
+
+Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  This means that these Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
 
 ### Fractals: objects of multiple dimensions
