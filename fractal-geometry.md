@@ -330,10 +330,12 @@ Note that both of these curves are nowhere-differentiable: pick any point on the
 These curves map a line of infinite length to a surface, and the mapping is continuous.  But importantly, this mapping is not one-to-one (injective): multiple points on the starting line end up at the same spots in the final surface. In fact no injective mapping exists between one and two dimensions exists, and a geometric proof of this in the second Peano curve is as follows: observe the point at the upper right corner of the curve $p_1$ and the point directly below it $p_1$ to be $p_2$. Upon each recursion $r$, the distance between these points is divided by 3 such that 
 
 $$
-d(p_1, p_2)_{r+1} = d(p_1, p_2)_{r} / 3 \\
+d(p_1, p_2)_{r+1} = d(p_1, p_2)_{r} / 3 \\ 
+\; \\
 \frac{1}{3^n} \to 0 \; as n \to infty \\
-d(p_1, p_2) \to 0$ as $r \to infty
-$$.  
+\; \\
+d(p_1, p_2) \to 0 \; as \; r \to infty
+$$
 
 Now the true Peano curves are infinitely recursive, therefore this the distance 
 
