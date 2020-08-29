@@ -327,7 +327,14 @@ As is the case in the first Peano curve, the true space-filling curve is the res
 
 Note that both of these curves are nowhere-differentiable: pick any point on the curve, and it is an angle (a 90 degree angle to be precise) and as angles are non-differentiable, the curve is non-differentiable.  
 
-These curves map a line of infinite length to a surface, and the mapping is continuous.  But importantly, this mapping is not one-to-one (injective): multiple points on the starting line end up at the same spots in the final surface. In fact no injective mapping exists between one and two dimensions exists, and a geometric proof of this in the second Peano curve is as follows: observe the point at the upper right corner of the curve $p_1$ and the point directly below it $p_1$ to be $p_2$. Upon each recursion, these points approach each other such that $d(p_1, p_2) \to 0$ as $r \to df
+These curves map a line of infinite length to a surface, and the mapping is continuous.  But importantly, this mapping is not one-to-one (injective): multiple points on the starting line end up at the same spots in the final surface. In fact no injective mapping exists between one and two dimensions exists, and a geometric proof of this in the second Peano curve is as follows: observe the point at the upper right corner of the curve $p_1$ and the point directly below it $p_1$ to be $p_2$. Upon each recursion $r$, the distance between these points is divided by 3 such that 
+
+$$
+d(p_1, p_2)_{r+1} = d(p_1, p_2)_{r} / 3 \\
+d(p_1, p_2) \to 0$ as $r \to infty
+$$.  
+
+Now the true Peano curves are infinitely recursive, therefore this the distance 
 
 Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  This means that these Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
