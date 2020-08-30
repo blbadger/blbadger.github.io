@@ -27,6 +27,8 @@ and again
 
 and so on ad infinitum.  $C$ is the set of numbers that remains after an infinite number of these steps.  This set is remarkable: after n steps of removing the inner third, $(\frac{2}{3})^n$ total length remains.  Therefore $C$ has $0$ total length: $(2/3)^n \to 0 \; as \; n \to \infty$.  If it has $0$ length, does $C$ have any points? It does indeed, just as many points as the original closed interval $[1,0]$!  The set is totally disconnected (no point touches any other point) and perfect (every point is a limit of another set of points in $C$).
 
+This set can be drawn with Turtle, a Python programming library that was designed to help teach programming in a visual way.  It turns out to be quite capable of intricate fractal drawings as well.
+
 ```python
 from turtle import *
 import turtle
@@ -273,7 +275,7 @@ After a few more recursive steps (only 5 in total!) , the present resolution is 
 
 ![peano 1]({{https://blbadger.github.io}}/fractals/peano_surface.gif)
 
-The following is another space filling curve from Peano but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
+This curve fills space but crosses over itself.  The following is another space filling curve from Peano that does not self-cross but is more difficult to draw.  The L -system, named after its discoverer Lindenmayer, is a very useful system for characterizing the generation of more complex recursive structures.  For a good overview of this system complete with examples, see [here](http://paulbourke.net/fractals/lsys/).  The Peano curve may be defined in the L-system by the sequences `X = 'XFYFX+F+YFXFY-F-XFYFX', Y = 'YFXFY-F-XFYFX+F+YFXFY'` where X and Y are separate recursive sequences, '+' signifies a turn left by 90 degrees, '-' a turn right 90 degrees, and 'F' signifies a movement forward.  This can be implemented in python by interpreting each L-system element separately as follows:
 
 ```python
 def peano_curve(size, steps, orientation):
@@ -330,14 +332,14 @@ Note that both of these curves are nowhere-differentiable: pick any point on the
 These curves map a line of infinite length to a surface, and the mapping is continuous.  But importantly, this mapping is not one-to-one (injective): multiple points on the starting line end up at the same spots in the final surface. In fact no injective mapping exists between one and two dimensions exists, and a geometric proof of this in the second Peano curve is as follows: observe the point at the upper right corner of the curve $p_1$ and the point directly below it $p_1$ to be $p_2$. Upon each recursion $r$, the distance between these points is divided by 3 such that 
 
 $$
-d(p_1, p_2)_{r+1} = d(p_1, p_2)_{r} / 3 \\ 
+d(p_1, p_2)_{r+1} = \frac{d(p_1, p_2)_{r}}{3} \\ 
 \; \\
-\frac{1}{3^n} \to 0 \; as n \to infty \\
+\frac{1}{3^n} \to 0 \; as \; \; n \to \infty \\
 \; \\
-d(p_1, p_2) \to 0 \; as \; r \to infty
+d(p_1, p_2) \to 0 \; as \; \; r \to \infty
 $$
 
-Now the true Peano curves are infinitely recursive, therefore this the distance 
+Now the true Peano curves are infinitely recursive, therefore this the distance between these points is 0 and therefore $p_1$ and $p_2$ map to the same point in two dimensional space, making the Peano curve a non-injective mapping.
 
 Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  This means that these Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
 
@@ -391,13 +393,8 @@ ls = [90, -90, -90, 0, 90, 90, -90, 0]
 def quadric_koch_curve(size, recursive_steps, ls):
 	if recursive_steps > 0:
 		for i in range(len(ls)):
-			if i % 2 == 0:
-				quadric_koch_curve(size, recursive_steps-1, [i for i in ls])
-				turtle.left(ls[i])
-				
-			else:
-				quadric_koch_curve(size, recursive_steps-1, [i for i in ls])
-				turtle.left(ls[i])
+			quadric_koch_curve(size, recursive_steps-1, ls)
+			turtle.left(ls[i])
 
 	else:
 		turtle.forward(size)
@@ -438,7 +435,7 @@ Fractals are defined as shapes that have a Hausdorff dimension greater than thei
 
 ### More self-similar fractals
 
-Mandelbrot's [book](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) contains a number of classic fractals, and here are a few re-created.
+
 
 The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the drawing proceeds as follows:
 
@@ -471,11 +468,56 @@ And after a few more recursive levels, the following curve is produced:
 
 ![sierpinski]({{https://blbadger.github.io}}/fractals/sierpinski.gif)
 
+The following fractal is reminiscent of the appearence of [endocytosis] in cells
 
+```python
+def endocytic_curve(size, recursive_steps):
+	if recursive_steps > 0:
+		for angle in [60, -60, -60]:
+			turtle.left(angle)
+			endocytic_curve(size, recursive_steps-1)
+		turtle.left(60)
+	else:
+		turtle.forward(size)
+```
+
+[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis001.png)
+
+[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis002.png)
+
+[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis003.png)
+
+[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis004.png)
+
+[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis.gif)
+
+and here is a modifed version of Sierpinski's triangle that makes fractal snowflakes:
+
+```python
+def snowflake_curve(size, recursive_steps):
+	if recursive_steps > 0:
+		for angle in [60, 60, -60, -60, -60, -60, 60, 60, 0]:
+			snowflake_curve(size, recursive_steps-1)
+			turtle.left(angle)
+
+	else:
+		turtle.forward(size)
+```
+[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake001.png)
+
+[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake002.png)
+
+[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake003.png)
+
+[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake.gif)
+
+Note that there are smaller snowflakes on the periphery of larger snowflakes: if the recursions were infinite, there would be an infinite number of smaller and smaller snowflakes on these little snowflakes. To save time, the previous image was obtained at a recursive depth of 6.
+
+For more classic fractals and a number of very interesting ideas about fractal geometry in general, see Mandelbrot's [book](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC).  
 
 ### Fractals in the natural world
 
-Fractals can be thought of as objects that are irregular and do not become more regular as one increases scale, as well as objects that have smaller parts that resemble the whole.  These properties are observed in most objects from nature, and a particularly noteworthy example is in coastlines.  Here is a picture of the Chesapeake Bay taken from a sattelite which is found in the Smithsonian museum. 
+Fractals can be thought of as objects that are irregular and do not become more regular as one increases scale, as well as objects that have smaller parts that resemble the whole.  These properties are observed in most objects from nature, and a particularly noteworthy example is in coastlines.  Here is a picture of the Chesapeake Bay taken from a satellite which is found in the Smithsonian museum. 
 
 ![chesapeake bay]({{https://blbadger.github.io}}/fractals/chesapeake_bay.png)
 
