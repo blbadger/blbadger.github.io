@@ -1,6 +1,6 @@
 ## Fractal Geometry
 
-Images of dynamical systems, as seen in other pages of [this site](https://blbadger.github.io/), are often described as fractals.  This section explores the meaning of this term, its origins, and deep connections between fractals and nonlinear dynamics and other fields.
+Images of [nonlinear dynamical systems](https://blbadger.github.io/) are typically fractals.  Here we explore the origin and meaning of this term.
 
 ### Origin and Cantor's set
 
@@ -453,6 +453,10 @@ For more classic fractals and a number of very interesting ideas about fractal g
 
 ### Fractals in the natural world
 
+When I was a kid and just learning how to plot polynomial functions, I remember being quite disappointed to find that any such function describing the objects in the natural world would have to be extremely complicated and unwieldy.  Nearly every shape in nature, from the outline of the trees around my parent's house to the pattern or surf on the seaside to the shapes of nebulae and galaxies I saw in astronomy books were all, as I found, unsuitable for attempting to recreate using the functions I knew then (polynomial and trigonometric functions). 
+
+I did not know at the time, but there is a good reason from this.  These shapes are non-differentiable: increasing in scale does not lead to a simpler, more line-like shape.  Rather, one finds more detail the closer one looks.  These shapes are better mathematically described using fractal geometry, and why this is should be evident from the fractals that have been drawn above.  Fractals also contain more detail the closer one looks, and thus are non-differentiable.  Simple rules specify intricate shapes.
+
 Fractals can be thought of as objects that are irregular and do not become more regular as one increases scale, as well as objects that have smaller parts that resemble the whole.  These properties are observed in most objects from nature, and a particularly noteworthy example is in coastlines.  Here is a picture of the Chesapeake Bay taken from a satellite which is found in the Smithsonian museum. 
 
 ![chesapeake bay]({{https://blbadger.github.io}}/fractals/chesapeake_bay.png)
@@ -460,4 +464,18 @@ Fractals can be thought of as objects that are irregular and do not become more 
 Observe how the large bay has many smaller bays that, though not identical in shape, closely resemble the whole bay.  These inlets in turn have smaller inlets and so on past the resolution limit of this image.  This makes the coastline irregular on a large scale but importantly that this irregularity does not diminish with an increase in scale.  
 
 These properties are important because they nullify our attempts to understand such objects by using common measures and techniques.  To be specific, the length of the coastline in the image above is entirely dependent on how high the resolution of the image is: a higher resolution image will yield a larger measurement.  This is not the case for smooth objects that we like to measure, such as the desk I am writing on.  In addition, fractals are non-differentiable: calculus cannot be accurately applied to these objects because at many points they do not have a defined tangent curve. 
+
+
+### The significance of the fractal geometry of nature
+
+What does this matter, beyond the purpose of attempting to model nature in the most parsimonious fashion?  The observation that most objects in the natural world are best described as fractals is important because it implies that nearly all natural processes are nonlinear.  
+
+
+
+
+
+
+
+
+
 
