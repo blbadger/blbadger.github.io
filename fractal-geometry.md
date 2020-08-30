@@ -481,15 +481,15 @@ def endocytic_curve(size, recursive_steps):
 		turtle.forward(size)
 ```
 
-[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis001.png)
+![endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis001.png)
 
-[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis002.png)
+![endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis002.png)
 
-[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis003.png)
+![endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis003.png)
 
-[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis004.png)
+![endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis004.png)
 
-[endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis.gif)
+![endocytic_fractal]({{https://blbadger.github.io}}/fractals/endocytosis.gif)
 
 and here is a modifed version of Sierpinski's triangle that makes fractal snowflakes:
 
@@ -503,13 +503,13 @@ def snowflake_curve(size, recursive_steps):
 	else:
 		turtle.forward(size)
 ```
-[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake001.png)
+![snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake001.png)
 
-[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake002.png)
+![snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake002.png)
 
-[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake003.png)
+![snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake003.png)
 
-[snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake.gif)
+![snowflake_fractal]({{https://blbadger.github.io}}/fractals/snowflake.gif)
 
 Note that there are smaller snowflakes on the periphery of larger snowflakes: if the recursions were infinite, there would be an infinite number of smaller and smaller snowflakes on these little snowflakes. To save time, the previous image was obtained at a recursive depth of 6.
 
