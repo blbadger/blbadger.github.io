@@ -84,13 +84,13 @@ $$
 
 where $\epsilon$ is an arbitrarily small number and iterations of $f(x)$ are denoted $f^n(x)$. 
 
-Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every starting initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, 
+Now suppose that all points are unstable, such that all points that start close together move apart after a number of iterations. This is equivalent to saying that a system is sensitive to changes in initial values.  Now being that every initial value will eventually have different outputs than the value's neighbor (for any 'neighbor size'), each initial value has a unique trajectory.  As there is an uncountably infinite number of possible starting values on the interval $(0,1]$, 
 
 $$
 | \{ x \; : \; x \in (0, 1] \} | = |\Bbb R|
 $$
 
-there is an uncountably infinite number of possible trajectories if trajectories no two trajectories are the same (they diverge).  
+there is an uncountably infinite number of possible trajectories if no two trajectories are the same.  
 
 As we have above established an equivalence between continuous functions with periodic trajectories and rational numbers, 
 
@@ -98,7 +98,7 @@ $$
 \Bbb B \sim \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories (or more accurately. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
+and as there are countably many rational numbers, there are countably many periodic trajectories. But there are uncountably many trajectories if the system is unstable everywhere, so trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
 
 This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent whith regards to periodicity.
 
