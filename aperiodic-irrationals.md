@@ -1,7 +1,7 @@
 
 ## Periodicity and rationality
 
-Here we establish an equivalence between irrational numbers and continuous aperiodic differential functions to examine the nature of aperiodicity.
+Here is established an equivalence relation between the set of irrational numbers and the set of continuous aperiodic differential functions to write some concise proofs for previously observed properties of aperiodic functions. 
 
 As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \Bbb R - \Bbb Q$, or equivalently
 
@@ -37,13 +37,13 @@ $$
 \Bbb P = \{ p(x) \}
 $$
 
-The set of all continuous functions is equivalent in size to the set of all real numbers $\Bbb R$.  Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size.  As functions may be periodic or aperiodic,
+The set of all continuous functions is equivalent in size to the set of all real numbers $\Bbb R$.  Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto function can be established between the sets if they are not finite.  As functions may be periodic or aperiodic,
 
 $$
-\Bbb A + \Bbb P \sim \Bbb R
+card (\Bbb A + \Bbb P) \sim card(\Bbb R)
 $$
 
-We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function. Using this definition, there exists a one-to-one and onto (bijective) correspondance between periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period but only one period.
+We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function.  Using this definition, there exists a one-to-one and onto (bijective) correspondance between the set of periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period.
 
 $$
 \Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
@@ -56,8 +56,8 @@ $$
 And as the set of natural numbers is equivalent (in size) to the set of rationals, by transitivity we have
 
 $$
-\Bbb P \sim \Bbb N \sim \Bbb Q \\
-\Bbb P \sim \Bbb Q
+card \;\Bbb P \sim \Bbb N \sim \Bbb Q \\
+card\; \Bbb P \sim \Bbb Q
 $$
 
 Recall that the set of all continuous functions (denoted here as $\Bbb F$) is equivalent to $\Bbb R$.  As functions may be periodic (quasiperiodic or asymptotically periodic functions are included) or aperiodic, and as the set of periodic functions is equivalent to the set of rational numbers,
@@ -67,11 +67,11 @@ $$
 \Bbb A \sim \Bbb I
 $$
 
-Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$.
+Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$.  In conclusion, there are as many 'types' of periodic continuous functions as there are rational numbers, where the periodicity of a function defines its 'type'.
 
-Let's see if the implications of this make sense.  In particular, can we also set up a one to one correspondance between aperiodic functions and natural numbers? This would be a contradiction if so, but it turns out we cannot: if we define functions based on their periodicity then consider that aperiodic functions have infinite periodicity, ie each has a period of $\infty$, which cannot map to the set of natural numbers, which are finite.
+Can we also set up a one to one correspondance between aperiodic functions and natural numbers? This would be a contradiction if so, but it turns out we cannot: if we define functions based on their periodicity then consider that aperiodic functions have infinite periodicity, ie each has a period of $\infty$, which cannot map to the set of natural numbers, which are finite.
 
-Also consider the process of writing down a number by adding one digit at a time to a decimal.  Irrational numbers have non-repeating decimal expansions, whereas rational numbers contain digits that eventually repeat.  The process decimal expansion is either periodic (defined as a repeating sequence rather than returning to an original value) or not, and aperiodic decimal expansion results in an irrational number whereas periodic decimal epansion gives a rational.
+Also consider the process of writing down a number by adding one digit at a time to a decimal.  Irrational numbers have non-repeating decimal expansions, whereas rational numbers contain digits that eventually repeat.  The process of decimal expansion is either periodic (defined as a repeating sequence rather than returning to an original value) or not, and aperiodic decimal expansion results in an irrational number whereas periodic decimal epansion gives a rational.
 
 
 ### Aperiodicity is equivalent to sensitivity to initial conditions
@@ -92,17 +92,17 @@ $$
 
 there is an uncountably infinite number of possible trajectories if trajectories no two trajectories are the same (they diverge).  
 
-As we have above established an equivalence between functions with periodic trajectories and rational numbers, 
+As we have above established an equivalence between continuous functions with periodic trajectories and rational numbers, 
 
 $$
 \Bbb B \sim \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
+and as there are countably many rational numbers, there are countably many periodic trajectories (or more accurately. But as there are uncountably many trajectories if the system is unstable everywhere, trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
 
-This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent.
+This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent whith regards to periodicity.
 
-### The set of chaotic (aperiodic) systems is equivalent to the set of unsolvable problems
+### The set of aperiodic functions is equivalent to the set of unsolvable problems
 
 Let's define solvable equations to be those that are computable in finite time for all inputs.  There exists and elegent proof for the idea that nearly every decision problem (that outputs one of two options) is not computable in finite time [here](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-fall-2011/lecture-videos/lecture-23-computational-complexity/).  This proof establishes that nearly all decision (output 'yes' or 'no') problems are unsolveable in finite time, and can be tweaked to establish an equivalence between uncomputable (by a finite algorithm) problems and irrational numbers as follows:
 
