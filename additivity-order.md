@@ -97,20 +97,17 @@ White noise is unpredictable, and 'purely' random: one cannot predict the freque
 
 As noted by [Mandelbrot](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) and [Bak](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.59.381), fractional noise results from fractal objects as they change over time.  Brownian noise coming from Brownian motion is simply a special case of this more general phenomenon: Brownian motion traces out fractal paths.  These paths are self-similar in that very small sections of the path resemble much larger sections, not that smaller portions exactly match the whole as is the case for certain geometric fractals.  This type of self-similarity is sometmies called statistical self-similarity, and is intimately linked to the property this motion exhibits of being nowhere-differentiable.
 
-[generate Weierstrauss function animation]
-
 In general terms, Brownian motion is a fractal because it appears to trace paths that are rough and jagged at every scale until the atomic, meaning that at large scales the paths somewhat resemble the Weierstrauss function above.  Now imaging trying to measure the length of such a shape: the more you zoom in, the longer the measurement is!  Truly nowhere-differentiable paths are of infinite length and instead can be characterized by how many objects (a box or sphere or any other regular shape) it takes to cover the curve at smaller and smaller scales (either by making the shapes themselves smaller or by making the curve larger).  The ratio of the logarithm of the change in the number of objects necessary for covering the curve (a fraction) divided by the logarithm of the change in scale is the counting dimension.  Equivalently,
 
 $$
-D = \frac{log(N)}{log(e)} \\
-N = e^D
+D = \frac{log(N)}{log(1/r)} \\
+N = (1/r)^D
 $$
 
-where $D$ is the counting dimension, $N$ is the ratio of the number of objects required to cover the curve at the smaller vs. larger scale, and $e$ is the change in scale, expressed as a fraction.  A line has a topological and counting dimension of 1: it takes twice as many objects to cover it when the scale has increased by a factor of two, and similarly a square in a plane has a topological and counting dimension of 2. 
+where $D$ is the counting dimension, $N$ is the ratio of the number of objects required to cover the curve, and $1/r$ is the change in scale expressed as a fraction.  A line has a topological and counting dimension of 1: it takes twice as many objects to cover it when the scale has increased by a factor of two, and similarly a square in a plane has a topological and counting dimension of 2. 
 
-If the counting dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails have a counting dimension of approximately $2$, meaning that they practically cover area even though they are topologically one-dimensional. The terms 'fractal dimension' and 'counting dimension' are used here to mean the same thing. 
+If the counting dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails have a counting dimension of approximately $2$, meaning that they cover area even though they are topologically one-dimensional. 
 
-[add section on randomized fractal drawings]
 
 ### Aside: quantum mechanics and non-differentiable motion
  
