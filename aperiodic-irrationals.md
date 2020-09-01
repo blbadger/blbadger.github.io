@@ -1,8 +1,6 @@
 
 ## Periodicity and rationality
 
-Here is established an equivalence relation between the set of irrational numbers and the set of continuous aperiodic differential functions to write some concise proofs for previously observed properties of aperiodic functions. 
-
 As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \Bbb R - \Bbb Q$, or equivalently
 
 $$ \Bbb I = \{ x \; \vert \; x \in \Bbb R \land x \notin \Bbb Q\} $$
