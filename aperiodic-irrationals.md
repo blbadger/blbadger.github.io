@@ -8,10 +8,10 @@ $$ \Bbb I = \{ x \; \vert \; x \in \Bbb R \land x \notin \Bbb Q\} $$
 Rational numbers are expressible as fractions, whereas irrationals are not, and all real numbers are either rational or irrational.  As $\Bbb R $ is uncountably infinite but $\Bbb Q$ is countably infinite, $\Bbb I$ is uncountably infinite, meaning that the cardinality of the set of irrationals is much larger than the cardinality of rationals, or in other words nearly every possible number is irrational.
 
 $$
-card \; ( \Bbb I)  >> card \; ( \Bbb Q)
+card \; \Bbb I  >>  card \; \Bbb Q
 $$
 
-Now let's consider continuous differential functions, which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never return to that of previous iterations:
+Now let's consider continuous functions, which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never return to that of previous iterations:
 
 $$
 a^n(x_0) \neq a^k(x_0) \; \mathbf {if} \; x, k \in \Bbb N \; \mathbf {and} \; k \neq x
@@ -38,10 +38,10 @@ $$
 The set of all continuous functions is equivalent in size to the set of all real numbers $\Bbb R$.  Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto function can be established between the sets if they are not finite.  As functions may be periodic or aperiodic,
 
 $$
-card (\Bbb A + \Bbb P) \sim card(\Bbb R)
+\Bbb A + \Bbb P \sim \Bbb R
 $$
 
-We can define a periodic differential function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function.  Using this definition, there exists a one-to-one and onto (bijective) correspondance between the set of periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period.
+We can define a periodic function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function.  Using this definition, there exists a one-to-one and onto (bijective) correspondance between the set of periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period.
 
 $$
 \Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
@@ -51,11 +51,11 @@ $$
 \Bbb P \sim \Bbb N
 $$
 
-And as the set of natural numbers is equivalent (in size) to the set of rationals, by transitivity we have
+And as the set of natural numbers is equivalent to the set of rational numbers, by transitivity we have
 
 $$
-card \;\Bbb P \sim \Bbb N \sim \Bbb Q \\
-card\; \Bbb P \sim \Bbb Q
+\Bbb P \sim \Bbb N \sim \Bbb Q \\
+\Bbb P \sim \Bbb Q
 $$
 
 Recall that the set of all continuous functions (denoted here as $\Bbb F$) is equivalent to $\Bbb R$.  As functions may be periodic (quasiperiodic or asymptotically periodic functions are included) or aperiodic, and as the set of periodic functions is equivalent to the set of rational numbers,
