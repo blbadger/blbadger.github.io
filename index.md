@@ -80,7 +80,7 @@ $$
 ### [Discontinuity and aperiodicity](/discontinuities.md)
 
 $$
-f \in C(X, Y) \; if \; \Bbb R \to \Bbb Q
+f \in C(X, Y) \Rightarrow \; f: \; \Bbb R \to \Bbb Q \\
 $$
 
 ### [Additive transformations](/additivity-order.md)
