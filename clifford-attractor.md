@@ -62,7 +62,9 @@ From $b=0.95$ to $b \approx 1.18$, incremented evenly:
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.gif)
 
-The flashes are not a result of video artefacts, but instead represent small changes that lead to the attractor shifting back to points.  Observe that the transition between a 0 and >1 dimensional attractor is not completely smooth!  Small changes to $b$ lead to large changes in attractor dimension, even though the >1-dimensional attractor's shape changes slowly.
+The flashes are not a result of video artefacts, but instead represent small changes that lead to the attractor shifting back to points.  Observe that the transition between a 0 and >1 dimensional attractor is not completely smooth!  Small changes to $b$ lead to large changes in attractor dimension, even though the >1-dimensional attractor's shape changes slowly.  
+
+This is not peculiar to the Clifford attractor: any one-to-one mapping from $1$ to $2$ dimensions must be discontinuous.  And as there is no function that will map a point to a line (because any such function would have to map a point to many points, and would therefore not be a function), a vacuous observation is that there is no continuous mapping from 0 to 1 dimensions.
 
 And when $b = 1.7$, a nearly-2d attractor is produced
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_2d.png)
