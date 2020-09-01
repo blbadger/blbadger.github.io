@@ -77,7 +77,11 @@ $$
 \; \\
 $$
 
-### Discontinuity and aperiodicity
+### [Discontinuity and aperiodicity](/discontinuities.md)
+
+$$
+f \in C(X, Y) \; if \; \Bbb R \to \Bbb Q
+$$
 
 ### [Additive transformations](/additivity-order.md)
 
