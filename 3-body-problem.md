@@ -17,7 +17,9 @@ The three body problem may be formulated as follows:
 $$
 a_1 = -Gm_2\frac{p_1 - p_2}{\lvert p_1 - p_2 \rvert ^3} - Gm_3\frac{p_1 - p_3}{\lvert p_1 - p_3 \rvert^3} \\
 \; \\
+\; \\
 a_2 = -Gm_3\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert ^3} - Gm_1\frac{p_2 - p_1}{\lvert p_2 - p_1 \rvert^3} \\
+\; \\
 \; \\
 a_3 = -Gm_3\frac{p_3 - p_1}{\lvert p_3 - p_1 \rvert ^3} - Gm_1\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert^3} 
 $$
