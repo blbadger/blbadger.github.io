@@ -2,13 +2,13 @@
 
 ### Newtonian mechanics
 
-Newtonian mechanics is often thought to render the motion of celestial bodies as an open and shut matter: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  Consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
+Newtonian mechanics are often thought to render the motion of celestial bodies a solved problem: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  Consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
 
 "Now armed with the tremendous power of Newton's laws, we can not only calculate such simple motions but also, given only a machine to handle the arithmetic, even the tremendously complex motions of the planets, to as high a degree of precision as we wish!"
 
-This statement seems logical at first glance.  The most accurate equations of force, momentum, gravitational acceleration etc. are all fairly simple and for most examples that were taught to me, there were solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to time as 'solved'.  The mechanics most of us learned were problems that were solveable with some calculus, usually by integrating over time to remove that variable.  
+This statement seems logical at first glance.  The most accurate equations of force, momentum, and gravitational acceleration are all fairly simple and for most examples that are taught in school, there are solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to teh variable time as 'solved'.  The mechanics most of us learned were problems that were solvable with some calculus, usually by integrating over time to remove that variable.  
 
-If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. 
+If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, or else the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. 
 
 But what about 3 bodies, or more?  Newton attempted to find a similar solution to this problem but failed.  This did not deter others, and it seems that some investigators (Laplace in particular) were confident of a solution being just around the corner, even if they could not find one themselves.
 
@@ -33,7 +33,7 @@ The norm of the difference of two vectors may be understood as a distance betwee
 
 ### Modelling the three body problem
 
-After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is make it into a self-contained algebraic expression, because it is impossible to do so!  
+After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is, make it into a self-contained algebraic expression, because it is impossible to do so!  
 
 Is any solution possible?  Sundman found that there is an infinite power series that describes the three body problem, and in that sense there is.  But in the sense of actually predicting an orbit, the power series is no help because it cannot directly infer the position of any of the three bodies owing to round-off error propegation from extremely slow convergence ([ref](https://arxiv.org/pdf/1508.02312.pdf)).  From the point of a solution being one in which time is removed from the equation, the power series is more of a problem reformulation than a solution: the time variable is the power series base.  Rather than numerically integrate the differential equations of motion, one can instead add up the power series terms, but the latter option takes an extremely long time to do.  To give an appreciation for exactly how long, it has been estimated that more than $10^{8000000}$ terms are required for calculating the series for one short time step ([ref](http://articles.adsabs.harvard.edu/pdf/1930BuAst...6..417B)). 
 
@@ -88,11 +88,14 @@ def accelerations(p1, p2, p3):
 	'''A function to calculate the derivatives of x, y, and z
 	given 3 object and their locations according to Newton's laws
 	'''
-	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt(np.sum([i**2 for i in p1 - p2]))**3) - 9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
+	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt(np.sum([i**2 for i in p1 - p2]))**3) -  \
+	9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
 
-	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt(np.sum([i**2 for i in p2 - p3]))**3) - 9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
+	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt(np.sum([i**2 for i in p2 - p3]))**3) -  \
+	9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
 
-	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt(np.sum([i**2 for i in p3 - p1]))**3) - 9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
+	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt(np.sum([i**2 for i in p3 - p1]))**3) -  \
+	9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
 
 	return planet_1_dv, planet_2_dv, planet_3_dv
 ```
