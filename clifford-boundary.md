@@ -1,6 +1,6 @@
 ## Clifford map boundary
 
-Recall that the Clifford map (see [here](/clifford-map.md) for more information) is a two dimensional discrete map defined by the following equations:
+Recall that the Clifford map (see [here](/clifford-attractor.md) for more information) is a two dimensional discrete map defined by the following equations:
 
 $$
 x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
