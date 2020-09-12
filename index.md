@@ -77,7 +77,7 @@ $$
 \text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n \\
 $$
 
-### [Discontinuity is necessary for aperiodicity](/discontinuities.md)
+### [Discontinuity and aperiodicity](/discontinuities.md)
 
 $$
 f \in C(X, Y) \Rightarrow \; f: \; \Bbb R \to \Bbb Q \\
