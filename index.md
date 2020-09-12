@@ -39,7 +39,7 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 
 
 ## Boundaries of nonlinear systems
-
+Trajectories of nonlinear systems may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  Sufficiently near this border, predicting whether a trajectory stays bounded becomes infeasible because of this.
 
 ### [Julia sets](/julia-sets.md)
 
@@ -67,8 +67,9 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 
 
 ## Fundamental features of nonlinearity
+The examples of nonlinear trajectories and boundaries above display a number of interesting features: aperiodic trajectories come from nonlinear systems, discontinuity often leads to aperiodicity, and changes in attractor dimension are often discontinuous.  Here are abstract approaches to understanding these observations.
 
-### [Aperiodic maps and irrational numbers](/aperiodic-irrationals.md)
+### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
 
 $$  
 \; \\
@@ -77,7 +78,7 @@ $$
 \; \\
 $$
 
-### [Discontinuity and aperiodicity](/discontinuities.md)
+### [Discontinuity is necessary for aperiodicity](/discontinuities.md)
 
 $$
 f \in C(X, Y) \Rightarrow \; f: \; \Bbb R \to \Bbb Q \\
@@ -85,7 +86,7 @@ $$
 
 ### [Additive transformations](/additivity-order.md)
 
-![3 body image]({{https://blbadger.github.io}}/assets/images/montipora.JPG)
+![montipora image]({{https://blbadger.github.io}}/assets/images/montipora.JPG)
 
 ### [Fractal geometry](/fractal-geometry.md)
 
@@ -93,6 +94,7 @@ $$
 
 
 ## Physics
+The study of observable things. Not as simple as it sounds, however. 
 
 ### [Entropy](/entropy.md)
 
@@ -104,22 +106,25 @@ $$
 
 
 ## Biology
+The study of life.  Life displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  As for nonlinear attractors, the closer one studies an organism the more one learns. 
 
 ### [Genetic information problem](/genetic-info-problem.md)
 
 ![coral image]({{https://blbadger.github.io}}/bio_images/acropora.png)
+
 
 ### [Homeostasis](/homeostasis.md)
 
 ![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
 
 
-### [Neural Network](/neural-networks.md) 
+### [Neural Network classification of a neural network](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
 
 ## Smaller software projects
+A few smaller software projects.  Mostly to convince all you potential employers out there that I code good.
 
 ### [Game puzzles](/puzzle-projects.md)
 
@@ -145,9 +150,9 @@ $$
 n!_k \to ?
 \; \\
 $$
-
  	
 ## High voltage 
+High voltage engineering projects which make for pretty screensavers and light shows.
 
 ### [Tesla coil](/tesla-coils.md)
 
