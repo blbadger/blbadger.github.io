@@ -186,11 +186,12 @@ This abrupt change between smooth and fractal attractor basin shape is called ba
 ### A semicontinuous iteration of the Henon map reveals period doubling 
 
 This map (1) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
+
 $$
 \cfrac{dx}{dt} = 1-ax^2 + y \\
-\cfrac{dy}{dt} = bx_n\\
+\cfrac{dy}{dt} = bx_n \\
 x_{n+1} \approx x_n + \cfrac{dx}{dt} \cdot \Delta t \\
-y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t 
+y_{n+1} \approx y_n + \cfrac{dy}{dt} \cdot \Delta t \\
 \tag{3}
 $$
 
