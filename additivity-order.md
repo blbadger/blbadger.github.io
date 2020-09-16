@@ -166,7 +166,7 @@ def randomized_sierpinski(steps, a, b, c):
 		if i > 100:
 			turtle.forward(0.2)
 ```
-yeilds
+yields
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinski.gif)
 
