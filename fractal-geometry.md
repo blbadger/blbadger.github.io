@@ -177,7 +177,11 @@ which results in
 
 ![cantor zoom]({{https://blbadger.github.io}}/fractals/cantor_zoom_vertical.gif)
 
-Now this is one particular example of a Cantor set, but there are others: one could remove middle halves instead of thirds etc.  The general definition of a Cantor set is any set that is closed, bounded, totally disconnected, and perfect.  The general Cantor set $C$ is a common occurence in nonlinear maps.  The following arrangement of stable versus unstable locations for the [Clifford attractor](/clifford-boundary.md) is a good example of an irregular Cantor set
+Now this is one particular example of a Cantor set, but there are others: one could remove middle halves instead of thirds etc.  The general definition of a Cantor set is any set that is closed, bounded, totally disconnected, and perfect.  The general Cantor set $C$ is a common occurence in nonlinear maps.  The period doubling in the logistic map forms a Cantor set, although this is not a middle thirds set as seen above. 
+
+![logistic_zoom]({{https://blbadger.github.io}}/fractals/logistic_zoom_branches.gif)
+
+The following arrangement of stable versus unstable locations for the [Clifford attractor](/clifford-boundary.md) is a good example of an irregular Cantor set
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom1.gif)
 
