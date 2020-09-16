@@ -137,6 +137,39 @@ Markov processes attempt to model non-random dependencies by providing each stat
 It may instead be more effective to consider a nonlinear model of statistics in which additivity is not assumed (meaning that the expected value of one variable may affect the expected value of another in a nonrandom (and noncomplementary) way.  One could imagine a Markov chain-like graph in which the state probabilites continually updated depending on the path to each state.
 
 
+### Randomized fractals 
+
+An example of the kind of organization seen for a normal distribution is that observed for random fractals.  
+
+```python
+a = (-700,-480)
+b = (0, 500)
+c = (700, -480)
+
+def randomized_sierpinski(steps, a, b, c):
+
+	for i in range(steps):
+		pos = [j for j in turtle.pos()]
+
+		n = random.randint(0, 6)
+		turtle.pu()
+		if n < 2:
+			turtle.goto((pos[0]+a[0])/2, (pos[1]+a[1])//2)
+
+		elif n >= 4:
+			turtle.goto((pos[0]+b[0])/2, (pos[1]+b[1])//2)
+
+		else:
+			turtle.goto((pos[0]+c[0])/2, (pos[1]+c[1])//2)
+
+		turtle.pd()
+		if i > 100:
+			turtle.forward(0.2)
+```
+yeilds
+
+![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinski.gif)
+
 ### Aside: quantum mechanics and non-differentiable motion
  
 The wave-like behavior of small particles such as photons or electrons is one of the fundamnetal aspects of the physics of small objects.  Accordingly, the equations of quantum mechanics have their root in equations describing macroscopic waves of water and sound.  Now macroscopic waves are the result of motion of particles much smaller than the waves themselves.  As quantum particles are well-described by wave equations, it seems logical to ask whether or not these particles are actually composed of many smaller particles in the same way macroscopic waves are.  
