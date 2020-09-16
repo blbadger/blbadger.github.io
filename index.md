@@ -117,7 +117,7 @@ The study of life.  Life displays many of the features of nonlinear mathematical
 ![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
 
 
-### [Neural Network classification of a neural network](/neural-networks.md) 
+### [Neural Network](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}cNN_architecture.png)
 
