@@ -139,12 +139,14 @@ It may instead be more effective to consider a nonlinear model of statistics in 
 
 ### Randomized fractals 
 
-An example of the kind of organization seen for a normal distribution is that observed for random fractals.  
+One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the sierpinski triangle:
+
+
 
 ```python
-a = (-700,-480)
-b = (0, 500)
-c = (700, -480)
+a = (-400,-300)
+b = (0, 300)
+c = (400, -300)
 
 def randomized_sierpinski(steps, a, b, c):
 
@@ -154,17 +156,17 @@ def randomized_sierpinski(steps, a, b, c):
 		n = random.randint(0, 6)
 		turtle.pu()
 		if n < 2:
-			turtle.goto((pos[0]+a[0])/2, (pos[1]+a[1])//2)
+			turtle.goto((pos[0]+a[0])/2, (pos[1]+a[1])/2)
 
 		elif n >= 4:
-			turtle.goto((pos[0]+b[0])/2, (pos[1]+b[1])//2)
+			turtle.goto((pos[0]+b[0])/2, (pos[1]+b[1])/2)
 
 		else:
-			turtle.goto((pos[0]+c[0])/2, (pos[1]+c[1])//2)
+			turtle.goto((pos[0]+c[0])/2, (pos[1]+c[1])/2)
 
 		turtle.pd()
 		if i > 100:
-			turtle.forward(0.2)
+			turtle.forward(0.5)
 ```
 yields
 
