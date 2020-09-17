@@ -85,7 +85,7 @@ $$
 
 ### [Additive transformations](/additivity-order.md)
 
-![montipora image]({{https://blbadger.github.io}}/assets/images/montipora.JPG)
+![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinski_2.gif)
 
 ### [Fractal geometry](/fractal-geometry.md)
 
