@@ -179,7 +179,7 @@ def randomized_sierpinski(steps, a, b, c):
 
 One might think that this procedure would result in a haze of random points in the triangle.  Indeed, if the verticies of a square are used instead of a triangle then the plotted points occupy random positions in this square and do not make a pattern.  But in a triangle, the following shape is made:
 
-![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinski.gif)
+![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinksi_2.gif)
 
 Changing the distance travelled to each point from $d = 1 \to d = 1/4$, 
 
