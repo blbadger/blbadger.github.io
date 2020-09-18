@@ -185,6 +185,66 @@ Changing the distance travelled to each point from $d = 1 \to d = 1/4$,
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/random_sierpinski_distance.gif)
 
+A similar process can be used to make a Sierpinski carpet.  The idea is to specify the location of four verticies of a rectangle as $a, b, c, d$.  Each iteration proceeds as above, except that the pointer only moves $1/3$ the distance to the vertex chosen by the random number generator. 
+
+```python
+from turtle import *
+import turtle
+import random
+
+a = (-500,-500)
+b = (-500, 500)
+c = (500, -500)
+d = (500, 500)
+div = 3
+def randomized_sierpinski(steps, a, b, c, d, div):
+	for i in range(steps):
+		pos = [j for j in turtle.pos()]
+
+		n = random.randint(0, 8)
+		turtle.pu()
+		if n < 2:
+			turtle.goto((pos[0]+a[0])/div, (pos[1]+a[1])/div)
+
+		elif n >= 6:
+			turtle.goto((pos[0]+b[0])/div, (pos[1]+b[1])/div)
+
+		elif n < 6 and n >= 4:
+			turtle.goto((pos[0]+c[0])/div, (pos[1]+c[1])/div)
+
+		elif n < 4 and n >= 2:
+			turtle.goto((pos[0] + d[0])/div, (pos[1] + d[1])/div)
+
+		turtle.pd()
+		if i > 100:
+			turtle.forward(0.5)
+```
+
+And the setup for viewing the resulting carpet from $d=1 \to d=4$ is
+
+```python
+...
+div = 1
+...
+for i in range(300):
+	turtle.hideturtle()
+	turtle.speed(0)
+	turtle.delay(0)
+
+	turtle.pensize(2)
+	width = 1900
+	height = 1080
+	turtle.setup (width, height, startx=0, starty=0)
+
+	print (i)
+	randomized_sierpinski(5000, a, b, c, d, div + i/100)
+	turtle_screen = turtle.getscreen()
+	turtle_screen.getcanvas().postscript(file="randomized_sierpinski{0:03d}.eps".format(i), colormode = 'color')
+	turtle.reset()
+```
+which results in a Sierpinski carpet. 
+
+![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_carpet.gif)
 
 ### Aside: quantum mechanics and non-differentiable motion
  
