@@ -141,7 +141,9 @@ It may instead be more effective to consider a nonlinear model of statistics in 
 
 One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the sierpinski triangle:
 
+[pic]
 
+This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template.  But it is also constructed using random inputs in a surprising way: take three points that are the edges of an equilateral triangle and add an initial point somewhere in this triangle.  Assign two numbers on a dice to each vertex, roll the dice, and move half way towards the vertex indicated by the dice and repeat.  This can be done in python as follows: 
 
 ```python
 a = (-400,-300)
@@ -149,12 +151,17 @@ b = (0, 300)
 c = (400, -300)
 
 def randomized_sierpinski(steps, a, b, c):
-
+	'''
+	A function that draws the sierpinski triangle using random.randint, accepts arguments 'steps' (int)
+	for the number of points to plot and 2D vertex points a, b, and c (tuples) as the corners of an 
+	equilateral triangle.
+	'''
 	for i in range(steps):
-		pos = [j for j in turtle.pos()]
+		pos = [j for j in turtle.pos()] # find current position
 
-		n = random.randint(0, 6)
+		n = random.randint(0, 6) # dice roll
 		turtle.pu()
+		# move half way towards the vertex indicated by the dice roll
 		if n < 2:
 			turtle.goto((pos[0]+a[0])/2, (pos[1]+a[1])/2)
 
@@ -165,12 +172,19 @@ def randomized_sierpinski(steps, a, b, c):
 			turtle.goto((pos[0]+c[0])/2, (pos[1]+c[1])/2)
 
 		turtle.pd()
+		# skip the first 100 rolls 
 		if i > 100:
 			turtle.forward(0.5)
 ```
-yields
+
+One might think that this procedure would result in a haze of random points in the triangle.  Indeed, if the verticies of a square are used instead of a triangle then the plotted points occupy random positions in this square and do not make a pattern.  But in a triangle, the following shape is made:
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinski.gif)
+
+Changing the distance travelled to each point from $d = 1 \to d = 1/4$, 
+
+![randomized sierpinski]({{https://blbadger.github.io}}misc_images/random_sierpinski_distance.gif)
+
 
 ### Aside: quantum mechanics and non-differentiable motion
  
