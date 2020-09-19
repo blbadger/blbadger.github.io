@@ -141,7 +141,7 @@ It may instead be more effective to consider a nonlinear model of statistics in 
 
 One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the sierpinski triangle:
 
-[sierpinski]]({{https://blbadger.github.io}}misc_images/sierpinski_triangle.png)
+[sierpinski]({{https://blbadger.github.io}}misc_images/sierpinski_triangle.png)
 
 This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template consisting of seven line segments with exact angles between them (for more on exactly how to draw this fractal, see [here](https://blbadger.github.io/fractal-geometry.html).  
 
