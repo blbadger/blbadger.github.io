@@ -141,9 +141,11 @@ It may instead be more effective to consider a nonlinear model of statistics in 
 
 One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the sierpinski triangle:
 
-[pic]
+[sierpinski]]({{https://blbadger.github.io}}misc_images/sierpinski_triangle.png)
 
-This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template.  But it is also constructed using random inputs in a surprising way: take three points that are the edges of an equilateral triangle and add an initial point somewhere in this triangle.  Assign two numbers on a dice to each vertex, roll the dice, and move half way towards the vertex indicated by the dice and repeat.  This can be done in python as follows: 
+This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template consisting of seven line segments with exact angles between them (for more on exactly how to draw this fractal, see [here](https://blbadger.github.io/fractal-geometry.html).  
+
+The Sierpinski triangle can also be constructed using random inputs in a surprising way: take three points that are the edges of an equilateral triangle and add an initial point somewhere in this triangle.  Assign two numbers on a dice to each vertex, roll the dice, and move half way towards the vertex indicated by the dice and repeat.  This can be done in python as follows: 
 
 ```python
 a = (-400,-300)
@@ -181,7 +183,9 @@ One might think that this procedure would result in a haze of random points in t
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_sierpinksi_2.gif)
 
-Changing the distance travelled to each point from $d = 1 \to d = 1/4$, 
+Guessing where the next point will land is not possible, but as more and more iterations are made each iteration comes arbitrarily close to the Sierpinski triangle.  This occurs regardless of where the initial point is located!  The points, when added togather, approximate the intricate structure of a fractal.
+
+For a more dramatic example of the organizing effect of a decrease in distance travelled towards the chosen vertex on each iteration, observe what happens when we go from $d = 1 \to d = 1/4$, or in other words when we go from $(x, y) + (v_x, v_y)$ to $((x, y) + (v_x, v_y))/4)$ on each iteration:
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/random_sierpinski_distance.gif)
 
@@ -213,14 +217,14 @@ def randomized_sierpinski(steps, a, b, c, d, div):
 			turtle.goto((pos[0]+c[0])/div, (pos[1]+c[1])/div)
 
 		elif n < 4 and n >= 2:
-			turtle.goto((pos[0] + d[0])/div, (pos[1] + d[1])/div)
+			turtle.goto((pos[0]+d[0])/div, (pos[1]+d[1])/div)
 
 		turtle.pd()
 		if i > 100:
 			turtle.forward(0.5)
 ```
 
-And the setup for viewing the resulting carpet from $d=1 \to d=4$ is
+And the setup for viewing the resulting carpet from $d=1 \to d=1/4$ is
 
 ```python
 ...
