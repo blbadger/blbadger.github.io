@@ -83,6 +83,12 @@ $$
 f \in C(X, Y) \Rightarrow \; f: \; \Bbb R \to \Bbb Q \\
 $$
 
+### [Irrational numbers on the real line](/irrational-dimension.md)
+
+$$
+\Bbb R = {... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ...}
+$$
+
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
@@ -105,7 +111,7 @@ The study of observable things. Not as simple as it sounds, however.
 
 
 ## Biology
-The study of life.  Life displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  As for nonlinear attractors, the closer one studies an organism the more one learns. 
+The study of life.  Life displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  
 
 ### [Genetic information problem](/genetic-info-problem.md)
 
@@ -123,7 +129,6 @@ The study of life.  Life displays many of the features of nonlinear mathematical
 
 
 ## Smaller software projects
-A few smaller software projects.  Mostly to convince all you potential employers out there that I code good.
 
 ### [Game puzzles](/puzzle-projects.md)
 
