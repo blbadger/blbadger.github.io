@@ -12,7 +12,7 @@ A playing a balanced game of smash bros. is a pleasure as well.
 
 ![smash bros]({{https://blbadger.github.io}}/assets/images/smash_bros.png)
 
-If you would like to get in touch, email me at blbadger at  gmail dot com.
+If you would like to get in touch, email me at blbadger10 at  gmail dot com.
 
 
 
