@@ -250,18 +250,13 @@ There is more and more area that diverges with an increasing number of maximum i
 ### Discontinuous transition from linear to nonlinear complex maps
 
 Take the familiar example where $a = -0.744 + 0.148i$, but now let's see what happens when we move from 
+
 $$
 f(x) = x^1 + a \to \\
 f(x) = x^4 + a \tag{2}
 $$
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_1_to_4.gif)
-
-
-If $a = 0.75$, the (2) leads to a different map with similar qualitative features:
-
-
-![julia set1]({{https://blbadger.github.io}}fractals/julia_exponent_0.75.gif)
 
 
 We can learn a few things from these maps.  The first is that non-differentiable regions (angular places) of the set experience a transition from a finite to an infinite number.  This means that the maps go from mostly smooth with a few sharp angles to being entirely composed of sharp bends and twists, which is a transition from differentiability most places to nowhere-differentiability.
