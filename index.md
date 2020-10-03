@@ -86,7 +86,7 @@ $$
 ### [Irrational numbers on the real line](/irrational-dimension.md)
 
 $$
-\Bbb R = {... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ...}
+\Bbb R \neq { ... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ... }
 $$
 
 ### [Additive transformations](/additivity-order.md)
