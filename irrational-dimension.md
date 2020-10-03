@@ -43,7 +43,7 @@ a_1 = 0.a_{10}a_{11}a_{12}a_{13}a_{14}a_{15}... \\
 a_2 = 0.a_{20}a_{21}a_{22}a_{23}a_{24}a_{25}... \\
 a_3 = 0.a_{30}a_{31}a_{32}a_{33}a_{34}a_{35}... \\
 ... \\
-b = 0.b_{1} b_{2}  b_{3} ... : b_1\neq a_{10}, b_2\neq a_{21}, b_3\neq a_{32} ... 
+b = 0.b_{1} b_{2}  b_{3} ... \; such \; that \; b_1\neq a_{10}, b_2\neq a_{21}, b_3\neq a_{32} ... 
 $$
 
 Now imagine we are constructing the number $b$ (which must be irrational because if it were rational, it would be in a countable set and therefore equal to one or ${a_1, a_2, a_3 ...}$) using this very method.  We start with a sequence of 0s (or any arbitrary sequence of digits) and a line representing the rational numbers $(0, 1)$, and place a pin at the origin because our number is currently:
