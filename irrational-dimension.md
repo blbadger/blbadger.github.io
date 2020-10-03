@@ -30,15 +30,53 @@ $$
 because otherwise there would be nonzero distance between an abritrary rational and an irrational number in one direction.  The paradox here is that rational and irrational numbers cannot alternate because there are far more irrationals than rationals on the real number line, and alternating points necessitates equal set cardinality (even if they are both infinite).  If the points did alternate in this way, either rationals and irrationals must both be countably infinite or else both uncountably infinite. 
 
 
-### Irrational numbers exist in a separate temporal dimension from rationals
+### Irrational numbers move around on the real line
 
 One way to try to resolve these paradoxes could be to invoke another spatial dimension for irrational numbers, akin to the extra dimension occupied by imaginary numbers.  But this leads to a problem: rationals are no longer dense in the real numbers, because there are irrational numbers far from the rational number axis that do not contain a rational between them.
 
-Instead, consider the idea that irrational numbers exist in a separate temporal dimension from rational numbers.  Intuitively, rationals may be thought to exist as stationary points on the real line, whereas irrationals move.  This resolves the first paradox because irrationals are not able to be listed in sequence because their sequence would continually change, and the second paradox is addressed because a single rational number is at any one time bordered by two irrationals, but 'over time' it is bordered by an arbitrary number (an infinite number to be precise) of irrationals.
+Instead, consider the idea that irrational numbers exist in a separate temporal dimension from rational numbers, meaning that irrational numbers act as though they are in motion along the real line.  This resolves the first paradox because irrationals are not able to be listed in sequence because any sequence of these numbers contains non-comparable elements, and the second paradox is addressed because a single rational number is at any one time bordered by two irrationals, but 'over time' it is bordered by an arbitrary number (an infinite number to be precise) of irrationals.
 
+In Cantor's diagonal argument, no countable number of numbers between 0 and 1 can contain all real numbers because a number $b$ can always be generated that differs from all previously generated numbers ${a_1, a_2, a_3...}$ in at least one decimal place:
 
+$$
+a_1 = 0.a_{10}a_{11}a_{12}a_{13}a_{14}a_{15}...
+a_2 = 0.a_{20}a_{21}a_{22}a_{23}a_{24}a_{25}...
+a_3 = 0.a_{30}a_{31}a_{32}a_{33}a_{34}a_{35}...
+...
+b = 0.b_{1} != a_{10}  b_{2} != a_{21} b_{3} != a{32}...
+$$
 
+Now imagine we are constructing the number $b$ (which must be irrational because if it were rational, it would be in a countable set and therefore equal to one or ${a_1, a_2, a_3 ...}$) using this very method.  We start with a sequence of 0s (or any arbitrary sequence of digits) and a line representing the rational numbers $(0, 1)$, and place a pin at the origin because our number is currently:
 
+$$
+b = 0.00000...
+$$
+
+Now the first digit $b_1$ is added, which we can arbitrarily say is a 5:
+
+$$
+b = 0.50000...
+$$
+
+This is so far a rational number: one half.  But we know (see above) that the completed $b$ cannot be rational so we are not done.  We move the pin to the number $1/2$ and say that this is our starting point.  Now for a second digit $b_2$:
+
+$$
+b = 0.52000...
+$$
+
+The pin has moved to a new rational number $52/100$ but we are not done.  From here it should be clear what happens next: a third number $b_3$ is chosen
+
+$$
+b = 0.52800...
+$$
+
+and the pin moves again to a new rational $528/1000$ but we are not done
+
+$$
+b = 0.52810...
+$$
+
+And in fact we are never done, because otherwise we could convert the resultant number into a fraction.  Now at each stage the pin has moved to a new rational number but as we never finish, the pin does not cease its movement but instead hops ceaselessly from rational to rational, never settling on any of them.
 
 ### Implications for dynamical systems: aperiodicity and irrationality
 
