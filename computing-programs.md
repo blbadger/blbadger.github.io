@@ -71,7 +71,20 @@ Let's test the program out on our large matrix!  By printing out the results usi
 [Finished in 0.4s]
 ```
 
-Which can be checked against software to compute determinants on the web!  Although this program can theoretically compute the determinant of a matrix of any size, it is practically limited to matricies smaller than 11x11 due to time.
+Which can be checked against the built-in matrix determinant calculator found in numpy:
+
+```python
+import numpy
+
+m = numpy.matrix(matrix)
+print (numpy.linalg.det(m))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+355328.9999999997
+[Finished in 0.2s]
+```
+
+Although this program can theoretically compute the determinant of a matrix of any size, it is practically limited to matricies smaller than 11x11 due to time.
 
 Can we make this program faster?  Thinking carefully about what the recursion is doing, we can see that the same computations will be performed over and over again.  This is a perfect opportunity to employ some heroic dynamic programming in order to save the computations we did previously in memory and simply refer to the answer we got last time we performed the computations.
 
@@ -157,6 +170,17 @@ sys	0m0.012s
 ```
 
 we get the same answer, but the memoized version of the program is much faster! This one calculates matricies of under 19x19 in a reasonable amount of time, a substantial improvement over the standard recursive program.
+
+The memoized version is a little faster than the numpy `numpy.linalg.det()` for this matrix (although it becomes slower for larger matricies)
+
+```bash
+(base) bbadger@bbadger:~$ time python ~/Desktop/matrix_determinant_memoized.py
+18639282.00000001
+
+real	0m0.195s
+user	0m0.323s
+sys	0m0.221s
+```
 
 ### Trailing factorial zeros
 
