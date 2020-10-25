@@ -24,7 +24,7 @@ $$
 The real numbers $\Bbb R$ are described as existing on a line, also called the real number line $R^1$.  Now topologically the rational numbers $\Bbb Q$ are dense in the real numbers, meaning that the limit of every sequence of real numbers is a rational number.  In other words, the distance between any real number and a certain 'closest' rational number is 0.  Bearing in mind that points may be on one side or the other if arranged in a line, this means that rational numbers and irrational numbers must alternate in sequence along this line as follows:
 
 $$
-\Bbb R = {... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ...}
+\Bbb R = \{... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ...\}
 $$
 
 because otherwise there would be nonzero distance between an abritrary rational and an irrational number in one direction.  The paradox here is that rational and irrational numbers cannot alternate because there are far more irrationals than rationals on the real number line, and alternating points necessitates equal set cardinality (even if they are both infinite).  If the points did alternate in this way, either rationals and irrationals must both be countably infinite or else both uncountably infinite. 
