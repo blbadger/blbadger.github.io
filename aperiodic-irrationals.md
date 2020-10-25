@@ -72,7 +72,7 @@ Can we also set up a one to one correspondance between aperiodic functions and n
 Also consider the process of writing down a number by adding one digit at a time to a decimal.  Irrational numbers have non-repeating decimal expansions, whereas rational numbers contain digits that eventually repeat.  The process of decimal expansion is either periodic (defined as a repeating sequence rather than returning to an original value) or not, and aperiodic decimal expansion results in an irrational number whereas periodic decimal epansion gives a rational.
 
 
-### Aperiodicity is equivalent to sensitivity to initial conditions
+### Aperiodicity implies sensitivity to initial conditions
 
 Say that points close together are stable if they stay close together in the arbitrary future, or are unstable if they diverge.  
 
@@ -88,7 +88,7 @@ $$
 | \{ x \; : \; x \in (0, 1] \} | = |\Bbb R|
 $$
 
-there is an uncountably infinite number of possible trajectories if no two trajectories are the same.  
+there is an uncountably infinite number of possible trajectories if no two trajectories are the same, because they can diverge anywhere.  
 
 As we have above established an equivalence between continuous functions with periodic trajectories and rational numbers, 
 
@@ -96,9 +96,7 @@ $$
 \Bbb B \sim \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But there are uncountably many trajectories if the system is unstable everywhere, so trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere implies an aperiodic trajectory.
-
-This same reasoning may be used to show that periodic systems must be insensitive to initial conditions, as there are countably many periodic outputs but uncountably many inputs, so some inputs on $\Bbb R$ must be equivalent whith regards to periodicity.
+and as there are countably many rational numbers, there are countably many periodic trajectories. But there are uncountably many trajectories if the system is unstable everywhere, so trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere is the result an aperiodic trajectory.
 
 ### The set of aperiodic trajectories is equivalent to the set of unsolvable problems
 
