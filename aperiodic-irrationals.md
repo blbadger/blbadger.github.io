@@ -35,7 +35,7 @@ $$
 \Bbb P = \{ p(x) \}
 $$
 
-The set of all continuous functions is equivalent in size to the set of all real numbers $\Bbb R$.  Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto function can be established between the sets if they are not finite.  As functions may be periodic or aperiodic,
+Equivalence of sets is reflexive, symmetric and transitive just like equivalence between numbers or expressions. Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto function can be established between the sets if they are not finite.  As functions may be periodic or aperiodic,
 
 $$
 \Bbb A + \Bbb P \sim \Bbb R
