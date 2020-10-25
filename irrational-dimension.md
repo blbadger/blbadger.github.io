@@ -7,7 +7,7 @@ Two related paradoxes regarding real numbers are described and a resolution is p
 The first paradox almost goes without saying, and is implicit in the definitions of rational and irrational numbers and lines.  A geometric line consists of an infinite number of points arranged in a sequence: $p_1$ may come after $p_2$ or before, but not both after and before.  Take a line formed from the rational numbers: all rationals may be enumerated in a list based on their 'height' (defined as the numberator plus denominator) and thus arranged along a line. This is Cantor's famous diagonal argument for the countability of rational numbers $ \Bbb Q$
 
 $$
-\Bbb Q = {0, \; 1/1, \; 1/2, \; 2/1, \; 1/3, \; 2/2 ... }
+\Bbb Q = \{0, \; 1/1, \; 1/2, \; 2/1, \; 1/3, \; 2/2 ... \}
 $$
 
 The problem here is that real numbers are non-enumerable: real (specifically irrational) numbers are unable to be listed in a sequence because they are non-enumerable.  This means that any single list of real numbers will inevitably miss some because the reals are uncountably infinite.  Because of this, we cannot arrange all the real numbers on a line because doing so would imply that there is some way of arranging the real numbers in a list.  This means that if we try to construct a true real number line, we cannot include all real numbers.  As rational numbers are countably infinite but irrationals are uncountable (non-enumerable), in particular it is the set of irrational numbers that are too many to fit on any line. 
