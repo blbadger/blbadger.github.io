@@ -1,6 +1,10 @@
 
 ## Periodicity and rationality
 
+Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories, and conversely an equivalence between the set of rationals and periodic functions.  These allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
+
+### The set of periodic trajectories is equivalent to the set of rational numbers
+
 As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \Bbb R - \Bbb Q$, or equivalently
 
 $$ \Bbb I = \{ x \; \vert \; x \in \Bbb R \land x \notin \Bbb Q\} $$
@@ -11,7 +15,7 @@ $$
 card \; \Bbb I  >>  card \; \Bbb Q
 $$
 
-Now let's consider continuous functions, which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never return to that of previous iterations:
+Now let's consider functions of time (differential or difference equations), the trajectories of which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never are identical to values of previous iterations:
 
 $$
 a^n(x_0) \neq a^k(x_0) \; \mathbf {if} \; x, k \in \Bbb N \; \mathbf {and} \; k \neq x
