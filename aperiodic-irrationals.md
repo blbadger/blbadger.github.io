@@ -61,14 +61,14 @@ Now being that the trajectory is periodic, the number will have digits that even
 Is this function one-to-one? For trajectories of any one dimension, each individual trajectory maps to one digit sequence, and likewise each digit sequence represents only one trajectory (given our arbitrary precision) and therefore the function is one-to-one.  The function is onto as well, because any rational number can be represented with a periodic function in our dimension and precision constraints (the function is not restricted to certain digits at any time).  This means that our mapping function is bijective, and thus we can establish an equivalence between the set of all periodic trajectories of discrete time and the set of rational numbers:
 
 $$
-P \to \Bbb Q \; (bijective \to) \\
+P \to \Bbb Q \; (bijective) \\
 P \sim \Bbb Q 
 $$
 
 Now what about aperiodic functions of discrete time?  Using the same mapping function specified above, we can map these trajectories to digit sequences after $0.$ that do not repeat.  Irrational numbers are represented as digit sequences that do not repeat, so we have mapped aperiodic trajectories to irrational numbers.  By the reasoning in the last paragraph, the mapping is one-to-one and onto and therefore the set of aperiodic trajectories is equivalent to the set of irrational numbers,
 
 $$
-A \to \Bbb I \; (bijective \to) \\
+A \to \Bbb I \; (bijective) \\
 A \sim \Bbb I
 $$
 
