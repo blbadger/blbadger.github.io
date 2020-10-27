@@ -1,9 +1,10 @@
+## Periodicic trajectories and rational numbers
 
-## Periodicity and rationality
-
-Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories, and conversely an equivalence between the set of rationals and periodic functions.  These allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
+Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories (restricted to functions of discrete time intervals in finite precision in a given dimension), and conversely an equivalence between the set of rationals and periodic functions.  These allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
 
 ### The set of periodic trajectories is equivalent to the set of rational numbers
+
+Here periodic trajectories are defined as trajectories of discrete dynamical equations in finite dimension at a given precision that eventually re-visit previous points.  Difference equations (or differential equations) that repeat previous points are periodic because there is no change in behavior over time, meaning that the trajectory from any given point at time 0 is identical to the trajectory from the same point at any other time.
 
 As there is no universally-agreed upon notation for the set of irrational numbers, here we take the set of irrational numbers to be the real numbers that are not rational, $ \Bbb I = \Bbb R - \Bbb Q$, or equivalently
 
@@ -15,7 +16,7 @@ $$
 card \; \Bbb I  >>  card \; \Bbb Q
 $$
 
-Now let's consider functions of time (differential or difference equations), the trajectories of which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never are identical to values of previous iterations:
+Now let's consider functions of discrete time intervals (difference equations or approximations of differential equations), the trajectories of which may be periodic or aperiodic. Aperiodicity means that values of the function $a(x)$ never are identical to values of previous iterations:
 
 $$
 a^n(x_0) \neq a^k(x_0) \; \mathbf {if} \; x, k \in \Bbb N \; \mathbf {and} \; k \neq x
@@ -24,10 +25,10 @@ $$
 The set of all continuous functions with aperiodic outputs can be defined as $\Bbb A$
 
 $$ 
-\Bbb A = \{a(x)\}
+A = \{a(x)\}
 $$
 
-Conversely, a periodic differential function is one which does revisit a previous point
+Conversely, a periodic differential function is one which eventually does revisit a previous point
 
 $$
 p^n(x_0) = p^k(x_0) \; \mathbf {for} \; \mathbf {some} \; x, k \in \Bbb N \; \mathbf {given} \; k \neq x
@@ -36,45 +37,42 @@ $$
 and the set of all continuous periodic functions can be denoted as
  
 $$
-\Bbb P = \{ p(x) \}
+P = \{ p(x) \}
 $$
 
-Equivalence of sets is reflexive, symmetric and transitive just like equivalence between numbers or expressions. Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto function can be established between the sets if they are not finite.  As functions may be periodic or aperiodic,
+Note that included in this definition are eventually periodic trajectories, which in finite time become periodic even if they do not begin as such.  
+
+Equivalence (of sets) is a property that is reflexive, symmetric and transitive just like equivalence between numbers or expressions. Equivalence can be expressed as $\sim$ and signifies that the sets are of equal size if they are finite, or that a one-to-one and onto (bijective) function can be established between the sets if they are not finite. Properties of one set may be used to inform properties of an equivalent set.
+
+We can specify a bijective function from periodic trajectories to rational numbers as follows: for a given trajectory in finite dimensions, specify each point in coordinates $(x_1, x_2, x_3, ..., x_n)$ to an arbitrary finite precision (for example, if $x_1 = \pi$ can be specified as $x_1 = 3.14159265$).  Note that this precision is a representation, rather than a substitute, for the value of the trajectory coordinate.  Now for each time point, add the coordinates to $0.$ to yield a rational number.  For example, in two dimensions if 
+
+$$(x_1, y_1) = (15.32, 10.15)$$
+
+and 
+
+$$(x_2, y_2) = (14.99, 11.1)$$
+
+then the number yielded from these points is
+
+$$ 0.1532101514991110 $$ 
+
+Now being that the trajectory is periodic, the number will have digits that eventually repeat (in finite time) because future coordinates are identical to previous coordinates.  All numbers that have digits that eventually repeat (after a finite number of digits) are rational numbers, and therefore this function maps periodic trajectories of discrete time to the set of rational numbers $Q$. 
+
+Is this function one-to-one? For trajectories of any one dimension, each individual trajectory maps to one digit sequence, and likewise each digit sequence represents only one trajectory (given our arbitrary precision) and therefore the function is one-to-one.  The function is onto as well, because any rational number can be represented with a periodic function in our dimension and precision constraints (the function is not restricted to certain digits at any time).  This means that our mapping function is bijective, and thus we can establish an equivalence between the set of all periodic trajectories of discrete time and the set of rational numbers:
 
 $$
-\Bbb A + \Bbb P \sim \Bbb R
+P \to \Bbb Q \; (bijective \to) \\
+P \sim \Bbb Q 
 $$
 
-We can define a function based on its periodicity: in this case, all periodic functions with period 1 are defined as being the same function.  Using this definition, there exists a one-to-one and onto (bijective) correspondance between the set of periodic functions and the set of natural numbers $\Bbb N$ because periodic functions may have any finite period.
+Now what about aperiodic functions of discrete time?  Using the same mapping function specified above, we can map these trajectories to digit sequences after $0.$ that do not repeat.  Irrational numbers are represented as digit sequences that do not repeat, so we have mapped aperiodic trajectories to irrational numbers.  By the reasoning in the last paragraph, the mapping is one-to-one and onto and therefore the set of aperiodic trajectories is equivalent to the set of irrational numbers,
 
 $$
-\Bbb P = \{ \mathbf {period} \; 1, \mathbf {period} \; 2, \mathbf {period} \; 3... \} \\
-\Bbb N = \{1, 2, 3... \} \\
-\Bbb P \mapsto \Bbb N \\
-\Bbb N \mapsto \Bbb P \\
-\Bbb P \sim \Bbb N
+A \to \Bbb I \; (bijective \to) \\
+A \sim \Bbb I
 $$
 
-And as the set of natural numbers is equivalent to the set of rational numbers, by transitivity we have
-
-$$
-\Bbb P \sim \Bbb N \sim \Bbb Q \\
-\Bbb P \sim \Bbb Q
-$$
-
-The set of all continuous functions (denoted here as $\Bbb F$) is equivalent to $\Bbb R$.  As functions may be periodic (quasiperiodic or asymptotically periodic functions are included here) or aperiodic, and as the set of periodic functions is equivalent to the set of rational numbers,
-
-$$
-\Bbb A = \Bbb F - \Bbb P \sim \Bbb R - \Bbb Q = \Bbb I \\
-\Bbb A \sim \Bbb I
-$$
-
-Thus the outputs of the set of continuous functions with aperiodic iterations, $\Bbb A$ is equivalent to the set of all irrational numbers $\Bbb I$, meaning that one can establish a one-to-one bijective mapping from an arbitrary irrational number to an arbitrary aperiodic map.  
-
-Can we also set up a one to one correspondance between aperiodic functions and natural numbers? This would be a contradiction if so, but it turns out we cannot: if we define functions based on their periodicity then consider that aperiodic functions have infinite periodicity, ie each has a period of $\infty$, which cannot map to the set of natural numbers, which are finite.
-
-Also consider the process of writing down a number by adding one digit at a time to a decimal.  Irrational numbers have non-repeating decimal expansions, whereas rational numbers contain digits that eventually repeat.  The process of decimal expansion is either periodic (defined as a repeating sequence rather than returning to an original value) or not, and aperiodic decimal expansion results in an irrational number whereas periodic decimal epansion gives a rational.
-
+Thus the set of all periodic trajectories (as defined above) is equivalent to the set of all rational numbers, whereas the set of aperiodic trajectories is equivalent to the set of irrational numbers $\square$.  
 
 ### Aperiodicity implies sensitivity to initial conditions
 
