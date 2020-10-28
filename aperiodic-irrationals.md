@@ -1,4 +1,4 @@
-## Periodicic trajectories and rational numbers
+## Periodic trajectories and rational numbers
 
 Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories (restricted to functions of discrete time intervals in finite precision in a given dimension), and conversely an equivalence between the set of rationals and periodic functions.  These allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
 
