@@ -72,15 +72,8 @@ The examples of nonlinear trajectories and boundaries above display a number of 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
 
 $$  
-\; \\
 \Bbb R - \Bbb Q \sim \{f(x) : f^n(x(0)) \neq f^k(x(0))\} \\
 \text{given} \; n, k \in \Bbb N \; \text{and} \; k \neq n \\
-$$
-
-### [Discontinuity and aperiodicity](/discontinuities.md)
-
-$$
-f \in C(X, Y) \Rightarrow \; f: \; \Bbb R \to \Bbb Q \\
 $$
 
 ### [Irrational numbers on the real line](/irrational-dimension.md)
@@ -92,6 +85,7 @@ $$
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
+
 
 ### [Fractal geometry](/fractal-geometry.md)
 
