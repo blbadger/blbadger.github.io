@@ -28,7 +28,7 @@ At very small scale, the force of electromagnetism confines electrons to exist n
 
 ### Second consideration: infinite states 
 
-Work can be defined as directed movement: when one does work to move a log, all molecules in the log move in approximately concerted motion.  In contrast, thermal motion is not directed: heat causes molecules to move faster but not in concerted motion.  In statistical mechanics, the number of internal states that a molecule can assume is used to calculate its entropy.  
+Work can be defined as directed movement: when one does work to move a log, all molecules in the log move in approximately concerted motion.  In contrast, thermal motion is not directed: heat causes molecules to move faster but not in concerted motion.  In statistical mechanics, the number of internal states (formally, the microcanonical ensemble) that a molecule can assume is used to calculate its entropy.  
 
 $$
 S = k \; ln W
@@ -40,7 +40,36 @@ If we restrict ourselves to energy levels alone, it is often thought that quantu
 
 Suppose one accepts that energy levels are purely discrete.  As molecular orientation is important (and the defining characteristic between energy able to do work and heat), molecule that obeys quantum mechanics still has an uncountably infinite number of states at any time.  Defining entropy by the number of microstates is unquestionably useful, but does not appear to be an entirely accurate description of nature.
 
-### Third consideration: exceptions to the rule
+### Third consideration: combinatorial microstates
+
+Consider the idea that entropy is determined by the number of microstates avaliable to a collection of molecules, with more microstates possible signifying a higher entropy.  The current understanding that the number of microstates is maximized upon a dissipation of head presents a problem: what about the relation of molecules in one ensemble to each other (the combinatorial microstate)?  This is of more than theoretical concern, as many subatomic particles (electrons etc.) are practically indistinguishable if they exist at a similar energy.
+
+To see the problem, say we have 3 particles $x, y, z$ that may each exist in one of 3 possible locations $A, B, C$.  If the particles are identical and exhibit identical thermodynamic properties, we can regard these as identical and name them $x, x, x$: these may be the results of a reaction proceeding to thermodynamic equilibrium.  How many possible combinatorial microstates are there if the particles are identical?  If they can exist in any of $A, B, C$ then there are 3 possible locations each containing 1, 2, or 3 particles: $3 * 3 = 9$ possible microstates:
+$$
+| A | B | C |
+|---|---|---|
+| x | x | x |  
+|   |  xx | x  |  
+|   |   |  xxx |   ...
+$$
+
+But now imagine that the particles are distinguishable: perhaps they are thermodynamically distinct.  Now, the number of possibilities for particles $x, y, z$ is
+3 places, three particles, where order matters (meaning that xy at location A is distinct from xz at location A): $3! * 3 = 18$ possible microstates:
+
+$$
+| A | B | C |
+|---|---|---|
+| x | y | z |  
+|   |  xy | z  | 
+|    |  xz | y|
+|   |   |  xyz |   ...
+$$
+
+This means that there are more possible microstates available to a particle ensemble where the elements are thermodynamically distinct: in other words, entropy is maximized for ensembles that contain thermodynamically distinct elements. 
+
+For more problems resulting from indistinguishability of small particles, see the Gibbs Paradox (https://en.wikipedia.org/wiki/Gibbs_paradox). 
+
+### Fourth consideration: exceptions to the rule
 
 The first law of thermodynamics is that energy cannot be created nor destroyed, and there are no phenomena that I am aware of that flout this rule.  This is not the same for the second law, and two particular examples of importance will be discussed here.  It should be made clear that nearly every other relevant physical observation supports rather than fails to support the second law, but the existence of counterexamples does suggest that our understanding is presently incomplete. 
 
