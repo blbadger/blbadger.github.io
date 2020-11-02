@@ -45,24 +45,27 @@ Suppose one accepts that energy levels are purely discrete.  As molecular orient
 Consider the idea that entropy is determined by the number of microstates avaliable to a collection of molecules, with more microstates possible signifying a higher entropy.  The current understanding that the number of microstates is maximized upon a dissipation of head presents a problem: what about the relation of molecules in one ensemble to each other (the combinatorial microstate)?  This is of more than theoretical concern, as many subatomic particles (electrons etc.) are practically indistinguishable if they exist at a similar energy.
 
 To see the problem, say we have 3 particles $x, y, z$ that may each exist in one of 3 possible locations $A, B, C$.  If the particles are identical and exhibit identical thermodynamic properties, we can regard these as identical and name them $x, x, x$: these may be the results of a reaction proceeding to thermodynamic equilibrium.  How many possible combinatorial microstates are there if the particles are identical?  If they can exist in any of $A, B, C$ then there are 3 possible locations each containing 1, 2, or 3 particles: $3 * 3 = 9$ possible microstates:
-$$
+
 | A | B | C |
 |---|---|---|
 | x | x | x |  
 |   |  xx | x  |  
-|   |   |  xxx |   ...
-$$
+|   |   |  xxx |   
+$$...$$
+
 
 But now imagine that the particles are distinguishable: perhaps they are thermodynamically distinct.  Now, the number of possibilities for particles $x, y, z$ is
 3 places, three particles, where order matters (meaning that xy at location A is distinct from xz at location A): $3! * 3 = 18$ possible microstates:
 
-$$
+
 | A | B | C |
 |---|---|---|
 | x | y | z |  
 |   |  xy | z  | 
 |    |  xz | y|
-|   |   |  xyz |   ...
+|   |   |  xyz |  
+$$
+...
 $$
 
 This means that there are more possible microstates available to a particle ensemble where the elements are thermodynamically distinct: in other words, entropy is maximized for ensembles that contain thermodynamically distinct elements. 
