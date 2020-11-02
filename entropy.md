@@ -64,6 +64,7 @@ But now imagine that the particles are distinguishable: perhaps they are thermod
 |   |  xy | z  | 
 |    |  xz | y|
 |   |   |  xyz |  
+
 $$
 ...
 $$
