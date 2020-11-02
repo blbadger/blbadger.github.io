@@ -51,7 +51,10 @@ To see the problem, say we have 3 particles $x, y, z$ that may each exist in one
 | x | x | x |  
 |   |  xx | x  |  
 |   |   |  xxx |   
-$$...$$
+
+$$
+...
+$$
 
 
 But now imagine that the particles are distinguishable: perhaps they are thermodynamically distinct.  Now, the number of possibilities for particles $x, y, z$ is
