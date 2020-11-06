@@ -67,7 +67,6 @@ Trajectories of nonlinear systems may stay bounded or else diverge towards infin
 
 
 ## Fundamental features of nonlinearity
-The examples of nonlinear trajectories and boundaries above display a number of interesting features: aperiodic trajectories come from nonlinear systems, discontinuity often leads to aperiodicity, and changes in attractor dimension are often discontinuous.  
 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
 
