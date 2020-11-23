@@ -119,7 +119,7 @@ And here is the same point, increasing scale to a factor of $2^{42}$ (over four 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/0qrordbf7WE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1$, the equation is linear and a circular region about the origin remains bounded.  But as the system becomes nonlinear, intricate shapes appear.
+What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1$, the equation is linear and a circular region about the origin remains bounded.  But as the system becomes nonlinear, intricate shapes appear.  Here we go from $z^1 \to z^4 \to z^1$, and note that the positive real axis is pointed up instead of to the right.
 
 ![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
 
