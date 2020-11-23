@@ -37,6 +37,10 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 
 ![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
 
+### [Polynomial roots](/polynomial-roots.md)
+
+![roots]({{https://blbadger.github.io}}newton-method/Newton046.png)
+
 
 ## Boundaries of nonlinear systems
 Trajectories of nonlinear systems may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  Sufficiently near this border, predicting whether a trajectory stays bounded becomes infeasible because of this.
