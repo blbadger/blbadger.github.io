@@ -80,11 +80,9 @@ with roots at $x=-3, x=1, x=2$.  But now there is more than one point on the rea
 
 ![roots]({{https://blbadger.github.io}}/newton-method/Newton000.png)
 
-The dark areas correspond to
-
 Looking closer at the point $x=-0.8413$, 
 
-[insert plot]
+![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
 
 we find a [Cantor set](fractal-geometry.md).
 
