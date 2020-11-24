@@ -10,3 +10,6 @@ $code-text-color: #494D4E;
 
 @import "{{ site.theme }}";
 
+.inner {
+  max-width: 65%;
+}
