@@ -47,14 +47,14 @@ def successive_approximations(x_start, iterations):
 
 Let's try with an initial guess at $x=-50$, 
 
-```
+```python
 print (successive_approximations(-50, 20))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [-50, -33.333200000000005, -22.221833330933322, -14.813880530329783, -9.874401411977551, -6.579515604587147, -4.378643733243303, -2.9017098282008416, -1.894884560449859, -1.1704210552983418, -0.5369513549799065, 0.7981682581594858, 1.0553388026381803, 1.002851080311187, 1.0000080978680779, 1.0000000000655749, 1.0, 1.0, 1.0, 1.0]
 ```
 
 There is convergence on the (real) root, in 17 iterations.  What about if we try an initial guess closer to the root, say at $x=2$?
-```
+```python
 print (successive_approximations(2, 10))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [2, 1.4166666666666665, 1.1105344098423684, 1.0106367684045563, 1.0001115573039492, 1.0000000124431812, 1.0000000000000002, 1.0, 1.0, 1.0]
@@ -62,7 +62,7 @@ print (successive_approximations(2, 10))
 
 The method converges quickly on the root of 1. Now from this one might assume that starting from the point near $x=0$ would result in convergence in around 8 iterations as well, but 
 
-```
+```python
 print (successive_approximations(0.000001, 20))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [1e-06, 333333333333.3333, 222222222222.2222, 148148148148.14813, 98765432098.76541, 65843621399.17694, 43895747599.451294, 29263831732.96753, 19509221155.311684, 13006147436.874454, 8670764957.916304, 5780509971.944202, 3853673314.6294684, 2569115543.0863123, 1712743695.3908749, 1141829130.2605832, 761219420.173722, 507479613.44914806, 338319742.29943204, 225546494.86628804]
@@ -90,13 +90,15 @@ we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhi
 
 The function defined above can be used to apply Newton's method to complex numbers 
 
-```
+```python
 print (successive_approximations(2 + 5j, 20))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [(2+5j), (1.325009908838684+3.3254062623860485j), (0.8644548662679195+2.199047743713538j), (0.5325816440348543+1.4253747693717602j), ... (-0.5+0.8660254037844386j), (-0.5+0.8660254037844387j)]
 ```
+
 To avoid differentiating polynomials by hand, a 'Calculate' class 
-```
+
+```python
 class Calculate:
 
 	def __init__(self, equation, point, differentiate=False):
@@ -229,7 +231,7 @@ class Calculate:
 
 Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
-```	
+```python	
 def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
 	print (equation)
 	y, x = np.ogrid[-5: 5: y_range*1j, -5: 5: x_range*1j]
@@ -260,7 +262,7 @@ The idea here is to start with a grid of the complex plane points that we are te
 
 Now we can call this function to see how long it takes to find roots for $x^3 - 1$ as follows
 
-```
+```python
 plt.imshow(newton_raphson_map('x^3-1', 50, 1558, 1558, 30), extent=[-5, 5, -5, 5], cmap='twilight_shifted')
 plt.axis('on')
 plt.show()
