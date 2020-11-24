@@ -278,9 +278,13 @@ What happens when the polynomial goes from a linear form to a nonlinear?  Here $
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_3_ranged.gif)
 
-And taking a closer look at the transition $z^2.86 \to z^2.886$
+And taking a closer look at the transition 
 
-![roots]({{https://blbadger.github.io}}/newton-method/newton_2.86.gif)
+$$
+z^{2.86} \to z^{2.886}
+$$
+
+![transition]({{https://blbadger.github.io}}/newton-method/newton_2.86.gif)
 
 ### A simple unrootable polynomial
 
