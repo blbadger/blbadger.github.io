@@ -171,11 +171,7 @@ Let's explore where roots are found with Newton's method.  With a scale of  $(-1
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
-Zooming in on the point $0.41187 + 0i$ we have
-
-<iframe width="820" height="461" src="https://www.youtube.com/embed/8_7q6dk5-uo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-And on the point $0.154047 + 0.135678i$, 
+Zooming in on the point $0.154047 + 0.135678i$, 
 
 <iframe width="820" height="461" src="https://www.youtube.com/embed/ZTMaKLmLxJM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
