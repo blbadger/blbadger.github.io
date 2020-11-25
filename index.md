@@ -87,7 +87,7 @@ $$
 
 ### [Additive transformations](/additivity-order.md)
 
-![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
+![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_still.png)
 
 
 ### [Fractal geometry](/fractal-geometry.md)
