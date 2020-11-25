@@ -155,10 +155,9 @@ $$
 z^{2.86} - 1 \to z^{2.886} - 1
 $$
 
-we find that 
+follow the link
 
-![transition]({{https://blbadger.github.io}}/newton-method/newton_2.86.gif)
-
+<iframe width="800" height="500" src="https://youtu.be/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### A simple unrootable polynomial
 
