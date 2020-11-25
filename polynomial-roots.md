@@ -96,7 +96,13 @@ print (successive_approximations(2 + 5j, 20))
 
 This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/fractal_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
-```python	
+```python
+# libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+plt.style.use('dark_background')
+from Calculate import Calculate # see above
+
 def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
 	print (equation)
 	y, x = np.ogrid[-5: 5: y_range*1j, -5: 5: x_range*1j]
