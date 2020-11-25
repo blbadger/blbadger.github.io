@@ -274,17 +274,20 @@ which yields
 
 Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.
 
-What happens when the polynomial goes from a linear form to a nonlinear?  Here $z^1-1 \to z^4-1$
+What happens when the polynomial goes from a linear form to a nonlinear?  Here $z = z^1-1 \to z = z^4-1$
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_3_ranged.gif)
 
 And taking a closer look at the transition 
 
 $$
-z^{2.86} \to z^{2.886}
+z^{2.86} - 1 \to z^{2.886} - 1
 $$
 
+we find that 
+
 ![transition]({{https://blbadger.github.io}}/newton-method/newton_2.86.gif)
+
 
 ### A simple unrootable polynomial
 
@@ -294,9 +297,23 @@ $$
 y = x^5 - x - 1
 $$
 
+Let's explore the behavior of this polynomial in the complex plane using Newton's method.
 
-### Beyond polynomials
 
+
+Using the identity $e^{\pi i} - 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
+
+```python
+...
+for i in range(max_iterations):
+		previous_z_array = z_array
+		z = z_array
+		f_now = z**5 - z - 1 + np.exp(3.14159j * (t/300))/4
+		f_prime_now = 5*z**4 - 1
+		z_array = z_array - f_now / f_prime_now
+```
+
+![transition]({{https://blbadger.github.io}}/newton-method/newton_rotated.gif)
 
 
 
