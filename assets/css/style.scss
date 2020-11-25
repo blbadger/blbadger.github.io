@@ -9,16 +9,8 @@ $body-link-color: #7EA7D3;
 $blockquote-text-color: #819198; 
 $code-text-color: #494D4E;
 
-.inner {
-  max-width: 85%;
-}
 
-body {
-  font-size: 15px;
-}
-
-$border-color: #191a1c;
-$table-border-color: #191a1c ;
-$hr-border-color: #191a1c;
+$large-breakpoint: 1280px;
+$medium-breakpoint: 1040px;
 
 @import "{{ site.theme }}";
