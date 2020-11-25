@@ -1,5 +1,3 @@
-{% include youtube.html id=dQw4w9WgXcQ %}
-
 ## Mandelbrot set with variations
 
 The Mandelbrot set $\mathscr M$ is the set of points $a$ in the complex plane for which the Julia sets are connected.  This happens to be the same set of points that iterations of the equation
