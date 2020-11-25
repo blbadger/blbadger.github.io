@@ -155,7 +155,7 @@ $$
 z^{2.86} - 1 \to z^{2.886} - 1
 $$
 
-follow the link
+follow the link to see what happens during this (right click the video while playing to loop)
 
 <iframe width="820" height="461" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -204,7 +204,7 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 
 For the purposes of maintaining resolution, follow the link for a video of the rotation
 
-<iframe width="820" height="461" src="https://www.youtube.com/embed/Dq6fKNz28VM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="820" height="461" src="https://www.youtube.com/embed/Dq6fKNz28VM" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 
