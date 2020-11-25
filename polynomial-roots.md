@@ -157,7 +157,7 @@ $$
 
 follow the link
 
-<iframe width="800" height="630" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="750" height="422" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### A simple unrootable polynomial
 
