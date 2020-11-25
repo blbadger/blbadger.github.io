@@ -170,8 +170,6 @@ $$
 Let's explore the behavior of this polynomial in the complex plane using Newton's method.
 
 
-
-
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
 ```python
@@ -198,11 +196,11 @@ for i in range(max_iterations):
 ```
 which starts as
 
-![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_000.gif)
+![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_000.png)
 
 the cover photo for this page found [here](https://blbadger.github.io/) is at t=46, and at t=205 (0.00046 of a full rotation) yields
 
-![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.gif)
+![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.png)
 
 For the purposes of maintaining resolution, follow the link for a video of the rotation
 
