@@ -204,7 +204,7 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 
 For the purposes of maintaining resolution, follow the link for a video of the rotation
 
-<iframe width="820" height="461" src="https://www.youtube.com/embed/Dq6fKNz28VM" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="820" height="461" src="https://www.youtube.com/embed/t7QAqeJQ290" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 
