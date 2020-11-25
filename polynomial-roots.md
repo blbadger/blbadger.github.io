@@ -94,7 +94,7 @@ print (successive_approximations(2 + 5j, 20))
 [(2+5j), (1.325009908838684+3.3254062623860485j), (0.8644548662679195+2.199047743713538j), (0.5325816440348543+1.4253747693717602j), ... (-0.5+0.8660254037844386j), (-0.5+0.8660254037844387j)]
 ```
 
-This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/fractal_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
+This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
 ```python
 # libraries
@@ -157,7 +157,7 @@ $$
 
 follow the link
 
-<iframe width="750" height="422" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="820" height="461" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### A simple unrootable polynomial
 
@@ -179,15 +179,34 @@ Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the comple
 for i in range(max_iterations):
 		previous_z_array = z_array
 		z = z_array
-		f_now = z**5 - z - 1 + np.exp(3.14159j * (t/300))/4
+		f_now = z**5 - z - 1 + np.exp(3.1415j * (t/300))/4
 		f_prime_now = 5*z**4 - 1
 		z_array = z_array - f_now / f_prime_now
 ```
 
 ![transition]({{https://blbadger.github.io}}/newton-method/newton_rotated.gif)
 
+We can also perform a polynomial rotation as follows:
+```python
+...
+for i in range(max_iterations):
+		previous_z_array = z_array
+		z = z_array
+		f_now = (np.exp(3.1415j * (t/450000))/4) * z**5 - z * np.exp(3.1415j * (t/450000))/4 - 1 + np.exp(3.1415j * (t/450000))/4 
+		f_prime_now = 5 * (np.exp(3.1415j * (t/450000))/4)*z**4 - np.exp(3.1415j * (t/450000))/4
+		z_array = z_array - f_now / f_prime_now
+```
+which starts as
 
+![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_000.gif)
 
+the cover photo for this page found [here](https://blbadger.github.io/) is at t=46, and at t=205 (0.00046 of a full rotation) yields
+
+![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.gif)
+
+For the purposes of maintaining resolution, follow the link for a video of the rotation
+
+<iframe width="1920" height="1080" src="https://www.youtube.com/embed/Dq6fKNz28VM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
 
