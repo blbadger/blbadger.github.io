@@ -10,7 +10,7 @@ $blockquote-text-color: #819198;
 $code-text-color: #494D4E;
 
 
-$large-breakpoint: 1280px;
-$medium-breakpoint: 1040px;
+$large-breakpoint: 80em;
+$medium-breakpoint: 42em;
 
 @import "{{ site.theme }}";
