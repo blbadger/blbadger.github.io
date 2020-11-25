@@ -1,5 +1,6 @@
 ---
 ---
+@import "{{ site.theme }}";
 
 $header-bg-color: #957ce3;  
 $header-bg-color-secondary: #1399dc; 
@@ -8,13 +9,3 @@ $body-link-color: #7EA7D3;
 
 $blockquote-text-color: #819198; 
 $code-text-color: #494D4E;
-
-.inner {
-  max-width: 75%;
-}
-
-body {
-  font-size: 15px;
-}
-
-@import "{{ site.theme }}";
