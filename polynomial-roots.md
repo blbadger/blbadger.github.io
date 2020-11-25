@@ -1,8 +1,6 @@
 ## Roots of polynomial equations
 
-### There is no closed solution to find roots for most polynomials
-
-Polynomials are equations of the type $ax^b + cx^d + ... = z$ 
+Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$ 
 
 At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial $y = ax + b$, setting $y$ to $0$ and solving for x yields $x = -b/a$. For a degree 2 polynomial $y = ax^2 + bx + c$, the closed form expression 
 
@@ -12,7 +10,7 @@ $$
 
 suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 and degree 4 polynomials, this is true: closed form root expressions in terms of $a, b, c ...$ may be found even though the expressions become very long. 
 
-It is somewhat surprising then that for a general polynomial of degree 5 or larger, there is no closed equation (with addition, subtraction, multipliction, nth roots, and division) that allows for the finding of a general root.  This is the Abel-Ruffini theorem.
+It is somewhat surprising then that for a general polynomial of degree 5 or larger, there is no closed equation (with addition, subtraction, multiplication, nth roots, and division) that allows for the finding of all roots.  This is the Abel-Ruffini theorem.
 
 ### Newton's method for estimating roots of polynomial equations
 
@@ -78,9 +76,9 @@ $$
 
 with roots at $x=-3, x=1, x=2$.  But now there is more than one point on the real line where Newton's method fails to converge quickly.  We can plot the pattern such points make as follows: darker the point, the faster the convergence. 
 
-![roots]({{https://blbadger.github.io}}/newton-method/newton_real_still.png)
+![roots]({{https://blbadger.github.io}}/newton-method/real_newton_still.png)
 
-Looking closer at the point $x=-0.8413$, 
+This plot seems reasonable, as the points near the roots converge quickly.  Looking closer at the point $x=-0.8413$, 
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
 
@@ -96,140 +94,7 @@ print (successive_approximations(2 + 5j, 20))
 [(2+5j), (1.325009908838684+3.3254062623860485j), (0.8644548662679195+2.199047743713538j), (0.5325816440348543+1.4253747693717602j), ... (-0.5+0.8660254037844386j), (-0.5+0.8660254037844387j)]
 ```
 
-To avoid differentiating polynomials by hand, a 'Calculate' class 
-
-```python
-class Calculate:
-
-	def __init__(self, equation, point, differentiate=False):
-		self.equation = equation
-		self.point = point
-		self.diff = differentiate
-
-	def parse(self):
-		'''
-		Simple iterative parser to prepare a polynomial
-		string for evaluation or differentiation.  Only for
-		positive-exponent polynomials
-		'''
-		equation = self.equation
-		digits = '0123456789.'
-		characters_ls = [i for i in equation]
-		characters_ls = ['start'] + characters_ls
-		characters_ls.append('end')
-		for i in range(len(characters_ls)-1):
-			if characters_ls[i] not in digits and characters_ls[i+1] == 'x':
-				characters_ls.insert(i+1, '1')
-		ls, i = [], 0
-
-		# parse expression into list
-		while i in range(len(characters_ls)):
-			if characters_ls[i] in digits:
-				number = ''
-				j = 0
-				while characters_ls[i+j] in digits:
-					number += (characters_ls[i+j])
-					j += 1
-				ls.append(float(number))
-				i += j
-			else:
-				ls.append(characters_ls[i])
-				i += 1
-
-		return ls
-
-	def differentiate(self):
-		'''
-		Finds the derivative of a given
-		function 'equation' and computes this derivative at
-		value 'point'.  Accepts any polynomial with positive
-		exponent values.
-		'''
-		parsed_exp = self.parse()
-		ls, point = parsed_exp, self.point
-
-		# differentiate polynomial
-		final_ls = []
-		for i in range(len(ls)):
-
-			if isinstance(ls[i], float) and ls[i+1] == 'x' or ls[i-1] == '^' and ls[i-2] == 'x':
-				final_ls.append(ls[i])
-
-			if ls[i] == 'x':
-				if ls[i+1] == '^':
-					final_ls[-1] *= ls[i+2]
-					if ls[i+2] > 0: # prevent divide by 0 error
-						ls[i+2] -= 1 
-				final_ls.append(ls[i])
-
-			if ls[i]== 'x' and ls[i+1] != '^':
-				final_ls.append('^')
-				final_ls.append(0)
-
-			if ls[i] in ['+', '-', '^']:
-				final_ls.append(ls[i])
-
-		while True:
-			if isinstance(final_ls[-1], float):
-				break
-			final_ls.pop()
-		final_ls.append('+')
-
-		return final_ls
-
-
-	def evaluate(self):
-		'''
-		A helper function that finds the derivative of a given
-		function 'equation' and computes this derivative at
-		value 'point'. Note that this point may also be an ogrid
-		value, in which case the derivative is computed at each
-		point on the grid. Accepts any polynomial with positive
-		exponent values.
-		'''
-		if self.diff:
-			final_ls = self.differentiate()
-		else:
-			final_ls = self.parse()
-
-		if final_ls[0] != 'start':
-			final_ls = ['start'] + final_ls
-		if final_ls[-1] != 'end':
-			final_ls.append('end')
-		final_ls[0], final_ls[-1] = '+', '+' # change 'start' and 'end' to appropriate markers
-
-		point =self.point
-		# evaluate parsed expression
-		i = 0
-		final_blocks = [[]]
-		while i in range(len(final_ls)):
-			ls = []
-			j = 0
-			while final_ls[i+j] not in ['+', '-']:
-				ls.append(final_ls[i+j])
-				j += 1
-			if final_ls[i-1] == '-':
-				if ls:
-					ls[0] = -1 * ls[0]
-			final_blocks.append(ls)
-			i += j + 1
-
-		total = 0
-		for block in final_blocks:
-			if block:
-				if '^' not in block:
-					if 'x' not in block:
-						block += ['x', '^', 0]
-					else:
-						block += ['^', 1]
-
-				start = block[0] * point ** block[-1]
-				total += start
-
-		return total
-```
-
-Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
+This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/fractal_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
 ```python	
 def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
@@ -301,7 +166,8 @@ Let's explore the behavior of this polynomial in the complex plane using Newton'
 
 
 
-Using the identity $e^{\pi i} - 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
+
+Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
 ```python
 ...
