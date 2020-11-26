@@ -145,17 +145,15 @@ which yields
 
 Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.
 
-What happens when the polynomial goes from a linear form to a nonlinear?  Here $z = z^1-1 \to z = z^4-1$
+What happens when the polynomial goes from a linear form to a nonlinear?  Here $z = z^1-1 \to z = z^4-1$, follow the link to see the change (right click the video while playing to loop)
 
-![roots]({{https://blbadger.github.io}}/newton-method/newton_3_ranged.gif)
+{% include youtube.html id='YIO_w4x1P2k' %}
 
 And taking a closer look at the transition 
 
 $$
 z^{2.86} - 1 \to z^{2.886} - 1
 $$
-
-follow the link to see what happens during this (right click the video while playing to loop)
 
 {% include youtube.html id='qS8g6m0QOik' %}
 
