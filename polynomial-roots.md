@@ -86,7 +86,7 @@ we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhi
 
 ### Newton's method in the complex plane
 
-The function defined above can be used to apply Newton's method to complex numbers 
+The function defined above can be used to apply Newton's method to the equation $z^3-1$ for any complex number, for example
 
 ```python
 print (successive_approximations(2 + 5j, 20))
