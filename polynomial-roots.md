@@ -159,8 +159,6 @@ follow the link to see what happens during this (right click the video while pla
 
 {% include youtube.html id='qS8g6m0QOik' %}
 
-<iframe width="820" height="461" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 ### A simple unrootable polynomial
 
 Arguably the simplest polynomial that by Galois theory does not have a closed form rooted expression is
@@ -175,7 +173,7 @@ Let's explore where roots are found with Newton's method.  With a scale of  $(-1
 
 Zooming in on the point $0.154047 + 0.135678i$, 
 
-<iframe width="820" height="461" src="https://www.youtube.com/embed/ZTMaKLmLxJM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include youtube.html id='ZTMaKLmLxJM' %}
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
@@ -209,9 +207,9 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 
 ![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.png)
 
-For the purposes of maintaining resolution, follow the link for a video of the rotation
+Follow the link for a video of the rotation:
 
-<iframe width="820" height="461" src="https://www.youtube.com/embed/t7QAqeJQ290" frameborder="0" allow="accelerometer; autoplay; loop; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include youtube.html id='t7QAqeJQ290' %}
 
 
 
