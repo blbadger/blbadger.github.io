@@ -157,6 +157,8 @@ $$
 
 follow the link to see what happens during this (right click the video while playing to loop)
 
+{% include youtube.html id='qS8g6m0QOik' %}
+
 <iframe width="820" height="461" src="https://www.youtube.com/embed/qS8g6m0QOik" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### A simple unrootable polynomial
