@@ -117,7 +117,7 @@ The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797
 
 And here is the same point, increasing scale to a factor of $2^{42}$ (over four trillion)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/0qrordbf7WE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include youtube.html id='0qrordbf7WE' %}
 
 What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1$, the equation is linear and a circular region about the origin remains bounded.  But as the system becomes nonlinear, intricate shapes appear.  Here we go from $z^1 \to z^4 \to z^1$, and note that the positive real axis is pointed up instead of to the right.
 
@@ -145,7 +145,6 @@ $$
 
 so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page) of a point centered at a radius of $1/3$,
 ```python
-...
 	...
 
 	for i in range(max_iterations):
