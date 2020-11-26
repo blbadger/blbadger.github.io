@@ -175,16 +175,17 @@ Zooming in on the point $0.154047 + 0.135678i$,
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
 
-Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^1.0046-1$ 
+Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^{1.0046}-1$ 
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
 
-and at $z^5-z^1.0066-1$
+and at $z^5-z^{1.0066}-1$
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
 
-Upon incrementing $z^5-z-1 \to z^5-z^1.033-1$,
+Upon incrementing $z^5-z-1 \to z^5-z^{1.033}-1$,
 
+{% include youtube.html id='ZTMaKLmLxJM' %}
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
