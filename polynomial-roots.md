@@ -185,7 +185,6 @@ and at $z^5-z^1.0066-1$
 
 Upon incrementing $z^5-z-1 \to z^5-z^1.033-1$,
 
-{% include youtube.html id='Wi0EQ7WqJtU' %}
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
