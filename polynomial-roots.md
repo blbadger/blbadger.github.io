@@ -167,7 +167,7 @@ $$
 y = x^5 - x - 1
 $$
 
-Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical,
+Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical (with our original color map),
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
@@ -185,7 +185,7 @@ and at $z^5-z^{1.0066}-1$
 
 Upon incrementing $z^5-z-1 \to z^5-z^{1.033}-1$,
 
-{% include youtube.html id='ZTMaKLmLxJM' %}
+{% include youtube.html id='Wi0EQ7WqJtU' %}
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
