@@ -167,13 +167,21 @@ $$
 y = x^5 - x - 1
 $$
 
-Let's explore where roots are found with Newton's method.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical,
+Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical,
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
 Zooming in on the point $0.154047 + 0.135678i$, 
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
+
+Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^1.0046-1$ 
+
+![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
+
+and at $z^5-z^1.0066-1$
+
+![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
 
 Upon incrementing $z^5-z-1 \to z^5-z^1.033-1$,
 
