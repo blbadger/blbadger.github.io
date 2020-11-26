@@ -221,10 +221,21 @@ Follow the link for a video of the rotation:
 
 {% include youtube.html id='t7QAqeJQ290' %}
 
+### Dimension changes
 
+$$
+z^7-z-1
+$$
 
+we have
 
+![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7-z-1.png)
 
+at $z^{7.11}-z-1$, 
 
+![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7.11-z-1.png)
 
+and at $z^{7.14}-z-1$ 
+
+![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7.24-z-1.png)
 
