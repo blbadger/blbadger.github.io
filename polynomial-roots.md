@@ -173,7 +173,7 @@ Zooming in on the point $0.154047 + 0.135678i$,
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
 
-Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^{1.0046}-1$ 
+Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
 
