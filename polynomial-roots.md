@@ -74,7 +74,7 @@ $$
 y = (x-2)(x-1)(x+3) = x^3-7x+6
 $$
 
-with roots at $x=-3, x=1, x=2$.  But now there is more than one point on the real line where Newton's method fails to converge quickly.  We can plot the pattern such points make as follows: darker the point, the faster the convergence. 
+with roots at $x=-3, x=1, x=2$.  Again there is more than one point on the real line where Newton's method fails to converge quickly.  We can plot the pattern such points make as follows: darker the point, the faster the convergence. Lines of color corresponding to points on the real line are used for clarity.
 
 ![roots]({{https://blbadger.github.io}}/newton-method/real_newton_still.png)
 
