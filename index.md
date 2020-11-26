@@ -92,7 +92,7 @@ $$
 
 ### [Fractal geometry](/fractal-geometry.md)
 
-![snowflake]({{https://blbadger.github.io}}/fractals/snowflake.gif)
+![snowflake]({{https://blbadger.github.io}}/fractals/snowflake_fractal.gif)
 
 
 ## Physics
