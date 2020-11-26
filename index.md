@@ -62,7 +62,7 @@ Trajectories of nonlinear systems may stay bounded or else diverge towards infin
 
 ### [Clifford map](/clifford-boundary.md)
 
-![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_boundary_20.gif)
+![clifford]({{https://blbadger.github.io}}clifford_attractor/Clifford_boundary_still.png)
 
 
 ### [Logistic map](/logistic-boundary.md)
