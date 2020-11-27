@@ -214,7 +214,7 @@ which starts as
 
 ![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_000.png)
 
-the cover photo for this page found [here](https://blbadger.github.io/) is at t=46, and at t=205 (0.00046 of a full rotation) yields
+the cover photo for this page found [here](https://blbadger.github.io/) is at t=46, and at t=205 (0.00023 of a full rotation) yields
 
 ![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.png)
 
@@ -249,7 +249,7 @@ There are other methods besides that of Newton for finding roots of an equation.
 Edmond Halley (of Halley's comet fame) introduced the following algorithm to find roots for polynomial equations:
 
 $$
-x_{n+1} = x_n - \frac{2f(x_n)f'(x_n)}{2(f'(x_n)^2-f(x_n)f''(x_n))}
+x_{n+1} = x_n - \frac{2f(x_n)f'(x_n)}{2(f'(x_n))^2-f(x_n)f''(x_n)}
 $$
 
 
