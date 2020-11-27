@@ -224,6 +224,7 @@ Follow the link for a video of the rotation:
 
 ### Dimension changes
 
+
 $$
 z^7-z-1
 $$
@@ -239,4 +240,19 @@ at $z^{7.11}-z-1$,
 and at $z^{7.14}-z-1$ 
 
 ![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7.14-z-1.png)
+
+
+### Halley's method
+
+There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root.  
+
+Edmond Halley (of Halley's comet fame) introduced the following algorithm to find roots for polynomial equations:
+
+$$
+x_{n+1} = x_n - \frac{2f(x_n)f'(x_n)}{2(f'(x_n)^2-f(x_n)f''(x_n))}
+$$
+
+
+
+
 
