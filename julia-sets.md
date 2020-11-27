@@ -102,7 +102,8 @@ def julia_set(h_range, w_range, max_iterations):
 	with the number of maximum iterations to try.  Returns an array with 
 	the number of the last bounded iteration at each array value.
 	'''
-	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.4: 1.4: w_range*1j]
+	# top left to bottom right
+	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.4: 1.4: w_range*1j]
 	z_array = x + y*1j
 	a = -0.744 + 0.148j
 	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
