@@ -35,14 +35,15 @@ To make an array of complex numbers, the  class in numpy is especially helpful. 
 
 Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
 
-```python3
+```python
 def julia_set(h_range, w_range, max_iterations):
 	''' A function to determine the values of the Julia set. Takes
 	an array size specified by h_range and w_range, in pixels, along
 	with the number of maximum iterations to try.  Returns an array with 
 	the number of the last bounded iteration at each array value.
 	'''
-	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.4: 1.4: w_range*1j]
+	# top left to bottom right
+	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.4: 1.4: w_range*1j]
 	z_array = x + y*1j
   	a = -0.744 + 0.148j
 	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
