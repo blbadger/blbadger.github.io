@@ -113,7 +113,7 @@ which yields
 
 To reorient ourselves, the dark area in the center is composed of all the points that do not diverge (head towards positive or negative infinity) after the specified maximum number of iterations.  The light areas bordering this are the points that diverge but not immediately, and the purple region that surrounds the shape is the region that quickly diverges towards infinity.
 
-The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 + 0.072500001i (see [here](/julia-sets.md) for a description of how to make the video)
+The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 - 0.072500001i (see [here](/julia-sets.md) for a description of how to make the video)
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_zoom1.gif)
 
