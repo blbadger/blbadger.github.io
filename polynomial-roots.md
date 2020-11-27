@@ -105,7 +105,8 @@ from Calculate import Calculate # see above
 
 def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
 	print (equation)
-	y, x = np.ogrid[-5: 5: y_range*1j, -5: 5: x_range*1j]
+	# top left to bottom right
+	y, x = np.ogrid[5: -5: y_range*1j, -5: 5: x_range*1j]
 	z_array = x + y*1j
 
 	iterations_until_rooted = max_iterations + np.zeros(z_array.shape)
