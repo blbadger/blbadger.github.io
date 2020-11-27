@@ -18,7 +18,8 @@ import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
 def mandelbrot_set(h_range, w_range, max_iterations):
-	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.8: 1: w_range*1j]
+	# top left to bottom right
+	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.8: 1: w_range*1j]
 	a_array = x + y*1j
 	z_array = np.zeros(a_array.shape)
 	iterations_till_divergence = max_iterations + np.zeros(a_array.shape)
@@ -57,7 +58,8 @@ plt.style.use('dark_background')
 
 
 def mandelbrot_set(h_range, w_range, max_iterations):
-	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.8: 1: w_range*1j]
+	# top left to bottom right
+	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.8: 1: w_range*1j]
 	a_array = x + y*1j
 	z_array = np.zeros(a_array.shape)
 	iterations_till_divergence = max_iterations + np.zeros(a_array.shape)
