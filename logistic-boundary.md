@@ -81,7 +81,7 @@ As an aside, the previous and following zooms were made using a different method
 
 ```python
 def mandelbrot_set(h_range, w_range, max_iterations, t):
-	y, x = np.ogrid[-1.4: 1.4: h_range*1j, -1.8: 1:w_range*1j] # note that the ogrid does not scale
+	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.8: 1:w_range*1j] # note that the ogrid does not scale
 
 	a_array = x/(2**(t/15)) - 1.633 + y*1j / (2**(t/15)) # the array scales instead
 	z_array = np.zeros(a_array.shape)
