@@ -250,6 +250,7 @@ Edmond Halley (of Halley's comet fame) introduced the following algorithm to fin
 
 $$
 x_{n+1} = x_n - \frac{2f(x_n)f'(x_n)}{2(f'(x_n))^2-f(x_n)f''(x_n)}
+\;
 $$
 
 The general rate of convergence for this method is cubic rather than quadratic as for Newton's method. This can be accomplished using [Calculate](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py) as follows:
@@ -267,11 +268,11 @@ The general rate of convergence for this method is cubic rather than quadratic a
 		...
 ```
 
-For $z^3-1$ there is a smaller area of slow convergence than for Newton's method (see above)
+For $z^3-1$ the pattern in the complex plane of areas of slow convergence is similar but not identical to that observed for Newton's method (see above)
 
 ![Halley]({{https://blbadger.github.io}}/newton-method/halley000.png)
 
-But for larger polynomials, areas of slow convergence are exhibited.  For $z^{13}-z-1$, 
+For larger polynomials, areas of slow convergence are exhibited.  For $z^{13}-z-1$, 
 
 ![Halley]({{https://blbadger.github.io}}/newton-method/halley_x^13-x-1.png)
 
