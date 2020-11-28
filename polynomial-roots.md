@@ -220,7 +220,7 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 
 Follow the link for a video of the rotation:
 
-{% include youtube.html id='t7QAqeJQ290' %}
+{% include youtube.html id='NgZZq32in7g' %}
 
 ### Dimension changes
 
