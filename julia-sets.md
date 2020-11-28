@@ -178,11 +178,12 @@ How can a bounded line possibly have infinite length? If we zoom in on a point o
 
 The first thing to do is to pick a point in the complex plane to focus on, and to decide how fast the zoom should be.  For an zoom that does not appear to slow down or speed up, an exponential function must be used.  As magnifying an image by a power of two provides a clear image of what to think about, let's use exponents with base 2.  Say one wanted to increase scale by a factor of two over one second, with 30 individual images being shown in that second.  Then each frame should be scaled by a factor of $ \frac{1}{2 ^{1/30}}$, and the way I chose to do this is by multiplying the exponent $1/30$ by the frame number `t`.  I prefer a 4x zoom each second, so the exponent used is $t/15$.  
 
-If the scale is mostly symmetrical (nearly equal x and y ranges), that is all for the magnification process!  Next we need to decide which point to increase in scale.  For the Julia set defined by $a = -0.29609091 + 0.62491i$, let's look at  $x = -0.6583867 + 0.041100001i$.  Each component is added to it's 
+If the scale is mostly symmetrical (nearly equal x and y ranges), that is all for the magnification process!  Next we need to decide which point to increase in scale.  For the Julia set defined by $a = -0.29609091 + 0.62491i$, let's look at  $x = -0.6583867 - 0.041100001i$.  Each component is added to it's 
 
 ```python
 def julia_set(h_range, w_range, max_iterations, t):
-	y, x = np.ogrid[-1.4/(2**(t/15)) + 0.041100001: 1.4 / (2**(t/15)) + 0.041100001:h_range*1j, \
+	# top left to bottom right grid
+	y, x = np.ogrid[1.4/(2**(t/15)) + 0.041100001: -1.4 / (2**(t/15)) + 0.041100001:h_range*1j, \
 			-1.4/(2**(t/15)) -0.6583867: 1.4/(2**(t/15)) -0.6583867:w_range*1j]
 
 ```
