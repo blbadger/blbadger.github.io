@@ -161,7 +161,7 @@ plt.show()
 plt.close()
 ```
 
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted_scaled.png)
+![julia set1]({{https://blbadger.github.io}}fractals/julia_set__corrected.png)
 
 There are a multitute of interesting Julia sets, each one defined by a different $a$ value.  We can make a video of the changes as we increment from $a=-0.29609091 + 0.62491i \to a = -0.20509091 + 0.71591i$ (how to do this is shown below) at the same scale as shown above.
 
