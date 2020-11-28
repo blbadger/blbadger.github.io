@@ -193,7 +193,7 @@ Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the comple
 for i in range(max_iterations):
 		previous_z_array = z_array
 		z = z_array
-		f_now = z**5 - z - 1 + np.exp(3.1415j * (t/300))/4 # only half a full rotation (pi radians)
+		f_now = z**5 - z - 1 + np.exp(3.1415j * (t/300))/4 
 		f_prime_now = 5*z**4 - 1
 		z_array = z_array - f_now / f_prime_now
 ```
