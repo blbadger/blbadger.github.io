@@ -270,7 +270,7 @@ The general rate of convergence for this method is cubic rather than quadratic a
 
 For $z^3-1$ the pattern in the complex plane of areas of slow convergence is similar but not identical to that observed for Newton's method (see above)
 
-![Halley]({{https://blbadger.github.io}}/newton-method/halley000.png)
+![Halley]({{https://blbadger.github.io}}/newton-method/halley_x^3-1.png)
 
 For larger polynomials, areas of slow convergence are exhibited.  For $z^{13}-z-1$, 
 
