@@ -27,9 +27,10 @@ current during capacitor discharge.
 
 ### Low-res videos of the coil above
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gwUA4ATNvRg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include youtube.html id='gwUA4ATNvRg' %}
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/FyRCdSQW1GY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include youtube.html id='FyRCdSQW1GY' %}
+
 
 ### Very large topload test
 
