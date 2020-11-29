@@ -241,6 +241,9 @@ and at $z^{7.14}-z-1$
 
 ![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7.14-z-1.png)
 
+From $z^7-z-1$ to $7^{7.1064}-x-1$,
+
+{% include youtube.html id='fpKBzto_ZnA' %}
 
 ### Halley's method
 
