@@ -13,7 +13,7 @@ at 400mA.  Power controlled with a variable autotransformer (for low power runs)
 The topload is two aluminum dryer ducts forming a double stacked toroid, each stack 8" by 2.5'.
 Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
 is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete 
-forming tube coated in polyurethane. Inner turns of the primary get 
+forming tube coated in polyurethane. The inner turns of the primary get 
 warm during operation, not suprising with an estimated 18.9 kA instantaneous 
 current during capacitor discharge.
 
@@ -29,7 +29,8 @@ current during capacitor discharge.
 
 {% include youtube.html id='gwUA4ATNvRg' %}
 
-   
+![]()
+
 {% include youtube.html id='FyRCdSQW1GY' %}
 
 
