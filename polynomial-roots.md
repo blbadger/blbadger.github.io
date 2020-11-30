@@ -224,6 +224,7 @@ Follow the link for a video of the rotation:
 
 ### Dimension changes
 
+The maps for initial points that converge rapidly versus slowly to a root are 
 
 $$
 z^7-z-1
@@ -245,9 +246,55 @@ From $z^7-z-1$ to $z^{7.1064}-z-1$,
 
 {% include youtube.html id='fpKBzto_ZnA' %}
 
-### Halley's method
+### Secant method for finding roots
 
-There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root.  
+There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root. 
+
+There are two initial guesses, $x_0$ and $x_1$, which are then used to guess a third point
+
+$$
+x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
+$$
+
+This is algebraically equivalent to Newton's method if the derivative is treated as a discrete quantity, ie
+
+$$
+f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
+$$
+
+Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the origin from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
+
+```python
+def secant_method(equation, max_iterations, x_range, y_range, t):
+	...
+	# create a boolean table of all 'true'
+	not_already_at_root = iterations_until_rooted < 10000
+	zeros = np.ones(z_array.shape) 
+	z_last = (z_array - zeros)/2 # setting the initial guess to half the distance to the origin from the second guess, which is plotted
+
+	for i in range(max_iterations):
+		previous_z_array = z_array
+		z = z_array
+		f_previous = Calculate(equation, z_last, differentiate=False).evaluate()
+		f_now = Calculate(equation, z, differentiate=False).evaluate()
+		z_array = z - f_now * (z - z_last)/(f_now - f_previous) # secant method recurrence
+
+		# the boolean map is tested for rooted values
+		...
+		z_last = z # set z(-2) to z(-1)
+	return iterations_until_rooted
+```
+
+For $z^3-1$, 
+![secant]({{https://blbadger.github.io}}/newton-method/secant_z^3-1_half.png)
+
+Remembering that black denotes locations that do not converge within the maximum interations (here 50), it is clear that there are more points that fail to find a root using this method compared to Newton's, which is expected given that the convergence rate is slower than for Newton's.
+
+Rotated at a radius of $1/8$ (code found [here](https://github.com/blbadger/polynomial_roots/blob/main/secant_rotated.py), $z^5-z-1$ yields
+
+{% include youtube.html id='Abn2TThqx68' %}
+
+### Halley's method
 
 Edmond Halley (of Halley's comet fame) introduced the following algorithm to find roots for polynomial equations:
 
