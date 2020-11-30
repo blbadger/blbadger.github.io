@@ -262,7 +262,7 @@ $$
 f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1)}}
 $$
 
-Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the origin from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
+Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the value $1+0i$ from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
 
 ```python
 def secant_method(equation, max_iterations, x_range, y_range, t):
