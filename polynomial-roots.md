@@ -253,13 +253,13 @@ There are other methods besides that of Newton for finding roots of an equation.
 There are two initial guesses, $x_0$ and $x_1$, which are then used to guess a third point
 
 $$
-x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
+x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1)}}
 $$
 
 And so on until the next guess is the same as the current one, meaning that a root has been found.  This is algebraically equivalent to Newton's method if the derivative is treated as a discrete quantity, ie
 
 $$
-f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
+f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1)}}
 $$
 
 Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the origin from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
@@ -290,7 +290,7 @@ For $z^3-1$,
 
 Remembering that black denotes locations that do not converge within the maximum interations (here 50), it is clear that there are more points that fail to find a root using this method compared to Newton's, which is expected given that the convergence rate is slower than for Newton's.
 
-Rotated at a radius of $1/8$ (code found [here](https://github.com/blbadger/polynomial_roots/blob/main/secant_rotated.py), $z^5-z-1$ yields
+Rotated at a radius of $1/8$ (code found [here](https://github.com/blbadger/polynomial_roots/blob/main/secant_rotated.py)), $z^5-z-1$ yields
 
 {% include youtube.html id='Abn2TThqx68' %}
 
