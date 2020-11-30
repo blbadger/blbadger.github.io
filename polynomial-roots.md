@@ -222,15 +222,15 @@ Follow the link for a video of the rotation:
 
 {% include youtube.html id='NgZZq32in7g' %}
 
-### Dimension changes
+### Incrementing a polynomial power
 
-The maps for initial points that converge rapidly versus slowly to a root are 
+For the equation
 
 $$
 z^7-z-1
 $$
 
-we have
+with roots estimated via Newton's method (centered on the origin), we have
 
 ![dimension]({{https://blbadger.github.io}}/newton-method/newton_z^7-z-1.png)
 
@@ -246,7 +246,7 @@ From $z^7-z-1$ to $z^{7.1064}-z-1$,
 
 {% include youtube.html id='fpKBzto_ZnA' %}
 
-### Secant method for finding roots
+### Secant method 
 
 There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root. 
 
@@ -256,7 +256,7 @@ $$
 x_{n+1} = x_n - f(x_n) \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
 $$
 
-This is algebraically equivalent to Newton's method if the derivative is treated as a discrete quantity, ie
+And so on until the next guess is the same as the current one, meaning that a root has been found.  This is algebraically equivalent to Newton's method if the derivative is treated as a discrete quantity, ie
 
 $$
 f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1}}
