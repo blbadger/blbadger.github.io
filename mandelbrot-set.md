@@ -164,7 +164,7 @@ def mandelbrot_set(h_range, w_range, max_iterations, t):
 	...
 	# make an array with all elements set to 'True'
 	not_already_diverged = a_array < 1000
-	z_array = z_array + a_array # set initial z_array values to a_array points
+	z_array = a_array # set initial z_array values to a_array points
 	
 	for i in range(max_iterations):
 		# mandelbrot equation
