@@ -89,15 +89,35 @@ This code is perfectly valid for mapping $\mathscr M$, itself (the dark region),
 
 ![ mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_diverging2.png)
 
-A little retrospection can convince us that there is a problem with how we compute the first iteration of divergence, mainly that sometimes this program does not actually store the first iteration but instead a later one! Remember that $a$ is being added to $z$ for every iteration even if $z = 0$, as we have set it to stop the values from getting out of hand.  This could cause a later iteration to become larger than 2 (see [here](/julia-sets.md), and the code as it stands would record this later value as the iteration of divergence. This can be remedied by simply changing all values of `a_array` corresponding to just-diverged `z_array` values to be 0
+A little retrospection can convince us that there is a problem with how we compute the first iteration of divergence, mainly that sometimes this program does not actually store the first iteration but instead a later one! Remember that $a$ is being added to $z$ for every iteration even if $z = 0$, as we have set it to stop the values from getting out of hand.  This could cause a later iteration to become larger than 2 (see [here](/julia-sets.md), and the code as it stands would record this later value as the iteration of divergence. This can be remedied by introducing another boolean array `not_already_diverged` that keeps track of which points in the plane have previously headed off towards infinity as follows:
 
 ```python
-    ...
+def mandelbrot_set(h_range, w_range, max_iterations, t):
+	y, x = np.ogrid[1.6: -1.6: h_range*1j, -2.2: 1: w_range*1j]
+	a_array = x + y*1j		
+	z_array = np.zeros(a_array.shape) 
+	iterations_till_divergence = max_iterations + np.zeros(a_array.shape)
+
+	# make an array with all elements set to 'True'
+	not_already_diverged = a_array < 1000
+	
+	for i in range(max_iterations):
+		# mandelbrot equation
+		z_array = z_array**2 + a_array 
+
+		# make a boolean array for diverging indicies of z_array
+		z_size_array = z_array * np.conj(z_array)
+		divergent_array = z_size_array > 4
+		diverging_now = divergent_array & not_already_diverged
+
+		iterations_till_divergence[diverging_now] = i
 		# prevent overflow (numbers -> infinity) for diverging locations
-		z_array[divergent_array] = 0 
+		z_array[divergent_array] = 0
 
 		# prevent the a point from diverging again in future iterations
-		a_array[divergent_array] = 0 
+		not_already_diverged = np.invert(diverging_now) & not_already_diverged
+
+	return iterations_till_divergence
 ```
 
 The colors are accurate now! The above code (except with slightly larger x and y ranges used to initialize the ogrid) may be called with the kwarg `extent` in order to provide accurate axes makers as follows:
@@ -111,7 +131,7 @@ which yields
 
 ![mandelbrot_set]({{https://blbadger.github.io}}fractals/mandelbrot_corrected.png)
 
-To reorient ourselves, the dark area in the center is composed of all the points that do not diverge (head towards positive or negative infinity) after the specified maximum number of iterations.  The light areas bordering this are the points that diverge but not immediately, and the purple region that surrounds the shape is the region that quickly diverges towards infinity.
+To reorient ourselves, the dark area in the center is composed of all the points that do not diverge (head towards positive or negative infinity) after the specified maximum number of iterations.  The light areas bordering this are the points that diverge but not immediately, and the purple region that surrounds the shape is the region that quickly heads towards infinity.
 
 The Mandelbrot set is a very rich fractal. Here is a zoom on the point - 0.74797 - 0.072500001i (see [here](/julia-sets.md) for a description of how to make the video)
 
@@ -125,8 +145,32 @@ What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1
 
 ![extended mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_slow.gif)
 
+### Translations and rotations
 
-What happens if we add a small amount $b$ to $a$?  Then we have $z = z^2 + a + b$, and intuitively one can guess that the bounded set size will decrease as $b$ gets farther from the origin because there is less bounded area far from the origin in the Mandelbrot set. Let's look at many values of a real $b$, going from $b=0 \to b=1.3 \to b=0$:
+What happens if there is a small amount $b$ added upon each iteration?  Then we have $z_{n+1} = z_n^2 + a + b$, which is equivalent to changing $a$ by a constant factor for all values in the complex plane.  This results in the map being translated in the complex plane, but not otherwise changed.  
+
+The effect is quite different if the starting value $z_0 \neq 0 + 0i$. We are now departing from a true Mandelbrot set, which requires the initial value to be $0$, but a small change like setting $z_0 = a$ will result in a set that mostly resembles $\mathscr M$,.  But if $b$ is added upon each iteration, the set changes for the same reason as $\mathscr M$ is irregular to begin with. In sum, the following $\mathscr M$ -like equation shall be investigated:
+
+$$
+z_{n+1} = z_n^2 + a + b \\
+z_0 = a \\
+\tag{2}
+$$
+
+Let's look at the bounded iterations of (2) with many real values of $b$, going from $b=0 \to b=1.3 \to b=0$ as follows:
+
+```python
+def mandelbrot_set(h_range, w_range, max_iterations, t):
+	...
+	# make an array with all elements set to 'True'
+	not_already_diverged = a_array < 1000
+	z_array = z_array + a_array # set initial z_array values to a_array points
+	
+	for i in range(max_iterations):
+		# mandelbrot equation
+		z_array = z_array**2 + a_array + (1.3/300)*t 
+		...
+```
 
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared.gif)
 
@@ -135,7 +179,7 @@ In the other direction, $b=0 \to b = -2.5$ yields
 ![disappearing mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_disappeared_reversed.gif)
 
 
-How about if we move to a complex number? The set from $b = 0 \to b = 1 - i$ looks like
+How about if we move to a complex number? The set from $b = 0 \to b = 1 + i$ looks like
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
 
