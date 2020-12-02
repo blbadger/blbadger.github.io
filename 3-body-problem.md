@@ -311,7 +311,7 @@ This means that this trajectory of a two body problem is not sensitive to initia
 
 ### The three body problem is general 
 
-One can hope that the three (or more) body problem is restricted to celestial mechanics, and that it does not find its way into other fields of study.  Great effort has been expended to learn about the orbitals an electron will make around the nucleus of a proton, so hopefully this knowledge is transferrable to an atom with more than one proton. This hope is in vain: any three-dimensional system with three or more objects that operates according to nonlinear equations reaches the same difficulties outlined above for planets. 
+One can hope that the three (or more) body problem is restricted to celestial mechanics, and that it does not find its way into other fields of study.  Great effort has been expended to learn about the orbitals an electron will make around the nucleus of a proton, so hopefully this knowledge is transferrable to an atom with more than one proton. Unfortunately it does not: any three-dimensional system with three or more objects that operates according to nonlinear forces (gravity, electromagnetism etc.) reaches the same difficulties outlined above for planets. 
 
 
 ### Does it matter that we cannot solve the three body problem, given that we can just simulate the problem on a computer?
