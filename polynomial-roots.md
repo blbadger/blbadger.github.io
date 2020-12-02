@@ -331,7 +331,7 @@ And similar shapes to that found for Newton's method are also present.  For $z^{
 
 ![Halley]({{https://blbadger.github.io}}/newton-method/halley_x^9.067-x-1.png)
 
-and incrementing $z^13-z-1$ to $z^14-z-1$, 
+and incrementing $z^{13}-z-1$ to $z^{14}-z-1$, 
 
 {% include youtube.html id='9xl0BWtcc1Y' %}
 
