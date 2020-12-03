@@ -144,7 +144,7 @@ which yields
 
 ![roots]({{https://blbadger.github.io}}/newton-method/Newton_Raphson.png)
 
-Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.
+Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.  John Hubbard was the first person to observe the fractal behavior of Newton's method in the complex plane, and the border between the set of non-diverging and diverging points may be considered a [Julia set](https://blbadger.github.io/julia-sets.html).
 
 What happens when the polynomial goes from a linear form to a nonlinear?  Here $z = z^1-1 \to z = z^4-1$, follow the link to see the change (right click the video while playing to loop)
 
