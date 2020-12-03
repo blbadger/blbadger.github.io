@@ -26,13 +26,13 @@ At a vacuum estimated at 50 microns, this fusor design ignites plasma at under 4
 Note the dark regions around the inner grid, also visible in the high power images above.  These are regions of high potential.  THe electron distribution function is
 
 $$
-f(u) = Ae^{\frac{-(1/2mu^2+q\phi)}{KT_e}}
+f(u) = Ae^{\frac{-((1/2)mu^2+q\phi)}{KT_e}}
 $$
 
-where $q\phi$ is the potential energy, $KT_e$ is the thermal energy of the particles, $1/2mu^2$ is the electron's kinetic energy, and $A$ is the constant
+where $q\phi$ is the potential energy, $KT_e$ is the thermal energy of the particles, $(1/2)mu^2$ is the electron's kinetic energy, and $A$ is the constant
 
 $$
-A = n(\frac{m}{2\piKT})^{1/2}
+A = n(\frac{m}{2\pi KT})^{1/2}
 $$
 
 $n$ is the plasma density, $K$ is Boltzmann's constant, and $m$ is the mass of the particle (in this case an electron). 
