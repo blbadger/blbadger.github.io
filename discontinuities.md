@@ -17,5 +17,14 @@ If continuous maps may form aperiodic attractors in three or more dimensions, wh
 A two dimensional curve's intersection with a line may be discontinuous as well. Why can't two dimensional continuous dynamical trajectories also be aperiodic?  
 
 Smale introduced the horseshoe map to describe a common aperiodic attractor topology.  This model maps a square into itself such that the surface is stretched, folded and then re-stretched over and over like a baker's dough.  The horseshoe map is everywhere discontinuous as points arbitrarily close together to start are separated (the surface is stretched at each iteration and there are infinite iterations) such that there is a distance greater than some $e > 0$ between them.  The process of folding prevents divergence to infinity.  
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Aperiodic in phase space cannot be defined in $\Bbb Q$
+
+[Elsewhere](https://blbadger.github.io/aperiodic-irrationals.html) there is established an equivalence between the set of aperiodic trajectories and the set of irrational numbers.  This means that there are uncountably many aperiodic trajectories.  
+
+Now define a phase space $S$ on $Q$ such that every coordinate is a rational number.  There are countably many rationals, so for any finite dimension $D$ there is a countable number of possible trajectories (as the trajectory repeats itself (ie becomes periodic) if it reaches any point it has seen previously).  With countably many inputs $S_0, S_1 ... $, so there are countably many functions that may exist in $S$.
+
+But as there are uncountably many aperiodic trajectories, all but a meagre portion (ie an infinitely tiny amount) of these cannot be defined in $S$.  In the general case, therefore, aperiodic maps must be defined on the real (or irrational) numbers, not the rationals.
 
 
