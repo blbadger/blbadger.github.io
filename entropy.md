@@ -128,7 +128,7 @@ which yields a list of all possible microstates,
 27
 ```
 
-Combinatorically, in the former case where particles are not distinguisheable then we want to find the number of 3-element multisets of elements of the set ${A, B, C}$, corresponding to each possible location.  We seek the possible multisets because more than one location can be present in our list of where the particles are, ei ${A, A, B}$ is a possibility that corresponds to two particles at position $A$ and one at $B$.  The general method for finding $k$-element multisets from a set of size $n$ is
+Combinatorically, in the former case where particles are not distinguishable then we want to find the number of 3-element multisets of elements of the set ${A, B, C}$, corresponding to each possible location.  We seek the possible multisets because more than one location can be present in our list of where the particles are, ei ${A, A, B}$ is a possibility that corresponds to two particles at position $A$ and one at $B$.  The general method for finding $k$-element multisets from a set of size $n$ is
 
 $$
 \left(\binom{n}{k} \right) = \binom{n+k-1}{k}
@@ -140,7 +140,7 @@ $$
 \left(\binom{n}{k} \right) = \binom{3+3-1}{3} = \binom{5}{3} = 10
 $$
 
-For more information, search the stars and bars problem.  This number will always be smaller than the number of combinations if order matters for $n>1$ and $k>1$, 
+For more information, search the stars and bars problem.  This number will always be smaller than the number of ways k distinct objects can be placed in n distinct locations for all $n>1$ and $k>1$, which is
 
 $$
 n^k
