@@ -70,7 +70,7 @@ Trajectories of nonlinear systems may stay bounded or else diverge towards infin
 ![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
 
 
-## Fundamental features of nonlinearity
+## Foundations
 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
 
