@@ -2,7 +2,7 @@
 
 For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, phase space portraits of ODEs are considered.  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page, a 'map' is synonymous with a 'function'.  Each heading is a theorem, with proof following (sometimes informal). 
 
-### There are $2^{\Bbb Q}$ continuous functions
+### There are $2^{\Bbb Q} = \Bbb R$ continuous functions
 
 This theorem has been established and may be found in texts on real analysis, and one proof will suffice here.
 
@@ -28,7 +28,12 @@ or the set of all continuous functions defined on $\Bbb Q$ is equivalent to the 
 
 ### Discontinuous maps cannot be defined on the rationals
 
-Discontinuous trajectories in $Q$ may do more than increase or decrease by $\delta$ or else stay the same: the next point may be any element of $\Bbb Q$.  
+Discontinuous trajectories in $Q$ may do more than increase or decrease by $\delta$ or else stay the same: the next point may be any element of $\Bbb Q$.   The size of the set of all discontinuous functions is 
+
+$$
+2^{\Bbb Q}^{\Bbb Q} = \Bbb R ^ {\Bbb R} = 2^{\Bbb R}
+$$
+
 
 ### Aperiodic trajectories in phase space cannot be defined in $\Bbb Q$
 
