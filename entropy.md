@@ -44,32 +44,106 @@ Suppose one accepts that energy levels are purely discrete.  As molecular orient
 
 Consider the idea that entropy is determined by the number of microstates avaliable to a collection of molecules, with more microstates possible signifying a higher entropy.  The current understanding that the number of microstates is maximized upon a dissipation of head presents a problem: what about the relation of molecules in one ensemble to each other (the combinatorial microstate)?  This is of more than theoretical concern, as many subatomic particles (electrons etc.) are practically indistinguishable if they exist at a similar energy.
 
-To see the problem, say we have 3 particles $x, y, z$ that may each exist in one of 3 possible locations $A, B, C$.  If the particles are identical and exhibit identical thermodynamic properties, we can regard these as identical and name them $x, x, x$: these may be the results of a reaction proceeding to thermodynamic equilibrium.  How many possible combinatorial microstates are there if the particles are identical?  If they can exist in any of $A, B, C$ then there are 3 possible locations each containing 1, 2, or 3 particles: $3 * 3 = 9$ possible microstates:
+To see the problem, say we have 3 particles $x, y, z$ that may each exist in one of 3 possible locations $A, B, C$.  If the particles are identical and exhibit identical thermodynamic properties, we can regard these as identical and name them $x, x, x$: these may be the results of a reaction proceeding to thermodynamic equilibrium.  How many possible combinatorial microstates are there if the particles are identical?  If they can exist in any of $A, B, C$ then there are 3 distinct possible locations each containing 1, 2, or 3 identical particles.  A program can be written to search for all possibilities of ways that three identical particles can be arranged in three distinct spaces as follows:
 
-| A | B | C |
-|---|---|---|
-| x | x | x |  
-|   |  xx | x  |  
-|   |   |  xxx |   
+```python
+import pprint
 
-$$
+def number_of_states(places, particles, final_set, count=0):
+	if count == particles:
+		places_tuple = tuple(tuple(i) for i in places)
+		if places_tuple not in final_set:
+			final_set.add(places_tuple)
+		return
+	for i in range(len(places)):
+		places[i].append('*')
+		number_of_states(places, particles, final_set, count+1)
+		places[i].pop()
+
+particles = 3
+places = [[] for i in range(particles)]
+final_set = set()
+
+number_of_states(places, particles, final_set, count=0)
+pprint.pprint(final_set)
+print(len(final_set))
+```
+which results in 10 possibilites, enumerated as follows
+
+```python
+{((), (), ('*', '*', '*')),
+ ((), ('*',), ('*', '*')),
+ ((), ('*', '*'), ('*',)),
+ ((), ('*', '*', '*'), ()),
+ (('*',), (), ('*', '*')),
+ (('*',), ('*',), ('*',)),
+ (('*',), ('*', '*'), ()),
+ (('*', '*'), (), ('*',)),
+ (('*', '*'), ('*',), ()),
+ (('*', '*', '*'), (), ())}
+ 
+10
+```
+For small numbers, this result can quickly be confirmed by hand.  
+
+But now imagine that the particles are distinguishable: perhaps they are thermodynamically distinct.  Now, the number of possibilities for particles $x, y, z$ is 3 places, three particles, where order matters (here meaning that xy at location A is distinct from xz at location A, but that xy at location A is not distinct from yx at location A): $3^3 = 27$ possible microstates are possible.  This can be confirmed with our previous program if we instead replace `'*'` with a separate symbol upon each addition:
+
+```
 ...
+	for i in range(len(places)):
+		places[i].append(str(count))
+    ...
+```
+which yields a list of all possible microstates,
+
+```
+{((), (), ('0', '1', '2')),
+ ((), ('0',), ('1', '2')),
+ ((), ('0', '1'), ('2',)),
+ ((), ('0', '1', '2'), ()),
+ ((), ('0', '2'), ('1',)),
+ ((), ('1',), ('0', '2')),
+ ((), ('1', '2'), ('0',)),
+ ((), ('2',), ('0', '1')),
+ (('0',), (), ('1', '2')),
+ (('0',), ('1',), ('2',)),
+ (('0',), ('1', '2'), ()),
+ (('0',), ('2',), ('1',)),
+ (('0', '1'), (), ('2',)),
+ (('0', '1'), ('2',), ()),
+ (('0', '1', '2'), (), ()),
+ (('0', '2'), (), ('1',)),
+ (('0', '2'), ('1',), ()),
+ (('1',), (), ('0', '2')),
+ (('1',), ('0',), ('2',)),
+ (('1',), ('0', '2'), ()),
+ (('1',), ('2',), ('0',)),
+ (('1', '2'), (), ('0',)),
+ (('1', '2'), ('0',), ()),
+ (('2',), (), ('0', '1')),
+ (('2',), ('0',), ('1',)),
+ (('2',), ('0', '1'), ()),
+ (('2',), ('1',), ('0',))}
+ 
+27
+```
+
+Combinatorically, in the former case where particles are not distinguisheable then we want to find the number of 3-element multisets of elements of the set ${A, B, C}$, corresponding to each possible location.  We seek the possible multisets because more than one location can be present in our list of where the particles are, ei ${A, A, B}$ is a possibility that corresponds to two particles at position $A$ and one at $B$.  The general method is
+
+$$
+\left {n \choose k} \right = {n+k-1 \choose k}
 $$
 
-
-But now imagine that the particles are distinguishable: perhaps they are thermodynamically distinct.  Now, the number of possibilities for particles $x, y, z$ is
-3 places, three particles, where order matters (meaning that xy at location A is distinct from xz at location A): $3! * 3 = 18$ possible microstates:
-
-
-| A | B | C |
-|---|---|---|
-| x | y | z |  
-|   |  xy | z  | 
-|    |  xz | y|
-|   |   |  xyz |  
+and in the case above, 
 
 $$
-...
+\left {n \choose k} \right = {3+3-1 \choose 3} = {5 \choose 3} = 10
+$$
+
+For more information, search the stars and bars problem.  This number will always be smaller than the number of combinations if order matters for $n>1$ and $k>1$, 
+
+$$
+n^k
 $$
 
 This means that there are more possible microstates available to a particle ensemble where the elements are thermodynamically distinct: in other words, entropy is maximized for ensembles that contain thermodynamically distinct elements. 
