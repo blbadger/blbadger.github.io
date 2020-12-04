@@ -146,6 +146,8 @@ $$
 n^k
 $$
 
+because for any orientation with items in more than one location, there is more than one way to place the items while keeping the multiset identical.
+
 This means that there are more possible microstates available to a particle ensemble where the elements are thermodynamically distinct: in other words, entropy is maximized for ensembles that contain thermodynamically distinct elements. 
 
 For more problems resulting from indistinguishability of small particles, see the [Gibbs Paradox](https://en.wikipedia.org/wiki/Gibbs_paradox). 
