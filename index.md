@@ -86,7 +86,7 @@ $$
 $$
 
 
-### [Discontinuity and periodicity](/discontinuities.md)
+### [Discontinuity and periodicity]
 
 $$
 {f_c} \sim \Bbb R \\
