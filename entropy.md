@@ -148,11 +148,11 @@ $$
 
 This means that there are more possible microstates available to a particle ensemble where the elements are thermodynamically distinct: in other words, entropy is maximized for ensembles that contain thermodynamically distinct elements. 
 
-For more problems resulting from indistinguishability of small particles, see the Gibbs Paradox (https://en.wikipedia.org/wiki/Gibbs_paradox). 
+For more problems resulting from indistinguishability of small particles, see the [Gibbs Paradox](https://en.wikipedia.org/wiki/Gibbs_paradox). 
 
 ### Fourth consideration: exceptions to the rule
 
-The first law of thermodynamics is that energy cannot be created nor destroyed, and there are no phenomena that I am aware of that flout this rule.  This is not the same for the second law, and two particular examples of importance will be discussed here.  It should be made clear that nearly every other relevant physical observation supports rather than fails to support the second law, but the existence of counterexamples does suggest that our understanding is presently incomplete. 
+The first law of thermodynamics is that energy cannot be created nor destroyed, and there are no phenomena that I am aware of that could be evidence to dispute this rule.  This is not the same for the second law, and two particular examples of importance will be discussed here.  It should be made clear that nearly every other relevant physical observation supports rather than fails to support the second law, but the existence of counterexamples does suggest that our understanding is presently incomplete. 
 
 A first exception is Brownian motion, the movement of small (<0.1 mm) particles in fluids such as water.  Originally thought to be a biological phenomena (observed with pollen grains), Brown provided evidence that nonliviing matter undergoes Brownian motion too (hence the name).  Einstein used Brownian motion as evidence for the theory of the atom, and it is now understood that this motion is the result of a huge number of molecules undergoing thermal motion that collide with a larger particle, and that these collisions add and subtract and tend to push the particle along an everywhere-nondifferentiable path.  
 
