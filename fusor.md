@@ -32,7 +32,7 @@ $$
 where $q\phi$ is the potential energy, $KT_e$ is the thermal energy of the particles, $(1/2)mu^2$ is the electron's kinetic energy, and $A$ is the constant
 
 $$
-A = n(\frac{m}{2\pi KT})^{1/2}
+A = n \left(\frac{m}{2\pi KT} \right)^{1/2}
 $$
 
 $n$ is the plasma density, $K$ is Boltzmann's constant, and $m$ is the mass of the particle (in this case an electron). 
