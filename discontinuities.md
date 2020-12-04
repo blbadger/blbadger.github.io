@@ -21,7 +21,7 @@ for any arbitrarily small value $\epsilon$.
 Thus for $\Bbb Q$ there are three options, meaning that the set of continuous functions is equivalent to the set of all sets of $\Bbb Q$ into ${0, 1, 2}$
 
 $$
-{f} \sim 3^{\Bbb Q} \sim \Bbb R
+\{f\} \sim 3^{\Bbb Q} \sim \Bbb R
 $$
 
 or the set of all continuous functions defined on $\Bbb Q$ is equivalent to the set of real numbers. 
@@ -31,12 +31,12 @@ or the set of all continuous functions defined on $\Bbb Q$ is equivalent to the 
 Discontinuous trajectories in $Q$ may do more than increase or decrease by $\delta$ or else stay the same: the next point may be any element of $\Bbb Q$.   The size of the set of all discontinuous functions is therefore the size of the set of all subsets of continuous functions. As we have established that the set of all continuous functions from $\Bbb Q \to \Bbb Q$ is equivalent to $\Bbb R$, 
 
 $$
-2^{\Bbb Q}^{\Bbb Q} = \Bbb R ^ {\Bbb R} = 2^{\Bbb R}
+(2^{\Bbb Q})^{\Bbb Q} = \Bbb R ^ {\Bbb R} = 2^{\Bbb R}
 $$
 
-### Discontinuous maps cannot be defined on the rationals
+### Discontinuous maps cannot be defined on the set of rationals
 
-Functions are simply subsets of the Cartesian product of one set into another, meaning that a function mapping $\Bbb Q \to Bbb Q$ is a subset of 
+Functions are simply subsets of the Cartesian product of one set into another, meaning that a function mapping $\Bbb Q \to \Bbb Q $ is a subset of 
 
 $$
 \Bbb Q^{\Bbb Q} = 2^{\Bbb Q}
@@ -46,7 +46,7 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 ### Aperiodic trajectories in phase space cannot be defined on the rationals
 
-tbc
+tbc 
 
 ### Aperiodic trajectories are discontinuous*
 
@@ -64,6 +64,6 @@ Smale introduced the horseshoe map to describe a common aperiodic attractor topo
 
 ### Discontinuous maps may be aperiodic in 1 or more dimension
 
-tdc
+tbc
 
 
