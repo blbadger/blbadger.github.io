@@ -45,13 +45,7 @@ But as there are uncountably many aperiodic trajectories, all but a meagre porti
 
 This only applies to maps in phase space, where revisiting any previous point necessarily entails periodicity.  Functions can lead to aperiodic behavior in $\Bbb N$ or other countable sets if revisiting a previous point does not lead to
 
-### In general, aperiodic maps are discontinuous
-
-The Poincare-Bendixon theorem states that no continuous, bounded dynamical system of two dimensions can form an aperiodic attractor but instead must be periodic or asymptotically periodic.  
-
-As above it is found that the set of all continuous maps may be defined on the set of rational numbers $Q$, whereas the set of aperiodic maps cannot be defined on rationals.  As there are infinitely many more aperiodic functions than continuous functions, nearly all but a negligable portion of aperiodic functions are discontinuous.
-
-### Why continuous maps can be aperiodic and bounded in 3 or more dimensions
+### The Poincare-Bendixon Theorem: continuous phase space functions in two dimensions are periodic
 
 If continuous maps may form aperiodic attractors in three or more dimensions, why are they unable to do so in two or less?  A geometric argument is as follows: a three dimensional curve's intersection with a plane may be discontinuous.  A good example of this is found in the Lorenz attractor. 
 
@@ -60,4 +54,7 @@ If continuous maps may form aperiodic attractors in three or more dimensions, wh
 A two dimensional curve's intersection with a line may be discontinuous as well. Why can't two dimensional continuous dynamical trajectories also be aperiodic?  
 
 Smale introduced the horseshoe map to describe a common aperiodic attractor topology.  This model maps a square into itself such that the surface is stretched, folded and then re-stretched over and over like a baker's dough.  The horseshoe map is everywhere discontinuous as points arbitrarily close together to start are separated (the surface is stretched at each iteration and there are infinite iterations) such that there is a distance greater than some $e > 0$ between them.  The process of folding prevents divergence to infinity.  
+
+### Discontinuous maps may be aperiodic in 1 or more dimension
+
 
