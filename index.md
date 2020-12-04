@@ -85,6 +85,14 @@ $$
 \Bbb R \neq \{ ... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ... \}
 $$
 
+
+### [Discontinuity and periodicity](/discontinuities.md)
+
+$$
+{f_c} \sim \Bbb R \\
+{f} \sim 2^{\Bbb R}
+$$
+
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
