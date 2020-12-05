@@ -92,8 +92,7 @@ $$
 \Bbb R \neq \{ ... x \in \Bbb Q, \; y \in \Bbb I, \; z \in \Bbb Q ... \}
 $$
 
-
-### [Most functions are discontinuous]
+### [Discontinuous aperiodic maps](/most-discontinuous.md)
 
 $$
 {f_{continuous}} \sim \Bbb R \\
