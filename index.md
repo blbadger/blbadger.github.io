@@ -75,7 +75,7 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
 $$
-f(x) : f^n(x(0)) \neq f^k(x(0)) \implies f(x_0) \neq f(x_1)
+f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \forall x_1, x_2 \; \exists n \; : f^(x_0) \neq f(x_1)
 $$
 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
