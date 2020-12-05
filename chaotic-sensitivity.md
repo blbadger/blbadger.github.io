@@ -32,7 +32,7 @@ This means that insensitivity to initial values (in this case $x_n$) implies per
 
 $$
 f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
-\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \epsilon, \; \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \epsilon
+\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
 $\square$
