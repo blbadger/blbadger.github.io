@@ -1,7 +1,3 @@
-## Continuity, aperiodicity, and Poincare-Bendixson
-
-For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, phase space portraits of ODEs are considered.  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page, a 'map' is synonymous with a 'function'.  Each heading is a theorem, with proof following (sometimes informal). 
-
 ### There are $2^{\Bbb Q} = \Bbb R$ continuous functions from $\Bbb Q \to \Bbb Q$
 
 This theorem has been established and may be found in texts on real analysis, and one proof will suffice here.
@@ -12,9 +8,9 @@ First we define a 'unique' function to define a single trajectory in finite dime
 
 and precisely, $f$ may increase by $\delta$, decrease by $\delta$, or stay the same where $delta$ is defined as 
 
-$$
-\lvert x_1 - x_2 \rvert < \epsilon \implies \lvert f(x_1) - f(x_2) \rvert < \delta
-$$
+$$ 
+\lvert x_1 - x_2 \rvert < \epsilon \implies \lvert f(x_1) - f(x_2) \rvert < \delta 
+$$ 
 
 for any arbitrarily small value $\epsilon$. 
 
@@ -52,21 +48,6 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 
 
-### The Poincare-Bendixon Theorem: continuous phase space functions in two dimensions are periodic
 
-Here 'dimensions' are taken to be plane dimensions.
-
-If continuous maps may form aperiodic attractors in three or more dimensions, why are they unable to do so in two or less?  A geometric argument is as follows: a three dimensional curve's intersection with a plane may be discontinuous.  A good example of this is found in the Lorenz attractor. 
-
-![lorenz attractor]({{https://blbadger.github.io}}misc_images/lorenz_1.png)
-
-A two dimensional curve's intersection with a line may be discontinuous as well. Why can't two dimensional continuous dynamical trajectories also be aperiodic?  
-
-Smale introduced the horseshoe map to describe a common aperiodic attractor topology.  This model maps a square into itself such that the surface is stretched, folded and then re-stretched over and over like a baker's dough.  The horseshoe map is everywhere discontinuous as points arbitrarily close together to start are separated (the surface is stretched at each iteration and there are infinite iterations) such that there is a distance greater than some $e > 0$ between them.  The process of folding prevents divergence to infinity.  
-
-
-### Discontinuous maps may be aperiodic in 1 or more dimension
-
-In other pages on this site, it was made apparent that moving from a continuous to a discontinuous map is capable of transforming a periodic trajectory to an aperiodic one.  From the Poincare-Bendixson theorem, it is clear why this is the case: a restriction to any space as seen above is impossible if the trajectory may simply discontinuously pass through (jump through) previous trajectories.
 
 
