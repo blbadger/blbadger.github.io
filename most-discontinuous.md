@@ -40,14 +40,6 @@ $$
 
 Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we have already seen that the size of the set of discontinuous functions is $2^{\Bbb R}$.  This means that discontinuous functions cannot be defined on the set of rational numbers $Q$ for any finite dimension $D$.
 
-### Aperiodic maps cannot be defined on the rationals
-
-
-
-### Aperiodic trajectories are discontinuous, and cannot be defined on rationals
-
-
-
 
 
 
