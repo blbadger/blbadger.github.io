@@ -15,7 +15,7 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-## Nonlinear dynamics
+## Dynamics
 Dynamics studies change over time. Nonlinear systems are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
@@ -42,8 +42,8 @@ Dynamics studies change over time. Nonlinear systems are not additive, or in oth
 ![roots]({{https://blbadger.github.io}}newton-method/Newton046.png)
 
 
-## Boundaries of nonlinear systems
-Trajectories of nonlinear systems may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  Sufficiently near this border, predicting whether a trajectory stays bounded becomes infeasible because of this.
+## Boundaries 
+Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  Sufficiently near this border, predicting whether a trajectory stays bounded becomes infeasible because of this.
 
 ### [Julia sets](/julia-sets.md)
 
@@ -104,7 +104,7 @@ $$
 
 
 ## Physics
-The study of observable things. Not as simple as it sounds, however. 
+The study of observable things.
 
 ### [Entropy](/entropy.md)
 
