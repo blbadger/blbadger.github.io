@@ -44,14 +44,14 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 Aperiodic, bounded trajectories are sensitive to inital values such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a larger difference $\delta > \varepsilon$ in $\lbar f^n(x_0) - f^n(x_1) \rbar \; \exists n$. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
 
-Function $f$ is defined from $\Bbb R \to \Bbb R$.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. 
+Function $f$ is defined to be a continuous function from $\Bbb R \to \Bbb R$.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. 
 
 Theorem: $g$ for an arbitrary aperiodic map is discontinuous
 
-Proof: This falls out of 
+Proof: Suppose, for the sake of contradiction, that $g$ is continuous...
 
 
-### Aperiodic maps cannot be defined on $\Bbb Q$ (5)
+### The set of all aperiodic maps cannot be defined on $\Bbb Q$ (5)
 
 This results from (3) and (4).
 
