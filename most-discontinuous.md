@@ -42,14 +42,22 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 ### Aperiodic maps are discontinuous (4)
 
-Aperiodic, bounded trajectories are sensitive to inital values such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a larger difference $\delta > \varepsilon$ in $\lbar f^n(x_0) - f^n(x_1) \rbar \; \exists n$. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
+Aperiodic, bounded trajectories are sensitive to inital values such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a larger difference $\varepsilon^* > \varepsilon$ in $ \lbar f^n(x_0) - f^n(x_1) \rbar \; \exists n$. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
 
-Function $f$ is defined to be a continuous function from $\Bbb R \to \Bbb R$.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. 
+Function $f$ is defined to be a continuous function from $\Bbb R \to \Bbb R$.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. One $f$ yields a different $g$ for each composition $\circ f...$.  $g$ by definition is sensitive to initial values as above, because it reflects the final position after any number of compositions.
 
-Theorem: $g$ for an arbitrary aperiodic map is discontinuous
+Corrollary: $g$ for an arbitrary aperiodic map is discontinuous
 
-Proof: Suppose, for the sake of contradiction, that $g$ is continuous...
+Proof: Suppose, for the sake of contradiction, that $g$ is continuous.  By definition, for all points $x_a, x_b$ and for any finite $\epsilon > 0$, there exists a $\delta > 0$ such that
 
+$$
+\lbar g(x_a) - g(x_b) \rbar < \epsilon \\
+whenever \;  \lbar x_a - x_b \rbar < \delta 
+$$
+
+But if this was true of $g(x_a)$ and $g(x_b)$ for all $g$ then $g(x_a) - g(x_b) < \epsilon \; \forall \epsilon$ given a finite $\delta$ such that $\lbar x_a - x_b \rbar < \delta$.  But then if $x_a - x_b < \delta$ then $g(x_a)$ would stay arbitrarily close to $g(x_b)$ and $g(x)$ would not be sensitive to arbitrarily small changes in initial points $x_a, x_b...$.  This is a contradiction by the definition of $g$ above, and therefore $g(x)$ is discontinuous. $\square$
+
+Finally, note that we can define the map of an aperiodic, bounded function $f$ based on $g$ for an arbitrarily large number of compositions of $f$.  Taking $g$ as our aperiodic map, the result is that aperiodic, bounded phase space maps are discontinuous.
 
 ### The set of all aperiodic maps cannot be defined on $\Bbb Q$ (5)
 
