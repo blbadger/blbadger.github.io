@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-Dynamics studies change over time. Nonlinear systems are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+Dynamics is the mathematical approach to change over time. Nonlinear dynamics are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
@@ -75,7 +75,7 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
 $$
-f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \forall x_1, x_2 \; \exists n \; : f^(x_0) \neq f(x_1)
+f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \forall x_1, x_2 : \lbar x_1 - x_2 \rbar < \epsilon \; \exists n \; : \lbar f^n(x_1) - f^n(x_2) \rbar > \epsilon
 $$
 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
