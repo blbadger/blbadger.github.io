@@ -281,8 +281,7 @@ $$
 
 Now the true Peano curves are infinitely recursive, therefore this the distance between these points is 0 and therefore $p_1$ and $p_2$ map to the same point in two dimensional space, making the Peano curve a non-injective mapping.
 
-Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  This means that these Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on neural networks, see [here](/neural-networks.md).
-
+Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on machine learning methods such as neural networks, see [here](/neural-networks.md).
 
 ### Fractals: objects of multiple dimensions
 
