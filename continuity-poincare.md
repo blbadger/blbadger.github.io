@@ -1,8 +1,12 @@
 ## Continuity and aperiodicity
 
-For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, phase space portraits of ODEs are considered.  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page, a 'map' is synonymous with a 'function'.  Each heading is a theorem, with proof following (sometimes informal). 
+As seen with examples on [this page](https://blbadger.github.io/), movement from a continuous to a discrete-like map of continuous equations in phase space mapping $\Bbb R^2$ into $\Bbb R^2$ results in a shift from a point to a fractal attractor.  Note that these examples are only approximations of continuous maps, as in most cases one requires an infinite number of mathematical operations to produce a true continuous map of a nonlinear equation.  
 
-### The Poincare-Bendixon Theorem: continuous phase space functions in two dimensions are periodic
+There is a good reason for this shift: the Poincare-Bendixson theorem, which among other findings states that any attractor of a continuous map in two dimensions must be periodic: the attractor is either a point or a circuit line, corresponding to a zero- or one-dimensional attractor.  
+
+For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, phase space portraits of ODEs are considered.  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page but not elsewhere, a 'map' is synonymous with a 'function'. 
+
+### The Poincare-Bendixson Theorem: continuous phase space functions in two dimensions are periodic
 
 Here 'dimensions' are taken to be plane dimensions.
 
