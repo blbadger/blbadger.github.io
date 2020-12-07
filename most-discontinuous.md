@@ -96,13 +96,17 @@ then
 
 $$
 dx/dt = 1 + x^2 \\
-\frac{dx}{1+x^2} = dt \\
+\frac{dx}{1+x^2} = dt
+$$
+
+and integrating for time,
+
+$$
 \int \frac{dx}{1+x^2} = \int dt \\
-tan^-1(x) = t + C \\
+tan^{-1}(x) = t + C \\
 $$
 
 For the definition of $g$ as the composition of $f$ at finite time $t$, $g(t) = tan^-1(x) + C$ meaning that $g$ reaches $\pm \infty$ when $t \ge \pi/2$.  Note that $f(x_0) = 1$, meaning that an infinite value has been reached in finite time for compositions of this $f$. 
-
 
 
 
