@@ -95,8 +95,8 @@ $$
 ### [Discontinuous aperiodic maps](/most-discontinuous.md)
 
 $$
-{f_{continuous}} \sim \Bbb R \\
-{f} \sim 2^{\Bbb R}
+\{ f_{continuous} \} \sim \Bbb R \\
+\{ f \} \sim 2^{\Bbb R}
 $$
 
 ### [Additive transformations](/additivity-order.md)
