@@ -16,7 +16,9 @@ If continuous maps may form aperiodic attractors in three or more dimensions, wh
 
 A two dimensional curve's intersection with a line may be discontinuous as well. Why can't two dimensional continuous dynamical trajectories also be aperiodic?  The answer is that though the intersection may be discontinuous, it is restricted over time because trajectories are unique in phase space (ie lines cannot cross).
 
-Here is a geometric argument: 
+Here is a geometric argument: suppose a trajectory passes through an arbitrary area $A$ of phase space in $D=2$, perhaps in $R^2$.  
+
+
 
 ## Why discrete but not continuous maps in 2 dimensions exhibit fractal attractors
 
@@ -24,7 +26,9 @@ As seen with examples on [this page](https://blbadger.github.io/), movement from
 
 There is a good reason for this shift: the Poincare-Bendixson theorem, which among other findings states that any attractor of a continuous map in two dimensions must be periodic: the attractor is either a point or a circuit line, corresponding to a zero- or one-dimensional attractor.  
 
+For continuous maps, aperiodic attractors form in $n-2$ dimensions.  For the case of a 2-dimensional map considered by the Poincare-Bendixson theorem, this means that the aperiodic trajectory forms in 0 dimensions, ie at a point.  As a point is by definition a period 0 attractor in phase space, there is no aperiodic trajectory in 2 dimensional phase space.
 
+Note that this only applies to phase space in which every trajectory must be unique.  Boundary maps of continuous ODEs are unsrestricted are capable of forming fractals in 2 or fewer dimensions. 
 
 ### Discontinuous maps may be aperiodic in 1 or more dimension
 
