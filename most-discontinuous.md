@@ -1,3 +1,5 @@
+### Continuity and aperiodicity
+
 ### There are $2^{\Bbb Q} = \Bbb R$ continuous functions from $\Bbb Q \to \Bbb Q$ (1)
 
 This theorem has been established and may be found in texts on real analysis, and one proof will suffice here.
@@ -27,7 +29,7 @@ or the set of all continuous functions defined on $\Bbb Q$ is equivalent to the 
 Discontinuous trajectories in $Q$ may do more than increase or decrease by $\delta$ or else stay the same: the next point may be any element of $\Bbb Q$.   The size of the set of all discontinuous functions is therefore the size of the set of all subsets of continuous functions. As we have established that the set of all continuous functions from $\Bbb Q \to \Bbb Q$ is equivalent to $\Bbb R$, 
 
 $$
-(2^{\Bbb Q})^{\Bbb Q} = \Bbb R ^ {\Bbb R} = 2^{\Bbb R}
+(2^{\Bbb Q})^{\Bbb Q} = \Bbb 2 ^ {\Bbb R} = 2^{\Bbb R} = \Bbb R ^{\Bbb R}
 $$
 
 ### Discontinuous maps cannot be defined on the rationals (3)
@@ -42,11 +44,17 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 ### Aperiodic maps are discontinuous (4)
 
-Aperiodic, bounded trajectories are sensitive to inital values such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a larger difference $\varepsilon^* > \varepsilon$ in $ \lvert f^n(x_0) - f^n(x_1) \rvert \; \exists n$. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
+Sensitivity to inital values can be defined such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a difference $\Delta$ in $ \lvert f^n(x_0) - f^n(x_1) \rvert \; \exists n$ where $\Delta$ is not arbitrarily small. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
 
-Function $f$ is defined to be a continuous function from $\Bbb R \to \Bbb R$.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. One $f$ yields a different $g$ for each composition $\circ f...$.  $g$ by definition is sensitive to initial values as above, because it reflects the final position after any number of compositions.
+Function $f$ is defined to be a continuous function from $\Bbb R^3 \to \Bbb R^3$ such that future values do not match previous ones.  An example of $f$ could be an ordinary differential equation system for the Lorenz attractor.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. One $f$ yields one $g$ after an infinite number of compositions 
 
-Corrollary: $g$ for an arbitrary aperiodic map is discontinuous
+$$
+f \circ f \circ f \circ f...
+$$
+
+$g$ is necessarily sensitive to initial values, due to the definition of $f$. 
+
+Corollary: $g$ for an arbitrary aperiodic map is discontinuous
 
 Proof: Suppose, for the sake of contradiction, that $g$ is continuous.  By definition, for all points $x_a, x_b$ and for any finite $\epsilon > 0$, there exists a $\delta > 0$ such that
 
@@ -57,10 +65,48 @@ $$
 
 But if this was true of $g(x_a)$ and $g(x_b)$ for all $g$ then $\lvert g(x_a) - g(x_b) \rvert < \epsilon \; \forall \epsilon$ given a finite $\delta$ such that $\lvert x_a - x_b \rvert < \delta$.  But then if $x_a - x_b < \delta$ then $g(x_a)$ would stay arbitrarily close to $g(x_b)$ and $g(x)$ would not be sensitive to arbitrarily small changes in initial points $x_a, x_b...$.  This is a contradiction by the definition of $g$ above, and therefore $g(x)$ is discontinuous. $\square$
 
-Finally, note that we can define the map of an aperiodic, bounded function $f$ based on $g$ for an arbitrarily large number of compositions of $f$.  Taking $g$ as our aperiodic map, the result is that aperiodic, bounded phase space maps are discontinuous.
+Finally, note that we can define the map of an aperiodic, bounded function $f$ based on $g$ for an infinite number of compositions $f$.  Taking $g$ as our aperiodic map, the result is that aperiodic, bounded phase space maps are discontinuous.
 
-### The set of all aperiodic maps cannot be defined on $\Bbb Q$ (5)
+### Aperiodic, bounded maps cannot be defined on $\Bbb Q$ (5)
 
-This results from (3) and (4).
+This results from (3) and (4). 
+
+And now we conclude the (informal but hopefully accurate) theorem-proof portion of this page.
+
+### How a composition of continuous functions can be discontinuous
+
+Given a continuous function, say $f(x) = x^2$, the composition of this function with itself is 
+
+$$
+f \circ f =f(f(x)) = (x^2)^2 = x^4
+$$
+
+and $x^4$ is also continuous. Indeed any finite number of compositions of $f$ will be continuous.  But consider that there are an infinite number of compositions required for a map of an ordinary differential equation system over any finite length of time.  This means that no finite number of compositions of $f$, or an ability to show that this composition is continuous can convince us that $g$ is continuous.
+
+For a discontinous functions, an infinitely small change in the input does not correspond to an infinitely small change in the output but rather a certain finite amount.  For our composition map $g$, this finite change in the output is the result of multiplication of infinitely small changes in outputs of $f$ (as $f$ is continuous) by an infinite number (of compositions).  This is reminiscent of integral calculus, where the multiplication of an infinite number of infinitely small quantities yields a finite positive output. 
+
+This is conceptually the mirror image of the idea that nonlinear ordinary differential equations can lead to evaluation to infinity in a finite amount of time. An example of this is for the differential equation
+
+$$
+f(x) = 1 + x^2 \\
+x_0 = 0
+$$
+
+then
+
+$$
+dx/dt = 1 + x^2 \\
+\frac{dx}{1+x^2} = dt \\
+\int \frac{dx}{1+x^2} = \int dt \\
+tan^-1(x) = t + C \\
+$$
+
+For the definition of $g$ as the composition of $f$ at finite time $t$, $g(t) = tan^-1(x) + C$ meaning that $g$ reaches $\pm \infty$ when $t \ge \pi/2$.  Note that $f(x_0) = 1$, meaning that an infinite value has been reached in finite time.
+
+
+
+
+
+
 
 
