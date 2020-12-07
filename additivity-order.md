@@ -250,6 +250,16 @@ which results in a Sierpinski carpet.
 
 ![randomized sierpinski]({{https://blbadger.github.io}}misc_images/randomized_carpet.gif)
 
+### $\Bbb I$ is not closed under addition
+
+[Here](https://blbadger.github.io/aperiodic-irrationals.html) it is established for a certain class of dynamical equation that periodic maps exist in a bijective correspondence with the rational numbers, and that aperiodic maps correspond to irrational numbers $\Bbb I$.  What happens if we add together multiple aperiodic maps: can a periodic map ever result?  Defining addition on maps here could be simply a composition of one map with another.
+
+$\Bbb I$ is not closed under addition (or subtraction).  For example, $x_1 = 1 + \pi$ is irrational and $x_2 = 2 - pi$ is irrational but $y = x_1 + x_2 = 3$ which is rational.  By equivalence two aperiodic maps may be added together to yield a periodic one, according to the method of digits (see the link in the last paragraph).  
+
+But note that $\Bbb Q$ is closed under addition (and subtraction), meaning that two rationals will not add to yield an irrational.  This means that, given a set $S$ of numbers in $\Bbb R$, addition may convert elements of $S$ from irrational to rational.  For a set of trajectory maps $M$, addition may lead to the transformation of aperiodic trajectories to periodic.
+
+This suggests a deep ability of addition to affect the ordering of dynamical systems. 
+
 ### Aside: quantum mechanics and non-differentiable motion
  
 The wave-like behavior of small particles such as photons or electrons is one of the fundamnetal aspects of the physics of small objects.  Accordingly, the equations of quantum mechanics have their root in equations describing macroscopic waves of water and sound.  Now macroscopic waves are the result of motion of particles much smaller than the waves themselves.  As quantum particles are well-described by wave equations, it seems logical to ask whether or not these particles are actually composed of many smaller particles in the same way macroscopic waves are.  
