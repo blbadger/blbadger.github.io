@@ -145,11 +145,12 @@ for i in range(steps):
 
 print ('p1 = ' + '(' + str(X[-1]) + ',' + str(Y[-1]) + ')')
 print ('p2 = ' + '(' + str(X1[-1]) + ',' + str(Y1[-1]) + ')')
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 p1 = (-0.6195501560736936,-0.3176710683722944)
 p2 = (-0.6195501540914985,-0.3176710834485138)
 ```
-The final values are nearly identical.  Indeed, when the final cartesian distance between the shifted points shrinks to 0 as the initial distance does:
+The final values are very nearly identical.  Indeed, when the final cartesian distance between the shifted points shrinks to 0 as the initial distance does:
 
 ```python
 ...
@@ -163,7 +164,9 @@ The final values are nearly identical.  Indeed, when the final cartesian distanc
   
  for i in range(len(initial_distance)):
 	print ('initial = {}'.format(initial_distance[i]) + '    ' + 'final = {:.3e}'.format(final_distance[i]))
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(output)
 initial = 0.1    final = 1.957e-01
 initial = 0.01    final = 1.161e-02
 initial = 0.001    final = 1.485e-03
@@ -175,17 +178,29 @@ initial = 1e-08    final = 1.521e-08
 initial = 1e-09    final = 1.522e-09
 initial = 1e-10    final = 1.528e-10
 ```
-Thus this map is not sensitive to initial conditions for these values. 
-
-![insensitive]({{https://blbadger.github.io}}/misc_images/pendulum_sensitivity.png)
-
-In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) at $x_0 = a = -1.4 b = 1.7, c = 1.0, d = 0.7, \; \Delta t = 1.35$ (for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.75000001, 8.2)$ results in 
+and to plot these points on a log/log scale, 
 
 ```python
--2.5768848783588347 18.282751712210164
-0.08136766347153969 1.0406297128105297
+fig, ax = plt.subplots()
+ax.plot(initial_distance, final_distance)
+ax.set(xlabel='Initial distance', ylabel='Final distance')
+ax.set_yscale('log')
+ax.set_xscale('log')
+plt.show()
 ```
-If we shrink the initial distance towards 0, the final distance does not shrink.
+
+![pendulum insensitive]({{https://blbadger.github.io}}/misc_images/pendulum_sensitivity.png)
+
+Thus the pendulum map is not sensitive to initial conditions for these values, implying periodicity (which we have already seen in the phase space diagrams above).
+
+In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) for $a = -1.4 b = 1.7, c = 1.0, d = 0.7$ and $ \Delta t = 1.35$ (iterated for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.750000001, 8.2)$ results in a significant change in final point location
+
+```python
+p1 = (10.98448, 7.96167)
+p2 = (11.03945, 8.26257)
+```
+
+If we shrink the distance between initial points to 0, the distance between final points does not decrease.
 
 ```python
 initial = 0.1    final = 3.775e-01
@@ -199,9 +214,10 @@ initial = 1e-08    final = 3.059e-01
 initial = 1e-09    final = 3.143e-01
 initial = 1e-10    final = 4.002e-01
 ```
-![insensitive]({{https://blbadger.github.io}}/misc_images/clifford_sensitivity.png)
 
+![clifford sensitive]({{https://blbadger.github.io}}/misc_images/clifford_sensitivity.png)
 
+This means that the Clifford attractor is sensitive to initial values, implying that it is aperiodic for these parameters. 
 
 ### Pendulum map in the Clifford system
 
