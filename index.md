@@ -99,6 +99,12 @@ $$
 \{ f \} \sim 2^{\Bbb R}
 $$
 
+### Poincare-Bendixson and aperiodic trajectory dimension
+
+$$
+D=2 \implies \forall f \; \exists n, k, n \neq k : f_c^n(x) = f_c^k(x)
+$$
+
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
@@ -115,6 +121,7 @@ The study of observable things.
 ### [Entropy](/entropy.md)
 
 ![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
+
 
 ### [3 body problem](/3-body-problem.md)
 
@@ -167,7 +174,7 @@ n!_k \to ?
 $$
  	
 ## High voltage 
-High voltage engineering projects which make for pretty screensavers and light shows.
+High voltage engineering projects: follow the links for more on arcs and plasma.
 
 ### [Tesla coil](/tesla-coils.md)
 
@@ -177,6 +184,7 @@ High voltage engineering projects which make for pretty screensavers and light s
 ### [Fusor](/fusor.md)
 
 ![fusor image]({{https://blbadger.github.io}}fusor_images/fusor-1-1.png)
+
 
 ### [About Me](/about-me.md)
 
