@@ -99,10 +99,10 @@ $$
 \{ f \} \sim 2^{\Bbb R}
 $$
 
-### Poincare-Bendixson and aperiodic trajectory dimension
+### [Poincare-Bendixson and dimension](\continuity-poincare.md)
 
 $$
-D=2 \implies 
+D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
