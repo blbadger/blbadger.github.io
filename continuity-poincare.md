@@ -1,10 +1,9 @@
-<head>
-  Continuity and Poincare-Bendixson
-</head>
+
+### Continuity and Poincare-Bendixson
 
 For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, continuous phase space portraits of differentiable ODEs are considered, so the trajectories of such systems are necessarily differentiable (as they are defined on differential equations).  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page but not elsewhere, a 'map' is synonymous with a 'function'. 'dimensions' are taken to be plane dimensions.
 
-## Why discrete but not continuous maps in 2 dimensions exhibit fractal attractors
+### Why discrete but not continuous maps in 2 dimensions exhibit fractal attractors
 
 As seen with examples on [this page](https://blbadger.github.io/), movement from a continuous to a discrete-like map of continuous equations in phase space mapping $\Bbb R^2$ into $\Bbb R^2$ results in a shift from a point to a fractal attractor.  Note that these examples are only approximations of continuous maps, as in most cases one requires an infinite number of mathematical operations to produce a true continuous map of a nonlinear equation.  
 
@@ -23,7 +22,7 @@ Here is a geometric argument: suppose a bounded trajectory passes through an arb
 
 Whichever of $a$ or $a'$ the trajectory enters, it is unable to cross into the other if moving through $A$.  This is not necessarily the case if the trajectory exits $A$ and then re-enters.  As the boundary region $R$ of the trajectory is finite by definition, exit and re-entry into $R$ is impossible.  
 
-We can fill $R$ with areas $A_1, A_2, A_3 ...$ none of which are necessarily congruent with $A$.  Some of $A_1, A_2, A_3 ...$ necessarily share a border with $R$ because the latter has finite area.  At these areas, the choice $a, a'$ restricts all future trajectory locations because exit from $R$ is not allowed.  Now note that the trajectory is defined as continuous and differentiable, meaning that if $A$ is small enough then the trajectory path approximates a line.  Therefore (1) is general to any arbitrary point in $R$, and future trajectories are restricted to either $a$ or $ a'$ and $R$ shrinks.  As $t \to infty$, $R \to 0$ and a trajectory's future values are arbitrarily close to previous ones, meaning that the trajectory is periodic.
+We can fill $R$ with areas $A_1, A_2, A_3 ...$ none of which are necessarily congruent with $A$.  Some of $A_1, A_2, A_3 ...$ necessarily share a border with $R$ because the latter has finite area.  At these areas, the choice $a, a'$ restricts all future trajectory locations because exit from $R$ is not allowed.  Now note that the trajectory is defined as continuous and differentiable, meaning that if $A$ is small enough then the trajectory path approximates a line.  Therefore (1) is general to any arbitrary point in $R$, and future trajectories are restricted to either $a$ or $ a'$ and $R$ shrinks.  As $t \to \infty$, $R \to 0$ and a trajectory's future values are arbitrarily close to previous ones, meaning that the trajectory is periodic.
 
 To see why this theorem does not apply to instances where $D=3$, observe that if another dimension is present, a bounded trajectory is not limited to $a$ or $a'$ but can exit the plane and re-enter an abitrary number of times in either.  This means that $A$ is not restricted over time, and therefore the trajectory is not necessarily periodic. 
 
