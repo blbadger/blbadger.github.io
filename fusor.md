@@ -48,7 +48,7 @@ Fusor contain plasma with an electrostatic grid pair.  Here, the outer 'grid' is
 
 Note that one should only use glass that will not shatter if exposed to a temperature gradient for any kind of fusor! Borosilicate comes under various brand names and is far more resistance to temperature gradient-induced damage than standard silica glass. 
 
-Borosilicate is relatively transparent to UV ratiation, and as a fusor running a the above voltages can put out quite a lot of this it is necessary to add shielding that is opaque to UV.  Most clear plastics fulfill this requirement, although it is important to check the material used to be sure.  I used a polycarbonate shield which doubled as a safety barrier to mitigate any effects of chamber implosion.  The chamber never did fail, but one does not want flying shards of glass going everywhere.
+Borosilicate is relatively transparent to UV ratiation, and as a fusor running a the above voltages can put out quite a lot of this it is necessary to add shielding that is opaque to UV.  Most clear plastics fulfill this requirement, although it is important to check the material used to be sure.  I used a polycarbonate shield which doubled as a safety barrier to mitigate any effects of chamber implosion.  The chamber never did fail, but one does not want flying shards of glass going everywhere.  Also keep in mind that x-ray radiation becomes an issue for higher potentials, as borosilicate is quite transparent to that as well. 
 
 
 
