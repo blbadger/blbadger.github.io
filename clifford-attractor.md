@@ -230,7 +230,7 @@ Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
 
-The finial position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, also called strange attractors.
+The finial position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
 
 ### In what way is this mapping semi-continuous?
 
