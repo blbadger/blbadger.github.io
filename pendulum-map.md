@@ -177,7 +177,7 @@ initial = 1e-10    final = 1.528e-10
 ```
 Thus this map is not sensitive to initial conditions for these values. 
 
-[insensitive](/misc_images/pendulum_sensitivity.png)
+![insensitive]({{https://blbadger.github.io}}/misc_images/pendulum_sensitivity.png)
 
 In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) at $x_0 = a = -1.4 b = 1.7, c = 1.0, d = 0.7, \; \Delta t = 1.35$ (for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.75000001, 8.2)$ results in 
 
@@ -199,6 +199,8 @@ initial = 1e-08    final = 3.059e-01
 initial = 1e-09    final = 3.143e-01
 initial = 1e-10    final = 4.002e-01
 ```
+![insensitive]({{https://blbadger.github.io}}/misc_images/clifford_sensitivity.png)
+
 
 
 ### Pendulum map in the Clifford system
