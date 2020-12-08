@@ -42,9 +42,13 @@ Note what this implies: as potential increases, the number of electrons decrease
 
 ### Fusor vacuum chamber, power off
 
-Fusor contain plasma with an electrostatic grid pair.  Here, the outer 'grid' is the steel vacuum coupling visible on the left and the inner grid is made of solid copper, visible front and center.  The chamber is approximately 7 inches in length and uses thick borosilicate glass for heat resistance, and stainless steel couplings designed for use in high vacuum are attached via two-part epoxy to the ends of the borosilicate chamber.  The red tube on the left travels to the vacuum pump.  I experimented with a surplus high vacuum single stage pump (rated at 5 microns) as well as a standard HVAC single stage pump rated at 40 microns.  The latter was used for most of the ignitions that are imaged here. 
+Fusor contain plasma with an electrostatic grid pair.  Here, the outer 'grid' is the steel vacuum coupling visible on the left and the inner grid is made of solid copper, visible front and center.  The chamber is approximately 7 inches in length and uses thick borosilicate glass (to prevent implosion from the pressure difference accross the chamber), and stainless steel couplings designed for use in high vacuum are attached via two-part epoxy to the ends of the borosilicate chamber.  The red tube on the left travels to the vacuum pump.  I experimented with a surplus high vacuum single stage pump (rated at 5 microns) as well as a standard HVAC single stage pump rated at 40 microns.  The latter was used for most of the ignitions that are imaged here. 
 
 ![vacuum chamber assembly]({{https://blbadger.github.io}}fusor_images/fusor-3.png)
 
- Note that one should only use glass that will not shatter if exposed to a temperature gradient for any kind of fusor! Borosilicate comes under various brand names and is far more resistance to temperature gradient-induced damage than standard silica glass.
+Note that one should only use glass that will not shatter if exposed to a temperature gradient for any kind of fusor! Borosilicate comes under various brand names and is far more resistance to temperature gradient-induced damage than standard silica glass. 
+
+Borosilicate is relatively transparent to UV ratiation, and as a fusor running a the above voltages can put out quite a lot of this it is necessary to add shielding that is opaque to UV.  Most clear plastics fulfill this requirement, although it is important to check the material used to be sure.  I used a polycarbonate shield which doubled as a safety barrier to mitigate any effects of chamber implosion.  The chamber never did fail, but one does not want flying shards of glass going everywhere.
+
+
 
