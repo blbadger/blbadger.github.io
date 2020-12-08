@@ -102,7 +102,8 @@ $$
 ### Poincare-Bendixson and aperiodic trajectory dimension
 
 $$
-D=2 \implies \forall f \; \exists n, k, n \neq k : f_c^n(x) = f_c^k(x)
+D=2 \implies 
+\forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
 ### [Additive transformations](/additivity-order.md)
