@@ -87,7 +87,7 @@ From $\Delta t = 0.9 \to \Delta t = 0.999$,
 ![spiral image]({{https://blbadger.github.io}}pendulum_map/swirl1.gif)
 
 
-###  Pendulum maps with 1-dimensional attractors have fractal wave patterns
+###  Eventually periodic pendulum map 
 
 Take $\Delta t$ to be 0.04087.  Now let's zoom in on the upper part of the map:
 
@@ -96,15 +96,114 @@ Take $\Delta t$ to be 0.04087.  Now let's zoom in on the upper part of the map:
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom3.png)
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_0.0487t_zoom4.png)
 
-Notice that more and more waves are visible as the scale decreases: the wave pattern is a fractal.  At a small spatial scale, many waves are seen over a very small in $\Delta t=0.040865 \to \Delta t=0.040877$:
+Notice that more and more waves are visible as the scale decreases. At a small spatial scale, many waves are seen over a very small in $\Delta t=0.040865 \to \Delta t=0.040877$:
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/pendulum_zoom.gif)
 
 Waves are not observed for the linear map at any $\Delta t$ size (here at 0.9999):
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/swirl_map_zoom.png)
 
-### Reduction of a Clifford system to the pendulum map
+Even the the nonlinear pendulum system is eventually periodic: the attractor is a 1-dimensional circle in phase space for the parameters chosen above. Because the system is eventually periodic, it should not be sensitive to initial values.  This can be checked for two values shifted by an  $0.00000001$ along the x-axis as follows:
 
-There are a number of similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems (as seen above).  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
+```python
+#! python3
+
+# import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+plt.style.use('dark_background')
+
+def pendulum_phase_map(x, y, a=0.2, # coefficient of friction
+							 b=4.9 # g/L, 9.8 / 2
+							):
+	dx = y
+	dy = -a*y - b*np.sin(x)
+	return dx, dy
+
+# parameters
+steps = 1000000
+delta_t = 0.043
+
+# initialization
+X = np.zeros(steps + 1)
+Y = np.zeros(steps + 1)
+X1 = np.zeros(steps + 1)
+Y1 = np.zeros(steps + 1)
+
+X[0], Y[0] = 0.00000001, 1
+X1[0], Y1[0] = 0, 1
+
+# differential equation model
+for i in range(steps):
+	dx, dy = pendulum_phase_map(X[i], Y[i])
+	X[i+1] = X[i] + dx * delta_t
+	Y[i+1] = Y[i] + dy * delta_t
+
+for i in range(steps):
+	dx, dy = pendulum_phase_map(X1[i], Y1[i])
+	X1[i+1] = X1[i] + dx * delta_t
+	Y1[i+1] = Y1[i] + dy * delta_t
+
+print ('p1 = ' + '(' + str(X[-1]) + ',' + str(Y[-1]) + ')')
+print ('p2 = ' + '(' + str(X1[-1]) + ',' + str(Y1[-1]) + ')')
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+p1 = (-0.6195501560736936,-0.3176710683722944)
+p2 = (-0.6195501540914985,-0.3176710834485138)
+```
+The final values are nearly identical.  Indeed, when the final cartesian distance between the shifted points shrinks to 0 as the initial distance does:
+
+```python
+...
+	for i in range(steps):
+		dx, dy = pendulum_phase_map(X1[i], Y1[i])
+		X1[i+1] = X1[i] + dx * delta_t
+		Y1[i+1] = Y1[i] + dy * delta_t
+
+	initial_distance.append(float('0.' + j*'0' + '1'))
+	final_distance.append(((X[-1] - X1[-1])**2 + (Y[-1] - Y1[-1])**2)**0.5)
+  
+ for i in range(len(initial_distance)):
+	print ('initial = {}'.format(initial_distance[i]) + '    ' + 'final = {:.3e}'.format(final_distance[i]))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+initial = 0.1    final = 1.957e-01
+initial = 0.01    final = 1.161e-02
+initial = 0.001    final = 1.485e-03
+initial = 0.0001    final = 1.517e-04
+initial = 1e-05    final = 1.520e-05
+initial = 1e-06    final = 1.521e-06
+initial = 1e-07    final = 1.521e-07
+initial = 1e-08    final = 1.521e-08
+initial = 1e-09    final = 1.522e-09
+initial = 1e-10    final = 1.528e-10
+```
+Thus this map is not sensitive to initial conditions for these values. 
+
+[insensitive](/misc_images/pendulum_sensitivity.png)
+
+In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) at $x_0 = a = -1.4 b = 1.7, c = 1.0, d = 0.7, \; \Delta t = 1.35$ (for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.75000001, 8.2)$ results in 
+
+```python
+-2.5768848783588347 18.282751712210164
+0.08136766347153969 1.0406297128105297
+```
+If we shrink the initial distance towards 0, the final distance does not shrink.
+
+```python
+initial = 0.1    final = 3.775e-01
+initial = 0.01    final = 3.060e-01
+initial = 0.001    final = 3.097e-01
+initial = 0.0001    final = 3.042e-01
+initial = 1e-05    final = 4.195e-01
+initial = 1e-06    final = 1.138e-01
+initial = 1e-07    final = 4.368e-02
+initial = 1e-08    final = 3.059e-01
+initial = 1e-09    final = 3.143e-01
+initial = 1e-10    final = 4.002e-01
+```
+
+
+### Pendulum map in the Clifford system
+
+There are a number of similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems.  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
 $$
 x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
@@ -118,7 +217,7 @@ a=-0.3, b=0.2, c=0.5, d=0.3, \Delta t = 0.9 \\
 (x_0, y_0) = (90, 90)
 $$
 
-We have a (slightly oblong) pendulum map!
+We have a (slightly oblong) pendulum map!  
 
 ![clifford pendulum image]({{https://blbadger.github.io}}pendulum_map/clifford_pendulum.png)
 
