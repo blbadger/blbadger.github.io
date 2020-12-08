@@ -99,7 +99,7 @@ $$
 \{ f \} \sim 2^{\Bbb R}
 $$
 
-### [Poincare-Bendixson and dimension](\continuity-poincare.md)
+### [Poincare-Bendixson and dimension](/continuity-poincare.md)
 
 $$
 D=2 \implies \\
