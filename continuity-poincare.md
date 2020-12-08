@@ -1,4 +1,6 @@
-
+<head>
+  Continuity and Poincare-Bendixson
+</head>
 
 For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, continuous phase space portraits of differentiable ODEs are considered, so the trajectories of such systems are necessarily differentiable (as they are defined on differential equations).  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page but not elsewhere, a 'map' is synonymous with a 'function'. 'dimensions' are taken to be plane dimensions.
 
@@ -37,9 +39,9 @@ Note that this only applies to phase space in which every trajectory must be uni
 
 In other pages on this site, it was made apparent that moving from a continuous to a discontinuous map is capable of transforming a periodic trajectory to an aperiodic one.  From the Poincare-Bendixson theorem, it is clear why this is the case: a restriction to any space as seen above is impossible if the trajectory may simply discontinuously pass through (jump through) previous trajectories.  
 
-Careful observation of discontinuous 1-dimensional or 2-dimensional maps shows that trajectories cross each other if the map is aperiodic, or at least they would if the trajectories were continuous.  An example of this was seen for the [clifford attractor](https://blbadger.github.io/clifford-attractor.html), where the map became aperiodic precisely when the trajectories crossed each other.
+Careful observation of discontinuous 1-dimensional or 2-dimensional maps shows that trajectories cross each other if the map is aperiodic, or at least they would if the trajectories were continuous.  The meaning here is not that one point in phase space heads in two directions (as this would no longer be specified by a function) but instead that if one connects each individual point in succession according the the order in which they are plotted, the connecting lines must cross each other if the map is aperiodic.  An example of this was seen for the [clifford attractor](https://blbadger.github.io/clifford-attractor.html), where the map became aperiodic precisely when the trajectories crossed each other.
 
-On the other hand, the [pendulum map](https://blbadger.github.io/pendulum-map.html) iterated discontinuously is eventually periodic.  This is because the pendulum map trajectories do not cross each other, meaning that the available phase space shrinks as time passes.  This means that this map is not aperiodic (for all time), and thus is insensitive to initial values.
+On the other hand, the [pendulum map](https://blbadger.github.io/pendulum-map.html) iterated discontinuously is eventually periodic.  This is because the pendulum map trajectories do not cross each other. Therefore the available phase space shrinks as time passes.  This means that this map is not aperiodic (for all time), and thus is insensitive to initial values.
 
 
 
