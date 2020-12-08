@@ -327,12 +327,16 @@ For larger polynomials, areas of slow convergence are exhibited.  For $z^{13}-z-
 
 ![Halley]({{https://blbadger.github.io}}/newton-method/halley_x^13-x-1.png)
 
+and incrementing $z^{13}-z-1$ to $z^{14}-z-1$, 
+
+{% include youtube.html id='9xl0BWtcc1Y' %}
+
 And similar shapes to that found for Newton's method are also present.  For $z^{9.067}-z-1$, 
 
 ![Halley]({{https://blbadger.github.io}}/newton-method/halley_x^9.067-x-1.png)
 
-and incrementing $z^{13}-z-1$ to $z^{14}-z-1$, 
+and incrementing $z^7-z-1$ to $z^8-z-1$,
 
-{% include youtube.html id='9xl0BWtcc1Y' %}
+{% include youtube.html id='-Kbq3EJploo' %}
 
 
