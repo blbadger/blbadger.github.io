@@ -113,8 +113,8 @@ import matplotlib.pyplot as plt
 plt.style.use('dark_background')
 
 def pendulum_phase_map(x, y, a=0.2, # coefficient of friction
-							 b=4.9 # g/L, 9.8 / 2
-							):
+b=4.9 # g/L, 9.8 / 2
+):
 	dx = y
 	dy = -a*y - b*np.sin(x)
 	return dx, dy
