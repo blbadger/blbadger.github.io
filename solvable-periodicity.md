@@ -20,7 +20,7 @@ $$
 
 To be solvable, an algorithm of finite length must be able to map all of the countably infinite inputs.  After a certain number of $n$ inputs, the decision procedure for $i_0$ must be identical to the decision procedure $\mathscr P$ for $i_{0+n}$ or else the algorithm would be of infinite size, meaning that it would be unusable as it would never halt when applied to a Turing machine.  Thus $\mathscr P$ repeats after a finite interval $n$ between inputs.  
 
-As the inputs are countable, they can be arranged in sequence.  Taking the sequence of decision procedures $\mathscr D$ for all inputs, the function mapping an input $\{ i_0, i_1, i_2 ... \}$ to its decision procedure $ \{ \mathscr D_0, \mathscr D_1, \mathscr D_2 \}$ defined as $f(i)$ can be viewed as a discrete dynamical system.  For all decidable problems, this functions is periodic for soome ordering of $i$.
+As the inputs are countable, they can be arranged in sequence.  Taking the sequence of decision procedures $\mathscr D$ for all inputs, the function mapping an input $\{ i_0, i_1, i_2 ... \}$ to its decision procedure $ \{ \mathscr D_0, \mathscr D_1, \mathscr D_2 \}$ defined as $f(i)$ can be viewed as a discrete dynamical system.  For all decidable problems, this function is periodic for some ordering of $i$.
 
 ### What does it mean that most problems are unsolvable, or that most $\mathfrak t, \mathfrak f$ predicates are undecidable?
 
@@ -30,7 +30,7 @@ On the other hand, consider this: in the real world, many problems appear to be 
 
 Thus mathematics would be expected to reflect something about the natural world.  Now if all mathematical problems were solvable, it would not seem that this study was an accurate description of the world around us.  If a system with axioms as simple as arithmetic could have unsolvable problems, there is hope that even something as historically removed from application as number theory reflects something very important about 
 
-### Addition-only or multiplication-only arithmetics are decidable
+### Addition-only or multiplication-only number theories are decidable
 
 ### Examples of probably-undecidable number theoretic statements
 
