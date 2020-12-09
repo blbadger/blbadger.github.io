@@ -106,6 +106,12 @@ D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
+### [Decidable problems are periodic](/solvable-periodicity.md)
+
+$$
+\{i_0 \to O_0, i_1 \to O_1, i_2 \to O-2 ...\}
+$$
+
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
