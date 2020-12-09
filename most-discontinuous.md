@@ -108,7 +108,7 @@ $$
 
 For the definition of $g$ as the composition of $f$ at finite time $t$, $g(t) = tan^{-1}(x) + C$ meaning that $g$ reaches $\pm \infty$ when $t \ge \pi/2$.  Note that $f(x_0) = 1$, meaning that an infinite value has been reached in finite time for compositions of this $f$. 
 
-### Smale's horseshoe map is discontinuous
+### Smale's horseshoe map
 
 Stephen Smale introduced the horseshoe map to describe a common aperiodic attractor topology.  This model maps a square into itself such that the surface is stretched, folded and then re-stretched over and over like a baker's dough.  The horseshoe map is everywhere discontinuous as points arbitrarily close together to start are separated (the surface is stretched at each iteration and there are infinite iterations) such that there is a distance greater than some $e > 0$ between them.  The process of folding prevents divergence to infinity.  
 
