@@ -109,7 +109,7 @@ $$
 ### [Decidable problems are periodic](/solvable-periodicity.md)
 
 $$
-\{i_0 \to O_0, i_1 \to O_1, i_2 \to O-2 ...\}
+\{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
 $$
 
 ### [Additive transformations](/additivity-order.md)
