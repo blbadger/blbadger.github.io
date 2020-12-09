@@ -24,3 +24,7 @@ A bijective mapping from two dimensions to one is necessarily discontinuous (a p
 Space-filling Hilbert or Peano curves require an infinite number of recursions.  Infinitely recursive functions are undecidable, and therefore space-filling curves are undecidable.  
 
 Dimension-changing maps require an infinite number of recursions as well, and therefore dimension-changing maps are undecidable. 
+
+For more on decidability, see [here](/solvable-periodicity.md).
+
+### 
