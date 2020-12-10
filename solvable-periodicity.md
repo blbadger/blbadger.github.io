@@ -89,3 +89,37 @@ $$
 
 All are as yet unproved and yet seem true, at least they are true for all inputs observed thus far.
 
+
+### Computability and the axiom of choice in Banach-Tarski
+
+Cantor's set theory has become foundational for many areas of mathematics, but in its original form (naive set theory) the theory was observed to harbor contradictions that were unsatisfactory to mathematicians at the turn of the 20th century.  Axiomatized set theory was an attempt to prevent many such contradictions, and did this by replacing intuitive notions of 'collections' with rules for what sets could be composed of.  
+
+One particular axiom of interest is the axiom of choice, which states that the Cartesian product of two aritrary non-empty sets is non-empty. Equivalently, there exists some function to find any value of choice from even an infinitely large set.  This axiom was controversial when first introduced but is not widely accepted. The axiom is similar to the law of the excluded middle detailed at the top of this page, in that one seems to be able to search through an infinite set with a function to find an element just as with the law of the excluded middle, one of $\mathfrak t, \mathfrak f$ is chosen even if the function domain is infinte (meaning that we cannot practically test every element).
+
+The axiom of choice gives rise to an interesting, and somewhat counterintuitive idea: the Banach-Tarski theorem, which states that an arbitrary set-theoretic sphere of infinite points can be decomposed and recomposed into two spheres of the same 'size'.  The idea that one ball can be split up and the re-formed into two of the sme size is also called the pea and the sun paradox, because with repeated applications of Banach-Tarski a small pea could be multiplied to the size of a large object like the sun.
+
+A reconciliation with this paradox may be had if one observes that the function required to perform the dissassembly and reassembly of spheres in Banach-Tarski is uncomputable.  This follows from how the deconstruction and reconstruction is performed: it is an infinite recursive (tree) algorithm, and therefore not computable if we accept the Church-Turing thesis (or if we are reasonable people in general). 
+
+If the Church-Turing thesis is correct and our somewhat undefined notion of computability is captured by Turing machines (or by general recursive functions), then the Banach-Tarski theorem is paradoxical in part because it relies on functions that we cannot compute.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
