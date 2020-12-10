@@ -21,8 +21,8 @@ $$
 Where $z_n$ (and $z_{n+a}$ for any $a$ and $r$ are points in the complex plane:
 
 $$
-z_n = x + yi \\
-r = x + yi
+z_n = x_0 + y_0i \\
+r = x_1 + y_1i
 $$
 
 Now which points remain bounded and which head towards infinity?  Let's try fixing $r$ in place, say at $3$ and seeing what happens to different starting points in the complex plane after iterations of (3).  
