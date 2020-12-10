@@ -29,7 +29,7 @@ or the set of all continuous functions defined on $\Bbb Q$ is equivalent to the 
 Discontinuous trajectories in $Q$ may do more than increase or decrease by $\delta$ or else stay the same: the next point may be any element of $\Bbb Q$.   The size of the set of all discontinuous functions is therefore the size of the set of all subsets of continuous functions. As we have established that the set of all continuous functions from $\Bbb Q \to \Bbb Q$ is equivalent to $\Bbb R$, 
 
 $$
-(2^{\Bbb Q})^{\Bbb Q} = \Bbb 2 ^ {\Bbb R} = 2^{\Bbb R} = \Bbb R ^{\Bbb R}
+{2^{\Bbb Q}}^{\Bbb Q} = 2^{\Bbb R} = \Bbb R ^{\Bbb R}
 $$
 
 ### Discontinuous maps cannot be defined on the rationals (3)
