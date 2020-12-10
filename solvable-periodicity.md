@@ -23,9 +23,9 @@ Theorem (1): Most functions are not effectively computable
 Proof: There are an uncountably infinite number of 1-place number theoretic functions on a countably infinite number of inputs.  Suppose that we could enumerate all such functions in a list $f_0(a), f_1(a), f_2(a), ...$.  Each function has the domain of the natural numbers $0, 1, 2, 3, ...$ so we can list them as follows:
 
 $$
-f_0(a): f_0(0), \; f_0(1), \; f_0(2), ...
-f_1(a): f_1(0), \; f_1(1), \; f_1(2), ...
-f_2(a): f_2(0), \; f_2(1), \; f_2(2), ...
+f_0(a): f_0(0), \; f_0(1), \; f_0(2), ... \\
+f_1(a): f_1(0), \; f_1(1), \; f_1(2), ... \\
+f_2(a): f_2(0), \; f_2(1), \; f_2(2), ... \\
 ...
 $$
 
@@ -49,7 +49,13 @@ As the inputs are countable, they can be arranged in sequence.  Taking the seque
 
 Theorem (2): For all decidable problems, $f(i)$ is periodic for some ordering of $i_0, i_1, i_2 ...$.
 
-Proof: Suppose that $f(i)$ is computable but is not periodic for any ordering of $i_1, i_2, i_3 ...$.  Then $\forall n, k : n \neq k, \; \mathscr D_n \neq \mathscr D_k$.  Therefore there are a countably infinite number of elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ meaning that $f(i)$ is countably infinite.  Thus $f(i)$ would be uncomputable, but this contradicts the definition of computability.  Therefore $f(i)$ is periodic for some ordering of $i_1, i_2, i_3 ...$ (which is equivalent for stating that $f(i)$ is periodic for some ordering of its elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ ).  
+Proof: Suppose that $f(i)$ is computable but is not periodic for any ordering of $i_1, i_2, i_3 ...$.  Then
+
+$$
+\forall n, k : n \neq k, \; \mathscr D_n \neq \mathscr D_k
+$$
+
+Therefore there are a countably infinite number of elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ meaning that $f(i)$ is countably infinite.  Thus $f(i)$ would be uncomputable, but this contradicts the definition of computability.  Therefore $f(i)$ is periodic for some ordering of $i_1, i_2, i_3 ...$ (which is equivalent for stating that $f(i)$ is periodic for some ordering of its elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ ).  
 
 Thus $f(i)$ gives us the function mapping each computable function (or decidable predicate or solvable problem) to one discrete dynamical equation.  
 
@@ -101,23 +107,6 @@ The axiom of choice gives rise to an interesting, and somewhat counterintuitive 
 A reconciliation with this paradox may be had if one observes that the function required to perform the dissassembly and reassembly of spheres in Banach-Tarski is uncomputable.  This follows from how the deconstruction and reconstruction is performed: it is an infinite recursive (tree) algorithm, and therefore not computable if we accept the Church-Turing thesis (or if we are reasonable people in general). 
 
 If the Church-Turing thesis is correct and our somewhat undefined notion of computability is captured by Turing machines (or by general recursive functions), then the Banach-Tarski theorem is paradoxical in part because it relies on functions that we cannot compute.  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
