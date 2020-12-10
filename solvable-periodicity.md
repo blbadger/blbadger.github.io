@@ -1,4 +1,6 @@
-### Decadiability and periodicity
+### Decidability and periodicity
+
+*This page is under construction*
 
 [Elsewhere](https://blbadger.github.io/aperiodic-irrationals.html) we have seen that the set of all periodic dynamical systems (albeit systems as defined in a specific manner) is equinumerous with the set of solvable problems.  The set of all aperiodic systems was found to be more numerous, instead equivalent to the size of the set of all unsolvable problems.  This page will investigate a direct equivalence between the the members of the sets of solvable problems and periodic maps to arrive at a stronger conclusion: equality (with substitution) between these sets, rather than equivalence.
 
