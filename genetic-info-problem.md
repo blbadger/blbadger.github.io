@@ -91,7 +91,7 @@ $$
 
 and then have a system that computes each iteration.  In text, this is only 25 bytes, but gives us the incredibly information-rich maps of the set.  In this sense, an extremely complicated structure may be stored in with a miniscule amount of information.
 
-### Traits of nonlinear dynamical systems in proteins?
+### Protein folding as a nonlinear dynamical systems 
 
 To the eye of someone used to thinking of the genome as a collection of genes that are 'read' during protein transcription, the idea that the genome does not directly encode information yielding a three dimensional product may be counterintuitive.  After all, this seems to be how proteins are made: the genetic code is read out almost like a tape by RNA polymerase, which then is read out (again sequentially) by the ribosome.  The three-nucleotide genetic code for each amino acid has been deciphered and seems to point us to the idea that the genome is indeed a source of information that is stored as blueprints, or as a direct encoding.  Is there any evidence for the idea that information in genetic are stored as instead instructions for nonlinear dynamical systems?  
 
@@ -107,10 +107,9 @@ Second, protein folding is sensitive to initial conditions. A chemically signifi
 
 But note that this sensitivity does not seem to extend to the initial bond angles for a given amino acid chain, only to the amino acids found in the chain itself (otherwise thermal motion to identical chains would be expected to yield different folded conformations).  In this way protein folding resembles the formation of a strange attractor like the [Clifford attractor](clifford-boundary.md) where many starting points yield one final outcome, but these starting points are bounded by others that result in a far different outcome.
 
-Finally, protein folding is difficult to predict: given a sequence of DNA, one can be fairly certain as to what mRNA and thus what amino acid chain will be produced (ignoring splicing) even if that sequence of DNA has never been seen before.  But a similar task for predicting a protein's folded structure based on its
-amino acid chain starting point has proven extremely challenging for all but the smallest amino acid sequences.  
+Finally, protein folding is difficult to predict: given a sequence of DNA, one can be fairly certain as to what mRNA and thus what amino acid chain will be produced (ignoring splicing) even if that sequence of DNA has never been seen before.  But a similar task for predicting a protein's folded structure based on its amino acid chain starting point has proven extremely challenging for all but the smallest amino acid sequences.
 
-The reason for this is often attributed to the vast number of possible orientations an amino acid may exist in, but it is important to note that there are a vast number of possible sequences of DNA for each gene (if there are 100 nucleotides, there are $4^{100}$ possiblilities) but that we can clearly predict the amino acid sequences from all these outcomes regardless.  If we instead view this problem from the lense of nonlinear dynamics, a different explanation comes about: sensitivity to initial conditions implies aperiodicity, and aperiodic dynamical systems are [intrinsically difficult to predict in the long term](/logistic-map.md). 
+The reason for this is often attributed to the vast number of possible orientations an amino acid may exist in, but it is important to note that there are a vast number of possible sequences of DNA for each gene (if there are 100 nucleotides, there are $4^{100}$ possibilities) but that we can predict the amino acid sequences from all these outcomes regardless.  If we instead view this problem from the lense of nonlinear dynamics, a different explanation comes about: sensitivity to initial conditions implies aperiodicity, and aperiodic dynamical systems are [intrinsically difficult to predict in the long term](/logistic-map.md). 
 
 ### Implications for cellular and organismal biology
 
