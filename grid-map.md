@@ -47,7 +47,7 @@ Systems of ordinary differential equations have one independent variable: time. 
 
 ### An aperiodic unbounded map
 
-The grid map is an example of an aperiodic but unbounded trajectory.  Aperiodic trajectories must cross each other if bounded, meaning that if one connects the iterations of a discontinuous map over time the connections must cross one another (for why this is, see [here](https://blbadger.github.io/continuity-poincare.html)).  But as the grid map is unbounded, a trajectory does not necessarily have to cross itself in this manner in order to be aperiodic. For larger $\Delta t$ values detalied below, the trajectory does indeed self-cross in this manner.
+The grid map is an example of an aperiodic but unbounded trajectory.  Aperiodic trajectories must cross each other if bounded, meaning that if one connects the iterations of a discontinuous map over time the connections must cross one another (for why this is, see [here](https://blbadger.github.io/continuity-poincare.html)).  But as the grid map is unbounded, a trajectory does not necessarily have to cross itself in this manner in order to be aperiodic. For larger $\Delta t$ values detailed below, the trajectory does indeed self-cross in this manner.
 
 The grid map displays sensitivity to initial values typical of aperiodic maps, and although not bounded the trajectories head towards infinity very slowly. 
 
