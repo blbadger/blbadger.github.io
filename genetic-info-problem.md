@@ -121,6 +121,15 @@ Most tissues in the human body contain some degree of self-simimilarity.  This c
 
 Temporal self-similarities in living things and and the implications of nonlinear dynamics in homeostasis and development are considered elsewhere. 
 
+### Reproduction and information
+
+On other pages of this site, self-similar fractals resulting from simple instructions are found. Many such maps contain smaller versions of themselves ad infinitum, meaning that one can see at any arbitrary scale the whole figure.  Except in cases of trivial self-similarity (like that existing for a line), such objects are of infinite information.  THe images of fractals on this and other sites are only finite representations of the true figures.
+
+Self-similar fractals may seem far removed from biology, but consider the ability of living organisms to reproduce.  With the acceptance of cell theory in the 1800s (the idea that multicellular organisms such as humans are composed of many smaller organisms) brought about a difficulty for understanding reproduction.  How can the information necessary to make an entire person reside in a single cell?  One theory (predating acceptance of cell theory) was the existance of a homonculus, a small person resided in a gamete. But in this small person must exist another gamete containing an even smaller person and so on. 
+
+The homunculus was discarded after closer examination revealed no such person inside gamete cells.  But reproduction does bring a difficult question with regards to information.  Consider the simpler case of an asexually reproducing single cell: the genetic information contained inside one individual is also enough information for other individuals as well.  The apprently limitless capacity for reproduction (as long as enviromental conditions are optimal) means that a finite amount of information contained in the genetic material of one cell has the potential to specify any arbitrary number of cells.  This applies even when the original cell only divides a certain number of times before scenescence (as for budding yeast, for example) because as long as each cell divides once, exponential growth occurs.
+
+
 
 
 
