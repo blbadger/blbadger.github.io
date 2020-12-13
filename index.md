@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-Dynamics is the mathematical approach to change over time. Nonlinear dynamics are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Most equations are nonlinear. Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+Dynamics is the mathematical approach to change over time. Nonlinear dynamics are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
@@ -43,7 +43,7 @@ Dynamics is the mathematical approach to change over time. Nonlinear dynamics ar
 
 
 ## Boundaries 
-Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  Sufficiently near this border, predicting whether a trajectory stays bounded becomes infeasible because of this.
+Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders where bounded and unbounded trajectories exist adjacent to one another can take on spectacular fractal geometries.  
 
 ### [Julia sets](/julia-sets.md)
 
