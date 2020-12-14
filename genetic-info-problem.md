@@ -75,7 +75,7 @@ To sum up the problem in a sentence: the human genome is ~750 megabytes (2 bits 
 
 ### What genomes specify
 
-How can such a small amount of information encode something so complex?  The simple answer is that it cannot, at least not in the way encoding is usually meant.  But even a little information can yeild 
+How can such a small amount of information encode something so complex?  The simple answer is that it cannot, at least not in the way encoding is usually meant.  But even a little information can yield 
 
 Consider the other pages of [this website](/index.md).  There, we see many examples of small and relatively simple equations give rise to extremly intricate and infinitely detailed patterns.  An important thing to remember about these systems are that they are dynamical: they specify a change over time, and that they are all nonlinear (piecewise linear equations can also form comlicated patterns, but for our purposes we can classify piecewise linear equations as nonlinear).  
 
