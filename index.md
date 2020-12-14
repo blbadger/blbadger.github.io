@@ -150,7 +150,7 @@ The study of life.  Life displays many of the features of nonlinear mathematical
 
 ### [Neural Network](/neural-networks.md) 
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
 
 
 ## Smaller software projects
