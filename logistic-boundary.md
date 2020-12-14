@@ -67,7 +67,7 @@ $$
 (3.58355 + 0i)
 $$
 
-yeilds
+yields
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_zoom.gif)
 
