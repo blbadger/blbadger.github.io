@@ -26,7 +26,7 @@ $$
 \cfrac{dy}{dt} = -by + x \tag{2}
 $$
 
-which at $\Delta t = 0.1 $ yeilds
+which at $\Delta t = 0.1 $ yields
 
 ![swirl image]({{https://blbadger.github.io}}pendulum_map/linear_swirl.png)
 
