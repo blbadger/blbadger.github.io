@@ -241,7 +241,7 @@ One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' 
 As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractal, as is the case for discrete maps. 
 
 
-### Semicontinuous Clifford maps are rich: one parameter combination yeilds many possible attractors
+### Semicontinuous Clifford maps are rich: one parameter combination yields many possible attractors
 
 To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x_0, y_0)$ coordinate, many (possibly infinitely many) attractors are possible. 
 
