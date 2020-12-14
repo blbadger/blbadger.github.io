@@ -80,7 +80,7 @@ But this is not so!  Closer inspection of this ring reveals that there is no cha
 
 ![spiral image]({{https://blbadger.github.io}}pendulum_map/spiral_map_zoom.png)
 
-Only at $\Delta t = 1$ is there a 1-dimensional attractor, but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. The linear system yeilds a 1-dimensional ring map only when the starting coordinate is already on the ring, and thus it is incapable of forming a 1-dimensional attractor (ie a stable set) as was the case for the nonlinear system.
+Only at $\Delta t = 1$ is there a 1-dimensional attractor, but this is unstable: at small values less than or greater than 1, iterations head towards the origin or else towards infinity. The linear system yields a 1-dimensional ring map only when the starting coordinate is already on the ring, and thus it is incapable of forming a 1-dimensional attractor (ie a stable set) as was the case for the nonlinear system.
 
 From $\Delta t = 0.9 \to \Delta t = 0.999$, 
 
@@ -241,7 +241,7 @@ We have a (slightly oblong) pendulum map!
 
 ---
 
-### If using large $\Delta t$ values yeilds a physically inaccurate map, what do these images mean?
+### If using large $\Delta t$ values yields a physically inaccurate map, what do these images mean?
 
 There are some physically relevant reasons to increase a $\Delta t$ value: 
 
