@@ -259,7 +259,7 @@ and as $\Delta t = 0.1 \to \Delta t = 1.35$ the attractor changes from point to 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_9090.gif)
 
 
-The regions that attract all points into a certain attractor are called the basins of attraction (see the [henon map](/henon-map.md) page for more information).  For example, the attractor (shown above) of the starting point $(x_0, y_0) = (10.75, 8.2)$ is also the attractor of the point $(x_0, y_0) = (10.5, 8)$ and the attractor of the point $(x_0, y_0) = (9, 7)$.  Other starting points yeild other attractors, so does steadily moving the starting point lead to smooth changes between attractors? 
+The regions that attract all points into a certain attractor are called the basins of attraction (see the [henon map](/henon-map.md) page for more information).  For example, the attractor (shown above) of the starting point $(x_0, y_0) = (10.75, 8.2)$ is also the attractor of the point $(x_0, y_0) = (10.5, 8)$ and the attractor of the point $(x_0, y_0) = (9, 7)$.  Other starting points yield other attractors, so does steadily moving the starting point lead to smooth changes between attractors? 
 
 For $(x_0, y_0) = (7.5, 7.5) \to (x_0, y_0) \approx (12, 12)$, the transition from one basin of attraction to another is both abrupt and unpredictable: very small changes in starting position lead to total disappearence or change of the attractor for certain values. This causes the attractors to flash when $(x_0, y_0) = (7.5, 7.5) \to (x_0, y_0) \approx (12, 12)$
 
