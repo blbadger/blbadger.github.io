@@ -20,7 +20,7 @@ Dynamics is the mathematical approach to change over time. Nonlinear dynamics ar
 
 ### [Logistic map](/logistic-map.md)
 
-![logistic map image]({{https://blbadger.github.io}}/logistic_zoom.jpg)
+![logistic map image]({{https://blbadger.github.io}}/misc_images/logistic_zoom.jpg)
 
 
 ### [Clifford attractor](/clifford-attractor.md)
