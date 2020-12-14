@@ -228,7 +228,7 @@ plt.show()
 plt.close()
 ```
 
-which yeilds
+which yields
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
 
