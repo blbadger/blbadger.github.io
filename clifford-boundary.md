@@ -103,6 +103,6 @@ $$
 (x, y) = (91.82168, 90.47914)
 $$
 
-yeilds
+yields
 
 ![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_bound_zoom2.gif)
