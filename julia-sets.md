@@ -148,7 +148,7 @@ plt.show()
 plt.close()
 ```
 
-which yeilds for $a = -0.744 + 0.148i$:
+which yields for $a = -0.744 + 0.148i$:
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_set2.png)
 
@@ -178,7 +178,7 @@ How can a bounded line possibly have infinite length? If we zoom in on a point o
 
 The first thing to do is to pick a point in the complex plane to focus on, and to decide how fast the zoom should be.  For an zoom that does not appear to slow down or speed up, an exponential function must be used.  As magnifying an image by a power of two provides a clear image of what to think about, let's use exponents with base 2.  Say one wanted to increase scale by a factor of two over one second, with 30 individual images being shown in that second.  Then each frame should be scaled by a factor of $ \frac{1}{2 ^{1/30}}$, and the way I chose to do this is by multiplying the exponent $1/30$ by the frame number `t`.  I prefer a 4x zoom each second, so the exponent used is $t/15$.  
 
-If the scale is mostly symmetrical (nearly equal x and y ranges), that is all for the magnification process!  Next we need to decide which point to increase in scale.  For the Julia set defined by $a = -0.29609091 + 0.62491i$, let's look at  $x = -0.6583867 - 0.041100001i$.  Each component is added to it's 
+If the scale is mostly symmetrical (nearly equal x and y ranges), that is all for the magnification process!  Next we need to decide which point to increase in scale.  For the Julia set defined by $a = -0.29609091 + 0.62491i$, let's look at  $x = -0.6583867 - 0.041100001i$.
 
 ```python
 def julia_set(h_range, w_range, max_iterations, t):
@@ -188,7 +188,7 @@ def julia_set(h_range, w_range, max_iterations, t):
 
 ```
 
-The `julia_set()` function needs to be called for every time step `t`, and one way to do this is to put it in a loop and save each image that results, with the intention of compiling the images later into a movie.  I prefer to do this rather than compile images into a movie without seeing them first.  The following code yeilds all 300 images being added to whatever directory the `.py` file running is held in, with the name of the image being the image's sequence number.  
+The `julia_set()` function needs to be called for every time step `t`, and one way to do this is to put it in a loop and save each image that results, with the intention of compiling the images later into a movie.  I prefer to do this rather than compile images into a movie without seeing them first.  The following code yields all 300 images being added to whatever directory the `.py` file running is held in, with the name of the image being the image's sequence number.  
 
 An important step here is to increase the `max_iterations` argument for `julia_set()` with each increase in scale!  If this is not done, no increased resolution will occur beyond a certain point even if we increase the scale of the image of interest.  To see why this is, consider what the `max_iterations` value for the true Julia set is: it is infinite!  If a value diverges after any number of iterations, then we consider it to diverge.  But at large scale, there may not be a significatn change upon increase in `max_iterations` (although this turns out to not be the case for this particular Julia set, see below), so to save time we can simply start with a smaller `max_iterations` and increase as we go, taking more and more time per image.  The true Julia set is uncomputable: it would take an infinite number of iterations to determine which $x + yi$ values diverge, and this would take infinite time.   
 
