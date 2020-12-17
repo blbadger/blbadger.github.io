@@ -1,12 +1,14 @@
-## Nonlinear tranformations change attractor dimension
+## Nonlinear tranformations as routes between dimensions
 
 Here 'nonlinear transformations' is taken to mean the set of all equations that are nonlinear (ie any non limited to unary exponents) or piecewise linear.
 
 ### Maps from finite to infinite are nonlinear
 
-Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc.  An object in one dimension may be
+Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc.  An object in one dimension of finite length may be mapped to the entire real line 
 
 [insert curve mapping line segment to all reals]
+
+
 
 ### Changes in dimension require infinite maps
 
