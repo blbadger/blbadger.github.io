@@ -1,7 +1,5 @@
 ### Decidability and periodicity
 
-*This page is under construction*
-
 [Elsewhere](https://blbadger.github.io/aperiodic-irrationals.html) we have seen that the set of all periodic dynamical systems (albeit systems as defined in a specific manner) is equinumerous with the set of solvable problems.  The set of all aperiodic systems was found to be more numerous, instead equivalent to the size of the set of all unsolvable problems.  This page will investigate a direct equivalence between the the members of the sets of solvable problems and periodic maps to arrive at a stronger conclusion: equality (with substitution) between these sets, rather than equivalence.
 
 'Unsolvable' and 'Undecidable' are here defined in terms of mathematical logic: decidability is the process of determining the validity of a $\mathfrak t, \mathfrak f$ (true or false) statement.  Validity means that the statement is always true, regardless of the inputs to the statement.  Solvable means that there is some computation procedure that applies to the given function (or problem) that is finite in length.  
@@ -71,7 +69,9 @@ Thus mathematics would be expected to reflect something about the natural world.
 
 Skolem defined an arithemtic with multiplication but not addition, and showed that this is decidable and complete.  Similarly, Presburger defined an arithemtic with addition but not multiplication and found this was decidable and complete.  
 
-### Examples of probably-undecidable number theoretic statements
+### Examples of undecidably-undecidable number theoretic statements
+
+Kleene found levels of undecidabity, implying some statements are more undecidable than others.  Some problems, like whether or not a Turing machine will halt given an arbitrary input, are demonstrably undecidable.  But other problems may or may not be undecidable, and these would be expected to occupy a higher level of undecidability with respect to the halting problem.  Some such probably-undecidable statement examples are put forth here.  
 
 As both Presburger and Skolem arithmetics are decidable (and complete) but arithemtic with both addition and multiplication is not, one would expect to find some undecidable number-theoretic statements existing at the intersection of multiplication and addition.  If we consider prime numbers to the the 'atoms' of multiplication, this is indeed the case: there are a number of as-yet-undecidable statements relating primes to addition. 
 
@@ -87,10 +87,10 @@ $$
 \lvert \{p, p+2\} \rvert > n \; \forall n : p, p+2 \in \{ primes \}
 $$
 
-and Legendre's conjecture,
+and Legendre's conjecture, that there exists a prime number between the square of any integer and the square of its successor,
 
 $$
-\forall n, \; \exists p : n^2 < p < (n+1)^2
+\forall n, \; \exists p \in \{ primes \} : n^2 < p < (n+1)^2
 $$
 
 All are as yet unproved and yet seem true, at least they are true for all inputs observed thus far.
