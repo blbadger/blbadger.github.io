@@ -85,6 +85,16 @@ But now suppose that the road has a hill such that the car uses no fuel for a ce
 
 The problem here is the introduction of the infinite quantity. The system is no longer additive once this occurs, and therefore one cannot use fuel economy at each time point and add them together for an accurate measure of total economy.  
 
+### Why nonlinear transformations are not additive, from a set-theoretic perspective
+
+At the risk of belaboring the point, here is yet more work to show that nonlinear transformations are generally not additive.
+
+Sets cannot be partitioned arbitrarily.  To see that this statement is true, consider what happens if we try to partition a set $A$ into partition sets $S_1, S_2, S_3 ...$ where members are larger than the other members of the partition.  It is not clear which elements belong with which others, or even if an element belongs in its own set.
+
+Somewhat surprisingly, the only way to partition a set is via an equivalence class: each element in a given partition $e_1 \in P$ must be somehow equivalent to each other element $e_2, e_3, ... \in P$.  For example, suppose that we want to partition the set of natural numbers $\Bbb N$ based on size: numbers larger than 5 in one partition, numbers smaller or equal to 5 in another.  The equivalence of each partition is its relation to the number 5: either all larger or all smaller (or the same size). 
+
+Now consider a set where each object is different.  
+
 
 
 
