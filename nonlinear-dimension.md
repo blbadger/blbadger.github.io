@@ -2,15 +2,20 @@
 
 Here 'nonlinear transformations' is taken to mean the set of all equations that are nonlinear (ie any non limited to unary exponents) or piecewise linear.
 
-### Maps from finite to infinite are nonlinear
+### Nonlinear transformations from finite to infinite length
 
-Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc.  An object in one dimension of finite length may be mapped to the entire real line 
+In set-theoretic geometry, there are as many points in a line of finite length than there are in the entire real number line, which is of infinite length.  This means that there can be some function $f$ that maps each point of a finite line segment to each point on the number line, or in other words that there is some function $f$ that maps a finite length onto an infinite one bijectively.  
+
+
+In summary, an object in one dimension of finite length may be mapped to the entire real line 
 
 [insert curve mapping line segment to all reals]
 
 
 
 ### Changes in dimension require infinite maps
+
+Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc. 
 
 see also space-filling curve length
 
@@ -67,6 +72,23 @@ Now this is a serious challenge to any attempt to understand nonlinear systems b
 In the models of nonlinear equations on this webpage, computer programs were used to represent the behavior of various nonlinear transformations.  These programs work by dividing each problem into smaller versions of the same problem until a finite case is reached.  For example, a program that observed the behavior of a particle over time first divides the time period into maybe 500000 individual time steps and then proceeds to calculate the behavior as if each time step were itself indivisible.  Or perhaps we wish to understand which points in the complex plane diverge to infinity and which do not: in this case a certain resolution for the plane, perhaps 1400x2000, is chosen and then the maximum number of iterations is specified such that the program eventually halts. 
 
 In either case, the program generates (albeit high-resolution) approximations of the actual object.  These objects are necessarily approximations any machine that attempts recursion without a base case will never halt.  This is why Turing's construct of a machine $T(a, a, x)$ never halts, ie the search for a solution to the problem 'Does a Turing machine with the input $a$ as the program it runs on halt at time x?' is undecidable inside the system because it does not halt.
+
+### Why nonlinear transformations are typically not additive
+
+The underlying point here is that one arrives at problems when attempting to add infinite quantities, or in other words that infinite quantities are non-additive.  As we saw earlier, nonlinear transformations have the capacity to map finite regions onto infinite, and indeed any fraction of the whole finite region may be mapped onto an infinite region.  Because of the introduction of infinite quantities, nonlinear transformations are not additive. 
+
+### A concrete example of non-additivity
+
+To show how a infinite quantities lead to the inability of additivity, consider the following problem: a hybrid car (perhaps a prius) is driving along a road that is relatively flat.  The car dislays the gas milage at each point along the trip, and we assume that this display is accurate.  In this particular trip, the gas engine runs continually such that gas is continually consumed.  How does one calculate the overall fuel economy, or distance travelled per unit of fuel consumed for the trip?  In the absence of any other information, one could simply record the fuel economy at each second of the trip and take the average of these numbers to gain a pretty good estimation. 
+
+But now suppose that the road has a hill such that the car uses no fuel for a certain amount of time (perhaps it shuts off the engine and coasts or else uses the electric motor).  In this case, the fuel economy for this section is infinite: there is a positive distance travelled $d$ but no fuel consumed $c$, so $f_e = d/c = d/0 \to infty \; as \; c\to 0$.  If we then use the method above for determining fuel economy for the whole trip, we find that there is infinite economy.  But this is not so: a finite amount of fuel was consumed during the trip in total, which proceeded a finite distance, meaning that the true economy must be finite.  
+
+The problem here is the introduction of the infinite quantity. The system is no longer additive once this occurs, and therefore one cannot use fuel economy at each time point and add them together for an accurate measure of total economy.  
+
+
+
+
+
 
 
 
