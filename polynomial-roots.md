@@ -246,6 +246,10 @@ From $z^7-z-1$ to $z^{7.397}-z-1$,
 
 {% include youtube.html id='fpKBzto_ZnA' %}
 
+and from $z^7-z-1$ to $z^{7.1438555}-z-1$, incremented slowly, 
+
+{% include youtube.html id='VoxHmL-1Hys' %}
+
 ### Secant method 
 
 There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root. 
