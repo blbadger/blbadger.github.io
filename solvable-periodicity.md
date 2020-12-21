@@ -67,7 +67,24 @@ Thus mathematics would be expected to reflect something about the natural world.
 
 ### Addition-only or multiplication-only number theories are decidable
 
-Skolem defined an arithemtic with multiplication but not addition, and showed that this is decidable and complete.  Similarly, Presburger defined an arithemtic with addition but not multiplication and found this was decidable and complete.  
+Skolem defined an arithemtic with multiplication but not addition, and showed that this is decidable and complete.  Similarly, Presburger defined an arithemtic with addition but not multiplication and found this was decidable and complete.
+
+These results are surprising because addition composes multiplication.  For any arbitrary multiplication function $m(x)$ and addition function $a(x)$, we can compose the multiplication function of repeated additions as follows:
+
+$$
+m(x) = nx \implies m(x) = a \circ a \circ a ... a = a^n(x)\\
+$$
+
+Similarly, division $d(x)$ on the integers can be composed of repeated applications of addition $a(x)$ as follows:
+
+$$
+a \circ a \circ a = a(a(a(n))) \\
+d(x) = \frac{x}{n} \implies d(x) = \card \{a \circ a \circ a ... \circ a : a \circ a \circ a ... \circ a = x\}
+$$
+
+In other words, division of one number by a second is equivalent to the number of times addition must be composed on the second number to equal the first, or the cardinality of the set of addition compositions required to transform the second number into the first.
+
+As subtraction is defined as the inverse of addition, all four arithemetical operations may be performed on terms of only addition.  How then is addition-only or multiplication-only number theory decidable, but if both operations are allowed then the theory is undecidable?
 
 ### Examples of undecidably-undecidable number theoretic statements
 
