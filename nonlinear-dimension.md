@@ -36,7 +36,7 @@ This was shown using analytical methods on [this page](/most-discontinuous.md) f
 A bijective mapping from two dimensions to one is necessarily discontinuous (a proof is found in Pierce’s Introduction to Information Theory, and found at the end of [this page](/neural-networks.md)).  
 
 
-### Dimension-changing maps are undecidable 
+### Dimension-changing maps are uncomputable
 
 Space-filling Hilbert or Peano curves require an infinite number of recursions.  Infinitely recursive functions are undecidable, and therefore space-filling curves are undecidable.  
 
@@ -96,7 +96,11 @@ Somewhat surprisingly, the only way to partition a set is via an equivalence cla
 Now consider a set where each object is different.  
 
 
+### Infinite sets are self-similar
 
+Nonlinear maps often yield self-similar fractals.  Here is a reason as to why this is: if we accept that nonlinear transformations are generally decribed by infinite sets, and that $A \in A$ (proper subset) is true for any infinite set, it necessarily follows that some subset of a map of a nonlinear transformation is equal to the entire set.  
+
+From this perspective, self-similarity is a consequence to any non-linear transformation.
 
 
 
