@@ -88,6 +88,8 @@ In other words, division of one number by a second is equivalent to the number o
 
 As subtraction is defined as the inverse of addition, all four arithemetical operations may be performed on terms of only addition.  How then is addition-only or multiplication-only number theory decidable, but if both operations are allowed then the theory is undecidable?
 
+A direct answer to this question is difficult, but an interesting analogy is available with dynamical systems.  To restate, number theory with only addition is decidable, as is number theory with only multiplication but with both addition and multiplication, the theory is undecidable.  In dynamics, as seen elsewhere on [this page](https://blbadger.github.io/), transformations involving only addition are linear and solvable, and transformations of only multiplication (if bounded) are nonlinear but also solvable, as they simply expand or compress the function pre-image.  But transformations with both addition and multiplication may be aperiodic and unsolvable.
+
 ### Examples of undecidably-undecidable number theoretic statements
 
 Kleene found levels of undecidabity, implying some statements are more undecidable than others.  Some problems, like whether or not a Turing machine will halt given an arbitrary input, are demonstrably undecidable.  But other problems may or may not be undecidable, and these would be expected to occupy a higher level of undecidability with respect to the halting problem.  Some such probably-undecidable statement examples are put forth here.  
