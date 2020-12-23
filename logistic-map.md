@@ -191,7 +191,7 @@ $r=4$
 
 Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
 
-To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $p_01 = 3, p_02 = 3.0003$.
+To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $p_{01} = 3, p_{02} = 3.0003$.
 To do this, the first step is to initialize an array to record $r$ values from 3.5 to 4, taking 500 steps.
 ```python
 from matplotlib import pyplot as plt 
