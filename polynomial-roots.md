@@ -263,7 +263,7 @@ $$
 And so on until the next guess is the same as the current one, meaning that a root has been found.  This is algebraically equivalent to Newton's method if the derivative is treated as a discrete quantity, ie
 
 $$
-f'(x) = \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}
+f'(x) = \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}}
 $$
 
 Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the value $1+0i$ from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
