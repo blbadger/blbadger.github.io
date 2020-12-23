@@ -122,17 +122,17 @@ Additivity is usually assumed in the calculation of expectated values:
 
 $$
 E(A + B) = E(A) + E(B) \\
-if \; E(A) \bot E(B)
+if \; E(A) \; \bot \; E(B)
 $$
 
 or the expected value of event A or B is the same as the expected value of A plus the expected value of B.  Additivity is a given for independent events.  Additivity also holds for pseudoindependent events, meaning those that are dependent but not non-randomly dependent.  When events are non-randomly dependent, additivity is no longer valid because a change in the expectation value of one event could change the expectation value of the other:
 
 $$
 E(A + B) \neq E(A) + E(B) \\
-if \; E(A) \not \; \bot E(B)
+if \; E(A) \; \not \bot \; E(B)
 $$
 
-Markov processes attempt to model non-random dependencies by providing each state with a separate probability rule, and then by applying standard linear statistical rules to each separate state.  This is similar to the decomposition of a curve into many small lines and is a practical way of addressing simpler probability states such as those that exist while playing cards, but is extremely difficult to use to model states where each decision leads to exponentially more states in the future (such as is the case for chess, where one starting configuration leads to $10^46$ possiblilites for future ones. 
+Markov processes attempt to model non-random dependencies by providing each state with a separate probability rule, and then by applying standard linear statistical rules to each separate state.  This is similar to the decomposition of a curve into many small lines and is a practical way of addressing simpler probability states such as those that exist while playing cards, but is extremely difficult to use to model states where each decision leads to exponentially more states in the future (as is the case for chess, where one starting configuration leads to $10^{46}$ possibilities for future ones). 
 
 It may instead be more effective to consider a nonlinear model of statistics in which additivity is not assumed (meaning that the expected value of one variable may affect the expected value of another in a nonrandom (and noncomplementary) way.  One could imagine a Markov chain-like graph in which the state probabilites continually updated depending on the path to each state.
 
