@@ -35,11 +35,23 @@ As noted by Feynmann, quantum particle paths are typically non-differentiable.  
 
 This is not the only place where infinite quantities intrude in the study of small objects: the process of calculating field strength for quantum particles, for example, is rife with infinite quantities.  To deal with both issues, the theory of quantum renormalization was introduced to remove such infinities, allowing for calculation to proceed safely.
 
-A necessity for renormalization as well as non-differentiable particle paths imply and are implied by scale invariance.  Scale invariance in turn is typical of nonlinear dynamical systems, and thus it is not a stretch of the imagination to propose that the mechanics of small objects are most accurately defined in terms of nonlinear dynamics. As the Schrodinger equation is linear, the current formulation is either incomplete or, as is more likely, a linear approximation.
+A necessity for renormalization as well as non-differentiable particle paths imply and are implied by scale invariance.  Scale invariance in turn is typical of nonlinear dynamical systems, and thus it is not a stretch of the imagination to propose that the mechanics of small objects are most accurately defined in terms of nonlinear dynamics. As the Schrodinger equation is a linear partial differential equation, the current formulation is either incomplete or, as is more likely, a linear approximation.
 
 ### Implications for quantum mechanics
 
-THe similarity between nondifferentiable motion in quantum particles and that observed for Brownian motion (see [here](https://blbadger.github.io/additivity-order.html) for more on Brownian motion) naively suggests a similar physical cause.  This implies that just as the particles undergoing Brownian motion are far larger than the water molecules causing this motion, there may well be particles much smaller than currently observed that buffet about the quantum bodies observed.  
+The above considerations, if true, have a number of consequences.  Firstly, they suggest that many questions of particle path and field strength are inherently undecidable for the following reason: aperiodic nonlinear dynamical systems require an infinite number of logical operations to predict an arbitrarily small change.  As seen elsewhere on these pages, such systems are inherently uncomputable and therefore to some extent so are the questions of path and field.  
+
+This much has long been recognized (although for different reasons than stated here), and similar concerns prompted the famous outburst from Feynman, stated as follows:
+
+"Why should it take an infinite amount of logic to figure out what one stinky little bit of space-time is going to do?"
+
+But it should be recognized that the implications continue far past this issue.  The presence of an apparent continuum of scale in the physical world (which prompted the above comment) means that physical theories attempt not to predict what will happen to a starting condition, but what approximately will happen to an approximate start.  
+
+But if physical theories at all scales behave according to nonlinear transformations that are aperiodic, then arbitrarily small changes to starting values lead to unpredictable predictions.  What this means is that the accuracy for predicting such attributes as bond angle from orbitals and spin changing etc. rely on a nonlinear system to be periodic. 
+
+To see just how unlikely it is that a nonlinear physical system is periodic for more than two objects, consider the classical [three-body problem](https://blbadger.github.io/3-body-problem.html) for celestial mechanics.  Nearly all possible orientations of three bodies in space yield unpredictable outputs from nonlinear gravitational partial differential equations.  The inability for current quantum mechanical systems to predict events with more than three objects is implied by nonlinearity.  
+
+Furhtermore, the similarity between nondifferentiable motion in quantum particles and that observed for Brownian motion (see [here](https://blbadger.github.io/additivity-order.html) for more on Brownian motion) naively suggests a similar physical cause.  This implies that just as the particles undergoing Brownian motion are far larger than the water molecules causing this motion, there may well be particles much smaller than currently observed that buffet about the quantum bodies observed.  
 
 ### Electron orbitals and period doubling
 
