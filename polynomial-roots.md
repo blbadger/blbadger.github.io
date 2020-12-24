@@ -341,6 +341,6 @@ And similar shapes to that found for Newton's method are also present.  For $z^{
 
 and incrementing $z^7-z-1$ to $z^8-z-1$,
 
-{% include youtube.html id='-Kbq3EJploo' %}
+{% include youtube.html id='-Kbq3EJploo&rel=0' %}
 
 
