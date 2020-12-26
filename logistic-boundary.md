@@ -55,13 +55,13 @@ $$
 z_{next} = z^2 + c
 $$
 
-in the complex plane and find which positions ($c$) head towards infinity and which do not for a given starting point $z_0$.  This is analagous to fixing the starting point for the logistic equation (at $(x_0, y_0) = (0.5, 0i)$ in this case) and then looking at which $r$ values cause iterations of the logistic equation in the complex plane
+in the complex plane and find which positions ($c$) head towards infinity and which do not for a given starting point $z_0$.  This is analagous to fixing the starting point for the logistic equation (at $(x_0, y_0) = (0.5, 0i)$ in this case) and then looking at which $r$ values cause future iterations of 
 
 $$
-z_{next} = rz(1-z) = rz - rz^2
+z_{next} = rz(1-z) = (-z^2 + z)r
 $$
 
-For example, increasing the scale at the point 
+to head towards infinity. To illustrate, increasing the scale at the point 
 
 $$
 (3.58355 + 0i)
