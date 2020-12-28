@@ -66,7 +66,7 @@ print (successive_approximations(0.000001, 20))
 [1e-06, 333333333333.3333, 222222222222.2222, 148148148148.14813, 98765432098.76541, 65843621399.17694, 43895747599.451294, 29263831732.96753, 19509221155.311684, 13006147436.874454, 8670764957.916304, 5780509971.944202, 3853673314.6294684, 2569115543.0863123, 1712743695.3908749, 1141829130.2605832, 761219420.173722, 507479613.44914806, 338319742.29943204, 225546494.86628804]
 ```
 
-a root is not found in 20 iterations! It takes 72 to find converge on a root with this starting point.  By observing the behavior of Newton's method on three initial points, it is clear that simply distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that fails to converge: negative multiples of $0.7937...$ also fail to converge on a root.
+a root is not found in 20 iterations! It takes 72 to find converge on a root with this starting point.  By observing the behavior of Newton's method on three initial points, it is clear that simply distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.428$ do as well.
 
 Now consider the equation
 
@@ -82,7 +82,7 @@ This plot seems reasonable, as the points near the roots converge quickly.  Look
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
 
-we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that fail to find a root, as was the case for $x^3 - 1$, but the locations of these values on the real line are not obvious multiples of a number but instead form a fractal pattern.
+we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit multiple values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.
 
 ### Newton's method in the complex plane
 
@@ -150,10 +150,10 @@ What happens between integer polynomial powers?  Here $z = z^2-1 \to z = z^5-1$,
 
 {% include youtube.html id='YIO_w4x1P2k' %}
 
-And taking a closer look around
+And taking a closer look at the transition 
 
 $$
-z^{3.86} - 1 
+z^{3.86} - 1 \to z^{3.886}-1
 $$
 
 {% include youtube.html id='qS8g6m0QOik' %}
