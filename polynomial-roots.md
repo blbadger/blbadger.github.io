@@ -146,14 +146,14 @@ which yields
 
 Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.  John Hubbard was the first person to observe the fractal behavior of Newton's method in the complex plane, and the border between the set of non-diverging and diverging points may be considered akin to a [Julia set](https://blbadger.github.io/julia-sets.html).  But by a strict definition, the maps presented on this page are not Julia sets because points that orbit, never settling on a root but also never diverging to infinity, are not members of the set of converging points (as they do not converge) but are members of the set of all non-diverging elements.  A Julia set is composed of elements that border diverging and non-diverging points, whereas the maps on this page denote points that converge on roots or do not, the latter of which do not necessarily head to infinity at all.
 
-What happens when the polynomial goes from a linear form to a nonlinear?  Here $z = z^1-1 \to z = z^4-1$, follow the link to see the change (right click the video while playing to loop)
+What happens between integer polynomial powers?  Here $z = z^2-1 \to z = z^5-1$, follow the link to see the change (right click the video while playing to loop)
 
 {% include youtube.html id='YIO_w4x1P2k' %}
 
-And taking a closer look at the transition 
+And taking a closer look around
 
 $$
-z^{2.86} - 1 \to z^{2.886} - 1
+z^{3.86} - 1 
 $$
 
 {% include youtube.html id='qS8g6m0QOik' %}
