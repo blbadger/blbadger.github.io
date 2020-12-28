@@ -66,11 +66,43 @@ print (successive_approximations(0.000001, 20))
 [1e-06, 333333333333.3333, 222222222222.2222, 148148148148.14813, 98765432098.76541, 65843621399.17694, 43895747599.451294, 29263831732.96753, 19509221155.311684, 13006147436.874454, 8670764957.916304, 5780509971.944202, 3853673314.6294684, 2569115543.0863123, 1712743695.3908749, 1141829130.2605832, 761219420.173722, 507479613.44914806, 338319742.29943204, 225546494.86628804]
 ```
 
-a root is not found in 20 iterations! It takes 72 to find converge on a root if one starts at the origin.   By observing the behavior of Newton's method on three initial points, it is clear that simple distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.428$ do as well.
+a root is not found in 20 iterations! It takes 72 to find converge on a root if one starts at the origin.   By observing the behavior of Newton's method on three initial points, it is clear that simple distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.4337...$ do as well.
 
-Why is this?  Notice that the starting value was not exactly at the origin.  Remembering that $x^3-1$ has a tangent line parallel to the x-axis at point $x=0$, and that parallel lines never meet, it is clear that Newton's method must fail for this point because the tangent line will never meet the x-axis.  Now consider why there must also be one other point that fails to converge using Newton's method: one tangent line of $x^3-1$ intersects the origin precisely, and therefore the second iteration of Newton's method for this point will cause the method to fail. 
+Why is this?  Notice that the starting value was not exactly at the origin.  Remembering that $x^3-1$ has a tangent line parallel to the x-axis at point $x=0$, and that parallel lines never meet, it is clear that Newton's method must fail for this point because the tangent line will never meet the x-axis.  Now consider why there must also be one other point that fails to converge using Newton's method: one tangent line of $x^3-1$ intersects the origin precisely, and therefore the second iteration of Newton's method for this point will cause the method to fail. The precise location of this first point may be found by setting $x_{n+1}$ to 0 and solving for $x_n$,
 
-But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$.  
+$$
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \\
+0 = x - \frac{x^3-1}{3x^2} \\
+-1 = 3x^3 - x^3 \\
+-\sqrt[3]{\frac 1/2} = x
+$$
+
+or equivalently, as the tangent line with slope $m = 3x^2$ must pass through both the origin $x_0, y_0$, 
+
+$$
+y - y_0 = m(x - x_0) \\
+y - 0 = 3x^2(x - 0) \\
+y = 3x^3
+$$
+
+subject to the condition that the pair of points $(x, y)$ exists on the line $y = x^3-1$, 
+
+$$
+y = 3x^3 \\
+y = x^3 - 1 \implies
+0 = 2x^3 + 1 \\
+-sqrt[3]{\frac 1/2} = x
+$$
+
+Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
+
+$$
+-sqrt[3]{\frac 1/2} = x - \frac{f(x)}{f'(x)} \\
+-sqrt[3]{\frac 1/2} = x -frac{x^3-1}{3x^2} \\
+0 = 2x^3 + 3(sqrt[3]{\frac 1/2} x^2) + 1
+$$
+
+To find this point exactly, a more difficult polynomial must be solved and so the formidible cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.
 
 Now consider the equation
 
@@ -86,7 +118,7 @@ This plot seems reasonable, as the points near the roots converge quickly.  Look
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
 
-we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit multiple values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.
+we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.
 
 ### Newton's method in the complex plane
 
