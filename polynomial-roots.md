@@ -230,67 +230,6 @@ Newton's method yields self-similar fractals, which can be clearly observed by i
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
 
-### Non-converging periodic attractor basins
-
-Let's look closer at the areas that converge slowly for $z^5-z-1$. A little experimentation suggests that these areas actually never converge, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the central (near the origin, that is) sowly-converging area, many are found to converge on the period-3 orbit
-
-$$
--1.000257561..., -0.750321828..., 0.0833570997..., -1.000257561...
-$$
-
-Certainly there are some points in the plane, such as $\pm \sqrt[4]{1/5}$, which do not converge on anything at all.  But do the other starting points in the slowly-converging region eventually end up in this periodic orbit?  This can be tested for each point plotted for Newton's method (code for this section [here](https://github.com/blbadger/polynomial_roots/blob/main/newton_convergence_test.py)) After 80 iterations, nearly all points head towards a root or else to the periodic orbit above:
-
-![convergence]({{https://blbadger.github.io}}/newton-method/convergence_overlayed.png)
-
-What about the non-converging areas on the periphery?  If we follow the trajectory from the point $4.707 - 4.117i$, 
-
-![convergence]({{https://blbadger.github.io}}/newton-method/newton_trajectory.gif)
-
-the outer region is mapped to the inner region.  This is also appears to the the case for initial points far from the origin that do end up converging on a root.  But is this the case for every point plotted outside the central region?  
-
-This can be tested by checking how long it takes for two arrays shifted by a small amount (here 0.0000001 along the real axis) to come near each other:
-
-```python
-def traveling_together(equation, max_iterations, x_range, y_range):
-	'''
-	Returns the number of iterations until a point in the comples plane
-	approaches points 
-	'''
-	y, x = np.ogrid[1.4: -1.4: y_range*1j, -2: 2: x_range*1j]
-	z_array = x + y*1j
-	z_array_2 = z_array + 0.0000001 # arbitrary change, can be any small amount
-	iterations_until_together = max_iterations + np.zeros(z_array.shape)
-
-	# create a boolean table of all 'true'
-	not_already_together = iterations_until_together < 10000
-
-	for i in range(max_iterations):
-		f_now = Calculate(equation, z_array, differentiate=False).evaluate() 
-		f_prime_now = Calculate(equation, z_array, differentiate=True).evaluate()
-		z_array = z_array - f_now / f_prime_now
-
-		f_2_now = Calculate(equation, z_array_2, differentiate=False).evaluate() 
-		f_2_prime_now = Calculate(equation, z_array_2, differentiate=True).evaluate()		
-		z_array_2 = z_array_2 - f_2_now / f_2_prime_now
-
-		# the boolean map is tested for rooted values
-		together = (abs(z_array - z_array_2) <= 0.0000001) & not_already_together
-		iterations_until_together[together] = i
-		not_already_together = np.invert(together) & not_already_together
-
-	return iterations_until_together
-
-```
-which yields
-
-![convergence]({{https://blbadger.github.io}}/newton-method/Newton_z^5-z-1_together.png)
-
-All mapped points outside a certain radius from the origin stay near each other for their first iteration.  This is also the case for $z^3-1$, 
-
-![convergence]({{https://blbadger.github.io}}/newton-method/newton_z^3-1_together.png)
-
-
-
 ### Newton's map rotations
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
