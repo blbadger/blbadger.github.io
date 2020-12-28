@@ -66,7 +66,11 @@ print (successive_approximations(0.000001, 20))
 [1e-06, 333333333333.3333, 222222222222.2222, 148148148148.14813, 98765432098.76541, 65843621399.17694, 43895747599.451294, 29263831732.96753, 19509221155.311684, 13006147436.874454, 8670764957.916304, 5780509971.944202, 3853673314.6294684, 2569115543.0863123, 1712743695.3908749, 1141829130.2605832, 761219420.173722, 507479613.44914806, 338319742.29943204, 225546494.86628804]
 ```
 
-a root is not found in 20 iterations! It takes 72 to find converge on a root with this starting point.  By observing the behavior of Newton's method on three initial points, it is clear that simply distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.428$ do as well.
+a root is not found in 20 iterations! It takes 72 to find converge on a root if one starts at the origin.   By observing the behavior of Newton's method on three initial points, it is clear that simple distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.428$ do as well.
+
+Why is this?  Notice that the starting value was not exactly at the origin.  Remembering that $x^3-1$ has a tangent line parallel to the x-axis at point $x=0$, and that parallel lines never meet, it is clear that Newton's method must fail for this point because the tangent line will never meet the x-axis.  Now consider why there must also be one other point that fails to converge using Newton's method: one tangent line of $x^3-1$ intersects the origin precisely, and therefore the second iteration of Newton's method for this point will cause the method to fail. 
+
+But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$.  
 
 Now consider the equation
 
