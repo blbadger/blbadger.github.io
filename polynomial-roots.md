@@ -68,7 +68,7 @@ print (successive_approximations(0.000001, 20))
 
 a root is not found in 20 iterations! It takes 72 to find converge on a root if one starts at the origin.   By observing the behavior of Newton's method on three initial points, it is clear that simple distance away from the root does not predict how fast the method will converge. Note that the area near $x=0$ is not the only one that converges slowly on a root: $-0.7937...$ and $-1.4337...$ do as well.
 
-Why is this?  Notice that the starting value was not exactly at the origin.  Remembering that $x^3-1$ has a tangent line parallel to the x-axis at point $x=0$, and that parallel lines never meet, it is clear that Newton's method must fail for this point because the tangent line will never meet the x-axis.  Now consider why there must also be one other point that fails to converge using Newton's method: one tangent line of $x^3-1$ intersects the origin precisely, and therefore the second iteration of Newton's method for this point will cause the method to fail. The precise location of this first point may be found by setting $x_{n+1}$ to 0 and solving for $x_n$,
+Why does an initial value near 0 lead to a slow convergence using Newton's method?  Notice that the starting value was not exactly 0.  Remembering that $x^3-1$ has a tangent line parallel to the x-axis at point $x=0$, and that parallel lines never meet, it is clear that Newton's method must fail for this point because the tangent line will never meet the x-axis.  Now consider why there must also be one other point that fails to converge using Newton's method: one tangent line of $x^3-1$ intersects the origin precisely, and therefore the second iteration of Newton's method for this point will cause the method to fail. The precise location of this first point may be found by setting $x_{n+1}$ to 0 and solving for $x_n$,
 
 $$
 x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \\
@@ -90,15 +90,15 @@ subject to the condition that the pair of points $(x, y)$ exists on the line $y 
 $$
 y = 3x^3, y = x^3-1 \implies \\
 0 = 2x^3 + 1 \\
--\sqrt[3]{\frac 12} = x
+-\sqrt[3]{\frac12} = x
 $$
 
 Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
 
 $$
--\sqrt[3]{\frac 1/2} = x - \frac{f(x)}{f'(x)} \\
--\sqrt[3]{\frac 1/2} = x -frac{x^3-1}{3x^2} \\
-0 = 2x^3 + 3(\sqrt[3]{\frac 12} x^2) + 1
+-\sqrt[3]{\frac12} = x - \frac{f(x)}{f'(x)} \\
+-\sqrt[3]{\frac12} = x - \frac{x^3-1}{3x^2} \\
+0 = 2x^3 + 3(\sqrt[3]{\frac12} x^2) + 1
 $$
 
 To find this point exactly, a more difficult polynomial must be solved and the formidible cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
@@ -117,7 +117,21 @@ This plot seems reasonable, as the points near the roots converge quickly.  Look
 
 ![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
 
-we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.
+we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.  To see the reason for this, first ovserve that Newton's method will fail for points where $f'(x) = 0$, and for $3x^2-7=0$ the evaluation is $\pm \sqrt{7/3}$.  Therefore the value that heads towards $\sqrt{7/3}$ is, again using the cubic formula,
+
+$$
+\sqrt{7/3} = x - \frac{x^3-7x+6}{3x^2-7} \\
+x_{-1} \approx −0.8625...
+$$
+
+which is the second line passed on the left in the video above.  Applying newton's method again and solving for $$x_n, 
+
+$$
+-0.8625... \approx x - \frac{x^3-7x+6}{3x^2-7} \\
+x_{-2} \approx 1.4745...
+$$
+
+and repeating this twice more yields $x_{-3}=-0.8413... \; , x_{-4}=1.47402...$.  
 
 ### Newton's method in the complex plane
 
