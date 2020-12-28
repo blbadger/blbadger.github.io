@@ -230,15 +230,7 @@ Newton's method yields self-similar fractals, which can be clearly observed by i
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
 
-### Large non-converging areas are periodic attractor basins
-
-Let's look closer at the areas that converge slowly for $z^5-z-1$. A little experimentation suggests that these areas actually never converge, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the center sowly-converging area, many are found to converge on the period-3 orbit
-
-$$
--1.000257561..., -0.750321828..., 0.0833570997..., -1.000257561...
-$$
-
-### Rotations
+### Newton's map rotations
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
