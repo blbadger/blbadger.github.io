@@ -74,7 +74,7 @@ $$
 x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \\
 0 = x - \frac{x^3-1}{3x^2} \\
 -1 = 3x^3 - x^3 \\
--\sqrt[3]{\frac 1/2} = x
+-\sqrt[3]{\frac 12} = x
 $$
 
 or equivalently, as the tangent line with slope $m = 3x^2$ must pass through both the origin $x_0, y_0$, 
@@ -88,21 +88,20 @@ $$
 subject to the condition that the pair of points $(x, y)$ exists on the line $y = x^3-1$, 
 
 $$
-y = 3x^3 \\
-y = x^3 - 1 \implies
+y = 3x^3, y = x^3-1 \implies \\
 0 = 2x^3 + 1 \\
--sqrt[3]{\frac 1/2} = x
+-\sqrt[3]{\frac 12} = x
 $$
 
 Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
 
 $$
--sqrt[3]{\frac 1/2} = x - \frac{f(x)}{f'(x)} \\
--sqrt[3]{\frac 1/2} = x -frac{x^3-1}{3x^2} \\
-0 = 2x^3 + 3(sqrt[3]{\frac 1/2} x^2) + 1
+-\sqrt[3]{\frac 1/2} = x - \frac{f(x)}{f'(x)} \\
+-\sqrt[3]{\frac 1/2} = x -frac{x^3-1}{3x^2} \\
+0 = 2x^3 + 3(\sqrt[3]{\frac 12} x^2) + 1
 $$
 
-To find this point exactly, a more difficult polynomial must be solved and so the formidible cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.
+To find this point exactly, a more difficult polynomial must be solved and the formidible cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
 
 Now consider the equation
 
