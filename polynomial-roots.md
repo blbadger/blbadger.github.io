@@ -73,7 +73,6 @@ Why does an initial value near 0 lead to a slow convergence using Newton's metho
 $$
 x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \\
 0 = x - \frac{x^3-1}{3x^2} \\
--1 = 3x^3 - x^3 \\
 -\sqrt[3]{\frac 12} = x
 $$
 
@@ -96,7 +95,6 @@ $$
 Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
 
 $$
--\sqrt[3]{\frac12} = x - \frac{f(x)}{f'(x)} \\
 -\sqrt[3]{\frac12} = x - \frac{x^3-1}{3x^2} \\
 0 = 2x^3 + 3(\sqrt[3]{\frac12} x^2) + 1
 $$
@@ -223,27 +221,24 @@ This is different than the case for $z^3-1$ because an entire region fails to co
 
 $$
 5x^4 - 1 = 0 \\
-x = \pm \sqrt[4]{1/5} \\
-x \approx \pm 0.6689..
+x = \pm \sqrt[4]{1/5} \approx \pm 0.6689...
 $$
 
-which corresponds to the point in the center of the 5 patterns to the right of the largest area of no convergence.  But these do not explain the appearance of large areas of no convergence themselves.
+which corresponds to the point in the center of the 5 radial spokes to the right of the largest area of no convergence.  But these do not explain the appearance of large areas of no convergence themselves.
 
-Zooming in on the point $0.154047 + 0.135678i$, 
+Newton's method yields self-similar fractals, which can be clearly observed by increasing scale. For example, zooming in on the point $0.154047 + 0.135678i$,
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
 
-Small changes in exponents lead to dramatic changes for where roots may be found. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
+### Large non-converging areas are periodic attractor basins
 
-![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
+Let's look closer at the areas that converge slowly for $z^5-z-1$. A little experimentation suggests that these areas actually never converge, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the center sowly-converging area, many are found to converge on the period-3 orbit
 
-and at $z^5-z^{1.0066}-1$
+$$
+-1.000257561..., -0.750321828..., 0.0833570997..., -1.000257561...
+$$
 
-![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
-
-Upon incrementing $z^5-z-1 \to z^5-z^{1.033}-1$,
-
-{% include youtube.html id='Wi0EQ7WqJtU' %}
+### Rotations
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
@@ -259,7 +254,7 @@ for i in range(max_iterations):
 
 ![transition]({{https://blbadger.github.io}}/newton-method/newton_rotated.gif)
 
-We can also perform a polynomial rotation as follows:
+We can also perform a different rotation as follows:
 ```python
 ...
 for i in range(max_iterations):
@@ -277,11 +272,23 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 
 ![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_205.png)
 
-Follow the link for a video of the rotation:
+Follow the link for a video of this rotation:
 
 {% include youtube.html id='NgZZq32in7g' %}
 
-### Incrementing a polynomial power
+### Incrementing powers
+
+Small changes in exponents lead to large changes for which starting points find roots quickly. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
+
+![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
+
+and at $z^5-z^{1.0066}-1$
+
+![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
+
+Upon incrementing $z^5-z-1 \to z^5-z^{1.033}-1$,
+
+{% include youtube.html id='Wi0EQ7WqJtU' %}
 
 For the equation
 
