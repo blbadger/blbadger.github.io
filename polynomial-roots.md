@@ -122,7 +122,7 @@ $$
 x_{-1} \approx −0.8625...
 $$
 
-which is the second line passed on the left in the video above.  Applying newton's method again and solving for $$x_n, 
+which is the second line passed on the left in the video above.  Applying newton's method again and solving for $x_n$, 
 
 $$
 -0.8625... \approx x - \frac{x^3-7x+6}{3x^2-7} \\
