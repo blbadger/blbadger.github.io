@@ -219,6 +219,16 @@ Let's explore where roots are found with Newton's method in the complex plane, i
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
+This is different than the case for $z^3-1$ because an entire region fails to converge on a root, rather than individual points as before.  Now there are certainly points analagous to that observed above (for $z^3-1$) in which the tangent line is parallel to the x-axis: these exist at
+
+$$
+5x^4 - 1 = 0 \\
+x = \pm \sqrt[4]{1/5} \\
+x \approx \pm 0.6689..
+$$
+
+which corresponds to the point in the center of the 5 patterns to the right of the largest area of no convergence.  But these do not explain the appearance of large areas of no convergence themselves.
+
 Zooming in on the point $0.154047 + 0.135678i$, 
 
 {% include youtube.html id='ZTMaKLmLxJM' %}
