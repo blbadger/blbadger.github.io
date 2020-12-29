@@ -53,7 +53,7 @@ $$
 \forall n, k : n \neq k, \; \mathscr D_n \neq \mathscr D_k
 $$
 
-Therefore there are a countably infinite number of elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ meaning that $f(i)$ is countably infinite.  Thus $f(i)$ would be uncomputable, but this contradicts the definition of computability.  Therefore $f(i)$ is periodic for some ordering of $i_1, i_2, i_3 ...$ (which is equivalent for stating that $f(i)$ is periodic for some ordering of its elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ ).  
+Therefore there are a countably infinite number of elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ meaning that $f(i)$ is countably infinite.  Thus $f(i)$ would be infinitely long, but this contradicts the definition of computability.  Therefore $f(i)$ is periodic for some ordering of $i_1, i_2, i_3 ...$ (which is equivalent for stating that $f(i)$ is periodic for some ordering of its elements $\mathscr D_0, \mathscr D_1, \mathscr D_2 ...$ ).  
 
 Thus $f(i)$ gives us the function mapping each computable function (or decidable predicate or solvable problem) to one discrete dynamical equation.  
 
