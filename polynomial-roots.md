@@ -282,6 +282,10 @@ All mapped points outside a certain radius from the origin stay near each other 
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/newton_z^3-1_together.png)
 
+And for incremental powers between $z^5-z-1$ and $z^6-z-1$
+
+{% include youtube.html id='mEUgmvWiCEM' %}
+
 ### Newton's map rotations
 
 Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
