@@ -112,6 +112,11 @@ $$
 \{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
 $$
 
+### [Nonlinearity and dimension](/nonlinear-dimension.md)
+
+![mapping]({{https://blbadger.github.io}}misc_images/curve_mapping.png)
+
+
 ### [Additive transformations](/additivity-order.md)
 
 ![random fractal]({{https://blbadger.github.io}}/misc_images/randomized_sierpinksi_2.gif)
