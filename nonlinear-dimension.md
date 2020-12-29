@@ -2,25 +2,23 @@
 
 Here 'nonlinear transformations' is taken to mean the set of all equations that are nonlinear (ie any non limited to unary exponents) or piecewise linear.
 
-### Transformations from finite to infinite length
+### Transformations from finite to infinite size
 
 In set-theoretic geometry, there are as many points in a line of finite length than there are in the entire real number line, which is of infinite length.  This means that there can be some function $f$ that maps each point of a finite line segment to each point on the number line, or in other words that there is some function $f$ that maps a finite length onto an infinite one bijectively.  
 
-In summary, an object in one dimension of finite length may be mapped to the entire real line with the right transformation.  Which transformations can accomplish this?  Transformations may observed as lines or curves or points that map the finite line segment to the real line as follows:
+Therefore an object in one dimension of finite length may be mapped to the entire real line with the right transformation.  Which transformations can accomplish this?  Transformations may be defined as lines or curves or points that map the finite line segment into the real line as follows:
 
-[insert image of mapping]
+![mapping]({{https://blbadger.github.io}}misc_images/function_mapping.png)
 
-Only a curve (or line segments arranged to approximate a curve) can map the segment to the entire real line. 
+Only a curve (or line segments arranged to approximate a curve if corners are ignored) can map the segment to the entire real line. 
 
-[insert curve mapping line segment to all reals]
+![mapping]({{https://blbadger.github.io}}misc_images/curve_mapping.png)
 
- This can be seen most clearly by observing what happens when the starting line approaches a linear map, ie a line.  More and more of the reals may be mapped but the distance is always finite until the mapping (the transforation) is on top of the line segment (the pre-image).  
+This can be seen most clearly by observing what happens when the starting line approaches a linear map, ie a line.  More and more of the reals may be mapped but the distance is always finite until the mapping (the transforation) is on top of the line segment (the pre-image).  
  
-[insert line mapping a segment to the reals]
+![mapping]({{https://blbadger.github.io}}misc_images/linear_mapping.png)
 
 When the transformation lies on top of the pre-image, it may accurately be said that the transformation is the pre-image.  But this transformation is no longer a function at all, as it is a one-to-many transformation because any point on the pre-image line segment is in the same place as a point on the transformation, meaning that the image point may exist anywhere.  
-
-[picture detailing the pre-image to image]
 
 This is a graphical illustration of a function in which the input is the same as the function itself.  If the Curch-Turing thesis is accepted, these functions can be equivalently stated as Turing machines $T$ in which the program $a$ is the same as the input $i$.  It is provable that such machines never halt: the predicate 'does the turing machine $T$ with input $i$ and program $a$ halt at value $x$ for some value $x$, in symbols $T(i, a, x)$, is undecidable because it never halts.
 
@@ -32,19 +30,13 @@ Topological dimension and scaling (fractal) dimension are equivalent for the cla
 
 see also space-filling curve length
 
-### Curves are not entirely one-dimensional
+### Curves as more than one-dimensional
 
 Here dimension is not fractal or topological, but a definition based on the transformations that can result from a function.  Take an arbitrary line existing on a plane.  In some orientation, this line may be defined entirely on the basis of another line that exists alone, ie in one dimension.  
 
 Now note that this is not the case for an arbitrary curve on a plane: this curve by definition is not congruent to any of the lines mentioned above. The curve may be mapped to a line, but it is not equal in that it cannot be substituted for any line.  Therefore a curve cannot be defined in one dimension, because otherwise it would be congruent with a line.
 
 This idea extends to curved surfaces in three dimensions.  Such surfaces are not entirely planar but exist in three dimensions, and therefore are not congruent with a topologically two-dimensional plane. This goes to suggest that curves of any kind exist between topological dimensions, which provides a clear reason why nonlinear transformations are capable of attaining a fractional dimension.
-
-### Aperiodic, bounded maps are discontinuous
-
-This was shown using analytical methods on [this page](/most-discontinuous.md) for dimensions 1 and 2.  Here is another with a different approach:
-
-A bijective mapping from two dimensions to one is necessarily discontinuous (a proof is found in Pierce’s Introduction to Information Theory, and found at the end of [this page](/neural-networks.md)).  Maps from one to two dimensions are not necessarily discontinuous but are 
 
 ### Dimension-changing maps are uncomputable
 
@@ -60,11 +52,11 @@ $$
 f(a+b) \neq f(a) + f(b)
 $$
 
-in the sense that how can this come about?  Intuitively, this means that the transformation specified by $f$ is different at different locations, such that the location $a+b$ is a different transformation than that which is found at $a$ or $b$ and that simply performing the transformation at $a$ then at $b$ is not sufficient to predict the transformation at $a+b$.  In sense, the transformations are unique.
+in the sense of how is this possible?  Intuitively, this means that the transformation specified by $f$ is different at different locations, such that the location $a+b$ is a different transformation than that which is found at $a$ or $b$ and that simply performing the transformation at $a$ then at $b$ is not sufficient to predict the transformation at $a+b$.  In a sense, the transformations are unique for every element of the pre-image.
 
-But this remains a somewhat counter-intuitive idea. We can define the set of all possible transformations for any given $f$ as $\mathscr S$.  Now as all finite quantities can be added, elements $a$ and $b$ of $\mathscr S$ are not finite.  An infinite set is equivalent to one of its proper subsets, meaning that inside elements $a$ and $b$ there are more of $a$ and $b$.  This perhaps makes it intuitively mmore understandable as to why these elements cannot be added.
+But this remains a somewhat counter-intuitive idea. We can define the set of all possible transformations for any given $f$ as $\mathscr S$.  As all finite quantities can be added, elements $a$ and $b$ of $\mathscr S$ are not finite.  An infinite set is equivalent to one of its proper subsets, meaning that inside elements $a$ and $b$ there are more of $a$ and $b$.  
 
-Now recall that nonlinear transformations are usually aperiodic and that bounded, aperiodic maps form self-similar fractals. The observations that $a \in a$ (proper subset) gives a clear reason why such objects exist: each fractal image $i$ contains a smaller version of itself, meaning that $i \in i$ (proper subset, as the smaller version does not contain all points of the larger). 
+Now recall that most nonlinear transformations are aperiodic and that bounded, aperiodic maps form self-similar fractals. The observations that $a \in a$ (proper subset) gives a clear reason why such objects exist: each fractal image $i$ contains a smaller version of itself, meaning that $i \in i$ (proper subset, as the smaller version does not contain all points of the larger). 
 
 Here is another argument arriving at the same concusion: Sets cannot be partitioned arbitrarily.  To see that this statement is true, consider what happens if we try to partition a set $A$ into partition sets $S_1, S_2, S_3 ...$ where members are larger than the other members of the partition.  It is not clear which elements belong with which others, or even if an element belongs in its own set.
 
@@ -72,18 +64,32 @@ Somewhat surprisingly, the only way to partition a set is via an equivalence cla
 
 Now consider a set $S$ where some elements are incomparable.  There is no chance of partitioning $S$ because one cannot determine shich elements of $S$ are greater or less than others, and thus we cannot be sure of which elements are equivalently larger or smaller (or equivalent in any way).  If a set cannot be partitioned, then additivity cannot be valid from the definition given above.  Therefore any set with incomparable elements is not additive.
 
+Finally, observe that transformations in aperiodic nonlinear maps must be defined using irrationals.  
+
+
+### A concrete example of non-additivity
+
+The underlying point here is that one arrives at problems when attempting to add infinite quantities, or in other words that infinite quantities are non-additive.  As we saw earlier, nonlinear transformations have the capacity to map finite regions onto infinite, and indeed any fraction of the whole finite region may be mapped onto an infinite region.  Because of the introduction of infinite quantities, nonlinear transformations are not additive. 
+
+To show how a infinite quantities lead to the inability of additivity, consider the following problem: a hybrid car (perhaps a prius) is driving along a road that is relatively flat.  The car dislays the gas milage at each point along the trip, and we assume that this display is accurate.  In this particular trip, the gas engine runs continually such that gas is continually consumed.  How does one calculate the overall fuel economy, or distance travelled per unit of fuel consumed for the trip?  In the absence of any other information, one could simply record the fuel economy at each second of the trip and take the average of these numbers to gain a pretty good estimation. 
+
+But now suppose that the road has a hill such that the car uses no fuel for a certain amount of time (perhaps it shuts off the engine and coasts or else uses the electric motor).  In this case, the fuel economy for this section is infinite: there is a positive distance travelled $d$ but no fuel consumed $c$, so $f_e = d/c = d/0 \to infty \; as \; c\to 0$.  If we then use the method above for determining fuel economy for the whole trip, we find that there is infinite economy.  But this is not so: a finite amount of fuel was consumed during the trip in total, which proceeded a finite distance, meaning that the true economy must be finite.  
+
+The problem here is the introduction of the infinite quantity. The system is no longer additive once this occurs, and therefore one cannot use fuel economy at each time point and add them together for an accurate measure of total economy.  
 
 ### Infinite sets are self-similar
 
 Nonlinear maps often yield self-similar fractals.  Here is a reason as to why this is: if we accept that nonlinear transformations are generally decribed by infinite sets, and that $A \in A$ (proper subset) is true for any infinite set, it necessarily follows that some subset of a map of a nonlinear transformation is equal to the entire set.  
 
-From this perspective, self-similarity is a consequence to any non-linear transformation.  
+From this perspective, self-similarity is a consequence to any non-linear transformation.  Particularly interesting is non-trivial self-similarity, which may be defined as scale invariance of a non-differentiable object (which can be discontinuous, like a Cantor set, or continuous with a non-differentiable border like a Julia set). Another definition for non-trivial self-similarity is that this is a scale invariance leading to an arbitrary amount of information at an arbitrarily small scale.
 
-### Infinite recursion in nonlinear transformations
+Self-similarity in either case can be thought of as a form of symmetry: it is the symmetry of scale.  Unfortunately this symmetry is not necessarily helpful for computation.
 
-The images of fractals on this site are examples of recursion without a base case.  In the natural numbers with addition, 1 is the base case for which succession acts to make all other numbers.  A recursive base case is the smallest indivisible unit. 
+### Infinite recursion in self-similar transformations
 
-For nonlinear transformations that yield fractal objects, there is no recursive base case because there is always a smaller part of the image at any scale that is equivalent to the entire image.
+The images of fractals on this site are examples of recursion without a base case (sometime called basis case).  In the natural numbers with addition, 1 is the base case for which succession acts to make all other numbers.  A recursive base case is the smallest indivisible unit. 
+
+For nonlinear transformations that yield fractal objects, there is no recursive base case because there is always a smaller part of the image at any scale that is equivalent to the entire image.  For this reason, none of the fractal maps presented elsewhere on these pages are entirely accurate, because they must contain a base case in order to be computed.  
 
 ### Nonlinearity and problem solving
 
@@ -95,18 +101,6 @@ In the models of nonlinear equations on this webpage, computer programs were use
 
 In either case, the program generates (albeit high-resolution) approximations of the actual object.  These objects are necessarily approximations any machine that attempts recursion without a base case will never halt.  This is why Turing's construct of a machine $T(a, a, x)$ never halts, ie the search for a solution to the problem 'Does a Turing machine with the input $a$ as the program it runs on halt at time x?' is undecidable inside the system because it does not halt.
 
-### Why nonlinear transformations are typically not additive
-
-The underlying point here is that one arrives at problems when attempting to add infinite quantities, or in other words that infinite quantities are non-additive.  As we saw earlier, nonlinear transformations have the capacity to map finite regions onto infinite, and indeed any fraction of the whole finite region may be mapped onto an infinite region.  Because of the introduction of infinite quantities, nonlinear transformations are not additive. 
-
-### A concrete example of non-additivity
-
-To show how a infinite quantities lead to the inability of additivity, consider the following problem: a hybrid car (perhaps a prius) is driving along a road that is relatively flat.  The car dislays the gas milage at each point along the trip, and we assume that this display is accurate.  In this particular trip, the gas engine runs continually such that gas is continually consumed.  How does one calculate the overall fuel economy, or distance travelled per unit of fuel consumed for the trip?  In the absence of any other information, one could simply record the fuel economy at each second of the trip and take the average of these numbers to gain a pretty good estimation. 
-
-But now suppose that the road has a hill such that the car uses no fuel for a certain amount of time (perhaps it shuts off the engine and coasts or else uses the electric motor).  In this case, the fuel economy for this section is infinite: there is a positive distance travelled $d$ but no fuel consumed $c$, so $f_e = d/c = d/0 \to infty \; as \; c\to 0$.  If we then use the method above for determining fuel economy for the whole trip, we find that there is infinite economy.  But this is not so: a finite amount of fuel was consumed during the trip in total, which proceeded a finite distance, meaning that the true economy must be finite.  
-
-The problem here is the introduction of the infinite quantity. The system is no longer additive once this occurs, and therefore one cannot use fuel economy at each time point and add them together for an accurate measure of total economy.  
-
 ### Sensitivity to initial values as implied by self-similarity
 
 Self-similarity here is defined to mean an invariance with respect to scale. 
@@ -116,6 +110,8 @@ Aperiodic dynamical systems are usually self-similar if bounded.  From the defin
 Aperiodicity is implied by sensitivity to initial values, meaning that two points arbitrarily close together (but not located in the same place) in a starting region (phase space or any other area) will eventually diverge such that they are arbitrarily far apart, at least within the confines of the bounded region of the function image.  
 
 Self-similarity is usually applied to the dyamical system output, but sensitivity to initial conditions can be understood as self-similarity of input distance with respect to output distance. In other words, the distance between two points $p_o, q_o$ in the image space is invariant with respect to the scale of the distance bewteen initial points $p_i, q_i$.  This implies a self-similarity in the system input (ie function pre-image) with respect to the outputs.  Thus not only is the output self-similar with respect to itself, it is also self-similar with respect to the input with regards to distances between initial points $p_i, q_i$ and final points $p_o, q_o$.  
+
+
 
 
 
