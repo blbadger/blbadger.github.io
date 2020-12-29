@@ -252,16 +252,10 @@ This can be tested by checking how long it takes for two arrays shifted by a sma
 
 ```python
 def traveling_together(equation, max_iterations, x_range, y_range):
-	'''
-	Returns the number of iterations until a point in the comples plane
-	approaches points 
-	'''
 	y, x = np.ogrid[1.4: -1.4: y_range*1j, -2: 2: x_range*1j]
 	z_array = x + y*1j
 	z_array_2 = z_array + 0.0000001 # arbitrary change, can be any small amount
 	iterations_until_together = max_iterations + np.zeros(z_array.shape)
-
-	# create a boolean table of all 'true'
 	not_already_together = iterations_until_together < 10000
 
 	for i in range(max_iterations):
@@ -272,8 +266,7 @@ def traveling_together(equation, max_iterations, x_range, y_range):
 		f_2_now = Calculate(equation, z_array_2, differentiate=False).evaluate() 
 		f_2_prime_now = Calculate(equation, z_array_2, differentiate=True).evaluate()		
 		z_array_2 = z_array_2 - f_2_now / f_2_prime_now
-
-		# the boolean map is tested for rooted values
+		
 		together = (abs(z_array - z_array_2) <= 0.0000001) & not_already_together
 		iterations_until_together[together] = i
 		not_already_together = np.invert(together) & not_already_together
