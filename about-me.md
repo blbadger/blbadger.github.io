@@ -1,6 +1,6 @@
 ## About Me
 
-My name is Benjamin Badger and I hope you have enjoyed perusing these pages as much as I did making them.  Just completed my doctoral dissertation! 
+My name is Benjamin Badger and I hope you have enjoyed perusing these pages as much as I did making them.  Just completed my dissertation defense!
 
 ![writing in the orchard]({{https://blbadger.github.io}}/misc_images/orchard.JPG)
 
