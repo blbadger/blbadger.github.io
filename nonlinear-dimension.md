@@ -64,7 +64,7 @@ Somewhat surprisingly, the only way to partition a set is via an equivalence cla
 
 Now consider a set $S$ where some elements are incomparable.  There is no chance of partitioning $S$ because one cannot determine which elements of $S$ are greater or less than others, and thus we cannot be sure of which elements are equivalently larger or smaller (or equivalent in any way).  If a set cannot be partitioned, then additivity cannot be valid from the definition given above.  Therefore any set with incomparable elements is not additive.  
 
-Take collections of points transformed by a nonlinear function.  Are such collections comparable to other collections?  Comparability requires that for two elements $a, b$ either $a \geq b$ or $b \geq a$.  Can we choose between statements if there exists an infinite number of elements $a$ in element $b$, while at the same time there are infinitely many $b$ in $a$?  Not easily, and therefore self-similar nonlinear maps contain collections of points that are incomparable by definition.  As certain subsets are incomparable, the transformation itself is non-additive.
+Take collections of points transformed by a nonlinear function.  Are such collections comparable to other collections?  Comparability requires that for two elements $a, b$ either $a \geq b$ or $b \geq a$.  Can we choose between statements if there exists an infinite number of elements $a$ in element $b$, while at the same time there are infinitely many $b$ in $a$?  No, and therefore self-similar nonlinear maps contain collections of points that are incomparable by definition.  As certain subsets are incomparable, the transformation itself is non-additive.
 
 ### A concrete example of non-additivity
 
@@ -72,7 +72,7 @@ The underlying point here is that one arrives at problems when attempting to add
 
 To show how a infinite quantities lead to the inability of additivity, consider the following problem: a hybrid car (perhaps a prius) is driving along a road that is relatively flat.  The car dislays the gas milage at each point along the trip, and we assume that this display is accurate.  In this particular trip, the gas engine runs continually such that gas is continually consumed.  How does one calculate the overall fuel economy, or distance travelled per unit of fuel consumed for the trip?  In the absence of any other information, one could simply record the fuel economy at each second of the trip and take the average of these numbers to gain a pretty good estimation. 
 
-But now suppose that the road has a hill such that the car uses no fuel for a certain amount of time (perhaps it shuts off the engine and coasts or else uses the electric motor).  In this case, the fuel economy for this section is infinite: there is a positive distance travelled $d$ but no fuel consumed $c$, so $f_e = d/c = d/0 \to infty \; as \; c\to 0$.  If we then use the method above for determining fuel economy for the whole trip, we find that there is infinite economy.  But this is not so: a finite amount of fuel was consumed during the trip in total, which proceeded a finite distance, meaning that the true economy must be finite.  
+But now suppose that the road has a hill such that the car uses no fuel for a certain amount of time (perhaps it shuts off the engine and coasts or else uses the electric motor).  In this case, the fuel economy for this section is infinite: there is a positive distance travelled $d$ but no fuel consumed $c$, so $f_e = d/c = d/0 \to \infty \; as \; c\to 0$.  If we then use the method above for determining fuel economy for the whole trip, we find that there is infinite economy.  But this is not so: a finite amount of fuel was consumed during the trip in total, which proceeded a finite distance, meaning that the true economy must be finite.  
 
 The problem here is the introduction of the infinite quantity. The system is no longer additive once this occurs, and therefore one cannot use fuel economy at each time point and add them together for an accurate measure of total economy.  
 
@@ -92,7 +92,7 @@ For nonlinear transformations that yield fractal objects, there is no recursive 
 
 ### Nonlinearity and problem solving
 
-Nonlinear systems are not additive (see above), meaning that they cannot be broken down into parts and re-assembled again.  As we have seen for fractals, attempting to isolate a small portion of a nonlinear map may simply lead to the presence of the entire map in miniature (a property called self-similarity).  
+Nonlinear systems are not additive (see above), meaning that they cannot be broken down into parts and re-assembled again.  As we have seen for fractals, attempting to isolate a small portion of a nonlinear map may simply lead to the presence of the entire map in miniature.  
 
 Now this is a serious challenge to any attempt to understand nonlinear systems because so much of human thought (or at least current problem solving thought) operates by the principle of additivity.  For example, if one builds a house then the a foundation is made, the walls go up, and the roof is set.  Or if a computer program is written, each individual variable is defined and operations are enumerated.  The same is true of practically every discipline of knowledge: smaller pieces are added together to make the final outcome.  
 
