@@ -20,23 +20,23 @@ This can be seen most clearly by observing what happens when the starting line a
 
 When the transformation lies on top of the pre-image, it may accurately be said that the transformation is the pre-image.  But this transformation is no longer a function at all, as it is a one-to-many transformation because any point on the pre-image line segment is in the same place as a point on the transformation, meaning that the image point may exist anywhere.  
 
-This is a graphical illustration of a function in which the input is the same as the function itself.  If the Curch-Turing thesis is accepted, these functions can be equivalently stated as Turing machines $T$ in which the program $a$ is the same as the input $i$.  It is provable that such machines never halt: the predicate 'does the turing machine $T$ with input $i$ and program $a$ halt at value $x$ for some value $x$, in symbols $T(i, a, x)$, is undecidable because it never halts.
+This is a graphical illustration of a function in which the input is the same as the function itself.  If the Church-Turing thesis is accepted, these functions can be equivalently stated as Turing machines $T$ in which the program $a$ is the same as the input $i$.  It is provable that such machines never halt: the predicate 'does the turing machine $T$ with input $i$ and program $a$ where $i=a$ halt at value $x$ for some value $x$', in symbols $\exists x T(a, a, x)$, is undecidable.  If such a machine halted at any $x$, the predicate would be decidable but as it is not, a Turing machine with its program as the input never halts.
 
-All this is to say that the transformation of a line on top of another line may map a segment to the entire real line but that this is no longer a function, nor is it computable in any way.  Therefore, only nonlinear functions are capable of mapping a segment onto the entire real line.
+All this is to say that the transformation of a line on top of another line may map a segment to the entire real line but that this is no longer a function, nor is it computable.  Therefore, only nonlinear functions are capable of mapping a finite segment onto the entire real line.
 
-### Changes in dimension from finite pre-images require nonlinear transformations
+### Increases in topological dimension require nonlinear transformations
 
-Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc. 
+Topological dimension and scaling (fractal) dimension are equivalent for the classical objects in which topological dimension is defined: a point is 0-dimensional, a line 1-dimensional, a plane surface two-dimensional etc.  A mapping from one topological dimension to another that is larger requires a transformation to infinite size.  A proof for this for the case of a 1-D line transformed into a 2-D plane is as follows: first suppose that a finite line could be arranged to cover a plane.  As the line is of finite size, an increase in scale will eventually lead to gaps between portions of this line: if this were not the case, 
 
-see also space-filling curve length
+As seen in the previous section, only nonlinear transformations map finite sizes to infinite.  Therefore transformations from one topological dimension to a larger one must be nonlinear.
 
-### Curves as more than one-dimensional
+### Curve dimension
 
 Here dimension is not fractal or topological, but a definition based on the transformations that can result from a function.  Take an arbitrary line existing on a plane.  In some orientation, this line may be defined entirely on the basis of another line that exists alone, ie in one dimension.  
 
 Now note that this is not the case for an arbitrary curve on a plane: this curve by definition is not congruent to any of the lines mentioned above. The curve may be mapped to a line, but it is not equal in that it cannot be substituted for any line.  Therefore a curve cannot be defined in one dimension, because otherwise it would be congruent with a line.
 
-This idea extends to curved surfaces in three dimensions.  Such surfaces are not entirely planar but exist in three dimensions, and therefore are not congruent with a topologically two-dimensional plane. This goes to suggest that curves of any kind exist between topological dimensions, which provides a clear reason why nonlinear transformations are capable of attaining a fractional dimension.
+This idea extends to curved surfaces in three dimensions.  Such surfaces are not entirely planar but exist in three dimensions, and therefore are not congruent with a topologically two-dimensional plane. This goes to suggest that curves of any kind exist between topological dimensions, which provides a clear reason why nonlinear transformations are capable of providing routes between topological or fractal dimensions.
 
 ### Dimension-changing maps are uncomputable
 
@@ -46,26 +46,25 @@ Dimension-changing maps require an infinite number of recursions as well, and th
 
 ### Why nonlinear transformations are not additive, from a set-theoretic perspective
 
-What does it mean that nonlinear transformations are not additive, which in symbols is
+Non-additivity is a defining feature of nonlinearity.  But what does it mean that nonlinear transformations are not additive, which in symbols is
 
 $$
 f(a+b) \neq f(a) + f(b)
 $$
 
-in the sense of how is this possible?  Intuitively, this means that the transformation specified by $f$ is different at different locations, such that the location $a+b$ is a different transformation than that which is found at $a$ or $b$ and that simply performing the transformation at $a$ then at $b$ is not sufficient to predict the transformation at $a+b$.  In a sense, the transformations are unique for every element of the pre-image.
+in the sense of how is this possible?  This means that the transformation specified by $f$ must be different at different locations, such that the location $a+b$ is a different transformation than that which is found at $a$ or $b$ and that simply performing the transformation at $a$ then at $b$ is not sufficient to predict the transformation at $a+b$.  In a sense, the transformations are unique for every element of the pre-image.
 
 But this remains a somewhat counter-intuitive idea. We can define the set of all possible transformations for any given $f$ as $\mathscr S$.  As all finite quantities can be added, elements $a$ and $b$ of $\mathscr S$ are not finite.  An infinite set is equivalent to one of its proper subsets, meaning that inside elements $a$ and $b$ there are more of $a$ and $b$.  
 
 Now recall that most nonlinear transformations are aperiodic and that bounded, aperiodic maps form self-similar fractals. The observations that $a \in a$ (proper subset) gives a clear reason why such objects exist: each fractal image $i$ contains a smaller version of itself, meaning that $i \in i$ (proper subset, as the smaller version does not contain all points of the larger). 
 
-Here is another argument arriving at the same concusion: Sets cannot be partitioned arbitrarily.  To see that this statement is true, consider what happens if we try to partition a set $A$ into partition sets $S_1, S_2, S_3 ...$ where members are larger than the other members of the partition.  It is not clear which elements belong with which others, or even if an element belongs in its own set.
+Here is another argument arriving at the same concusion: Sets cannot be partitioned arbitrarily.  To see that this statement is true, consider what happens if we try to partition a set $A$ into partition sets $S_1, S_2, S_3 ...$ where members are larger than the other members of the same partition.  It is not clear which elements belong with which others, or even if an element belongs in its own set.
 
-Somewhat surprisingly, the only way to partition a set is via an equivalence class: each element in a given partition $e_1 \in P$ must be somehow equivalent to each other element $e_2, e_3, ... \in P$.  For example, suppose that we want to partition the set of natural numbers $\Bbb N$ based on size: numbers larger than 5 in one partition, numbers smaller or equal to 5 in another.  The equivalence of each partition is its relation to the number 5: either all larger or all smaller (or the same size). 
+Somewhat surprisingly, the only way to partition a set is via an equivalence class: each element in a given partition $e_1 \in P$ must be somehow equivalent to each other element $e_2, e_3, ... \in P$.  For example, suppose that we want to partition the set of natural numbers $\Bbb N$ based on size: numbers larger than 5 in one partition, numbers smaller or equal to 5 in another.  The equivalence of each partition is its relation to the number 5: either all larger or all smaller (or the same size).  Imagine if partitioning did not necessarily involve equivalence.  Then trying to partition a set into elements that are larger than each other would be possible, but it is unclear which elements belong in any given subset, or even if an element belongs in any subset, a contradiction.
 
-Now consider a set $S$ where some elements are incomparable.  There is no chance of partitioning $S$ because one cannot determine shich elements of $S$ are greater or less than others, and thus we cannot be sure of which elements are equivalently larger or smaller (or equivalent in any way).  If a set cannot be partitioned, then additivity cannot be valid from the definition given above.  Therefore any set with incomparable elements is not additive.
+Now consider a set $S$ where some elements are incomparable.  There is no chance of partitioning $S$ because one cannot determine which elements of $S$ are greater or less than others, and thus we cannot be sure of which elements are equivalently larger or smaller (or equivalent in any way).  If a set cannot be partitioned, then additivity cannot be valid from the definition given above.  Therefore any set with incomparable elements is not additive.  
 
-Finally, observe that transformations in aperiodic nonlinear maps must be defined using irrationals.  
-
+Take collections of points transformed by a nonlinear function.  Are such collections comparable to other collections?  Comparability requires that for two elements $a, b$ either $a \geq b$ or $b \geq a$.  Can we choose between statements if there exists an infinite number of elements $a$ in element $b$, while at the same time there are infinitely many $b$ in $a$?  Not easily, and therefore self-similar nonlinear maps contain collections of points that are incomparable by definition.  As certain subsets are incomparable, the transformation itself is non-additive.
 
 ### A concrete example of non-additivity
 
@@ -79,7 +78,7 @@ The problem here is the introduction of the infinite quantity. The system is no 
 
 ### Infinite sets are self-similar
 
-Nonlinear maps often yield self-similar fractals.  Here is a reason as to why this is: if we accept that nonlinear transformations are generally decribed by infinite sets, and that $A \in A$ (proper subset) is true for any infinite set, it necessarily follows that some subset of a map of a nonlinear transformation is equal to the entire set.  
+Nonlinear maps often yield self-similar fractals if bounded.  Here is a reason as to why this is: if we accept that nonlinear transformations are generally decribed by infinite sets, and that $A \in A$ (proper subset) is true for any infinite set, it necessarily follows that some subset of a map of a nonlinear transformation is equal to the entire set.  
 
 From this perspective, self-similarity is a consequence to any non-linear transformation.  Particularly interesting is non-trivial self-similarity, which may be defined as scale invariance of a non-differentiable object (which can be discontinuous, like a Cantor set, or continuous with a non-differentiable border like a Julia set). Another definition for non-trivial self-similarity is that this is a scale invariance leading to an arbitrary amount of information at an arbitrarily small scale.
 
@@ -99,13 +98,13 @@ Now this is a serious challenge to any attempt to understand nonlinear systems b
 
 In the models of nonlinear equations on this webpage, computer programs were used to represent the behavior of various nonlinear transformations.  These programs work by dividing each problem into smaller versions of the same problem until a finite case is reached.  For example, a program that observed the behavior of a particle over time first divides the time period into maybe 500000 individual time steps and then proceeds to calculate the behavior as if each time step were itself indivisible.  Or perhaps we wish to understand which points in the complex plane diverge to infinity and which do not: in this case a certain resolution for the plane, perhaps 1400x2000, is chosen and then the maximum number of iterations is specified such that the program eventually halts. 
 
-In either case, the program generates (albeit high-resolution) approximations of the actual object.  These objects are necessarily approximations any machine that attempts recursion without a base case will never halt.  This is why Turing's construct of a machine $T(a, a, x)$ never halts, ie the search for a solution to the problem 'Does a Turing machine with the input $a$ as the program it runs on halt at time x?' is undecidable inside the system because it does not halt.
+In either case, the program generates (albeit high-resolution) approximations of the actual object.  These objects are necessarily approximations any machine that attempts recursion without a base case will never halt.  This is why Turing's construct of a machine $T(a, a, x)$ never halts, ie the search for a solution to the problem 'Does a Turing machine with the input $a$ as the program it runs on halt at time x?' is undecidable inside the system because there is no recursive base case.
 
 ### Sensitivity to initial values as implied by self-similarity
 
 Self-similarity here is defined to mean an invariance with respect to scale. 
 
-Aperiodic dynamical systems are usually self-similar if bounded.  From the definition above, this means that a small potion of the output of the dynamical system (for many inputs) resembles a larger portion of the output in some way or another.  
+Aperiodic dynamical systems are typically self-similar if bounded.  From the definition above, this means that a small potion of the output of the dynamical system (for many inputs) resembles a larger portion of the output in some way or another.  
 
 Aperiodicity is implied by sensitivity to initial values, meaning that two points arbitrarily close together (but not located in the same place) in a starting region (phase space or any other area) will eventually diverge such that they are arbitrarily far apart, at least within the confines of the bounded region of the function image.  
 
