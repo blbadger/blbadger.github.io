@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-Dynamics is the mathematical approach to change over time. Nonlinear dynamics are not additive, or in other words the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are nearly all unsolveable, and though deterministic are unpredictable.  
+Dynamics is the mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
@@ -71,6 +71,7 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 
 ## Foundations
+Why nonlinear systems behave the way they do, in general terms.
 
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
@@ -128,12 +129,11 @@ $$
 
 
 ## Physics
-The study of observable things.
+As for any science, an attempt to explain observations and predict future ones using hypothetical theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately described by a different theory.  As many different theories can accurately describe and predict the same observations, the simplest are favored by Occam's razor.  
 
 ### [Entropy](/entropy.md)
 
 ![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
-
 
 ### [3 body problem](/3-body-problem.md)
 
@@ -141,7 +141,7 @@ The study of observable things.
 
 
 ## Biology
-The study of life.  Life displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  
+The study of life, which displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  
 
 ### [Genetic information problem](/genetic-info-problem.md)
 
