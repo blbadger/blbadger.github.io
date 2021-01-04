@@ -27,11 +27,13 @@ Light travels at different speeds throught different materials.  For example, li
 
 ### Nonlocality implies a nonlinear space: the observer effect
 
-'Spooky action at a distance', or what is now called quantum entanglement, is the phenomenon why which two particles interact such that in a future time at great distance, what happens to one affects what happens to the other (specifically with regards to quantum spin).  There is no intrinsic reasoning capable of explaining such behavior using vector (linear) space, but if one considers a nonlinear space then the result is implied.  In a space defined by a nonlinear function, a change to one area in the space changes other areas because the area i
+'Spooky action at a distance', or what is now called quantum entanglement, is the phenomenon why which two particles interact such that in a future time at great distance, what happens to one affects what happens to the other (specifically with regards to quantum spin).  There is no intrinsic reasoning capable of explaining such behavior using vector (linear) space, but if one considers a nonlinear space then the result is implied.  In a space defined by a nonlinear function, a change to one area in the space changes other areas because nonlinear 
+
+#########
 
 Nonlocality is closely related to the idea of observer effects, which is that any observation to certain systems necessarily changes the system itself. An example of an observer effect is the delayed choice double slit experiment, where the act of observation of two photons changes the experimental outcome.  
 
-
+#######
 
 ### Renormalization and scale
 
@@ -70,8 +72,11 @@ $$
 \sigma_x \sigma_p \geq \frac{h}{4 \pi}
 $$
 
-which follows from the wave-like nature of small objects, and also applies to macroscopic waves.  The result is that small objects (which have little mass) resemble 3-dimensional probability clouds rather than one-dimensional points.  
+which follows from the wave-like nature of small objects, and also applies to macroscopic waves.  Equivalently, one cannot define a unique wavefunction for a very short waveform.  As precision in location increases as the waveform length decreases, necessarily there is a limit to the precision of the accuracy of location and momentum (which is defined by the wavefunction).
 
+But note that this only applies to predictions of the future, not observations in the past.  A photon passing through a double slit, for example, can be determined precisely in both location and momentum after the fact, that is, after it is no longer a wave.  
+
+The result is that small objects (which have little mass) resemble 3-dimensional probability clouds rather than one-dimensional points.  
 
 
 
