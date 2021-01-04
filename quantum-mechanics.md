@@ -1,6 +1,22 @@
 ## Quantum mechanics 
 
-Delayed choice, nonlocality, and more observations from small objects are considered here.  This commentary should be considered as provisional.
+Delayed choice, nonlocality, and more observations from small objects are considered here.  This commentary should be considered as provisional. 
+
+### Wave behavior as nonlinearity
+
+Additivity is necessary for linearity.  If bb-gun is fired through two slits onto a wall, the distribution of probabilities that particular areas on the wall that are hit by bbs that pass through the first slit $P_1$ and the second slit $P_2$ is 
+
+$$
+P_{12} = P_1 + P_2
+$$
+
+or in other words, the slits are additive.  But now consider waves passing through these same slits. In this case, 
+
+$$
+P_{12} \neq P_1 + P_2
+$$
+
+meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$
 
 ### Delayed choice
 
@@ -27,13 +43,7 @@ Light travels at different speeds throught different materials.  For example, li
 
 ### Nonlocality implies a nonlinear space: the observer effect
 
-'Spooky action at a distance', or what is now called quantum entanglement, is the phenomenon why which two particles interact such that in a future time at great distance, what happens to one affects what happens to the other (specifically with regards to quantum spin).  There is no intrinsic reasoning capable of explaining such behavior using vector (linear) space, but if one considers a nonlinear space then the result is implied.  In a space defined by a nonlinear function, a change to one area in the space changes other areas because nonlinear 
-
-#########
-
-Nonlocality is closely related to the idea of observer effects, which is that any observation to certain systems necessarily changes the system itself. An example of an observer effect is the delayed choice double slit experiment, where the act of observation of two photons changes the experimental outcome.  
-
-#######
+'Spooky action at a distance', or what is now called quantum entanglement, is the phenomenon why which two particles interact such that in a future time at great distance, what happens to one affects what happens to the other (specifically with regards to quantum spin).  There is no intrinsic reasoning capable of explaining such behavior using vector (linear) space, but if one considers a nonlinear space then the result is implied.  In a space defined by a nonlinear function, a change to one area in the space changes other areas because nonlinear transformations are not additive.  Manipulating a particle (or simply observing it, as by the observer effect these are identical) equivalent to changing a parameter in a nonlinear transformation, which changes all areas in the resulting space simultaneously.
 
 ### Renormalization and scale
 
@@ -55,11 +65,13 @@ But if physical theories at all scales behave according to nonlinear transformat
 
 To see just how unlikely it is that a nonlinear physical system is periodic for more than two objects, consider the classical [three-body problem](https://blbadger.github.io/3-body-problem.html) for celestial mechanics.  Nearly all possible orientations of three bodies in space yield unpredictable outputs (if bounded) from nonlinear gravitational partial differential equations.  The inability for current quantum mechanical systems to predict events with more than three objects is implied by nonlinearity.  
 
-Furthermore, the similarity between nondifferentiable motion in quantum particles and that observed for Brownian motion (see [here](https://blbadger.github.io/additivity-order.html) for more on Brownian motion) naively suggests a similar physical cause.  This implies that just as the particles undergoing Brownian motion are far larger than the water molecules causing this motion, there may well be particles much smaller than currently observed that buffet about the quantum bodies observed.  
+Furthermore, the similarity between nondifferentiable motion in quantum particles and that observed for Brownian motion (see [here](https://blbadger.github.io/additivity-order.html) for more on Brownian motion) naively suggests a similar physical cause.  This implies that just as the particles undergoing Brownian motion are far larger than the water molecules causing this motion, there may well be particles much smaller than currently observed that buffet about the quantum bodies that are observed.  In this sense, there may be no quantum scale at all, merely a relatively quantum scale for our observations because size continues to shrink indefinitely.
+
+If this seems fantastic, consider photons from a point source traveling through a vacuum to land on a photographic plate.  The resolution limit of a blue photon is on the order of 200nm, meaning that the photons land in a blob of about this diameter called an airy disk.  Why do the photons not simply make a point on the plate?  The current account for such behavior is the wave nature of light, and of all small particles.  But observe that the intensity of the central region is a normal distribution, precisely the same as observed for a collection of particles in a fluid undergoing [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion).  The longer the wavelength of the light, the larger the blob and equivalently the longer the particles diffuse in fluid.  Flight length of a photon has no effect on distribution width because photons experience infinite time dilation.
 
 ### Example: electron orbitals and period doubling
 
-A concrete example for how nonlinearity could be important for quantum mechanical systems is in atomic orbitals.  Consider that larger energies are required to attain each orbital in succession s, p, d, f and that the maximum number of locations (physically speaking, the distinct clouds) an electron can exist in for a given m value is, respectively, 1, 2, 4, 8.  
+A concrete example for how nonlinearity could be important for quantum mechanical systems is in atomic orbitals.  Consider that larger energies are required to attain each orbital in succession s, p, d, f and that the maximum number of locations (physically speaking, the distinct clouds) an electron can exist in for a given m value is, respectively, 1, 2, 4, 8.  Whether or not the period doubling here follows Feigenbaum's $\delta$ is unclear.
 
 Now note that electron orbitals may be considered as the periodicity of electrons: one cloud corresponds to period one etc. Period doubling is typical of nonlinear systems upon an increase in energy, and therefore observed orbital geometry is consistent with period doubling.  If an electron absorbs enough energy, it is discharged from an orbital and travels freely, and most accurately in a non-differentiable path.  This is an aperiodic path with a fractal dimension greater than one, meaning that the process of energy addition to a bound electron (eventually freeing the particle) is consistent with that for a nonlinear attractor.  
 
