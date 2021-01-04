@@ -6,7 +6,7 @@ Newtonian mechanics are often thought to render the motion of celestial bodies a
 
 "Now armed with the tremendous power of Newton's laws, we can not only calculate such simple motions but also, given only a machine to handle the arithmetic, even the tremendously complex motions of the planets, to as high a degree of precision as we wish!"
 
-This statement seems logical at first glance.  The most accurate equations of force, momentum, and gravitational acceleration are all fairly simple and for most examples that are taught in school, there are solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to teh variable time as 'solved'.  The mechanics most of us learned were problems that were solvable with some calculus, usually by integrating over time to remove that variable.  
+This statement seems logical at first glance, and was the hope of Laplace and others immediately following Newton (but not, as we shall see, of Feynman).  The most accurate equations of force, momentum, and gravitational acceleration are all fairly simple and for most examples that are taught in school, there are solutions that does not involve time at all.  We can define the differential equations for which there exists a closed (non-infinite, or in other words practical) solution that does not contain any reference to teh variable time as 'solved'.  The mechanics most of us learned were problems that were solvable with some calculus, usually by integrating over time to remove that variable.  
 
 If one peruses the curriculum generally taught to people just learning mechanics, a keen eye might spot something curious: the systems considered in the curriculum are all systems of two objects: a planet and a moon, or else the sun and earth.  This is the problem Newton inherited from Kepler, and the solution he found is the one we learn about today. 
 
@@ -33,7 +33,7 @@ $$
 The norm of the difference of two vectors may be understood as a distance between those vectors, if our distance function is an arbitrary dimension -extension of the function above.
 
 
-### Modelling the three body problem
+### Modeling the three body problem
 
 After a long succession of fruitless attempts, Bruns and Poincare showed that the three body problem does not contain a solution approachable with the method of integration used by Newton to solve the two body problem. No one could solve the three body problem, that is, make it into a self-contained algebraic expression, because it is impossible to do so!  
 
@@ -43,7 +43,7 @@ For more information, see [Wolfram's notes](https://www.wolframscience.com/refer
 
 Unfortunately for us, there is no general solution to the three body problem: we cannot actually tell where three bodies will be at an arbitrary time point in the future, let alone four or five bodies.  This is an inversion with respect to what is stated in the quotation above: armed with the power of Newton's laws, we cannot calculate, with arbitrary precision in finite time, the paths of any system of more than two objects.  
 
-### Trajectories of 3 objects are (almost always) chaotic
+### Bounded trajectories of 3 objects are (almost always) aperiodic
 
 Why is there a solution to the two body problem but not three body problem?  One can imagine that a problem with thousands of objects would be much harder to deal with than two objects, but why does adding only one more object create such a difficult problem?
 
@@ -313,6 +313,11 @@ This means that this trajectory of a two body problem is not sensitive to initia
 
 One can hope that the three (or more) body problem is restricted to celestial mechanics, and that it does not find its way into other fields of study.  Great effort has been expended to learn about the orbitals an electron will make around the nucleus of a proton, so hopefully this knowledge is transferrable to an atom with more than one proton. Unfortunately it does not: any three-dimensional system with three or more objects that operates according to nonlinear forces (gravity, electromagnetism etc.) reaches the same difficulties outlined above for planets. 
 
+This was appreciated by Feynman, who states in his lectures (2-9):
+
+"[Classical mechanics] is deterministic.  Suppose, however, that we have a finite accuracy and do not know exactly where just one atom is, say to one part in a billion.  Then as it goes along it hits another atom...if we start with only a tiny error it rapidly magnifies to a very great uncertainty.... Speaking more precisely, given an arbitrary accuracy, no matter how precise, one can find a time long enough that we cannot make predictions valid for that long a time"
+
+The idea that error magnifies over time is only true of nonlinear systems, and in particular aperiodic nonlinear systems. On this page, we have seen that in a nonlinear system of two planets, error does not magnify whereas it does for the cases observed with three planets.  Therefore measurement error does not necessarily become magnified, but only for aperiodic dynamical systems. This was the salient recognition of Lorenz, who found that aperiodicity and sensitivity to initial conditions (which is equivalent to magnification of error) implied one another.
 
 ### Does it matter that we cannot solve the three body problem, given that we can just simulate the problem on a computer?
 
@@ -320,5 +325,5 @@ When one hears about solutions to the three body problem, they are either restri
 
 To gain an appreciation for why computers cannot solve our problem, let's first pretend that perfect observations were able to be made.  Would we then be able to use a program to calculate the future trajectory of a planetary system exactly?  We have seen that we cannot when small imperfections exist in observation, but what about if these imperfections do not exist?  Even then we cannot, because it appears that Newton's gravitational constant, like practically all other constants, is an irrational number.  This means that even a perfect measurement of G would not help because it would take infinite time to enter into a computer exactly.
 
-That said, computational methods are very good for determining short-term trajectories.  Furthermore, when certain bodies are much larger in mass than others (as is the case in the solar system where the sun is much more massive than all the planets combined), the ability to determine trajectories is substantially enhanced. But like any chaotic equations system, the ability to determine trajectories for all time is not possible.
+That said, computational methods are very good for determining short-term trajectories.  Furthermore, when certain bodies are much larger in mass than others (as is the case in the solar system where the sun is much more massive than all the planets combined), the ability to determine trajectories is substantially enhanced. But like any aperiodic equations system, the ability to determine trajectories for all time is not possible.
 
