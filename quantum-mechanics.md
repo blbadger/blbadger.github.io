@@ -16,30 +16,15 @@ $$
 P_{12} \neq P_1 + P_2
 $$
 
-meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$
-
-### Delayed choice
-
-Quantum mechanics is the study of small objects, or at least objects that seem small relative to us.  The celebrated models of this study such as Schrodinger's equation imply a particle-wave duality of such objects.  Such a duality was observed upon experimentation with light, which in some experimental apparatus behave as though they were particles and in other experiments behave as though they were waves.  An example of the former case is the excitation of electrons to discrete energy levels, and an example of the latter is the dual slit experiment in which a photon interferes with itself, as a macroscopic wave does, when travelling through two closely spaced slits.  Wave-like or particle-like behavior may be observed from objects such as photons or electrons (or even much larger things) but never both at the same time: this is the complementarity principle.
-
-Wheeler devised a thought experiment, now known as the delayed choice, to test complementarity.  It proceeds as follows: suppose gravitational lensing were used to make a cosmic inferometer, which is a method for telling how far away something is.  With that information, it is possible to know the path a photon took as it travelled between galaxies.  Wheeler's hypothesis was that as a photon is neither a particle nor a wave until observed, but instead something indeterminate, then the act of observing the path choice would preclude a wave-like behavior manifest by
-
-This experiment has been carried out, though not as Wheeler initially proposed.  In various experiments, it has been shown that the method used to observe a photon at the end of its path through a double slit with inferometer determines its wave or particle behavior in the entire apparatus, even through the double slit itself.  
-
-One way to think about this is to try to understand when the photon 'learns' the experimental apparatus.  Now note that the Lorenz time dilation for a photon is infinite because it travels at the speed of light:
+meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$.  The intensity distribution along the wall with only slit 1 open is $I_1 = \lbar h_1 \rbar ^2$ and only slit 2 open is $I_2 = \lbar h_2 \rbar ^2$, but the intensity distribution with both slits open is
 
 $$
-\Delta t' = \frac{\Delta t}{1-\frac{v^2}{c^2}} \implies \\
-\Delta t' \to \infty \; as \; v \to c 
+I_{12} = \lbar h_1 + h_2 \rbar ^2 \neq lbar h_1 \rbar ^2 + \lbar h_2 \rbar ^2 \\
+I_{12} = I_1 + I_2 + 2\sqrt{I_1I_2}cos \delta
 $$
 
-which means that from the photon's perspective, all events are simultaneous.  
+A fundamental feature of quantum mechanics is that when path is known, linear particle behavior is observed and $P_{12} = P_1 + P_2$ but when path is unknown, nonlinear wave behavior is observed and $P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta$.  
 
-If this is accepted, the question of when the photon learns the apparatus is moot because the ending time is equal to the start time.  A change in the method of recording the photon at the end of a photon flight can change its behavior through a double slit 20ns beforehand (in our reference).  Delayed choice and quantum erasure would be more accurately thought of as a necessary result of simultaneity from a photon's perspective.  This idea also accounts for the finding that a photon can be influenced after detection, ie after it is destroyed.
-
-### Principle of least time as implied by delayed choice
-
-Light travels at different speeds throught different materials.  For example, light travels through water (2.25E8 m/s)  slower than it does in vacuum (3E8 m/s). Fermat noted that light travels along paths in different media of refraction as if it chose the quickest way to get from point A to point B.  Suppose that a new transparent material were invented and light was passed through it. When does light 'learn' what angle it should deflect to in order to minimize the time passing through this object? 
 
 ### Nonlocality implies a nonlinear space: the observer effect
 
@@ -53,7 +38,7 @@ This is not the only place where infinite quantities intrude in the study of sma
 
 A necessity for renormalization as well as non-differentiable particle paths imply and are implied by scale invariance.  Scale invariance in turn is typical of nonlinear dynamical systems, and thus it is not a stretch of the imagination to propose that the mechanics of small objects are most accurately defined in terms of nonlinear dynamics. As the Schrodinger equation is a linear partial differential equation, the current formulation is either incomplete or, as is more likely, a linear approximation.
 
-Why would field strength need to be renormalized in the first place?  Consider that in many of the pages on this site, maps between dimensions require explosion to infinity (for example, notice how any plane-filling curve must become infinitely long to cover any finite area).  Now fields are three dimensional, whereas if one takes a particle at face value then it is a one dimensional object.  Generation of the field requires passage between dimensions, specifically from a 1-dimensional point to an 3-dimensional (or 4-dimensional if relativity is taken into account) volume.  Only nonlinear transformations are capable of mapping a 1-dimensional point to a 3-dimensional volume, and 
+Why would field strength need to be renormalized in the first place?  Consider that in many of the pages on this site, maps between dimensions require explosion to infinity (for example, notice how any plane-filling curve must become infinitely long to cover any finite area).  Now fields are three dimensional, whereas if one takes a particle at face value then it is a one dimensional object.  Generation of the field requires passage between dimensions, specifically from a 0-dimensional point to an 3-dimensional (or 4-dimensional if relativity is taken into account) volume.  Only nonlinear transformations are capable of mapping a 0-dimensional point to a 3-dimensional volume, and 
 
 ### Implications 
 
@@ -88,11 +73,30 @@ which follows from the wave-like nature of small objects, and also applies to ma
 
 But note that this only applies to predictions of the future, not observations in the past.  A photon passing through a double slit, for example, can be determined precisely in both location and momentum after the fact, that is, after it is no longer a wave.  
 
-The result is that small objects (which have little mass) resemble 3-dimensional probability clouds rather than one-dimensional points.  
+The result is that small objects (which have little mass) resemble 3-dimensional probability clouds rather than one-dimensional points.  But this is only true for future predictions rather than events that happened in the past, which implies a transformation from a 0-dimensional
 
+### Aside: Delayed choice
 
+The celebrated models of this study such as Schrodinger's equation imply a particle-wave duality of such objects.  Such a duality was observed upon experimentation with light, which in some experimental apparatus behave as though they were particles and in other experiments behave as though they were waves.  An example of the former case is the excitation of electrons to discrete energy levels, and an example of the latter is the dual slit experiment in which a photon interferes with itself, as a macroscopic wave does, when travelling through two closely spaced slits.  Wave-like or particle-like behavior may be observed from objects such as photons or electrons (or even much larger things) but never both at the same time: this is the complementarity principle.
 
+Wheeler devised a thought experiment, now known as the delayed choice, to test complementarity.  It proceeds as follows: suppose gravitational lensing were used to make a cosmic inferometer, which is a method for telling how far away something is.  With that information, it is possible to know the path a photon took as it travelled between galaxies.  Wheeler's hypothesis was that as a photon is neither a particle nor a wave until observed, but instead something indeterminate, then the act of observing the path choice would preclude a wave-like behavior manifest by
 
+This experiment has been carried out, though not as Wheeler initially proposed.  In various experiments, it has been shown that the method used to observe a photon at the end of its path through a double slit with inferometer determines its wave or particle behavior in the entire apparatus, even through the double slit itself.  
+
+One way to think about this is to try to understand when the photon 'learns' the experimental apparatus.  Now note that the Lorenz time dilation for a photon is infinite because it travels at the speed of light:
+
+$$
+\Delta t' = \frac{\Delta t}{1-\frac{v^2}{c^2}} \implies \\
+\Delta t' \to \infty \; as \; v \to c 
+$$
+
+which means that from the photon's perspective, all events are simultaneous.  
+
+If this is accepted, the question of when the photon learns the apparatus is moot because the ending time is equal to the start time.  A change in the method of recording the photon at the end of a photon flight can change its behavior through a double slit 20ns beforehand (in our reference).  Delayed choice and quantum erasure would be more accurately thought of as a necessary result of simultaneity from a photon's perspective.  This idea also accounts for the finding that a photon can be influenced after detection, ie after it is destroyed.
+
+### Principle of least time as implied by delayed choice
+
+Light travels at different speeds throught different materials.  For example, light travels through water (2.25E8 m/s)  slower than it does in vacuum (3E8 m/s). Fermat noted that light travels along paths in different media of refraction as if it chose the quickest way to get from point A to point B.  Suppose that a new transparent material were invented and light was passed through it. When does light 'learn' what angle it should deflect to in order to minimize the time passing through this object? 
 
 
 
