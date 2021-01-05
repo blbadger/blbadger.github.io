@@ -139,6 +139,11 @@ As for any science, an attempt to explain observations and predict future ones u
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
+### [Quantum mechanics](/quantum-mechanics.md)
+
+$$
+P_{12} \neq P_1 + P_2
+$$
 
 ## Biology
 The study of life, which displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  
