@@ -1,6 +1,6 @@
 ## Quantum mechanics 
 
-Delayed choice, nonlocality, and more observations from small objects are considered here.  This commentary should be considered as provisional. 
+Delayed choice, nonlocality, and more observations from small objects are considered here.  This commentary should be considered as provisional, to be taken with a grain of salt.
 
 ### Wave behavior as nonlinearity
 
@@ -16,10 +16,10 @@ $$
 P_{12} \neq P_1 + P_2
 $$
 
-meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$.  The intensity distribution along the wall with only slit 1 open is $I_1 = \lbar h_1 \rbar ^2$ and only slit 2 open is $I_2 = \lbar h_2 \rbar ^2$, but the intensity distribution with both slits open is
+meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$.  The intensity distribution along the wall with only slit 1 open is $I_1 = \vert{I_1}^2$ and only slit 2 open is $I_2 = \vert{h_2}^2$, but the intensity distribution with both slits open is
 
 $$
-I_{12} = \lbar h_1 + h_2 \rbar ^2 \neq lbar h_1 \rbar ^2 + \lbar h_2 \rbar ^2 \\
+I_{12} = \vert{h_1 + h_2}^2 \neq  \vert{h_1}^2 + \vert{h_2}^2 \\
 I_{12} = I_1 + I_2 + 2\sqrt{I_1I_2}cos \delta
 $$
 
