@@ -25,6 +25,7 @@ $$
 
 A fundamental feature of quantum mechanics is that when path is known, linear particle behavior is observed and $P_{12} = P_1 + P_2$ but when path is unknown, nonlinear wave behavior is observed and $P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta$.  
 
+Quantum mechanics from first principles extends no further: there is no reason why observation of path leads to particle-like behavior and a lack of path observation leads to wave-like behavior. If it is accepted that small particles are by nature probablistic, this is as far as one can go.  But the similarities of quantum behavior to aperiodic dynamical systems abound (inherently unpredictable future from a finitely precise past, necessity for nonlinear transformations etc.) leading to the possibility that one can better explain first principles of quantum mechanics with the principles of nonlinear dynamics.
 
 ### Nonlocality implies a nonlinear space: the observer effect
 
