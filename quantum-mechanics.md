@@ -16,7 +16,7 @@ $$
 P_{12} \neq P_1 + P_2
 $$
 
-meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$.  The intensity distribution along the wall with only slit 1 open is $I_1 = \vert I_1 \vert^2$ and only slit 2 open is $I_2 = \verth_2 \vert^2$, but the intensity distribution with both slits open is
+meaning that adding a second slit to the first is not additive.  More precisely, the amplitude of a wave traveling through the first slit, denoted as the complex number $h_1$, is the real part of $h_1e^{i \omega t}$.  The intensity distribution along the wall with only slit 1 open is $I_1 = \vert I_1 \vert^2$ and only slit 2 open is $I_2 = \vert h_2 \vert^2$, but the intensity distribution with both slits open is
 
 $$
 I_{12} = \vert h_1 + h_2 \vert^2 \neq  \vert h_1 \vert^2 + \vert h_2 \vert^2 \\
