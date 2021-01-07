@@ -80,7 +80,7 @@ Similarly, division $d(x)$ on the integers can be composed of repeated applicati
 $$
 a \circ a \circ a = a(a(a(n))) \\
 d(x) = \frac{x}{n} \implies d(x) = card \; \{a \circ a \circ a \cdots \circ a \} :  \\
-\circ a \circ a \cdots \circ a = x \\
+a \circ a \circ a \cdots \circ a = x \\
 a^{d(x)}(n) = x
 $$
 
@@ -128,6 +128,20 @@ The axiom of choice gives rise to an interesting, and somewhat counterintuitive 
 A reconciliation with this paradox may be had if one observes that the function required to perform the dissassembly and reassembly of spheres in Banach-Tarski is uncomputable.  This follows from how the deconstruction and reconstruction is performed: it is an infinite recursive (tree) algorithm, and therefore not computable if we accept the Church-Turing thesis (or if we are reasonable people in general). 
 
 If the Church-Turing thesis is correct and our somewhat undefined notion of computability is captured by Turing machines (or by general recursive functions), then the Banach-Tarski theorem is paradoxical in part because it relies on functions that we cannot compute.  
+
+### Aside: computability and the natural world
+
+Does it matter that most functions are uncomputable (accepting the Church-Turing thesis)?  Sometimes it is argued that no, just as the rationals are dense in the reals so computable functions can approximate any function. This argument relies on assumptions of approximations that do not hold for nonlinear functions and is therefore unhelpful as most functions are nonlinear. 
+
+Another argument is that most of these uncomputable functions would mostly resemble mappings to (white or other) noise, like the static on a CRT.  But suppose this argument were true (and it is not clear that it is). To restate, assume that there are many functions out there that are uncomputable which map to noise.  
+
+Now consider that most oservations in the natural world are noise.  Any scientific measurement is usually divided into signal (which is rare and what one is usually after) and noise (which is everything else by definition).  Brown noise (which we can define here as $1/f^n, \; n > 0$) is the most common but others are found as well.  Noise is usually discarded but is ever-present.
+
+Therefore if uncomputable functions map to noise, and if noise is by far the most common observation in the natural world, it is implied that uncomputable functions map to most observations of the natural world.  This does not, of course, mean that nothing can be learned about the world using computable functions.  But it does imply that it is a bad idea to disregard uncomputable functions as unimportant in real life.
+
+
+
+
 
 
 
