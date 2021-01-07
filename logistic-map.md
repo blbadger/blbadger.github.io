@@ -1,6 +1,6 @@
 ## Logistic Map
 
-The logistic equation was derived from a differential equation describing population growth, studied by Robert May. The equation is as follows:
+The logistic map was derived from a differential equation describing population growth, studied by Robert May. The dynamical equation is as follows:
 
 $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
@@ -9,6 +9,7 @@ where r can be considered akin to a growth rate, $x_{n+1}$ is the population nex
 Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries.
 
 ```python
+#! python3
 # import third-party libraries
 from matplotlib import pyplot as plt 
 import numpy as np 
@@ -42,6 +43,15 @@ As $r$ is increased to 2.5, a stable population is reached:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
 
+This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $r=2.5$ we have
+
+$$
+x_n = 2.5x_n(1-x_n) \\
+0 = x_n(-2.5x_n + 1.5) \\
+x_n = 0, \; x_n = 3/5 \\
+$$
+
+where the value of $x_{n+1} = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. 
 
 If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
 
@@ -58,7 +68,7 @@ and at $r=3.55$, the population is period 8:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
 
-and at $r=3.7$, the period is longer than the iterations plotted (actually it is infinite).  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is called mathematical chaos.
+and at $r=3.7$, the period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
@@ -143,7 +153,6 @@ Let's take a closer look at the fuzzy region of the right. This corresponds to t
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
-
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
 Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
@@ -172,8 +181,6 @@ This also holds for $r = 4$: at this value, the orbit diagram suggests that ther
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $p \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
-
-
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
@@ -246,9 +253,9 @@ This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/
 
 Let's call locations where close-together points eventually diverge in time unstable points.  Chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
-But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($x_n \approx 0.74$) than others.  This illustrates a second feature of chaos that differs from its English usage: mathematical chaos is not completely unordered. A more descriptive word might be 'mysterious' because these systems are unsolveable and unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the next section.
+But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($x_n \approx 0.74$) than others.  This illustrates a feature of chaos that differs from its English usage: mathematical chaos is not completely disordered. A more descriptive word might be 'mysterious' because these systems are unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the following section.
 
-### The relationship between chaotic systems and fractals
+### The relationship between aperiodic systems and fractals
 
 One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.
 
@@ -275,11 +282,11 @@ As $r$ increases, the periodicity increases until it becomes infinite, and infin
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_3.png)
 
 
-What about the transition from aperiodicity back to periodicity? There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. 
+What about the transition from aperiodicity back to periodicity? There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
 
 Recall that areas with higher point density correspond to population values that appear more often over many iterations.  With increases in $r$, these populations that are more probable, the 'favored' populations, change.  There is always more than one favored population size, and occasionally with increases in $r$ two different favored sizes can converge to become one.  If the difference between two favored sizes goes to 0 at a decreasing rate, increasing $r$ leads to periodicity from aperiodicity. 
 
-This can be clearly seen with a look at the map: if lines of higher density in chaotic regions approach but do not cross, there is a region of periodicity immediately following.  If these lines approach and cross (if they approach at a rate that does not decrease to 0), then aperiodicity remains for subsequent, slightly larger values of $r$. 
+This can be clearly seen with a look at the map: if dense areas in chaotic regions approach but do not cross, there is a region of periodicity immediately following.  If these lines approach and cross (if they approach at a rate that does not decrease to 0), then aperiodicity remains for subsequent, slightly larger values of $r$. 
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_4.png)
 
@@ -293,10 +300,6 @@ For any pair of elements $(x_i, x_j) \in \mathbf A$, if
 
 $x_i - x_j \to 0$ and $\frac{d}{dr} (x_i - x_j) \to 0$ as $r$ increases, 
 
-then succsessively larger values of $r$ move (1) from aperiodic to periodic iterations.  These periodic iterations are found at population sizes equal to the value of $x_i$ as $x_i - x_j \to 0$.
-
-It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then further increases of $r$ will lead to periodicity.
-
-The idea that tangential approaching of two 'favored' populations implying soon-to-be periodicity is conjectural at this point.
+then successively larger values of $r$ move (1) from aperiodic to periodic iterations.  These periodic iterations are found at population sizes equal to the value of $x_i$ as $x_i - x_j \to 0$.  It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then further increases of $r$ will lead to periodicity.  
 
 
