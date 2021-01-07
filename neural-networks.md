@@ -100,10 +100,15 @@ $$
 \{decision \; problems\} \sim \Bbb R >> \Bbb Q \sim \{\mathtt {finite} \; \mathtt {programs}\}
 $$
 
-
 This means that the set of all finite programs is a vanishingly small subset of the set of all decision problems, meaning that no finite program (or collection of programs) will ever be able to solve all decision problems, only a small subset of them.
 
-For one specific reason why neural networks in particular cannot compute decisions with arbitrary accuracy and how this is manifested in the presence of adversarial examples, see the bottom of this page.
+The underlying point here is that there is a difference between strict universality in computer science and the idea of universality in functions. Universality in computer science is an idea that goes back to the Church-Turing thesis that any computable function may be evaluated by a certain machine, called a 'Universal' machine (Turing machines are a class of universal machines).  Programming languages that are capable of defining procedures for all computable functions are termed 'Turing complete', and most general purpose languages that exist today are Turing complete. 
+
+Note that the class of computable functions extends far beyond the continuous, (piecewise) differentiable functions that have shown to be approximated by neural networks.  But with more work, one can imagine that some future machine learning technique may approximate nondifferentiable and even discontinuous computable functions as well.  Would that future machine learning program then be able to compute any function?
+
+Not in the slightest: most functions are uncomputable.  Specifically, if a random function were chosen then the probability that it is computable is 0. For why statement is true, see [here](https://blbadger.github.io/solvable-periodicity.html).  Now consider that functions describing the natural world are by no means computable.  This means that there is no guarantee that the set of all computable functions (and therefore the set of all machine learning techniques in the future) will accurately describe the natural world in any way.  For example, take the common physical constants $g$, $h$ etc.  There is no evidence to suggest that any of these values are computable much less rational.  Even something as simple as a physical constant therefore is dubiously evaluated by a computable function.
+
+For a specific example of how neural networks cannot compute with arbitrary accuracy and how this is manifested in the presence of adversarial examples, see the bottom of this page.
 
 ### Using a neural network to classify fluorescent images of cells
 
