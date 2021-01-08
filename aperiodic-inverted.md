@@ -4,7 +4,7 @@ Consequences of non-invertability of aperiodic maps (logistic and Henon in parti
 
 ### The logistic map is non-invertible, hence dynamically irreversible
 
-Suppose one were to track a dynamical system without knowing any details about how it worked.  
+Suppose one were to observe movement over time.  
 
 The logistic equation, which has been explored [here](https://blbadger.github.io/logistic-map.html) and [here](https://blbadger.github.io/logistic-boundary.html) is as follows:
 
@@ -57,14 +57,14 @@ and for $x_n$,
 
 $$
 x_n = 1 - ax_{n+1}^2 + a(y_n/b)^2 + x_n -1 \\
-x_{n+1}^2 = (y_n/b)^2 + 2x_n/a \\
-x_{n+1} = \pm \sqrt{(y_n/b)^2 + 2x_n/a}
+x_{n+1}^2 = (y_n/b)^2 \\
+x_{n+1}^2 = \pm \frac{y_n}{b}
 $$
 
 Therefore the inverse of the Henon map is:
 
 $$
-x_{n+1} = \pm \sqrt{(y_n/b)^2 + 2x_n/a}
+x_{n+1} = \pm \frac{y_n}{b}
 y_{n+1} = ay_n^2 / b^2 + x_n - 1
 $$
 
