@@ -4,7 +4,7 @@ Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two
 
 Henon investigated the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
 
-$$x_{n+1} = 1-ax_n^2 + y \\
+$$x_{n+1} = 1-ax_n^2 + y_n \\
 y_{n+1} = bx_n \tag{1}$$
 
 When
