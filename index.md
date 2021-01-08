@@ -117,6 +117,12 @@ $$
 
 ![mapping]({{https://blbadger.github.io}}misc_images/curve_mapping.png)
 
+### [Reversibility and periodicity](/aperiodic-inverted.md)
+
+$$
+x_{n+1} = rx_n(1-x_n) \\
+x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
+$$
 
 ### [Additive transformations](/additivity-order.md)
 
