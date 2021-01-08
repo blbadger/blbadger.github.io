@@ -121,7 +121,8 @@ $$
 
 $$
 x_{n+1} = rx_n(1-x_n) \\
-x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
+\; \\
+x_{n} = \frac{r \pm \sqrt{r^2-4rx_{n+1}}}{2r}
 $$
 
 ### [Additive transformations](/additivity-order.md)
