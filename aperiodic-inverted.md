@@ -56,20 +56,16 @@ $$
 and for $x_n$, 
 
 $$
-x_n = 1 - ax_{n+1}^2 + a(y_n/b)^2 + x_n -1 \\
-x_{n+1}^2 = (y_n/b)^2 \\
-x_{n+1}^2 = \pm \frac{y_n}{b}
+y_{n} = bx_{n+1} \\
+x_{n+1} = \pm \frac{y_n}{b}
 $$
 
 Therefore the inverse of the Henon map is:
 
 $$
-x_{n+1} = \pm \frac{y_n}{b}
+x_{n+1} = \frac{y_n}{b} \\
 y_{n+1} = ay_n^2 / b^2 + x_n - 1
 $$
-
-Once again, the inverse is not a function as it may yield two values of $x_{n+1}$ for one input $x_n$, thus the Henon map like the logistic map is strictly speaking non-invertible as it too is 2-to-1 for certain values of $x_n, y_n$.  
-
 
 
 
