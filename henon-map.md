@@ -275,7 +275,7 @@ Thus the waves of the henon map form in a similar fashion to those seen in the p
 
 ### Fractal zoom on a henon map divergence
 
-At $a-0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
+At $a=0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
 
 ```python
 def henon_map(max_iterations, a, b, x_range, y_range):
@@ -324,7 +324,7 @@ def henon_boundary(max_iterations, a, b):
 ...
 ```
 
-When $a=0.2, b=1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
+When $a=0.2, b=-1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
