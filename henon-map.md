@@ -286,14 +286,14 @@ $$
 which by the quadratic formula yields 
 
 $$
-x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a}
+x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = b
 $$
 
 When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the irrational values of
 
 $$
-x = \frac{(-1.1-1) \pm \sqrt{(-1.1-1)^2 + 4*0.2}}{2*0.2}
+x = \frac{(-2.1) \pm \sqrt{(-2.1)^2 + 0.8}}{0.4}
 $$
 
 will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. 
