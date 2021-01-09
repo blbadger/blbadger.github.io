@@ -275,10 +275,36 @@ Thus the waves of the henon map form in a similar fashion to those seen in the p
 
 ### Fractal zoom on a henon map divergence
 
-At $a=0.2$ and $b=-1.1$, points head towards infinity nearly everywhere. But a pinwheel-like pattern is formed by the areas of slower divergence. Let's zoom in on this pinwheel to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
+At $a=0.2$ and $b=-1.1$, points head towards infinity nearly everywhere.  One point that does not diverge is where the next iteration is equivalent to the current, or where $x_{n+1} = x_n$ and $y_{n+1} = y_n$.  This can be found as follows:
+
+$$
+x_n = 1 - ax_n^2 + y_n \\
+y_n = bx_n \implies \\
+0 = 1-ax_n^2 + (b-1)x_n + 1 \\
+$$
+
+which by the quadratic formula yields 
+
+$$
+x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a}
+y_n = b
+$$
+
+When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the irrational values of
+
+$$
+x = \frac{(-1.1-1) \pm \sqrt{(-1.1-1)^2 + 4*0.2}}{2*0.2}
+$$
+
+will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. 
+
+The former coordinate lies at the center of the pinwheel, meaning that regions nearby converge more slowly than regions elsewhere and is therefore semistable.  The latter point is unstable, such that iterations arbitrarily close rapidly diverge.  To get an idea of just how unstable this point is, for x and  at 64 bit precision ($x = -10.956356105256663$), iterations diverge after a mere ~28 iterations.  In contrast, it takes over five hundred iterations for $(x, y) \approx (0.456, -0.502)$ at 64 bit precision to diverge.
+
+Let's zoom in on the pinwheel-like pattern of slower divergence around $(x, y) \approx (0.456, -0.502)$ to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
 
 ```python
 def henon_map(max_iterations, a, b, x_range, y_range):
+	# offset slightly from true value
 	xl = -5/(2**(t/15)) + 0.4564
 	xr = 5/(2**(t/15)) + 0.4564
 	yl = 5/(2**(t/15)) - 0.50202
@@ -323,6 +349,8 @@ def henon_boundary(max_iterations, a, b):
 	array = np.meshgrid(x_list[:2000], y_list[:2000])
 ...
 ```
+
+
 
 When $a=0.2, b=-1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
