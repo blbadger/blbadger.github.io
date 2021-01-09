@@ -257,7 +257,7 @@ Setting $a=0.2, b=-0.99994$ and $x_0, y_0 = -1.5, 1.5$ we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_spiral.png)
 
-The semicontinuous pendulum waves form as a spiral trajectory unwinds with increasing $\Delta t$.  Does this Henon map form the same way?  Let's find out by plotting (1) going from $b \approx 0.9 \to b \approx 1.05$, including the attractor basin.
+The semicontinuous pendulum waves form as a spiral trajectory unwinds with increasing $\Delta t$.  Does this Henon map form the same way?  Let's find out by plotting (1) going from $b \approx -0.9 \to b \approx -1.05$, including the attractor basin.
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_b0.9_to_1.1.gif)
 
