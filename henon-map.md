@@ -290,13 +290,13 @@ x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = b
 $$
 
-When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the irrational values of
+When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the (irrational) values of
 
 $$
 x = \frac{(-2.1) \pm \sqrt{(-2.1)^2 + 0.8}}{0.4}
 $$
 
-will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. 
+will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. This is important because there are no perfect finite representations of irrational numbers, meaning that any form of the radical above that can be stored in finite memory will eventually diverge to infinity given enough iterations of (1).  
 
 The former coordinate lies at the center of the pinwheel, meaning that regions nearby converge more slowly than regions elsewhere and is therefore semistable.  The latter point is unstable, such that iterations arbitrarily close rapidly diverge.  To get an idea of just how unstable this point is, for x and  at 64 bit precision (x = -10.956356105256663), divergence occurs after a mere ~28 iterations.  In contrast, it takes over five hundred iterations for $(x, y) \approx (0.456, -0.502)$ at 64 bit precision to diverge.
 
@@ -349,8 +349,6 @@ def henon_boundary(max_iterations, a, b):
 	array = np.meshgrid(x_list[:2000], y_list[:2000])
 ...
 ```
-
-
 
 When $a=0.2, b=-1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
 
