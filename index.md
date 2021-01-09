@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-Dynamics is the mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
+The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
