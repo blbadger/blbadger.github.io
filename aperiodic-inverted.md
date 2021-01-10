@@ -67,7 +67,7 @@ $$
 
 This is a one-to-one map, meaning that (2) is invertible.  
 
-Does this mean that, given some point $(x, y)$ in the plane we can determine the path it took to get there?  Let's try this with the reversal function above
+Does this mean that, given some point $(x, y)$ in the plane we can determine the path it took to get there?  Let's try this with the inverse function above for $a = 1.4, b=0.3$
 
 ```python
 #! python3
@@ -77,6 +77,7 @@ def reversed_henon_map(x, y, a, b):
 	return x_next, y_next
 	
 array = [[0, 0]]
+a, b = 1.4, 0.3
 for i in range(4):
 	array.append(reversed_henon_map(array[-1][0], array[-1][1], a, b))
 
@@ -179,9 +180,13 @@ for i in range(steps-1):
 
 plt.plot(X, Y, ',', color='white', alpha = 0.5, markersize = 0.1)
 ```
+
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed_overlay.png)
 
 
+From a = 1 to a = 1.5, holding b=0.3 constant,
+
+{% include youtube.html id='gb18hw3ndpU' %}
 
 
 
