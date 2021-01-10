@@ -210,13 +210,9 @@ $$
 
 outside of which values diverge. For b >= 1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity.  If we look at the values that diverge for (3) for a=0.2, b=-0.99 from 20 maximum iterations to 520,
 
-[insert video]
+{% include youtube.html id='81ewwor3Lt8' %}
 
-As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
-
-### The Henon map is practically irreversible
-
-This goes to show that, given a point in the plane moving according to the Henon map for the two sets of values (a, b), it is difficult if not impossible to determine the past trajectory of this point.  
+As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.    
 
 ### Aperiodic logistic and Henon maps are practically irreversible
 
