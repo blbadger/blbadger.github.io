@@ -26,13 +26,25 @@ The term $x_n$ can be treated as a constant (as it is constant for any given inp
 
 $$
 x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
+\tag{2}
 $$
 
 Now the first thing to note is that this dynamical equation is not strictly a function: it maps a single input $x_n$ to two outputs $x_{n+1}$ (one value for $+$ or $-$ taken in the numerator) for many values of $x_n \in (0, 1)$ whereas a function by definition has one output for any input that exists in the pre-image set.  In other words the logistic map is non-invertible.
 
-### the aperiodic logistic map in reverse is unstable
+### The aperiodic logistic map in reverse is unstable
 
 Suppose one wanted to calculate the values of 
+
+Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
+
+###  Aperiodic logistic maps are not practically reversible
+
+The logistic map is not because it is 2-to-1 for many values of $x_n \in (0, 1)$: there is no way to know which of the two points $x_{n-1}, x_{n-1}'$ the trajectory actually visited.  For values of r that yield an aperiodic logistic map trajectory, only one of the two $x_{n-1}, x_{n-1}'$ points may be visited because aperiodic trajectories never revisit previous points, and if either point was visited then $x_n$ is also visited.  Therefore aperiodic logistic map trajectories follow only one of the many possible previous trajectories, and which one is impossible to determine.
+
+But what about reversibility with respect to future values $(x_{n+1}, x_{n+2} ...)$?  In other words, given that $x_{n-1}, x_{n-1}'$ both map to the same trajectory $(x_{n+1}, x_{n+2} ...)$, can we find any previous values of $x_n$ that yield the same fucutre trajectory?  This criteria for reversibility is similar to the criteria for one-way functions, which stipulates that either $x_{n-1}, x_{n-1}'$ may be chosen as a suitable previous value and that there is no difference between the two with respect to where they end up.  Is the logistic map reversible under this definition, or equivalently is the logistic map a one way function?
+
+Symbolically, it is not: 
+
 
 ### The Henon map is invertible 
 
@@ -41,7 +53,7 @@ The [Henon map](https://blbadger.github.io/henon-map.html) is a two dimensional 
 $$
 x_{n+1} = 1 - ax_n^2 + y_n \\
 y_{n+1} = bx_n \\
-\tag{2}
+\tag{3}
 $$
 
 Let's try the same method used above to reverse $x_{n+1}$ of (2) with respect to time, 
@@ -63,10 +75,10 @@ Therefore the inverse of the Henon map is:
 $$
 x_{n+1} = \frac{y_n}{b} \\
 y_{n+1} = a \frac{y_n^2}{b^2} + x_n - 1
-\tag{3}
+\tag{4}
 $$
 
-This is a one-to-one map, meaning that (2) is invertible.  
+This is a one-to-one map, meaning that (3) is invertible.  
 
 Does this mean that, given some point $(x, y)$ in the plane we can determine the path it took to get there?  Let's try this with the inverse function above for $a = 1.4, b=0.3$
 
@@ -169,7 +181,7 @@ which results (lighter color indicates more iterations occur before divergence)
 
 The baker's dough topology found by Smale is evident in this image, meaning that each iteration of the forward Henon map can be decomposed into a series of three stretching or folding events as shown [here](https://en.wikipedia.org/wiki/H%C3%A9non_map).  This topology is common for attractors that map a 2D surface to an attractor of 1 < D < 2: the Henon map for a=1.4, b=0.3 is around 1.25 dimensional. 
 
-The attractor for (2) can be mapped on top of the divergence map for (3) as follows:
+The attractor for (3) can be mapped on top of the divergence map for (4) as follows:
 
 ```python
 steps = 100000
@@ -199,35 +211,38 @@ From a = 1 to a = 1.5, holding b=0.3 constant,
 
 {% include youtube.html id='gb18hw3ndpU' %}
 
-It is interesting to note that the divergence map for (3) is not simply the inverse of the divergence map for (2), which is presented [here](https://blbadger.github.io/henon-map.html), given that (3) is the inverse of (2).  In particular, regions outside the attractor basin for (2) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (3), which is somewhat counter-intuitive given that (3) should give the iterations of (2) in reverse.  
+It is interesting to note that the divergence map for (3) is not simply the inverse of the divergence map for (3), which is presented [here](https://blbadger.github.io/henon-map.html), given that (4) is the inverse of (3).  In particular, regions outside the attractor basin for (3) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (4), which is somewhat counter-intuitive given that (4) should give the iterations of (3) in reverse.  
 
-For a=0.2, -1 < b < 0, (2) experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
+For a=0.2, -1 < b < 0, (3) experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
 
 $$
 x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = b * x_n
 $$
 
-outside of which values diverge. For b >= 1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity.  If we look at the values that diverge for (3) for a=0.2, b=-0.99 from 20 maximum iterations to 520,
+outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity.  
+
+![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
+
+The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 20 maximum iterations to 520, iterating (4) for a=0.2, b=-0.99 we have
 
 {% include youtube.html id='81ewwor3Lt8' %}
 
 As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.    
 
-### Aperiodic logistic and Henon maps are practically irreversible
+### Aperiodic Henon maps are practically irreversible
 
-Are any logistic or Henon maps reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing (3) for however many reverse iterations are required.  But what about the logistic map?
+Is Henon maps reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing (3) for however many reverse iterations are required. 
 
-The logistic map is not because it is 2-to-1 for many values of $x_n \in (0, 1)$: there is no way to know which of the two points $x_{n-1}, x_{n-1}'$ the trajectory actually visited.  For values of r that yield an aperiodic logistic map trajectory, only one of the two $x_{n-1}, x_{n-1}'$ points may be visited because aperiodic trajectories never revisit previous points, and if either point was visited then $x_n$ is also visited.  Therefore aperiodic logistic map trajectories follow only one of the many possible previous trajectories, and which one is impossible to determine.
+But ealrier our attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (3).  This suggests that although the Henon map is invertible, it is not practically invertible.  'Practical" in this definition means computable using finite memory, which is not a stipulation given to Turing machines but is clearly true of any computation one wishes to perform.  
 
-But what about reversibility with respect to future values $(x_{n+1}, x_{n+2} ...)$?  In other words, given that $x_{n-1}, x_{n-1}'$ both map to the same trajectory $(x_{n+1}, x_{n+2} ...)$, does it matter that there are many different possible previous trajectories and we cannot determine which was taken?  
+Is the reverse Henon map necessarily impractical?  If it is aperiodic (as is the case for a=1.4, b=0.3) then yes, and this can be proved as follows.  First note that all aperiodic maps in phase space must be defined on the real numbers and not the rationals, and in particular the Henon map, iterated discontinuously, cannot be defined on the rationals.  For more on this topic, see [here](https://blbadger.github.io/aperiodic-irrationals.html).  As reals are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  Now irrational numbers are of infinite length, and cannot be stored to arbitrary accuracy in finite memory. This implies that all but a negligable portion of values on the Henon map itself are practically non-invertible, meaning that the Henon map itself is for practical purposes irreversible.
 
-The attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (2).  This suggests that although the Henon map is invertible, it is not practically invertible.  'Practical" in this definition means computable using finite memory, which is not a stipulation given to Turing machines but is clearly true of any computation one wishes to perform.  
+How do we know that rational approximations of $\mathscr H$ diverge after many iterations of (4), if the corresponding values of a, b yield an aperiodic map from (3)?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that (4) is sensitive to initial conditions is as follows: (4) is the one-to-one inverse of (3).  Being aperiodic, the trajectory of (3) never revisits a previous point.  Therefore we know that (4) is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as (3).  As aperiodicity implies arbitrary sensitivity to initial values, (4) is arbitrarily sensitive to initial values. 
 
-Is the reverse Henon map necessarily impractical?  If it is aperiodic (as is the case for a=1.4, b==0.3) then yes, and this can be proved relatively simply.  First note that all aperiodic maps in phase space must be defined on the real numbers, as shown [here](https://blbadger.github.io/aperiodic-irrationals.html).  As reals are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  Now irrational numbers are of infinite length, meaning that any starting value in this set is practically non-invertible. 
+This means that any arbitrarily small (but still finite) deviation from $\mathscr H$, if iterated as a starting point with (4), eventually diverges from $\mathscr H$.  As points not on $\mathscr H$ head to infinity, so do any points that are close but not precisely on $\mathscr H$. 
 
-
-
+Another line of reasoning can be used to show why the Henon map is not invertible, assuming finite computation and memory.  This is as follows: $\mathscr H$ is not computable, because it requires an infinite number of iterations of $2$ for a starting point not in $\mathscr H$ to end up precisely on $\mathscr H$.  As the location of $\mathscr H$ is not known a priori, it cannot be found but only approximated.  Given that any finite approximation of $\mathscr H$ will eventually lead to errors in iterating (4) due to sensitivity to initial conditions, (3) is non-invertible for all practical purposes. 
 
 
 
