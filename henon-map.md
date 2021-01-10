@@ -287,7 +287,7 @@ which by the quadratic formula yields
 
 $$
 x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a} \\
-y_n = b * x
+y_n = b * x_n
 $$
 
 When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the (irrational) values of
