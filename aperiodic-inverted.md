@@ -228,11 +228,7 @@ But what about reversibility with respect to future values $(x_{n+1}, x_{n+2} ..
 
 The attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (2).  This suggests that although the Henon map is invertible, it is not practically invertible.  'Practical" in this definition means computable using finite memory, which is not a stipulation given to Turing machines but is clearly true of any computation one wishes to perform.  
 
-Is the reverse Henon map necessarily impractical?  We can see that for all but a negligible number of possible starting values, it is indeed: (3) 
-
-
-
-
+Is the reverse Henon map necessarily impractical?  If it is aperiodic (as is the case for a=1.4, b==0.3) then yes, and this can be proved relatively simply.  First note that all aperiodic maps in phase space must be defined on the real numbers, as shown [here](https://blbadger.github.io/aperiodic-irrationals.html).  As reals are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  Now irrational numbers are of infinite length, meaning that any starting value in this set is practically non-invertible. 
 
 
 
