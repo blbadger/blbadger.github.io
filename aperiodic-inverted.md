@@ -30,11 +30,11 @@ $$
 
 Now the first thing to note is that this dynamical equation is not strictly a function: it maps a single input $x_n$ to two outputs $x_{n+1}$ (one value for $+$ or $-$ taken in the numerator) for many values of $x_n \in (0, 1)$ whereas a function by definition has one output for any input that exists in the pre-image set.  In other words the logistic map is non-invertible.
 
-### Practical irreversibility in the aperiodic logistic map
+### the aperiodic logistic map in reverse is unstable
 
+Suppose one wanted to calculate the values of 
 
-
-### The Henon map is invertible but unstable
+### The Henon map is invertible 
 
 The [Henon map](https://blbadger.github.io/henon-map.html) is a two dimensional discrete dynamical system defined as
 
@@ -44,18 +44,18 @@ y_{n+1} = bx_n \\
 \tag{2}
 $$
 
-Let's try the same method used above to reverse the $y_n$ component of (2) with respect to time:
+Let's try the same method used above to reverse $x_{n+1}$ of (2) with respect to time, 
+
+$$
+y_{n} = bx_{n+1} \\
+x_{n+1} = \frac{y_n}{b}
+$$
+
+using this, we can invert $y_{n+1}$ as follows:
 
 $$
 y_{n+1} = ax_{n+1}^2 + x_n - 1 \\
 y_{n+1} = a \frac{y_n^2}{b^2} + x_n - 1
-$$
-
-and for $x_n$, 
-
-$$
-y_{n} = bx_{n+1} \\
-x_{n+1} = \pm \frac{y_n}{b}
 $$
 
 Therefore the inverse of the Henon map is:
@@ -63,6 +63,7 @@ Therefore the inverse of the Henon map is:
 $$
 x_{n+1} = \frac{y_n}{b} \\
 y_{n+1} = a \frac{y_n^2}{b^2} + x_n - 1
+\tag{3}
 $$
 
 This is a one-to-one map, meaning that (2) is invertible.  
@@ -88,6 +89,8 @@ Starting at the origin, future iterations diverge extremely quickly:
 ```python
 [[0, 0], (0.0, -1.0), (-3.3333333333333335, 14.555555555555557), (48.518518518518526, 3291.331961591222), (10971.106538637407, 168511297.67350394)]
 ```
+
+### The reverse Henon map is unstable
 
 We know that a starting value on the Henon attractor itself should stay bounded if (1) iterating in reverse, at least for the number of iterations it has been located near the attractor.  For example, the following yields a point that has existed near the attractor for 1000 iterations
 
@@ -164,7 +167,9 @@ which results (lighter color indicates more iterations occur before divergence)
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed_scale.png)
 
-where, as expected, the areas of slower divergence align with the attractor (in white)
+The baker's dough topology found by Smale is evident in this image, meaning that each iteration of the forward Henon map can be decomposed into a series of three stretching or folding events as shown [here](https://en.wikipedia.org/wiki/H%C3%A9non_map).  This topology is common for attractors that map a 2D surface to an attractor of 1 < D < 2: the Henon map for a=1.4, b=0.3 is around 1.25 dimensional. 
+
+The attractor for (2) can be mapped on top of the divergence map for (3) as follows:
 
 ```python
 steps = 100000
@@ -179,14 +184,54 @@ for i in range(steps-1):
 		Y[i+1] = henon_map(X[i], Y[i], a, b)[1]
 
 plt.plot(X, Y, ',', color='white', alpha = 0.5, markersize = 0.1)
+plt.imshow(reverse_henon_stability(40, a, b, x_range=2000, y_range=1558), extent=[-2.8, 2.8, -0.8, 0.8], aspect= 2.2, cmap='inferno', alpha=1)
+plt.axis('off')
+plt.savefig('henon_reversed{0:03d}.png'.format(t), dpi=420, bbox_inches='tight', pad_inches=0)
+plt.close()
 ```
+which gives
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed_overlay.png)
 
+where, as expected, the areas of slower divergence align with the attractor (in white). 
 
 From a = 1 to a = 1.5, holding b=0.3 constant,
 
 {% include youtube.html id='gb18hw3ndpU' %}
+
+It is interesting to note that the divergence map for (3) is not simply the inverse of the divergence map for (2), which is presented [here](https://blbadger.github.io/henon-map.html), given that (3) is the inverse of (2).  In particular, regions outside the attractor basin for (2) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (3), which is somewhat counter-intuitive given that (3) should give the iterations of (2) in reverse.  
+
+For a=0.2, -1 < b < 0, (2) experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
+
+$$
+x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
+y_n = b * x_n
+$$
+
+outside of which values diverge. For b >= 1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity.  If we look at the values that diverge for (3) for a=0.2, b=-0.99 from 20 maximum iterations to 520,
+
+[insert video]
+
+As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
+
+### The Henon map is practically irreversible
+
+This goes to show that, given a point in the plane moving according to the Henon map for the two sets of values (a, b), it is difficult if not impossible to determine the past trajectory of this point.  
+
+### Aperiodic logistic and Henon maps are practically irreversible
+
+Are any logistic or Henon maps reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing (3) for however many reverse iterations are required.  But what about the logistic map?
+
+The logistic map is not because it is 2-to-1 for many values of $x_n \in (0, 1)$: there is no way to know which of the two points $x_{n-1}, x_{n-1}'$ the trajectory actually visited.  For values of r that yield an aperiodic logistic map trajectory, only one of the two $x_{n-1}, x_{n-1}'$ points may be visited because aperiodic trajectories never revisit previous points, and if either point was visited then $x_n$ is also visited.  Therefore aperiodic logistic map trajectories follow only one of the many possible previous trajectories, and which one is impossible to determine.
+
+But what about reversibility with respect to future values $(x_{n+1}, x_{n+2} ...)$?  In other words, given that $x_{n-1}, x_{n-1}'$ both map to the same trajectory $(x_{n+1}, x_{n+2} ...)$, does it matter that there are many different possible previous trajectories and we cannot determine which was taken?  
+
+The attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (2).  This suggests that although the Henon map is invertible, it is not practically invertible.  'Practical" in this definition means computable using finite memory, which is not a stipulation given to Turing machines but is clearly true of any computation one wishes to perform.  
+
+Is the reverse Henon map necessarily impractical?  We can see that for all but a negligible number of possible starting values, it is indeed: (3) 
+
+
+
 
 
 
