@@ -29,9 +29,11 @@ x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
 \tag{2}
 $$
 
-Now the first thing to note is that this dynamical equation is not strictly a function: it maps a single input $x_n$ to two outputs $x_{n+1}$ (one value for $+$ or $-$ taken in the numerator) for many values of $x_n \in (0, 1)$ whereas a function by definition has one output for any input that exists in the pre-image set.  In other words the logistic map is non-invertible.
+Now the first thing to note is that this dynamical equation is not strictly a function: it maps a single input $x_n$ to two outputs $x_{n+1}$ (one value for $+$ or $-$ taken in the numerator) for many values of $x_n \in (0, 1)$ whereas a function by definition has one output for any input that exists in the pre-image set.  In other words the logistic map is non-invertible.  
 
 ### The aperiodic logistic map in reverse is unstable
+
+What does it mean for a dynamical equation to be non-invertible?  It means that, given a point in a trajectory, we cannot determine what its previous point was with certainty.  In the case of the reverse logistic equation, one point $x_n$ could have two possible previous points $x_{n-1}, x_{n-1}'$ and each of these could have two possible previous points $x_{n-2}, x_{n-2}', x_{n-2}'', x_{n-2}'''$ and so on (note that some points have only one previous point, because either $x_{n-1}, x_{n-1}' \not \in (0, 1)$).  
 
 Suppose one wanted to calculate the all the possible values that could have preceded $x_n$ after a certain number of steps.  The set `s` of points a point could have come from after a given number of `steps` may be found using recursion on (2) as shown below:
 
@@ -60,6 +62,8 @@ def reverse_logistic_map(r, array, steps, s):
 	reverse_logistic_map(r, array_2, steps-1, s)
 
 ```
+
+The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  The result grows exponentially.
 
 Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
 
