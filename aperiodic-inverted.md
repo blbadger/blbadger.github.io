@@ -61,19 +61,40 @@ def reverse_logistic_map(r, array, steps, s):
 	
 	reverse_logistic_map(r, array_2, steps-1, s)
 
-ls = [0.478]
-s = set()
-steps = 3
-reverse_logistic_map(r, ls, steps, s)
 ```
 
-Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
+A set is used as our return type because it is immutable, or in other words because we wish to return from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
 
-The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  
+The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ 
 
-The result grows exponentially
+```python
+ls = [0.5]
+s = set()
+steps = 1
+reverse_logistic_map(r, ls, steps, s)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+{0.8535091826042803, 0.1464908173957197}
+```
 
+Thus there are two values that, if applied to the logistic map as $x_{n-1}$, give our original value $x_n$.  
 
+```python
+def logistic_map(r, start, steps):
+	for i in range(steps):
+		start = r*start*(1-start)
+	return start
+	
+result_ls = [i for i in s]
+for j in range(len(result_ls)):
+	forward_value = logistic_map(3.999, result_ls[j], 1)
+	result_ls[j] = forward_value
+
+print (result_ls)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0.4999999999999999, 0.5]
+```
+
+or at least an extremely good approximation of $x_n = 0.5$.  
 
 Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
 
