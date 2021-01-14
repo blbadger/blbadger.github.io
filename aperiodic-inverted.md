@@ -65,9 +65,10 @@ def reverse_logistic_map(r, array, steps, s):
 
 A set is used as our return type because it is immutable, or in other words because we wish to return from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
 
-The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ 
+The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ with $r = 3.999$
 
 ```python
+r = 3.999
 ls = [0.5]
 s = set()
 steps = 1
@@ -94,7 +95,22 @@ print (result_ls)
 [0.4999999999999999, 0.5]
 ```
 
-or at least an extremely good approximation of $x_n = 0.5$.  
+or at least an extremely good approximation of $x_n = 0.5$.  For two steps, the reverse logistic map yields four values of $x_{n-2}$
+
+```
+{0.691231134195249, 0.30876886580475105, 0.03808210936845992, 0.96191789063154}
+```
+which when applied to the logistic map (forward) equation twice, yield
+```
+[0.4999999999999996, 0.4999999999999999, 0.5000000000000003, 0.5000000000000013]
+```
+
+The list of possible values grows exponentially, as long as iterations in reverse stay in (0, 1).  As an example of when they do not, $x=0.00001$ for two reverse steps yields
+
+```python
+{0.9999993746854281, 6.253145719266672e-07}
+```
+rather than four values.  
 
 Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
 
