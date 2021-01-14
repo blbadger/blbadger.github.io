@@ -61,9 +61,19 @@ def reverse_logistic_map(r, array, steps, s):
 	
 	reverse_logistic_map(r, array_2, steps-1, s)
 
+ls = [0.478]
+s = set()
+steps = 3
+reverse_logistic_map(r, ls, steps, s)
 ```
 
-The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  The result grows exponentially.
+Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
+
+The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  
+
+The result grows exponentially
+
+
 
 Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
 
