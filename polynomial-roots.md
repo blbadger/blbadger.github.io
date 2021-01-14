@@ -282,9 +282,9 @@ All mapped points outside a certain radius from the origin stay near each other 
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/newton_z^3-1_together.png)
 
-And for incremental powers between $z^5-z-1$ and $z^6-z-1$
+And for incremental powers between $z^1-z-1$ and $z^6-z-1$
 
-{% include youtube.html id='mEUgmvWiCEM' %}
+{% include youtube.html id='AsSwysIDTfg' %}
 
 ### Newton's map rotations
 
