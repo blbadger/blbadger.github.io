@@ -73,6 +73,8 @@ ls = [0.5]
 s = set()
 steps = 1
 reverse_logistic_map(r, ls, steps, s)
+
+print (s)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {0.8535091826042803, 0.1464908173957197}
 ```
@@ -97,22 +99,32 @@ print (result_ls)
 
 or at least an extremely good approximation of $x_n = 0.5$.  For two steps, the reverse logistic map yields four values of $x_{n-2}$
 
-```
+```python
 {0.691231134195249, 0.30876886580475105, 0.03808210936845992, 0.96191789063154}
 ```
 which when applied to the logistic map (forward) equation twice, yield
-```
+
+```python
 [0.4999999999999996, 0.4999999999999999, 0.5000000000000003, 0.5000000000000013]
 ```
 
-The list of possible values grows exponentially, as long as iterations in reverse stay in (0, 1).  As an example of when they do not, $x=0.00001$ for two reverse steps yields
+The list of possible values grows exponentially, as long as iterations in reverse stay in (0, 1).  As an example of when they do not, $x=0.00001$ for two reverse steps yields two possible $x_{n-2}$ points
 
 ```python
 {0.9999993746854281, 6.253145719266672e-07}
 ```
-rather than four values.  
+rather than four.
 
 Aside:  At first glance it may seem that having many (a countably infinite number, to be precise) values that eventually meet to make the same trajectory suggests that the logistic map is not sensitive to initial conditions.  This is not so because it requires an infinite number of iterations for these values to reach the same trajectory.  Remembering that aperiodic is another way of saying 'periodic with period $\infty$', this is to be expected.
+
+Recall the four values of $x_{n-2}$, which give four estimates of $x_n$, respectively:
+
+```python
+{0.691231134195249, 0.30876886580475105, 0.03808210936845992, 0.96191789063154}
+[0.4999999999999996, 0.4999999999999999, 0.5000000000000003, 0.5000000000000013]
+```
+
+Notice that all values of $x_{n-2}$ are not equally accurate starting points for the forward logistic map: $x_{n-2} = 0.961...$ is worse than $x_{n-2} = 0.308...$ in that it yields a more inaccurate $x_n$ value.  This difference may not seem substantial, but after
 
 ###  Aperiodic logistic maps are not practically reversible
 
@@ -304,7 +316,7 @@ outside of which values diverge. For b <= -1, the attractor basin collapses, and
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
 
-The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 20 maximum iterations to 520, iterating (4) for a=0.2, b=-0.99 we have
+The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 10 maximum iterations to 510, iterating (4) for a=0.2, b=-0.99 we have
 
 {% include youtube.html id='81ewwor3Lt8' %}
 
