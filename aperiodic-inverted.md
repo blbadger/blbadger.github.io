@@ -124,7 +124,85 @@ Recall the four values of $x_{n-2}$, which give four estimates of $x_n$, respect
 [0.4999999999999996, 0.4999999999999999, 0.5000000000000003, 0.5000000000000013]
 ```
 
-Notice that all values of $x_{n-2}$ are not equally accurate starting points for the forward logistic map: $x_{n-2} = 0.961...$ is worse than $x_{n-2} = 0.308...$ in that it yields a more inaccurate $x_n$ value.  This difference may not seem substantial, but after
+Notice that all values of $x_{n-2}$ are not equally accurate starting points for the forward logistic map: $x_{n-2} = 0.961...$ is worse than $x_{n-2} = 0.308...$ in that it yields a more inaccurate $x_n$ value.  We can define approximation error for $x$ given the estimate $e_{est}$ as
+
+$$
+e = \frac{\lvert x - x_{est}}{x}
+$$
+
+Now setting $r=3.6$ and the step number to 30,
+
+```python
+r = 3.6
+ls = [0.5]
+s = set()
+steps = 30
+reverse_logistic_map(r, ls, steps, s)
+
+result_ls = [i for i in s]
+error_ls = []
+original_ls = []
+
+for i in range(len(result_ls)):
+	error_ls.append(abs(logistic_map(r, result_ls[i], steps)-0.5)/0.5)
+	original_ls.append(logistic_map(r, result_ls[i], steps))
+
+error_ls.sort()
+print ('smallest_error:', error_ls[:1])
+print (' ')
+print ('largest error:', error_ls[-1:])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+smallest_error: [7.771561172376096e-16]
+ 
+largest error: [0.14402728314624147]
+[Finished in 0.7s]
+```
+
+The largest error is $10^15$ larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
+
+How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?
+
+
+Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$. 
+
+```python
+s = 300
+Y = []
+R = []
+
+for i in range(1000):
+	r = 3 + i/1000
+	starting_point = 0.5
+	trajectory = []
+	for i in range(300):
+		trajectory.append(logistic_map(r, starting_point, i))
+	ls = [trajectory[-1]]
+	s = set()
+	steps = 100
+	reverse_logistic_map(r, ls, steps, s)
+
+	result_ls = [i for i in s]
+	error_ls = []
+	original_ls = []
+
+	for i in range(len(result_ls)):
+		error_ls.append(abs(logistic_map(r, result_ls[i], steps)-trajectory[-1])/trajectory[-1])
+		original_ls.append(logistic_map(r, result_ls[i], steps))
+
+	R.append(r)
+	if len(error_ls) > 0:
+		Y.append(sum([i for i in error_ls])/ len(error_ls))
+	else:
+		Y.append(0.00001)
+
+fig, ax = plt.subplots()
+ax.plot(R, Y, '^', color='white', markersize=0.5)
+ax.set(xlabel='r value', ylabel='Average error')
+plt.show()
+plt.close()
+```
+
+
 
 ###  Aperiodic logistic maps are not practically reversible
 
