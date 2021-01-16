@@ -63,7 +63,60 @@ def reverse_logistic_map(r, array, steps, s):
 
 ```
 
-A set is used as our return type because it is immutable, or in other words because we wish to return from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
+A set is used as our return type because it is immutable, or in other words because we wish to see the values of `array` from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
+
+As the above program uses tail recursion, it can easily be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  In C++, this looks like
+
+```c++
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <iomanip>
+using namespace std;
+
+vector<float> array_returner(float value){
+	vector<float> array {value};
+	return array;
+}
+
+vector<double> reverse_logistic(vector<double> values, double r, int steps){
+	if (steps == 0){
+		return values;
+	}
+	vector<double> new_values {};
+	for (int i=0; i <= values.size(); i++){
+		double current_value = values[i];
+		
+		if ((r*r-4*r*current_value) >= 0){
+			double numerator = r + sqrt(r*r - 4*r*current_value);
+			double next_value = numerator / (2*r);
+			if(0 < next_value and 1 > next_value){
+				new_values.push_back(next_value);
+				}
+			}
+			double numerator = r - sqrt(r*r - 4*r*current_value);
+			double next_value = numerator / (2*r);
+			if(0 < next_value and 1 > next_value){
+				new_values.push_back(next_value);
+				}
+			
+		}
+	return reverse_logistic(new_values, r, steps-1);
+}
+
+
+int main() {
+	vector<double> values {0.3};
+	double r = 3.999;
+	int steps = 10;
+	vector<double> val = reverse_logistic(values, r, steps);
+	cout << val.size() << endl;
+	for (int i = 0; i < val.size(); i++){
+		cout << std::setprecision (17) << val[i] << ',' << ' ';
+	}
+	return 0;
+}
+```
 
 The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ with $r = 3.999$
 
