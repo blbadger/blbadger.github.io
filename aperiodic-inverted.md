@@ -180,7 +180,7 @@ Recall the four values of $x_{n-2}$, which give four estimates of $x_n$, respect
 Notice that all values of $x_{n-2}$ are not equally accurate starting points for the forward logistic map: $x_{n-2} = 0.961...$ is worse than $x_{n-2} = 0.308...$ in that it yields a more inaccurate $x_n$ value.  We can define approximation error for $x$ given the estimate $e_{est}$ as
 
 $$
-e = \frac{\lvert x - x_{est}}{x}
+e = \frac{\lvert x - x_{est} \rvert}{x}
 $$
 
 Now setting $r=3.6$ and the step number to 30,
