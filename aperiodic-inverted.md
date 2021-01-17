@@ -69,17 +69,11 @@ As the above program uses tail recursion, it can easily be converted into one th
 
 ```c++
 // C++
-
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <iomanip>
 using namespace std;
-
-vector<float> array_returner(float value){
-	vector<float> array {value};
-	return array;
-}
 
 vector<double> reverse_logistic(vector<double> values, double r, int steps){
 	if (steps == 0){
@@ -275,6 +269,37 @@ If this is extended to the minimum error of any of the four last values of the `
 There is an increase in average error as the map becomes aperiodic, at around r = 3.58.  This is to be expected for any value of r that yields a periodicity larger than 4, because iterations of either (1) or (2) are attracted to periodic orbits and the above program only takes into account accuracy up to four previous values (near four periodic values).  As aperiodic trajectories have infinite period, the accuracy necessarily suffers.
 
 
+### Are some approximations of $x_{n-p}$ with (2) are necessarily better than others
+
+The previous section saw some extimates of a previous value in the trajectory of the logistic map to yield more accurate vales of $x_n$ after p iterations of (1). Is this necessarily the case, or in other words is there some way to compute the reverse logistic map such that all previous estimates are equivalently good?
+
+Here is (2) restated for clarity:
+
+$$
+x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
+$$
+
+Now consider what many iterations of (2) entail, specifically that many square roots of $r^2-4rx_n$ are taken.  For example, 
+
+$$
+x_{n+2} = \frac{r \pm \sqrt{r^2-4r(\frac{r \pm \sqrt{r^2-4rx_n}}{2r})}}{2r}
+$$
+
+Now some square roots are better approximated by rational numbers than others: most famously, the golden ratio $\phi = \frac{1 + \sqrt 5}{2}$ which is the positive root of $x^2-x-1$ is the irrational number that is 'furthest' from any rational in the sense that it is worst approximated by any rational.  This can be shown with continued fractions:
+
+$$
+\phi = 1 + \cfrac{1}{1+\cfrac{1}{1+\cfrac{1}{1+\cdots}}}
+$$
+
+Now consider what makes a poorly approximated number: if the denominator contains a large first integer before addition, then everything that follows is less important than if it were smaller.  For example,  see that $5 + \cfrac{1}{5 + \cfrac{1}{5}} \approx 5.19$ is better approximated by $5 + \cfrac{1}{5} = 5.2$ than $2 + \cfrac{1}{2 + \cfrac{1}{2}} = 2.4$ is by  $2 + \cfrac{1}{2} = 2.5$ .  With $1$ being the smallest non-zero natural number (and dividing by zero is unhelpful here) means that this number is most poorly approximated by ending this continued fraction at any finite stage.  
+This is explained in more depth in this excellent [video](https://www.youtube.com/watch?v=sj8Sg8qnjOg) from Numberphile.
+
+Thus certain square root values are better approximated by rational numbers than others. Therefore, iterating (2) will yield numbers approximated better or worse depending on the value inside each radical, which in turn depends on whether addition or subtraction occurs at each iteration.
+
+Now if the r value for (1) yields a periodic trajectory, (2) will be attracted to the same periodic trajectory and thus it does not matter whether addition or subtraction is chosen because either reaches the same value.  But for aperiodic trajectories values never repeat, meaning that each choice for addition or subtraction in (2) yields unique values.  Because  different radicals are approximated by rational with differing success, and as computable procedures must use rational (finite) approximations, (2) must yield numbers that, when iterated with (1) to recover the original $x_0$, are of varying accuracy.
+
+### Accurate approximation $x_{n-p}$ as a one-way function
+
 
 
 ###  Aperiodic logistic maps are not practically reversible
@@ -467,9 +492,9 @@ outside of which values diverge. For b <= -1, the attractor basin collapses, and
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
 
-The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 10 maximum iterations to 510, iterating (4) for a=0.2, b=-0.99 we have
+The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 2 maximum iterations to 1010, iterating (4) for a=0.2, b=-0.99 we have
 
-{% include youtube.html id='81ewwor3Lt8' %}
+{% include youtube.html id='zbcgAlZtRGo' %}
 
 As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.    
 
