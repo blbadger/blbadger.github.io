@@ -89,12 +89,13 @@ vector<double> reverse_logistic(vector<double> values, double r, int steps){
 			if(0 < next_value and 1 > next_value){
 				new_values.push_back(next_value);
 				}
-			}
-			double numerator = r - sqrt(r*r - 4*r*current_value);
-			double next_value = numerator / (2*r);
+			
+			numerator = r - sqrt(r*r - 4*r*current_value);
+			next_value = numerator / (2*r);
 			if(0 < next_value and 1 > next_value){
 				new_values.push_back(next_value);
 				}
+			}
 			
 		}
 	return reverse_logistic(new_values, r, steps-1);
@@ -102,8 +103,8 @@ vector<double> reverse_logistic(vector<double> values, double r, int steps){
 
 
 int main() {
-	vector<double> values {0.3};
-	double r = 3.999;
+	vector<double> values {0.5};
+	double r = 3.2;
 	int steps = 10;
 	vector<double> val = reverse_logistic(values, r, steps);
 	cout << val.size() << endl;
