@@ -214,7 +214,15 @@ largest error: [0.07201364157312073]
 
 The largest error is $10^14$ larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
 
-How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?
+How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  To address this, lets first limit the number of values added at each step, taking a maximum of 100
+
+```python
+			...
+			if 0 < y_next < 1:
+				array_2.append(y_next)
+	
+	reverse_logistic_map(r, array_2[:100], steps-1, s)
+```
 
 
 Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
@@ -223,11 +231,11 @@ Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$
 Y = [] # list of average error per R value
 R = [] # list of R values
 
-for i in range(1000):
-	r = 3 + i/1000
+for i in range(1500):
+	r = 2.5 + i/1000
 	starting_point = 0.5
 	trajectory = [starting_point]
-	for i in range(50):
+	for i in range(100):
 		start = trajectory[-1]
 		trajectory.append(r*start*(1-start))
 	ls = [trajectory[-1]]
@@ -240,11 +248,7 @@ for i in range(1000):
 	original_ls = []
 
 	for i in range(len(result_ls)):
-		error_ls.append(min(abs(logistic_map(r, result_ls[i], steps)-trajectory[-1]), \
-			abs(logistic_map(r, result_ls[i], steps)-trajectory[-2]), \
-			abs(logistic_map(r, result_ls[i], steps)-trajectory[-3]), \
-			abs(logistic_map(r, result_ls[i], steps)-trajectory[-4])))
-
+		error_ls.append(abs(logistic_map(r, result_ls[i], steps)-trajectory[-1]))
 		original_ls.append(logistic_map(r, result_ls[i], steps))
 
 	R.append(r)
@@ -252,17 +256,22 @@ for i in range(1000):
 		Y.append(sum([i for i in error_ls])/ len(error_ls))
 	else:
 		# if there are no previous values
-		Y.append(False) # some small value
+		Y.append(-0.1) # some small value
 
 fig, ax = plt.subplots()
 ax.plot(R, Y, '^', color='white', markersize=0.5)
 ax.set(xlabel='r value', ylabel='Average error')
+# plt.savefig('{}.png'.format(t), dpi=300)
 plt.show()
 plt.close()
 ```
 which results in the following plot.
 
-![error]({{https://blbadger.github.io}}misc_images/reversed_logistic_4_error.png)
+![error]({{https://blbadger.github.io}}misc_images/logistic_reverse_1.png)
+
+If this is extended to the minimum error of any of the four last values of the `trajectory` from 0.5, we instead have
+
+![error]({{https://blbadger.github.io}}misc_images/logistic_reverse_4.png)
 
 There is an increase in average error as the map becomes aperiodic, at around r = 3.58.  This is to be expected for any value of r that yields a periodicity larger than 4, because iterations of either (1) or (2) are attracted to periodic orbits and the above program only takes into account accuracy up to four previous values (near four periodic values).  As aperiodic trajectories have infinite period, the accuracy necessarily suffers.
 
