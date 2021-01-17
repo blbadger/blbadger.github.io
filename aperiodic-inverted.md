@@ -256,12 +256,11 @@ for i in range(1500):
 		Y.append(sum([i for i in error_ls])/ len(error_ls))
 	else:
 		# if there are no previous values
-		Y.append(-0.1) # some small value
+		Y.append(-0.1) # some value that can be discarded
 
 fig, ax = plt.subplots()
 ax.plot(R, Y, '^', color='white', markersize=0.5)
 ax.set(xlabel='r value', ylabel='Average error')
-# plt.savefig('{}.png'.format(t), dpi=300)
 plt.show()
 plt.close()
 ```
