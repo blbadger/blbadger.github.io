@@ -65,7 +65,7 @@ def reverse_logistic_map(r, array, steps, s):
 
 A set is used as our return type because it is immutable, or in other words because we wish to see the values of `array` from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
 
-As the above program uses tail recursion, it can easily be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  In C++, this looks like
+As the above program uses tail recursion, it can easily be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  For some variety, here this is in C++
 
 ```c++
 // C++
@@ -114,7 +114,7 @@ int main() {
 }
 ```
 
-The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ with $r = 3.999$
+The initial point $x_n$ is the first (and before the function is called, the only) entry in `array`.  For example, here is the reverse logistic map function for a starting point at $x_n=0.5$ with $r = 3.999$ (back in python)
 
 ```python
 r = 3.999
