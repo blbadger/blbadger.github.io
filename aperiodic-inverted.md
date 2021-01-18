@@ -209,7 +209,7 @@ largest error: [0.07201364157312073]
 
 The largest error is $10^14$ larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
 
-How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  To address this, lets first limit the number of values added at each step, taking a maximum of 100
+How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  To address this, one can limit the number of values added at each step. The following gives at most 100 values per step:
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
@@ -260,6 +260,53 @@ for i in range(50):
 	trajectory.append(logistic_map(r, starting_point, i))
 # trajectory[-1] is our desired value
 ```
+
+With `trajectory[-1]` as the starting value and a maximum of 100 values per iteration of (2), we can calculate more iterations to try to understand why substantial error in calculating $x_n$ with (1) occurs after calculating $x_{n-p}$ with (2).  With 100 steps of (2) then (1) at r = 2.95 (period 1) to recalculate $x_n \approx 0.661$ there is a large difference in the approximation error depending on which $x_{n-100}$ was used.  
+
+```python
+smallest_error: [0.0]
+largest error: [0.002287179106238879]
+```
+
+To see why this is, the values of $x_{n-100}$ may be viewed:
+
+```python
+r = 2.8
+starting_point = 0.5
+trajectory = []
+for i in range(100):
+	trajectory.append(logistic_map(r, starting_point, i))
+
+ls = [trajectory[-1]]
+s = set()
+steps = 100
+reverse_logistic_map(r, ls, steps, s)
+
+result_ls = [i for i in s]
+result_ls.sort()
+print (result_ls)
+```
+which gives 
+
+```python
+Result list [7.526935760170552e-17, 1.5053871520341105e-16, 4.516161456102331e-16, 1.2043097216272884e-15, 3.2365823768733374e-15, 1.0537710064238773e-14, 2.7849662312631042e-14, 9.205442434688585e-14, 2.410877523982628e-13, 8.05909011841461e-13, 2.0833805490576073e-12, 7.0663625610057165e-12, 1.799073131524445e-11, 6.20285743672743e-11, 1.5520278094720074e-10, 5.45169935560545e-10, 1.3372589664608297e-09, 4.798801055209755e-09, 1.1504929814858098e-08, 4.232121192100105e-08, 9.879781173962447e-08, 3.7414690848327905e-07, 8.464077734738537e-07, 3.318475220716627e-06, 7.228333600448949e-06, 2.956762489958464e-05, 6.145528865947984e-05, 0.00026525167524554897, 0.0005188860973583614, 0.0024055057511865553, 0.004323711646638956, 0.022166149207306658, 0.03467009226705414, 0.21625977507447144, 0.21625991839052272, 0.7837400816094773, 0.7837402249255285, 0.9653299077329459, 0.9778338507926934, 0.9956762883533611, 0.9975944942488134, 0.9994811139026417, 0.9997347483247544, 0.9999385447113406, 0.9999704323751004, 0.9999927716663994, 0.9999966815247793, 0.9999991535922266, 0.9999996258530914, 0.9999999012021882, 0.9999999576787881, 0.9999999884950702, 0.999999995201199, 0.9999999986627411, 0.9999999994548301, 0.9999999998447973, 0.9999999999379714, 0.9999999999820093, 0.9999999999929338, 0.9999999999979166, 0.999999999999194, 0.9999999999997589, 0.9999999999999079, 0.9999999999999721, 0.9999999999999895, 0.9999999999999967, 0.9999999999999988, 0.9999999999999996, 0.9999999999999999]
+```
+We can see that there are values very close to 0, and values very close to 1.  Now all $x \in (0, 1)$ converge on the period one attractor with (1), meaning that with enough iterations in the forward direction all these values will end up arbitrarily close to $0.661...$.  But we can expect for values closer to 0 or 1 to require more iterations to do so compared to values farther from 0 or 1 simply by observing trajectories of (1) starting at very small initial points (note that initial points near 1 become very small after one iteration of (1)).
+
+```python
+[7.656710514656253e-17, 2.2204460492503128e-16, 6.439293542825906e-16, 1.8673951274195114e-15, 5.415445869516573e-15, 1.5704793021597974e-14, 4.554389976263341e-14, 1.3207730931163088e-13, 3.8302419700367896e-13, 1.1107701713102434e-12, 3.2212334967961275e-12, 9.341577140678679e-12, 2.70905737077151e-11, 7.856266375024548e-11, 2.278317248578128e-10, 6.60712001937126e-10, 1.916064804351698e-09...]
+```
+
+A guess, therefore, as to why certain $x_{n-100}$ yield bad estimates of $x_n$ after iterating (1) is that some very small (or close to 1) $x_{n-100}$ converge too slowly.  Removing small and large values of $x_{n-100}$ with`result_ls = result_ls[20:50]` gives
+
+```python
+smallest_error: [0.0]
+ 
+largest error: [2.5417445925768334e-12]
+```
+
+
+
 
 Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
 
