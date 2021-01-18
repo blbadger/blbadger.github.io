@@ -212,12 +212,36 @@ The largest error is $10^14$ larger than the smallest error, meaning that some v
 How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  To address this, lets first limit the number of values added at each step, taking a maximum of 100
 
 ```python
-			...
+def reverse_logistic_map(r, array, steps, s):
+	...
 			if 0 < y_next < 1:
 				array_2.append(y_next)
 	
 	reverse_logistic_map(r, array_2[:100], steps-1, s)
 ```
+
+Now we can iterate (2) for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of (1) settles on period 1?  
+Setting $x_n = x_{n+1}$, 
+
+$$
+x_n = rx_n(1-x_n)
+0 = -rx_n^2 + (r-1)x_n 
+$$
+
+there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  
+
+
+For starting values greater than 1/2, (2) finds only complex values, which can be seen by modifying `reverse_logistic_map` as follows
+```python
+def reverse_logistic_map(r, array, steps, s):
+	...
+	for y in array:
+		y_next = (r + (r**2 - 4*r*y)**0.5)/ (2*r)
+		if 0 < y_next.real < 1:
+			array_2.append(y_next)
+
+```
+But for all values of $1/2 \geq x_n > 0$, (2) is attracted to 1/2.  
 
 
 Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
