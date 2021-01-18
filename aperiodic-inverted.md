@@ -220,18 +220,15 @@ def reverse_logistic_map(r, array, steps, s):
 	reverse_logistic_map(r, array_2[:100], steps-1, s)
 ```
 
-Now we can iterate (2) for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of (1) settles on period 1?  
-Setting $x_n = x_{n+1}$, 
+Now we can iterate (2) for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of (1) settles on period 1?  Setting $x_n = x_{n+1}$, 
 
 $$
 x_n = rx_n(1-x_n)
 0 = -rx_n^2 + (r-1)x_n 
 $$
 
-there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  
+there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  For starting values greater than 1/2, (2) finds only complex values because $r^2 - 4rx_n$ becomes negative.  Which complex values can be found by modifying `reverse_logistic_map` as follows
 
-
-For starting values greater than 1/2, (2) finds only complex values, which can be seen by modifying `reverse_logistic_map` as follows
 ```python
 def reverse_logistic_map(r, array, steps, s):
 	...
@@ -239,10 +236,30 @@ def reverse_logistic_map(r, array, steps, s):
 		y_next = (r + (r**2 - 4*r*y)**0.5)/ (2*r)
 		if 0 < y_next.real < 1:
 			array_2.append(y_next)
+	for y in array:
+		y_next = (r - (r**2 - 4*r*y)**0.5)/ (2*r)
+		if 0 < y_next.real < 1:
+			array_2.append(y_next)
 
 ```
-But for all values of $1/2 \geq x_n > 0$, (2) is attracted to 1/2.  
 
+Why does (2) fail to find real previous values for an initial value $1/2 < x_n < 1$ if the initial value is attracted to $1/2$?  Iterating (1) with any starting point $1/2 < x_n < 1$ shows why this is:
+
+```python
+[0.85, 0.255, 0.37995, 0.471175995, 0.4983383534715199, 0.49999447786162876, 0.49999999993901195, 0.5, 0.5, 0.5, 0.5]
+```
+$1/2 < x_n < 1$ can only be the first iteration of any trajectory of (1) limited to real numbers because $r^2 - 4rx_n$ is negative, and therefore there is no previous value $x_{n-1}$ in (1) if $1/2 < x_n < 1$. 
+
+Thus not every $x_n \in (0, 1)$ has a next iteration of (2) (restricted to the reals), and therefore does not have an $x_{n-1}$ in (1).  To avoid this problem, we can start iterating (2) with a value that exists along a trajectory of (1), which can be implemented as
+
+```python
+r = 2
+starting_point = 0.5
+trajectory = []
+for i in range(50):
+	trajectory.append(logistic_map(r, starting_point, i))
+# trajectory[-1] is our desired value
+```
 
 Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
 
@@ -316,8 +333,7 @@ $$
 \phi = 1 + \cfrac{1}{1+\cfrac{1}{1+\cfrac{1}{1+\cdots}}}
 $$
 
-Now consider what makes a poorly approximated number: if the denominator contains a large first integer before addition, then everything that follows is less important than if it were smaller.  For example,  see that $5 + \cfrac{1}{5 + \cfrac{1}{5}} \approx 5.19$ is better approximated by $5 + \cfrac{1}{5} = 5.2$ than $2 + \cfrac{1}{2 + \cfrac{1}{2}} = 2.4$ is by  $2 + \cfrac{1}{2} = 2.5$ .  With $1$ being the smallest non-zero natural number (and dividing by zero is unhelpful here) means that this number is most poorly approximated by ending this continued fraction at any finite stage.  
-This is explained in more depth in this excellent [video](https://www.youtube.com/watch?v=sj8Sg8qnjOg) from Numberphile.
+Now consider what makes a poorly approximated number: if the denominator contains a large first integer before addition, then everything that follows is less important than if it were smaller.  For example,  see that $5 + \cfrac{1}{5 + \cfrac{1}{5}} \approx 5.19$ is better approximated by $5 + \cfrac{1}{5} = 5.2$ than $2 + \cfrac{1}{2 + \cfrac{1}{2}} = 2.4$ is by  $2 + \cfrac{1}{2} = 2.5$ .  With $1$ being the smallest non-zero natural number (and dividing by zero is unhelpful here) means that this number is most poorly approximated by ending this continued fraction at any finite stage.  Approximation of the golden ratio is discussed in this excellent [video](https://www.youtube.com/watch?v=sj8Sg8qnjOg) from Numberphile.
 
 Thus certain square root values are better approximated by rational numbers than others. Therefore, iterating (2) will yield numbers approximated better or worse depending on the value inside each radical, which in turn depends on whether addition or subtraction occurs at each iteration.
 
