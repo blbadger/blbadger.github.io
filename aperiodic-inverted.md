@@ -301,14 +301,32 @@ A guess, therefore, as to why certain $x_{n-100}$ yield bad estimates of $x_n$ a
 
 ```python
 smallest_error: [0.0]
- 
 largest error: [2.5417445925768334e-12]
 ```
+The largest error is now reasonably small.  In general for r values giving period 1 attractors in (1), back-calculating $x_n$ using only moderate values of $x_{n-p}$ gives accurate approximations by avoiding slow convergence.
 
+Is removing small and large values capable of preventing larger error for r values giving period 2 attractors in (1)?  It is not: at r=3.3, both minimum and maximum errors are far larger even using the same restriction as above.
 
+```python
+smallest_error: [6.032329413763193e-09]
+largest error: [0.34417022723336355]
+```
 
+If the calculated values of $x_n$ are observed (without restriction on $x_{n-100}$ size), 
 
-Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=3 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
+```python
+original list [0.4794047645286176, 0.4794270197446111, 0.4794270198235495, 0.4794270198237357, 0.4794270198241478, 0.47942701982417835, 0.4794270198242073, 0.4794270198242338, 0.4794270198242338, 0.47942701982423414, 0.47942701982423414, 0.4794270198242346, 0.4794270198242346, 0.4794270198242469, 0.4794270198258387, 0.47942701985138186, 0.4794270201094164, 0.47942706429511417, 0.47943305597270514, 0.47949483653227437, 0.6735095413758753, 0.8218213953164031, 0.8226215546105751, 0.8231044602006431, 0.8233353601396424, 0.823447283941356, 0.8234609986401885, 0.8235801688346698, 0.8235801688346698, 0.8235854109768287, 0.8235872120774619, 0.8235953650317183, 0.8235957506424327, 0.8235957506424327, 0.8235979860054629, 0.8235999110552038, 0.8236004238673749, 0.8236005654074291, 0.8236029304926894, 0.8236029304926894, 0.8236030164819234, 0.8236030164819234, 0.8236032496606793, 0.8236032814078792, 0.8236032832060614, 0.8236032832060685, 0.8236032832060689, 0.8236032832060689, 0.823603283206069, 0.823603283206069, 0.823603283206069, 0.823603283206095, 0.8236032883637385, 0.8236032892383981, 0.8236033564494317, 0.823613690976619, 0.8236956717788287, 0.8237174065220663, 0.8237894778288714, 0.8239864668392716, 0.8247958463410507, 0.824834242709513, 0.8249727017477269]
+```
+there are apparently two attractors: one at $x = 0.479...$ and another at $x = 0.823...$, the latter being our initial value $x_n$.  
+
+This is seen for any r giving a periodic attractor greater than 1: for r=3.5 (period 4), 
+
+```python
+original list [0.38281260360403013, 0.3828139123252521, 0.38281968301557207, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.38281968301732416, 0.5008842103072163, 0.5008842103072179, 0.5008842103072179, 0.5008842103072179, 0.5008842103072179, 0.5008842103128662, 0.5008842103181947, 0.5008842178162276, 0.5008842178162276, 0.8269407065902027, 0.8269407065914385, 0.8269407065914387, 0.8269407065914387, 0.8269407065914387, 0.8269407065914387, 0.8269407067389265, 0.8269407551975788, 0.8269407976758019, 0.8269408464554105, 0.8269408869648845, 0.8269408876533455, 0.8270219098976035, 0.8322724885292522, 0.8640473538477498, 0.8707577866023022, 0.8749955169069416, 0.8749971961401654, 0.8749971961401654, 0.8749971961401654, 0.8749971961401654, 0.8749972445225117, 0.8749972636003276, 0.8749972636024504, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024641, 0.8749972636024662, 0.8749972648925344, 0.8749972648925344, 0.8749972653362731]
+```
+where the four periodic values $0.38..., 0.50..., 0.82..., 0.87...$ are all obtained. This means that error in recalculating $x_n$ for periodic attractors can be attributed to 'iteration error', defined as follows: error in the specific iteration of a periodic trajectory, rather than error finding the trajectory. 
+
+Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=2.5 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
 
 ```python
 Y = [] # list of average error per R value
@@ -351,7 +369,7 @@ which results in the following plot.
 
 ![error]({{https://blbadger.github.io}}misc_images/logistic_reverse_1.png)
 
-If this is extended to the minimum error of any of the four last values of the `trajectory` from 0.5, we instead have
+If this is extended to the minimum error of any of the four last values of the `trajectory` from 0.5 in order to account for iteration error up to period 4, we instead have
 
 ![error]({{https://blbadger.github.io}}misc_images/logistic_reverse_4.png)
 
