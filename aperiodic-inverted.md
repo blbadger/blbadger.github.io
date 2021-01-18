@@ -599,7 +599,11 @@ The area in the center does not diverge after 40 iterations.  Do initial points 
 
 {% include youtube.html id='zbcgAlZtRGo' %}
 
-As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.    
+As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
+
+The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for (3) but diverges everywhere except unstable points for (4), whereas a=0.2, b=1.05 diverges everywhere except unstable points for (3) but converges on points for (4).  In the video below a = 0.2 and b goes from 0.95 to b = 1.01 iterated with (4), note how the change in basin behavior is the opposite to that found for the same transition with (3)
+
+{% include youtube.html id='IEbtIjFz6Bo' %}
 
 ### Aperiodic Henon maps are practically irreversible
 
