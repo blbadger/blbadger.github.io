@@ -375,6 +375,7 @@ If this is extended to the minimum error of any of the four last values of the `
 
 There is an increase in average error as the map becomes aperiodic, at around r = 3.58.  This is to be expected for any value of r that yields a periodicity larger than 4, because iterations of either (1) or (2) are attracted to periodic orbits and the above program only takes into account accuracy up to four previous values (near four periodic values).  As aperiodic trajectories have infinite period, the accuracy necessarily suffers.
 
+To summarize, if the reverse logistic map is used to calculate values that result in accurate recapitulations of the intial value using the forward logistic map, error due to finding the right periodic trajectory but being on the 'wrong' iteration occurs because all periodic points are attractors.  For r values giving an aperiodic trajectory of the forward logistic map, this error cannot be prevented because periodicity is infinite.
 
 ### Are some approximations of $x_{n-p}$ with (2) are necessarily better than others
 
@@ -403,10 +404,6 @@ Now consider what makes a poorly approximated number: if the denominator contain
 Thus certain square root values are better approximated by rational numbers than others. Therefore, iterating (2) will yield numbers approximated better or worse depending on the value inside each radical, which in turn depends on whether addition or subtraction occurs at each iteration.
 
 Now if the r value for (1) yields a periodic trajectory, (2) will be attracted to the same periodic trajectory and thus it does not matter whether addition or subtraction is chosen because either reaches the same value.  But for aperiodic trajectories values never repeat, meaning that each choice for addition or subtraction in (2) yields unique values.  Because  different radicals are approximated by rational with differing success, and as computable procedures must use rational (finite) approximations, (2) must yield numbers that, when iterated with (1) to recover the original $x_0$, are of varying accuracy.
-
-### Accurate approximation $x_{n-p}$ as a one-way function
-
-
 
 ###  Aperiodic logistic maps are not practically reversible
 
