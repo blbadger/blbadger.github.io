@@ -223,7 +223,7 @@ def reverse_logistic_map(r, array, steps, s):
 Now we can iterate (2) for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of (1) settles on period 1?  Setting $x_n = x_{n+1}$, 
 
 $$
-x_n = rx_n(1-x_n)
+x_n = rx_n(1-x_n) \\
 0 = -rx_n^2 + (r-1)x_n 
 $$
 
