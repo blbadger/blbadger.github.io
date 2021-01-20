@@ -224,10 +224,11 @@ Now we can iterate (2) for many more iterations than before without taking up mo
 
 $$
 x_n = rx_n(1-x_n) \\
-0 = -rx_n^2 + (r-1)x_n 
+0 = x_n(-rx_n+r-1) \\
+x_n = 1-\frac{1}{r}
 $$
 
-there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  For starting values greater than 1/2, (2) finds only complex values because $r^2 - 4rx_n$ becomes negative.  Which complex values can be found by modifying `reverse_logistic_map` as follows
+given $r=2$, there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  For starting values greater than 1/2, (2) finds only complex values because $r^2 - 4rx_n$ becomes negative.  Which complex values can be found by modifying `reverse_logistic_map` as follows
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
