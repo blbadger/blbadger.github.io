@@ -207,9 +207,9 @@ largest error: [0.07201364157312073]
 [Finished in 0.7s]
 ```
 
-The largest error is $10^14$ larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
+The largest error is $10^{14}$ times larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
 
-How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  To address this, one can limit the number of values added at each step. The following gives at most 100 values per step:
+How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  First one can limit the number of values added to the array at each step, in order to calculate (2) for many more steps without experiencing a memory overflow from the exponentially increasing number of array values. The following gives at most 100 values per step:
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
@@ -244,7 +244,7 @@ def reverse_logistic_map(r, array, steps, s):
 
 ```
 
-Why does (2) fail to find real previous values for an initial value $1/2 < x_n < 1$ if the initial value is attracted to $1/2$?  Iterating (1) with any starting point $1/2 < x_n < 1$ shows why this is:
+Why does (2) fail to find real previous values for an initial value $1/2 < x_n < 1$ if the initial value is attracted to $1/2$?  Iterating (1) with any starting point $1/2 < x_n < 1$ gives an indication as to why this is:
 
 ```python
 [0.85, 0.255, 0.37995, 0.471175995, 0.4983383534715199, 0.49999447786162876, 0.49999999993901195, 0.5, 0.5, 0.5, 0.5]
@@ -416,7 +416,10 @@ Symbolically, it is not: (2) may be applied any number of times to find the set 
 
 Consider what happens when one attempts to compute successive iterations of (2): first one square root is taken, then another and another etc.  Now for nearly every initial value $x_n$, these square roots are not of perfect squares and therefore yield irrational numbers.  Irrational numbers cannot be represented with complete accuracy in any computation procedure with finite memory, which certainly applies to any computation procedure known.  The definition for 'practical' computation is precisely this: computations that can be accomplished with finite memory in a finite number of steps.  The former stipulation is not found in the classic notion of a Turing machine, but is most accurate to what a non-analogue computer is capable of.
 
-This would not matter much if approximations stayed accurate after many iterations of (2), but one can show this to be untrue for values of r and $x_0$ such that (1) is aperiodic...
+This would not matter much if approximations stayed accurate after many iterations of (2), but one can show this to be untrue for values of r and $x_0$ such that (1) is aperiodic.  Now all 
+
+It follows that the reverse logistic map is impossible to compute practically.
+
 
 ### The Henon map is invertible 
 
@@ -592,7 +595,7 @@ x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = b * x_n
 $$
 
-outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity.  
+outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for (4) with b = -0.99, 
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
 
@@ -627,4 +630,39 @@ Another line of reasoning can be used to show why the Henon map is not invertibl
 Where do subsequent iterations of $p_1, p_2$ go once they diverge?  If (3) contains attractor $\mathscr H$, and therefore is a repellor for (4) because these maps are 1-to-1 inverses of each other.  This means that any point near but not $\mathscr H$ will be repelled from $\mathscr H$ given enough iterations of (4).  As nearly every point in $\mathscr H$ is composed of irrational coordinates, a finite representation of any member of this set of points will be near but not on $\mathscr H$ exactly and thus will be repelled over iterations of (4). As points not on $\mathscr H$ are repelled from this attractor, sensitivity to initial conditions results in most points heading away from $\mathscr H$, which is what was observed numerically above.
 
 The last statement does not necessarily mean that (3) is not practically invertible for periodic trajectories, because any finite number of iterations of (3) could still be reversed with the same number of iterations of (4).  
+
+### Aperiodicity and reversibility
+
+in conclusion, aperiodic logistic and Henon maps are not practically reversible, meaning that one cannot compute arbitrary previous values accurately using finite memory.  
+
+If future values are difficult to predict, as is the case for aperiodic systems in general, does it come as any surprise that past values are hard to determine as well?  It is indeed surprising, but why this is requires explanation.
+
+First consider what it means for an aperiodic dynamical system to be hard to predict.  More precisely, it is often stated that the approximate present does not determine the approximate future, which is a consequence of sensitivity to initial values.  But it should be understood that the exact present does indeed determine the exact future: every time (1) is iterated 30 times with idential (rational) starting values for a fixed r, the result is the same (assuming identical floating point arithmetic).  Real observations are necessarily imperfect, but if a rational value is used as a starting point to iterate the logistic equation then all future iterations are computable, given enough memory.  
+
+On the other hand, this page demonstrates a separate difficulty in attempting to calculate previous values from the logistic map.  Choosing a rational value of $x_n$ is no guarantee that any previous value will be rational, and sensitivity to initial values necessitates that small approximation errors become large over time.  This means that no computation procedure with finite memory will be able to accurately determine past values for an arbitrary number of iterations, regardless of starting value.  The logistic map, therefore, is deterministic and computable in the forward time direction (given the right starting values and enough memory) but not in the reverse time direction.  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
