@@ -416,10 +416,9 @@ Symbolically, it is not: (2) may be applied any number of times to find the set 
 
 Consider what happens when one attempts to compute successive iterations of (2): first one square root is taken, then another and another etc.  Now for nearly every initial value $x_n$, these square roots are not of perfect squares and therefore yield irrational numbers.  Irrational numbers cannot be represented with complete accuracy in any computation procedure with finite memory, which certainly applies to any computation procedure known.  The definition for 'practical' computation is precisely this: computations that can be accomplished with finite memory in a finite number of steps.  The former stipulation is not found in the classic notion of a Turing machine, but is most accurate to what a non-analogue computer is capable of.
 
-This would not matter much if approximations stayed accurate after many iterations of (2), but one can show this to be untrue for values of r and $x_0$ such that (1) is aperiodic.  Now all 
+This would not matter much if approximations stayed accurate after many iterations of (2), but one can show this to be untrue for values of r and $x_0$ such that (1) is aperiodic.  First note that (2) forms a tree, with one $x_n$ leading to one or two $x_{n_1}$.  If (1) is aperiodic for all starting $x_n$, then all paths through (2) are aperiodic because previous values are never revisited in the forward direction (with (1)), and therefore are never revisited in the reverse.  Therefore all paths through (2) are sensitive to initial values (becase they are aperiodic) and it follows that any approximation of $x_n$ yields is arbitrarily inaccurate (within limites) for $x_{n+p}$ given a large enough $p$.  
 
-It follows that the reverse logistic map is impossible to compute practically.
-
+As iterations of (2) are (almost all) irrational, it follows that the reverse logistic map is impossible to compute practically (assuming aperiodicity) because finite representations of irrational numbers yield inaccurate estimates of future iterations.  
 
 ### The Henon map is invertible 
 
