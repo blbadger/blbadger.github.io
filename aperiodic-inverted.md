@@ -608,13 +608,13 @@ The transition from point attractors to divergence everywere except a point (or 
 
 {% include youtube.html id='IEbtIjFz6Bo' %}
 
-### Aperiodic Henon maps are reversible
+### Aperiodic Henon maps are reversible from some starting points
 
 Is the Henon map reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing (3) for however many reverse iterations are required. 
 
 But earlier our attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (3).  Moreover, divergence occurred in fewer iterations that were taken in the original forward trajectory.  This begs the question: is the Henon map, like the logistic map, practically irreversible?
 
-If it is aperiodic (as is the case for a=1.4, b=0.3) then yes, for the special case where the point of interest is an element of the set of points in the Henon attractor $\matscr H$, in symbols $x_n \in \mathscr H$, or more generally where $x_n \not \in \Bbb Q$.  The Henon map, iterated discontinuously, cannot be defined on the rationals (for more information, see [here](https://blbadger.github.io/most-discontinuous.html)).  As real numbers are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  
+If it is aperiodic (as is the case for a=1.4, b=0.3) then yes, for the special case where the point of interest is an element of the set of points in the Henon attractor $\mathscr H$, in symbols $x_n \in \mathscr H$, or more generally where $x_n \not \in \Bbb Q$.  The Henon map, iterated discontinuously, cannot be defined on the rationals (for more information, see [here](https://blbadger.github.io/most-discontinuous.html)).  As real numbers are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  
 
 Now irrational numbers are of infinite length, and cannot be stored to perfect accuracy in finite memory.  How do we know that rational approximations of irrational numbers eventually diverge after many iterations of (4)?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that (4) is sensitive to initial conditions is as follows: (4) is the one-to-one inverse of (3).  Being aperiodic, the trajectory of (3) never revisits a previous point.  Therefore we know that (4) is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as (3).  As aperiodicity implies arbitrary sensitivity to initial values, (4) is arbitrarily sensitive to initial values. 
 
@@ -628,7 +628,7 @@ What about if we start with a rational number not on the Henon attractor itself,
 
 ### Aperiodicity and reversibility
 
-In conclusion, aperiodic Henon but not logistic maps are practically irreversible, meaning that one cannot compute arbitrary previous values accurately using finite memory.  
+In conclusion, aperiodic Henon but not logistic maps are practically reversible for some starting value, meaning that one cannot compute arbitrary previous values accurately using finite memory.  
 
 If future values for the logistic map are difficult to predict, as is the case for aperiodic systems in general, does it come as any surprise that past values are hard to determine as well?  It is indeed surprising, but why this is requires explanation.
 
