@@ -52,6 +52,7 @@ plt.close()
 ```
 
 After many iterations, the following map is produced:
+
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
 How does the equation produce the map above?  We can plot each point one by one to find out.  To do this, the program above can be modified as follows to make many images of the map of successive iterations of (1), which can then be compiled into a movie (see [here](/julia-sets.md) for an explanation on how to compile images using ffmpeg).
@@ -73,6 +74,7 @@ for i in range(steps):
 ```
 
 For the first thousand iterations:
+
 ![map]({{https://blbadger.github.io}}/henon_map/henon_dev.gif)
 
 Successive iterations jump around unpredictably but are attracted to a distinctive curved shape. 
