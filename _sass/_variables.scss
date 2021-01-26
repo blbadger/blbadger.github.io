@@ -29,11 +29,8 @@ $type-size-7                  : 0.6875em !default; // ~11px
 $type-size-8                  : 0.625em !default;  // ~10px
 
 
-$grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1400px
-);
+$small : 768px;
+$medium : 900px;
+$medium-wide : 1024px;
+$large : 1280px;
+$x-large : 1900px;
