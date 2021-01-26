@@ -15,7 +15,7 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-Come and see some beautiful mathematical ideas, explored comutationally and theoretically.  Follow the links to skip to pages on [dynamical boudaries](#boundaries) or abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, see some [smaller software projects](#smaller-software-projects) and [high voltage engineering projects](#high-voltage).
+Come and see some beautiful mathematical ideas, explored computationally and theoretically.  Follow the links to skip to pages on [dynamical boudaries](#boundaries) or abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, see some [smaller software projects](#smaller-software-projects) and [high voltage engineering projects](#high-voltage).
 
 ## Dynamics
 The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
