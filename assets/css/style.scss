@@ -9,7 +9,6 @@ $body-link-color: #7EA7D3;
 $blockquote-text-color: #819198; 
 $code-text-color: #494D4E;
 
-
 $large-breakpoint: 80em;
 $medium-breakpoint: 42em;
 
@@ -30,6 +29,10 @@ $medium-breakpoint: 42em;
   border: 0;
 }
 
+.page {
+  width: calc(100% - #{$right-sidebar-width-narrow});
+}
+
 // .inner {
 //   max-width: 100%;
 // }
@@ -37,5 +40,4 @@ $medium-breakpoint: 42em;
 body {
 //     font-family: "Helvetica", Helvetica, sans-serif;
   line-height: 1.6;
-  line_width: 1.5;
 }
