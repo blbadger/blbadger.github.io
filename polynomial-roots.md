@@ -14,7 +14,7 @@ It is somewhat surprising then that for a general polynomial of degree 5 or larg
 
 ### Newton's method for estimating roots of polynomial equations
 
-What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal is simply to find a root, rather than all roots, we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iterativley such that the x-intercept found previously is the x-value of the new point.  This can be expressed dynamically as follows:
+What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal is simply to find a root, rather than all roots, we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iteratively such that the x-intercept found previously is the x-value of the new point.  This can be expressed dynamically as follows:
 
 $$
 x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}
