@@ -15,6 +15,8 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
+Skip to pages on [dynamical boudaries](#boudaries), abstract [foundations](#foundations), [physics](#physics), [biology](#biology) as well as small [software projects](#smaller-software-projects) and [high voltage engineering](#high-voltage).
+
 ## Dynamics
 The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
 
