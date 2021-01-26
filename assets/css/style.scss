@@ -29,10 +29,6 @@ $medium-breakpoint: 42em;
   border: 0;
 }
 
-.page {
-  width: calc(100% - #{$right-sidebar-width-narrow});
-}
-
 // .inner {
 //   max-width: 100%;
 // }
