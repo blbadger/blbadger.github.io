@@ -15,7 +15,7 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-Explorations of some beautiful mathematical ideas.  Skip to pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) or abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, a few smaller software [projects](#smaller-software-projects) and some [high voltage engineering](#high-voltage).
+Explorations of some beautiful mathematical ideas.  Skip to pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) or abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, a few smaller [projects](#smaller-software-projects) and some high voltage [engineering](#high-voltage).
 
 ## Dynamics
 The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
@@ -138,7 +138,7 @@ $$
 
 
 ## Physics
-As for any science, an attempt to explain observations and predict future ones using hypothetical theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately described by a different theory.  As many different theories can accurately describe and predict the same observations, the simplest are favored by Occam's razor.  
+As for any science, an attempt to explain observations and predict future ones using hypothetical theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
 
 ### [Entropy](/entropy.md)
 
@@ -155,7 +155,7 @@ P_{12} \neq P_1 + P_2
 $$
 
 ## Biology
-The study of life, which displays many of the features of nonlinear mathematical systems: an attractive state resistance to perturbation, lack of periodicity, and simple instructions giving rise to intricate shapes and movements.  
+The study of life, observations of which display many of the features of nonlinear mathematical systems: an attractive state resistant to perturbation, lack of exact repeats, and simple instructions giving rise to intricate shapes and movements.  
 
 ### [Genetic information problem](/genetic-info-problem.md)
 
