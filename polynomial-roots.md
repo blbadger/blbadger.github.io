@@ -113,7 +113,7 @@ with roots at $x=-3, x=1, x=2$.  Again there is more than one point on the real 
 
 This plot seems reasonable, as the points near the roots converge quickly.  Looking closer at the point $x=-0.8413$, 
 
-![roots]({{https://blbadger.github.io}}/newton-method/newton_real_zoom.gif)
+{% include youtube.html id='OGDTLGhvj9Y' %}
 
 we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.  To see the reason for this, first ovserve that Newton's method will fail for points where $f'(x) = 0$, and for $3x^2-7=0$ the evaluation is $\pm \sqrt{7/3}$.  Therefore the value that heads towards $\sqrt{7/3}$ is, again using the cubic formula,
 
