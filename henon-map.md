@@ -276,6 +276,8 @@ Thus the waves of the henon map form in a similar fashion to those seen in the p
 
 Note that unlike the case for $a=1.4, b=0.3$, the basin of attraction is a fractal while a stable attractor remains.  Notice that the fractal edge of the basin of attraction extends outward when the attractor remains (as for the spiral maps) but extends inward into the attractor space in the region of $a=1.4, b=0.3$.
 
+To observe the behavior of stable and unstable points for the Henon map iterated in reverse, see [this page](https://blbadger.github.io/aperiodic-inverted.html).
+
 ### Fractal zoom on a henon map divergence
 
 At $a=0.2$ and $b=-1.1$, points head towards infinity nearly everywhere.  One point that does not diverge is where the next iteration is equivalent to the current, or where $x_{n+1} = x_n$ and $y_{n+1} = y_n$.  This can be found as follows:
