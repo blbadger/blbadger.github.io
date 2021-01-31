@@ -17,6 +17,7 @@ It is helpful to view the vector plot for this differential system to get an ide
 ![pendulum vectors]({{https://blbadger.github.io}}pendulum_map/pendulum_vectors.png)
 
 Imagine a ball rolling around on a plane that is directed by the vectors above. We can calculate this rolling using Euler's formula (see [here](https://blbadger.github.io/clifford-attractor.html)) the change in time step $\Delta t$ is small (0.01 in this case), the following map is produced:
+
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/continuous_pendulum.png)
 
 Now note that we can achieve a similar map with a linear dissipative differential system
@@ -102,7 +103,7 @@ Notice that more and more waves are visible as the scale decreases. At a small s
 Waves are not observed for the linear map at any $\Delta t$ size (here at 0.9999):
 ![pendulum image]({{https://blbadger.github.io}}pendulum_map/swirl_map_zoom.png)
 
-Even the the nonlinear pendulum system is eventually periodic: the attractor is a 1-dimensional circle in phase space for the parameters chosen above. Because the system is eventually periodic, it should not be sensitive to initial values.  This can be checked for two values shifted by an  $0.00000001$ along the x-axis as follows:
+The collection of iterations in a ring suggests that the nonlinear pendulum system is eventually periodic: the attractor is a 1-dimensional circle in phase space for the parameters chosen above. Because the system is eventually periodic, it should not be sensitive to initial values as only aperiodic trajectories are sensitive to initial values (disregarding round-off error and approximation issues present in real-world computations).  This can be checked for two values shifted by an  $0.00000001$ along the x-axis as follows:
 
 ```python
 #! python3
@@ -193,7 +194,7 @@ plt.show()
 
 Thus the pendulum map is not sensitive to initial conditions for these values, implying periodicity (which we have already seen in the phase space diagrams above).
 
-In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) for $a = -1.4 b = 1.7, c = 1.0, d = 0.7$ and $ \Delta t = 1.35$ (iterated for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.750000001, 8.2)$ results in a significant change in final point location
+In contrast, the semicontinuous [Clifford map](https://blbadger.github.io/clifford-attractor.html) for $a = -1.4, \; b = 1.7, \; c = 1.0, \; d = 0.7$ and $ \Delta t = 1.35$ (iterated for 500000 steps) is extremely sensitive to changes in initial values: going from $(x_0, y_0) = (10.75, 8.2)$ to $(x_0, y_0)= (10.750000001, 8.2)$ results in a significant change in final point location
 
 ```python
 p1 = (10.98448, 7.96167)
