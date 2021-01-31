@@ -24,7 +24,7 @@ $$
 And the standard deviation is the square root of the variance, 
 
 $$
-\sigma = \sqrt(n(\frac{1}{2})^2)
+\sigma = \sqrt(n(1/2)^2)
 $$
 
 As n increases, $\sigma$ shrinks with respect to $E(V)$: after 100 tosses the standard deviation is 10% of the expected value, and after 1000 tosses the standard deviation is ~3% of the expected value, whereas after 10000 tosses the standard deviation is only 1% of the expected value. This is because $\sigma$ increases in proportion to the square root of $n$, whereas $E(V)$ increases linearly with $n$.
