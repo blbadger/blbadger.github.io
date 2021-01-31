@@ -1,6 +1,6 @@
 ## Additivity and order
 
-### Probability and additivity
+### Probability 
 
 Imagine tossing a fair coin and trying to predict the outcome. There exists a 50% chance of success, but there is no way to know with any certainty what will happen.  Now imagine tossing the coin thousands of times, and consider what you will be able to predict: each toss continues to be random and completely uncertain, so one's ability to predict the outcome of each individual toss does not change.  But now add the results of the tosses together, assigning an arbitrary value to heads and a different value to tails.  As the number of individual coin tosses increases, one is better able to predict what value the sum will take.  Moreover, if the same coin toss experiment is repeated many times (say repeating 1000 tosses 1000 times), we can predict what the sum of the tosses will be with even more accuracy.  
 
@@ -8,7 +8,8 @@ Imagine tossing a fair coin and trying to predict the outcome. There exists a 50
 Specifically, there are two possible outcomes for each toss (heads or tails) and so a binomial distribution is appropriate to model the expected value $E(X)$ after $n$ tosses as follows:
 
 $$
-E(X) = n * p
+E(X) = n * p \\
+E(X) = n * \frac{1}{2}
 $$
 
 where $p$ is probability of the coin landing in a specific orientation, say heads. 
@@ -17,12 +18,18 @@ The variance $V(X)$ approximates a binomial distribution centered around the exp
 
 $$  
 V(X) = n * p (1-p) \\
-V(X) = n(1/4)^2
+V(X) = n(\frac{1}{2})^2
 $$
 
-As n increases, the standard deviation shrinks with respect to the expected value: after 100 tosses the standard deviation is 10% of the expected value, and after 1000 tosses the standard deviation is ~3% of the expected value, whereas after 10000 tosses the standard deviation is only 1% of the expected value.  
+And the standard deviation is the square root of the variance, 
 
-The second observation is perhaps more striking: the additive transformation on a coin toss leads to the gaussian distribution with arbitrarily close presicion.  Let's simulate this so that we don't have to actually toss a coin millions of times, assigning the value of $1$ to heads and $0$ to tails.  We can compare the resulting distribution of heads to the expected normal distribution using `scipy.stats.norm` as follows:
+$$
+\sigma = \sqrt(n(\frac{1}{2})^2)
+$$
+
+As n increases, $\sigma$ shrinks with respect to $E(V)$: after 100 tosses the standard deviation is 10% of the expected value, and after 1000 tosses the standard deviation is ~3% of the expected value, whereas after 10000 tosses the standard deviation is only 1% of the expected value. This is because $\sigma$ increases in proportion to the square root of $n$, whereas $E(V)$ increases linearly with $n$.
+
+The second observation is perhaps more striking: the additive transformation on a coin toss leads to the gaussian distribution with arbitrarily close precision.  Let's simulate this so that we don't have to actually toss a coin millions of times, assigning the value of $1$ to heads and $0$ to tails.  We can compare the resulting distribution of heads to the expected normal distribution using `scipy.stats.norm` as follows:
 
 ```python
 import numpy
@@ -55,7 +62,7 @@ plt.close()
 
 Let's assign $n$ as the number of tosses for each experiment and $t$ as the number of experiments plotted.  For 10 experiments ($t=10$) of 10 flips ($n=10$) each, the normal distribution (orange) is an inaccurate estimation of the the actual distribution (blue).
 
-![gaussian]({{https://blbadger.github.io}}/assets/images/coin_10_10.png)
+![gaussian]({{https://blbadger.github.io}}/assets/images/coing_10_10.png)
 
 As we go from 100 tries of 100 tosses each to 1000000 tries of 100 tosses each, the normal distribution is fit more and more perfectly.  For $n=100, t=100$,the distribution more closely 
 approximates the normal curve.
@@ -79,21 +86,21 @@ and for $n=100, t=1 * 10^6$, there is almost no discernable difference between t
 ![gaussian]({{https://blbadger.github.io}}/assets/images/coin_100_1mil.png)
 
 
-Let's take a moment to appreciate what has happened here: a completely random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  (Well, not completely random: digital computers actuqlly produe pseudo-random outputs that eventually repeat over time. But we do not need to worry about that here, as our output number is far less than what would be necessary for repetition.)
+Let's take a moment to appreciate what has happened here: a random input can be mapped to a curve with arbitrary precision simply by adding outputs together.  (Well, not completely random: digital computers actually produce pseudo-random outputs that are periodic with an exceedingly large interval. But we do not need to worry about that here, as our output number is far less than what would be necessary for repetition.)
 
 This observation is general: individual random events such as a die roll or card shuffle cut are quite unpredictable, but adding together many random events yields a precise mapping to a gaussian curve centered at the expectation value.  Each individual event remains just as unpredictable as the last, but the sum is predictable to an arbitrary degree given enough events.  One way to look at these observations is to see that addition orders random events into a very non-random map, and if we were to find the sum of sums (ie integrate under the gaussian curve) then a number would be reached with arbitrary precision given unlimited coin flips and experiments.
 
 ### Brownian motion
 
-There is an interesting physical manifestation of the abstract statistical property of additive ordering: Brownian motion, the irregular motion of small (pollen grain size or smaller) particles in fluid.  Thermal motions (often thought of as random, or stochastic) of fluid molecules add together over time to result in a non-differentiable path of the particle, and movement along this path is termed Brownian motion, after the naturalist Brown who showed that this motion is not the result of a biological process (although it very much resembles the paths taken by small protists living in pond water). 
+There is an interesting physical manifestation of the abstract statistical property of additive ordering: Brownian motion, the irregular motion of small (pollen grain size or smaller) particles in fluid.  Thermal motions are often thought of as random or stochastic, meaning that they are described by probability distributions.  Sush motions of fluid molecules add together on the surface of a larger particle to result in a non-differentiable path of that particle.  Movement along this path is termed Brownian motion, after the naturalist Brown who showed that this motion is not the result of a biological process (although it very much resembles the paths taken by small protists living in pond water). 
 
-In three dimensions, Browniam motion leads to a movement away from the initial particle position.  The direction of this movement is unpredictable, but over many experiments (or with many particles underging brownian motion at once), the distances of the particles away from the initial point together form a Gaussian distribution (see [here](https://en.wikipedia.org/wiki/Brownian_motion) for a good summary of this).  Regardless of the speed or trajectory of each individual particle undergoing Brownian motion an ensemble that start at the same location form a Gaussian distribution with arbitrary accuracy, given enough particles. 
+In three dimensions, Browniam motion leads to a movement away from the initial particle position.  The direction of this movement is unpredictable, but over many experiments (or with many particles underging brownian motion at once), the distances of the particles away from the initial point together form a Gaussian distribution (see [here](https://en.wikipedia.org/wiki/Brownian_motion) for a good summary of this).  Regardless of the speed or trajectory of each individual particle undergoing Brownian motion, an ensemble that start at the same location form a Gaussian distribution with arbitrary accuracy, given enough particles. 
 
 ### White and fractional noise
 
-Noise may signify the presence of sound, or it may mean everything that is not a signal. Both meanings are applicable here. White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Fractional noise is defined here as any noise that is inversly frequency dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise, and Brown noise any noise that has $1/f^n$ for $n > 0$.
+Noise may signify the presence of sound, or it may mean any observation that is not classified as a signal. Both meanings are applicable here. White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Fractional noise is defined here as any noise that is inversely frequency-dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise, and Brown noise any noise that has $1/f^n$ for $n > 0$.
 
-White noise is unpredictable, and 'purely' random: one cannot predict the frequency or intensity of a future signal any better than by chance.  But because fractional noise decays in total intensity with an increase in frequency, this type of noise is not completely random (meaning that it is somewhat predictable).  Consider one specific type of fractional noise, Brown noise, which is characterized by a $1/f^{~2}$ frequency vs. intensity spectrum.  This is the noise that results from Brownian motion (hence the name).  It may come as no surprise that another way to generate this noise is to integrate (sum) white noise, as the section above argues that Brownian motion itself acts to integrate random thermal motion.  
+White noise is unpredictable, and 'purely' random: one cannot predict the frequency or intensity of a future signal any better than by chance.  But because fractional noise decays in total intensity with an increase in frequency, this type of noise is not completely random (meaning that it is somewhat predictable).  Consider one specific type of fractional noise, Brown noise, which for our purpose is characterized by a $\frac{1}{f^n}, \; n > 1$ frequency vs. intensity spectrum.  This is the noise that results from Brownian motion (hence the name).  It may come as no surprise that another way to generate this noise is to integrate (sum) white noise, as the section above argues that Brownian motion itself acts to integrate random thermal motion.  
 
 As noted by [Mandelbrot](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) and [Bak](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.59.381), fractional noise results from fractal objects as they change over time.  Brownian noise coming from Brownian motion is simply a special case of this more general phenomenon: Brownian motion traces out fractal paths.  These paths are self-similar in that very small sections of the path resemble much larger sections, not that smaller portions exactly match the whole as is the case for certain geometric fractals.  This type of self-similarity is sometmies called statistical self-similarity, and is intimately linked to the property this motion exhibits of being nowhere-differentiable.  For more about fractals, see [here](/fractal-geometry.md).
 
@@ -101,19 +108,26 @@ In general terms, Brownian motion is a fractal because it appears to trace paths
 
 $$
 D = \frac{log(N)}{log(1/r)} \\
-N = (1/r)^D
+N = (\frac{1}{r})^D \\
 $$
 
-where $D$ is the fractal dimension, $N$ is the ratio of the number of objects required to cover the curve, and $1/r$ is the change in scale expressed as a fraction.  A line has a topological and fractal dimension of 1: it takes twice as many objects to cover it when the scale has increased by a factor of two, and similarly a square in a plane has a topological and fractal dimension of 2. 
 
-If the fractal dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails have a fractal dimension of approximately $2$, meaning that they cover area even though they are topologically one-dimensional. 
+where $D$ is the fractal dimension, $N$ is the ratio of the number of objects required to cover the curve, and $1/r$ is the change in scale expressed as a fraction.  Note that this is equivalent to the equation for fractional (Brownian) noise,
+
+$$
+I = (\frac{1}{f})^n
+$$
+
+where the number of objects required to cover the curve N is eqivalent to the signal intensity I, the radius of the objects r is equivalent to the frequency f, and the dimension D is equivalent to the noise scaling factor n.  
+
+If the fractal dimension is larger than the object's topological dimension, it is termed a fractal.  For very rough paths, an increase in scale by, say, twofold leads to a larger increase in the number of objects necessary to cover the path because the path length has increased relative to the scale. Brownian trails in two dimensions have a fractal dimension of approximately $2$, meaning that they cover area even though they are topologically one-dimensional. 
 
 
 ###  Gambler's fallacy
 
-Statistical distributions of the natural world rarely conform to Gaussian distributions.  Instead, rare events are often overrepresented: the more data that is obtained, the larger the standard deviation describing those observations.  This is equivalent to the fractal noise mentioned above, where uncommon events are of low frequency and are overepresented compared to white noise.  This implies that truly independent samples are rare, a conclusion that is often in agreement with experimentation.  For example, the weather a place receives from one day to the next is not completely independent, as a downpour one day will lead to greater humidity in the hours following, which necessarily affects the weather of the hours following.
+Statistical distributions of the natural world rarely conform to Gaussian distributions.  Instead, rare events are often overrepresented: the more data that is obtained, the larger the standard deviation describing those observations.  This is equivalent to the fractal noise mentioned above, where uncommon events (low frequency signal) are over-represented compared to the expected value for these events if modeled with white noise.  This implies that truly independent samples are rare, a conclusion that is often in agreement with experimentation.  For example, the weather a place receives from one day to the next is not completely independent, as a downpour one day will lead to greater humidity in the hours following, which necessarily affects the weather of the hours following.
 
-The gambler's fallacy may be defined as a tendancy to assume that events are not independent. In light of the ubiquity of fractal noise and scarcity of white noise in the natural world, it may be that the gamlber's fallacy is actually a more accurate interpretation of most natural events than one assuming independent events.
+The gambler's fallacy may be defined as a tendancy to assume that events are not independent. In light of the ubiquity of fractal noise and scarcity of white noise in the natural world, it may be that the gambler's fallacy is actually a more accurate interpretation of most natural processes than one assuming independent events.
 
 
 ### Nonlinear statistics
@@ -129,7 +143,7 @@ or the expected value of event A or B is the same as the expected value of A plu
 
 $$
 E(A + B) \neq E(A) + E(B) \\
-if \; E(A) \; \not \bot \; E(B)
+if \; \lnot E(A) \; \bot \; E(B)
 $$
 
 Markov processes attempt to model non-random dependencies by providing each state with a separate probability rule, and then by applying standard linear statistical rules to each separate state.  This is similar to the decomposition of a curve into many small lines and is a practical way of addressing simpler probability states such as those that exist while playing cards, but is extremely difficult to use to model states where each decision leads to exponentially more states in the future (as is the case for chess, where one starting configuration leads to $10^{46}$ possibilities for future ones). 
@@ -139,11 +153,11 @@ It may instead be more effective to consider a nonlinear model of statistics in 
 
 ### Randomized fractals 
 
-One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the sierpinski triangle:
+One example of organization is found in randomized fractals.  These are shapes that can be obtained by from random (pseudorandom, as no digital computer is capable of truly random number generation) inputs that are restricted in some way.  Take the Sierpinski triangle:
 
 ![sierpinski]({{https://blbadger.github.io}}misc_images/sierpinski_triangle.png)
 
-This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template consisting of seven line segments with exact angles between them (for more on exactly how to draw this fractal, see [here](https://blbadger.github.io/fractal-geometry.html).  
+This fractal may be constructed in a deterministic fashion by instructing a computer to draw exactly where we want it to using recursion on a base template consisting of seven line segments with exact angles between them (for more on exactly how to draw this fractal, see [here](https://blbadger.github.io/fractal-geometry.html)).  
 
 The Sierpinski triangle can also be constructed using random inputs in a surprising way: take three points that are the edges of an equilateral triangle and add an initial point somewhere in this triangle.  Assign two numbers on a dice to each vertex, roll the dice, and move half way towards the vertex indicated by the dice and repeat.  This can be done in python as follows: 
 
@@ -257,8 +271,6 @@ which results in a Sierpinski carpet.
 $\Bbb I$ is not closed under addition (or subtraction).  For example, $x_1 = 1 + \pi$ is irrational and $x_2 = 2 - \pi$ is irrational but $y = x_1 + x_2 = 3$ which is rational.  By equivalence two aperiodic maps may be added together to yield a periodic one, according to the method of digits (see the link in the last paragraph).  
 
 But note that $\Bbb Q$ is closed under addition (and subtraction), meaning that two rationals will not add to yield an irrational.  This means that, given a set $S$ of numbers in $\Bbb R$, addition may convert elements of $S$ from irrational to rational.  For a set of trajectory maps $M$, addition may lead to the transformation of aperiodic trajectories to periodic.
-
-This suggests a deep ability of addition to affect the ordering of dynamical systems. 
 
 ### Aside: quantum mechanics and non-differentiable motion
  
