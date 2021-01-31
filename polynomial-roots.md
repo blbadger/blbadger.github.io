@@ -99,7 +99,7 @@ $$
 0 = 2x^3 + 3(\sqrt[3]{\frac12} x^2) + 1
 $$
 
-To find this point exactly, a more difficult polynomial must be solved and the formidible cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
+To find this point exactly, a more difficult polynomial must be solved and the formidable cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
 
 Now consider the equation
 
