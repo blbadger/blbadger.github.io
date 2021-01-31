@@ -18,13 +18,13 @@ The variance $V(X)$ approximates a binomial distribution centered around the exp
 
 $$  
 V(X) = n * p (1-p) \\
-V(X) = n(\frac{1}{2})^2
+V(X) = n \left( \frac{1}{2} \right) ^2
 $$
 
 And the standard deviation is the square root of the variance, 
 
 $$
-\sigma = \sqrt(n(1/2)^2)
+\sigma = \sqrt{n \left( 1/2 \right)^2}
 $$
 
 As n increases, $\sigma$ shrinks with respect to $E(V)$: after 100 tosses the standard deviation is 10% of the expected value, and after 1000 tosses the standard deviation is ~3% of the expected value, whereas after 10000 tosses the standard deviation is only 1% of the expected value. This is because $\sigma$ increases in proportion to the square root of $n$, whereas $E(V)$ increases linearly with $n$.
@@ -98,9 +98,9 @@ In three dimensions, Browniam motion leads to a movement away from the initial p
 
 ### White and fractional noise
 
-Noise may signify the presence of sound, or it may mean any observation that is not classified as a signal. Both meanings are applicable here. White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Fractional noise is defined here as any noise that is inversely frequency-dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise, and Brown noise any noise that has $1/f^n$ for $n > 0$.
+Noise may signify the presence of sound, or it may mean any observation that is not classified as a signal. Both meanings are applicable here. White noise is defined as being frequency-independent: over time, neither low nor high frequencies are more likely to be observed than the other.  Fractional noise is defined here as any noise that is inversely frequency-dependent: lower frequency signal occurs more often than higher frequency signal.  Inverse frequency noise is also called pink or $1/f$ noise.
 
-White noise is unpredictable, and 'purely' random: one cannot predict the frequency or intensity of a future signal any better than by chance.  But because fractional noise decays in total intensity with an increase in frequency, this type of noise is not completely random (meaning that it is somewhat predictable).  Consider one specific type of fractional noise, Brown noise, which for our purpose is characterized by a $\frac{1}{f^n}, \; n > 1$ frequency vs. intensity spectrum.  This is the noise that results from Brownian motion (hence the name).  It may come as no surprise that another way to generate this noise is to integrate (sum) white noise, as the section above argues that Brownian motion itself acts to integrate random thermal motion.  
+White noise is unpredictable, and 'purely' random: one cannot predict the frequency or intensity of a future signal any better than by chance.  But because fractional noise decays in total intensity with an increase in frequency, this type of noise is not completely random (meaning that it is somewhat predictable).  Consider one specific type of fractional noise, Brown noise, which for our purpose is characterized by a $\frac{1}{f^n}, \; n > 0$ frequency vs. intensity spectrum.  This is the noise that results from Brownian motion (hence the name).  It may come as no surprise that another way to generate this noise is to integrate (sum) white noise, as the section above argues that Brownian motion itself acts to integrate random thermal motion.  
 
 As noted by [Mandelbrot](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC) and [Bak](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.59.381), fractional noise results from fractal objects as they change over time.  Brownian noise coming from Brownian motion is simply a special case of this more general phenomenon: Brownian motion traces out fractal paths.  These paths are self-similar in that very small sections of the path resemble much larger sections, not that smaller portions exactly match the whole as is the case for certain geometric fractals.  This type of self-similarity is sometmies called statistical self-similarity, and is intimately linked to the property this motion exhibits of being nowhere-differentiable.  For more about fractals, see [here](/fractal-geometry.md).
 
@@ -108,14 +108,14 @@ In general terms, Brownian motion is a fractal because it appears to trace paths
 
 $$
 D = \frac{log(N)}{log(1/r)} \\
-N = (\frac{1}{r})^D \\
+N =  \left( \frac{1}{r} \right) ^D \\
 $$
 
 
 where $D$ is the fractal dimension, $N$ is the ratio of the number of objects required to cover the curve, and $1/r$ is the change in scale expressed as a fraction.  Note that this is equivalent to the equation for fractional (Brownian) noise,
 
 $$
-I = (\frac{1}{f})^n
+I = \left( \frac{1}{f} \right) ^n
 $$
 
 where the number of objects required to cover the curve N is eqivalent to the signal intensity I, the radius of the objects r is equivalent to the frequency f, and the dimension D is equivalent to the noise scaling factor n.  
