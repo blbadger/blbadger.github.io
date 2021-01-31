@@ -64,7 +64,7 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 ### [Clifford map](/clifford-boundary.md)
 
-![clifford]({{https://blbadger.github.io}}clifford_attractor/Clifford_boundary_still.png)
+![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_cover0.png)
 
 
 ### [Logistic map](/logistic-boundary.md)
