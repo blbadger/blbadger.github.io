@@ -1,6 +1,6 @@
 ## Logistic Map
 
-Contents: 
+**Contents:** 
 
 [Introduction: periodic and aperiodic trajectories in the logistic map](#introduction:-periodic-and-aperiodic-trajectories-in-the-logistic-map)
  
