@@ -10,9 +10,7 @@
 
 [Semi-continuous mapping](#semi-continuous-mapping)
 
-[In what way is this mapping semi-continuous?](#in-what-way-is-this-mapping-semi-continuous?)
-
-[Semicontinuous Clifford maps are rich: one parameter combination yields many possible attractors](#semicontinuous-clifford-maps-are-rich:-one-parameter-combination-yields-many-possible-attractors)
+[Semicontinuous Clifford maps are rich, one parameter combination yields many possible attractors](#semicontinuous-clifford-maps-are-rich,-one-parameter-combination-yields-many-possible-attractors)
 
 ### Introduction
 
@@ -246,8 +244,6 @@ Is the attractor for $\Delta t = 1.35$ a fractal? Zooming in on the bottom right
 
 The final position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
 
-### In what way is this mapping semi-continuous?
-
 Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given. In contrast, both a point's next position almost entirely determines its current position alone, and only the direction of change is influenced by the given equation system.  
 
 One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
@@ -255,7 +251,7 @@ One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' 
 As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractals, as is the case for discrete maps. 
 
 
-### Semicontinuous Clifford maps are rich: one parameter combination yields many possible attractors
+### Semicontinuous Clifford maps are rich, one parameter combination yields many possible attractors
 
 To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x_0, y_0)$ coordinate, many (possibly infinitely many) attractors are possible. 
 
