@@ -1,5 +1,7 @@
 ## Roots of polynomial equations
 
+### Introduction
+
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$ 
 
 At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial $y = ax + b$, setting $y$ to $0$ and solving for x yields $x = -b/a$. For a degree 2 polynomial $y = ax^2 + bx + c$, the closed form expression 
