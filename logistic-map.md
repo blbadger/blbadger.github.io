@@ -2,15 +2,15 @@
 
 Contents: 
 
-[Introduction](#introduction)
+[Introduction: periodic and aperiodic trajectories in the logistic map](#introduction:-periodic-and-aperiodic-trajectories-in-the-logistic-map)
  
-[A closer look at chaos with an orbit map](#a-closer-look-at-chaos-with-an-orbit-map)
+[A closer look at aperiodicity with an orbit map](#a-closer-look-at-aperiodicity-with-an-orbit-map)
 
 [The relationship between aperiodic systems and fractals](#the-relationship-between-aperiodic-systems-and-fractals)
 
 [Patterned entrances and exits from chaos](#patterned-entrances-and-exits-from-chaos)
 
-### Introduction
+### Introduction: periodic and aperiodic trajectories in the logistic map
 
 The logistic map was derived from a differential equation describing population growth, studied by Robert May. The dynamical equation is as follows:
 
@@ -114,7 +114,7 @@ even a large change in starting value at $r=3.55$ (period 8), from population $p
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
 
-### A closer look at chaos with an orbit map
+### A closer look at aperiodicity with an orbit map
 
 Information from iterating (1) at different values of $r$ may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
 
