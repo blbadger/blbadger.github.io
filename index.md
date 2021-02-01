@@ -15,7 +15,7 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
 
-Explorations of some beautiful mathematical ideas.  Skip to pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) or abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, a few smaller [projects](#smaller-software-projects) and some high voltage [engineering](#high-voltage).
+Explorations of some beautiful mathematical ideas.  Skip to pages on [dynamical systems](#dynamics), their [boundaries](#boundaries), abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology).  And just for fun, a few smaller [projects](#smaller-software-projects) and some high voltage [engineering](#high-voltage).
 
 ## Dynamics
 The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
@@ -73,7 +73,6 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 
 ## Foundations
-Why nonlinear systems behave the way they do, in general terms.
 
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
