@@ -1,4 +1,20 @@
-## Semicontinuous Clifford attractor
+## Clifford attractor
+
+**Contents:** 
+ 
+[Introduction](#introduction)
+
+[Clifford attractors are fractals](#clifford-attractors-are-fractals)
+
+[Attractors shift dimension depending on constant values](#attractors-shift-dimension-depending-on-constant-values)
+
+[Semi-continuous mapping](#semi-continuous-mapping)
+
+[In what way is this mapping semi-continuous?](#in-what-way-is-this-mapping-semi-continuous?)
+
+[Semicontinuous Clifford maps are rich: one parameter combination yields many possible attractors](#semicontinuous-clifford-maps-are-rich:-one-parameter-combination-yields-many-possible-attractors)
+
+### Introduction
 
 The Clifford attractor, also known as the fractal dream attractor, is the system of equations:
 
@@ -21,7 +37,7 @@ A wide array of shapes may be made by changing the constants, and the code to do
 [here](https://github.com/blbadger/2D_strange_attractors/blob/master/clifford_attractor.py)
 Try experimenting with different constants!
 
-### Clifford attractors are fractal
+### Clifford attractors are fractals
 
 In what way is this a fractal?  Let's zoom in on the lower right side: 
 In the central part that looks like Saturn's rings, there appear to be 6 lines.
@@ -40,7 +56,7 @@ To drive the point home, the top-right line looks to be as solid a line as any, 
 There are two paths visible at higher magnification:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_zoom5.png)
 
-### Clifford attractors can shift between one and two (or more) dimensions
+### Attractors shift dimension depending on constant values
 
 For $a = 2.1, b = 0.8, c = -0.5, d = -1$, the attractor is three points:
 
@@ -222,15 +238,13 @@ From $\Delta t = 0.1 \to \Delta t = 1.35$,
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
 
+Is the attractor for $\Delta t = 1.35$ a fractal? Zooming in on the bottom right section suggests that it is:
 
-### Is the attractor for $\Delta t = 1.35$ a fractal? 
-
-Zooming in on the bottom right section suggests that it is:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
 
-The finial position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
+The final position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
 
 ### In what way is this mapping semi-continuous?
 
@@ -238,7 +252,7 @@ Discrete differential systems are recurrence relations: a point's next position 
 
 One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
 
-As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractal, as is the case for discrete maps. 
+As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractals, as is the case for discrete maps. 
 
 
 ### Semicontinuous Clifford maps are rich: one parameter combination yields many possible attractors
