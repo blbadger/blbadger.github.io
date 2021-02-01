@@ -1,5 +1,17 @@
 ## Logistic Map
 
+Contents: 
+
+[Introduction](#introduction)
+ 
+[A closer look at chaos with an orbit map](#a-closer-look-at-chaos-with-an-orbit-map)
+
+[The relationship between aperiodic systems and fractals](#the-relationship-between-aperiodic-systems-and-fractals)
+
+[Patterned entrances and exits from chaos](#patterned-entrances-and-exits-from-chaos)
+
+### Introduction
+
 The logistic map was derived from a differential equation describing population growth, studied by Robert May. The dynamical equation is as follows:
 
 $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
