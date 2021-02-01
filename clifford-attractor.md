@@ -10,7 +10,7 @@
 
 [Semi-continuous mapping](#semi-continuous-mapping)
 
-[Semicontinuous Clifford maps are rich, one parameter combination yields many possible attractors](#semicontinuous-clifford-maps-are-rich,-one-parameter-combination-yields-many-possible-attractors)
+[Many attractors from one semi-continuous Clifford map](#many-attractors-from-one-semi-continuous-clifford-map)
 
 ### Introduction
 
@@ -242,16 +242,16 @@ Is the attractor for $\Delta t = 1.35$ a fractal? Zooming in on the bottom right
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
 
-The final position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
+The final position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values is implied by aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
 
-Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given. In contrast, both a point's next position almost entirely determines its current position alone, and only the direction of change is influenced by the given equation system.  
+Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given.  In contrast, both a point's next position in a continuous system is almost entirely determined by its current position: the equation system merely determines the direction and rate of change.  
 
-One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent a balance between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
+One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent an point between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
 
-As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semicontinuous maps of dissipative nonlinear equations may be fractals, as is the case for discrete maps. 
+As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semi-continuous but not continuous maps of dissipative nonlinear equations may be fractals in two dimensions, as is the case for discrete maps (see [here](https://blbadger.github.io/continuity-poincare.html) for an explanation). 
 
 
-### Semicontinuous Clifford maps are rich, one parameter combination yields many possible attractors
+### Many attractors from one semi-continuous Clifford map
 
 To generate a different Clifford attractor as defined in a discrete map, a change in the values of at least one of $a, b, c, d$ is required.  But this is not the case for a semicontinuous map: merely by changing the starting $(x_0, y_0)$ coordinate, many (possibly infinitely many) attractors are possible. 
 
