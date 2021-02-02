@@ -74,6 +74,15 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 ## Foundations
 
+### [Primes are unpredictable](/unpredictable-primes.md) 
+
+$$
+\lnot \exists n, p : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + p - 1}) \\
+= (g_{n+2p}, g_{n+2p+1}, g_{n+2p+2}, ..., g_{n + 2p - 1}) \\
+= (g_{n+3p}, g_{n+3p+1}, g_{n+3p+2}, ..., g_{n + 3p - 1}) \\
+\; \; \vdots
+$$
+
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
 $$
