@@ -151,7 +151,7 @@ As for any science, an attempt to explain observations and predict future ones u
 
 $$
 P_{12} \neq P_1 + P_2 \\
-$P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta$
+P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta
 $$
 
 ## Biology
