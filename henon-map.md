@@ -1,8 +1,6 @@
 ## The Henon map
 
-Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space
-
-Henon investigated the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
+Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space, achieved with the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
 
 $$x_{n+1} = 1-ax_n^2 + y_n \\
 y_{n+1} = bx_n \tag{1}$$
@@ -141,7 +139,7 @@ In an effort to prevent explosion of values to infinity, we will run into the po
 	not_already_diverged = array[0] < 1000
 ```
 
-Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  By using bitwise and, we make a new array `diverging_now` that checks whether divergence has already happened or not, and assigns `True` only to the diverging values that have not. The indicies of `iterations_until_divergence` that are currently diverging are assigned to the iteration number `k`, and the `not_already_diverged` array is updated. Finally, diverging elements of x or y arrays are then assigned as 0 to prevent them from exploding to infinity. 
+Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  By using bitwise and, we make a new array `diverging_now` that checks whether divergence has already happened or not, and assigns `True` only to the diverging values that have not. The indicies of `iterations_until_divergence` that are currently diverging are assigned to the iteration number `k`, and the `not_already_diverged` array is updated. Finally, diverging elements of x or y arrays are then assigned as 0 to prevent them from exploding to infinity (as long as the origin does not head towards infinity, that is).
 
 ```python
 	for k in range(max_iterations):
