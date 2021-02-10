@@ -8,7 +8,7 @@ First we define a 'unique' function to define a single trajectory in finite dime
 
 ![continuous function next value]({{https://blbadger.github.io}}misc_images/continuous_function_next.png)
 
-and precisely, $f$ may increase by $\delta$, decrease by $\delta$, or stay the same where $delta$ is defined as 
+and precisely, $f$ may increase by $\delta$, decrease by $\delta$, or stay the same. Here $\delta$ is defined as 
 
 $$ 
 \lvert x_1 - x_2 \rvert < \epsilon \implies \lvert f(x_1) - f(x_2) \rvert < \delta 
@@ -112,6 +112,7 @@ For the definition of $g$ as the composition of $f$ at finite time $t$, $g(t) = 
 
 Stephen Smale introduced the horseshoe map to describe a common aperiodic attractor topology.  This model maps a square into itself such that the surface is stretched, folded and then re-stretched over and over like a baker's dough.  The horseshoe map is everywhere discontinuous as points arbitrarily close together to start are separated (the surface is stretched at each iteration and there are infinite iterations) such that there is a distance greater than some $e > 0$ between them.  The process of folding prevents divergence to infinity.  
 
+It is also interesting to note that stretching and folding is the most efficient way to mix physical substances that have internal cohesion.  For example, take two substances that are malleable solids.  Being solids, they have internal cohesion strong enough to prevent mixing due to gravity if someone puts the solids in the same container.  This self-attraction makes it difficult to mix the solids by jostling or otherwise adding energy to the container.  Rather, iteratively stretching out each solid (maintaining some internal attraction while increasing surface area) and then folding them together uses less energy (cohesive forces do not need to be overcome).
 
 
 
