@@ -1,7 +1,5 @@
 ## Sine-Cosine grid map
 
-### A demonstration of semicontinuous mapping of a 2D chaotic system
-
 The differential system
 
 $$ 
@@ -47,13 +45,13 @@ Systems of ordinary differential equations have one independent variable: time. 
 
 (1) is an example of a chaotic mathematical system as it is deterministic but deeply unpredictable: small changes to the starting value of a chaotic system will lead to large changes in the output.  These are also called aperiodic systems, because they never revisit previously visited points.
 
-### An aperiodic unbounded map
+### An aperiodic, unbounded map
 
 The grid map is an example of an aperiodic but unbounded trajectory.  Aperiodic trajectories must cross each other if bounded, meaning that if one connects the iterations of a discontinuous map over time the connections must cross one another (for why this is, see [here](https://blbadger.github.io/continuity-poincare.html)).  But as the grid map is unbounded, a trajectory does not necessarily have to cross itself in this manner in order to be aperiodic. For larger $\Delta t$ values detailed below, the trajectory does indeed self-cross.
 
 The grid map displays sensitivity to initial values typical of aperiodic maps, and although not bounded the trajectories head towards infinity very slowly. 
 
-### The grid map $\Delta t$ values is indistinguisheable from a random walk Brownian trajectory
+### The grid map is indistinguisheable from a random walk Brownian trajectory for some $\Delta t$
 
 Imagine a ball with elastic collisions to sparse particles that flow in the vector map pattern, or else a ball moving smoothly that is only influenced by the vectors at discrete time intervals. Observe what happens with increases in the time step size:
 
