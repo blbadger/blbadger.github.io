@@ -4,15 +4,23 @@ As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.h
 
 ### Theorem: Aperiodicity (in phase space) implies sensitivity to initial values.
 
-Proof: Take $f$ to be a function in finite dimensional phase space, iterated discretely, that is bounded by finite values.  This entails that trajectories are unique, and that if $f$ returns to a previous point then $f$ is periodic.  Assume that $f$ is aperiodic, such that future iterations do not 
-
-In symbols, $f$ is defined as follows:
+Restated, take $f$ to be a function in finite dimensional phase space, iterated discretely, that is bounded by finite values.  This entails that trajectories are unique, and that if $f$ returns to a previous point then $f$ is periodic.  Define $f$ to be aperiodic when future iterations do not revisit previous points in the space.  In symbols, an aperiodic $f$ is defined as follows:
 
 $$
-f(x) : f^n(x(0)) \neq f^k(x(0)) \; \forall n, k : n \neq k
+f(x) : f^n(x_0) \neq f^k(x_0) \; \forall n, k : n \neq k
 $$
 
 (An example of an $f$ satisfying these conditions is seen in the link at the top of this page, proving that this is not a vacuous statement)
+
+And in contrast, $f$ is periodic when there is some period $f-n$ such that this future iteration is located at a current or past point:
+
+$$
+f(x) : f^n(x_0) = f^k(x_0) \; \exists n, k: n \neq k
+$$
+
+Note that these definitions restrict the following to discrete maps.  In higher dimensional continuous maps, $f(x)$ may be strictly aperiodic in that it never revisits a previous point, but this $f(x)$ may be decomposed into independant lower-dimensional trajectories that are periodic, revisiting previous points arbitrarily often.  See below for more on this subject.
+
+**Proof:** 
 
 There is nothing special about our initial value $x(0)$ relative to the others obtained by iterating an equation.  So any value that is iterated from $f$ can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value $x_n$ to produce $x_n^*$
 
@@ -24,17 +32,43 @@ $$\lvert f^i(x_n) - f^i(x_n^*) \rvert \le \varepsilon $$
 
 ie $f^i(x_n)$ and $f^i(x_n^*)$ stay arbitrarily close to each other for all iterations.
 
-As phase space trajectories are unique (ie if any given point of the system has only one future trajectory), then this system must be periodic: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat (recall that $f$ is defined to be bounded). The period may be very large, in this it may take many iterations of $f$ to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  
+As phase space trajectories are unique (meaning that any given point of the system has only one future trajectory), then this system must be periodic if in is insensitive to initial values: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat (recall that $f$ is defined to be bounded). The period may be very large, in that it may take many iterations of $f$ to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  
 
-The geometric argument is as follows: if the conditions above are satisfied, there is a small but finite ball $B$ around each point on the trajectory $T$ where the radius of $B$ is $\varepsilon$.  As the trajectory remains in a finite area by definition, it must revisit one of $B$ after infinite time because a finite area can be tiled by a finite number of $B$.
+The geometric argument for this statement is as follows: if the conditions above are satisfied and we assume that future iterations finitely close to a current point travel, there is a small but finite ball $B$ around each point on the trajectory $T$ where the radius of $B$ is $\varepsilon$.  As the trajectory remains in a finite area by definition, it must revisit one of $B$ after infinite time because a finite area can be tiled by a finite number of $B$.  
 
-This means that insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values (for discrete maps of $f$). All together, 
+
+Revisiting a previous value is equivalent to periodicity, and therefore insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values (for discrete maps of $f$). All together, 
 
 $$
 f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
 \forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
-$\square$
+### Decomposably periodic functions insensitive to initial values
+
+The case for periodic versus aperiodic functions mapped continuously is mostly similar, but with a few extra considerations. The first and probably the most obvious is that with no discrete unit of time and therefore no iterations to speak of.  Instead there is a continuum, which one can think of as an infinite number of iterations between any two points in the trajectory.  Therefore rather than a finite $k$ number of iterations defining a period, there is some finite time $t$ that defines it.  Secondly, trajectories cannot cross one another's path in continuous maps, whereas they may for discrete cases where the points do not fall on top of one another.  
+
+The theorem above extends to continuous functions in higher dimensions that do not necessarily have periodic outputs, but that may be decomposed into periodic trajectories that are independant of one another.  A simple case of this can be seen for two points rotating on circular orbit independantly of one another: if one has a rotational period of 1 and another of $\pi$, after starting in the same place on their respective circles they never again would do so because $\pi$ is irrational but 1 is rational.  Both circular orbits are periodic but the combination of the two is strictly aperiodic, but not sensitive to initial values because it can be composed of two independant periodic systems.
+
+Note that the above argument does not apply to discrete maps.  This is because if an equation is iterated discretely, any period must have a finite number of iterations between $x_n$ occurrences.  Therefore the circle map above is only periodic if both trajectories reach the same point after a finite number of iterations.  Without loss of generality, say the first orbit has period $p$ and the second period $q$.  Then both points will be located in their initial position at iteration $k = pq$, which is finite as $p$ and $q$ are.  Therefore the map is necessarily periodic for discrete iterations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
