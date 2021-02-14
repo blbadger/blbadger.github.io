@@ -66,28 +66,37 @@ If $r = 3.1$, the population fluctuates, returning to the starting point every o
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
-the points of which may be found where
+We can find points where $x_{n+1} = x_n$, 
+
+$$
+x = rx_n(1-x)  \\
+0 = x(2.1-3.1x) \\
+x = 0, x \approx 0.6774...
+$$
+
+but some quick numerical experimentation shows that these points are unstable: any slight deviation from the values (and indeed any finite approximation of 0.6774...) will not result in $x_{n+1} = x_n$.  
+
+In contrast, the points of period 2 may be found as follows:
 
 $$
 f(f(x)) = f^2(x) = x \\
 x = r^2x(1-x)(1-rx(1-x)) \\
-0 = x(-r^3x^3 + 2r^3x^2 - (r^3+r^2)x + (r^2-1)
+0 = x(-r^3x^3 + 2r^3x^2 - (r^3+r^2)x + (r^2-1))
 $$
 
-which when $r=3.1$ has a root at $x=0$.  The other roots may be found using the rather complicated cubic equation, and are $x\approx 0.76457, x \approx 0.55801, x \approx 0.67742$.  As $f^2'(x) = -4r^3x^3 + 6r^3x^2-2(r^3+r^2)x + r^2-1$...
+which when $r=3.1$ has a root at $x=0$.  The other roots may be found using the rather complicated cubic equation, and are $x\approx 0.76457, x \approx 0.55801, x \approx 0.67742$.  Note that the two unstable period-1 points are included (see below), but that there are two new points.  To see if they are stable,  we can check if $\lbar (f^2)' \rbar < 1$, and indeed as $(f^2)'(x) = -4r^3x^3 + 6r^3x^2 - 2\left(r^3+r^2\right)x + r^2$, and substituting both $x=0.55801$ and $x=0.76457$ yields a number around $\bar 0.5899.. \rbar < 1$, meaning that both points are stable.  Therefore both are attractors, as seen in the previous numerical map.  On the other hand, $f^2'(0.67742) = 1.21$ and $f^2'(0) = 9.61$, neither of which are between positive and negative one and thus both points are unstable.  The point $x\approx 0.67742$ would be stable if the period had not increased: this is a period-doubling bifurcation. 
+
+Note that 'period' on this page signifies what is elsewhere sometimes referred to as 'prime period', or minimal period.  Take a fixed point, for example at $r=2.5$ this was found to be located $x=3/5$.  This has period 1 because $x_{n+1} = x_n$, but it can also be thought to have period 2 because $x_{n+2} = x_n$ and period 3, and any other finite period because $x_{n+k} = x_n \forall k$.  This is why we found period-1 points when trying to compute period-2 values above.
+
+But there is a clear difference between this sort of behavior and that where $x_{n+2} = x_n$ but $x_{n+1} \neq x_n$, where the next iteration does not equal the current but two iterations in the future does.  The last sentence is true for the logistic map where $r=3.1$, and we can call this 'prime period 2' to avoid ambiguity.  But for this and other pages on this site, 'prime' is avoided as any specific value referred to by 'period' is taken to mean 'prime period'.  
 
 at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
-
 and at $r=3.55$, the population is period 8:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
-
-Note that 'period' on this page signifies what is elsewhere sometimes referred to as 'prime period', or minimal period.  Take a fixed point, for example at $r=2.5$ this was found to be located $x=3/5$.  This has period 1 because $x_{n+1} = x_n$, but it can also be thought to have period 2 because $x_{n+2} = x_n$ and period 3, and any other finite period because $x_{n+k} = x_n \forall k$.  But there is a clear difference between this sort of behavior and that where $x_{n+2} = x_n$ but $x_{n+1} \neq x_n$, where the next iteration does not equal the current but two iterations in the future does.  The last sentence is true for the logistic map where $r=3.1$, and we can call this 'prime period 2' to avoid ambiguity.  But for this and other pages on this site, 'prime' is avoided as any specific value referred to by 'period' is taken to mean 'prime period'.  
-
-Just as we calculated the periodic points for 
 
 ### Aperiodic trajectories in the logistic map
 
