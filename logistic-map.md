@@ -1,16 +1,6 @@
 ## Logistic Map
 
-**Contents:** 
-
-[Introduction: periodic and aperiodic trajectories in the logistic map](#introduction:-periodic-and-aperiodic-trajectories-in-the-logistic-map)
- 
-[A closer look at aperiodicity with an orbit map](#a-closer-look-at-aperiodicity-with-an-orbit-map)
-
-[The relationship between aperiodic systems and fractals](#the-relationship-between-aperiodic-systems-and-fractals)
-
-[Patterned entrances and exits from chaos](#patterned-entrances-and-exits-from-chaos)
-
-### Introduction: periodic and aperiodic trajectories in the logistic map
+### Introduction: periodic trajectories in the logistic map
 
 The logistic map was derived from a differential equation describing population growth, studied by Robert May. The dynamical equation is as follows:
 
@@ -58,17 +48,33 @@ As $r$ is increased to 2.5, a stable population is reached:
 This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $r=2.5$ we have
 
 $$
-x_n = 2.5x_n(1-x_n) \\
-0 = x_n(-2.5x_n + 1.5) \\
-x_n = 0, \; x_n = 3/5 \\
+x = 2.5x(1-x) \\
+0 = -2.5x^2 + 1.5x = x(-\frac{5}{2}x+\frac{3}{2}) \\
+x_n = 0, \; x = 3/5 \\
 $$
 
-where the value of $x_{n+1} = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. 
+where the value of $x_{n+1} = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. Stability for one dimensional systems may be determined using linearization, and for iterated systems like the logistic map this involves determining whether or not $\lbar f'(x) \rbar < 1$.  If so, the point is stable but if $\lbar f'(x) \rbar > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
+
+$$
+f'(x) = 3.5-7x \\
+f'(0) = 3.5-0 > 1
+$$
+
+and therefore $x=0$ is unstable.  On the other hand, $f'(3/5) = 3.5-4.2 = -0.7$ which means that $x=3/5$ is a stable point of period 1.  As we shall see below, stable points of finite period act as attractors, such that points in $(0, 1)$ eventually end up on the point $x=3/5$ given sufficient iterations.
 
 If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
+the points of which may be found where
+
+$$
+f(f(x)) = f^2(x) = x \\
+x = r^2x(1-x)(1-rx(1-x)) \\
+0 = x(-r^3x^3 + 2r^3x^2 - (r^3+r^2)x + (r^2-1)
+$$
+
+which when $r=3.1$ has a root at $x=0$.  The other roots may be found using the rather complicated cubic equation, and are $x\approx 0.76457, x \approx 0.55801, x \approx 0.67742$.  As $f^2'(x) = -4r^3x^3 + 6r^3x^2-2(r^3+r^2)x + r^2-1$...
 
 at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
 
@@ -79,8 +85,13 @@ and at $r=3.55$, the population is period 8:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
+Note that 'period' on this page signifies what is elsewhere sometimes referred to as 'prime period', or minimal period.  Take a fixed point, for example at $r=2.5$ this was found to be located $x=3/5$.  This has period 1 because $x_{n+1} = x_n$, but it can also be thought to have period 2 because $x_{n+2} = x_n$ and period 3, and any other finite period because $x_{n+k} = x_n \forall k$.  But there is a clear difference between this sort of behavior and that where $x_{n+2} = x_n$ but $x_{n+1} \neq x_n$, where the next iteration does not equal the current but two iterations in the future does.  The last sentence is true for the logistic map where $r=3.1$, and we can call this 'prime period 2' to avoid ambiguity.  But for this and other pages on this site, 'prime' is avoided as any specific value referred to by 'period' is taken to mean 'prime period'.  
 
-and at $r=3.7$, the period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
+Just as we calculated the periodic points for 
+
+### Aperiodic trajectories in the logistic map
+
+For $r=3.7$, the period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
@@ -88,7 +99,6 @@ and at $r=3.7$, the period is longer than the iterations plotted and is actually
 Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
-
 
 As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.    
 
