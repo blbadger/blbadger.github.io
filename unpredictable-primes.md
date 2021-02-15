@@ -4,13 +4,13 @@ Whilst incrementing through the integers, how long one has to wait until reachin
 
 ### Theorem: The sequence of gaps between consecutive prime numbers is not initially periodic
 
-Restated, this theorem is that no subsequence of gaps betwen consecutive prime numbers, starting from the first gap $g_1$
+Restated, the sequence between gaps betwen consecutive prime numbers, starting from the first gap $g_1$
 
 $$
 g_1 = p_2 - p_1 = 3-2 = 1
 $$            
 
-can never repeat for the entirety of that subsequence, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, g_3, ... , g_n), (g_{n+1}, g_{n+2}, g_{n+3}, ... g_{2n}), ...$ such that $g_1 = g_{n+1}, g_2 = g_{n+2}, ... g_n = g_{2n}$.  
+cannot be split into repeated subsequences, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, g_3, ... , g_n), (g_{n+1}, g_{n+2}, g_{n+3}, ... g_{2n}), (g_{2n_1}, g_{2n+2}, ... g_{3n}), ... $ such that $g_1 = g_{n+1} = g_{2n+1}, g_2 = g_{n+2} = g_{2n+2}, ... g_n = g_{2n} = g_{3n}$.  
 
 **Proof:** 
 
@@ -45,12 +45,12 @@ which is an integer and thus is either even or odd.  If $\mathscr S_n$ is even, 
 
 ### Theorem: Prime gap sequences are not eventually periodic
 
-In symbols, there does not exist an $n$ such that 
+In symbols, there does not exist finite $n, p$ such that 
 
 $$
 \exists n, p : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + p - 1}) \\
-= (g_{n+2p}, g_{n+2p+1}, g_{n+2p+2}, ..., g_{n + 2p - 1}) \\
-= (g_{n+3p}, g_{n+3p+1}, g_{n+3p+2}, ..., g_{n + 3p - 1}) \\
+= (g_{n+p}, g_{n+p+1}, g_{n+p+2}, ..., g_{n + 2p - 1}) \\
+= (g_{n+2p}, g_{n+2p+1}, g_{n+2p+2}, ..., g_{n + 3p - 1}) \\
 \; \; \vdots
 $$
 
@@ -90,6 +90,8 @@ The results on this page shed light on the findings from Presburger and Skolem t
 
 More precisely, aperiodicity in prime gaps means that the question 'Will adding any value to a current number yield another number that cannot be divided (properly)' necessitates a longer and longer computational procedure the larger the number and value are.  Assuming the Church-Turing thesis, decidability is only possible if a finite computational procedure gives the right answer for an infinite number of inputs, here the natural numbers.  Accepting theorems (1) and (2) above together with the idea that there is an equivalence between aperiodicity and undecidability, any arithmetic containing in it the prime gaps will be undecidable.  Note that neither Skolem nor Presburger arithmetic do so: one accepts primes but no gaps (because there is no addition and thus no incrementation), and the other gaps but no primes (no multiplication and therefore no unit of multiplication). 
 
+
+### 
 
 
 
