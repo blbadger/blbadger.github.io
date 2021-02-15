@@ -67,14 +67,14 @@ $$
 \; \; \vdots
 $$
 
-What happens when this pattern repeats $p_n$ times?  The prime number indexed at this position is $p_{n+mp_n}$, because there are $n$ primes before $g_n$, and $mp$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+mp_n-1} = p_{n + np} - p_{n+mp_n-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+m-1}$ as above, the value of $p_{n+mp_n}$ is 
+What happens when this pattern repeats $p_n$ times?  The prime number indexed at this position is $p_{n+mp_n}$, because there are $n$ primes before $g_n$, and $mp_n$ primes after: in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+mp_n-1} = p_{n + mp} - p_{n+mp_n-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+m-1}$ as above, the value of $p_{n+mp_n}$ is 
 
 $$
 p_{n+mp_n} = p_n + p_n \mathscr S_n \\
 p_{n+mp_n} = p_n (1 + \mathscr S_n)
 $$
 
-and therefore $p_n \rvert p_{n+mp_n}$, or in words $p_n$ divides $p_{n+mp_n}$.  But then $p_n < p_{n+mp_n}$ for all $n, m>0$, so therefore $p_{n+mp_n}$ is composite, a contradiction as it was ealier stated to be prime. As $n$ and $m$ were chosen arbitrarily, there is no $n$ or $m$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
+and therefore $p_n \rvert p_{n+mp_n}$ or in words $p_n$ divides $p_{n+mp_n}$.  But then $p_n < p_{n+mp_n}$ for all $n, m>0$, so therefore $p_{n+mp_n}$ is composite, a contradiction as it was ealier stated to be prime. As $n$ and $m$ were chosen arbitrarily, there is no $n$ or $m$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
 
 One can appreciate that this is a more general theorem than the first presented on this page, which is the special case where $p_n = 2$.  
 
