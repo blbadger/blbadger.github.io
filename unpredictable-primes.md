@@ -21,7 +21,7 @@ p_1, \; p_2, \; p_3, \; p_4, \; p_5, \; p_6, \; p_7, \; p_8 ...\\
 2, \; 3, \; 5, \; 7, \; 11, \; 13, \; 17, \; 19 ...
 $$
 
-and the gaps between primes where $g_1 = p_2 - p_1$ is enumerated as
+and the gaps between primes where $g_n = p_{n+1} - p_n$ is enumerated as
 
 $$
 g_1, \; g_2, \; g_3, \; g_4, \; g_5, \; g_6, \; g_7 ...\\
