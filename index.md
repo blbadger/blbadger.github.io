@@ -117,7 +117,7 @@ D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
-### [Decidability](/solvable-periodicity.md)
+### [Decidability in dynamics](/solvable-periodicity.md)
 
 $$
 \{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
