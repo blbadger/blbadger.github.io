@@ -45,16 +45,16 @@ which is an integer and thus is either even or odd.  If $\mathscr S_n$ is even, 
 
 ### Theorem: Prime gap sequences are not eventually periodic
 
-In symbols, there does not exist finite $n, m$ such that 
+In symbols, there does not exist finite $n, m$ such that the sequence of prime gaps may at prime $p_n$ and on be split into subsequences of length $m$
 
 $$
-\exists n, m : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + m - 1}) \\
+\lnot \exists n, m : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + m - 1}) \\
 = (g_{n+m}, g_{n+m+1}, g_{n+m+2}, ..., g_{n + 2m - 1}) \\
 = (g_{n+2m}, g_{n+2m+1}, g_{n+2m+2}, ..., g_{n + 3m - 1}) \\
 \; \; \vdots
 $$
 
-Note the slightly different enumeration choice as compared with the previous theorem.
+Note the slightly different enumeration choice as compared with that used in the previous theorem.
 
 **Proof:**
 
@@ -91,7 +91,6 @@ The results on this page shed light on the findings from Presburger and Skolem t
 More precisely, aperiodicity in prime gaps means that the question 'Will adding any value to a current number yield another number that cannot be divided (properly)' necessitates a longer and longer computational procedure the larger the number and value are.  Assuming the Church-Turing thesis, decidability is only possible if a finite computational procedure gives the right answer for an infinite number of inputs, here the natural numbers.  Accepting theorems (1) and (2) above together with the idea that there is an equivalence between aperiodicity and undecidability, any arithmetic containing in it the prime gaps will be undecidable.  Note that neither Skolem nor Presburger arithmetic do so: one accepts primes but no gaps (because there is no addition and thus no incrementation), and the other gaps but no primes (no multiplication and therefore no unit of multiplication). 
 
 
-### 
 
 
 
