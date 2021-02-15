@@ -58,7 +58,7 @@ Note the slightly different enumeration choice as compared with the previous the
 
 **Proof:**
 
-Suppose that there was some finite $n>0$ such that the above statement held.  THen there exists a $p$ such that after $p$ gaps, the sequence $g_n, g_{n+1}, ...$ is repeated with period p:
+Suppose that there was some finite $n>0$ such that the above statement held.  Then there exists a finite $p$ such that after $p$ gaps, the sequence $g_n, g_{n+1}, ...$ is repeated (with period $p$):
 
 $$
 (g_n, g_{n+1}, ... , g_{n+p-1}) = \\
@@ -67,16 +67,14 @@ $$
 \; \; \vdots
 $$
 
-Taking $g_n = p_{n+1} - p_n$ then necessarily $g_{n+np} = p_{n + np} - p_{n+np-1}$.  
-
-Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+p-1}$ as above, the identity of $p_{n+np}$ is 
+What happens when this pattern repeats $n$ times?  The prime number indexed at this position is $p_{n+np}$, because there are $n$ primes before $g_n$, and $np$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+np} = p_{n + np+1} - p_{n+np}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+p-1}$ as above, the value of $p_{n+np}$ is 
 
 $$
 p_{n+np} = p_n + p_n \mathscr S_n \\
 p_{n+np} = p_n (1 + \mathscr S_n)
 $$
 
-and therefore $p_n \rvert p_{n+np}$, or in words $p_n$ divides $p_{n+np}$.  But then $p_n < p_{n+np}$ for all $n, p>0$, so therefore $p_{n+np}$ is not prime, a contradiction as it was ealier stated to be prime. As $n$ and $p$ were chosen arbitrarily, there is no $n$ or $p$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
+and therefore $p_n \rvert p_{n+np}$, or in words $p_n$ divides $p_{n+np}$.  But then $p_n < p_{n+np}$ for all $n, p>0$, so therefore $p_{n+np}$ is composite, a contradiction as it was ealier stated to be prime. As $n$ and $p$ were chosen arbitrarily, there is no $n$ or $p$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
 
 ### Theorem: Prime gap sequences are aperiodic
 
