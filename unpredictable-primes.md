@@ -45,12 +45,12 @@ which is an integer and thus is either even or odd.  If $\mathscr S_n$ is even, 
 
 ### Theorem: Prime gap sequences are not eventually periodic
 
-In symbols, there does not exist finite $n, p$ such that 
+In symbols, there does not exist finite $n, m$ such that 
 
 $$
-\exists n, p : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + p - 1}) \\
-= (g_{n+p}, g_{n+p+1}, g_{n+p+2}, ..., g_{n + 2p - 1}) \\
-= (g_{n+2p}, g_{n+2p+1}, g_{n+2p+2}, ..., g_{n + 3p - 1}) \\
+\exists n, m : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + m - 1}) \\
+= (g_{n+m}, g_{n+m+1}, g_{n+m+2}, ..., g_{n + 2m - 1}) \\
+= (g_{n+2m}, g_{n+2m+1}, g_{n+2m+2}, ..., g_{n + 3m - 1}) \\
 \; \; \vdots
 $$
 
@@ -58,23 +58,25 @@ Note the slightly different enumeration choice as compared with the previous the
 
 **Proof:**
 
-Suppose that there was some finite $n>0$ such that the above statement held.  Then there exists a finite $p$ such that after $p$ gaps, the sequence $g_n, g_{n+1}, ...$ is repeated (with period $p$):
+Suppose that there was some finite $n>0$ such that the above statement held.  Then there exists a finite $m>0$ such that after $m$ gaps, the sequence $g_n, g_{n+1}, ...$ is repeated (with period $m$):
 
 $$
-(g_n, g_{n+1}, ... , g_{n+p-1}) = \\
-(g_{n+p}, g_{n+p+1}, ... , g_{n+2p-1}) = \\
-(g_{n+2p}, g_{n+2p+1}, ... , g_{n+3p-1}) = \\
+(g_n, g_{n+1}, ... , g_{n+m-1}) = \\
+(g_{n+m}, g_{n+m+1}, ... , g_{n+2m-1}) = \\
+(g_{n+2m}, g_{n+2m+1}, ... , g_{n+3m-1}) = \\
 \; \; \vdots
 $$
 
-What happens when this pattern repeats $n$ times?  The prime number indexed at this position is $p_{n+np}$, because there are $n$ primes before $g_n$, and $np$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+np-1} = p_{n + np} - p_{n+np-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+p-1}$ as above, the value of $p_{n+np}$ is 
+What happens when this pattern repeats $p_n$ times?  The prime number indexed at this position is $p_{n+mp_n}$, because there are $n$ primes before $g_n$, and $mp$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+mp_n-1} = p_{n + np} - p_{n+mp_n-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+m-1}$ as above, the value of $p_{n+mp_n}$ is 
 
 $$
-p_{n+np} = p_n + p_n \mathscr S_n \\
-p_{n+np} = p_n (1 + \mathscr S_n)
+p_{n+mp_n} = p_n + p_n \mathscr S_n \\
+p_{n+mp_n} = p_n (1 + \mathscr S_n)
 $$
 
-and therefore $p_n \rvert p_{n+np}$, or in words $p_n$ divides $p_{n+np}$.  But then $p_n < p_{n+np}$ for all $n, p>0$, so therefore $p_{n+np}$ is composite, a contradiction as it was ealier stated to be prime. As $n$ and $p$ were chosen arbitrarily, there is no $n$ or $p$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
+and therefore $p_n \rvert p_{n+mp_n}$, or in words $p_n$ divides $p_{n+mp_n}$.  But then $p_n < p_{n+mp_n}$ for all $n, m>0$, so therefore $p_{n+mp_n}$ is composite, a contradiction as it was ealier stated to be prime. As $n$ and $m$ were chosen arbitrarily, there is no $n$ or $m$ such that the sequence of prime gaps is eventually periodic given that there are infinitely many prime numbers.  
+
+One can appreciate that this is a more general theorem than the first presented on this page, which is the special case where $p_n = 2$.  
 
 ### Theorem: Prime gap sequences are aperiodic
 
