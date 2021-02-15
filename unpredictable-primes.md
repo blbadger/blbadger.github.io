@@ -65,7 +65,7 @@ $$
 \; \; \vdots
 $$
 
-What happens when this pattern repeats $p_n$ times?  The prime number indexed at this position is $p_{n+mp_n}$, because there are $n$ primes before $g_n$, and $mp_n$ primes after: in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+mp_n-1} = p_{n + mp} - p_{n+mp_n-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+m-1}$ as above, the value of $p_{n+mp_n}$ is 
+What happens when this pattern repeats $p_n$ times?  The prime number indexed at this position is $p_{n+mp_n}$, because there are $n$ primes before $g_n$, and $mp_n$ primes after: in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+mp_n-1} = p_{n + mp_n} - p_{n+mp_n-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+m-1}$ as above, the value of $p_{n+mp_n}$ is 
 
 $$
 p_{n+mp_n} = p_n + p_n \mathscr S_n \\
