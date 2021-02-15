@@ -32,7 +32,7 @@ Now suppose that this sequence of gaps between primes did repeat for multiples o
 
 $$
 (g_1, g_2, g_3, ..., g_{n-1}) = (g_{n}, g_{n+1}, g_{n+2}, ... , g_{2n-1}) \\
-g_1 = g_{n}, \; g_2 = g_{n+1}, \; ... g_n = g_{2n-1}
+g_1 = g_{n}, \; g_2 = g_{n+1}, \; ... g_{n-1} = g_{2n-1}
 $$
 
 Adding the sequence of gaps together, we have a sum $\mathscr S_n$ 
