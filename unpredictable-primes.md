@@ -32,7 +32,7 @@ Now suppose that this sequence of gaps between primes did repeat for multiples o
 
 $$
 (g_1, g_2, g_3, ..., g_n) = (g_{n+1}, g_{n+2}, g_{n+3}, ... , g_{2n}) \\
-g_1 = g_{n+1}, g_2 = g_{n+2}, ... g_n = g_{2n}
+g_1 = g_{n+1}, \; g_2 = g_{n+2}, \; ... g_n = g_{2n}
 $$
 
 Adding the sequence of gaps together, we have a sum $\mathscr S_n$ 
@@ -67,7 +67,7 @@ $$
 \; \; \vdots
 $$
 
-What happens when this pattern repeats $n$ times?  The prime number indexed at this position is $p_{n+np}$, because there are $n$ primes before $g_n$, and $np$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+np} = p_{n + np+1} - p_{n+np}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+p-1}$ as above, the value of $p_{n+np}$ is 
+What happens when this pattern repeats $n$ times?  The prime number indexed at this position is $p_{n+np}$, because there are $n$ primes before $g_n$, and $np$ primes after as in this enumeration $g_n = p_{n+1} - p_n$ means that $g_{n+np-1} = p_{n + np} - p_{n+np-1}$.   Defining $\mathscr S_n = g_n + g_{n+1} + \cdots + g_{n+p-1}$ as above, the value of $p_{n+np}$ is 
 
 $$
 p_{n+np} = p_n + p_n \mathscr S_n \\
