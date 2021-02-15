@@ -77,9 +77,9 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 ### [Primes are unpredictable](/unpredictable-primes.md) 
 
 $$
-\lnot \exists n, p : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + p - 1}) \\
-= (g_{n+p}, g_{n+p+1}, g_{n+p+2}, ..., g_{n + 2p - 1}) \\
-= (g_{n+2p}, g_{n+2p+1}, g_{n+2p+2}, ..., g_{n + 3p - 1}) \\
+\lnot \exists n, m : (g_n, g_{n+1}, g_{n+2}, ... , g_{n + m - 1}) \\
+= (g_{n+m}, g_{n+m+1}, g_{n+m+2}, ..., g_{n + 2m - 1}) \\
+= (g_{n+2m}, g_{n+2m+1}, g_{n+2m+2}, ..., g_{n + 3m - 1}) \\
 \; \; \vdots
 $$
 
