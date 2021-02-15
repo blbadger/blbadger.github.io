@@ -10,7 +10,7 @@ $$
 g_1 = p_2 - p_1 = 3-2 = 1
 $$            
 
-cannot be split into repeated subsequences, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, g_3, ... , g_n), (g_{n+1}, g_{n+2}, g_{n+3}, ... g_{2n}), (g_{2n_1}, g_{2n+2}, ... g_{3n}), ... $ such that $g_1 = g_{n+1} = g_{2n+1}, g_2 = g_{n+2} = g_{2n+2}, ... g_n = g_{2n} = g_{3n}$.  
+cannot be split into repeated subsequences, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, ... g_n), (g_{n+1}, g_{n+2}, ... g_{2n}), (g_{2n_1}, g_{2n+2}, ... g_{3n}), ... $ such that $g_1 = g_{n+1} = g_{2n+1} ..., g_2 = g_{n+2} = g_{2n+2} ...$.  
 
 **Proof:** 
 
@@ -21,7 +21,7 @@ p_1, \; p_2, \; p_3, \; p_4, \; p_5, \; p_6, \; p_7, \; p_8 ...\\
 2, \; 3, \; 5, \; 7, \; 11, \; 13, \; 17, \; 19 ...
 $$
 
-and the gaps between primes where $g_n = p_{n+1} - p_n$ is enumerated as
+and the gaps between primes where $g_n = p_{n+1} - p_n$ is listed as
 
 $$
 g_1, \; g_2, \; g_3, \; g_4, \; g_5, \; g_6, \; g_7 ...\\
@@ -80,7 +80,7 @@ One can appreciate that this is a more general theorem than the first presented 
 
 ### Theorem: Prime gap sequences are aperiodic
 
-**Proof:** As prime gap sequences are neither initially nor eventually periodic for any finite period $p$, they are aperiodic.
+**Proof:** As prime gap sequences are neither initially nor eventually periodic for any finite period $m$, they are aperiodic.
 
 ### Implications for decidability
 
