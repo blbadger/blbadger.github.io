@@ -585,7 +585,7 @@ From a = 1 to a = 1.5, holding b=0.3 constant,
 
 {% include youtube.html id='gb18hw3ndpU' %}
 
-It is interesting to note that the divergence map for (3) is not simply the inverse of the divergence map for (3), which is presented [here](https://blbadger.github.io/henon-map.html), given that (4) is the inverse of (3).  In particular, regions outside the attractor basin for (3) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (4), which is somewhat counter-intuitive given that (4) should give the iterations of (3) in reverse.  
+It is interesting to note that the divergence map for the forward Henon map (3) is not simply the inverse of the divergence map for the reverse Henon map (4), which is presented [here](https://blbadger.github.io/henon-map.html), given that they are inverse functions of each other.  In particular, regions outside the attractor basin for (3) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (4), which is somewhat counter-intuitive given that (4) yields the iterations of (3) in reverse.  
 
 For a=0.2, -1 < b < 0, (3) experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
 
