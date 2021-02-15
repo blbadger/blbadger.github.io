@@ -10,7 +10,7 @@ $$
 g_1 = p_2 - p_1 = 3-2 = 1
 $$            
 
-cannot be split into repeated subsequences, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, ... g_n), (g_{n+1}, g_{n+2}, ... g_{2n}), (g_{2n_1}, g_{2n+2}, ... g_{3n}), ... $ such that $g_1 = g_{n+1} = g_{2n+1} ..., g_2 = g_{n+2} = g_{2n+2} ...$.  
+cannot be split into repeated subsequences, such that repetitions of this subsequence cover all prime gaps.  In other words, given a sequence of gaps between consecutive primes $g_1, g_2, g_3 , ... $ there is no way to divide this list into subsequences $ (g_1, g_2, ... g_{n-1}), (g_{n}, g_{n+1}, ... g_{2n-1}), (g_{2n}, g_{2n+1}, ... g_{3n-1}), ... $ such that $g_1 = g_{n} = g_{2n} ..., g_2 = g_{n+1} = g_{2n+1} ...$.  
 
 **Proof:** 
 
@@ -31,17 +31,17 @@ $$
 Now suppose that this sequence of gaps between primes did repeat for multiples of some finite $n > 0$.  Then
 
 $$
-(g_1, g_2, g_3, ..., g_n) = (g_{n+1}, g_{n+2}, g_{n+3}, ... , g_{2n}) \\
-g_1 = g_{n+1}, \; g_2 = g_{n+2}, \; ... g_n = g_{2n}
+(g_1, g_2, g_3, ..., g_{n-1}) = (g_{n}, g_{n+1}, g_{n+2}, ... , g_{2n-1}) \\
+g_1 = g_{n}, \; g_2 = g_{n+1}, \; ... g_n = g_{2n-1}
 $$
 
 Adding the sequence of gaps together, we have a sum $\mathscr S_n$ 
 
 $$
-g_1 + g_2 + g_3 + \cdots + g_n = \mathscr S_n
+g_1 + g_2 + g_3 + \cdots + g_{n-1} = \mathscr S_n
 $$
 
-which is an integer and thus is either even or odd.  If $\mathscr S_n$ is even, prime $p_{n+1}$ is necessarily even as well because $p_{n+1} = 2 + \mathscr S_n$.  But if $\mathscr S_n$ is odd, then $p_{2n+1} = 2 + 2(\mathscr S_n) = 2(1 + \mathscr S_n)$ and therefore $p_{n+1}$ is even. But this is a contradiction as the only even prime number is $p_1 = 2$ but by definition for any $n > 0$, $p_n > 2$.  Therefore the sequence of gaps between consecutive primes starting from the first prime cannot repeat itself no matter how large $n$ is (remaining finite), or in dynamical terms all subsequences of $g_1, g_2, g_3, ... $ are aperiodic.
+which is an integer and thus is either even or odd.  If $\mathscr S_n$ is even, prime $p_n$ is necessarily even as well because $p_n = 2 + \mathscr S_n$.  But if $\mathscr S_n$ is odd, then $p_{2n} = 2 + 2(\mathscr S_n) = 2(1 + \mathscr S_n)$ and therefore $p_{2n}$ is even. But this is a contradiction as the only even prime number is $p_1 = 2$ but by definition for any $n > 0$, $p_{2n} > 2$.  Therefore the sequence of gaps between consecutive primes starting from the first prime cannot repeat itself no matter how large $n$ is (remaining finite), or in dynamical terms all subsequences of $g_1, g_2, g_3, ... $ are aperiodic.
 
 ### Theorem: Prime gap sequences are not eventually periodic
 
@@ -53,8 +53,6 @@ $$
 = (g_{n+2m}, g_{n+2m+1}, g_{n+2m+2}, ..., g_{n + 3m - 1}) \\
 \; \; \vdots
 $$
-
-Note the slightly different enumeration choice as compared with that used in the previous theorem.
 
 **Proof:**
 
