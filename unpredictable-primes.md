@@ -82,14 +82,34 @@ One can appreciate that this is a more general theorem than the first presented 
 
 ### Implications for decidability
 
-As presented [here](https://blbadger.github.io/solvable-periodicity.html), it is possible to show that aperiodic systems are undecidable: it is impossible to specify a finite computational procedure that can predict the location of any of a countably infinite number of inputs if the mapping is aperiodic.  On the other hand, if the mapping is periodic or eventually periodic then the system is decidable (equivalent to computable if the Church-Turing thesis is accepted) and a countably infinite number of input can be mapped to outputs with a finite computational procedure, or algorithm. A simple example of this is a system which maps all integers to the origin: for any ordering of the inputs, the algorithm is finite (go to 0, to be precise) and interval gaps are of period 1.  
+As presented [here](https://blbadger.github.io/solvable-periodicity.html), it is possible to show that aperiodic systems are undecidable (albeit with a more strict definition of undecidability than is normally used): it is impossible to specify a finite computational procedure that can predict the location of any of a countably infinite number of inputs if the mapping is aperiodic.  On the other hand, if the mapping is periodic or eventually periodic then the system is decidable (equivalent to computable if the Church-Turing thesis is accepted) and a countably infinite number of input can be mapped to outputs with a finite computational procedure, or algorithm. A simple example of this is a system which maps all integers to the origin: for any ordering of the inputs, the algorithm is finite (go to 0, to be precise) and interval gaps are of period 1.  
 
 The results on this page shed light on the findings from Presburger and Skolem that addition-only or multiplication-only arithmetics are decidable, whereas arithmetic with both addition and multiplication is not (more background [here](https://blbadger.github.io/solvable-periodicity.html)).  The reason is as follows: prime number gaps represent intersections between addition and multiplication, but if these intersections are undecidable (meaning that we cannot compute using finite arithmetic how all gaps should be placed) then arithmetic containing this prime gaps is necessarily undecidable. 
 
 More precisely, aperiodicity in prime gaps means that the question 'Will adding any value to a current number yield another number that cannot be divided (properly)' necessitates a longer and longer computational procedure the larger the number and value are.  Assuming the Church-Turing thesis, decidability is only possible if a finite computational procedure gives the right answer for an infinite number of inputs, here the natural numbers.  Accepting theorems (1) and (2) above together with the idea that there is an equivalence between aperiodicity and undecidability, any arithmetic containing in it the prime gaps will be undecidable.  Note that neither Skolem nor Presburger arithmetic do so: one accepts primes but no gaps (because there is no addition and thus no incrementation), and the other gaps but no primes (no multiplication and therefore no unit of multiplication). 
 
 
+### Computability 
 
+One can convert decidable statements into computable ones and vice versa by assigning each number one of $\mathfrak t, f$ and then performing a decision procedure.  With this idea accepted, it should be noted that the definition for computability on this page is more strict than the more frequently used definition for this term.  
+
+In that parlance, numbers such as $\p$ and $\sqrt 2$ are termed computable because there is a procedure that approximates them to any desired accuracy, whereas a number like the Turing halting constant is uncomputable as there is no procedure for approximating it.  It should be noted that even by this broad definition, most real numbers are uncomputable.
+
+On this page, however, computability is defined as the ability to map a countably infinite number of inputs to outputs with a procedure of finite size.  In this sense, a number such as $\pi$ is not strictly computable because the procedure for finding any given decimal digit $d$ increases in size as the distance between the decimel point and $d$ increases. The procedure for mapping each decimal place to its correct digit, in any base, cannot be finite over countably infinite input domain.  This is identical to what is observed for aperiodic dynamical trajectories, where every additional step in time requires an extra computation such that the procedure grows without bound as time increases. 
+
+By this definition, computable numbers or sequences may be determined in arbitrary order, whereas uncomputable ones must proceed in one direction.  To see an example of this, imagine trying to find the 100th digit after the decimal point of the fraction $1/7$ without determining earlier values.  
+
+$$
+\frac{1}{7} = 0.1428571428571...
+$$
+
+We only need to find the identity of the first five digits to determine that the 100th digit is $5$ if we know that $1/7$ is periodic with period 5 in this base.  But trying to accomlish this task for $\pi$ is not possible.
+
+$$
+\pi = 3.1415926535...
+$$
+
+Any method of approximation by definition start farther and ends closer to the desired value.  As each addition to our decimal list increases the accuracy of approximation, each digit must be determined from left to right in sequence.  If this were not so, we could find the nth digit of $\pi$ or any irrational number with a constant computational procedure.  But to determine (correct) digits out of order is impossible for any approximation technique, because knowledge of one digit necessarily implies knowledge of all the precede it because they are larger.  Only for exact numbers (which are equivalent to computable numbers in this strict definition) may arbitrary digits be learned with constant computation.
 
 
 
