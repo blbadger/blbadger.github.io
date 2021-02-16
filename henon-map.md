@@ -302,7 +302,7 @@ $$
 
 will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. This is important because there are no perfect finite representations of irrational numbers, meaning that any form of the radical above that can be stored in finite memory will eventually diverge to infinity given enough iterations of (1).  
 
-The former coordinate lies at the center of the pinwheel, meaning that regions nearby converge more slowly than regions elsewhere and is therefore semistable.  The latter point is unstable, such that iterations arbitrarily close rapidly diverge.  To get an idea of just how unstable this point is, for $(x, y) \approx (-10.956, 12.052) at 64 bit precision (meaning that x is defined as -10.956356105256663), divergence occurs after a mere ~28 iterations.  In contrast, it takes over five hundred iterations for $(x, y) \approx (0.456, -0.502)$ at 64 bit precision to diverge.
+The former coordinate lies at the center of the pinwheel, meaning that regions nearby converge more slowly than regions elsewhere and is therefore semistable.  The latter point is unstable, such that iterations arbitrarily close rapidly diverge.  To get an idea of just how unstable this point is, for $(x, y) \approx (-10.956, 12.052)$ at 64 bit precision (meaning that x is defined as -10.956356105256663), divergence occurs after a mere ~28 iterations.  In contrast, it takes over five hundred iterations for $(x, y) \approx (0.456, -0.502)$ at 64 bit precision to diverge.
 
 Let's zoom in on the pinwheel-like pattern of slower divergence around $(x, y) \approx (0.456, -0.502)$ to get an appreciation of its structure!  The first step is to pick a point and then adjust the array the graph is produced on accordingly.
 
