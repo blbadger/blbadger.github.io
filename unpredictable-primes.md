@@ -100,7 +100,7 @@ On this page, however, computability is defined as the ability to map a countabl
 By this definition, computable numbers or sequences may be determined in arbitrary order, whereas uncomputable ones must proceed in one direction.  To see an example of this, imagine trying to find the 100th digit after the decimal point of the fraction $1/7$ without determining earlier values.  
 
 $$
-\frac{1}{7} = 0.1428571428571...
+\frac{1}{7} = 0.142857 \; 142857 \; 1...
 $$
 
 We only need to find the identity of the first five digits to determine that the 100th digit is $5$ if we know that $1/7$ is periodic with period 5 in this base.  But trying to accomlish this task for $\pi$ is not possible.
