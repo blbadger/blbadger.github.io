@@ -56,6 +56,7 @@ $$
 where the value of $x_{n+1} = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. Stability for one dimensional systems may be determined using linearization, and for iterated systems like the logistic map this involves determining whether or not $\lvert f'(x) \rvert < 1$.  If so, the point is stable but if $\lvert f'(x) \rvert > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
 
 $$
+f'(x) = r - 2rx \\
 f'(x) = 3.5-7x \\
 f'(0) = 3.5-0 > 1
 $$
@@ -70,6 +71,7 @@ We can find points where $x_{n+1} = x_n$,
 
 $$
 x = rx_n(1-x)  \\
+0 = x(r-1 - rx) \\
 0 = x(2.1-3.1x) \\
 x = 0, x \approx 0.6774...
 $$
@@ -90,22 +92,38 @@ Note that 'period' on this page signifies what is elsewhere sometimes referred t
 
 But there is a clear difference between this sort of behavior and that where $x_{n+2} = x_n$ but $x_{n+1} \neq x_n$, where the next iteration does not equal the current but two iterations in the future does.  The last sentence is true for the logistic map where $r=3.1$, and we can call this 'prime period 2' to avoid ambiguity.  But for this and other pages on this site, 'prime' is avoided as any specific value referred to by 'period' is taken to mean 'prime period'.  
 
-at $r = 3.5$, the population is period 4, as it takes 4 iterations for the population to return to its original position:
+at $r = 3.5$, the trajectory is period 4, as it takes 4 iterations for the population to return to its original position:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
-and at $r=3.55$, the population is period 8:
+and at $r=3.55$, the population trajectory is period 8:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
 
 ### Aperiodic trajectories in the logistic map
 
-For $r=3.7$, the period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
+For $r=3.7$, the (prime) period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
+Are there any non-prime periodic points?  Looking for points of period 1, we find two:
 
-Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
+$$
+x_n = rx_n(1-x_n) \implies 0 = x_n(r-1-rx_n) \\
+0 = x_n(2.7-3.7x_n) \\
+x_n = 0, \; x_n = 27/37
+$$
+
+Both are unstable, as $f'(0) = 3.7 - 2*3.7*0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, 
+
+$$
+0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + (r^2-1)) \\
+x_n = 0, \; x_n = 27/37 \; x_n \approx 0.88, \; x_n \approx 0.39
+$$
+
+the fixed points are found again, and in addition two more points are found.  All are unstable (which can be checked by observing that all points fail the test of $\lvert (f^2)'(x_n) \rvert < 1$).  What makes the $r=3.7$ value special is that for any given integer $k$, one can find periodic points with period $k$.  But as $k+1$ also exhibits periodic points, the logistic map with $r=3.7$ only has a prime periodic point at $x_n = \infty$, which is to say that the map has no finite (prime) periodic points and therefore aperiodic.
+
+Aperiodicity leads to unpredictable behavior.  Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
 
@@ -208,7 +226,6 @@ This also holds for $r = 4$: at this value, the orbit diagram suggests that ther
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
 
-
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $p \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
@@ -280,7 +297,7 @@ Prediction power does increase with better initial measurements, but not always:
 
 In the real world, no measurement is perfect but is merely an estimation: the gravitational constant is not 9.8 meters per second squared but simply close to this value.  Necessarily imperfect measurements mean that not only would one have to take infinitely long to predict something at arbitrarily (infinitely) far in the future, but beyond a certain point the predictions will be inaccurate.  
 
-This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/view/journals/atsc/20/2/1520-0469_1963_020_0130_dnf_2_0_co_2.xml?tab_body=pdf) in which a deterministic model of air convection was observed to exhibit unpredictable behavior.  A simplified proof for the idea that aperiodicity implies sensitivity to initial values, based on Lorenz's work, is found [here](https://blbadger.github.io/chaotic-sensitivity.html). 
+This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/view/journals/atsc/20/2/1520-0469_1963_020_0130_dnf_2_0_co_2.xml?tab_body=pdf) mentioned above, in which a deterministic model of air convection was observed to exhibit unpredictable behavior.  A simplified proof for the idea that aperiodicity implies sensitivity to initial values, based on Lorenz's work, is found [here](https://blbadger.github.io/chaotic-sensitivity.html). 
 
 Let's call locations where close-together points eventually diverge in time unstable points.  Chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
 
@@ -308,12 +325,14 @@ An infinite number of smaller images of the original are found with increasing s
 
 ### Patterned entrances and exits from chaos
 
-As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity, which can be most clearly seen if we focus on a smaller region of chaotic behavior:
+As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity.  
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_3.png)
+Looking closely at the orbit map, it seems that there are regions where an aperiodic trajectory transitions into a periodic one, for example at around $x = 3.83$ where there are three values where that $f(x)$ is located.  Is this really a transition away from aperiodicity?
+
+Surprisingly, no..
 
 
-What about the transition from aperiodicity back to periodicity? There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
+There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
 
 Recall that areas with higher point density correspond to population values that appear more often over many iterations.  With increases in $r$, these populations that are more probable, the 'favored' populations, change.  There is always more than one favored population size, and occasionally with increases in $r$ two different favored sizes can converge to become one.  If the difference between two favored sizes goes to 0 at a decreasing rate, increasing $r$ leads to periodicity from aperiodicity. 
 
