@@ -114,7 +114,7 @@ x_n = rx_n(1-x_n) \implies 0 = x_n(r-1-rx_n) \\
 x_n = 0, \; x_n = 27/37
 $$
 
-Both are unstable, as $f'(0) = 3.7 - 2*3.7*0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, 
+Both are unstable, as $f'(0) = 3.7 - 2 * 3.7 * 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, 
 
 $$
 0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + (r^2-1)) \\
