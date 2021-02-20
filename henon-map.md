@@ -290,14 +290,14 @@ which by the quadratic formula yields
 
 $$
 x_n = \frac{(b-1) \pm \sqrt{(b-1)^2 + 4a}}{2a} \\
-y_n = b * x_n
+y_n = bx_n
 $$
 
 When $a = 0.2, b = -1.1$ is substituted into this equation system, we can evaluate two non-diverging points at $(x, y) \approx (0.456, -0.502)$ and $(x, y) \approx (-10.956, 12.052)$.  Both coordinates are unstable: only the (irrational) values of
 
 $$
 x = \frac{(-2.1) \pm \sqrt{(-2.1)^2 + 0.8}}{0.4} \\
-y = -1.1 * x
+y = -1.1x
 $$
 
 will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. This is important because there are no perfect finite representations of irrational numbers, meaning that any form of the radical above that can be stored in finite memory will eventually diverge to infinity given enough iterations of (1).  
@@ -318,29 +318,7 @@ def henon_map(max_iterations, a, b, x_range, y_range):
 	y_list = np.arange(yl, yr, -(yl - yr)/y_range)
 	array = np.meshgrid(x_list, y_list)
 ```
-Now we can plot the images produced (adjusting the `extent` variable if the correct scale labels are desired) in a for loop.  I ran into a difficulty here that I could not completely debug: the `diverging` array in the `henon_map()` function occasionally experienced an off-by-one error in indexing: if the `array[0]` dimensions are 2000x2000, the `diverging` array would become 2001x2001 or 2002x2002 etc.  A try/except workaround is shown below that is quick and effective but does not really solve the fundamental problem.
-
-```python
-x_range = 2005
-y_range = 2005
-for t in range(300):
-	# There is a strange off-by-one error in making the diverging array (such that it is one larger than it should be)
-	# To address this, the original array is enlarged until the index error no longer occurs
-	while True:
-		end = True
-		try: plt.imshow(henon_map(70 + t, a=0.2, b=-1.1, x_range=x_range, y_range = y_range), extent=[-2/(2**(t/15)) + 0.4564, 2/(2**(t/15))+ 0.4564, -2/(2**(t/15))-0.50202,2/(2**(t/15)) -0.50202], cmap='twilight_shifted', alpha=1)
-		except IndexError:
-			x_range += 1
-			y_range += 1
-			end = False
-		if end: break
-
-	plt.axis('off')
-	plt.savefig('{}.png'.format(t), dpi=300)
-	plt.close()
-```
-
-Edit: the root of the problem has been found, it is round off error in the array size calculation (here `10 / x_range`). Although the workaround above is effective, the simplest and most efficient way of addressing this is to simply take the correct number of indicies of the `x_list` and `y_list` arrays when making the two dimensional `array`. 
+Now we can plot the images produced (adjusting the `extent` variable if the correct scale labels are desired) in a for loop.  I ran into a difficulty here that I could not completely debug: the `diverging` array in the `henon_map()` function occasionally experienced an off-by-one error in indexing: if the `array[0]` dimensions are 2000x2000, the `diverging` array would become 2001x2001 or 2002x2002 etc. The root of this problem is a round off error in the array size calculation (here `10 / x_range`). Although the workaround above is effective, the simplest and most efficient way of addressing this is to simply take the correct number of indicies of the `x_list` and `y_list` arrays when making the two dimensional `array`. 
 
 ```python
 ...
