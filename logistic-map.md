@@ -323,7 +323,7 @@ Zooming in by a factor of $2^{15}$ on the point $(3.56995, 0.8925)$, we have
 
 An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
 
-### Period three, 
+### Period three
 
 As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity.  
 
@@ -349,10 +349,9 @@ This is greater than a fourth order equation, meaning that there is no formula a
 
 Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which yields the ungainly
 
-$$$
-(f^3(x))' = -96712.23164x^7.0+338492.81074x^6-473081.895498x^5+336472.71190500003x^4 \\
--128267.034504x^3+25174.245219x^2-2190.969992x+55.181887
-$$$
+```python
+-96712.23164x^7+338492.81074x^6-473081.895498x^5+336472.71190500003x^4-128267.034504x^3+25174.245219x^2-2190.969992x+56.181887
+```
 
 Using Halley's method to find roots, we have
 
@@ -362,7 +361,7 @@ Using Halley's method to find roots, we have
 
 and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.
 
-But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ for $r=3.83$ which is
+But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ which for $r=3.83$ is
 
 ```python
 -559733898.714433x^16+4477871189.715462x^15-16257127648.301172x^14+35437147718.087624x^13-51706394045.119659x^12+53298583067.632263x^11-39921349801.953377x^10+22008774729.800488x^9-8946369923.674864x^8+2660008486.237636x^7-568040584.628146x^6+84473618.951678x^5-8330423.126762x^4+503584.653117x^3-16284.736485x^2+214.176627x
@@ -375,7 +374,7 @@ which by Halley's method gives
 
 Some of these points are not prime period 4, but rather prime period 1 or 2.  But some (eg. x = 0.2991621) are truly prime period 4, which is suprising indeed!  How can there be prime period points of period 4, given that we already found points of prime period 3 and 4 is greater than 3?
 
-This observation is not specific to the logistic map: any (discrete) dynamical system with period 3 also contains (unstable) points of every other integer period.  This means that if period 3 is observed, one can find unstable trajectories of period 5, period 1, period 4952 and so on.  This result is due to Sharkovskii, who found that
+This observation is not specific to the logistic map: any (discrete) dynamical system of a continuous function with period 3 also contains (unstable) points of every other integer period.  This means that if period 3 is observed, one can find unstable trajectories of period 5, period 1, period 4952 and so on.  This result is due to Sharkovskii, who found the complete order
 
 $$
 3, \; 5, \; 7, \; 9, \; 11, ...
@@ -385,7 +384,9 @@ $$
 ... 16, 8, 4, 2, 1
 $$
 
-where any prime period also gives points of prime period for any number to the right or bottom of the first.  
+where any prime period also gives points of prime period for any number to the right or bottom of the first.
+
+As observed by Li and Yorke, there are an uncountably infinite number of aperiodic 
 
 ### Entrances and exits from aperiodicity
 
