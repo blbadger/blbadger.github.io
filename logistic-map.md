@@ -114,11 +114,11 @@ x_n = rx_n(1-x_n) \implies 0 = x_n(r-1-rx_n) \\
 x_n = 0, \; x_n = 27/37
 $$
 
-Both are unstable, as $f'(0) = 3.7 - 2 * 3.7 * 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, 
+Both are unstable, as $f'(0) = 3.7 - 2 * 3.7 * 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, the cubic formula can be used to find
 
 $$
-0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + (r^2-1)) \\
-x_n = 0, \; x_n = 27/37 \; x_n \approx 0.88, \; x_n \approx 0.39
+0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + r^2) \\
+x_n = 0, \; x_n = 27/37 \; x_n \approx 0.88, \; x_n = 0.39
 $$
 
 the fixed points are found again, and in addition two more points are found.  All are unstable (which can be checked by observing that all points fail the test of $\lvert (f^2)'(x_n) \rvert < 1$).  What makes the $r=3.7$ value special is that for any given integer $k$, one can find periodic points with period $k$.  But as $k+1$ also exhibits periodic points, the logistic map with $r=3.7$ only has a prime periodic point at $x_n = \infty$, which is to say that the map has no finite (prime) periodic points and therefore aperiodic.
@@ -323,19 +323,39 @@ Zooming in by a factor of $2^{15}$ on the point $(3.56995, 0.8925)$, we have
 
 An infinite number of smaller images of the original are found with increasing scale.  Far from being unusual, the formation of fractals from nonlinear systems is the norm provided that they are dissipative and do not explode towards infinity nor exhibit a point or line attractor.  
 
-### Patterned entrances and exits from chaos
+### Period three 
 
 As $r$ increases, the periodicity increases until it becomes infinite, and infinite periodicity is equivalent to aperiodicity.  This occurs via period doubling: as can be seen clearly from the logistic map, one period splits into two, which split into four, which split into eight etc.  This period doubling occurs with less and less increase in $r$ such that an infinite period is reached within a finite increase in $r$, and at this point the map is aperiodic. This occurs whenever there is a transition from periodicity to aperiodicity.  
 
 Looking closely at the orbit map, it seems that there are regions where an aperiodic trajectory transitions into a periodic one, for example at around $x = 3.83$ where there are three values where that $f(x)$ is located.  Is this really a transition away from aperiodicity?
 
-For $r=3.83$, iterations of the logistic map are attracted to the following period 3 orbit:
+For $r=3.83$, iterations of the logistic map are numerically attracted to the following period 3 orbit:
 
 $$
 0.50466649, \; 0.9574166, \; 0.15614932, \; 0.50466649 ...
 $$
 
-Are these points stable? 
+Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  This is best done using a computer algebra evaluator, which yields
+
+```python
+0 = -12089.028955x^8+48356.11582x^7-78846.982583x^6+67294.542381x^5-32066.758626x^4+8391.415073x^3-1095.484996x^2+55.181887x 
+```
+
+This is greater than a fourth order equation, meaning that there is no formula akin to the quadratic or cubic formulas that allow us to evaluate roots.  Instead roots can be found using an analytic technique, such as [Newton's or Halley's method](https://blbadger.github.io/polynomial-roots.html).  Using Halley's method (code [here](https://github.com/blbadger/polynomial_roots)) and selecting for real roots between 0 and 1, there is
+
+```python
+[(0.504667), (0.16357), (0.156149), (0.524), (0.738903), 0, (0.957418), (0.955293)]
+```
+
+Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which yields
+
+```python
+(f^3(x))' = -96712.23164x^7.0+338492.81074x^6.0-473081.895498x^5.0+336472.71190500003x^4.0-128267.034504x^3.0+25174.245219x^2.0-2190.969992x^1.0+55.181887
+
+[0.329918, 1.652343, 0.329823, 1.652285, -6.12846, 56.181887, 0.328975, 1.652814]
+```
+and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.
+
 
 There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
 
