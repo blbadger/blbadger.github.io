@@ -329,8 +329,13 @@ As $r$ increases, the periodicity increases until it becomes infinite, and infin
 
 Looking closely at the orbit map, it seems that there are regions where an aperiodic trajectory transitions into a periodic one, for example at around $x = 3.83$ where there are three values where that $f(x)$ is located.  Is this really a transition away from aperiodicity?
 
-Surprisingly, no..
+For $r=3.83$, iterations of the logistic map are attracted to the following period 3 orbit:
 
+$$
+0.50466649, \; 0.9574166, \; 0.15614932, \; 0.50466649 ...
+$$
+
+Are these points stable? 
 
 There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
 
