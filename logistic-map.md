@@ -337,9 +337,11 @@ $$
 
 Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  This is best done using a computer algebra evaluator, which yields
 
-```python
-0 = -12089.028955x^8+48356.11582x^7-78846.982583x^6+67294.542381x^5-32066.758626x^4+8391.415073x^3-1095.484996x^2+55.181887x 
-```
+$$
+0 = -12089.028955x^8+48356.11582x^7-78846.982583x^6 \\
++67294.542381x^5-32066.758626x^4+8391.415073x^3 \\
+-1095.484996x^2+55.181887x 
+$$
 
 This is greater than a fourth order equation, meaning that there is no formula akin to the quadratic or cubic formulas that allow us to evaluate roots.  Instead roots can be found using an analytic technique, such as [Newton's or Halley's method](https://blbadger.github.io/polynomial-roots.html).  Using Halley's method (code [here](https://github.com/blbadger/polynomial_roots)) and selecting for real roots between 0 and 1, there is
 
@@ -347,7 +349,7 @@ This is greater than a fourth order equation, meaning that there is no formula a
 [(0.504667), (0.16357), (0.156149), (0.524), (0.738903), 0, (0.957418), (0.955293)]
 ```
 
-Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which yields the ungainly
+Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which results in the ungainly
 
 ```python
 -96712.23164x^7+338492.81074x^6-473081.895498x^5+336472.71190500003x^4-128267.034504x^3+25174.245219x^2-2190.969992x+56.181887
