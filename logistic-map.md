@@ -377,10 +377,10 @@ Some of these points are not prime period 4, but rather prime period 1 or 2.  Bu
 This observation is not specific to the logistic map: any (discrete) dynamical system of a continuous function with period 3 also contains (unstable) points of every other integer period.  This means that if period 3 is observed, one can find unstable trajectories of period 5, period 1, period 4952 and so on.  This result is due to Sharkovskii, who found the complete order
 
 $$
-3, \; 5, \; 7, \; 9, \; 11, ...
-6, 10, 14, 18, 22, ...
-12, 20, 28, 36, 44, ...
-\vdots
+3, \; 5, \; 7, \; 9, \; 11, ... \\
+6, 10, 14, 18, 22, ... \\
+12, 20, 28, 36, 44, ... \\
+\vdots \\
 ... 16, 8, 4, 2, 1
 $$
 
