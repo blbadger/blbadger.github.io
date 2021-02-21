@@ -362,10 +362,10 @@ Using Halley's method to find roots, we have
 
 and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.
 
-But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ which is
+But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ for $r=3.83$ which is
 
 ```python
-'-559733898.714433x^16+4477871189.715462x^15-16257127648.301172x^14+35437147718.087624x^13-51706394045.119659x^12+53298583067.632263x^11-39921349801.953377x^10+22008774729.800488x^9-8946369923.674864x^8+2660008486.237636x^7-568040584.628146x^6+84473618.951678x^5-8330423.126762x^4+503584.653117x^3-16284.736485x^2+214.176627x'
+-559733898.714433x^16+4477871189.715462x^15-16257127648.301172x^14+35437147718.087624x^13-51706394045.119659x^12+53298583067.632263x^11-39921349801.953377x^10+22008774729.800488x^9-8946369923.674864x^8+2660008486.237636x^7-568040584.628146x^6+84473618.951678x^5-8330423.126762x^4+503584.653117x^3-16284.736485x^2+214.176627x
 ```
 which by Halley's method gives
 
