@@ -368,7 +368,7 @@ But there is something different about $r=3.83$ that yields (prime) period 3 poi
 ```python
 -559733898.714433x^16+4477871189.715462x^15-16257127648.301172x^14+35437147718.087624x^13-51706394045.119659x^12+53298583067.632263x^11-39921349801.953377x^10+22008774729.800488x^9-8946369923.674864x^8+2660008486.237636x^7-568040584.628146x^6+84473618.951678x^5-8330423.126762x^4+503584.653117x^3-16284.736485x^2+214.176627x
 ```
-which by Halley's method gives
+which by Halley's method estimates roots at
 
 ```python
 [(0.60584+0j), (0.738903+0j), (0.803014-0j), (0.299162-0j), (0.369161+0j), 0j, (0.891935+0j), (0.914596+0j)]
@@ -383,12 +383,12 @@ $$
 6, 10, 14, 18, 22, ... \\
 12, 20, 28, 36, 44, ... \\
 \vdots \\
-... 16, 8, 4, 2, 1
+... 16, \; 8, \; 4, \; 2, \; 1
 $$
 
 where any prime period also gives points of prime period for any number to the right or bottom of the first.
 
-As observed by Li and Yorke, there are an uncountably infinite number of aperiodic 
+As observed by Li and Yorke, period three also implies an uncountably infinite number of (unstable) aperiodic trajectories.  
 
 ### Entrances and exits from aperiodicity
 
