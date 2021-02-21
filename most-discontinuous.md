@@ -32,6 +32,8 @@ $$
 {2^{\Bbb Q}}^{\Bbb Q} = 2^{\Bbb R} = \Bbb R ^{\Bbb R}
 $$
 
+Another, perhaps more direct, proof of this statement is found [here](https://blbadger.github.io/aperiodic-irrationals.html) in the section section.
+
 ### Discontinuous maps cannot be defined on the rationals (3)
 
 Functions are simply subsets of the Cartesian product of one set into another, meaning that a function mapping $\Bbb Q \to \Bbb Q $ is a subset of 
