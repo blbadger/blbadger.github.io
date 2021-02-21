@@ -349,19 +349,22 @@ This is greater than a fourth order equation, meaning that there is no formula a
 [(0.504667), (0.16357), (0.156149), (0.524), (0.738903), 0, (0.957418), (0.955293)]
 ```
 
-Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which results in the ungainly
+Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which results in the ungainly equation
 
-```python
--96712.23164x^7+338492.81074x^6-473081.895498x^5+336472.71190500003x^4-128267.034504x^3+25174.245219x^2-2190.969992x+56.181887
-```
+$$
+(f^3)'(x) = -96712.23164x^7+338492.81074x^6 \\
+-473081.895498x^5+336472.71190500003x^4 \\
+-128267.034504x^3+25174.245219x^2 \\
+-2190.969992x+56.181887
+$$
 
-Using Halley's method to find roots, we have
+Evaluating this equation with class `Calculate` gives, respectively,
 
 ```python
 [0.329918, 1.652343, 0.329823, 1.652285, -6.12846, 56.181887, 0.328975, 1.652814]
 ```
 
-and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.
+and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.  As an aside, note that the root at 0 has the largest value of $(f^3)'(x)$, and numerically is the most unstable of all points.
 
 But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ which for $r=3.83$ is
 
@@ -376,13 +379,14 @@ which by Halley's method estimates roots at
 
 Some of these points are not prime period 4, but rather prime period 1 or 2.  But some (eg. x = 0.2991621) are truly prime period 4, which is suprising indeed!  How can there be prime period points of period 4, given that we already found points of prime period 3 and 4 is greater than 3?
 
-This observation is not specific to the logistic map: any (discrete) dynamical system of a continuous function with period 3 also contains (unstable) points of every other integer period.  This means that if period 3 is observed, one can find unstable trajectories of period 5, period 1, period 4952 and so on.  This result is due to Sharkovskii, who found the complete order
+This observation is not specific to the logistic map: any (discrete) dynamical system of a continuous function with period 3 also contains (unstable) points of every other integer period.  This means that if period 3 is observed, one can find unstable trajectories of period 5, period 1, period 4952 and so on.  This result is due to Sharkovskii, who found the complete order on the integers:
 
 $$
 3, \; 5, \; 7, \; 9, \; 11, ... \\
-6, 10, 14, 18, 22, ... \\
-12, 20, 28, 36, 44, ... \\
-\vdots \\
+6, \; 10, \; 14, \; 18, \; 22, ... \\
+12, \; 20, \; 28, \; 36, \; 44, ... \\
+\vdots \; \; ddots \\ 
+\; \\
 ... 16, \; 8, \; 4, \; 2, \; 1
 $$
 
