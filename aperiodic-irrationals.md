@@ -1,6 +1,6 @@
 ## Periodic trajectories and rational numbers
 
-Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories (restricted to functions of discrete time intervals in finite precision in a given dimension), and conversely an equivalence between the set of rationals and periodic functions.  These allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
+Here we establish an equivalence between the set of irrational numbers and the set of all aperiodic function trajectories (restricted to functions of discrete time intervals in finite precision in a given dimension), and conversely an equivalence between the set of rationals and periodic functions.  Then it is shown that aperiodic trajectories cannot be defined on rationals but instead require uncountably many elements, ie the set of irrational numbers.  These findings allow us form a short proof of sensitivity to initial conditions that typifies aperiodic trajectories, and also explore a connection between aperiodic trajectories and unsolveable problems. 
 
 ### The set of periodic trajectories is equivalent to the set of rational numbers
 
@@ -72,7 +72,21 @@ A \to \Bbb I \; (bijective) \\
 A \sim \Bbb I
 $$
 
-Thus the set of all periodic trajectories (as defined above) is equivalent to the set of all rational numbers, whereas the set of aperiodic trajectories is equivalent to the set of irrational numbers $\square$.  
+Thus the set of all periodic trajectories (as defined above) is equivalent to the set of all rational numbers, whereas the set of aperiodic trajectories is equivalent to the set of irrational numbers.
+
+### Periodic but not aperiodic trajectories defined on the rationals
+
+Restated, discrete maps of continuous functions can only be defined on the rational numbers if the trajectory is periodic.  The proof that follows assumes that the function $f(x)$ is continuous, but the theorem also applies to discontinuous functions (see below).
+
+The proof for this statement is as follows: for any aperiodic discrete trajectory of a continuous function $f(x)$, the Sharkovskii theorem states that the same $f(x)$ also contains (prime) period points of periods $1, \; 2, \; 4, \; 8, ...$.  Each point is unique for each prime period, meaning that there is at least one unique point in the domain of $x$ that satisfies each period.  We can classify each point by its period:
+
+$$
+x_0 = 1, \; x_1 = 2, \; x_2 = 4, \; x_3 = 8 ...
+$$
+
+which indexes $x_n$ over all the integers, meaning that there is a one-to-one and onto correspondance between periodic orbits and the integers.  The integers being countably infinite, there are countably infinitely many periodic orbits in the domain of $x$.  For periodic trajectories of $f(x)$, therefore, a countable set such as the rational numbers suffices.
+
+The same argument shows that a countable number of inputs in the domain of $x$ is insufficient to yield an aperiodic trajectory, any element of this set would be mapped on a finite period.  This is a contradiction by definition, and therefore aperiodic trajectories must contain an uncountably infinite number of elements in their domain, ie the irrational numbers or reals.
 
 ### Aperiodicity implies sensitivity to initial conditions
 
@@ -92,7 +106,7 @@ $$
 
 there is an uncountably infinite number of possible trajectories if no two trajectories are the same, because they can diverge anywhere.  
 
-As we have above established an equivalence between continuous functions with periodic trajectories and rational numbers, 
+As we have above established an equivalence between the set of continuous functions with periodic trajectories and rational numbers, 
 
 $$
 \Bbb B \sim \Bbb Q
