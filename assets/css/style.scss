@@ -53,15 +53,16 @@ $medium-breakpoint: 42em;
 // }
 
 .page-header.h1 {
-  font-family: Garamond;
-  font-size: 20px;
+  font-family: "Garamond", Garamond, serif;
+  font-size: 18px;
+  font-weight: normal;
 }
 
 .page-header{
-    padding-top: 2rem;
-    padding-right: 3rem;
-    padding-bottom: 2rem;
-    padding-left: 3rem;
+    padding-top: 1rem;
+    padding-right: 2rem;
+    padding-bottom: 1rem;
+    padding-left: 2rem;
 }
 
 body {
