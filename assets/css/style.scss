@@ -64,9 +64,9 @@ $medium-breakpoint: 42em;
 
   @include small {
     display: block;
-    width: 50%;
-    margin-left: 25%;
-    margin-right: 25%;
+    width: 40%;
+    margin-left: 30%;
+    margin-right: 30%;
     padding: 0.45rem;
     font-size: 0.9rem;
 
@@ -125,7 +125,7 @@ $medium-breakpoint: 42em;
     padding: 2rem 5rem;
     margin: 0 auto;
     font-size: 1.05rem;
-    line-height: 1.8em;
+    line-height: 1.85em;
   }
 
   @include medium {
@@ -135,9 +135,9 @@ $medium-breakpoint: 42em;
   }
 
   @include small {
-    padding: 2rem 1rem;
-    font-size: 0.95rem;
-    line-height: 1.8em;
+    padding: 1rem 1rem;
+    font-size: 0.93rem;
+    line-height: 1.75em;
   }
   
   kbd {
