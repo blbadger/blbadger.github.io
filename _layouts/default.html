@@ -45,7 +45,9 @@
     <header class="page-header" role="banner">
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
       <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
-      <a href="{{ https://blbadger.github.io/ }}" class="btn">Back to Home</a>
+      {% if not site.title %}
+        <a href="{{ https://blbadger.github.io/ }}" class="btn">Back to Home</a>
+      {% endif %}
     </header>
 
     <main id="content" class="main-content" role="main">
