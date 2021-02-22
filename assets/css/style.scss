@@ -63,17 +63,15 @@ $medium-breakpoint: 42em;
   }
 
   @include small {
-//     width: 40%;
-//     text-align: center;
-//     margin-left: 30%;
-//     margin-right: 30%;
+    width: 45%;
+    text-align: center;
     padding: 0.3rem;
     font-size: 0.8rem;
 
-//     + .btn {
-//       margin-top: 1rem;
-//       margin-left: 0;
-//     }
+    + .btn {
+      margin-top: 1rem;
+      margin-left: 0;
+    }
   }
 }
 
