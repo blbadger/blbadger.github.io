@@ -43,10 +43,10 @@
   <body> 
     <header class="page-header" role="banner">
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-      {% if request.build_absolute_uri() == 'https://blbadger.github.io' %}
+      {% if page.url == "/" %}
         <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% endif %}
-      {% if request.build_absolute_uri() != 'https://blbadger.github.io' %}
+      {% if page.url != "/" %}
         <a href="https://blbadger.github.io" class="btn">Home Page</a>
       {% endif %}
     </header>
@@ -54,7 +54,7 @@
     <main id="content" class="main-content" role="main">
       {{ content }}
 
-      <footer class="site-footer" style="font-size:18px">
+      <footer class="site-footer" style="font-size: 1.1rem">
         {% if site.github.is_project_page %}
           <span class="site-footer-owner"><a href="{{ site.github.repository_url }}">{{ site.github.repository_name }}</a> is maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a>.</span>
         {% endif %}
