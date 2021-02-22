@@ -43,10 +43,10 @@
   <body> 
     <header class="page-header" role="banner">
       <h1 class="project-name">{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-      {% if {request.build_absolute_uri} == "https://blbadger.github.io/" %}
+      {% if request.build_absolute_uri == "https://blbadger.github.io/" %}
         <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% endif %}
-      {% if {request.build_absolute_uri} != "https://blbadger.github.io/" %}
+      {% if request.build_absolute_uri != "https://blbadger.github.io/" %}
         <a href="https://blbadger.github.io" class="btn">Back to Home</a>
       {% endif %}
     </header>
