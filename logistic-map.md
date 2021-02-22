@@ -351,12 +351,9 @@ This is greater than a fourth order equation, meaning that there is no formula a
 
 Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which results in the ungainly equation
 
-$$
-(f^3)'(x) = -96712.23164x^7+338492.81074x^6 \\
--473081.895498x^5+336472.71190500003x^4 \\
--128267.034504x^3+25174.245219x^2 \\
--2190.969992x+56.181887
-$$
+```python
+(f^3)'(x) = -96712.23164x^7+338492.81074x^6-473081.895498x^5+336472.71190500003x^4-128267.034504x^3+25174.245219x^2-2190.969992x+56.181887
+```
 
 Evaluating this equation with class `Calculate` gives, respectively,
 
@@ -385,7 +382,7 @@ $$
 3, \; 5, \; 7, \; 9, \; 11, ... \\
 6, \; 10, \; 14, \; 18, \; 22, ... \\
 12, \; 20, \; 28, \; 36, \; 44, ... \\
-\vdots \; \; ddots \\ 
+\vdots \; \; \ddots \\ 
 \; \\
 ... 16, \; 8, \; 4, \; 2, \; 1
 $$
