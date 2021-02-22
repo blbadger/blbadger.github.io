@@ -63,10 +63,10 @@ $medium-breakpoint: 42em;
 
   @include small {
     display: block;
-    width: 60%;
-    margin-left: 20%;
-    margin-right: 20%;
-    padding: 0.6rem;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    padding: 0.5rem;
     font-size: 0.9rem;
 
     + .btn {
@@ -123,20 +123,20 @@ $medium-breakpoint: 42em;
     max-width: 70rem;
     padding: 2rem 4rem;
     margin: 0 auto;
-    font-size: 1.1rem;
-    line-height: 1.7em;
+    font-size: 1.05rem;
+    line-height: 1.8em;
   }
 
   @include medium {
     padding: 2rem 4rem;
-    font-size: 1rem;
-    line-height: 1.7em;
+    font-size: 0.95rem;
+    line-height: 1.8em;
   }
 
   @include small {
     padding: 2rem 1rem;
-    font-size: 1rem;
-    line-height: 1.7em;
+    font-size: 0.95rem;
+    line-height: 1.8em;
   }
   
   kbd {
@@ -163,7 +163,7 @@ $medium-breakpoint: 42em;
   h4,
   h5,
   h6 {
-    margin-top: 1rem;
+    margin-top: 1.2rem;
     margin-bottom: 1rem;
     font-weight: normal;
     color: $section-headings-color;
