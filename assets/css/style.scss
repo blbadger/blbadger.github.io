@@ -30,6 +30,50 @@ $medium-breakpoint: 42em;
   border: 0;
 }
 
+.btn {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.3rem;
+  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  + .btn {
+    margin-left: 1rem;
+  }
+
+  @include large {
+    padding: 0.75rem 1rem;
+  }
+
+  @include medium {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  @include small {
+    display: block;
+    width: 60%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+
+    + .btn {
+      margin-top: 1rem;
+      margin-left: 0;
+    }
+  }
+}
+
 // .main-content, .toc {
 //     max-width: 70rem;
 // }
@@ -75,19 +119,22 @@ $medium-breakpoint: 42em;
 
   @include large {
     max-width: 70rem;
-    padding: 2rem 6rem;
+    padding: 2rem 4rem;
     margin: 0 auto;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.7em;
   }
 
   @include medium {
     padding: 2rem 4rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6em;
   }
 
   @include small {
     padding: 2rem 1rem;
     font-size: 0.9rem;
+    line-height: 1.5em;
   }
   
   kbd {
@@ -107,7 +154,7 @@ $medium-breakpoint: 42em;
   img {
     max-width: 100%;
   }
-
+  
   h1,
   h2,
   h3,
