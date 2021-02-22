@@ -63,7 +63,7 @@ $medium-breakpoint: 42em;
   }
 
   @include small {
-    display: block;
+    display: inline-block;
 //     width: 40%;
     text-align: center;
 //     margin-left: 30%;
