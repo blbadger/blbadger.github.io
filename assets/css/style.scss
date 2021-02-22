@@ -14,6 +14,20 @@ $medium-breakpoint: 42em;
 
 @import "{{ site.theme }}";
 
+  .btn {
+//     color: #0000ff;
+//     border-color: #0000ff; 
+    font-size: 14px;
+    // background-color: #008CBA;
+  } 
+
+//   .btn:hover {
+//     color: #0bb6e1cc;
+//     text-decoration: none;
+//     background-color: #7c940ea1;
+//     border-color: #0000ff;
+//   }
+
 .youtube-wrapper {
   position: relative;
   width: 100%;
