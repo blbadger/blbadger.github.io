@@ -53,18 +53,20 @@ $medium-breakpoint: 42em;
   }
 
   @include large {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0.75rem;
   }
 
   @include medium {
-    padding: 0.6rem 0.9rem;
+    padding: 0.6rem 0.6rem;
     font-size: 0.9rem;
   }
 
   @include small {
     display: block;
     width: 60%;
-    padding: 0.75rem;
+    margin-left: 20%;
+    margin-right: 20%;
+    padding: 0.6rem;
     font-size: 0.9rem;
 
     + .btn {
@@ -121,20 +123,20 @@ $medium-breakpoint: 42em;
     max-width: 70rem;
     padding: 2rem 4rem;
     margin: 0 auto;
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     line-height: 1.7em;
   }
 
   @include medium {
     padding: 2rem 4rem;
-    font-size: 0.9rem;
-    line-height: 1.6em;
+    font-size: 1rem;
+    line-height: 1.7em;
   }
 
   @include small {
     padding: 2rem 1rem;
-    font-size: 0.9rem;
-    line-height: 1.5em;
+    font-size: 1rem;
+    line-height: 1.7em;
   }
   
   kbd {
@@ -161,7 +163,7 @@ $medium-breakpoint: 42em;
   h4,
   h5,
   h6 {
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-bottom: 1rem;
     font-weight: normal;
     color: $section-headings-color;
@@ -174,7 +176,7 @@ $medium-breakpoint: 42em;
   code {
     padding: 2px 4px;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: $code-text-color;
     background-color: $code-bg-color;
     border-radius: 0.3rem;
