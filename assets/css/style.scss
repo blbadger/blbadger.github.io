@@ -64,9 +64,10 @@ $medium-breakpoint: 42em;
 
   @include small {
     display: block;
-    width: 40%;
-    margin-left: 30%;
-    margin-right: 30%;
+//     width: 40%;
+    text-align: center;
+//     margin-left: 30%;
+//     margin-right: 30%;
     padding: 0.45rem;
     font-size: 0.9rem;
 
