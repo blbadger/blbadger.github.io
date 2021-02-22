@@ -52,10 +52,24 @@ $medium-breakpoint: 42em;
 //   max-width: 100%;
 // }
 
-.page-header.h1 {
-  font-family: "Garamond", Garamond, serif;
-  font-size: 18px;
+.project-name {
   font-weight: normal;
+  font-family: "Garamond", Garamond, serif;
+  opacity: 0.8;
+  margin-top: 0;
+  margin-bottom: 0.1rem;
+
+  @include large {
+    font-size: 2rem;
+  }
+
+  @include medium {
+    font-size: 1.5rem;
+  }
+
+  @include small {
+    font-size: 1rem;
+  }
 }
 
 .page-header{
