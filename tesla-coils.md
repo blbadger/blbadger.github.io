@@ -1,6 +1,3 @@
-<head>
-  <title>Tesla Coils</title>
-</head>
 
 ## Tesla Coils: high voltage resonant transformers
 
