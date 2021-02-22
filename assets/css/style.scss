@@ -53,11 +53,11 @@ $medium-breakpoint: 42em;
 // }
 
 .project-name {
-  font-weight: normal;
+  font-weight: bold;
   font-family: "Garamond", Garamond, serif;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-top: 0;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.2rem;
 
   @include large {
     font-size: 2rem;
@@ -75,12 +75,12 @@ $medium-breakpoint: 42em;
 .page-header{
     padding-top: 1rem;
     padding-right: 2rem;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
     padding-left: 2rem;
 }
 
 body {
 //     font-family: "Helvetica", Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.7;
 }
