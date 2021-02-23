@@ -67,11 +67,10 @@ If $r = 3.1$, the population fluctuates, returning to the starting point every o
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
-We can find points where $x_{n+1} = x_n$, 
+We can find points where $x_{n+1} = x_n$, or
 
 $$
 x = rx_n(1-x)  \\
-0 = x(r-1 - rx) \\
 0 = x(2.1-3.1x) \\
 x = 0, x \approx 0.6774...
 $$
@@ -83,7 +82,7 @@ Points of period 2 may be found as follows:
 $$
 f(f(x)) = f^2(x) = x \\
 x = r^2x(1-x)(1-rx(1-x)) \\
-0 = x(-r^3x^3 + 2r^3x^2 - (r^3+r^2)x + r^2)
+0 = x(-r^3x^3 + 2r^3x^2 - (r^3+r^2)x + r^2 - 1)
 $$
 
 which when $r=3.1$ has a root at $x=0$.  The other roots may be found using the rather complicated cubic equation, and are $x\approx 0.76457, x \approx 0.55801, x \approx 0.67742$.  Note that the two unstable period-1 points are included (see below), but that there are two new points.  To see if they are stable,  we can check if $\lvert (f^2)' \rvert < 1$, and indeed as $(f^2)'(x) = -4r^3x^3 + 6r^3x^2 - 2\left(r^3+r^2\right)x + r^2$, and substituting both $x=0.55801$ and $x=0.76457$ yields a number around $\lvert 0.5899.. \rvert < 1$, meaning that both points are stable.  Therefore both are attractors, as seen in the previous numerical map.  On the other hand, $(f^2)'(0.67742) = 1.21$ and $(f^2)'(0) = 9.61$, neither of which are between positive and negative one and thus both points are unstable.  The point $x\approx 0.67742$ would be stable if the period had not increased: this is a period-doubling bifurcation. 
@@ -106,10 +105,10 @@ For $r=3.7$, the (prime) period is longer than the iterations plotted and is act
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
-Are there any non-prime periodic points?  Looking for points of period 1, we find two:
+Are there any non-prime periodic points?  Looking for points of period 1 (keeping $r=3.7$), we find two:
 
 $$
-x_n = rx_n(1-x_n) \implies 0 = x_n(r-1-rx_n) \\
+x_n = rx_n(1-x_n) \\
 0 = x_n(2.7-3.7x_n) \\
 x_n = 0, \; x_n = 27/37
 $$
@@ -117,7 +116,7 @@ $$
 Both are unstable, as $f'(0) = 3.7 - 2 * 3.7 * 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, the cubic formula can be used to find
 
 $$
-0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + r^2) \\
+0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + r^2-1) \\
 x_n = 0, \; x_n = 27/37 \; x_n \approx 0.88, \; x_n = 0.39
 $$
 
@@ -338,15 +337,16 @@ $$
 Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  This is best done using a computer algebra evaluator, which yields
 
 $$
-0 = -12089.028955x^8+48356.11582x^7-78846.982583x^6 \\
-+67294.542381x^5-32066.758626x^4+8391.415073x^3 \\
+0 = -12089.028955x^8+48356.11582x^7 \\
+-78846.982583x^6+67294.542381x^5 \\
+-32066.758626x^4+8391.415073x^3 \\
 -1095.484996x^2+55.181887x 
 $$
 
-This is greater than a fourth order equation, meaning that there is no formula akin to the quadratic or cubic formulas that allow us to evaluate roots.  Instead roots can be found using an analytic technique, such as [Newton's or Halley's method](https://blbadger.github.io/polynomial-roots.html).  Using Halley's method (code [here](https://github.com/blbadger/polynomial_roots)) and selecting for real roots between 0 and 1, there is
+This is a greater-than fourth order equation, meaning that there is no formula akin to the quadratic or cubic formulas that allow us to evaluate roots.  Instead roots can be found using an analytic technique, such as [Newton's or Halley's method](https://blbadger.github.io/polynomial-roots.html).  Using Halley's method (code [here](https://github.com/blbadger/polynomial_roots)) and selecting for real roots between 0 and 1, there is
 
 ```python
-[(0.504667), (0.16357), (0.156149), (0.524), (0.738903), 0, (0.957418), (0.955293)]
+[(0.504667), (0.16357), (0.156149), (0.524), (0.738903), (0), (0.957418), (0.955293)]
 ```
 
 Each of the points found numerically are found, along with five others.  The stability of each point may be checked by evaluating $abs (f^3(x))' < 1 $, which can be done using the program above, which results in the ungainly equation
@@ -371,7 +371,7 @@ But there is something different about $r=3.83$ that yields (prime) period 3 poi
 which by Halley's method estimates roots at
 
 ```python
-[(0.60584+0j), (0.738903+0j), (0.803014-0j), (0.299162-0j), (0.369161+0j), 0j, (0.891935+0j), (0.914596+0j)]
+[(0.60584), (0.738903), (0.803014), (0.299162), (0.369161), (0), (0.891935), (0.914596)]
 ```
 
 Some of these points are not prime period 4, but rather prime period 1 or 2.  But some (eg. x = 0.2991621) are truly prime period 4, which is suprising indeed!  How can there be prime period points of period 4, given that we already found points of prime period 3 and 4 is greater than 3?
