@@ -63,9 +63,9 @@ def reverse_logistic_map(r, array, steps, s):
 
 ```
 
-A set is used as our return type because it is immutable, or in other words because we wish to see the values of `array` from the bottom of the recursion stack rather than the top.  A tuple would also suffice, but a list (array) would not because it is mutable.  Note that the computed previous value `y_next` is only added to `array_2` if it is not complex, and therefore only real numbers are added to the list of possible previous points `array_2`.  
+A set is used as our return type because it is immutable.  A tupe or even a mutable element like a list (array) would also work well as python functions usually act as pass-by-reference, but for certain object oriented functions mutable datatypes such as lists would not suffice. Note that the computed previous value `y_next` is only added to `array_2` if it is not complex.
 
-As the above program uses tail recursion, it can easily be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  For some variety, here this is in C++
+As the above program uses tail recursion, it can be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  For some variety, here this is in C++
 
 ```c++
 // C++
