@@ -46,12 +46,47 @@
       {% if page.url == "/" %}
         <h2 class="project-tagline">{{ page.description | default: site.description | default: site.github.project_tagline }}</h2>
       {% endif %}
+      
       {% if page.url != "/" %}
         <a href="https://blbadger.github.io" class="btn">Home Page</a>
       {% endif %}
+      
       {% if page.url == "/logistic-map.html" %}
         <a href="https://blbadger.github.io/aperiodic-inverted.html" class="btn">Reverse logistic</a>
       {% endif %}
+      
+      {% if page.url == "/clifford-attractor.html" %}
+        <a href="https://blbadger.github.io/clifford-boundary.html" class="btn">Clifford boundary</a>
+      {% endif %}
+      
+      {% if page.url == "/grid-map.html" %}
+        <a href="https://blbadger.github.io/additivity-order.html" class="btn">Additivity and order</a>
+      {% endif %}
+      
+      {% if page.url == "/pendulum-map.html" %}
+        <a href="https://blbadger.github.io/continuity-poincare.html" class="btn">Periodicity in 2D</a>
+      {% endif %}
+      
+      {% if page.url == "/polynomial-roots.html" %}
+        <a href="https://blbadger.github.io/logistic-map.html" class="btn">Logistic map</a>
+      {% endif %}
+      
+      {% if page.url == "/julia-sets.html" %}
+        <a href="https://blbadger.github.io/mandelbrot-set.html" class="btn">Mandelbrot Set</a>
+      {% endif %}
+      
+      {% if page.url == "/mandelbrot-set.html" %}
+        <a href="https://blbadger.github.io/logistic-boundary.html" class="btn">Logistic boundary</a>
+      {% endif %}
+      
+      {% if page.url == "/henon-map.html" %}
+        <a href="https://blbadger.github.io/aperiodic-inverted.html" class="btn">Inverse Henon</a>
+      {% endif %}
+            
+      {% if page.url == "/clifford-boundary.html" %}
+        <a href="https://blbadger.github.io/clifford-map.html" class="btn">Clifford map</a>
+      {% endif %}
+      
       
     </header>
 
