@@ -23,7 +23,7 @@ y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
 
 
 where a, b, c, and d are constants of choice.  It is an attractor because at given values of a, b, c, and d,
-any starting point $(x_0, y_0)$ will wind up in the same pattern. See Vedran Sekara's post [here](https://vedransekara.github.io/2016/11/14/strange_attractors.html) for a good summary on how to use Python to make a plot of the Clifford attractor.
+any starting point $(x_0, y_0)$ will wind up in the same pattern. See Vedran Sekara's [post](https://vedransekara.github.io/2016/11/14/strange_attractors.html) for a good summary on how to use Python to make a plot of the Clifford attractor.  Code for this page may be found [here](https://github.com/blbadger/2D_strange_attractors).  
 
 with $a = 2, b = 2, c = 1, d = -1$ the following map of (1) is made:
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_1.png)
