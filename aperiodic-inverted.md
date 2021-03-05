@@ -80,7 +80,7 @@ vector<double> reverse_logistic(vector<double> values, double r, int steps){
 		return values;
 	}
 	vector<double> new_values {};
-	for (int i=0; i <= values.size(); i++){
+	for (int i=0; i < values.size(); i++){
 		double current_value = values[i];
 		
 		if ((r*r-4*r*current_value) >= 0){
