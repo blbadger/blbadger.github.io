@@ -530,7 +530,8 @@ $$
 < 10\epsilon 
 $$
 
-Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration.  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
+Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration (which also turns out to be true for Euclidean distance, which is $<\sqrt{14}\epsilon < 10\epsilon$).  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
+
 
 
 ### Stable and unstable points of the inverted Henon map
