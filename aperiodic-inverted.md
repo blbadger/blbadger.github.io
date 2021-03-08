@@ -478,7 +478,7 @@ Starting at the origin, future iterations diverge extremely quickly:
 
 ### The reverse Henon map is unstable
 
-We know that a starting value on the Henon attractor itself should stay bounded if (1) iterating in reverse, at least for the number of iterations it has been located near the attractor.  For example, the following yields a point that has existed near the attractor for 1000 iterations
+We know that a starting value on the Henon attractor itself should stay bounded if (1) is iterated in reverse, at least for the number of iterations it has been located near the attractor.  For example, the following yields a point that has existed near the attractor for 1000 iterations
 
 ```python
 def henon_map(x, y, a, b):
@@ -510,7 +510,30 @@ results in
 [[0.5688254014690528, -0.08255572592986403], (-0.2751857530995468, -0.3251565203383966), (-1.0838550677946555, 0.36945277807827326), (1.231509260260911, 0.03940601355707107), (0.13135337852357026, 0.25566445433028995), (0.8522148477676332, 0.14813158398142479), (0.4937719466047493, 0.19354987712301397), (0.6451662570767133, 0.07650724558327537), (0.25502415194425126, -0.2637814976184484), (-0.8792716587281613, 0.3373902617238522), (1.1246342057461742, -0.10854872330010212), (-0.3618290776670071, 0.3079225997696742), (1.026408665898914, 0.11309157153833649), (0.37697190512778833, 0.225359610056858), (0.7511987001895267, 0.16699118716079653), (0.5566372905359884, 0.1849818026908716), (0.6166060089695721, 0.08892144895232601), (0.29640482984108674, -0.260395838616055), (-0.8679861287201833, 0.3511647173519976), (1.1705490578399922, 0.05027300681394742), (0.16757668937982473, 0.20986378339289535), (0.6995459446429846, -0.14731297048715142), (-0.4910432349571714, 0.03711878667906987), (0.12372928893023291, -1.469610723242318), (-4.898702410807727, 32.71992872244504), (109.06642907481681, 16647.781629174056), (55492.60543058019, 4311201068.530109), (14370670228.433699, 2.8912262794014697e+20), (9.637420931338232e+20, 1.3003183509091478e+42), (4.334394503030493e+42, 2.6301765991061335e+85), (8.767255330353778e+85, 1.0761067243866343e+172)]
 ```
 
-which demonstrates divergence in around 22 iterations, far fewer than the 1000 we had expected.  
+which demonstrates divergence in around 22 iterations, far fewer than the 1000 iterations that were performed by the Henon map in the forward direction to reach the initial point.  
+
+Could this be due to propegation of error? Supposing a sufficiently small error $\epsilon$ were added to both $y_n, x_n$, after one iteration of the reverse Henon map we have:
+
+$$
+x_{(n+1)'} = (y_n + \epsilon)/b \\
+y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\epsilon + \epsilon) + x_n + \epsilon - 1 \\
+$$
+
+Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $(x_1 - x_2) + (y_1 - y_2)$) as our metric for simplicity.
+
+This distance can be calculated and compared to what would occur if base 10 were 
+
+$$
+(x_{n+1} - x_{(n+1)'}) + (y_{n+1} - y_{(n+1)'}) \\
+= \epsilon/b + \lvert \frac{a}{b^2}(2y_n\epsilon + epsilon) + epsilon \rvert \\
+< \frac{10}{3}\epsilon + \frac{2\epsilon}{10} + \epsilon \\
+< 10\epsilon 
+$$
+
+Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration.  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
+
+
+### Stable and unstable points of the inverted Henon map
 
 Is the divergence specific to the point we chose above, or do all points near the Henon attractor eventually diverge in a similar manner?  This can be investigated as follows:
 
@@ -602,7 +625,7 @@ The area in the center does not diverge after 40 iterations.  Do initial points 
 
 {% include youtube.html id='zbcgAlZtRGo' %}
 
-As is the case for a=1.4, b=0.3 so for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
+As is the case for a=1.4, b=0.3 so also for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
 
 The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for (3) but diverges everywhere except unstable points for (4), whereas a=0.2, b=1.05 diverges everywhere except unstable points for (3) but converges on points for (4).  In the video below a = 0.2 and b goes from 0.95 to b = 1.01 iterated with (4), note how the change in basin behavior is the opposite to that found for the same transition with (3)
 
