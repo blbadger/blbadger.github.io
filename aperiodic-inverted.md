@@ -512,11 +512,11 @@ results in
 
 which demonstrates divergence in around 22 iterations, far fewer than the 1000 iterations that were performed by the Henon map in the forward direction to reach the initial point.  
 
-Could this be due to propegation of error? Supposing a sufficiently small error $\epsilon$ were added to both $y_n, x_n$, after one iteration of the reverse Henon map we have:
+Could this be due to propegation of error? Supposing a sufficiently small error $\varepsilon$ were added to both $y_n, x_n$, after one iteration of the reverse Henon map we have:
 
 $$
-x_{(n+1)'} = (y_n + \epsilon)/b \\
-y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\epsilon + \epsilon) + x_n + \epsilon - 1 \\
+x_{(n+1)'} = (y_n + \varepsilon)/b \\
+y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\varepsilon + \varepsilon) + x_n + \varepsilon - 1 \\
 $$
 
 Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $(x_1 - x_2) + (y_1 - y_2)$) as our metric for simplicity.
@@ -525,12 +525,12 @@ This distance can be calculated and compared to what would occur if base 10 were
 
 $$
 (x_{n+1} - x_{(n+1)'}) + (y_{n+1} - y_{(n+1)'}) \\
-= \epsilon/b + \lvert \frac{a}{b^2}(2y_n\epsilon + epsilon) + epsilon \rvert \\
-< \frac{10}{3}\epsilon + \frac{2\epsilon}{10} + \epsilon \\
+= \varepsilon/b + \lvert \frac{a}{b^2}(2y_n\varepsilon + \varepsilon) + \varepsilon \rvert \\
+< \frac{10}{3}\varepsilon + \frac{2\varepsilon}{10} + \varepsilon \\
 < 10\epsilon 
 $$
 
-Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration (which also turns out to be true for Euclidean distance, which is $<\sqrt{14}\epsilon < 10\epsilon$).  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
+Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration (which also turns out to be true for Euclidean distance, which is $<\sqrt{14}\varepsilon < 10\varepsilon$).  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
 
 
 
