@@ -516,7 +516,7 @@ Could this be due to propegation of error? Supposing a sufficiently small error 
 
 $$
 x_{(n+1)'} = (y_n + \varepsilon)/b \\
-y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\varepsilon + \varepsilon) + x_n + \varepsilon - 1 \\
+y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\varepsilon + \varepsilon^2) + x_n + \varepsilon - 1 \\
 $$
 
 Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $\lvert x_1 - x_2 \rvert + \lvert y_1 - y_2 \rvert$) as our metric for simplicity.
