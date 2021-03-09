@@ -519,13 +519,13 @@ x_{(n+1)'} = (y_n + \varepsilon)/b \\
 y_{(n+1)'} = \frac{a}{b^2}(y_n^2 + 2y_n\varepsilon + \varepsilon) + x_n + \varepsilon - 1 \\
 $$
 
-Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $(x_1 - x_2) + (y_1 - y_2)$) as our metric for simplicity.
+Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $\lvert x_1 - x_2 \rvert + \lvert y_1 - y_2 \rvert$) as our metric for simplicity.
 
-This distance can be calculated and compared to what would occur if base 10 were 
+This distance can be calculated, assuming $\varepsilon < 1$, as follows:
 
 $$
-(x_{n+1} - x_{(n+1)'}) + (y_{n+1} - y_{(n+1)'}) \\
-= \varepsilon/b + \lvert \frac{a}{b^2}(2y_n\varepsilon + \varepsilon) + \varepsilon \rvert \\
+abs(x_{n+1} - x_{(n+1)'}) + abs(y_{n+1} - y_{(n+1)'}) \\
+= \frac{\varepsilon}{b} + \lvert \frac{a}{b^2}(2y_n\varepsilon + \varepsilon^2) + \varepsilon \rvert \\
 < \frac{10}{3}\varepsilon + \frac{2\varepsilon}{10} + \varepsilon \\
 < 10\epsilon 
 $$
