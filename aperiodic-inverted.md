@@ -569,7 +569,7 @@ yields
 
 ![divergence vs precision]({{https://blbadger.github.io}}misc_images/divergence_vs_precision.png)
 
-From this we can see that there is a linear relation between how many iterations it takes to diverge in the reverse direction and the precision used.  This is because with more precision, we can better approximate values of points on the true Henon map (which are irrational, see below for more).  
+From this we can see that there is a linear relation between how many iterations it takes to diverge in the reverse direction and the precision used.  This is because with more precision, we can better approximate values of points on the true Henon map (which are irrational for $a, b$ values that yield an aperiodic attractor, see below for more).  
 
 What happens to the number of reverse iterations until divergence if the precision is held constant (at 1000 decimal points) but the number of forward iterations changes? 
 
