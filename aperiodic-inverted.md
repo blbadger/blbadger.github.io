@@ -524,7 +524,7 @@ Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert 
 This distance can be calculated, assuming $\varepsilon < 1$ such that $\varepsilon^2 < \varepsilon$, as follows:
 
 $$
-abs(x_{n+1} - x_{(n+1)'}) + abs(y_{n+1} - y_{(n+1)'}) \\
+\lvert x_{n+1} - x_{(n+1)'} \rvert + \lvert y_{n+1} - y_{(n+1)'} \rvert \\
 = \frac{\varepsilon}{b} + \frac{a}{b^2}(2y_n\varepsilon + \varepsilon^2) + \varepsilon \\
 < \frac{10}{3}\varepsilon + \frac{2\varepsilon}{10} + \varepsilon \\
 < 10\varepsilon 
@@ -532,7 +532,50 @@ $$
 
 Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration.  Therefore a 100-fold increase in error requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain relatively small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
 
+All this is to say that the divergence above occurred after 22 iterations because there were only ~16 decimal points of accuracy. What happens when this accuracy is increased?  Arbitrary precision (within memory and time limits, that is) math can be performed using the `decimal` library.  To find the number of iterations (in the inverse Henon map) until divergence (given 1000 forward iterations) at various decimal accuracies,
 
+```python
+from decimal import *
+
+... code above ...
+
+ls = [[x, y]]
+x_array = []
+y_array = []
+
+for i in range(2, 1000):
+	getcontext().prec = i
+	x, y = Decimal(1), Decimal(1)
+	a, b = Decimal(1.4), Decimal(0.3)
+
+	for j in range(1000):
+		x, y = ls[0][0], ls[0][1]
+		x_next, y_next = henon_map(x, y, a, b)
+		ls.pop()
+		ls.append([x_next, y_next])
+	x_array.append(i)
+
+	array = [ls[-1]]
+	count = 0
+	while True:
+		array[0] = reversed_henon_map(array[0][0], array[0][1], a, b)
+		if array[0][0] > 100 or array[0][1] > 100:
+			break
+		count += 1
+	y_array.append(count)
+```
+
+yields
+
+![divergence vs precision]({{https://blbadger.github.io}}misc_images/divergence_vs_precision.png)
+
+From this we can see that there is a linear relation between how many iterations it takes to diverge in the reverse direction and the precision used.  This is because with more precision, we can better approximate values of points on the true Henon map (which are irrational, see below for more).  
+
+What happens to the number of reverse iterations until divergence if the precision is held constant (at 1000 decimal points) but the number of forward iterations changes? 
+
+![forward vs reverse divergence]({{https://blbadger.github.io}}misc_images/forward_vs_reverse_iterations.png)
+
+Here we see something interesting: the Henon map is an attractor to a set of points $\mathscr H$ and the inverse Henon map repells points from $\mathscr H$, but the forward map is more attractive than the reverse map is repulsive.
 
 
 ### Stable and unstable points of the inverted Henon map
