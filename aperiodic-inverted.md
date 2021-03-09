@@ -521,17 +521,16 @@ $$
 
 Now for the attractor that forms given $a = 1.4, b = 0.3$, we know that $\lvert y_n \rvert < 1/2$.  Using this information, the distance between $x_{n+1}, y_{n+1}$ and $x_{(n+1)'}, y_{(n+1)'}$ can be calculated to see how much larger the error gets after each iteration of the inverse Henon map.  We will use Manhattan distance (which is $\lvert x_1 - x_2 \rvert + \lvert y_1 - y_2 \rvert$) as our metric for simplicity.
 
-This distance can be calculated, assuming $\varepsilon < 1$, as follows:
+This distance can be calculated, assuming $\varepsilon < 1$ such that $\varepsilon^2 < \varepsilon$, as follows:
 
 $$
 abs(x_{n+1} - x_{(n+1)'}) + abs(y_{n+1} - y_{(n+1)'}) \\
-= \frac{\varepsilon}{b} + \lvert \frac{a}{b^2}(2y_n\varepsilon + \varepsilon^2) + \varepsilon \rvert \\
+= \frac{\varepsilon}{b} + \frac{a}{b^2}(2y_n\varepsilon + \varepsilon^2) + \varepsilon \\
 < \frac{10}{3}\varepsilon + \frac{2\varepsilon}{10} + \varepsilon \\
-< 10\epsilon 
+< 10\varepsilon 
 $$
 
 Therefore the Manhattan distance between the next point with compared to the point without error is less than 10-fold the initial error size for each iteration (which also turns out to be true for Euclidean distance, which is $<\sqrt{14}\varepsilon < 10\varepsilon$).  For a 100-fold increase in error, one requires more than 2 iterations.  Now comparing back to our points with ~16 decimal places, we can say that the error will remain small as long as the iteration number is under 16, but after this iteration the initial error introduced by rounding starts to become large relative to the point's values.  
-
 
 
 ### Stable and unstable points of the inverted Henon map
