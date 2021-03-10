@@ -391,7 +391,7 @@ where any prime period also gives points of prime period for any number to the r
 
 As observed by Li and Yorke, period three also implies an uncountably infinite number of (unstable) aperiodic trajectories.  
 
-### Entrances and exits from aperiodicity
+### Exits from aperiodicity
 
 The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
 
@@ -400,6 +400,8 @@ Now consider the transition from an area in the orbit map where no orbit is stab
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_transformation.png)
 
 Recall that areas with higher point density in the orbit map correspond to population values that appear more often over many iterations of (1).  Thus these are the points that are less unstable than the others.  To see why it makes sense to talk about relative instability, consider that our test for $\rvert (f^2)'(x) \lvert < 1$ can be extended to compare $(f^2)'(x_1)$ and $(f^2)'(x_2)$ if both are >1.  For example, where r=3.1 (see above), $(f^2)'(0) = 9.81 > (f^2)'(0.67742) \approx 1.21$ and iterations move away from 0 far more rapidly than they do from 0.67742.
+
+--not completed--
 
 In other words, let's call the set favored values, $\mathbf A$, obtained for any value of $r$ while iterating (1) to be
 
