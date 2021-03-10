@@ -337,7 +337,7 @@ $$
 Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  This is best done using a computer algebra evaluator, which yields
 
 $$
-0 = -12089.028955x^8+48356.11582x^7 \\
+0 \approx -12089.028955x^8+48356.11582x^7 \\
 -78846.982583x^6+67294.542381x^5 \\
 -32066.758626x^4+8391.415073x^3 \\
 -1095.484996x^2+55.181887x 
@@ -393,13 +393,13 @@ As observed by Li and Yorke, period three also implies an uncountably infinite n
 
 ### Entrances and exits from aperiodicity
 
-There is also a pattern here: the convergence of 'favored' values tangentially leads to a transition from chaotic, aperiodic iteration to periodic. Note that the following is only conjectural.
+The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
 
-Recall that areas with higher point density correspond to population values that appear more often over many iterations.  With increases in $r$, these populations that are more probable, the 'favored' populations, change.  There is always more than one favored population size, and occasionally with increases in $r$ two different favored sizes can converge to become one.  If the difference between two favored sizes goes to 0 at a decreasing rate, increasing $r$ leads to periodicity from aperiodicity. 
+Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). For a closer view at one of these points
 
-This can be clearly seen with a look at the map: if dense areas in chaotic regions approach but do not cross, there is a region of periodicity immediately following.  If these lines approach and cross (if they approach at a rate that does not decrease to 0), then aperiodicity remains for subsequent, slightly larger values of $r$. 
+![map]({{https://blbadger.github.io}}/logistic_map/logistic_transformation.png)
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_zoom_4.png)
+Recall that areas with higher point density in the orbit map correspond to population values that appear more often over many iterations of (1).  Thus these are the points that are less unstable than the others.  To see why it makes sense to talk about relative instability, consider that our test for $\rvert (f^2)'(x) \lvert < 1$ can be extended to compare $(f^2)'(x_1)$ and $(f^2)'(x_2)$ if both are >1.  For example, where r=3.1 (see above), $(f^2)'(0) = 9.81 > (f^2)'(0.67742) \approx 1.21$ and iterations move away from 0 far more rapidly than they do from 0.67742.
 
 In other words, let's call the set favored values, $\mathbf A$, obtained for any value of $r$ while iterating (1) to be
 
