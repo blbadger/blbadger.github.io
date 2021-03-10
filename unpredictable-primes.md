@@ -111,8 +111,7 @@ $$
 
 Any method of approximation by definition start farther and ends closer to the desired value.  As each addition to our decimal list increases the accuracy of approximation, each digit must be determined from left to right in sequence.  If this were not so, we could find the nth digit of $\pi$ or any irrational number with a constant computational procedure.  But to determine (correct) digits out of order is impossible for any approximation technique, because knowledge of one digit necessarily implies knowledge of all the precede it because they are larger.  Only for exact numbers (which are equivalent to computable numbers in this strict definition) may arbitrary digits be learned with constant computation.
 
-
-
+Note that this idea also applies to algorithms that do not strictly approximations, such as the Bailey-Borwein-Plouffe [formula](https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula) for finding desired digits of pi.  Although digits prior to the one of interest are not explicitly calculated, they are implicitly, such that the higher the accuracy desired, the more elements in an infinite series must be added together.  This is true for all spigot algorithms, which find digits (from larger to smaller) in sequence rather than by approximation.  
 
 
 
