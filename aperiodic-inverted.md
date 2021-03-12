@@ -546,7 +546,7 @@ y_array = []
 for i in range(2, 1000):
 	getcontext().prec = i
 	x, y = Decimal(1), Decimal(1)
-	a, b = Decimal(1.4), Decimal(0.3)
+	a, b = Decimal(14)/Decimal(10), Decimal(3)/Decimal(10)
 
 	for j in range(1000):
 		x, y = ls[0][0], ls[0][1]
