@@ -334,17 +334,17 @@ $$
 0.50466649, \; 0.9574166, \; 0.15614932, \; 0.50466649 ...
 $$
 
-Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  
+Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  $f^3(x)$ is the rather complicated expression
 
 $$
-f^3(x) = -r^7x^8 + 4r^7x^7- \\
-(6r^7+2r^6)x^6 + (4r^7+6r^6)x^5 \\
+f^3(x) = -r^7x^8 + 4r^7x^7 \\
+- (6r^7+2r^6)x^6 + (4r^7+6r^6)x^5 \\
 - (r^7+6r^6+r^5+r^4)x^4 \\
 + (2r^6 + 2r^5 +2r^4)x^3 \\
 -(r^5 + r^4+r^3)x^2 + r^3x \\
 $$
 
-This is best done using a computer algebra evaluator, which yields
+so finding the solutions to $f^3(x)-x = 0$ is best done using a computer algebra evaluator, which yields
 
 $$
 0 \approx -12089.028955x^8+48356.11582x^7 \\
@@ -392,7 +392,7 @@ $$
 3, \; 5, \; 7, \; 9, \; 11, ... \\
 6, \; 10, \; 14, \; 18, \; 22, ... \\
 12, \; 20, \; 28, \; 36, \; 44, ... \\
-\vdots \; \; \ddots \\ 
+\vdots \; 
 \; \\
 ... 16, \; 8, \; 4, \; 2, \; 1
 $$
@@ -411,18 +411,5 @@ Now consider the transition from an area in the orbit map where no orbit is stab
 
 Recall that areas with higher point density in the orbit map correspond to population values that appear more often over many iterations of (1).  Thus these are the points that are less unstable than the others.  To see why it makes sense to talk about relative instability, consider that our test for $\rvert (f^2)'(x) \lvert < 1$ can be extended to compare $(f^2)'(x_1)$ and $(f^2)'(x_2)$ if both are >1.  For example, where r=3.1 (see above), $(f^2)'(0) = 9.81 > (f^2)'(0.67742) \approx 1.21$ and iterations move away from 0 far more rapidly than they do from 0.67742.
 
---not completed--
-
-In other words, let's call the set favored values, $\mathbf A$, obtained for any value of $r$ while iterating (1) to be
-
-$$\mathbf A = \{x_1, x_2, ..., x_i\}$$ 
-
-where $i$ is the index of the favored value. 
-
-For any pair of elements $(x_i, x_j) \in \mathbf A$, if 
-
-$x_i - x_j \to 0$ and $\frac{d}{dr} (x_i - x_j) \to 0$ as $r$ increases, 
-
-then successively larger values of $r$ move (1) from aperiodic to periodic iterations.  These periodic iterations are found at population sizes equal to the value of $x_i$ as $x_i - x_j \to 0$.  It also appears that if there is (tangential) intersection between any element $x_i \in \mathbf A$ and and either the maximum or minimum possible value of (1) at any given $r$, then further increases of $r$ will lead to periodicity.  
 
 
