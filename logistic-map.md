@@ -337,9 +337,11 @@ $$
 Checking that these points are indeed prime period 3 is a task of finding the roots of $f^3(x) = x$ when $r = 3.83$.  
 
 $$
-f^3(x) = -r^7x^8 + 4r^7x^7-
-(6r^7+2r^6)x^6 + (4r^7+6r^6)x^5 - (r^7+6r^6+r^5+r^4)x^4 
-+ (2r^6 + 2r^5 +2r^4)x^3 -(r^5 + r^4+r^3)x^2 + r^3x
+f^3(x) = -r^7x^8 + 4r^7x^7- \\
+(6r^7+2r^6)x^6 + (4r^7+6r^6)x^5 \\
+- (r^7+6r^6+r^5+r^4)x^4 \\
++ (2r^6 + 2r^5 +2r^4)x^3 \\
+-(r^5 + r^4+r^3)x^2 + r^3x \\
 $$
 
 This is best done using a computer algebra evaluator, which yields
