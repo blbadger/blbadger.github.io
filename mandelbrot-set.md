@@ -149,7 +149,9 @@ What happens if we change the exponent of (2) such that $z^1 \to z^4$ ?  At $z^1
 
 What happens if there is a small amount $b$ added upon each iteration?  Then we have $z_{n+1} = z_n^2 + a + b$, which is equivalent to changing $a$ by a constant factor for all values in the complex plane.  This results in the map being translated in the complex plane, but not otherwise changed.  
 
-The effect is quite different if the starting value $z_0 \neq 0 + 0i$. We are now departing from a true Mandelbrot set, which requires the initial value to be $0$, but a small change like setting $z_0 = a$ will result in a set that mostly resembles $\mathscr M$,.  But if $b$ is added upon each iteration, the set changes for the same reason as $\mathscr M$ is irregular to begin with. In sum, the following $\mathscr M$ -like equation shall be investigated:
+The effect is quite different if the starting value $z_0 \neq 0 + 0i$. We are now departing from a true Mandelbrot set, which requires the initial value to be $0$, but a small change like setting $z_0 = a$ will result in a set that mostly resembles the Mandelbrot set $\mathscr M$.  But if some value $b$ is added upon each iteration, the set of non-diverging points changes unpredictably, reflecting the irregularity of $\mathscr M$ itself. 
+
+The following  equation shall be investigated:
 
 $$
 z_{n+1} = z_n^2 + a + b \\
