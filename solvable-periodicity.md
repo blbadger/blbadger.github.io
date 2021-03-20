@@ -94,9 +94,9 @@ A direct answer to this question is difficult, but an interesting analogy is ava
 
 Kleene found levels of undecidabity, implying some statements are more undecidable than others.  Some problems, like whether or not a Turing machine will halt given an arbitrary input, are demonstrably undecidable.  But other problems may or may not be undecidable, and these would be expected to occupy a higher level of undecidability with respect to the halting problem.  Some such probably-undecidable statement examples are put forth here.  
 
-As both Presburger and Skolem arithmetics are decidable (and complete) but arithemtic with both addition and multiplication is not, one would expect to find some undecidable number-theoretic statements existing at the intersection of multiplication and addition.  If we consider prime numbers to the the 'atoms' of multiplication, this is indeed the case: there are a number of as-yet-undecidable statements relating primes to addition. 
+As both Presburger and Skolem arithmetics are decidable (and complete) but arithmetic with both addition and multiplication is not, one would expect to find some undecidable number-theoretic statements existing at the intersection of multiplication and addition.  If we consider prime numbers to the the 'atoms' of multiplication, this is indeed the case: there are a number of as-yet-undecidable statements relating primes to addition. 
 
-First and most famous is Goldbach's conjecture,
+First and most famous is Goldbach's conjecture, that all integers greater than two are the sum of two primes,
 
 $$
 \forall n>2, \; \exists a, b \in \{primes\} : n = a + b
@@ -111,7 +111,7 @@ $$
 and Legendre's conjecture, that there exists a prime number between the square of any integer and the square of its successor,
 
 $$
-\forall n, \; \exists p \in \{ primes \} : n^2 < p < (n+1)^2
+\forall n \in \Bbb N, \; \exists p \in \{ primes \} : n^2 < p < (n+1)^2
 $$
 
 All are as yet unproved and yet seem true, at least they are true for all inputs observed thus far.
