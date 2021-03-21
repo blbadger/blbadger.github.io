@@ -67,7 +67,7 @@ A set is used as our return type because it is immutable.  A tupe or even a muta
 
 As the above program uses tail recursion, it can be converted into one that returns from the bottom of the recursion stack by returning `reverse_logistic` rather than calling it.  For some variety, here this is in C++
 
-```c++
+```cpp
 // C++
 #include <iostream>
 #include <vector>
