@@ -33,7 +33,7 @@ Now as there are only countably infinite Turing machines (see below), because ea
 
 ### Computability with Turing machines
 
-To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action, moving to the left or right, and then changing state.  Note that each step may also not occur, for example meaning that the state could change to the same state.
+To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action (or not), moving to the left or right (or staying stationary), and then changing state (or staying in the same state).  
 
 Turing machines are computationally equivalent to Church's lambda functions and other such astract computational systems: each lambda function can be translated into a Turing machine and vice versa. 
 
