@@ -33,9 +33,206 @@ Now as there are only countably infinite Turing machines (see below), because ea
 
 ### Computability with Turing machines
 
-To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action (or not), moving to the left or right (or staying stationary), and then changing state (or staying in the same state).  
+To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action (or not), moving to the left or right (or staying stationary), and then changing state (or staying in the same state).  Turing machines are described by finite tables of instructions that completely specify what the machine should do at any given point.  For example, the following 1-state, 2-symbol machine if starting on a '1', changes the symbol to a '0', moves right, and halts:
 
-Turing machines are computationally equivalent to Church's lambda functions and other such astract computational systems: each lambda function can be translated into a Turing machine and vice versa. 
+$$
+\; 0\ ;  1 \\
+1: C0 \; ER1
+$$
+
+where 'P' is print '1', 'E' means erase (print 0), 'R' means move right, 'L' means move left, 'C' means stay in the same place, and the final number specifies the state of the machine ('0' means halt).  The variable in question is the column head, and the row (here only '1') denotes state.
+
+Now simply changing a symbol does not seem very useful, if one accepts the Church-Turing thesis then Turing machines are capable of performing any computational procedure that we can define. A more complicated one, found in Kleene 1967, takes any integer and adds one.  The instruction table is as follows:
+
+$$
+\; \; 0 \; \; 1 \\
+1 \; C0 \; R2 \\
+2 \; R3 \; R9 \\
+3 \; PL4 \; R3 \\
+4 \; L5 \; L4 \\
+5 \; L5 \; L6 \\
+6 \; R2 \; R7 \\
+7 \; R8 \; ER7 \\
+8 \; R8 \; R3 \\
+9 \; PR9\; L10 \\
+10\;C0 \; ER11\\
+11\;PC0 \; R11
+$$
+
+which may emulated as a Turing machine using c++ as follows:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <iomanip>
+using namespace std;
+
+vector<int> turing_incrementor(vector<vector<string>> program, int state, int position, vector<int> input, int& counter){
+	
+	// initialize the result tape as a copy of the input tape
+	vector<int> result;
+	for (auto u: input) result.push_back(u);
+	
+	while (true) {
+		int square = result[position];
+		string step;
+		
+		if (square == 1) {
+			step = program[state-1][1];
+		}
+		else step = program[state-1][0];
+		
+		int index = 0;
+		if (step[0] == 'E' or step[0] == 'P'){
+			index = 1;
+			if (step[0] == 'P') {
+				result[position] = 1;
+			}
+			else result[position] = 0;
+		}
+
+		if (step[index] == 'R') position += 1;
+		else if (step[index] == 'L') position -= 1;
+		
+		state = 0;
+		string num_string = "";
+
+		index++;
+		while (index < step.size()) {
+			num_string.push_back(step[index]);
+			index++;
+		}
+		state = stoi(num_string);
+		counter++;
+		if (step[step.size()-2] == 'C' and step[step.size()-1] == '0') {
+			return result;
+		}
+	}
+
+}
+	
+int main(){
+	//initialize program for incrementing integers
+	vector<vector<string>> program { {"C0", "R2"}, {"R3", "R9"}, 
+		{"PL4", "R3"}, {"L5", "L4"}, {"L5", "L6"}, {"R2", "R7"}, 
+		{"R8", "ER7"}, {"R8", "R3"}, {"PR9", "L10"}, {"C0", "ER11"}, 
+		{"PC0", "R11"} };
+	
+	//initialize input tape
+	vector<int> input;
+	
+	//specifiy input number 
+	int initial_number = 1000;
+	for (int i=0; i<2*initial_number + 10; i++) input.push_back(0);
+	for (int j=3; j<initial_number+3; j++) input[j] = 1;
+	cout << "Input:   ";
+	for (auto u:input) cout << u;
+	//state initialization
+	int state = 1;
+	
+	//counter initialization
+	int counter = 0;
+	
+	int position = 3 + initial_number-1;
+	vector<int> result;
+	
+	result = turing_incrementor(program, state, position, input, counter);
+	cout << counter;
+	cout << endl;
+	cout << "Output:  ";
+	for (auto u:result) cout << u;
+	return 0;
+}
+```
+
+The input is a series of '1's corresponding to an integer and the output is this followed by '0' and then the incremented integer.  For example, and input of  `00011000000`, corresponding to the integer 1 (as `000100` is 0) becomes `00011011100`, which is 1 followed by 2.  
+
+This program is capable of incrementing any finite number, and so clearly the function of incrementing 1 is computable.  But in the last section, it was claimed that there are number theoretic functions that are uncomputable by Turing machines, or by any other effective method (Church's lambda calculus etc.) if the Church-Turing thesis is accepted.  What are these functions that are not computable, and are any of these uncomputable functions important?  
+
+Let's introduce a useful predicate function: $T(i, a, x)$ signifies a Turing machine, with index integer $i$, input argument integer $a$, that returns $\mathfrak t$ (true) if the computation halts at step $x$ but otherwise $\mathfrak f$.  The input argument $a$ is any integer, which when encoded could be `000100` signifying $a=0$ etc.
+
+The Turing machine index $i$ is defined as the instructions for the Turing machine, encoded as an integer (which is usually very large).  For example, the table of instructions for the Turing machine above that increments integers can be represented as the integer
+
+$$
+21136737094333657700134424238322063624969284419 \\
+08675647661770484612266829110943192693004390163 \\
+75863429484413035036069094311865821860452564289 \\
+359749323778362522231196047032053805361
+$$
+
+Is $T(i, a, x)$ a decidable predicate function, or in other words is it computable?  It is: given any Turing machine table (in integer form) $i$, and any input $a$, we can simply run the machine until step $x$ to see if the machine stops at that step or not, and return $\mathfrak t$ or $ \mathfrak f$.  
+
+To compare across an infinite number of Turing machines without having to deal with an infinite number of different inputs, we can simply set the input argument $a$ to the machine's index $i$, or $i = a$, which means that the input to the program is the program itself. Now $T(a, a, x)$ is the true or false predicate that the Turing machine with input $a$ and index $a$ halts at step $x$, and is computable for the same reason $T(i, a, x)$ is.  But what about the question of whether there is any number of steps $x$ such that this machine halts, $\exists x \; T(a, a, x)$: is this computable too?  We can no longer simply run the Turing machine to find an answer because we are interested in all possible $a$ values.  
+
+Happily, however, one can list all possibilities of $T(a, a, x)$ as follows:
+
+$$
+T(1, 1, 1), \; T(1, 1, 2), \; T(1, 1, 3)  \cdots \\
+T(2, 2, 1), \; T(2, 2, 2), \; T(2, 2, 3)  \cdots \\
+T(3, 3, 1), \; T(3, 3, 2), \; T(3, 3, 3)  \cdots \\
+\vdots
+$$
+
+because any Turing machine's instructions may be represented as an integer, and the same for any input to the same machine, it should be apparent that this table includes all possible Turing machine instructions and all possible inputs. Finding whether or not the machine halts at step $x$ is simply a matter of looking up the value on the table.
+
+To restate the question at hand, can we compute the function $\exists x \; T(a, a, x)$, for any input $a$ and index $a$?  If we could do this, then we could create a Turing machine that simply adds one step (move right and halt, perhaps) to each machine $T(a, a, a)$ for all $a$.  Therefore if $T(a, a, a) = \mathfrak t$ then $T(a, a, a+1) = \mathfrak f$ and if $T(a, a, a) = \mathfrak f$ then $T(a, a, a+1) = \mathfrak t$ because there is only one integer number of steps $x$ at which the Turing machine halts.  
+
+Clearly this machine returns a different $\mathfrak t, \mathfrak f$ result than each machine listed above for all values of $a$ where $T(a, a, a)$: if for example a certain encoding gave
+
+$$
+T(1, 1, x) = \mathfrak t, \; \mathfrak f, \; \mathfrak f \cdots \\
+T(2, 2, x) = \mathfrak f, \; \mathfrak t, \; \mathfrak f \cdots \\
+T(3, 3, x) = \mathfrak f, \; \mathfrak t, \; \mathfrak f \cdots \\
+$$
+
+then this new Turing machine would be
+
+$$
+T'(1, 1, x) = \mathfrak t, \; \mathfrak f, \; \mathfrak f \cdots \\
+T'(2, 2, x) = \mathfrak f, \; \mathfrak f, \; \mathfrak t \cdots \\
+T'(3, 3, x) = \mathfrak f, \; \mathfrak f, \; \mathfrak t \cdots \\
+$$
+
+which is a different table by definition.  Different Turing machine outputs (for the same inputs) can only occur for different machines, so we know that $T'$ differs from all Turing machines listed above whenever $a=i=x$, or 
+
+$$
+T(1, 1, 1)\star, \; T(1, 1, 2), \; T(1, 1, 3)  \cdots \\
+T(2, 2, 1), \; T(2, 2, 2)\star, \; T(2, 2, 3)  \cdots \\
+T(3, 3, 1), \; T(3, 3, 2), \; T(3, 3, 3)\star  \cdots \\
+\vdots
+$$
+
+But this means that the new Turing machine is not present on this list, because it differs from each entry for at least one input.  The list by definition included all possible Turing machines, so a contradiction has been reached and the premise that $\exists x \; T(a, a, x)$ is computable must be false.
+
+
+### Busy Beaver Turing machines
+
+Code for this section is found [here](https://github.com/blbadger/turing-machines).
+
+In other words, whether or not an arbitrary Turing machine (with an input equal to its instructions) is going to ever halt is not a decidable predicate, even though it is clear for any finite step $x$ whether the machine halts there.  This does not mean that if we are given a value of $a=i$, we cannot determine if the machine halts in some cases.  The first machine presented, which simply changes the initial tape entry and moves to the right and halts, will always halt.  Likewise a machine that only moves to the left without any other instructions clearly will not halt.  But $\exists x \; T(a, a, x)$ contains $a$ as a free variable, meaning that it can take any value.  The surprising conclusion then is that there is no way to determine whether a machine halts given an arbitrary value of $a$, although for certain $a$ the answer is clear.
+
+To better understand just how unclear it is whether an arbitrary program will halt, Rad&oacute; described the busy beaver challenge: to make the longest number of steps to a Turing machine of a given size that does not obviously run forever.  For two state Turing machines (with entries of 1 or 0), the maximum number of steps an eventually-stopping program takes is 6.  This number must be found by trial and error, because as presented in the last section whether or not a program halts for all possible inputs is not computable.  In the language used above, this program is
+
+$$
+\; \; 0 \; 1 \\
+1 \; PR2 \; PL2 \\
+2 \; PL1 \; PRH \\
+$$
+
+which given an input of $...0000000000...$ returns $...00001111000...$ (depending exactly where the starting index is).  For three states, the maximum number of steps of an eventually-stopping machine is 21, which also does not seem so unmanageable.  But for five possible states and two symbols, the machine table
+
+$$
+\; \; 0 \; 1 \\
+1\; PR2\; PL3 \\
+2\; PR3\; PR2 \\
+3\; PR4\; EL5 \\
+4\; PL1\; PL4 \\
+5\; PRH\; EL1 \\
+$$
+
+takes 47176870 steps to complete.  As found in the very useful repository [here](http://www.logique.jussieu.fr/~michel/ha.html#tm52), the maximum number of steps for a six-state, two symbol Turing machine is greater than $7.4 × 10^36534$.  The true value is unknown, because this machine (and a number of other similar ones) are still running, with no indication of looping or stopping.  And this is for only 6 possible states and 2 possible symbols: imagine how many steps it would require to find whether all possible 11-state, 2-symbol machines halt!  An yet this number of states was used for something as simple as integer incrementation.  Clearly then, without some kind of external cue as to whether a machine halts or not the answer is unclear.
+
 
 ### Unsolvability and aperiodicity
 
@@ -144,6 +341,13 @@ Another argument is that most of these uncomputable functions would mostly resem
 Now consider that most oservations in the natural world are noise.  Any scientific measurement is usually divided into signal (which is rare and what one is usually after) and noise (which is everything else by definition).  Brown noise (which we can define here as $1/f^n, \; n > 0$) is the most common but others are found as well.  Noise is usually discarded but is ever-present.
 
 Therefore if uncomputable functions map to noise, and if noise is by far the most common observation in the natural world, it is implied that uncomputable functions map to most observations of the natural world.  This does not, of course, mean that nothing can be learned about the world using computable functions.  But it does imply that it is a bad idea to disregard uncomputable functions as unimportant in real life.
+
+
+
+
+
+
+
 
 
 
