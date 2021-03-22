@@ -36,8 +36,8 @@ Now as there are only countably infinite Turing machines (see below), because ea
 To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action (or not), moving to the left or right (or staying stationary), and then changing state (or staying in the same state).  Turing machines are described by finite tables of instructions that completely specify what the machine should do at any given point.  For example, the following 1-state, 2-symbol machine if starting on a '1', changes the symbol to a '0', moves right, and halts:
 
 $$
-\; 0 \; \; \; \;  1 \; \\
-1: EC0 \; ER1
+\; 0 \; \; \; \;  1  \\
+1\; EC0 \; \; ER1
 $$
 
 where 'P' is print '1', 'E' means erase (print 0), 'R' means move right, 'L' means move left, 'C' means stay in the same place, and the final number specifies the state of the machine ('0' or 'H' means halt).  The variable in question is the column head, and the row (here only '1') denotes state.
@@ -215,20 +215,20 @@ In other words, whether or not an arbitrary Turing machine (with an input equal 
 To better understand just how unclear it is whether an arbitrary program will halt, Rad&oacute; described the busy beaver challenge: to make the longest number of steps to a Turing machine of a given size that does not obviously run forever.  For two state Turing machines (with entries of 1 or 0), the maximum number of steps an eventually-stopping program takes is 6.  This number must be found by trial and error, because as presented in the last section whether or not a program halts for all possible inputs is not computable.  In the language used above, this program is
 
 $$
-\; 0 \; \; \; \; 1 \; \; \\
-1 \; PR2 \; PL2 \\
-2 \; PL1 \; PRH \\
+\; 0 \; \; \; \; 1 \; \\
+1 \; PR2 \; \; PL2 \\
+2 \; PL1 \; \; PRH \\
 $$
 
 which given an input of $...0000000000...$ returns $...00001111000...$ (depending exactly where the starting index is).  For three states, the maximum number of steps of an eventually-stopping machine is 21, which also does not seem so unmanageable.  But for five possible states and two symbols, the machine table
 
 $$
-\; 0 \; \; \; \; 1 \; \; \\
-1\; PR2\; PL3 \\
-2\; PR3\; PR2 \\
-3\; PR4\; EL5 \\
-4\; PL1\; PL4 \\
-5\; PRH\; EL1 \\
+\; 0 \; \; \; \; \; 1 \;  \\
+1\; PR2\; \; PL3 \\
+2\; PR3\; \; PR2 \\
+3\; PR4\; \; EL5 \\
+4\; PL1\; \; PL4 \\
+5\; PRH\; \; EL1 \\
 $$
 
 takes 47176870 steps to complete.  As found in the very useful repository [here](http://www.logique.jussieu.fr/~michel/ha.html#tm52), the maximum number of steps for a six-state, two symbol Turing machine is greater than $7.4 × 10^36534$.  The true value is unknown, because this machine (and a number of other similar ones) are still running, with no indication of looping or stopping.  And this is for only 6 possible states and 2 possible symbols: imagine how many steps it would require to find whether all possible 11-state, 2-symbol machines halt!  An yet this number of states was used for something as simple as integer incrementation.  Clearly then, without some kind of external cue as to whether a machine halts or not the answer is unclear.
