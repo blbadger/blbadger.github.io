@@ -36,7 +36,7 @@ Now as there are only countably infinite Turing machines (see below), because ea
 To gain more appreciation for what was presented in the previous section, a closer look at Turing machines is helpful. A [Turing machine](https://en.wikipedia.org/wiki/Turing_machine) is an abstract system whose rules were designed by Turing to model computation.  A tape of infinite length has a sequence (of 0s and 1s for two state Turing machines) with symbols printed on it is fed into this machine and the output is the tape but with the symbols re-written.  Each step of a Turing machine procedure involves performing an action (or not), moving to the left or right (or staying stationary), and then changing state (or staying in the same state).  Turing machines are described by finite tables of instructions that completely specify what the machine should do at any given point.  For example, the following 1-state, 2-symbol machine if starting on a '1', changes the symbol to a '0', moves right, and halts:
 
 $$
-\; 0 \; \; \; \;  1  \\
+0 \; \; \; \; \; \;  1  \\
 1\; EC0 \; \; ER1
 $$
 
@@ -215,7 +215,7 @@ In other words, whether or not an arbitrary Turing machine (with an input equal 
 To better understand just how unclear it is whether an arbitrary program will halt, Rad&oacute; described the busy beaver challenge: to make the longest number of steps to a Turing machine of a given size that does not obviously run forever.  For two state Turing machines (with entries of 1 or 0), the maximum number of steps an eventually-stopping program takes is 6.  This number must be found by trial and error, because as presented in the last section whether or not a program halts for all possible inputs is not computable.  In the language used above, this program is
 
 $$
-\; 0 \; \; \; \; 1 \; \\
+0 \; \; \; \; \; 1 \; \\
 1 \; PR2 \; \; PL2 \\
 2 \; PL1 \; \; PRH \\
 $$
@@ -302,13 +302,13 @@ As both Presburger and Skolem arithmetics are decidable (and complete) but arith
 First and most famous is Goldbach's conjecture, that all integers greater than two are the sum of two primes,
 
 $$
-\forall n>2, \; \exists a, b \in \{primes\} : n = a + b
+\forall n>2, \; n \in \Bbb N \; \exists a, b \in \{primes\} : n = a + b
 $$
 
 There is also the twin primes conjecture, that there is an infinite number of pairs of primes that are two apart from each other,
 
 $$
-\lvert \{p, p+2\} \rvert > n \; \forall n : p, p+2 \in \{ primes \}
+\lvert \{p, p+2\} \rvert > n \; \forall n\in \Bbb N : p, p+2 \in \{ primes \}
 $$
 
 and Legendre's conjecture, that there exists a prime number between the square of any integer and the square of its successor,
