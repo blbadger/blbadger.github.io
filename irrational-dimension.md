@@ -2,7 +2,7 @@
 
 Two related paradoxes regarding real numbers are described and a resolution is proposed, which implies a number of interesting properties about dynamical systems.
 
-### Lines are sequences of points, but real numbers are non-enumerable
+### Lines are sequences of points, but the real numbers are non-enumerable
 
 The first paradox almost goes without saying, and is implicit in the definitions of rational and irrational numbers and lines.  A geometric line consists of an infinite number of points arranged in a sequence: $p_1$ may come after $p_2$ or before, but not both after and before.  Take a line formed from the rational numbers: all rationals may be enumerated in a list based on their 'height' (defined as the numberator plus denominator) and thus arranged along a line. This is Cantor's famous diagonal argument for the countability of rational numbers $ \Bbb Q$
 
@@ -84,7 +84,7 @@ Continuous functions may be defined on the rational numbers whereas discontinuou
 
 In contrast, functions that are defined on the rational numbers would not be expected to be sensitive to initial conditions, because these numbers are stationary and do not exist in this separate temporal dimension.  
 
-### Aperiodic dynamical systems as *true* dynamical systems
+### Aperiodic dynamical systems as irreducible dynamical systems
 
 Periodic maps may be described without time because they can be reduced to a periodic behavior with a remainder.  To see why this is the case, consider that time proceeds in a loop in periodic systems: if a system at $t=0$ is identical to the system at $t=20$ and $t=40$ then we may say that the system returns to its initial state every twenty seconds.  Equivalently, time proceeds in a loop that is twenty seconds long.  Any problem of determining future position is reduced to finding the remainder of the future time divided by twenty seconds.  Now say that you have observed and recorded the behavior of this periodic system for more than twenty seconds: the only task to do in order to determine the future position is to find the past position with the same remainder.  This can be done without calculating future values.
 
