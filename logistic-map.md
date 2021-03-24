@@ -48,16 +48,16 @@ As $r$ is increased to 2.5, a stable population is reached:
 This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $r=2.5$ we have
 
 $$
-x = 2.5x(1-x) \\
-0 = -2.5x^2 + 1.5x = x(-\frac{5}{2}x+\frac{3}{2}) \\
-x_n = 0, \; x = 3/5 \\
+x_n = 2.5x_n(1-x_n) \\
+0 = -2.5x_n^2 + 1.5x_n = x_n(-\frac{5}{2}x_n+\frac{3}{2}) \\
+x_n = 0, \; x_n = 3/5 \\
 $$
 
-where the value of $x_{n+1} = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. Stability for one dimensional systems may be determined using linearization, and for iterated systems like the logistic map this involves determining whether or not $\lvert f'(x) \rvert < 1$.  If so, the point is stable but if $\lvert f'(x) \rvert > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
+where the value of $x_n = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. Stability for one dimensional systems may be determined using linearization, and for iterated systems like the logistic map this involves determining whether or not $\lvert f'(x) \rvert < 1$.  If so, the point is stable but if $\lvert f'(x) \rvert > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
 
 $$
-f'(x) = r - 2rx \\
-f'(x) = 3.5-7x \\
+f'(x) = r - 2rx_n \\
+f'(x) = 3.5-7x_n \\
 f'(0) = 3.5-0 > 1
 $$
 
@@ -70,9 +70,9 @@ If $r = 3.1$, the population fluctuates, returning to the starting point every o
 We can find points where $x_{n+1} = x_n$, or
 
 $$
-x = rx_n(1-x)  \\
-0 = x(2.1-3.1x) \\
-x = 0, x \approx 0.6774...
+x_n = rx_n(1-x_n)  \\
+0 = x_n(2.1-3.1x_n) \\
+x_n = 0, x_n \approx 0.6774...
 $$
 
 but some quick numerical experimentation shows that these points are unstable: any slight deviation from the values (and indeed any finite approximation of 0.6774...) will not result in $x_{n+1} = x_n$.  
@@ -197,13 +197,13 @@ plt.show()
 
 By looking at how many points there are at a given $r$ value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a [near-universal feature](https://www.ioc.ee/~dima/mittelindyn/paper4.pdf) of the transition from periodicity to chaos.
 
-Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible even in the aperiodic (fuzzy) sections, highlighting a key difference between mathematical chaos and the usual English usage (OED: a state of complete confusion and lack of order).  
+Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible even in the aperiodic sections:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
-Are these same values more common if $r$ is fixed and hundreds of iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  If we count the number of iterations near each population value using R as follows,
+Are these same values more common if $r$ is fixed and many iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  THe proportion of iterations near each value may be plotted in R,
 
 ```R
 # data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=4
@@ -216,7 +216,7 @@ a + geom_dotplot('binwidth' = 0.01, col='blue', fill='red') +
     theme_bw(base_size = 14) 
 ```
 
-we find that there are indeed more iterations that exist near $0.74$. Here the x-axis denotes the population size, and the y-axis denotes the number of iterations:
+and it is found that there are indeed more iterations near $0.74$. Here the x-axis denotes the population size, and the y-axis denotes the number of iterations:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
@@ -225,17 +225,43 @@ This also holds for $r = 4$: at this value, the orbit diagram suggests that ther
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
 
-Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68$ as shown above provides an explanation: the population only slowly changes if it reaches $p \approx 0.74$ such that many consecutive years (iterations) contain similar population values.
+Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides an explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
+
+We know that every point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.72829...$ move comparatively less than others, suggesting that it is comparatively stable.  
+
+Fixed points for $r=3.68$ may be found:
+
+$$
+x_n = rx_n(1-x_n) \\
+x_n = 0, x_n = 0.7282608695652174\\
+$$
+
+Note that our relatively stable point above is very close to the (unstable) point of period 1. These points have linear stabilities of 
+
+$$
+f'(0) = 3.86\\
+f'(0.72826...) \approx -1.68
+$$
+
+Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is not very unstable as it is close to 1.  This means that subsequent iterations will diverge, just slowly. For period two points, 
+
+$$
+x = 0, x\approx0.3935, x\approx0.7282, x\approx0.8783,
+(f^2(0))' = -113.214464 \\
+(f^2(0.3935))' \approx -79.0602 \\
+(f^2(0.7282))' \approx -31.6355 \\
+(f^2(0.8783))' \approx −17.6117 \\
+$$
+
+These points are more unstable, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from period 2 (or period 1, for the case where $x=0$ or  $x=0.7282$ as these are (approximations of) prime period one points).  
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
-Both values of $r$ lead to aperiodic behavior (for almost all starting values if $r=4$), but there is a notable difference in the potential range of population sizes reached at each value: it appears that at $r=3.6$, population values are restricted to two regions (around 0.3 to 0.6 and around 0.8 to 0.9), whereas at $r=4$ the population values span the entire interval $(0, 1]$.  
-
-Also in contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible (see above).  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
+In contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible (see above).  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
 
 $r=3.6$
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.6_small.png)
