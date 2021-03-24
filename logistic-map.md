@@ -229,7 +229,7 @@ Why are certain points more common than others, given that these systems are inh
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
-We know that every point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.72829...$ move comparatively less than others, suggesting that it is comparatively stable.  
+We know that every point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.7282...$ move comparatively less than others
 
 Fixed points for $r=3.68$ may be found:
 
@@ -242,20 +242,24 @@ Note that our relatively stable point above is very close to the (unstable) poin
 
 $$
 f'(0) = 3.86\\
-f'(0.72826...) \approx -1.68
+f'(0.72826) = -1.68
 $$
 
-Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is not very unstable as it is close to 1.  This means that subsequent iterations will diverge, just slowly. For period two points, 
+Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is not very unstable as it is close to 1.  This means that subsequent iterations will diverge, just slowly, which explains why points near $x_n=0.7282...$ tend to have subsequent iterations near their current value.
+
+But this does not fully explain why these points are more likely to be visited by any trajectory.  To address this, one can ask how stable is this point compared to (unstable) points of other periodicities.  For period two points, 
 
 $$
-x = 0, x\approx0.3935, x\approx0.7282, x\approx0.8783,
-(f^2(0))' = -113.214464 \\
+x = 0, \; x\approx0.3935, \; x\approx0.7282, \; x\approx0.8783 \\
+(f^2(0))' \approx -113.2145 \\
 (f^2(0.3935))' \approx -79.0602 \\
 (f^2(0.7282))' \approx -31.6355 \\
 (f^2(0.8783))' \approx −17.6117 \\
 $$
 
-These points are more unstable, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from period 2 (or period 1, for the case where $x=0$ or  $x=0.7282$ as these are (approximations of) prime period one points).  
+Linear analysis of these points indicates that they are more unstable than the fixed point at $0.7282...$, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from that period 2 orbit (or period 1 orbit, for the case where $x=0$ or $x=0.7282$ as these are (approximations of) prime period one points).  
+
+This procedure may be repeated for points of other (prime) periods, and it is found that they are also relatively more unstable than $0.7828...$ is for period one. Thus the answer to the question 'why are points near $0.7828$ more likely to be found over many iterations?' is because this point is relatively stable (for period 1).
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
