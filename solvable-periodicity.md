@@ -231,7 +231,7 @@ $$
 5\; PRH\; \; EL1 \\
 $$
 
-takes 47176870 steps to complete.  As found in the very useful repository [here](http://www.logique.jussieu.fr/~michel/ha.html#tm52), the maximum number of steps for a six-state, two symbol Turing machine is greater than $7.4 × 10^36534$.  The true value is unknown, because this machine (and a number of other similar ones) are still running, with no indication of looping or stopping.  And this is for only 6 possible states and 2 possible symbols: imagine how many steps it would require to find whether all possible 11-state, 2-symbol machines halt!  An yet this number of states was used for something as simple as integer incrementation.  Clearly then, without some kind of external cue as to whether a machine halts or not the answer is unclear.
+takes 47176870 steps to complete.  As found in the very useful repository [here](http://www.logique.jussieu.fr/~michel/ha.html#tm52), the maximum number of steps for a six-state, two symbol Turing machine is greater than $7.4 × 10^{36534}$.  The true value is unknown, because this machine (and a number of other similar ones) are still running, with no indication of looping or stopping.  And this is for only 6 possible states and 2 possible symbols: imagine how many steps it would require to find whether all possible 11-state, 2-symbol machines halt!  An yet this number of states was used for something as simple as integer incrementation.  Clearly then, without some kind of external cue as to whether a machine halts or not the answer is unclear.
 
 
 ### Unsolvability and aperiodicity
