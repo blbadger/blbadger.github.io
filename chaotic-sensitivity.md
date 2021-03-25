@@ -12,7 +12,7 @@ $$
 
 (An example of an $f$ satisfying these conditions is seen in the link at the top of this page, proving that this is not a vacuous statement)
 
-And in contrast, $f$ is periodic when there is some period $f-n$ such that this future iteration is located at a current or past point:
+And in contrast, $f$ is periodic when there is some period $f^n$ such that this future iteration is located at a current or past point:
 
 $$
 f(x) : f^n(x_0) = f^k(x_0) \; \exists n, k: n \neq k
@@ -30,12 +30,11 @@ where $\varepsilon$ is an arbitrarily small finite number. Now suppose that this
 
 $$\lvert f^i(x_n) - f^i(x_n^*) \rvert \le \varepsilon $$ 
 
-ie $f^i(x_n)$ and $f^i(x_n^*)$ stay arbitrarily close to each other for all iterations.
+ie $f^i(x_n)$ and $f^i(x_n^* )$ stay arbitrarily close to each other for all iterations.
 
 As phase space trajectories are unique (meaning that any given point of the system has only one future trajectory), then this system must be periodic if in is insensitive to initial values: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat (recall that $f$ is defined to be bounded). The period may be very large, in that it may take many iterations of $f$ to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  
 
 The geometric argument for this statement is as follows: if the conditions above are satisfied and we assume that future iterations finitely close to a current point travel, there is a small but finite ball $B$ around each point on the trajectory $T$ where the radius of $B$ is $\varepsilon$.  As the trajectory remains in a finite area by definition, it must revisit one of $B$ after infinite time because a finite area can be tiled by a finite number of $B$.  
-
 
 Revisiting a previous value is equivalent to periodicity, and therefore insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values (for discrete maps of $f$). All together, 
 
