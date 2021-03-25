@@ -259,8 +259,6 @@ $$
 
 Linear analysis of these points indicates that they are more unstable than the fixed point at $0.7282...$, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from that period 2 orbit (or period 1 orbit, for the case where $x=0$ or $x=0.7282$ as these are (approximations of) prime period one points).  
 
-This procedure may be repeated for points of other (prime) periods, and it is found that they are also relatively more unstable than $0.7828...$ is for period one. Thus the answer to the question 'why are points near $0.7828$ more likely to be found over many iterations?' is because this point is relatively stable (for period 1).
-
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
