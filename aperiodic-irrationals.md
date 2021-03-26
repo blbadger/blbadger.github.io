@@ -74,7 +74,7 @@ $$
 
 Thus the set of all periodic trajectories (as defined above) is equivalent to the set of all rational numbers, whereas the set of aperiodic trajectories is equivalent to the set of irrational numbers.
 
-### Periodic but not aperiodic trajectories defined on the rationals
+### Periodic but not aperiodic trajectories may be defined on the rationals
 
 Restated, discrete maps of continuous functions can only be defined on the rational numbers if the trajectory is periodic.  The proof that follows assumes that the function $f(x)$ is continuous, but the theorem also applies to discontinuous functions (see below).
 
@@ -88,7 +88,9 @@ which indexes $x_n$ over all the integers, meaning that there is a one-to-one an
 
 The same argument shows that a countable number of inputs in the domain of $x$ is insufficient to yield an aperiodic trajectory, any element of this set would be mapped on a finite period.  This is a contradiction by definition, and therefore aperiodic trajectories must contain an uncountably infinite number of elements in their domain, ie the irrational numbers or reals.
 
-### Aperiodicity implies sensitivity to initial conditions
+This is perhaps most clearly demonstrated for the [logistic map](https://blbadger.github.io/logistic-map.html) where $r=4$: trajectories may be periodic only if they land on rational points on the line, whereas trajectories that exist on the irrationals are aperiodic.
+
+### Sensitivity to initial values implies aperiodicity (for most trajectories)
 
 Say that points close together are stable if they stay close together in the arbitrary future, or are unstable if they diverge.  
 
@@ -112,7 +114,10 @@ $$
 \Bbb B \sim \Bbb Q
 $$
 
-and as there are countably many rational numbers, there are countably many periodic trajectories. But there are uncountably many trajectories if the system is unstable everywhere, so trajectories cannot be periodic. Thus, instability (sensitivity) at all initial points cannot lead to periodic trajectories. As trajectories may be periodic or aperiodic, instability at initial values everywhere is the result an aperiodic trajectory.
+and as there are countably many rational numbers, there are countably many periodic trajectories. But there are uncountably many trajectories if the system is unstable everywhere, so most cannot be periodic: there are simply too many (as there are far more objects in an uncountable set than a countable one). Thus, instability (sensitivity) at all initial points leads to (nearly all) trajectories being aperiodic.  
+
+This too is reflected in the logistic map: values such as r=3.99 yield countably many (unstable) periodic trajectories and an uncountable number of aperiodic ones.
+
 
 ### The set of aperiodic trajectories is equivalent to the set of unsolvable problems
 
