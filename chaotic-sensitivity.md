@@ -1,10 +1,10 @@
 ### Aperiodicity implies sensitivity to initial conditions
 
-As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.html), small changes in starting values lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  Here follows a proof using contraposition, based on the work of Ed Lorenz, the first person to recognize that bounded, aperiodic attractors in phase space necessarily exhibit sensitivity to initial conditions.
+As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.html), small changes in starting values lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  Here follows a proof using contraposition, based on the work of Ed Lorenz, but is applied to discrete systems.
 
-### Theorem: Aperiodicity (in phase space) implies sensitivity to initial values.
+### Theorem: Aperiodicity implies sensitivity to initial values.
 
-Restated, take $f$ to be a function in finite dimensional phase space, iterated discretely, that is bounded by finite values.  This entails that trajectories are unique, and that if $f$ returns to a previous point then $f$ is periodic.  Define $f$ to be aperiodic when future iterations do not revisit previous points in the space.  In symbols, an aperiodic $f$ is defined as follows:
+Restated, take $f$ to be a function in finite dimensional phase space that is bounded by finite values and iterated discretely.  This entails that trajectories are unique, and that if $f$ returns to a previous point then $f$ is periodic.  Define $f$ to be aperiodic when future iterations do not revisit previous points in the space.  In symbols, an aperiodic $f$ is defined as follows:
 
 $$
 f(x) : f^n(x_0) \neq f^k(x_0) \; \forall n, k : n \neq k
@@ -43,7 +43,7 @@ f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
 \forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
-### Decomposably periodic functions insensitive to initial values
+### Decomposably periodic functions that are insensitive to initial values
 
 The case for periodic versus aperiodic functions mapped continuously is mostly similar, but with a few extra considerations. The first and probably the most obvious is that with no discrete unit of time and therefore no iterations to speak of.  Instead there is a continuum, which one can think of as an infinite number of iterations between any two points in the trajectory.  Therefore rather than a finite $k$ number of iterations defining a period, there is some finite time $t$ that defines it.  Secondly, trajectories cannot cross one another's path in continuous maps, whereas they may for discrete cases where the points do not fall on top of one another.  
 
