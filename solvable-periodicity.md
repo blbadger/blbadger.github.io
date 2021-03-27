@@ -262,11 +262,11 @@ Thus $f(i)$ gives us the function mapping each computable function (or decidable
 
 ### What does it mean that most problems are unsolvable, or that most $\mathfrak t, \mathfrak f$ predicates are undecidable?
 
-The appearance of undecidable predicates and unsolvable problems (and unprovable but true statements) in arithemtic with the natural numbers is disconcerting enough when one considers how intuitively consistent the axioms of this system are as compared to, say, those of analysis.
+The appearance of undecidable predicates and unsolvable problems (and unprovable but true statements) in arithmetic is disconcerting enough when one considers how intuitively consistent the axioms of this system are as compared to, say, those of analysis.
 
 On the other hand, consider this: in the real world, many problems appear to be so difficult to find a solution to as to be, for all intents and purposes, impossible.  The study of mathematics attempts to understand the behavior of often very abstract ideas, but it is rooted in a study of the natural world: of shapes made by objects here on earth, paths that stars take in the sky, and the like.  Great utility of mathematics in describing the natural world remains to this day.  
 
-Thus mathematics would be expected to reflect something about the natural world.  Now if all mathematical problems were solvable, it would not seem that this study was an accurate description of the world around us.  If a system with axioms as simple as arithmetic could have unsolvable problems, there is hope that even something as historically removed from application as number theory is able to capture something of reality.
+Thus mathematics would be expected to reflect something about the natural world.  Now if all mathematical problems were solvable, it would not seem that this study is an accurate description of the world around us.  If a system with axioms as simple as arithmetic could have unsolvable problems, there is hope that even something as historically removed from application as number theory is able to capture something of reality.
 
 ### Addition-only or multiplication-only number theories are decidable
 
@@ -336,9 +336,7 @@ If the Church-Turing thesis is correct and our somewhat undefined notion of comp
 
 Does it matter that most functions are uncomputable (accepting the Church-Turing thesis)?  Sometimes it is argued that no, just as the rationals are dense in the reals so computable functions can approximate any function. This argument relies on assumptions of approximations that do not hold for nonlinear functions and is therefore unhelpful as most functions are nonlinear. 
 
-Another argument is that most of these uncomputable functions would mostly resemble mappings to (white or other) noise, like the static on a CRT.  But suppose this argument were true (and it is not clear that it is). To restate, assume that there are many functions out there that are uncomputable which map to noise.  
-
-Now consider that most oservations in the natural world are noise.  Any scientific measurement is usually divided into signal (which is rare and what one is usually after) and noise (which is everything else by definition).  Brown noise (which we can define here as $1/f^n, \; n > 0$) is the most common but others are found as well.  Noise is usually discarded but is ever-present.
+Another argument is that most of these uncomputable functions would mostly resemble mappings to (white or other) noise, like the static on an old cathode ray tube television.  First suppose this argument were true . To restate, assume that there are many functions out there that are uncomputable which map to noise.  Now consider that most oservations in the natural world are noise.  Any scientific measurement is usually divided into signal (which is rare and what one is usually after) and noise (which is everything else by definition).  Brown noise (which we can define here as $1/f^n, \; n > 0$) is the most common but others are found as well.  Noise is usually discarded but is ever-present.
 
 Therefore if uncomputable functions map to noise, and if noise is by far the most common observation in the natural world, it is implied that uncomputable functions map to most observations of the natural world.  This does not, of course, mean that nothing can be learned about the world using computable functions.  But it does imply that it is a bad idea to disregard uncomputable functions as unimportant in real life.
 
