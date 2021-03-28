@@ -1,6 +1,6 @@
 ## Primes are unpredictable
 
-Whilst incrementing through the integers, how long one has to wait until reaching a prime number is often quite a difficult thing to predict.  The question of where the next prime number will be is equivalent to the question of what is the gap between the current prime and the next prime numbers.  As we shall see from two proofs below, the gaps between prime numbers form a non-repeating sequence.  This does not necessarily preclude prediction but makes it unlikely that one can predict how far away the next prime will be without simply computing the primality of each successive integer, either directly or by an interval technique (eg. the sieve of Eratosthenes).  
+Whilst incrementing through the integers, how long one has to wait until reaching a prime number is often quite a difficult thing to predict.  The question of where the next prime number will be is equivalent to the question of what is the gap between the current prime and the next prime number.  Gaps between prime numbers form a non-repeating sequence, as do the gaps between those gaps.  This makes it difficult to predict how far away the next prime will be without simply computing the primality of each successive integer, either directly or by an interval technique (eg. the sieve of Eratosthenes).  
 
 ### Theorem: The sequence of gaps between consecutive prime numbers is not initially periodic
 
@@ -80,11 +80,43 @@ One can appreciate that this is a more general theorem than the first presented 
 
 **Proof:** As prime gap sequences are neither initially nor eventually periodic for any finite period $m$, they are aperiodic.
 
+### Theorem: The sequence of gaps-of-gaps of primes is aperiodic
+
+Restated, the sequence of gaps $g_g_1, g_g_2, g_g_3, ...$ between prime gaps such that $g_g_1 = g_2 - g_1$ and $g_g_2 = g_3 - g_2$ etc. is aperiodic
+
+
+**Proof:** Suppose that the sequence $g_g_1, g_g_2, g_g_3, ...$ were periodic with finite periodicity $m$.  
+
+$$
+p_1,\; p_2,\; p_3,\; p_4,\; p_5,\; \\
+\; g_1, \; g_2,\; g_3,\; g_4,...\\
+\;  \; g_g_1,\; g_g_2,\; g_g_3 ...
+$$
+
+Bearing in mind that $g_1=1$ and $g_2 = 2$, $g_g_1 = 1 = g_g_m$.  It is apparent that all of $g_2, g_3, g_4...$ are even, because all primes after $p_1 = 2$ are odd.  But then $g_{m+1} = 1 + g_m$ would be odd, and a contradiction has been reached.  Therefore there is no periodicity in the sequence of gaps between prime gaps.
+
+**Alternate Proof:** 
+
+$$
+\mathscr S = \theta
+$$
+
+$\mathscr S$ cannot be negative if there are infinitely many positive prime gaps.  But $\mathscr S$ cannot be 0 either, because then the sequence of prime gaps $g_0, g_1, g_2...$ would be periodic.  And finally $\mathscr S$ cannot be positive, because then there would be 0 or finitely many instances of any gap size, contradicting Zhang's theorem that there is some $k < 70000000$ for which there are infinitely many prime gaps of size $k$, or Maynard's finding of a $k<600$ with the same properties.  As $\mathscr S$ cannot be neither greater than nor less than nor equal to zero, a contradiction has been reached and therefore the gap of prime gaps is aperiodic.
+
+
+### Theorem: The sequence of all gap levels of primes is aperiodic
+
+In other words, $g_g_g_1, g_g_g_2, g_g_g_4...$ (gap level 3) or any other level gap sequence is aperiodic.
+
+**Proof** A direct extension of the previous theorem: the first gap at any level is odd, but subsequent gaps (on that level) are even, which can only occur if the first gap is never repeated.
+
+
+
 ### Implications for decidability
 
 As presented [here](https://blbadger.github.io/solvable-periodicity.html), one can show that all decidable predicates may be expressed as periodic systems, or in other words decidability implies periodicity (periodicity with respect to the computation procedure itself, that is).  Taking the contrapositive of this, aperiodicity (in the computation procedure) implies undecidability.  On this page it was found that the sequence of integers of prime gaps are aperiodic, but could some computation procedure for finding prime gaps be itself periodic?
 
-Examining such a procedure, note that it would have to map a countably infinite number of inputs (any of the prime numbers) to a countably infinite number of ouputs (prime gaps, which are unbounded).  The set of all functions possible here is equivalent with the set of all subsets of the natural numbers, $2^\Bbb N$ \sim \Bbb R$.  Suppose the mapping function were periodic, meaning that the procedure for finding a prime gap given the prime number's index is identical to the procedure for finding the gap for a different prime number.  
+Examining such a procedure, note that it would have to map a countably infinite number of inputs (any of the prime numbers) to a countably infinite number of ouputs (prime gaps, which are unbounded).  The set of all functions possible here is equivalent with the set of all subsets of the natural numbers, $2^ \Bbb N \sim \Bbb R$.  Suppose the mapping function were periodic, meaning that the procedure for finding a prime gap given the prime number's index is identical to the procedure for finding the gap for a different prime number.  
 
 If indeed the question of prime gap size is undecidable, this light on the findings from Presburger and Skolem that addition-only or multiplication-only arithmetics are decidable, whereas arithmetic with both addition and multiplication is not (more background [here](https://blbadger.github.io/solvable-periodicity.html)).  The reason is as follows: prime number gaps represent intersections between addition and multiplication, but if these intersections are undecidable (meaning that we cannot compute using finite arithmetic how all gaps should be placed) then arithmetic containing this prime gaps is necessarily undecidable. 
 
