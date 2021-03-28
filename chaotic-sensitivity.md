@@ -28,7 +28,7 @@ $$ x_n^* =  x_n + \varepsilon  $$
 
 where $\varepsilon$ is an arbitrarily small finite number. Now suppose that this small change does not change future values, such that for any iteration number $i$,
 
-$$\lvert f^i(x_n) - f^i(x_n^*) \rvert \le \varepsilon $$ 
+$$\lvert f^i(x_n) - f^i(x_n^* ) \rvert \le \varepsilon $$ 
 
 ie $f^i(x_n)$ and $f^i(x_n^* )$ stay arbitrarily close to each other for all iterations.
 
