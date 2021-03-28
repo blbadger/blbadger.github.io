@@ -98,7 +98,7 @@ Bearing in mind that $g_1=1$ and $g_2 = 2$, $g_g_1 = 1 = g_g_m$.  It is apparent
 **Alternate Proof:** 
 
 $$
-\mathscr S = \theta
+g_{g_1} + g_{g_2} + g_{g_3} + \cdots + g_{g_{n-1}} = \mathscr S_n
 $$
 
 $\mathscr S$ cannot be negative if there are infinitely many positive prime gaps.  But $\mathscr S$ cannot be 0 either, because then the sequence of prime gaps $g_0, g_1, g_2...$ would be periodic.  And finally $\mathscr S$ cannot be positive, because then there would be 0 or finitely many instances of any gap size, contradicting Zhang's theorem that there is some $k < 70000000$ for which there are infinitely many prime gaps of size $k$, or Maynard's finding of a $k<600$ with the same properties.  As $\mathscr S$ cannot be neither greater than nor less than nor equal to zero, a contradiction has been reached and therefore the gap of prime gaps is aperiodic.
@@ -106,7 +106,7 @@ $\mathscr S$ cannot be negative if there are infinitely many positive prime gaps
 
 ### Theorem: The sequence of all gap levels of primes is aperiodic
 
-In other words, $g_g_g_1, g_g_g_2, g_g_g_4...$ (gap level 3) or any other level gap sequence is aperiodic.
+In other words, $g_{g_{g_1}}, g_{g_{g_2}}, g_{g_{g_4}}...$ (gap level 3) or any other level gap sequence is aperiodic.
 
 **Proof** A direct extension of the previous theorem: the first gap at any level is odd, but subsequent gaps (on that level) are even, which can only occur if the first gap is never repeated.
 
