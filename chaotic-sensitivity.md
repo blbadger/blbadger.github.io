@@ -1,6 +1,6 @@
 ### Aperiodicity implies sensitivity to initial conditions
 
-As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.html), small changes in starting values lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  Here follows a proof using contraposition, based on the work of Ed Lorenz, but is applied to discrete systems.
+As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.html), small changes in starting values lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Why does aperiodic behavior imply sensitivity to initial values?  Here follows a proof using contraposition, based on the work of Ed Lorenz.
 
 ### Theorem: Aperiodicity implies sensitivity to initial values.
 
@@ -50,6 +50,12 @@ The case for periodic versus aperiodic functions mapped continuously is mostly s
 The theorem above extends to continuous functions in higher dimensions that do not necessarily have periodic outputs, but that may be decomposed into periodic trajectories that are independant of one another.  A simple case of this can be seen for two points rotating on circular orbit independantly of one another: if one has a rotational period of 1 and another of $\pi$, after starting in the same place on their respective circles they never again would do so because $\pi$ is irrational but 1 is rational.  Both circular orbits are periodic but the combination of the two is strictly aperiodic, but not sensitive to initial values because it can be composed of two independant periodic systems.
 
 Note that the above argument does not apply to discrete maps.  This is because if an equation is iterated discretely, any period must have a finite number of iterations between $x_n$ occurrences.  Therefore the circle map above is only periodic if both trajectories reach the same point after a finite number of iterations.  Without loss of generality, say the first orbit has period $p$ and the second period $q$.  Then both points will be located in their initial position at iteration $k = pq$, which is finite as $p$ and $q$ are.  Therefore the map is necessarily periodic for discrete iterations.
+
+### Other notes
+
+Consider the case of a point traveling around a circle in discrete jumps, at some rational value between iterations.  This is technically an aperiodic system (as previous points are never revisited), but is clearly not sensitive to initial values because changing the starting position changes the final position by an identical amount.
+
+
 
 
 
