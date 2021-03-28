@@ -82,18 +82,18 @@ One can appreciate that this is a more general theorem than the first presented 
 
 ### Theorem: The sequence of gaps-of-gaps of primes is aperiodic
 
-Restated, the sequence of gaps $g_g_1, g_g_2, g_g_3, ...$ between prime gaps such that $g_g_1 = g_2 - g_1$ and $g_g_2 = g_3 - g_2$ etc. is aperiodic
+Restated, the sequence of gaps $g_{g_1}, g_{g_2}, g_{g_3}, ...$ between prime gaps such that $g_{g_1} = g_2 - g_1$ and $g_{g_2} = g_3 - g_2$ etc. is aperiodic
 
 
-**Proof:** Suppose that the sequence $g_g_1, g_g_2, g_g_3, ...$ were periodic with finite periodicity $m$.  
+**Proof:** Suppose that the sequence $g_{g_1}, \; g_{g_2}, \; g_{g_3}, \; ...$ were periodic with finite periodicity $m$.  
 
 $$
 p_1,\; p_2,\; p_3,\; p_4,\; p_5,\; \\
 \; g_1, \; g_2,\; g_3,\; g_4,...\\
-\;  \; g_g_1,\; g_g_2,\; g_g_3 ...
+\;  \; g_{g_1},\; g_{g_2},\; g_{g_3} ...
 $$
 
-Bearing in mind that $g_1=1$ and $g_2 = 2$, $g_g_1 = 1 = g_g_m$.  It is apparent that all of $g_2, g_3, g_4...$ are even, because all primes after $p_1 = 2$ are odd.  But then $g_{m+1} = 1 + g_m$ would be odd, and a contradiction has been reached.  Therefore there is no periodicity in the sequence of gaps between prime gaps.
+Bearing in mind that $g_1=1$ and $g_2 = 2$, $g_{g_1} = 1 = g_{g_m}$.  It is apparent that all of $g_2, g_3, g_4...$ are even, because all primes after $p_1 = 2$ are odd.  But then $g_{m+1} = 1 + g_m$ would be odd, and a contradiction has been reached.  Therefore there is no periodicity in the sequence of gaps between prime gaps.
 
 **Alternate Proof:** 
 
@@ -106,7 +106,13 @@ $\mathscr S$ cannot be negative if there are infinitely many positive prime gaps
 
 ### Theorem: The sequence of all gap levels of primes is aperiodic
 
-In other words, $g_{g_{g_1}}, g_{g_{g_2}}, g_{g_{g_4}}...$ (gap level 3) or any other level gap sequence is aperiodic.
+In other words, 
+
+$$
+g_{g_{g_1}}, g_{g_{g_2}}, g_{g_{g_4}}...
+$$ 
+
+(gap level 3) or any other level gap sequence is aperiodic.
 
 **Proof** A direct extension of the previous theorem: the first gap at any level is odd, but subsequent gaps (on that level) are even, which can only occur if the first gap is never repeated.
 
