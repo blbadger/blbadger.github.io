@@ -251,13 +251,13 @@ But this does not fully explain why these points are more likely to be visited b
 
 $$
 x = 0, \; x\approx0.3935, \; x\approx0.7282, \; x\approx0.8783 \\
-(f^2(0))' \approx -113.2145 \\
-(f^2(0.3935))' \approx -79.0602 \\
-(f^2(0.7282))' \approx -31.6355 \\
-(f^2(0.8783))' \approx −17.6117 \\
+(f^2(0))' = -113.2145 \\
+(f^2(0.3935))' = -79.0602 \\
+(f^2(0.7282))' = -31.6355 \\
+(f^2(0.8783))' = −17.6117 \\
 $$
 
-Linear analysis of these points indicates that they are more unstable than the fixed point at $0.7282...$, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from that period 2 orbit (or period 1 orbit, for the case where $x=0$ or $x=0.7282$ as these are (approximations of) prime period one points).  
+Linear analysis of these points indicates that they are more unstable than the fixed point at $0.7282...$, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from that period 2 orbit (or period 1 orbit, for the case where $x=0$ or $x=0.7282$ as these are approximations of prime period one points).  
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
@@ -429,6 +429,8 @@ where any prime period also gives points of prime period for any number to the r
 
 As observed by Li and Yorke, period three also implies an uncountably infinite number of (unstable) aperiodic trajectories.  
 
+<!--- 
+
 ### Exits from aperiodicity
 
 The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
@@ -439,5 +441,6 @@ Now consider the transition from an area in the orbit map where no orbit is stab
 
 Recall that areas with higher point density in the orbit map correspond to population values that appear more often over many iterations of (1).  Thus these are the points that are less unstable than the others.  To see why it makes sense to talk about relative instability, consider that our test for $\rvert (f^2)'(x) \lvert < 1$ can be extended to compare $(f^2)'(x_1)$ and $(f^2)'(x_2)$ if both are >1.  For example, where r=3.1 (see above), $(f^2)'(0) = 9.81 > (f^2)'(0.67742) \approx 1.21$ and iterations move away from 0 far more rapidly than they do from 0.67742.
 
+-->
 
 
