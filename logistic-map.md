@@ -275,9 +275,9 @@ Now as one ranges over r values, the first four iterations after $x_n=0.5$ are i
 
 ![traces]({{https://blbadger.github.io}}/logistic_map/logistic_traces.png)
 
-Overlayed onto the logistic map,
+Overlayed onto the logistic map with successive iterations after $x_n=1/2$ in red, orange, yellow, green, blue, indigo, and violet respectively,
 
-{% include youtube.html id='wet5C4Yj51A' %}
+{% include youtube.html id='hUZ6s0AAXq0' %}
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
 
