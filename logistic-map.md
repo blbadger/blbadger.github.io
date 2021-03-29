@@ -150,7 +150,7 @@ even a large change in starting value at $r=3.55$ (period 8), from population $p
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
 
-### A closer look at aperiodicity with an orbit map
+### Patterns in the aperiodic orbit map
 
 Information from iterating (1) at different values of $r$ may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
 
@@ -257,9 +257,26 @@ x = 0, \; x\approx0.3935, \; x\approx0.7282, \; x\approx0.8783 \\
 (f^2(0.8783))' = −17.6117 \\
 $$
 
-Linear analysis of these points indicates that they are more unstable than the fixed point at $0.7282...$, meaning that it takes fewer iterations of (1) for a point arbitrarily close to any of these to diverge from that period 2 orbit (or period 1 orbit, for the case where $x=0$ or $x=0.7282$ as these are approximations of prime period one points).  
+But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the derivative of the logistic map $r(1-x/2)$ is zero when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
 
-The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and true disorder. Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
+For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$
+
+![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_1.png)
+
+and another iteration gives $x_{n+2} \approx 0.32$,
+
+![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_2.png)
+
+After five iterations (red, orange, yellow, blue, indigo respectively), there is
+
+![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_full.png)
+
+The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  
+
+
+### Prediction accuracy for differing values of r
+
+Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
@@ -330,7 +347,7 @@ Let's call locations where close-together points eventually diverge in time unst
 
 But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($x_n \approx 0.74$) than others.  This illustrates a feature of chaos that differs from its English usage: mathematical chaos is not completely disordered. A more descriptive word might be 'mysterious' because these systems are unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the following section.
 
-### The relationship between aperiodic systems and fractals
+### Nonlinear maps are often fractals
 
 One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.
 
