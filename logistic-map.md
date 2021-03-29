@@ -271,8 +271,11 @@ After five iterations (red, orange, yellow, blue, indigo respectively), there is
 
 ![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_full.png)
 
-The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  
+Now as one ranges over r values, the first four iterations after $x_n=0.5$ are in red, yellow, green, and blue respectively:
 
+![traces]({{https://blbadger.github.io}}/logistic_map/logistic_traces.png)
+
+The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  
 
 ### Prediction accuracy for differing values of r
 
