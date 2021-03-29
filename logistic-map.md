@@ -279,7 +279,7 @@ Overlayed onto the logistic map,
 
 {% include youtube.html id='6FBkbA6zUQM' %}
 
-The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in prime gaps.
+The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
 
 ### Prediction accuracy for differing values of r
 
