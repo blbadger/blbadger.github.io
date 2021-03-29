@@ -2,7 +2,7 @@
 
 ### Introduction: periodic trajectories in the logistic map
 
-The logistic map was derived from a differential equation describing population growth, studied by Robert May. The dynamical equation is as follows:
+The logistic map was derived from a differential equation describing population growth, popularized by Robert May. The dynamical equation is as follows:
 
 $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
@@ -225,7 +225,7 @@ This also holds for $r = 4$: at this value, the orbit diagram suggests that ther
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
 
-Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides an explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
+Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides a possible explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
@@ -250,16 +250,18 @@ Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is 
 But this does not fully explain why these points are more likely to be visited by any trajectory.  To address this, one can ask how stable is this point compared to (unstable) points of other periodicities.  For period two points, 
 
 $$
-x = 0, \; x\approx0.39, \; x\approx0.72, \; x\approx0.87 \\
+x = 0, \; x \approx 0.39, \; x \approx 0.72, \; x \approx 0.87 \\
 (f^2(0))' = -113.2145 \\
-(f^2(0.3935))' = -79.06 \\
-(f^2(0.7282))' = -31.63 \\
-(f^2(0.8783))' = −17.61 \\
+(f^2(0.393))' = -79.06 \\
+(f^2(0.728))' = -31.63 \\
+(f^2(0.878))' = −17.61 \\
 $$
 
-But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the derivative of the logistic map $r(1-2x)$ is zero when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
+But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the absolute value of derivative of the logistic map $f'(x) = r(1-2x)$ is minimized when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
 
-For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$
+This is best seen using a cobweb plot, which plots the equation of interest (here $rx(1-x)$) and the line $y=x$ in order to follow iterations geometrically.  The principle is that $y=x$ is used to reflect y-values onto the x-axis, thereby allowing iterations to be plotted clearly.  The procedure is as follows: given any point on the x-axis, find the y-value that corresponds to $rx(1-x)$.  This is the value of the next iteration of (1), and this value is reflected back onto the x-axis by travelling horixontally until the $y=x$ line is reached.  The x-value of this point is the same as the y-value we just found, and therefore we can repeat the process of finding a subsequent iteration value by again finding the y-value of the curve $rx(1-x)$ and travelling horizontally to meet $y=x$.
+
+For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$.  
 
 ![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_1.png)
 
@@ -279,15 +281,14 @@ Overlayed onto the logistic map with successive iterations after $x_n=1/2$ in re
 
 {% include youtube.html id='hUZ6s0AAXq0' %}
 
-The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
+Aperiodicity with sensitivity to initial values, also called mathematical chaos, results when points are everywhere unstable.  But as this section has demonstrated, they are not necessarily equally unstable everywhere which illustrates a feature of chaos that differs from its English usage: mathematical chaos is not completely disordered. A more descriptive word might be 'mysterious' because these systems are unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the following section.
+
+This phenomenon of patterns arising amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
+
 
 ### Prediction accuracy for differing values of r
 
-Consider two points, $r = 3.6$ and $r = 4$, and observe the points plotted at both values on the orbit map:
-
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
-
-In contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible (see above).  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
+Consider the logistic map for, $r = 3.6$ and $r = 4$.  In contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible.  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
 
 $r=3.6$
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.6_small.png)
@@ -349,10 +350,6 @@ Prediction power does increase with better initial measurements, but not always:
 In the real world, no measurement is perfect but is merely an estimation: the gravitational constant is not 9.8 meters per second squared but simply close to this value.  Necessarily imperfect measurements mean that not only would one have to take infinitely long to predict something at arbitrarily (infinitely) far in the future, but beyond a certain point the predictions will be inaccurate.  
 
 This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/view/journals/atsc/20/2/1520-0469_1963_020_0130_dnf_2_0_co_2.xml?tab_body=pdf) mentioned above, in which a deterministic model of air convection was observed to exhibit unpredictable behavior.  A simplified proof for the idea that aperiodicity implies sensitivity to initial values, based on Lorenz's work, is found [here](https://blbadger.github.io/chaotic-sensitivity.html). 
-
-Let's call locations where close-together points eventually diverge in time unstable points.  Chaotic systems are unstable everywhere, meaning that any trajectory initially close to $x_n$ will in time diverge as $n \to \infty$.  
-
-But such systems are not necessarily equally unstable everywhere, and the iterations at $r=3.68$ in the last section provide a graphical example of a certain value ($x_n \approx 0.74$) than others.  This illustrates a feature of chaos that differs from its English usage: mathematical chaos is not completely disordered. A more descriptive word might be 'mysterious' because these systems are unpredictable, even if they are partially ordered or are bounded by spectacular patterns, as seen in the following section.
 
 ### Nonlinear maps are often fractals
 
