@@ -22,7 +22,7 @@ The mathematical approach to change over time. Most dynamical systems are nonlin
 
 ### [Logistic map](/logistic-map.md)
 
-![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_trace0428.png)
+![logistic map image]({{https://blbadger.github.io}}logistic_map/logistic_trace0428.png)
 
 
 ### [Clifford attractor](/clifford-attractor.md)
