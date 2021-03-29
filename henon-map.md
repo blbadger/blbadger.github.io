@@ -237,7 +237,7 @@ plt.show()
 If iterate (3) with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
-It looks like the bifurcation diagram from the logistic attractor! Closer inspection on the chaotic portion reveals an inverted Logistic-like map.
+It looks like the orbit plot for the [logistic map](https://blbadger.github.io/logistic-map.html)! Closer inspection on the chaotic portion reveals an inverted (and somewhat elongated) version of the aperiodic region of that map.
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
 
 As this system is being iterated semicontinuously, we can observe the vectorfield behind the motion of the points:
@@ -246,8 +246,7 @@ As this system is being iterated semicontinuously, we can observe the vectorfiel
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
-Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity). The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.
-
+Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity for most points) with changes in parameter values. The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.  Specifically, note that the values in question are very large: this makes the $x^2$ term become much larger than the others.  With a very small $b$ constant, and positive $x$ values throughout, we are guaranteed that subsequent iterations from the initial point will increase in $y$ value.  
 
 ### Pendulum map from the Henon attractor
 
