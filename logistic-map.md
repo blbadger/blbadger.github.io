@@ -250,14 +250,14 @@ Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is 
 But this does not fully explain why these points are more likely to be visited by any trajectory.  To address this, one can ask how stable is this point compared to (unstable) points of other periodicities.  For period two points, 
 
 $$
-x = 0, \; x\approx0.3935, \; x\approx0.7282, \; x\approx0.8783 \\
+x = 0, \; x\approx0.39, \; x\approx0.72, \; x\approx0.87 \\
 (f^2(0))' = -113.2145 \\
-(f^2(0.3935))' = -79.0602 \\
-(f^2(0.7282))' = -31.6355 \\
-(f^2(0.8783))' = −17.6117 \\
+(f^2(0.3935))' = -79.06 \\
+(f^2(0.7282))' = -31.63 \\
+(f^2(0.8783))' = −17.61 \\
 $$
 
-But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the derivative of the logistic map $r(1-x/2)$ is zero when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
+But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the derivative of the logistic map $r(1-2x)$ is zero when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
 
 For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$
 
@@ -275,7 +275,11 @@ Now as one ranges over r values, the first four iterations after $x_n=0.5$ are i
 
 ![traces]({{https://blbadger.github.io}}/logistic_map/logistic_traces.png)
 
-The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  
+Overlayed onto the logistic map,
+
+{% include youtube.html id='6FBkbA6zUQM' %}
+
+The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in prime gaps.
 
 ### Prediction accuracy for differing values of r
 
