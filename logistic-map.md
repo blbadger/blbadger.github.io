@@ -277,7 +277,7 @@ Now as one ranges over r values, the first four iterations after $x_n=0.5$ are i
 
 Overlayed onto the logistic map,
 
-{% include youtube.html id='6FBkbA6zUQM' %}
+{% include youtube.html id='wet5C4Yj51A' %}
 
 The idea that the orbit map reflects the behavior of iterations of (1) at constant $r$ values implies another difference between mathematical chaos and what is normally thought of as complete disorder.  This phenomenon of patterns amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
 
