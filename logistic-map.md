@@ -465,7 +465,7 @@ $$
 x_3, x_6, x_9, x_{12}... 
 $$ 
 
-until $x_{24}$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = \frac{1}{2}$ go to each point.
+until $x_{24}$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = 1/2$ go to each point.
 
 Here we see that every third iteration from $x_0 = 1/2$ is less unstable than the surrounding points, and so each has a higher point density.  The iterations approach one another as $r$ increases until they meet at around $r=3.82$.  A quick look at the logistic map suggests that the meeting of less-unstable points, particularly a meeting where these points approach at a decreasing rate (ie $\frac{d}{dr}x_3 - x_0 \to 0$) occurs for practically all transitions from aperiodicity to periodicity, whatever the period (3, 5, 7, 6, 12, etc.)  
 
