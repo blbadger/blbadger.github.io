@@ -466,6 +466,8 @@ Does a meeting of iterations of $x_0 = 1/2$ necessarily lead to a transition fro
 
 First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, then another point $f^{2k}(x_0)$ will also approach because $f(x_0)$ is near-periodic with period $k$.  This means that, for the region mapped above, there are not only 7 but really a countably infinite number of less-unstable points that approach one another, and all are iterations from $x_0 = 1/2$ (and therefore orbits from this starting value).  There are a countably infinite number of periodic orbits possible (see [here](https://blbadger.github.io/aperiodic-irrationals.html) for more on this), and therefore there are as many possible periodic orbits as there are less-unstable orbits that converge.  Then the value the less-unstable orbits converge upon becomes stable with respect to those periodic orbits because they are all accounted for.  
 
+Now note that all points plotted using any computer are, strictly speeaking, periodic: there are only so many possible values because computers use finite decimal precision.  Therefore eventually all values repeat: thus each point plotted is really a member of a periodic orbit.  As there are countably many periodic orbits possible and as countably many periodic orbits converge whenever two or more meet, the convergence value becomes stable for points that are plotted by a computer.
+
 
 
 
