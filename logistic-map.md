@@ -462,10 +462,10 @@ Now consider the transition from an area in the orbit map where no orbit is stab
 Every third iteration of the logistic map starting from the relatively stable point of $x_0=1/2$, ie 
 
 $$
-x_3, x_6, x_9, x_{12}... 
+x_3, x_6, x_9, x_{12}, ..., x_{21}
 $$ 
 
-until $x_{24}$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = 1/2$ go to each point.
+is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = 1/2$ go to each point.
 
 Here we see that every third iteration from $x_0 = 1/2$ is less unstable than the surrounding points, and so each has a higher point density.  The iterations approach one another as $r$ increases until they meet at around $r=3.82$.  A quick look at the logistic map suggests that the meeting of less-unstable points, particularly a meeting where these points approach at a decreasing rate (ie $\frac{d}{dr}x_3 - x_0 \to 0$) occurs for practically all transitions from aperiodicity to periodicity, whatever the period (3, 5, 7, 6, 12, etc.)  
 
@@ -473,7 +473,7 @@ Does a meeting of iterations of $x_0 = 1/2$ necessarily lead to a transition fro
 
 First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, then another point $f^{2k}(x_0)$ will also approach because $f(x_0)$ is near-periodic with period $k$.  This means that, for the region mapped above, there are not only 7 but really a countably infinite number of less-unstable points that approach one another, and all are iterations from $x_0 = 1/2$ (and therefore orbits from this starting value).  There are a countably infinite number of periodic orbits possible (see [here](https://blbadger.github.io/aperiodic-irrationals.html) for more on this), and therefore there are as many possible periodic orbits as there are less-unstable orbits that converge.  Then the value the less-unstable orbits converge upon becomes stable with respect to those periodic orbits because they are all accounted for.  
 
-Now note that all points plotted using any computer are, strictly speeaking, periodic: there are only so many possible values because computers use finite decimal precision.  Therefore eventually all values repeat: thus each point plotted is really a member of a periodic orbit.  As there are countably many periodic orbits possible and as countably many periodic orbits converge whenever two or more meet, the convergence value becomes stable for points that are plotted by a computer.
+Now note that all points plotted using any computer are, strictly speaking, periodic: there are only so many possible values because computers use finite decimal precision.  Therefore eventually all values repeat: thus each point plotted is really a member of a periodic orbit.  As there are countably many periodic orbits possible and as countably many periodic orbits converge whenever two or more meet, the convergence value becomes stable for points that are plotted by a computer.
 
 
 
