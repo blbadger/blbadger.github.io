@@ -454,12 +454,12 @@ As observed by Li and Yorke, period three also implies an uncountably infinite n
 
 The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
 
-Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near r=3.8285 (right click to view image in higher resolution):
+Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near $r=3.8285$ (right click to view image in higher resolution):
 
 ![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
 
 
-Every third iteration of the logistic map starting from the relatively stable point of $x=\frac{1}{2}$, ie 
+Every third iteration of the logistic map starting from the relatively stable point of $x_0=1/2$, ie 
 
 $$
 x_3, x_6, x_9, x_{12}... 
