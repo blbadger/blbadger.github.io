@@ -454,11 +454,18 @@ As observed by Li and Yorke, period three also implies an uncountably infinite n
 
 The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
 
-Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near r=3.8285,
+Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near r=3.8285 (right click to view image in higher resolution):
 
 ![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
 
-Every third iteration of the logistic map starting from the relatively stable point of $x=\frac{1}{2}$, ie $x_3, x_6, x_9 ... $ until $x_24$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = \frac{1}{2}$ go to each point.
+
+Every third iteration of the logistic map starting from the relatively stable point of $x=\frac{1}{2}$, ie 
+
+$$
+x_3, x_6, x_9, x_{12}... 
+$$ 
+
+until $x_{24}$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = \frac{1}{2}$ go to each point.
 
 Here we see that every third iteration from $x_0 = 1/2$ is less unstable than the surrounding points, and so each has a higher point density.  The iterations approach one another as $r$ increases until they meet at around $r=3.82$.  A quick look at the logistic map suggests that the meeting of less-unstable points, particularly a meeting where these points approach at a decreasing rate (ie $\frac{d}{dr}x_3 - x_0 \to 0$) occurs for practically all transitions from aperiodicity to periodicity, whatever the period (3, 5, 7, 6, 12, etc.)  
 
