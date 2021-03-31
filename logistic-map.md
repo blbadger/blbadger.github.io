@@ -422,12 +422,12 @@ Evaluating this equation with class `Calculate` gives, respectively,
 
 and this means that as expected, only the roots that were attractors in the numerical approach are stable, and the rest are unstable.  As an aside, note that the root at 0 has the largest value of $(f^3)'(x)$, and numerically is the most unstable of all points.
 
-But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the unfortunate equation $f^4(x) - x$ which for $r=3.83$ is
+But there is something different about $r=3.83$ that yields (prime) period 3 points compared to those observed above for prime period 1 or 2.  Let's try to find points of period 4, which involves finding the roots of the equation $f^4(x) - x = 0$ which for $r=3.83$ is the unfortunate
 
 ```python
 -559733898.714433x^16+4477871189.715462x^15-16257127648.301172x^14+35437147718.087624x^13-51706394045.119659x^12+53298583067.632263x^11-39921349801.953377x^10+22008774729.800488x^9-8946369923.674864x^8+2660008486.237636x^7-568040584.628146x^6+84473618.951678x^5-8330423.126762x^4+503584.653117x^3-16284.736485x^2+214.176627x
 ```
-which by Halley's method estimates roots at
+which Halley's method estimates real roots at
 
 ```python
 [(0.60584), (0.738903), (0.803014), (0.299162), (0.369161), (0), (0.891935), (0.914596)]
@@ -450,18 +450,28 @@ where any prime period also gives points of prime period for any number to the r
 
 As observed by Li and Yorke, period three also implies an uncountably infinite number of (unstable) aperiodic trajectories.  
 
-<!--- 
-
 ### Exits from aperiodicity
 
 The conclusion from the last section is that for values of $r$ of the logistic map such that there is a period-3 orbit, there are simultaneously orbits of any finite period as well as infinite-period (which are by definition aperiodic) orbits for this same $r$ value.  These are unstable, whereas the period-3 orbit is stable which is why we see points attracted to this particular orbit.
 
-Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). For a closer view at one of these points
+Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near r=3.8285,
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_transformation.png)
+![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.gif)
 
-Recall that areas with higher point density in the orbit map correspond to population values that appear more often over many iterations of (1).  Thus these are the points that are less unstable than the others.  To see why it makes sense to talk about relative instability, consider that our test for $\rvert (f^2)'(x) \lvert < 1$ can be extended to compare $(f^2)'(x_1)$ and $(f^2)'(x_2)$ if both are >1.  For example, where r=3.1 (see above), $(f^2)'(0) = 9.81 > (f^2)'(0.67742) \approx 1.21$ and iterations move away from 0 far more rapidly than they do from 0.67742.
+Every third iteration of the logistic map starting from the relatively stable point of $x=\frac{1}{2}$, ie $x_3, x_6, x_9 ... $ until $x_24$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = \frac{1}{2}$ go to each point.
 
--->
+Here we see that every third iteration from $x_0 = 1/2$ is less unstable than the surrounding points, and so each has a higher point density.  The iterations approach one another as $r$ increases until they meet at around $r=3.82$.  A quick look at the logistic map suggests that the meeting of less-unstable points, particularly a meeting where these points approach at a decreasing rate (ie $\frac{d}{dr}x_3 - x_0 \to 0$) occurs for practically all transitions from aperiodicity to periodicity, whatever the period (3, 5, 7, 6, 12, etc.)  
+
+Does a meeting of iterations of $x_0 = 1/2$ necessarily lead to a transition from aperiodicity to periodicity?  Yes, and here is why: 
+
+First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, then another point $f^{2k}(x_0)$ will also approach because $f(x_0)$ is near-periodic with period $k$.  This means that, for the region mapped above, there are not only 7 but really a countably infinite number of less-unstable points that approach one another, and all are iterations from $x_0 = 1/2$ (and therefore orbits from this starting value).  There are a countably infinite number of periodic orbits possible (see [here](https://blbadger.github.io/aperiodic-irrationals.html) for more on this), and therefore there are as many possible periodic orbits as there are less-unstable orbits that converge.  Then the value the less-unstable orbits converge upon must be periodic, because all orbits are accounted for in one or another of the periodic points.
+
+
+
+
+
+
+
+
 
 
