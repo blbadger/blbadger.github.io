@@ -456,7 +456,7 @@ The conclusion from the last section is that for values of $r$ of the logistic m
 
 Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near r=3.8285,
 
-![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.gif)
+![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
 
 Every third iteration of the logistic map starting from the relatively stable point of $x=\frac{1}{2}$, ie $x_3, x_6, x_9 ... $ until $x_24$ is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = \frac{1}{2}$ go to each point.
 
@@ -464,7 +464,7 @@ Here we see that every third iteration from $x_0 = 1/2$ is less unstable than th
 
 Does a meeting of iterations of $x_0 = 1/2$ necessarily lead to a transition from aperiodicity to periodicity?  Yes, and here is why: 
 
-First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, then another point $f^{2k}(x_0)$ will also approach because $f(x_0)$ is near-periodic with period $k$.  This means that, for the region mapped above, there are not only 7 but really a countably infinite number of less-unstable points that approach one another, and all are iterations from $x_0 = 1/2$ (and therefore orbits from this starting value).  There are a countably infinite number of periodic orbits possible (see [here](https://blbadger.github.io/aperiodic-irrationals.html) for more on this), and therefore there are as many possible periodic orbits as there are less-unstable orbits that converge.  Then the value the less-unstable orbits converge upon must be periodic, because all possible orbits are accounted for.  
+First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, then another point $f^{2k}(x_0)$ will also approach because $f(x_0)$ is near-periodic with period $k$.  This means that, for the region mapped above, there are not only 7 but really a countably infinite number of less-unstable points that approach one another, and all are iterations from $x_0 = 1/2$ (and therefore orbits from this starting value).  There are a countably infinite number of periodic orbits possible (see [here](https://blbadger.github.io/aperiodic-irrationals.html) for more on this), and therefore there are as many possible periodic orbits as there are less-unstable orbits that converge.  Then the value the less-unstable orbits converge upon becomes stable with respect to those periodic orbits because they are all accounted for.  
 
 
 
