@@ -58,7 +58,7 @@ $$
 Now choosing certain values for $a$, $b$, and $c$, 
 
 $$
-b = a/2 \implies x_{n+1} = a^2(1-x_n) + (a/2)^2 + c \\
+b = a/2 \implies x_{n+1} = a^2x_n(1-x_n) + (a/2)^2 + c \\
 c=-(a/2)^2 \implies x_{n+1} = a^2x_n(1-x_n) \\
 a^2 = r \implies x_{n+1} = rx_n(1-x_n)
 $$
