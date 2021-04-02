@@ -8,7 +8,7 @@ $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
 where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
 
-Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries.
+Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries for mathematical modeling.
 
 ```python
 #! python3
@@ -259,7 +259,7 @@ and another iteration gives $x_{n+2} \approx 0.32$,
 
 ![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_2.png)
 
-After five iterations (red, orange, yellow, blue, indigo respectively), there is
+After six iterations (red, orange, yellow, green, blue, indigo respectively), there is
 
 ![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_full.png)
 
@@ -276,7 +276,7 @@ Aperiodicity with sensitivity to initial values, also called mathematical chaos,
 This phenomenon of patterns arising amidst aperiodicity is also found in [prime gaps](https://blbadger.github.io/unpredictable-primes.html).
 
 
-### Prediction accuracy for differing values of r
+### Prediction accuracy
 
 Consider the logistic map for, $r = 3.6$ and $r = 4$.  In contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible.  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
 
