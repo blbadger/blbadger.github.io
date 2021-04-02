@@ -36,7 +36,7 @@ ax.set(xlabel='Time (years)', ylabel='Population (fraction of max)')
 plt.show()
 ```
 
-When $r$ is small (0.5), the population heads towards 0:
+When $r$ is small (less than one, to be specific), the population heads towards 0.  Here $r=0.5$:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
 
@@ -95,9 +95,7 @@ at $r = 3.5$, the trajectory is period 4, as it takes 4 iterations for the popul
 
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
-and at $r=3.55$, the population trajectory is period 8:
-
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.55.png)
+As $r$ increases, trajectories of $8,\; 16,\; 32,\; 64...$ exist: given any natural number that is the power of two, there is some $r$ value range for which the logistic map trajectory has that number as a periodic cycle.
 
 ### Aperiodic trajectories in the logistic map
 
@@ -122,18 +120,13 @@ $$
 
 the fixed points are found again, and in addition two more points are found.  All are unstable (which can be checked by observing that all points fail the test of $\lvert (f^2)'(x_n) \rvert < 1$).  What makes the $r=3.7$ value special is that for any given integer $k$, one can find periodic points with period $k$.  But as $k+1$ also exhibits periodic points, the logistic map with $r=3.7$ only has a prime periodic point at $x_n = \infty$, which is to say that the map has no finite (prime) periodic points and therefore aperiodic.
 
-Aperiodicity leads to unpredictable behavior.  Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
-
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_pop.gif)
-
-As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.    
+As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.  
 
 Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
 
-
-The behavior is similar to the unshifted population for a while, until it changes and becomes wildly different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
+The behavior is similar to the unshifted population for a while, until it changes and becomes very different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
 
 In contrast, a relatively large shift of a factor of one hundreth (3 to 3.03) in initial population leads to no change to periodicity or exact values at $r=2.5$ (period 1):
 
@@ -344,6 +337,10 @@ Prediction ability (in length until divergence) tends to decrease with increasin
 Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
+
+Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
+
+{% include youtube.html id='WlbN2ZD34HU' %}
 
 Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.  Notice that for certain values of $r$ the number of iterations until divergence actually increases with a decrease in $\Delta x_0$: this means that paradoxically increased accuracy can lead to decreased prediction accuracy!  
 
