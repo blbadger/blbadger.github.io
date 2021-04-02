@@ -1,4 +1,6 @@
-## The boundary of the logistic equation
+## The boundary of the logistic map
+
+### The logistic map is a conjugate of a Julia set
 
 The logistic equation
 
@@ -29,17 +31,44 @@ Now which points remain bounded and which head towards infinity?  Let's try fixi
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_3_fixed_r.png)
 
-The result is nearly identical to a [Julia set](/julia-sets.md) for $a = -0.75 + 0i$, shown below.
+The result looks very similar to a [Julia set](/julia-sets.md), is defined as the set of points bordering initial points whose subsequent iterations of 
+
+$$
+z_{n+1} = z_n^2 + a
+\tag{3}
+$$
+
+that diverge (head to infinity) and points whose subsequent interations do not diverge.
+
+For $a = -0.75 + 0i$, this set is shown below (with an inverted color scheme to that used for the logistic map for clarity)
 
 ![julia map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
 
-Just for fun, let's zoom in on the origin.  For most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
+These maps look extremely similar, so could they actually be the same?  They are indeed!  The logistic map (1) and the quadratic map (3) which forms the basis of the Julia sets are conjugates of one another: they contain identical topological properties for a certain $a$ value, or in other words transforming from one map to another is a homeomorphism.  
+
+This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  Therefore linear transformations do not affect 
+
+This being the case, the logistic map (1) may be transformed into the quadratic map (3) with the linear transformation $y_n = ax_n + b$ by choosing certain values of $a, \; b$ as follows:
+
+$$
+y_{n+1} = y_n^2 + c, \; y_n = ax_n+b \\
+x_{n+1} = (ax_n+b)^2 + c = a^2x_n^2 + 2abx_n + b^2 + c \\
+b = a/2 \implies x_{n+1} = a^2(1-x_n) + (a/2)^2 + c \\
+c=-(a/2)^2 \implies x_{n+1} = a^2x_n(1-x_n) \\
+a^2 = r \implies x_{n+1} = rx_n(1-x_n)
+$$
+
+Therefore for $a=\sqrt{r},\; b=\sqrt{r}/2, \; c=-r/4$ the quadratic map is by a homeomorphism (ie a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the quadratic map is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c=-r/4 = -3/4$.  
+
+All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=-r/4$. Just for fun, let's zoom in on the origin of the set displayed above.  An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
 Moving from $r=2 \to r=4$, 
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
+
+### The logistic map and the Mandelbrot set
 
 What happens if we instead fix the starting point and allow $r$ to range about the complex plane? For the starting point $x_0, yi_0 = 0.5, 0$, we get 
 
@@ -77,7 +106,7 @@ $$
 (-1.633 + 0i)
 $$
 
-As an aside, the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
+Another aside: the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
 
 ```python
 def mandelbrot_set(h_range, w_range, max_iterations, t):
