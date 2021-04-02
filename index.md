@@ -87,7 +87,8 @@ $$
 
 $$
 f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
-\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
+\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \\
+\exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
 ### [Aperiodic maps, irrational numbers, and solvable problems](/aperiodic-irrationals.md)
