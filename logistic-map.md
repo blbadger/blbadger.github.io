@@ -335,11 +335,7 @@ This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/
 
 ### Nonlinear maps are often fractals
 
-One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.
-
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
-
-Observe what happens when we zoom in on the upper left section: A smaller copy of the original image is found.
+One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.  Observe what happens when we zoom in on the upper left section of the aperiodic region in the logistic map: A smaller copy of the original is found.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom3.png)
 
@@ -439,7 +435,6 @@ The conclusion from the last section is that for values of $r$ of the logistic m
 Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near $r=3.8285$ (right click to view image in higher resolution):
 
 ![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
-
 
 Every third iteration of the logistic map starting from the relatively stable point of $x_0=1/2$, ie 
 
