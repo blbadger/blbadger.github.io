@@ -275,4 +275,4 @@ For $(x_0, y_0) = (7.5, 7.5) \to (x_0, y_0) \approx (12, 12)$, the transition fr
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_ranged.gif)
 
-
+For an investigation into which point ends up where, see [this page](/clifford-boundary.md).
