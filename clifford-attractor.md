@@ -1,17 +1,5 @@
 ## Clifford attractor
 
-**Contents:** 
- 
-[Introduction](#introduction)
-
-[Clifford attractors are fractals](#clifford-attractors-are-fractals)
-
-[Attractors shift dimension depending on constant values](#attractors-shift-dimension-depending-on-constant-values)
-
-[Semi-continuous mapping](#semi-continuous-mapping)
-
-[Many attractors from one semi-continuous Clifford map](#many-attractors-from-one-semi-continuous-clifford-map)
-
 ### Introduction
 
 The Clifford attractor, also known as the fractal dream attractor, is the system of equations:
@@ -236,20 +224,24 @@ From $\Delta t = 0.1 \to \Delta t = 1.35$,
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
 
+<!---
+TODO: better zoom on the clifford attractor
 Is the attractor for $\Delta t = 1.35$ a fractal? Zooming in on the bottom right section suggests that it is:
 
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom1.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom2.png)
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_zoom3.png)
+-->
 
-The final position after a given number of iterations is also extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values is implied by aperiodicity, and bounded aperiodic maps form fractals, in which case the attractor may be called a strange attractor.
+For $\Delta t=1.35$, the final position after a sufficient number of iterations is extraordinarily sensitive to initial conditions, as detailed [here](https://blbadger.github.io/pendulum-map.html).  Sensitivity to initial values implies aperiodicity, and bounded aperiodic maps may contain fractals attractors (also called strange attractors.
+
+### Why semi-continuous?
 
 Discrete differential systems are recurrence relations: a point's next position is entirely determined by its current position according to the equation system given.  In contrast, both a point's next position in a continuous system is almost entirely determined by its current position: the equation system merely determines the direction and rate of change.  
 
-One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent an point between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step.  
+One can think of Euler maps with large $\Delta t$ values to be 'semicontinuous' because they represent amix between recurrence relations and (approximately) continuous maps: a point's next position depends on both its current position as well as on the equation system's output for that step. 
 
-As is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semi-continuous but not continuous maps of dissipative nonlinear equations may be fractals in two dimensions, as is the case for discrete maps (see [here](https://blbadger.github.io/continuity-poincare.html) for an explanation). 
-
+Thus as is the case for continuous systems (and unlike that for discrete systems), one can trace a point's path using a vector plot on a semicontinuous map.  On the other hand, semi-continuous but not continuous maps of dissipative nonlinear equations may be fractals in two dimensions, as is the case for discrete maps (see [here](https://blbadger.github.io/continuity-poincare.html) for an explanation). 
 
 ### Many attractors from one semi-continuous Clifford map
 
