@@ -138,7 +138,7 @@ or at $r=3.5$, period 4, the same change does not alter the pattern produced:
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
 
 
-even a large change in starting value at $r=3.55$ (period 8), from population $p=0.3$ to $p=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
+even a large change in starting value at $r=3.55$ (period 8), from $x_0=0.3$ to $x_0=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
@@ -199,7 +199,7 @@ What do these shapes mean? It is worth remembering what this orbit diagram repre
 Are these same values more common if $r$ is fixed and many iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  THe proportion of iterations near each value may be plotted in R,
 
 ```R
-# data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=4
+# data taken from 900 iterations of the logistic equation starting at 3, 6, and 9 (+ 0.0000000000000001) at r=3.68
 library(ggplot2)
 data1 = read.csv('~/Desktop/logistic_0.3_4.csv', header=T)
 a <- ggplot(data1, aes(value))
@@ -209,26 +209,23 @@ a + geom_dotplot('binwidth' = 0.01, col='blue', fill='red') +
     theme_bw(base_size = 14) 
 ```
 
-and it is found that there are indeed more iterations near $0.74$. Here the x-axis denotes the population size, and the y-axis denotes the number of iterations:
+Here the x-axis denotes the population size, and the y-axis denotes the proportion of iterations in this region:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
-
-This also holds for $r = 4$: at this value, the orbit diagram suggests that there is more point density at population size $p=1$ and $p=0$ than anywhere else.  Is this the case while holding $r$ constant and iterating many times over different starting population values? It is indeed! 
-
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_4.png)
+and thus there are are indeed more iterations near $0.74$ than elsewhere, holding $r$ constant and iterating from a few different starting points. 
 
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides a possible explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
-We know that every point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.7282...$ move comparatively less than others
+Each point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.7282...$ move comparatively less than others.
 
 Fixed points for $r=3.68$ may be found:
 
 $$
 x_n = rx_n(1-x_n) \\
-x_n = 0, x_n = 0.7282608695652174\\
+x_n = 0, x_n = 0.728261\\
 $$
 
 Note that our relatively stable point above is very close to the (unstable) point of period 1. These points have linear stabilities of 
@@ -240,7 +237,7 @@ $$
 
 Now $\lvert -1.68 \rvert > 1$ and so the point is unstable, but note that it is not very unstable as it is close to 1.  This means that subsequent iterations will diverge, just slowly, which explains why points near $x_n=0.7282...$ tend to have subsequent iterations near their current value.
 
-But this does not fully explain why these points are more likely to be visited by any trajectory.  To address this, one can ask how stable is this point compared to (unstable) points of other periodicities.  For period two points, 
+This does not really explain why these points are more likely to be visited by any trajectory because points of every periodicity are possible, not just period 1.  To address this, one can ask how stable is this point compared to (unstable) points of other periodicities.  For period two points, 
 
 $$
 x = 0, \; x \approx 0.39, \; x \approx 0.72, \; x \approx 0.87 \\
@@ -292,19 +289,15 @@ $r=4$
 Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
 
 To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $p_{01} = 3, p_{02} = 3.0003$.
-To do this, the first step is to initialize an array to record $r$ values from 3.5 to 4, taking 500 steps.
-```python
-from matplotlib import pyplot as plt 
-import numpy as np 
 
+To do this, the first step is to initialize an array to record $r$ values from 3.5 to 4, taking 500 steps.  The next step is to count the number of iterations it takes to diverge (with a maximum interation number of 100 in this case).  Arbitrarily setting divergence to be a difference in value greater than 0.15, 
+```python
 steps = 500
 y = np.zeros(steps + 1)
 r = np.zeros(steps + 1)
 r[0] = 3.5
 y[0] = 100
-```
-THe next step is to count the number of iterations it takes to diverge (with a maximum interation number of 100 in this case).  Arbitrarily setting divergence to be a difference in value greater than 0.15, 
-```python
+
 for i in range(500):
 	X1 = 0.3
 	X2 = 0.3 + 0.3**(t/30)
@@ -319,32 +312,24 @@ for i in range(500):
 	y[i+1] = j + 1
 	r[i+1] = r[i] + 0.001
 ```
-and now plot the results,
-```python
-fig, ax = plt.subplots()
-ax.plot(r, y)
-ax.set(xlabel='r value', ylabel='First iteration of divergence')
-plt.show()
-plt.close()
-```
 
-which yields
+which when plotted yields
 
 ![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
 
-Prediction ability (in length until divergence) tends to decrease with increasing $r$, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
+Prediction ability (in length until divergence) tends to decrease with increasing $r$ values, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
 
 Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence.gif)
+{% include youtube.html id='7MGpoV2x2Hc' %} 
+
+Thus prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.  Notice that for certain values of $r$ the number of iterations until divergence actually increases with a decrease in $\Delta x_0$: this means that paradoxically increased accuracy can lead to decreased prediction accuracy!  
 
 Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
 
 {% include youtube.html id='WlbN2ZD34HU' %}
 
-Prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.  Notice that for certain values of $r$ the number of iterations until divergence actually increases with a decrease in $\Delta x_0$: this means that paradoxically increased accuracy can lead to decreased prediction accuracy!  
-
-In the real world, no measurement is perfect but is merely an estimation: the gravitational constant is not 9.8 meters per second squared but simply close to this value.  Necessarily imperfect measurements mean that not only would one have to take infinitely long to predict something at arbitrarily (infinitely) far in the future, but beyond a certain point the predictions will be inaccurate.  
+This sensitivity to constant values as well as initial population is important because in the real world, no measurement is perfect but is merely an estimation: the gravitational constant is not 9.8 meters per second squared but simply close to this value.  Necessarily imperfect measurements mean that not only would one have to take infinitely long to predict something at arbitrarily (infinitely) far in the future, but beyond a certain point the predictions will be inaccurate.  
 
 This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/view/journals/atsc/20/2/1520-0469_1963_020_0130_dnf_2_0_co_2.xml?tab_body=pdf) mentioned above, in which a deterministic model of air convection was observed to exhibit unpredictable behavior.  A simplified proof for the idea that aperiodicity implies sensitivity to initial values, based on Lorenz's work, is found [here](https://blbadger.github.io/chaotic-sensitivity.html). 
 
