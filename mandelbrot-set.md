@@ -3,11 +3,11 @@
 The Mandelbrot set $\mathscr M$ is the set of points $a$ in the complex plane for which the Julia sets are connected.  This happens to be the same set of points that iterations of the equation
 
 $$
-z = z^2 + a
+z_{n+1} = z_n^2 + a
 \tag{1}
 $$
 
-do not diverge (go to positive or negative infinity) but instead are bounded upon many iterations at a starting value of $z = 0$.  Thus the Mandelbrot set is very similar to the Julia set but instead of fixing $a$ and ranging about $z$, the starting value of $z$ is fixed at 0 and the value of $a$ is ranged about the complex plane. 
+do not diverge (go to positive or negative infinity) but instead are bounded upon many iterations at a starting value of $z_0 = 0$.  Thus the Mandelbrot set is very similar to the Julia set but instead of fixing $a$ and varying $z_0$ at different points in the plot, instead the starting value of $z_0$ is fixed at 0 and the value of $a$ at different points in the complex plane are plotted.
 
 Let's compute $\mathscr M$. As for the [Julia sets](/julia-sets.html), the simplest way to do this is to initialize a complex plane as an `ogrid` array in numpy, with the difference being that `a` is assigned to this array, not `z`, which is instead asigned to an identically sized array of 0s.
 
