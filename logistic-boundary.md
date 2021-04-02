@@ -48,11 +48,16 @@ These maps look extremely similar, so could they actually be the same?  They are
 
 This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  Therefore linear transformations do not affect 
 
-This being the case, the logistic map (1) may be transformed into the quadratic map (3) with the linear transformation $y_n = ax_n + b$ by choosing certain values of $a, \; b$ as follows:
+This being the case, the logistic map (1) may be transformed into the quadratic map (3) with the linear transformation $y_n = ax_n + b$ as follows:
 
 $$
 y_{n+1} = y_n^2 + c, \; y_n = ax_n+b \\
-x_{n+1} = (ax_n+b)^2 + c = a^2x_n^2 + 2abx_n + b^2 + c \\
+x_{n+1} = (ax_n+b)^2 + c = a^2x_n^2 + 2abx_n + b^2 + c 
+$$
+
+Now choosing certain values for $a$, $b$, and $c$, 
+
+$$
 b = a/2 \implies x_{n+1} = a^2(1-x_n) + (a/2)^2 + c \\
 c=-(a/2)^2 \implies x_{n+1} = a^2x_n(1-x_n) \\
 a^2 = r \implies x_{n+1} = rx_n(1-x_n)
