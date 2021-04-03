@@ -48,24 +48,36 @@ These maps look extremely similar, so could they actually be the same?  They are
 
 This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  Therefore linear transformations do not affect 
 
-This being the case, the logistic map (1) may be transformed into the quadratic map (3) with the linear transformation $y_n = ax_n + b$ as follows:
+This being the case, if it is possible to transform the logistic map (1) into the quadratic map (3) with the linear transformation $f(x) = ax+b$, then these maps are topologically equivalent.  To test this, the following must be checked:
 
 $$
-y_{n+1} = y_n^2 + c, \; y_n = ax_n+b \\
-x_{n+1} = (ax_n+b)^2 + c = a^2x_n^2 + 2abx_n + b^2 + c 
+f(x_{n+1}) = y_{n+1}(f_x)
 $$
 
-Now choosing certain values for $a$, $b$, and $c$, 
+Which can be expanded for clarity:
 
 $$
-b = a/2 \implies x_{n+1} = a^2x_n(1-x_n) + (a/2)^2 + c \\
-c=-(a/2)^2 \implies x_{n+1} = a^2x_n(1-x_n) \\
-a^2 = r \implies x_{n+1} = rx_n(1-x_n)
+a(rx_n(1-x_n)) + b = (ax_n + b)^2 + c \\
+arx_n - arx_n^2 + b = a^2x_n^2 + 2abx_n + b^2 + c \\
 $$
 
-Therefore for $a=\sqrt{r},\; b=\sqrt{r}/2, \; c=-r/4$ the quadratic map is by a homeomorphism (ie a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the quadratic map is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c=-r/4 = -3/4$.  
+and now substituting useful values for $a$ and $b$ to remove terms,
 
-All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=-r/4$. Just for fun, let's zoom in on the origin of the set displayed above.  An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
+$$
+b = r/2 \implies -arx_n^2 + b = a^2x_n^2 + b^2 + c \\
+a = -r \implies b = b^2 + c \\
+c = b - b^2
+$$
+
+putting these expressions together, the conjugacy is valid whenever
+
+$$
+c = \frac{r}{2}(1-\frac{r}{2}
+$$
+
+Therefore for $a=\sqrt{r},\; b=\sqrt{r}/2, \; c=-r/4$ the quadratic map is by a homeomorphism (ie a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the quadratic map is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c= \frac{3}{2}(1-\frac{3}{2}) = -3/4$.  
+
+All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=\frac{r}{2}(1-\frac{r}{2})$. Just for fun, let's zoom in on the origin of the set displayed above.  An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
