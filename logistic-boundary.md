@@ -72,10 +72,10 @@ $$
 putting these expressions together, the conjugacy is valid whenever
 
 $$
-c = \frac{r}{2}(1-\frac{r}{2}
+c = \frac{r}{2}(1-\frac{r}{2})
 $$
 
-Therefore for $a=\sqrt{r},\; b=\sqrt{r}/2, \; c=-r/4$ the quadratic map is by a homeomorphism (ie a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the quadratic map is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c= \frac{3}{2}(1-\frac{3}{2}) = -3/4$.  
+Therefore the quadratic map is by a homeomorphism (in particular, a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the Julia set above is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c= \frac{3}{2}(1-\frac{3}{2}) = -3/4$.  
 
 All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=\frac{r}{2}(1-\frac{r}{2})$. Just for fun, let's zoom in on the origin of the set displayed above.  An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
