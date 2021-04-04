@@ -452,6 +452,17 @@ First note that if two points $f(x_0), f^k(x_0), k > 2$ approach one another, th
 
 Now note that all points plotted using any computer are, strictly speaking, periodic: there are only so many possible values because computers use finite decimal precision.  Therefore eventually all values repeat: thus each point plotted is really a member of a periodic orbit.  As there are countably many periodic orbits possible and as countably many periodic orbits converge whenever two or more meet, the convergence value becomes stable for points that are plotted by a computer.
 
+### Orbit map revisited
+
+It is interesting to consider what the logistic orbit map represents: periodic points that are stable, not periodic points that are unstable.  With very accurate arithmetic, the logistic map looks quite different.
+
+This can be plotted using the `Decimal` class in python, which implements arbitrary (within memory bounds, that is) decimal precision arithmetic.  For a constant $300000$ steps starting at $r=2.95$ and ending at $r=4$, increasing from $8$ to $28,208$ digits of decimal precision yields
+
+{% include youtube.html id='CcTqmILTRX8 ' %}
+
+And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  A map starting at $r=1$ would retain a period 1 attractor for the orbit map, and so on.
+
+Here is a good example of soomething that is, under a stricter definition of computability, uncomputable: if one starts in an aperiodic region ...
 
 
 
