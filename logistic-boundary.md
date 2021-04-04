@@ -72,7 +72,7 @@ $$
 putting these expressions together, the conjugacy is valid whenever
 
 $$
-c = \frac{r}{2}(1-\frac{r}{2})
+c = \frac{r}{2} \left( 1-\frac{r}{2} \right)
 $$
 
 Therefore the quadratic map is by a homeomorphism (in particular, a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the Julia set above is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c= \frac{3}{2}(1-\frac{3}{2}) = -3/4$.  
@@ -95,7 +95,7 @@ What happens if we instead fix the starting point and allow $r$ to range about t
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
-At $(x_0, yi_0) = (0.5, 0) = 0.5 + 0i$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).   the Mandelbrot set is what we get when we iterate 
+This figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  This is because the Mandelbrot set is what we get when we iterate 
 
 $$
 z_{next} = z_n^2 + c
@@ -104,7 +104,7 @@ $$
 and find which values of $c$ head towards infinity and which do not for a given starting point $z_0 = 0 + 0i$.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations of 
 
 $$
-z_{next} = z_n^2 + \frac{r}{2}(1-\frac{r}{2})
+z_{next} = z_n^2 + \frac{r}{2} \left( 1-\frac{r}{2} \right)
 $$
 
 to head towards infinity. 
