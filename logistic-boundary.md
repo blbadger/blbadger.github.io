@@ -77,37 +77,41 @@ $$
 
 Therefore the quadratic map is by a homeomorphism (in particular, a linear transformation) equivalent to the logistic map, and thus the two are topologically equivalent.  Now the necessity of the seemingly arbitrary value of $a=-0.75$ for the Julia set above is clear: $r=3$ was specified for the logistic map, and by our homeomorphism then $c= \frac{3}{2}(1-\frac{3}{2}) = -3/4$.  
 
-All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=\frac{r}{2}(1-\frac{r}{2})$. Just for fun, let's zoom in on the origin of the set displayed above.  An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
+All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=\frac{r}{2}(1-\frac{r}{2})$. Just for fun, let's zoom in on the logistic boundary map above, focusing on the origin.
+
+An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
-Moving from $r=2 \to r=4$, 
 
-![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
 
 ### The logistic map and the Mandelbrot set
 
-What happens if we instead fix the starting point and allow $r$ to range about the complex plane? For the starting point $x_0, yi_0 = 0.5, 0$, we get 
+Julia sets may be connected or disconnected.  As the logistic map (1) is a homeomorphism of the quadratic map Julia set (3), identical set topologies should be observed for the logistic map. Moving from $r=2 \to r=4$ (both on the real line) for the logistic map, which is equivalent to going from $c=0 \to c=-2$,
+
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
+
+What happens if we instead fix the starting point and allow $r$ to range about the complex plane, plotting these starting points? For the starting point $z_0 = 1/2 + 0i$, we get 
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
-And from $x_0 = 0 \to x_0 = 2$, 
-
-![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
-
-At $(x_0, yi_0) = (0.5, 0) = 0.5 + 0i$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  This intuitively makes sense: the Mandelbrot set is what we get when we iterate 
+At $(x_0, yi_0) = (0.5, 0) = 0.5 + 0i$ figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).   the Mandelbrot set is what we get when we iterate 
 
 $$
-z_{next} = z^2 + c
+z_{next} = z_n^2 + c
 $$
 
-in the complex plane and find which positions ($c$) head towards infinity and which do not for a given starting point $z_0$.  This is analagous to fixing the starting point for the logistic equation (at $(x_0, y_0) = (0.5, 0i)$ in this case) and then looking at which $r$ values cause future iterations of 
+and find which values of $c$ head towards infinity and which do not for a given starting point $z_0 = 0 + 0i$.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations of 
 
 $$
-z_{next} = rz(1-z) = (-z^2 + z)r
+z_{next} = z_n^2 + \frac{r}{2}(1-\frac{r}{2})
 $$
 
-to head towards infinity. To illustrate, increasing the scale at the point 
+to head towards infinity. 
+
+### Zoom and extended logistic set
+
+Increasing scale at the point 
 
 $$
 (3.58355 + 0i)
@@ -123,7 +127,7 @@ $$
 (-1.633 + 0i)
 $$
 
-Another aside: the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
+A programmatic tidbit that is entirely skippable if you do not wish to implement these maps yourself: the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
 
 ```python
 def mandelbrot_set(h_range, w_range, max_iterations, t):
@@ -139,3 +143,9 @@ def mandelbrot_set(h_range, w_range, max_iterations, t):
 This method requires far fewer iterations at a given scale for an arbitrary resolution relative to the method of scaling the ogrid directly, although more iterations are required for constant resolution as the scale decreases.  The fewer iterations is presumably due to decreased round-off error: centering the array and zooming in on the origin leads to approximately constant round-off error, whereas zooming in on a point far from the origin leads to significant error that requires more iterations to resolve.  I am not completely certain why a constant number of iterations are not sufficient for constant resolution using this method, however. 
 
 ![mandelbrot map]({{https://blbadger.github.io}}/logistic_map/mandelbrot_zoom_frame.gif)
+
+The logistic map boundary (1) iterated from different starting points yields extensions to Mandelbrot's set in the same way it does for Mandelbrot's set itself (see [here](https://blbadger.github.io/mandelbrot-set.html) for more).
+
+For example, moving the starting point from $x_0 = 0 \to x_0 = 2$ yields
+
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
