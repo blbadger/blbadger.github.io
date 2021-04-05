@@ -103,25 +103,26 @@ What happens if we instead fix the starting point and instead plot the points $r
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
-This figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  The Mandelbrot set is a map where the initial value $z_0$ is fixed at the origin and the points for which $c$ diverge are mapped.
-
-find which values of $c$ head towards infinity and which do not for a given starting point $z_0 = 0 + 0i$.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations to diverge using the $c=r/2(1-r/2)$ found above:
+This figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot sets (in reversed x-orientation).  The Mandelbrot set is the map where the initial value $z_0$ is fixed at the origin and the points for which $c$ diverge or not are potted.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations to diverge using the $c=r/2(1-r/2)$ found above:
 
 $$
 z_{next} = z_n^2 + \frac{r}{2} \left( 1-\frac{r}{2} \right)
 \tag{4}
 $$
 
-For $z_0 = 0+0i$, this is identical to the logistic map above (which stipulates the starting point $z_0 = 1/2 + 0i$ is not at the origin).
+For $z_0 = 0+0i$, this is identical to the logistic map above (which stipulates the starting point $z_0 = 1/2 + 0i$ is not at the origin). 
 
-Why are the starting points different for these maps, even though the output is the same?  To make identical maps for the same starting point, the homeomorphic functions before the change of variables may be used (see above), which is
+Why are the starting points different for these maps, even though the output is the same?  If one iterates the logistic map from point $x_0 = 0+0i$, no value of $r$ will cause the trajectory to diverge (as it stays at the origin).  Observing the Julia set and logistic set above, it is clear that the map has been translated by $1/2 + 0i$ units and has also been compressed.  This is true for any Julia set with an equivalent logistic set, which is why we have to start at $1/2 + 0i$ for the latter to make an identical Mandelbrot set to the former.
+
+To make identical maps for any one starting point $z_0 = x + yi$, we may use the homeomorphic functions (see above) before the change of variables which are
 
 $$
-a(rx_n(1-x_n))+b = (ax_n+b)^2 + c \\
+a(rx_n(1-x_n))+b \\
+(ax_n+b)^2 + c \\
 a=r/2, \; b=-r,\; c=\frac{r}{2} \left( 1-\frac{r}{2} \right)
 $$
 
-Iterating either side of this equation gives the same map of converging versus diverging iterations for various $r$ values in the complex plane for any starting value $z_0$.  For example, $z_0 = 1/4$ gives
+Iterating either equation gives the same map of converging versus diverging iterations for various $r$ values in the complex plane for any starting value $z_0$.  For example, $z_0 = 1/4$ gives
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_mandelbrot.png)
 
