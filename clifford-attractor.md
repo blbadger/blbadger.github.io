@@ -32,17 +32,15 @@ In the central part that looks like Saturn's rings, there appear to be 6 lines.
 At a smaller scale, however, there are more visible, around 10
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_zoom2.png)
 
-Is this all? Zooming in once, I count 14 lines, with 7 on the top section
+And at a smaller scale, still more,
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_zoom3.png)
 
-Zooming in on the top shows that there are actually more that 14 lines!
+and more at a smaller scale,
 ![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_zoom4.png)
 
-To drive the point home, the top-right line looks to be as solid a line as any, but on closer inspection it is not. 
-There are two paths visible at higher magnification:
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/clifford_zoom5.png)
+Fractals are objects that appear similar at different scale, or more precisely objects that have a scaling dimension greater than their topological dimension.  In this case, we can idealize the topological dimension to be $d=1$, as after many iterations curves are formed.  But upon an increase in scale, more and more lines within one boundary are visible: there are an infinite number of idealized curves that form a Cantor set, which has a scaling dimension greater than 0. For more on what fractals are and why they are important, see [this page](https://blbadger.github.io/fractal-geometry.html).
 
-### Attractors shift dimension depending on constant values
+### Clifford attractors shift dimension as constants change
 
 For $a = 2.1, b = 0.8, c = -0.5, d = -1$, the attractor is three points:
 
