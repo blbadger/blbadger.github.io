@@ -79,10 +79,11 @@ Therefore the quadratic map is by a homeomorphism (in particular, a linear trans
 
 All this is to say that for any $r$ value, the logistic map is equivalent to a Julia set where $c=\frac{r}{2}(1-\frac{r}{2})$. Just for fun, let's zoom in on the logistic boundary map above, focusing on the origin.
 
-An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
-
+ 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
+ 
+An aside: for most decreases in scale, more iterations are required in order to determine if close-together coordinates will diverge towards infinity or else remain bounded.  But this is not the case for a zoom towards the origin: no more iterations are required for constant resolution even when the scale has increased by a factor of $2^{20}$.
 
 ### The logistic map and the Mandelbrot set
 
@@ -95,7 +96,9 @@ $$
 
 from $r=2 \to r=4$ (both on the real line) for the logistic map, we have
 
+ 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
+ 
 
 This is analagous to observing Julia sets where $c=0 \to c=-2$.  
 
