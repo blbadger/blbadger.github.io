@@ -34,13 +34,13 @@ Now which points remain bounded and which head towards infinity?  Let's try fixi
 The result looks very similar to a [Julia set](/julia-sets.md), is defined as the set of points bordering initial points whose subsequent iterations of 
 
 $$
-z_{n+1} = z_n^2 + a
+z_{n+1} = z_n^2 + c
 \tag{3}
 $$
 
 that diverge (head to infinity) and points whose subsequent interations do not diverge.
 
-For $a = -0.75 + 0i$, this set is shown below (with an inverted color scheme to that used for the logistic map for clarity)
+For $c = -0.75 + 0i$, this set is shown below (with an inverted color scheme to that used for the logistic map for clarity)
 
 ![julia map]({{https://blbadger.github.io}}/logistic_map/julia_-0.75.png)
 
@@ -84,34 +84,50 @@ An aside: for most decreases in scale, more iterations are required in order to 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_fixed_r.gif)
 
 
-
 ### The logistic map and the Mandelbrot set
 
-Julia sets may be connected or disconnected.  As the logistic map (1) is a homeomorphism of the quadratic map Julia set (3), identical set topologies should be observed for the logistic map. Moving from $r=2 \to r=4$ (both on the real line) for the logistic map, which is equivalent to going from $c=0 \to c=-2$,
+Julia sets may be connected or disconnected.  As the logistic map (1) is a homeomorphism of the quadratic map Julia set (3), identical set topologies should be observed for the logistic map. Observing which values $z_0$ border bounded and unbounded iterations of the logistic map in the complex plane
+
+$$
+z_{n+1} = rz_n(1-z_n)
+\tag{2}
+$$
+
+from $r=2 \to r=4$ (both on the real line) for the logistic map, we have
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_r.gif)
 
-What happens if we instead fix the starting point and allow $r$ to range about the complex plane, plotting these starting points? For the starting point $z_0 = 1/2 + 0i$, we get 
+This is analagous to observing Julia sets where $c=0 \to c=-2$.  
+
+What happens if we instead fix the starting point and instead plot the points $r = x + yi$ for which the logistic map (2) diverges versus points that do not diverge? For the starting point $z_0 = 1/2 + 0i$, we get 
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_bound_0.5.png)
 
-This figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  This is because the Mandelbrot set is what we get when we iterate 
+This figure resembles a double-sided [Mandelbrot set](/mandelbrot-set.md).  When we zoom in, we can find many little mandelbrot set shapes (in reversed x-orientation).  The Mandelbrot set is a map where the initial value $z_0$ is fixed at the origin and the points for which $c$ diverge are mapped.
 
-$$
-z_{next} = z_n^2 + c
-$$
-
-and find which values of $c$ head towards infinity and which do not for a given starting point $z_0 = 0 + 0i$.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations of 
+find which values of $c$ head towards infinity and which do not for a given starting point $z_0 = 0 + 0i$.  This is analagous to fixing the starting point for the logistic equation and then looking at which $r$ values cause future iterations to diverge using the $c=r/2(1-r/2)$ found above:
 
 $$
 z_{next} = z_n^2 + \frac{r}{2} \left( 1-\frac{r}{2} \right)
+\tag{4}
 $$
 
-to head towards infinity. 
+For $z_0 = 0+0i$, this is identical to the logistic map above (which stipulates the starting point $z_0 = 1/2 + 0i$ is not at the origin).
+
+Why are the starting points different for these maps, even though the output is the same?  To make identical maps for the same starting point, the homeomorphic functions before the change of variables may be used (see above), which is
+
+$$
+a(rx_n(1-x_n))+b = (ax_n+b)^2 + c \\
+a=r/2, \; b=-r,\; c=\frac{r}{2} \left( 1-\frac{r}{2} \right)
+$$
+
+Iterating either side of this equation gives the same map of converging versus diverging iterations for various $r$ values in the complex plane for any starting value $z_0$.  For example, $z_0 = 1/4$ gives
+
+![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_mandelbrot.png)
 
 ### Zoom and extended logistic set
 
-Increasing scale at the point 
+The Mandelbrot set is well known for its fractal structure that yields interesting patterns at arbitrary scale.  The logistic map boundary is the same in this respect: for example, increasing scale at the point 
 
 $$
 (3.58355 + 0i)
@@ -127,7 +143,7 @@ $$
 (-1.633 + 0i)
 $$
 
-A programmatic tidbit that is entirely skippable if you do not wish to implement these maps yourself: the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
+A programmatic aside: the previous and following zooms were made using a different method than elaborate on previously.  Rather than modifying the ogrid directly, `a_array` and `z_array` are instead positioned (using addition and subtraction of real and imaginary amounts) and then scaled over time as follows:
 
 ```python
 def mandelbrot_set(h_range, w_range, max_iterations, t):
@@ -140,12 +156,11 @@ def mandelbrot_set(h_range, w_range, max_iterations, t):
   ...
 ```
 
-This method requires far fewer iterations at a given scale for an arbitrary resolution relative to the method of scaling the ogrid directly, although more iterations are required for constant resolution as the scale decreases.  The fewer iterations is presumably due to decreased round-off error: centering the array and zooming in on the origin leads to approximately constant round-off error, whereas zooming in on a point far from the origin leads to significant error that requires more iterations to resolve.  I am not completely certain why a constant number of iterations are not sufficient for constant resolution using this method, however. 
+This method requires far fewer iterations at a given scale for an arbitrary resolution relative to the method of scaling the ogrid directly, although more iterations are required for constant resolution as the scale decreases.  The fewer iteration number necessary is presumably due to decreased round-off error: centering the array and zooming in on the origin leads to approximately constant round-off error, whereas zooming in on a point far from the origin leads to significant error that requires more iterations to resolve.  I am not completely certain why a constant number of iterations are not sufficient for constant resolution using this method, however. 
 
 ![mandelbrot map]({{https://blbadger.github.io}}/logistic_map/mandelbrot_zoom_frame.gif)
 
-The logistic map boundary (1) iterated from different starting points yields extensions to Mandelbrot's set in the same way it does for Mandelbrot's set itself (see [here](https://blbadger.github.io/mandelbrot-set.html) for more).
 
-For example, moving the starting point from $x_0 = 0 \to x_0 = 2$ yields
+Also as for the Mandelbrot set, we can change the map by changing the starting point of the logistic map (2). For example, moving the starting point from $x_0 = 0 \to x_0 = 2$ yields
 
 ![complex map]({{https://blbadger.github.io}}/logistic_map/logistic_boundary_fixed_start.gif)
