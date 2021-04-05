@@ -27,7 +27,7 @@ The mathematical approach to change over time. Most dynamical systems are nonlin
 
 ### [Clifford attractor](/clifford-attractor.md)
 
-![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semiclifford_vid1.gif)
+![clifford vectors image]({{https://blbadger.github.io}}clifford_attractor/semi_clifford_cover.png)
 
 
 ### [Grid map](/grid-map.md)
