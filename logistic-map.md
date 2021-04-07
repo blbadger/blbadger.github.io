@@ -49,7 +49,7 @@ This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $
 
 $$
 x_n = 2.5x_n(1-x_n) \\
-0 = -2.5x_n^2 + 1.5x_n = x_n(-\frac{5}{2}x_n+\frac{3}{2}) \\
+0 = -2.5x_n^2 + 1.5x_n = x_n \left( -\frac{5}{2}x_n+\frac{3}{2} \right) \\
 x_n = 0, \; x_n = 3/5 \\
 $$
 
@@ -111,7 +111,7 @@ x_n = rx_n(1-x_n) \\
 x_n = 0, \; x_n = 27/37
 $$
 
-Both are unstable, as $f'(0) = 3.7 - 2 * 3.7 * 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, the cubic formula can be used to find
+Both are unstable, as $f'(0) = 3.7 - 2 \cdot 3.7 \cdot 0 > 1$ and $f'(27/37) = 3.7 - 54/37 > 1$.  For points of period 2, the cubic formula can be used to find
 
 $$
 0 = x_n(-r^3x_n^3 + 2r^3x_n^2 - (r^3+r^2)x + r^2-1) \\
@@ -439,7 +439,7 @@ Now consider the transition from an area in the orbit map where no orbit is stab
 Every third iteration of the logistic map starting from the relatively stable point of $x_0=1/2$, ie 
 
 $$
-x_3, x_6, x_9, x_{12}, ..., x_{21}
+x_3, x_6, x_9, x_{12}, x_{15}, x_{18}, x_{21}
 $$ 
 
 is also added and color coded as red, orange, yellow, green, blue, indigo, and violet respectively.  There are three points of period 3 near $r=3.83$, and so a third of all iterations from $x_0 = 1/2$ go to each point.
@@ -460,7 +460,27 @@ This can be plotted using the `Decimal` class in python, which implements arbitr
 
 {% include youtube.html id='CcTqmILTRX8' %}
 
-And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  A map starting at $r=1$ would retain a period 1 attractor for the orbit map, and so on.
+And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  A map starting at $r=1$ would retain a period 1 attractor for the orbit map, and so on for period 4 or 8.
+
+What would happen if we began the orbit map in the aperiodic region $r > 3.56995...$?  If one were able to calculate with perfect precision, what would the orbit map look like?  From Li and Yorke's finding of uncountably many unstable aperiodic orbits for period 3 (or 6 or 12 or 5...), it follows that most trajectories in the aperiodic region are unstable but aperiodic.  With perfect precision,instability is irrelevant and therefore most trajectories through these regions would remain aperiodic.  Thus for most (nearly all) starting points, there would be no period $3$ or $5$ or any other periodic windows.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
