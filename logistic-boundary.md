@@ -20,10 +20,10 @@ z_{n+1} = rz_n (1 - z_n) \\
 \tag{2}
 $$
 
-Where $z_n$ (and $z_{n+a}$ for any $a$ and $r$ are points in the complex plane:
+Where $z_n$ (and thus $z_{n+a}$ for any $a$) and $r$ are points in the complex plane using the Gaussian plane:
 
 $$
-z_n = x_0 + y_0i \\
+z_n = x + yi \\
 r = x + yi
 $$
 
