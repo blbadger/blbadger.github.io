@@ -462,7 +462,13 @@ This can be plotted using the `Decimal` class in python, which implements arbitr
 
 And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  A map starting at $r=1$ would retain a period 1 attractor for the orbit map, and so on for period 4 or 8.
 
-What would happen if we began the orbit map in the aperiodic region $r > 3.56995...$?  If one were able to calculate with perfect precision, what would the orbit map look like?  From Li and Yorke's finding of uncountably many unstable aperiodic orbits for period 3 (or 6 or 12 or 5...), it follows that most trajectories in the aperiodic region are unstable but aperiodic.  With perfect precision,instability is irrelevant and therefore most trajectories through these regions would remain aperiodic.  Thus for most (nearly all) starting points, there would be no period $3$ or $5$ or any other periodic windows.
+But what would happen if we began the orbit map in the aperiodic region $r > 3.56995...$, assuming we had the ability to perfom infinite precision arithmetic?  If one were able to calculate with perfect precision, what would the orbit map look like?  Clearly a substantial change would occur in the periodic windows in the aperiodic region, because these periodic windows are stable orbits that coexist with many unstable ones.  With perfect precision, iterations in any of these unstable orbits would remain in that orbit rather than head to a stable point.  
+
+For example, earlier in this page it was found that the (stable) period three region at $r=3.83$ also exhibited a period 4 trajectory that contains $x_n = 0.2991621...$.  This means that if one were to begin iterating at this point with perfect precision, the orbit map would exhibit a period 4 region for $r=3.83$ instead.  From Sharkovskii's total order above, this is also true for any other integer in this period three region: given any desired period, we can find a point such that $r=3.83$ exhibits a period of that value there.  
+
+This is not all: from Sharkovskii's as well as Li and Yorke's work, it is shown that there are uncountably many unstable aperiodic orbits for period 3 (or 6 or 12 or 5...), it follows that nearly all trajectories in the aperiodic region are unstable but aperiodic.  With perfect precision, instability is irrelevant and therefore most trajectories through these regions would remain aperiodic.  Thus if one were to pick a value ($x_0 \in \Bbb R$ and in the domain of the logistic map) at random for the period three region $r=3.83$ (or any aperiodic region $r> 3.565995...$), it is almost certain to exist on an aperiodic but unstable trajectory such that the periodic windows we see with the orbit map would no longer be visible.  
+
+
 
 
 
