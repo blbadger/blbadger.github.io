@@ -468,6 +468,9 @@ For example, earlier in this page it was found that the (stable) period three re
 
 This is not all: from Sharkovskii's as well as Li and Yorke's work, it is shown that there are uncountably many unstable aperiodic orbits for period 3 (or 6 or 12 or 5...), it follows that nearly all trajectories in the aperiodic region are unstable but aperiodic.  With perfect precision, instability is irrelevant and therefore most trajectories through these regions would remain aperiodic.  Thus if one were to pick a value ($x_0 \in \Bbb R$ and in the domain of the logistic map) at random for the period three region $r=3.83$ (or any aperiodic region $r> 3.565995...$), it is almost certain to exist on an aperiodic but unstable trajectory such that the periodic windows we see with the orbit map would no longer be visible.  
 
+### Uncomputable but definable trajectories
+
+Truly aperiodic (and bounded) trajectories are uncomputable (assuming finite memory and finite time, see [here](https://blbadger.github.io/solvable-periodicity.html) for more with this definition) which is to say that no finite computational procedure will ever be able to accurately display a bounded aperiodic trajectory.  All 'aperiodic' trajectories on this page as computed by a program are actually periodic, as there are a finite number of places any point may be given finite memory and so eventually one must be repeated.  Because of this, one would never know that the period 3, 5, 6, etc. windows in the logistic map only exist for an infinitely small fraction of starting points for the arbitrarily precise 'true' logistic map, or in other words that this true logistic map is quite different than the approximation presented here.
 
 
 
