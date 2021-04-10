@@ -236,9 +236,9 @@ Now that the images are in order, we can assemble them into a movie!  This can b
 (base) bbadger@bbadger:~/Desktop/julia_zoom1$ ffmpeg -f image2 -r 30 -pattern_type glob -i '*.png' julia_zoom.mp4
 
 ```
-And now we are done!  Conversion of this mp4 to a .gif using an online web app, we have
+which yields
 
-![julia set1]({{https://blbadger.github.io}}fractals/julia_zoom1.gif)
+{% include youtube.html id='mMOYJMgkFEs' %}
 
 The bounded line stays irregular as we zoom in (with an increased `max_iterations` value), and if this irregularity continues ad infinitum then any two points on this set are infinitely far from each other.
 
