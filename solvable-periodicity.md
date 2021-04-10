@@ -4,7 +4,7 @@
 
 'Unsolvable' and 'Undecidable' are here defined in terms of mathematical logic: decidability is the process of determining the validity of a $\mathfrak t, \mathfrak f$ (true or false) statement.  Validity means that the statement is always true, regardless of the inputs to the statement.  Solvable means that there is some computation procedure that applies to the given function (or problem) that is finite in length.  
 
-Decidability and solvability are equivalent in number theory. The solvable problem $x = 2^2$ is identical the the decision problem 'Is 4 the square of 2?'.  For this page, solvable implies a 'for-what?' statement and decidable implies a 'is it true?' statement.  The law of the excluded middle is accepted, meaning that a proposed statement must be true or false but not neither. In symbols,
+Decidability and solvability (in a number-theoretic setting) are equivalent concepts for this page. The solvable problem $x = 2^2$ is identical the the decision problem 'Is 4 the square of 2?'.  For this page, computable implies a 'for-what?' statement and decidable implies a 'is it true?' statement.  The law of the excluded middle is accepted, meaning that a proposed statement must be true or false but not neither. In symbols,
 
 $$
 \exists x P(x) \lor \lnot \exists x P(x)
