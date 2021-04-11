@@ -460,7 +460,11 @@ This can be plotted using the `Decimal` class in python, which implements arbitr
 
 {% include youtube.html id='CcTqmILTRX8' %}
 
-And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  A map starting at $r=1$ would retain a period 1 attractor for the orbit map, and so on for period 4 or 8.
+And with perfect precision, the orbit map would display only the points that are periodic at the start: an orbit map beginning at $r=0$ with a periodic point at $x_n=0$ would remain at $x_n=0$ throughout (until $r>4$).  An orbit map starting at $r=1$ would retain a period 1 attractor for the orbit map, which can be modeled by increasing decimal accuracy from 8 to 5587 digits, $r \in [1, 4]$, with 100000 steps as follows:
+
+{% include youtube.html id='iqFLjFJwpZ4' %}
+
+And an orbit map starting at period 2 would remain in period 2, and the same for 4, 8, etc.
 
 But what would happen if we began the orbit map in the aperiodic region $r > 3.56995...$, assuming we had the ability to perfom infinite precision arithmetic?  If one were able to calculate with perfect precision, what would the orbit map look like?  Clearly a substantial change would occur in the periodic windows in the aperiodic region, because these periodic windows are stable orbits that coexist with many unstable ones.  With perfect precision, iterations in any of these unstable orbits would remain in that orbit rather than head to a stable point.  
 
