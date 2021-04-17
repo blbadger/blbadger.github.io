@@ -246,7 +246,15 @@ As this system is being iterated semicontinuously, we can observe the vectorfiel
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver_zoom2.png)
 
-Why is this?  The (1) has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity for most points) with changes in parameter values. The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.  Specifically, note that the values in question are very large: this makes the $x^2$ term become much larger than the others.  With a very small $b$ constant, and positive $x$ values throughout, we are guaranteed that subsequent iterations from the initial point will increase in $y$ value.  
+Why is this?  The Henon map has one nonlinearity: an $x^2$.  Nonlinear maps may transition from order (with finite periodicity) to chaos (a period of infinity for most points) with changes in parameter values. The transition from order to chaos for many systems occurs via period doubling leading to infinite periodicity in finite time, resulting in a logistic-like map.  
+
+Renaming $\Delta t$ to $d$ for clarity, we have
+
+$$
+x_{n+1} = x_n + (1-ax_n^2 + y) \Delta t \\
+x_{n+1} = x_n + d - adx_n^2 + dy \\
+x_{n+1} = x_n(1 - adx_n) + d(1 + y)
+$$
 
 ### Pendulum map from the Henon attractor
 
