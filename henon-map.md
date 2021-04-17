@@ -256,6 +256,14 @@ x_{n+1} = x_n + d - adx_n^2 + dy \\
 x_{n+1} = x_n(1 - adx_n) + d(1 + y)
 $$
 
+This is similar to the quadratic equation
+
+$$
+x_{n+1} = x_n^2 + a
+$$
+
+where the constant $a$ is ranged about $(-2, 2)$, except here the constant $d(1+y)$ goes from $0, 1100000$.  The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.
+
 ### Pendulum map from the Henon attractor
 
 This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
