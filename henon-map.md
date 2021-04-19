@@ -260,21 +260,55 @@ $$
 x_{n+1} = x_n^2 + c
 $$
 
-If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) where the horizontal axis corresponds to $x_n$ iterations and the vertical axis to $c$ values:
+If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) where the horizontal axis corresponds to $x_n$ iterations and the vertical axis to $c$ values, multiplied by negative 1 (the actual range is 0 to -2):
 
 ![map]({{https://blbadger.github.io}}/henon_map/quadratic_orbit_map.png)
 
 The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.  It looks nearly identical to this semicontinuous Henon orbit map!  Could these orbits actually be the same, only in different notation?  
 
+Given the two equations
+
 $$
-x_{n+1} = -a_1x^2 + x/d + y + 1 \\
-x_{n+1} = x_n^2 + c \\
-x_n = ax+b \\
-a^2x^2 + 2abx + b^2 + c \\
-a = \sqrt{-a_1} \implies -a_1x^2 + 2\sqrt{-a_1}bx + b^2 + c\\
-b = 1/(2ad) \implies -a_1x^2 + x/d + b^2 + c \\
-c = -b^2 + y + 1 \implies -a_1x^2 + x/d + y + 1
+f(x) = x^2 + c
+g(x) = -adx^2 + x + d + dy
 $$
+
+and a linear transformation
+
+$$
+h(x) = mx + b
+$$
+
+and being that linear transformations do not change the topological properties of a set (they are homeomorphic transformations), if it can be shown that
+
+$$
+f(h(x)) = h(g(x))
+$$
+
+then $f(x)$ is for most purposes dynamically equivalent to $g(x)$.  
+
+Expanding these expressions and simplifying, there is
+
+$$
+(mx+b)^2 + c = m^2x^2 + 2mbx + b^2 + c \\
+m(-adx^2 + x + d + dy) + b \implies \\
+mx^2+2bx + b^2/m + c/m = -adx^2+x+d+dy+b/m
+$$
+
+now by a change of variables,
+
+$$
+m = -ad \implies 2bx + b^2/-ad + c/-ad = x + d + dy + b/-ad \\
+b = 1/2 \implies c/-ad = d + dy + 1/-4ad \\
+$$
+
+and therefore
+
+$$
+c = -ad(d+dy-1/4ad) = -ad^2(1+y) + 1/4
+$$
+
+results in $f(h(x)) = h(g(x))$, which can be checked by substituting the values obtained for $m, \; b, \; c$ and simplifying. 
 
 ### Pendulum map from the Henon attractor
 
