@@ -271,9 +271,9 @@ x_{n+1} = -a_1x^2 + x/d + y + 1 \\
 x_{n+1} = x_n^2 + c \\
 x_n = ax+b \\
 a^2x^2 + 2abx + b^2 + c \\
-a = \sqrt{-a_1} \implies a_1x^2 + 2\sqrt{-a_1}bx + b^2 + c\\
-b = 1/(2ad) \implies a_1x^2 + x/d + b^2 + c \\
-c = -b^2 + y + 1 \implies a_1x^2 + x/d + y + 1
+a = \sqrt{-a_1} \implies -a_1x^2 + 2\sqrt{-a_1}bx + b^2 + c\\
+b = 1/(2ad) \implies -a_1x^2 + x/d + b^2 + c \\
+c = -b^2 + y + 1 \implies -a_1x^2 + x/d + y + 1
 $$
 
 ### Pendulum map from the Henon attractor
