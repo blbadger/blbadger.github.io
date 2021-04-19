@@ -260,7 +260,7 @@ $$
 x_{n+1} = x_n^2 + a
 $$
 
-If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) is made where the constant $a$ is ranged about $(-2, 2)$, 
+If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) where the horizontal axis corresponds to $x_n$ iterations and the vertical axis to $a$ values:
 
 ![map]({{https://blbadger.github.io}}/henon_map/quadratic_orbit_map.png)
 
