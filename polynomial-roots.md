@@ -222,6 +222,7 @@ Let's explore where roots are found with Newton's method in the complex plane, i
 This is different than the case for $z^3-1$ because an entire region fails to converge on a root, rather than individual points as before.  Now there are certainly points analagous to that observed above (for $z^3-1$) in which the tangent line is parallel to the x-axis: these exist at
 
 $$
+f'(x) = 0 \\
 5x^4 - 1 = 0 \\
 x = \pm \sqrt[4]{1/5} \approx \pm 0.6689...
 $$
