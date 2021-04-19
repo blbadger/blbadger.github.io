@@ -12,9 +12,10 @@ b = 0.3 \\
 x_0, y_0 = 0, 0
 $$
 
-This can be plotted using python as follows:
+the result may be plotted using python as follows:
 
 ```python
+#python3
 import numpy as np 
 import matplotlib.pyplot as plt 
 plt.style.use('dark_background')
@@ -38,9 +39,9 @@ X[0], Y[0] = 0, 0
 
 # add points to array
 for i in range(steps):
-	x_dot, y_dot = henon_attractor(X[i], Y[i])
-	X[i+1] = x_dot 
-	Y[i+1] = y_dot
+	x_next, y_next = henon_attractor(X[i], Y[i])
+	X[i+1] = x_next
+	Y[i+1] = y_next
 	
 # plot figure
 plt.plot(X, Y, '^', color='white', alpha = 0.8, markersize=0.3)
