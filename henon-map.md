@@ -257,15 +257,24 @@ $$
 Notice the similarity to the quadratic equation
 
 $$
-x_{n+1} = x_n^2 + a
+x_{n+1} = x_n^2 + c
 $$
 
-If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) where the horizontal axis corresponds to $x_n$ iterations and the vertical axis to $a$ values:
+If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) where the horizontal axis corresponds to $x_n$ iterations and the vertical axis to $c$ values:
 
 ![map]({{https://blbadger.github.io}}/henon_map/quadratic_orbit_map.png)
 
-The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.  It looks nearly identical to this semicontinuous Henon map!  
+The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.  It looks nearly identical to this semicontinuous Henon orbit map!  Could these orbits actually be the same, only in different notation?  
 
+$$
+x_{n+1} = -a_1x^2 + x/d + y + 1 \\
+x_{n+1} = x_n^2 + c \\
+x_n = ax+b \\
+a^2x^2 + 2abx + b^2 + c \\
+a = \sqrt{-a_1} \implies a_1x^2 + 2\sqrt{-a_1}bx + b^2 + c\\
+b = 1/(2ad) \implies a_1x^2 + x/d + b^2 + c \\
+c = -b^2 + y + 1 \implies a_1x^2 + x/d + y + 1
+$$
 
 ### Pendulum map from the Henon attractor
 
