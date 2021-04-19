@@ -305,7 +305,7 @@ $$
 and therefore
 
 $$
-c = -ad(d+dy-\frac{1}{4ad}) = -ad^2(1+y) + 1/4
+c = -ad \left( d+dy-\frac{1}{4ad} \right) = -ad^2(1+y) + 1/4
 $$
 
 results in $f(h(x)) = h(g(x))$, which can be checked by substituting the values obtained for $m, \; b, \; c$ and simplifying. This being the case, these two expressions are conjugates of each other, meaning that it is no surprise that they are capable of displaying nearly identical dynamics.
