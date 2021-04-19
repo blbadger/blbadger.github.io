@@ -46,7 +46,7 @@ For $c = -0.75 + 0i$, this set is shown below (with an inverted color scheme to 
 
 These maps look extremely similar, so could they actually be the same?  They are indeed!  The logistic map (1) and the quadratic map (3) which forms the basis of the Julia sets are conjugates of one another: they contain identical topological properties for a certain $a$ value, or in other words transforming from one map to another is a homeomorphism.  
 
-This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  Therefore linear transformations do not affect 
+This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  
 
 This being the case, if it is possible to transform the logistic map (1) into the quadratic map (3) with the linear transformation $f(x) = ax+b$, then these maps are topologically equivalent.  To test this, the following must be checked:
 
