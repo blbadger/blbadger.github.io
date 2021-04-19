@@ -238,10 +238,7 @@ plt.show()
 If iterate (3) with $a=0.1, b = 0.03, \Delta t = 0.047 $, the following map is produced:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic.jpg)
 
-It looks like the orbit plot for the [logistic map](https://blbadger.github.io/logistic-map.html)! Closer inspection on the chaotic portion reveals an inverted (and somewhat elongated) version of the aperiodic region of that map.
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_zoom.png)
-
-As this system is being iterated semicontinuously, we can observe the vectorfield behind the motion of the points:
+It looks like the orbit plot for the [logistic map](https://blbadger.github.io/logistic-map.html)! As this system is being iterated semicontinuously, we can observe the vectorfield that the motion of the points:
 ![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/henon_logistic_quiver2.png)
 
 Subsequent iterations after the first bifurcation lead to the point bouncing from left portion to right portion in a stable period.  In the region of chaotic motion of the point, the vectors are ordered.
@@ -254,20 +251,25 @@ Renaming $\Delta t$ to $d$ for clarity, we have
 $$
 x_{n+1} = x_n + (1-ax_n^2 + y) \Delta t \\
 x_{n+1} = x_n + d - adx_n^2 + dy \\
-x_{n+1} = x_n(1 - adx_n) + d(1 + y)
+x_{n+1} = -adx_n^2 + x_n + d(1+y)
 $$
 
-This is similar to the quadratic equation
+Notice the similarity to the quadratic equation
 
 $$
 x_{n+1} = x_n^2 + a
 $$
 
-where the constant $a$ is ranged about $(-2, 2)$, except here the constant $d(1+y)$ goes from $0, 1100000$.  The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.
+If an orbit map of the quadratic equation (see [this page](https://blbadger.github.io/logistic-map.html) for explanation) is made where the constant $a$ is ranged about $(-2, 2)$, 
+
+![map]({{https://blbadger.github.io}}/henon_map/quadratic_orbit_map.png)
+
+The orbit map for the quadratic equation displays the same periodicity to aperiodicity pattern as the logistic map with period doubling and a chaotic region.  It looks nearly identical to this semicontinuous Henon map!  
+
 
 ### Pendulum map from the Henon attractor
 
-This is not the only similarity the Henon map has to another system: (1) can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
+This is not the only similarity the Henon map has to another dynamical system: (1) can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
 
 Setting $a=0.2, b=-0.99994$ and $x_0, y_0 = -1.5, 1.5$ we have
 
@@ -286,9 +288,9 @@ which form as spirals unwind before the attractor basin collapses from $b=0.95 \
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_double_b0.95_to_1.1.gif)
 
-Thus the waves of the henon map form in a similar fashion to those seen in the pendulum phase space.  But there is a significant difference between these two maps: the Henon spiral does not settle on a periodic orbit (as is the case for the pendulum map for certain paremeter values) but continues to head towards a point attractor as long as 0 > b > -1.  
+Thus the waves of the henon map form in a similar fashion to those seen in the pendulum phase space.  But there is a significant difference between these two maps: the Henon spiral does not settle on a periodic orbit (as is the case for the pendulum map for certain parameter values) but continues to head towards a point attractor as long as 0 > b > -1.  
 
-Note that unlike the case for $a=1.4, b=0.3$, the basin of attraction is a fractal while a stable attractor remains.  Notice that the fractal edge of the basin of attraction extends outward when the attractor remains (as for the spiral maps) but extends inward into the attractor space in the region of $a=1.4, b=0.3$.
+Note that unlike the case for $a=1.4, b=0.3$, the basin of attraction is a fractal while a stable attractor remains.  The fractal edge of the basin of attraction extends outward when the attractor remains (as for the spiral maps) but extends inward into the attractor space in the region of $a=1.4, b=0.3$.
 
 To observe the behavior of stable and unstable points for the Henon map iterated in reverse, see [this page](https://blbadger.github.io/aperiodic-inverted.html).
 
@@ -348,7 +350,7 @@ def henon_boundary(max_iterations, a, b):
 ...
 ```
 
-When $a=0.2, b=-1.1$, increasing the scale by a factor of $2^{20}$ (more than one million, short system) around the point $(x, y) = (0.4564, -0.50202)$, we have
+When $a=0.2, b=-1.1$, increasing the scale by a factor of $2^{20}$ around the point $(x, y) = (0.4564, -0.50202)$, we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_boundary_zoom.gif)
 
