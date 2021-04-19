@@ -292,23 +292,23 @@ Expanding these expressions and simplifying, there is
 $$
 (mx+b)^2 + c = m^2x^2 + 2mbx + b^2 + c \\
 m(-adx^2 + x + d + dy) + b \implies \\
-mx^2+2bx + b^2/m + c/m = -adx^2+x+d+dy+b/m
+mx^2+2bx + \frac{b^2}{m} + \frac{c}{m} = -adx^2 + x + d + dy + \frac{b}{m}
 $$
 
 now by a change of variables,
 
 $$
-m = -ad \implies 2bx + b^2/-ad + c/-ad = x + d + dy + b/-ad \\
-b = 1/2 \implies c/-ad = d + dy + 1/-4ad \\
+m = -ad \implies 2bx + \frac{b^2}{-ad} + \frac{c}{-ad} = x + d + dy + \frac{b}{-ad} \\
+b = 1/2 \implies \frac{c}{-ad} = d + dy + \frac{1}{-4ad} \\
 $$
 
 and therefore
 
 $$
-c = -ad(d+dy-1/4ad) = -ad^2(1+y) + 1/4
+c = -ad(d+dy-\frac{1}{4ad}) = -ad^2(1+y) + 1/4
 $$
 
-results in $f(h(x)) = h(g(x))$, which can be checked by substituting the values obtained for $m, \; b, \; c$ and simplifying. 
+results in $f(h(x)) = h(g(x))$, which can be checked by substituting the values obtained for $m, \; b, \; c$ and simplifying. This being the case, these two expressions are conjugates of each other, meaning that it is no surprise that they are capable of displaying nearly identical dynamics.
 
 ### Pendulum map from the Henon attractor
 
