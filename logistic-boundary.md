@@ -48,20 +48,35 @@ These maps look extremely similar, so could they actually be the same?  They are
 
 This can be shown as follows: a linear transformation on any variable is the same as a (combination of) stretching, rotation, translation, or dilation.  Each of these possibilities does not affect the underlying topology of the transformed space, which one can think of as being true because the space is not broken apart in any way.  
 
-This being the case, if it is possible to transform the logistic map (1) into the quadratic map (3) with the linear transformation $f(x) = ax+b$, then these maps are topologically equivalent.  To test this, the following must be checked:
+This being the case, if it is possible to transform the logistic map (1) into the quadratic map (3) with the linear transformation $h(x) = ax+b$, then these maps are topologically equivalent.  To test this, with the following definitions for the logistic and quadratic equations,
 
 $$
-f(x_{n+1}) = y_{n+1}(f_x)
+f(x) = rx(1-x) \\
+g(x) = x^2 + c \\
 $$
 
-Which can be expanded for clarity:
+is there some linear transformation
+
+$$
+h(x) = ax+b 
+$$
+
+that makes
+
+$$
+h(f(x)) = g(h(x))
+$$
+
+true?
+
+This can be expanded for clarity:
 
 $$
 a(rx_n(1-x_n)) + b = (ax_n + b)^2 + c \\
 arx_n - arx_n^2 + b = a^2x_n^2 + 2abx_n + b^2 + c \\
 $$
 
-and now substituting useful values for $a$ and $b$ to remove terms,
+and now  substituting useful values for $a$ and $b$ to remove terms,
 
 $$
 b = r/2 \implies -arx_n^2 + b = a^2x_n^2 + b^2 + c \\
