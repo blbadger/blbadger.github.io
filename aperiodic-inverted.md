@@ -666,7 +666,7 @@ For a=0.2, -1 < b < 0, (3) experiences a point attractor for initial values in t
 
 $$
 x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
-y_n = b * x_n
+y_n = bx_n
 $$
 
 outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for (4) with b = -0.99, 
