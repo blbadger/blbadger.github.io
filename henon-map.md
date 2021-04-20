@@ -273,19 +273,26 @@ f(x) = x^2 + c
 g(x) = -adx^2 + x + d + dy
 $$
 
-and a linear transformation
+and a linear transformation, 
 
 $$
 h(x) = mx + b
 $$
 
-and being that linear transformations do not change the topological properties of a set (they are homeomorphic transformations), if it can be shown that
+and being that linear transformations do not change the topological properties of a set (they are homeomorphic transformations), if it can be shown that 
 
 $$
+h^{-1} \circ f \circ h = g
+$$
+
+or equivalently that
+
+$$
+h^{-1}(f(h(x))) = g(x) \\
 f(h(x)) = h(g(x))
 $$
 
-then $f(x)$ is for most purposes dynamically equivalent to $g(x)$.  
+then $f(x)$ is dynamically equivalent to $g(x)$ because these are topological [conjugates](https://en.wikipedia.org/wiki/Topological_conjugacy) of one another.  
 
 Expanding these expressions and simplifying, there is
 
