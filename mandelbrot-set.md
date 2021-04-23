@@ -185,10 +185,10 @@ How about if we move to a complex number? The set from $b = 0 \to b = 1 + i$ loo
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_complex_disappeared.gif)
 
-Instead of moving from the origin to a given point $b$, let's try rotating about the origin at a radius $r$.  Luckily we are already working with complex numbers so this can be done using the identity
+Instead of moving from the origin to a given point $b$, let's try rotating about the origin at a radius $r$.  Luckily we are already working with complex numbers so this can be done using Euler's formula
 
 $$
-e^{i \pi} = -1
+e^{i y} = cos(y) + isin(y)
 $$
 
 so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page) of a point centered at a radius of $1/3$,
@@ -203,4 +203,45 @@ so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual
 which yields
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_swirl_0.3r.gif)
+
+Euler's formula can be found using Taylor series as follows: first note that the infinite sums 
+
+$$
+e^x = \sum_{n=0}^\infty \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \ddots \\
+sin(x) = \sum_{n=0}^\infty (-1)^n\frac{z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \ddots \\
+cos(x) = \sum_{n=0}^\infty (-1)^{n+1}\frac{z^{2n}}{2n} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
+$$
+
+Expressing $e^{iz}$ as an infinite sum proceeds by substituting $x = iz$ and remembering that powers of $i$ yeild the 4-cycle $i, \; -1, \; -i,\; 1,...$, we have
+
+$$
+e^{iz} = 1 + iz + i^2\frac{z^2}{2!} + i^3\frac{z^3}{3!} + i^4\frac{z^4}{4!} + \cdots \\
+e^{iz} = 1 + iz - \frac{z^2}{2!} - i\frac{z^3}{3!} + \frac{z^4}{4!} + \cdots \\
+$$
+
+and now splitting the series by taking every other term,
+
+$$
+e^{iz} = \left( 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots \right) + \\
+i \left( z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \right) \\
+e^{iz} = cos(z) + isin(z)
+$$
+
+Evaluating Euler's formula with $x= i\pi$ gives the beautiful identity
+
+$$
+e^{i\pi} + 1 = 0
+$$
+
+which relates two of the best known transcendental numbers with the two arithmetic identities.
+
+
+
+
+
+
+
+
+
+
 
