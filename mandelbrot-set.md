@@ -204,15 +204,40 @@ which yields
 
 ![disappearing complex mandelbrot]({{https://blbadger.github.io}}fractals/mandelbrot_swirl_0.3r.gif)
 
-Euler's formula can be found using Taylor series as follows: first note that the infinite sums 
+Euler's formula can be found using infinite series, which are sums of infinitely long sequences.  Power series centered at $0$ (also called Maclaurin series) can be expressed as
 
 $$
-e^x = \sum_{n=0}^\infty \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \cdots \\
+f(x) = c_0 + c_1(x) + c_2(x)^2 + c_3(x)^3 + \cdots
+$$
+
+and have coefficients equal to
+
+$$
+c_n = \frac{f^{(n)}(0)}{n!}
+$$
+
+where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by noting that $f'(0) = c_0$ and $f''(0) = 2c_2$ and $f'''(0) = 3\dot 2c_3$ etc.
+
+Therefore if a power series exists for any function $f(x)$, it has the form
+
+$$
+f(x) = \sum_{n = 0}^infty \frac{(f^{(n)}(x)}{n!} x^n 
+$$
+
+Checking Taylor's inequality, it can be verified that $e^x$ can be represented by a power series, which is
+
+$$
+e^x = \sum_{n=0}^\infty \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \cdots 
+$$
+
+and for the 
+
+$$
 sin(x) = \sum_{n=0}^\infty (-1)^n\frac{z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \\
 cos(x) = \sum_{n=0}^\infty (-1)^{n}\frac{z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
 $$
 
-Expressing $e^{iz}$ as an infinite sum proceeds by substituting $x = iz$ and remembering that successive powers of $i$ yield the 4-cycle $i, \; -1, \; -i,\; 1,...$  which altogether is
+Expressing $e^{iz}$ as an infinite sum proceeds by substituting $x = iz$ and remembering that successive powers of $i$ yield the 4-cycle $(i, \; -1, \; -i,\; 1, \dots)$  which altogether is
 
 $$
 e^{iz} = 1 + iz + i^2\frac{z^2}{2!} + i^3\frac{z^3}{3!} + i^4\frac{z^4}{4!} + \cdots \\
