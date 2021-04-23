@@ -221,7 +221,7 @@ where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by 
 Therefore if a power series exists for any function $f(x)$, it has the form
 
 $$
-f(x) = \sum_{n = 0}^\infty \frac{(f^{(n)}(x)}{n!} x^n 
+f(x) = \sum_{n = 0}^\infty \frac{f^{(n)}(x)}{n!} x^n 
 $$
 
 Checking Taylor's inequality, it can be verified that $e^x$ can be represented by a power series, which is
