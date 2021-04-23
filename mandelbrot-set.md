@@ -209,7 +209,7 @@ Euler's formula can be found using Taylor series as follows: first note that the
 $$
 e^x = \sum_{n=0}^\infty \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \cdots \\
 sin(x) = \sum_{n=0}^\infty (-1)^n\frac{z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \\
-cos(x) = \sum_{n=0}^\infty (-1)^{n+1}\frac{z^{2n}}{2n} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
+cos(x) = \sum_{n=0}^\infty (-1)^{n}\frac{z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
 $$
 
 Expressing $e^{iz}$ as an infinite sum proceeds by substituting $x = iz$ and remembering that successive powers of $i$ yield the 4-cycle $i, \; -1, \; -i,\; 1,...$  which altogether is
