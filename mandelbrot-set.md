@@ -216,7 +216,7 @@ $$
 c_n = \frac{f^{(n)}(0)}{n!}
 $$
 
-where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by noting that $f'(0) = c_0$ and $f''(0) = 2c_2$ and $f'''(0) = 3\dot 2c_3$ etc.
+where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by noting that $f'(0) = c_0$ and $f'' (0) = 2c_2$ and $f''' (0) = 3(2)c_3$ etc.
 
 Therefore if a power series exists for any function $f(x)$, it has the form
 
