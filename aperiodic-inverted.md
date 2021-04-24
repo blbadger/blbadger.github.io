@@ -2,7 +2,7 @@
 
 Suppose one were to observe movement over time, and wanted to describe the movement mathematically in order to be able to predict what happens in the future.  This is the goal of dynamical theory, and other pages on this site should convince one that precise knowledge of the future is much more difficult than it would seem even when a precise dynamical equation is known.  
 
-What about if someone were curious about the past?  Given a system of dynamical equations describing how an object's movement occurs, can we find out where the object came from?  This question is addressed here for two relatively simple maps, the logistic and Henon.  
+What about if someone were curious about the past?  Given a system of dynamical equations describing how an object's movement occurs, can we find out where the object came from?  This question is addressed here for two relatively simple iterative systems, the logistic and Henon maps.  
 
 ### The logistic map is non-invertible
 
@@ -33,7 +33,9 @@ Now the first thing to note is that this dynamical equation is not strictly a fu
 
 ### The aperiodic logistic map in reverse is unstable
 
-What does it mean for a dynamical equation to be non-invertible?  It means that, given a point in a trajectory, we cannot determine what its previous point was with certainty.  In the case of the reverse logistic equation, one point $x_n$ could have two possible previous points $x_{n-1}, x_{n-1}'$ and each of these could have two possible previous points $x_{n-2}, x_{n-2}', x_{n-2}'', x_{n-2}'''$ and so on (note that some points have only one previous point, because either $x_{n-1}, x_{n-1}' \not \in (0, 1)$).  
+What does it mean for a dynamical equation to be non-invertible?  It means that, given a point in a trajectory, we cannot determine what its previous point was with certainty.  In the case of the reverse logistic equation (2), one point $x_n$ could have two possible previous points $x_{n-1}, x_{n-1}'$ and each of these could have two possible previous points $x_{n-2}, x_{n-2}', x_{n-2}'', x_{n-2}'''$ and so on (note that some points have only one previous point, because either $x_{n-1}, x_{n-1}' \not \in (0, 1)$).  
+
+![reverse tree]({{https://blbadger.github.io}}misc_images/logistic_inverted.png)
 
 Suppose one wanted to calculate the all the possible values that could have preceded $x_n$ after a certain number of steps.  The set `s` of points a point could have come from after a given number of `steps` may be found using recursion on (2) as shown below:
 
@@ -378,7 +380,7 @@ There is an increase in average error as the map becomes aperiodic, at around r 
 
 To summarize, if the reverse logistic map is used to calculate values that result in accurate recapitulations of the intial value using the forward logistic map, error due to finding the right periodic trajectory but being on the 'wrong' iteration occurs because all periodic points are attractors.  For r values giving an aperiodic trajectory of the forward logistic map, this error cannot be prevented because periodicity is infinite.
 
-### Are some approximations of $x_{n-p}$ with (2) are necessarily better than others
+### Some approximations of $x_{n-p}$ with (2) are necessarily better than others
 
 The previous section saw some extimates of a previous value in the trajectory of the logistic map to yield more accurate vales of $x_n$ after p iterations of (1). Is this necessarily the case, or in other words is there some way to compute the reverse logistic map such that all previous estimates are equivalently good?
 
