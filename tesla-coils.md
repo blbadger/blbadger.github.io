@@ -5,7 +5,7 @@ High voltage arcs.  Beautiful to witness!
 
 Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps, made from a variable-speed angle grinder with a PE disk used to secure four brass electrodes (iron has high RF losses and becomes too hot to use with PE).
 
-The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors usually found in industrial lasers. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series (floating cores, and all submerged in oil) for a power ouput of 10 kV at ~400mA.  
+The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors usually found in industrial lasers. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series (floating cores, and all submerged in mineral oil) for a power ouput of 10 kV at ~400mA.  Not pretty but a very robust power source.
 
 ![MOT stack]({{https://blbadger.github.io}}tesla_images/mot_stack.JPG)
 
