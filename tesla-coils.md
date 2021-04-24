@@ -5,17 +5,16 @@ High voltage arcs.  Beautiful to witness!
 
 Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps.
 
-The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series
-(floating cores, and all submerged in oil) for a power ouput of 10 kV
-at 400mA.  Power controlled with a variable autotransformer (for low power runs), up to 
+The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors usually found in industrial lasers. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series (floating cores, and all submerged in oil) for a power ouput of 10 kV at ~400mA.  
+
+![MOT stack]({{https://blbadger.github.io}}tesla_images/mot_stack.JPG)
+
+Power controlled with a variable autotransformer (for low power runs), up to 
 145V output with 120V input. 
 
-The topload is two aluminum dryer ducts forming a double stacked toroid, each stack 8" by 2.5'.
-Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil
-is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete 
-forming tube coated in polyurethane. The inner turns of the primary get 
-warm during operation, not suprising with an estimated 18.9 kA instantaneous 
-current during capacitor discharge.
+![variac]({{https://blbadger.github.io}}tesla_images/variac.JPG)
+
+The topload is two aluminum dryer ducts forming a double stacked toroid, each stack 8" by 2.5'. Primary coil is ~8 turns of 0.25" refrigerator tubing, secondary coil is 1100 turns of AWG 22 magnet wire on an 8" inner diameter concrete  forming tube coated in polyurethane. The inner turns of the primary get  warm during operation, not suprising with an estimated 18.9 kA instantaneous current during capacitor discharge.
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
 
@@ -43,8 +42,13 @@ A rubber inner tube was inflated and covered in aluminum tape to make a very lar
 
 ### Early generation coil
 
-Same primary circuit as described above.  Secondary coil is a 4" diameter PVC wound 
-with 1300 turns of AWG 26 magnet wire. 3kVA input, smaller dryer duct toroids, smaller primary capacitor (~ 50 nF).
+This coil was based on a secondary coil wound on a 4" diameter PVC with 1300 turns of AWG 26 magnet wire. 3kVA input from the microwave oven transformer above but with an air core inductive current limiter, smaller dryer duct toroids, smaller primary capacitor (~ 50 nF) make from WIMA MKP-10 pulse capacitors (which are by design not as durable as FKP-1 but are cheaper).
+
+![primary capacitor]({{https://blbadger.github.io}}tesla_images/wima_mkp10.JPG)
+
+The primary and secondary coil setup on wood supports, with an angle grinder-based ASRG in the ground to the right and the capacitor bank underneath the primary.
+
+![setup]({{https://blbadger.github.io}}tesla_images/old_tesla.JPG)
 
 ![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_images/tesla_5.JPG)
 
