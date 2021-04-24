@@ -3,7 +3,7 @@
 
 High voltage arcs.  Beautiful to witness!
 
-Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps, made from a variable-speed angle grinder with a PE disk used to secure four brass electrodes (iron has high RF losses and becomes too hot to use with PE).
+Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps, made from a variable-speed angle grinder with a PE disk used to secure four brass electrodes (iron has high RF losses and becomes too hot to use with PE). 
 
 The primary circuit capacitor is 120nF multi-mini capacitor style, made from a few hundred surplus WIMA FKP1 pulse capacitors usually found in industrial lasers. Power supplied by 4 microwave oven transformers, primaries wired in parallel with secondaries in series (floating cores, and all submerged in mineral oil) for a power ouput of 10 kV at ~400mA.  Not pretty but a very robust power source.
 
@@ -51,6 +51,8 @@ Note the bleed resistors at the top: I have not found these to be necessary for 
 The primary and secondary coil setup on wood supports, with an angle grinder-based ASRG in the ground to the right and the capacitor bank underneath the primary.
 
 ![setup]({{https://blbadger.github.io}}tesla_images/old_tesla.JPG)
+
+The jumper cables are attached to the strike rail protecting the primary coil and the secondary coil base, and lead to an 8' copper grounding rod.
 
 ![gen 1 tesla arcs 2]({{https://blbadger.github.io}}tesla_images/tesla_5.JPG)
 
