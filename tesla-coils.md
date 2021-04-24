@@ -46,6 +46,8 @@ This coil was based on a secondary coil wound on a 4" diameter PVC with 1300 tur
 
 ![primary capacitor]({{https://blbadger.github.io}}tesla_images/wima_mkp10.JPG)
 
+Note the bleed resistors at the top: I have not found these to be necessary for new capacitors (with no dielectric memory) used on tesla coils, but it is generally a good idea to include some form of current dissipation for large capacitors like these.
+
 The primary and secondary coil setup on wood supports, with an angle grinder-based ASRG in the ground to the right and the capacitor bank underneath the primary.
 
 ![setup]({{https://blbadger.github.io}}tesla_images/old_tesla.JPG)
