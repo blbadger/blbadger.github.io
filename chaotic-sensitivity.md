@@ -44,7 +44,7 @@ f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
 \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
-### Decomposably periodic functions that are insensitive to initial values
+### Decomposably periodic or quasiperiodic functions that are insensitive to initial values
 
 The case for periodic versus aperiodic functions mapped continuously is mostly similar, but with a few extra considerations. The first and probably the most obvious is that with no discrete unit of time and therefore no iterations to speak of.  Instead there is a continuum, which one can think of as an infinite number of iterations between any two points in the trajectory.  Therefore rather than a finite $k$ number of iterations defining a period, there is some finite time $t$ that defines it.  Secondly, trajectories cannot cross one another's path in continuous maps, whereas they may for discrete cases where the points do not fall on top of one another.  
 
@@ -52,7 +52,9 @@ The theorem above extends to continuous functions in higher dimensions that do n
 
 Note that the above argument does not apply to discrete maps.  This is because if an equation is iterated discretely, any period must have a finite number of iterations between $x_n$ occurrences.  Therefore the circle map above is only periodic if both trajectories reach the same point after a finite number of iterations.  Without loss of generality, say the first orbit has period $p$ and the second period $q$.  Then both points will be located in their initial position at iteration $k = pq$, which is finite as $p$ and $q$ are.  Therefore the map is necessarily periodic for discrete iterations.
 
-Another example of an aperiodic map that can be decomposed into a periodic map: consider the case of a point traveling around a circle in discrete jumps, at some rational value between iterations.  This is technically an aperiodic system (as previous points are never revisited), but is clearly not sensitive to initial values because changing the starting position changes the final position by an identical amount.  If the coordinate system is changed such that a rational-valued rotation occurs upon each iteration, however, this system is periodic.  
+Another example of an aperiodic map that can be decomposed into a periodic map: consider the case of a point traveling around a circle in discrete jumps, at some rational value between iterations.  This is technically an aperiodic system (as previous points are never revisited), but is clearly not sensitive to initial values because changing the starting position changes the final position by an identical amount.  This orbit is dense along the circle meaning that after an arbitrary number of iterations any point is arbitrarily close to any other.  If the coordinate system is changed such that a rational-valued rotation occurs upon each iteration, however, this system is periodic.  
+
+This last function is often called 'quasiperiodic', meaning that while previous points are not actually revisited they are approximately revisited, to any degree of precision wished.  For this and other pages on this website, quasiperiodicity is included in the more general label of 'periodicity' for this reason.
 
 
 
