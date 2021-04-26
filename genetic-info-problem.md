@@ -128,7 +128,33 @@ $$
 x_{n+1} = - a\left( x_n \log_2 (x_n) + (1-x_n) \log_2 (1-x_n) \right)
 $$
 
-where $a$ is defined as a constant of loss: $a=1$ signifies no signal loss, $a=0$ means all sigal is lost.  Making an orbit map at different values of $a$, there is
+where $a$ is defined as a constant of loss: $a=1$ signifies no signal loss, $a=0$ means all sigal is lost.  Making an orbit map at different values of $a$, 
+
+```python
+#! python3 
+# Import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+
+def information_map(x, a):
+	return - a * (x*np.log2(x) + (1-x)*np.log2(1-x))
+
+a_ls = [0.5]
+x_ls = [0.1]
+
+steps = 1000000
+
+for i in range(steps):
+	a_ls.append(a_ls[-1] + 0.5/steps)
+	x_ls.append(information_map(x_ls[-1], a_ls[-1]))
+
+plt.plot(a_ls, x_ls, ',', color='black', alpha=0.1, markersize=0.1)
+plt.axis('on')
+plt.xlabel('Loss factor')
+plt.ylabel('Informational entropy')
+```
+
+there is
 
 ![Informational entropy]({{https://blbadger.github.io}}/misc_images/entropy_with_loss.png)
 
