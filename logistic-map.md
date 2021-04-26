@@ -488,9 +488,9 @@ Iterations of this map on $1.1101001$ yeild
 
 $$
 \theta_0 = 0.1101001 \\
-\theta_1 = 0.101001 \\
-\theta_2 = 0.01001 \\
-\theta_3 = 0.1001 \\
+\theta_1 = 0.1010010 \\
+\theta_2 = 0.0100100 \\
+\theta_3 = 0.1001000 \\
 $$
 
 Now for any rational starting number $\theta_0 \in \Bbb Q$, the bit shift map is periodic or eventually periodic because after a finite number of iterations, the remaining digits are composed of repeating sequences.  On the other hand, the bit shift map is aperiodic for $\theta_0 \in \Bbb R - \Bbb Q$.  This map also exhibits sensitivity to initial conditions because a small change in $\theta_0$ becomes exponentially larger over time, specifically $2^n$ as large after $n$ iterations.
@@ -506,19 +506,19 @@ If $x_{n+1} = 4x_n(1-x_n)$ is implied by $x_n = \sin^2(\pi\theta_n)$ given $\the
 because this map is identical to $x_{n+1}$ in the logistic map for $\theta_{n+1}$
 
 $$
-x_{n+1} = 4 \sin^2(\pi \theta_n) \left(1-\sin^2(\pi \theta_n) \right) \\
- = \sin^s(\pi2\theta_n \bmod 1 )
-\implies 4\sin^2(\pi\theta_n)\cos^2(\pi\theta_n) = \sin^2(\pi2\theta_n \bmod 1 ) \\
+x_{n+1} = 4 \sin^2(\pi \theta_n) \left(1-\sin^2(\pi \theta_n) \right), \\
+x_{n+1} = \sin^2(\pi2\theta_n \bmod 1 ) \implies \\
+4\sin^2(\pi\theta_n)\cos^2(\pi\theta_n) = \sin^2(\pi2\theta_n \bmod 1 ) \\
 2 \sin(\pi\theta_n)cos(\pi\theta_n) = \sin(\pi\theta_n \bmod 1) \\
 $$
 
 and as $\sin(2\theta)) = 2\sin(\theta)\cos(theta)$, 
 
 $$
-2 \sin(\pi\theta_n)cos(\pi\theta_n)  = 2 \sin(\pi\theta_n)cos(\pi\theta_n) $
+2 \sin(\pi\theta_n)cos(\pi\theta_n)  = 2 \sin(\pi\theta_n)cos(\pi\theta_n) 
 $$
 
-and therefore these expressions are equivalent regardless of a choice of $\theta$.
+and therefore these expressions are equivalent regardless of a choice of $\theta_0$.
 
 Expressed in an iteration-independant manner, 
 
