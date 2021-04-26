@@ -75,11 +75,11 @@ To sum up the problem in a sentence: the human genome is ~750 megabytes (2 bits 
 
 ### What genomes specify
 
-How can such a small amount of information encode something so complex?  The simple answer is that it cannot, at least not in the way encoding is usually meant.  But even a little information can yield 
+How can such a small amount of information encode something so complex?  The simple answer is that it cannot, at least not in the way encoding is usually meant.  
 
 Consider the other pages of [this website](/index.md).  There, we see many examples of small and relatively simple equations give rise to extremly intricate and infinitely detailed patterns.  An important thing to remember about these systems are that they are dynamical: they specify a change over time, and that they are all nonlinear (piecewise linear equations can also form comlicated patterns, but for our purposes we can classify piecewise linear equations as nonlinear).  
 
-If simple nonlinear differential equations can give rise to complex maps, perhaps a relatively simple genetic code could specify a complex body by acting as instructions not for the body directly but instead for parameters that over time specify a body.  In this way, the genetic code could be described as a specification for a nonlinear dynamical system of equations rather than a simple blueprint that can be read.
+If simple nonlinear dynamical equations can give rise to complex maps, perhaps a relatively simple genetic code could specify a complex body by acting as instructions not for the body directly but instead for parameters that over time specify a body.  In this way, the genetic code could be described as a specification for a nonlinear dynamical system of equations rather than a simple blueprint that can be read.
 
 Why does this help the genome specify a detailed three dimensional body from a single dimension?  Suppose we wanted to store the information necessary to create a complex structure like a zoomed video of a [Julia set](/julia-sets.md).  The ones I made were usually around 80 megabytes for 10 seconds worth of video.  It would take 100 seconds to make a movie that is 800 megabytes in size (without compression), just larger than the human genome.  And this is only for one among a multitute of possible locations to increase scale and still recieve more information!  A very detailed version of a Julia set would take a prodigous amount of memory to store, wouldn't it?
 
@@ -90,6 +90,50 @@ z_{next} = z_{current}^2 + a
 $$
 
 and then have a system that computes each iteration.  In text, this is only 25 bytes, but gives us the incredibly information-rich maps of the set.  In this sense, an extremely complicated structure may be stored in with a miniscule amount of information.
+
+
+### Iterated Information
+
+Considering the transmission of binary electrical signal over a noisy background, Shannon defined binary informational entropy as follows:
+
+$$
+H = -\left( p log p + q log q \right)
+$$
+
+where $p$ is the probability of transmitting a certain signal (perhaps '1') and $q = 1-p$, or the probability of not recieving the other signal, and $H$ is the information entropy in bits per signal (and these logarithms are of base 2).  'Entropy' here has little to nothing to do with the entropy of physical substances, but rather is a measure of total informational amount: the more entropy a transmission contains, the more information it transfers.  Plotting this equation with $H$ on the y-axis and $p$ on the x-axis, 
+
+![Informational entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
+
+Informational entropy is maximized when $p = q = 0.5$, which at first may seem strange.  After all, a simple random distribution of 0s and 1s, or heads and tails if one wished to flip coins, would also yield $p = q = 0.5$.  Why does approaching a random distribution give more information?  
+
+One way to see this is to consider what would happen if $p = 1, q = 0$: now every signal received is a $1$, and so there is minimal new information (as we could already predict that the signal would be $1$ at any given time).  On the other hand, a signal consisting more unpredictable sequence of 1s and 0s intuitively yields more informational content. A completely unpredictable distribution of 1s and 0s would be (without prior knowledge) indistinguisheable from noise.
+
+Say one were attempting to communicate with a friend by sending messages back and forth over an unconventional transmission line.  This transmission line changes such that each time a message is sent, the probability of a $1$ being recieved at any position of the message is equal to the entropy (in bits) of the message recieved. Tracking the entropy of each message over time can be accomlished using the dynamical system:
+
+$$
+x_{n+1} = - \left( x_n log x_n + (1-x_n)log(1-x_n) \right)
+$$
+
+which when starting near $x_0 = 0.299$ gives the following graph:
+
+![Informational entropy]({{https://blbadger.github.io}}/misc_images/entropy_discrete.png)
+
+which itself looks like noise!  The entropy moves around unpredictably, not settling on any value over time.
+
+Now real electrical transfer is usually lossy, meaning that whatever sequence of 0s and 1s we send will likely not arrive so cleanly, but instead as for example  $0,1,0,1,1...$ may become $0.12, \; 0.99,\; 0.01,\; 0.87,\; 0.62...$.  In this case we are not exactly sure what the signal was intended to be, meaning that some information is lost.
+
+Repeating the same process of tracking entropy over time as messages are sent and received, we have
+
+$$
+x_{n+1} = - a\left( x_n log x_n + (1-x_n)log(1-x_n) \right)
+$$
+
+where $a$ is defined as a constant of loss: $a=1$ signifies no signal loss, $a=0$ means all sigal is lost.  Making an orbit map at different values of $a$, there is
+
+![Informational entropy]({{https://blbadger.github.io}}/misc_images/entropy_with_loss.png)
+
+This is a period-doubling behavior analagous to the [logistic map](https://blbadger.github.io/logistic-map.html).
+
 
 ### Protein folding as a nonlinear dynamical systems 
 
