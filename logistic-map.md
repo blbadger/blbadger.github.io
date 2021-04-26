@@ -484,7 +484,7 @@ $$
 \theta_{n+1} = 2\theta_n \bmod 1
 $$
 
-Iterations of this map on $1.1101001$ yeild
+The first few iterations of this map on $1.1101001$ are
 
 $$
 \theta_0 = 0.1101001 \\
@@ -520,7 +520,7 @@ $$
 
 and therefore these expressions are equivalent regardless of a choice of $\theta_0$.
 
-Expressed in an iteration-independant manner, 
+Expressed another way, the solution to the logistic map with r=4 is 
 
 $$
 x_n = \sin^2(\pi 2^n \theta) 
