@@ -97,10 +97,10 @@ and then have a system that computes each iteration.  In text, this is only 25 b
 Considering the transmission of binary electrical signal over a noisy background, Shannon defined binary informational entropy as follows:
 
 $$
-H = -\left( p log p + q log q \right)
+H = -\left( p \log_2(p) + q \log_2(q) \right)
 $$
 
-where $p$ is the probability of transmitting a certain signal (perhaps '1') and $q = 1-p$, or the probability of not recieving the other signal, and $H$ is the information entropy in bits per signal (and these logarithms are of base 2).  'Entropy' here has little to nothing to do with the entropy of physical substances, but rather is a measure of total informational amount: the more entropy a transmission contains, the more information it transfers.  Plotting this equation with $H$ on the y-axis and $p$ on the x-axis, 
+where $p$ is the probability of transmitting a certain signal (perhaps '1') and $q = 1-p$, or the probability of not recieving the other signal, and $H$ is the information entropy in bits (binary digits) per signal.  'Entropy' here has little to nothing to do with the entropy of physical substances, but rather is a measure of total informational amount: the more entropy a transmission contains, the more information it transfers.  Plotting this equation with $H$ on the y-axis and $p$ on the x-axis, 
 
 ![Informational entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
 
@@ -111,7 +111,7 @@ One way to see this is to consider what would happen if $p = 1, q = 0$: now ever
 Say one were attempting to communicate with a friend by sending messages back and forth over an unconventional transmission line.  This transmission line changes such that each time a message is sent, the probability of a $1$ being recieved at any position of the message is equal to the entropy (in bits) of the message recieved. Tracking the entropy of each message over time can be accomlished using the dynamical system:
 
 $$
-x_{n+1} = - \left( x_n log x_n + (1-x_n)log(1-x_n) \right)
+x_{n+1} = - \left( x_n \log_2 (x_n) + (1-x_n) \log_2 (1-x_n) \right)
 $$
 
 which when starting near $x_0 = 0.299$ gives the following graph:
@@ -125,7 +125,7 @@ Now real electrical transfer is usually lossy, meaning that whatever sequence of
 Repeating the same process of tracking entropy over time as messages are sent and received, we have
 
 $$
-x_{n+1} = - a\left( x_n log x_n + (1-x_n)log(1-x_n) \right)
+x_{n+1} = - a\left( x_n \log_2 (x_n) + (1-x_n) \log_2 (1-x_n) \right)
 $$
 
 where $a$ is defined as a constant of loss: $a=1$ signifies no signal loss, $a=0$ means all sigal is lost.  Making an orbit map at different values of $a$, there is
