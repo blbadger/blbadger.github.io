@@ -14,7 +14,7 @@ $$
 \lvert x_1 - x_2 \rvert < \epsilon \implies \lvert f(x_1) - f(x_2) \rvert < \delta 
 $$ 
 
-for any arbitrarily small value $\epsilon$. 
+for any arbitrarily small value $\epsilon$. Note that this is identical to the standard definition for continuity, which is $\lvert f(x_1) - f(x_2) \rvert < \epsilon$ for any $epsilon > 0$ implies that there exists some $\delta$ such that $\lvert x_1 - x_2 \rvert < \delta$, but with $\epsilon$ and $\delta$ reversed.
 
 Thus for $\Bbb Q$ there are three options, meaning that the set of continuous functions is equivalent to the set of all sets of $\Bbb Q$ into $\{0, 1, 2\}$
 
