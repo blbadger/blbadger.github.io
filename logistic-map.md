@@ -509,7 +509,7 @@ $$
 x_{n+1} = 4 \sin^2(\pi \theta_n) \left(1-\sin^2(\pi \theta_n) \right), \\
 x_{n+1} = \sin^2(\pi2\theta_n \bmod 1 ) \implies \\
 4\sin^2(\pi\theta_n)\cos^2(\pi\theta_n) = \sin^2(\pi2\theta_n \bmod 1 ) \\
-2 \sin(\pi\theta_n)cos(\pi\theta_n) = \sin(\pi\theta_n \bmod 1) \\
+2 \sin(\pi\theta_n)cos(\pi\theta_n) = \sin(\pi2\theta_n \bmod 1) \\
 $$
 
 and as $\sin(2\theta)) = 2\sin(\theta)\cos(\theta)$, 
