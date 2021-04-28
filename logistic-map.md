@@ -38,12 +38,12 @@ plt.show()
 
 When $r$ is small (less than one, to be specific), the population heads towards 0.  Here $r=0.5$:
 
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
+![towards 0]({{https://blbadger.github.io}}/logistic_map/logistic_time_r0.8.png)
 
 
 As $r$ is increased to 2.5, a stable population is reached:
 
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
+![stable iterations]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
 
 This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $r=2.5$ we have
 
@@ -65,7 +65,7 @@ and therefore $x=0$ is unstable.  On the other hand, $f'(3/5) = 3.5-4.2 = -0.7$ 
 
 If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
 
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
+![period 2 logistic]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
 We can find points where $x_{n+1} = x_n$, or
 
@@ -93,7 +93,7 @@ But there is a clear difference between this sort of behavior and that where $x_
 
 at $r = 3.5$, the trajectory is period 4, as it takes 4 iterations for the population to return to its original position:
 
-![t=0.05 map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
+![period 4 logistic]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.5.png)
 
 As $r$ increases, trajectories of $8,\; 16,\; 32,\; 64...$ exist: given any natural number that is the power of two, there is some $r$ value range for which the logistic map trajectory has that number as a periodic cycle.
 
@@ -101,7 +101,7 @@ As $r$ increases, trajectories of $8,\; 16,\; 32,\; 64...$ exist: given any natu
 
 For $r=3.7$, the (prime) period is longer than the iterations plotted and is actually infinite, and therefore the system is called aperiodic.  To restate, this means that previous values of the logistic equation are never revisited for an aperiodic $r$ value.  The ensuing plot has points that look random but are deterministic.  The formation of aperiodic behavior from a deterministic system is termed mathematical chaos.
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
+![aperiodic logistic]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7.png)
 
 Are there any non-prime periodic points?  Looking for points of period 1 (keeping $r=3.7$), we find two:
 
@@ -124,23 +124,23 @@ As demonstrated by Lorenz in his [pioneering work on flow](https://journals.amet
 
 Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
+![aperiodic logistic shift]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
 
 The behavior is similar to the unshifted population for a while, until it changes and becomes very different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
 
 In contrast, a relatively large shift of a factor of one hundreth (3 to 3.03) in initial population leads to no change to periodicity or exact values at $r=2.5$ (period 1):
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_2.5_hundreth.png)
+![periodic logistic shift]({{https://blbadger.github.io}}/logistic_map/logistic_time_2.5_hundreth.png)
 
 
 or at $r=3.5$, period 4, the same change does not alter the pattern produced:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
+![period 4 logistic shift]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.5_hundreth.png)
 
 
 even a large change in starting value at $r=3.55$ (period 8), from $x_0=0.3$ to $x_0=0.5$ merely shifts the pattern produced over by two iterations but does not change the points obtained or the order in which they cycle:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
+![period 8 logistic shift]({{https://blbadger.github.io}}/logistic_map/logistic_large.png)
 
 
 ### Patterns in the aperiodic orbit map
@@ -185,14 +185,14 @@ plt.axis('on')
 plt.show()
 ```
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
+![logistic orbit map]({{https://blbadger.github.io}}/logistic_map/logistic_period.png)
 
 
 By looking at how many points there are at a given $r$ value, the same patter of period doubling may be observed. The phenomenon that periodic nonlinear systems become aperiodic via period doubling at specific ratios was found by Feigenbaum to be a [near-universal feature](https://www.ioc.ee/~dima/mittelindyn/paper4.pdf) of the transition from periodicity to chaos.
 
 Let's take a closer look at the fuzzy region of the right. This corresponds to the values of $r$ which are mostly aperiodic, but with windows of periodicity.  There are all kinds of interesting shapes visible even in the aperiodic sections:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
+![aperiodic logistic orbit map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
 What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
@@ -211,13 +211,13 @@ a + geom_dotplot('binwidth' = 0.01, col='blue', fill='red') +
 
 Here the x-axis denotes the population size, and the y-axis denotes the proportion of iterations in this region:
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
+![logistic proportions]({{https://blbadger.github.io}}/logistic_map/logistic_probs_3.68.png)
 
 and thus there are are indeed more iterations near $0.74$ than elsewhere, holding $r$ constant and iterating from a few different starting points. 
 
 Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides a possible explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
+![r=3.68 iterations]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
 Each point in the aperiodic logistic map's trajectory is unstable, meaning that every value arbitrarily close to the point of interest will eventually become arbitrarily far away (within the bounds of the function's image).  But these numerical test suggest that points near $0.7282...$ move comparatively less than others.
 
@@ -253,19 +253,19 @@ This is best seen using a cobweb plot, which plots the equation of interest (her
 
 For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$.  
 
-![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_1.png)
+![logistic analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_1.png)
 
 and another iteration gives $x_{n+2} \approx 0.32$,
 
-![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_2.png)
+![logistic analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_2.png)
 
 After six iterations (red, orange, yellow, green, blue, indigo respectively), there is
 
-![analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_full.png)
+![logistic analysis]({{https://blbadger.github.io}}/logistic_map/logistic_analysis_full.png)
 
 Now as one ranges over r values, the first four iterations after $x_n=0.5$ are in red, yellow, green, and blue respectively:
 
-![traces]({{https://blbadger.github.io}}/logistic_map/logistic_traces.png)
+![logistic map semistable traces]({{https://blbadger.github.io}}/logistic_map/logistic_traces.png)
 
 Overlayed onto the logistic map with successive iterations after $x_n=1/2$ in red, orange, yellow, green, blue, indigo, and violet respectively,
 
@@ -281,10 +281,10 @@ This phenomenon of patterns arising amidst aperiodicity is also found in [prime 
 Consider the logistic map for, $r = 3.6$ and $r = 4$.  In contrast to complete disorder, short-range prediction is possible with chaotic systems even if long-range prediction is impossible.  Does relatively restricted aperiodicity (as seen for $r=3.6$) lead to an extension in prediction range?  Let's compare iterations of two starting values at a factor of a ten-thousanth apart (0.3 and 0.30003) to find out:
 
 $r=3.6$
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.6_small.png)
+![logistic iterations shifted]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.6_small.png)
 
 $r=4$
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_time_4_small.png)
+![logistic iterations shifted]({{https://blbadger.github.io}}/logistic_map/logistic_time_4_small.png)
 
 Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
 
@@ -315,7 +315,7 @@ for i in range(500):
 
 which when plotted yields
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
+![logistic divergence]({{https://blbadger.github.io}}/logistic_map/logistic_divergence_3.0003.png)
 
 Prediction ability (in length until divergence) tends to decrease with increasing $r$ values, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
 
@@ -337,11 +337,11 @@ This was first shown in Lorenz's [pioneering work](https://journals.ametsoc.org/
 
 One of the most striking features of this map is that it is a self-similar fractal.  This means that smaller parts resemble the whole object.  Observe what happens when we zoom in on the upper left section of the aperiodic region in the logistic map: A smaller copy of the original is found.
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom3.png)
+![self-similar logistic map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom3.png)
 
 If we take this image and again zoom in on the upper left hand corner, again we see the original!
 
-![map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
+![self-similar logistic map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom4.png)
 
 Zooming in by a factor of $2^{15}$ on the point $(3.56995, 0.8925)$, we have
 
@@ -434,7 +434,7 @@ The conclusion from the last section is that for values of $r$ of the logistic m
 
 Now consider the transition from an area in the orbit map where no orbit is stable (and thus the trajectory is aperiodic) to an an area of a stable period-3 orbit (but still with points of aperiodicity, albeit unstable ones). Here is a closer view at the transition to period 3 near $r=3.8285$ (right click to view image in higher resolution):
 
-![closeup]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
+![logistic aperiodicity to periodicity]({{https://blbadger.github.io}}/logistic_map/logistic_closeup.png)
 
 Every third iteration of the logistic map starting from the relatively stable point of $x_0=1/2$, ie 
 
