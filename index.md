@@ -177,11 +177,6 @@ The study of life, observations of which display many of the features of nonline
 ![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
 
 
-### [Neural Network](/neural-networks.md) 
-
-![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
-
-
 ## Neural nets and smaller software projects
 
 ### [Neural Networks](/neural-networks.md) 
