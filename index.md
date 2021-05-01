@@ -15,7 +15,7 @@
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
  
-Pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) as well as abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology) or a few smaller software [projects](#smaller-software-projects) and some high voltage [engineering](#high-voltage).
+Pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) as well as abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology) neural networks and software [projects](#smaller-software-projects) and some high voltage [engineering](#high-voltage).
 
 ## Dynamics
 The mathematical approach to change over time. Most dynamical systems are nonlinear, which are not additive, meaning that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are mostly unsolvable, and though deterministic are unpredictable.  
@@ -182,7 +182,15 @@ The study of life, observations of which display many of the features of nonline
 ![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
 
 
-## Smaller software projects
+## Neural nets and smaller software projects
+
+### [Neural Networks](/neural-networks.md) 
+
+![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
+
+### [Limitations of NNs: adversarial negatives](/nn-limitations.md)
+
+![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
 
 ### [Game puzzles](/puzzle-projects.md)
 
