@@ -46,6 +46,7 @@ $$
 
 ### Aperiodicity and sensitivity to initial values: continuous version
 
+Lorenz defined sensitivity to initial conditions using a $\delta, \epsilon$ -style definition analagous to that for continuity.  This is especially interesting because it implies that trajectory which is sensitive to initial values is discontinuous in the output space with respect to the input. Other pages on this site show that there are too many possible aperiodic trajecotires for them to be continuous, as well as more direct proofs that aperiodicity implies discontinuity (with respect to the output space).  
 
 ### Decomposably periodic or quasiperiodic functions that are insensitive to initial values
 
