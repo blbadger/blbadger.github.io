@@ -2,7 +2,7 @@
 
 As we have seen for the [logistic map](https://blbadger.github.io/logistic-map.html), small changes in starting values lead to large changes after many iterations.  It turns out that a fundamental feature of all chaotic systems is that their lack of periodicity implies extreme sensitivity to initial values, and this was shown by Lorenz in his pioneering work on convection.  Here follows a proof using contraposition, based on the work of Ed Lorenz.
 
-### Theorem: Aperiodicity implies sensitivity to initial values.
+### Theorem: Aperiodicity implies sensitivity to initial values (discrete version)
 
 Restated, take $f$ to be a nonlinear function in finite dimensional phase space that is bounded by finite values and iterated discretely.  This entails that trajectories are unique, and that if $f$ returns to a previous point then $f$ is periodic.  Define $f$ to be aperiodic when future iterations do not revisit previous points in the space.  In symbols, an aperiodic $f$ is defined as follows:
 
@@ -44,6 +44,9 @@ f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
 \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
 
+### Aperiodicity and sensitivity to initial values: continuous version
+
+
 ### Decomposably periodic or quasiperiodic functions that are insensitive to initial values
 
 The case for periodic versus aperiodic functions mapped continuously is mostly similar, but with a few extra considerations. The first and probably the most obvious is that with no discrete unit of time and therefore no iterations to speak of.  Instead there is a continuum, which one can think of as an infinite number of iterations between any two points in the trajectory.  Therefore rather than a finite $k$ number of iterations defining a period, there is some finite time $t$ that defines it.  Secondly, trajectories cannot cross one another's path in continuous maps, whereas they may for discrete cases where the points do not fall on top of one another.  
@@ -54,7 +57,10 @@ Note that the above argument does not apply to discrete maps.  This is because i
 
 Another example of an aperiodic map that can be decomposed into a periodic map: consider the case of a point traveling around a circle in discrete jumps, at some rational value between iterations.  This is technically an aperiodic system (as previous points are never revisited), but is clearly not sensitive to initial values because changing the starting position changes the final position by an identical amount.  This orbit is dense along the circle meaning that after an arbitrary number of iterations any point is arbitrarily close to any other.  If the coordinate system is changed such that a rational-valued rotation occurs upon each iteration, however, this system is periodic.  
 
-This last function is often called 'quasiperiodic', meaning that while previous points are not actually revisited they are approximately revisited, to any degree of precision wished.  For this and other pages on this website, quasiperiodicity is included in the more general label of 'periodicity' for this reason.
+This last function is often called 'quasiperiodic', meaning that while previous points are not actually revisited they are approximately revisited, to any degree of precision wished.  Lorenz defined quasiperiodicity as follows: given trajectory $P(t)$ for any $\epsilon > 0$, there exists a time $t_1 > t_0$ such that $P(t_1) - P(t_0) < \epsilon$ for all points on trajectory $P$. Clearly the point traveling along a circle in rational-size steps is quasiperiodic because given any point along the circle, one will find a future point arbitrarily nearby if one waits long enough.
+
+
+For pages on this website, quasiperiodicity is included in the more general label of 'periodicity' for this reason.
 
 
 
