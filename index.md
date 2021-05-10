@@ -86,7 +86,7 @@ $$
 ### [Aperiodicity implies sensitivity to initial conditions](/chaotic-sensitivity.md)
 
 $$
-f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
+f(x) : f^n(x(0)) \neq f^{n+k}(x(0)) \forall k \implies \\
 \forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \; \\
 \exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
 $$
@@ -157,12 +157,15 @@ As for any science, an attempt to explain observations and predict future ones u
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
+<!--
 ### [Quantum mechanics](/quantum-mechanics.md)
 
 $$
 P_{12} \neq P_1 + P_2 \\
 P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta
 $$
+
+-->
 
 ## Biology
 The study of life, observations of which display many of the features of nonlinear mathematical systems: an attractive state resistant to perturbation, lack of exact repeats, and simple instructions giving rise to intricate shapes and movements.  
