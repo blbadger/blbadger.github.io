@@ -53,10 +53,9 @@ def julia_set(h_range, w_range, max_iterations):
 To find the number of iterations until divergence of each point in our array of complex numbers, we can simply loop through the array `z_array` such that each point in the array is 
 
 ```python
-  for h in range(h_range):
-     for w in range(w_range):
-        for i in range(max_iterations):
-          z = z_array[h][w]
+	for h in range(h_range):
+		for w in range(w_range):
+
 ```
 
 It can be shown that values where $\lvert a \rvert > 2$ and $\lvert z \rvert > \lvert a \rvert$, future iterations of (1) inevitably head towards positive or negative infinity. 
@@ -64,12 +63,13 @@ It can be shown that values where $\lvert a \rvert > 2$ and $\lvert z \rvert > \
 This makes it simple to find the number of iterations `i` until divergence: all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index. 
 
 ```python
-          for i in range(max_iterations):
-            z = z**2 + a
-            if z * np.conj(z) > 4:
-              iterations_till_divergence[h][w] = i
-              break
-              
+			z = z_array[h][w]
+			for i in range(max_iterations):
+				z = z**2 + a
+				if z * np.conj(z) > 4:
+					iterations_till_divergence[h][w] = i
+					break
+
 	return iterations_till_divergence
 ```
 
