@@ -98,7 +98,7 @@ Which evaluates to around $-0.7937...$.  But because there is one point, there m
 
 $$
 -\sqrt[3]{\frac12} = x - \frac{x^3-1}{3x^2} \\
-0 = 2x^3 + 3(\sqrt[3]{\frac12} x^2) + 1
+0 = 2x^3 + 3 \left( \sqrt[3]{\frac12} x^2 \right) + 1
 $$
 
 To find this point exactly, a more difficult polynomial must be solved and the formidable cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
@@ -117,21 +117,25 @@ This plot seems reasonable, as the points near the roots converge quickly.  Look
 
 {% include youtube.html id='OGDTLGhvj9Y' %}
 
-we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but the locations form a fractal pattern.  To see the reason for this, first ovserve that Newton's method will fail for points where $f'(x) = 0$, and for $3x^2-7=0$ the evaluation is $\pm \sqrt{7/3}$.  Therefore the value that heads towards $\sqrt{7/3}$ is, again using the cubic formula,
+we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but these slow- or non-converging points form a fractal pattern.  To see which values are in the set of non-converging points, first observe that Newton's method will fail for points where $f'(x) = 0$, and for $f'(x) = 3x^2-7$ this evaluates to $x = \pm \sqrt{7/3}$.  
+
+We have found one non-converging value, but are there more?  Yes, because any point whose next iteration of Newton's method that lands on $\pm \sqrt{7/3}}$ will also not converge.  The value that heads towards $\sqrt{7/3}$ is
 
 $$
+x_{n+1} = x + \frac{f(x)}{f'(x)}
 \sqrt{7/3} = x - \frac{x^3-7x+6}{3x^2-7} \\
-x_{-1} \approx −0.8625...
+x_{-1} = −0.8625...
 $$
 
-which is the second line passed on the left in the video above.  Applying newton's method again and solving for $x_n$, 
+which is the second line passed on the left in the video above.  Applying Newton's method again and solving for $x_n$, 
 
 $$
--0.8625... \approx x - \frac{x^3-7x+6}{3x^2-7} \\
-x_{-2} \approx 1.4745...
+-0.8625... = x - \frac{x^3-7x+6}{3x^2-7} \\
+x_{-2} = 1.4745...
 $$
 
 and repeating this twice more yields $x_{-3}=-0.8413... \; , x_{-4}=1.47402...$.  
+
 
 ### Newton's method in the complex plane
 
