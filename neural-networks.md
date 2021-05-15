@@ -408,6 +408,25 @@ This observation is important because it suggests that the appropriate cost func
 
 ### Extensions to other datasets: fashion MNIST and flower types
 
+Fluorescent images of cells are unlikely to be met with in everyday life, unless you happen to be a biologist.  What about image classification for these objects, can the neural net architectures presented here learn these too?
+
+The [fashion MNIST dataset](https://github.com/zalandoresearch/fashion-mnist) is a set of 28x28 monocolor images of articles of clothing.
+
+For some more colorful image classifications, lets turn to Alexander's flower [Kaggel photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.
+
+Examples of the deep network classifying images of roses or dandelions,
+
+![flower classes]({{https://blbadger.github.io}}/neural_networks/Figure_flowers2.png)
+
+sunflowers or tulips,
+
+![flower classes]({{https://blbadger.github.io}}/neural_networks/Figure_flowers1.png)
+
+and tulips or roses
+
+![flower classes]({{https://blbadger.github.io}}/neural_networks/Figure_flowers_tulips_roses2.png)
+
+
 
 
 
