@@ -18,7 +18,7 @@ As effective as numpy is, it is not quite ideal for speedy computations with lar
 
 Let's set up the network!  The first thing to do is to prepare the training and test datasets.  There are datsets online with many diverse images that have been prepped for use for neural network classification, but if one wishes to classify objects in images one takes, then preparation is necessary.  The primary thing that is necessary is to label the images such that the neural network knows which image represents which category.  With Keras this can be accomplished by simply putting all images of one class in one folder and putting images of another class in another folder, and then by saving the directory storing both folders as a variable before calling the appropriate data loading functions.
 
-Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of hundreds if not thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  I then performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  This is a common tactic for increasing training efficacy for neural networks, and can also be performed directly using Tensorflow (preprocessing module).  Here are the scripts I wrote to give you an idea of the particular process I used in python.
+Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  I then performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  This is a common tactic for increasing training efficacy for neural networks, and can also be performed directly using Tensorflow (preprocessing module).
 
 ```python
 ### Image slicer- preps images for classification via NNs
@@ -51,7 +51,7 @@ for i in range(1, 348):
 ```
 
 
-Next let's make the neural network program.  This will call on external APIs, so the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) is important to anyone wishing to set up a network on these libraries.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
+Next let's design the neural network.  This will call on external APIs, so the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) is important to anyone wishing to set up a network on these libraries.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
 
 
 ```python
@@ -117,12 +117,12 @@ BATCH_SIZE = 400
 ```
 From the training dataset images located in `data_dir`, a training dataset `train_data_1` is made by calling `image_generator` on `data_dir`.  The batch size specified above is entered, as well as the `target_size` and `classes` and `subset` kwargs.  If shuffling is to be performed between epochs, `shuffle` is set to `True`.  
 
-`image_generator` also has kwargs to specifiy rotations and translations to expand the training dataset, although neither of these functions are used in this example because the dataset has already been expanded via rotations.
+`image_generator` also has kwargs to specify rotations and translations to expand the training dataset, although neither of these functions are used in this example because the dataset has already been expanded via rotations.  The method returns a generator that can be iterated to obtain images of the dataset.
 
 ```python
 train_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir),
 	batch_size=BATCH_SIZE, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH), 
-		classes=list(CLASS_NAMES), subset = 'training')
+	classes=list(CLASS_NAMES), subset = 'training')
 ```
 
 The same process is repeated for the other directories, which in this case contain test image datasets.
@@ -134,7 +134,7 @@ print (CLASS_NAMES)
 
 test_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir2), 
     batch_size=783, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
-        classes=list(CLASS_NAMES))
+    classes=list(CLASS_NAMES))
 
 
 CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
@@ -143,7 +143,7 @@ print (CLASS_NAMES)
 
 test_data_gen2 = image_generator.flow_from_directory(directory=str(data_dir3), 
     batch_size=719, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
-        classes=list(CLASS_NAMES))
+    classes=list(CLASS_NAMES))
 ```
 
 An image set generation may be checked with s simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
@@ -168,7 +168,7 @@ def show_batch(image_batch, label_batch):
 image_batch, label_batch = next(train_data_gen1)
 show_batch(image_batch, label_batch)
 ```
-Assigning the pair of 
+Assigning the pair of labels to each iterable in the relevant generators,
 
 ```python
 (x_train, y_train) = next(train_data_gen1)
@@ -243,9 +243,13 @@ model.evaluate(x_test1, y_test1, verbose=2)
 model.evaluate(x_test2, y_test2, verbose=2)
 ```
 
+A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one 'hot' label (usually 1), ie instead of labels such as `[3]` we have `[0, 0, 1]`.  This means that categorical crossentropy should be used instead of sparse categorical crossentropy.  
+
+Another thing to note is the lack of normalization: there are no batch normalizations applied to any layers, no dropout nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  As an explanation for this, first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive.  Second, adaptive moment estimation (Adam) is employed as our optimization method, and this algorithm was specifically designed to converge for stochastic and sparse objective function outputs.  It has become clear that normalizations such as batch norm do not act to reduce internal covariant shift, but instead acts to smooth out the objective function.  With Adam, the objective function does not need to be smooth for effective tuning of weights and biases.  Finally, dataset augmentation via rotations and translations provides another form of insurance against overfitting.
+
 ### The network mimics expert human image classification capability
 
-Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation globs of fluorescent protein in 'Snap29' cells.
+Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
 The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  This can be achieved as follows:
 
@@ -303,11 +307,11 @@ which yields
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
 
-Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7' after the protein depleted in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
+Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
 
 It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %, both slightly lower than my manual classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence is incorrect on the identity of many.
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_2.png)
+![snf7 test accuracy]({{https://blbadger.github.io}}/neural_networks/nn_images_2.png)
 
 Each time a network is trained, there is variability in how effective the training is even with the same datasets as inputs.  Because of this, it is helpful to observe a network's performance over many training runs (each run starting with a naive network and ending with a trained one)  The statistical language R (with ggplot) can be used to make a box plot of the test accuracies achieved over many training runs for these datasets, once this data has been saved as text file. Here I use a csv file in the directory shown to compare the test accuracies of Snap29 compared to Snf7 datasets
 
@@ -380,21 +384,24 @@ Once again Snap29 training accuracy lags behind that of Snf7.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_8.png)
 
-Even when the Snap29 and Snf7 datasets are matched in size, the sharp increase in training accuracy seen for Snf7 is seen once again, suggesting that this effect does not result from differences in dataset size.
+### Comparison to AlexNet
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_9.png)
+To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture I used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split accross two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used an idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
 
-To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture I used, I designed a network that mimics the groundbreaking AlexNet, and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poor for both datasets).  This suggests that the faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
+Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poor for both datasets).  This suggests that the faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_10.png)
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
+These results are intruiguing
 
-### 
+### Extensions to other datasets: fashion MNIST and flower types
 
 
-### Learning (increased test accuracy) does not equate to global minimization of a cost function during training
+
+
+### Learning (ie increasing test classification accuracy) does not equate to global minimization of a cost function during training
 
 Neural networks learn by adjusting the weights and biases of the neurons in order to miminize a cost function, which is a continuous and differentiable representation of the accuracy of the output of the network. This is usually done with a variant on stochastic gradient descent, which involves calculating the gradient (direction of largest change) using a randomly chosen subset of images (which is why it is 'stochastic').  This is conceptually similar to rolling a ball representing the network down a surface representing the multidimensional weights and biases of the neurons.  The height of the ball represents the cost function, so the goal is to roll it to the lowest spot during training.  
 
