@@ -1,6 +1,6 @@
-## Image classification with a [convolutional neural network](https://github.com/blbadger/neural-network).
+## Image classification with [neural networks](https://github.com/blbadger/neural-network).
 
-### Preface: limitations of Neural networks
+### Preface: limitations
 
 Although very useful, like any program neural networks are subject to limitations.  Follow the link to [this page](/nn-limitations.md) to explore the nature of these limits, with a specific focus on the presence of adversarial negatives.  In brief, neural nets are useful but not universal in the broad sense, able to compute only a very small subset of all possible functions one might want to apply to.
 
@@ -384,22 +384,17 @@ Once again Snap29 training accuracy lags behind that of Snf7.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_8.png)
 
-### Comparison to AlexNet
+### AlexNet revisited
 
 To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture I used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split accross two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used an idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
 
-Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poor for both datasets).  This suggests that the faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
+Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_10.png)
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
-These results are intruiguing
-
-### Extensions to other datasets: fashion MNIST and flower types
-
-
-
+There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for the deep network) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  Thirdly and most importantly, see below.
 
 ### Learning (ie increasing test classification accuracy) does not equate to global minimization of a cost function during training
 
@@ -408,6 +403,10 @@ Neural networks learn by adjusting the weights and biases of the neurons in orde
 As we have seen in the case for Snf7 dataset images, this conception is accurate for increases in training accuracy but not not necessarily for general learning: reaching a global minimum for the cost function (100 % accuracy, corresponding to a cost function of less than 1E-4) led to severe overfitting and confident prediction of incorrect classifications.  This phenomenon of overfitting stemming from a global minimum in the cost function during training is not peculiar to this dataset either, as it has also been observed [elsewhere](http://proceedings.mlr.press/v38/choromanska15.pdf).  
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
+
+This observation is important because it suggests that the appropriate cost functions for neural nets need not necessarily be convex.  Convex functions are guaranteed to have a global minimum, not merely local minima: think $y=x^2$ rather than $y=\sin(x)$.  But we see above that reaching the global minima (which can be a value of 0$) for two distinct network architectures is achieved during training, but that this is negatively correlated with performance in the test dataset.
+
+### Extensions to other datasets: fashion MNIST and flower types
 
 
 
