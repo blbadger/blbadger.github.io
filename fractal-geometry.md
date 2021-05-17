@@ -324,9 +324,9 @@ Now this curve evidently does not cover the plane like the Peano curves. But the
 A better understanding comes from the similarity dimension, which is equivalent to the Hausdorff dimension for the following self-similar objects. First note that Euclidean objects like a point, line, or surface have the same topological dimension as their similarity dimension: a point cannot be subdivided ($n^0 = 1$), a line of length n can be subdivided into $n^1 = n$ pieces, and a surface square of length n can be subdivided into $n^2$ pieces.  Now note that the Koch curve may be subdivided into four equal pieces, and that these pieces are $1/3$ the length of the total curve.  It's similarity dimension is therefore
 
 $$
-D = \frac{log \; N}{log \; (1/r)} \\
+D = \frac{\log N}{\log (1/r)} \\
 \; \\
-D = \frac{log \; 4}{log \; 3} \approx 1.2618
+D = \frac{\log 4}{\log 3} \approx 1.2618
 $$
 
 Now consider the following curve, known as the quadric Koch curve:
@@ -357,9 +357,9 @@ and after 5 recursive levels,
 Let's calculate this curve's similarity dimension: there are 8 pieces that are smaller versions of the whole curve, and these pieces are $1/4$th the length of the whole so therefore
 
 $$
-D = \frac{log \; N}{log \; (1/r)} \\
+D = \frac{\log N}{\log (1/r)} \\
 \; \\
-D = \frac{log \; 8}{log \; (4)} = 1.5 \\
+D = \frac{\log 8}{\log (4)} = 1.5 \\
 $$
 
 This curve has a slightly larger dimension than the other Koch curve, which could be interpreted as being that this curve is closer to a surface than the first Koch curve.  Visually, this results in the appearance of a rougher line, one that appears to cover more area than the first.  How long are these curves? Each recursion adds length so just like the space-filling curves, the total length is infinite.  
@@ -367,9 +367,9 @@ This curve has a slightly larger dimension than the other Koch curve, which coul
 We can also calculate the dimension of the Cantor set.  There are 2 collections of points that are identical in structure to the entire collection, which we can call L and R.  These collections take up a third of the original interval, and so the dimension of $C$ is
 
 $$
-D = \frac{log \; N}{log \; (1/r)} \\
+D = \frac{\log N}{\log (1/r)} \\
 \; \\
-D = \frac{log \; 2}{log \; (3)} \approx 0.631
+D = \frac{\log 2}{\log (3)} \approx 0.631
 $$
 
 which is somewhere between $0$ and $1$, and this matches the observations that $C$ exhibits properties of both $0$ and $1$ dimensional objects.
@@ -377,8 +377,6 @@ which is somewhere between $0$ and $1$, and this matches the observations that $
 Fractals are defined as shapes that have a Hausdorff dimension greater than their topological dimension.  For the shapes presented on this page, Hausdorff and scaling dimensions are equal.  Thus the curves in this section are all fractals, as are the Cantor set and both space-filling Peano curves.  
 
 ### More self-similar fractals
-
-
 
 The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the drawing proceeds as follows:
 
@@ -553,7 +551,7 @@ $$
 
 Using box sizes from 1 to 500 pixels, our program yields 
 
-![snowflake_dimension]({{https://blbadger.github.io}}/fractals/box_sierpinski.png)
+![sierpinski_dimension]({{https://blbadger.github.io}}/fractals/sierpinski_box.png)
 
 which implies a dimension of $m = 1.5815$, which is close to the true theoretical value. 
 
@@ -562,7 +560,6 @@ Using this, the log/log plot of the snowflake fractal above is
 ![snowflake_dimension]({{https://blbadger.github.io}}/fractals/box_counting.png)
 
 and the dimension is found to be $\approx 1.72$
-
 
 ### Fractals in the natural world
 
