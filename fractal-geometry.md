@@ -458,6 +458,17 @@ Note that there are smaller snowflakes on the periphery of larger snowflakes: if
 
 For more classic fractals and a number of very interesting ideas about fractal geometry in general, see Mandelbrot's [book](https://books.google.com/books/about/The_Fractal_Geometry_of_Nature.html?id=0R2LkE3N7-oC).  
 
+### Fractal dimension from box counting
+
+Say one wants to calculate the dimensions of images that are not easily interpreted as self-similar zones as described above.  Perhaps the simplest way to do this is to convert the Kolmogorov definition of dimension to a box counting one, which can be proven to have the same limit as the Kolmogorov dimension.
+
+A program implementing a box counting algorithm may be found [here](https://github.com/blbadger/fractal-geometry).  Using this, the log/log plot of the snowflake fractal above is
+
+![snowflake_dimension]({{https://blbadger.github.io}}/fractals/box_counting.png)
+
+and the dimension is found to be $\approx 1.72$
+
+
 ### Fractals in the natural world
 
 When I was a kid and just learning how to plot polynomial functions, I remember being quite disappointed to find that any such function describing the objects in the natural world would have to be extremely complicated and unwieldy.  Nearly every shape in nature, from the outline of the trees around my parent's house to the pattern or surf on the seaside to the shapes of nebulae and galaxies I saw in astronomy books were all, as I found, unsuitable for attempting to recreate using the functions I knew then (polynomial and trigonometric functions). 
