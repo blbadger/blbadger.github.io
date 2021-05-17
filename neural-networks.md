@@ -416,7 +416,7 @@ The deep network with no other modifications than noted above performs very well
 
 ![fashion MNIST]({{https://blbadger.github.io}}/neural_networks/Fashion_mnist.png)
 
-AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~100 thousand here).
+AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~180,000).
 
 For some more colorful image classifications, lets turn to Alexander's flower [Kaggel photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
 
