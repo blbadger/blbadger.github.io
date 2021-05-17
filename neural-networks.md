@@ -239,8 +239,8 @@ model.fit(x_train, y_train, epochs=9, batch_size = 20, verbose=2)
 
 ### Evaluates neural network on test datasets and print the results
 
-model.evaluate(x_test1, y_test1, verbose=2)
-model.evaluate(x_test2, y_test2, verbose=2)
+model.evaluate(x_test1, y_test1, verbose=1)
+model.evaluate(x_test2, y_test2, verbose=1)
 ```
 
 A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one 'hot' label (usually 1), ie instead of labels such as `[3]` we have `[0, 0, 1]`.  This means that categorical crossentropy should be used instead of sparse categorical crossentropy.  
@@ -410,9 +410,15 @@ This observation is important because it suggests that the appropriate cost func
 
 Fluorescent images of cells are unlikely to be met with in everyday life, unless you happen to be a biologist.  What about image classification for these objects, can the neural net architectures presented here learn these too?
 
-The [fashion MNIST dataset](https://github.com/zalandoresearch/fashion-mnist) is a set of 28x28 monocolor images of articles of clothing.
+The [fashion MNIST dataset](https://github.com/zalandoresearch/fashion-mnist) is a set of 28x28 monocolor images of articles of 10 types of clothing, labelled accordingly.  Because these images are much smaller than the 256x256 pixel biological images above, the architectures used above must be modified (or else the input images must be reformatted to 256x256).  The reason for this is because max pooling (or convolutions with no padding) lead to reductions in subsequent layer size, eventually resulting in a 0-dimensional layer.  Thus the last four max pooling layers were removed from the deep network, and the last two from the AlexNet clone ([code](https://github.com/blbadger/neural-network/blob/master/fmnist_bench.py) for these networks).  
 
-For some more colorful image classifications, lets turn to Alexander's flower [Kaggel photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.
+The deep network with no other modifications than noted above performs very well on the task of classifying the fashion MNIST dataset, and >91 % accuracy rate on test datasets achieved with no hyperparameter tuning. 
+
+![fashion MNIST]({{https://blbadger.github.io}}/neural_networks/Fashion_mnist.png)
+
+AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~100 thousand here).
+
+For some more colorful image classifications, lets turn to Alexander's flower [Kaggel photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
 
 Examples of the deep network classifying images of roses or dandelions,
 
