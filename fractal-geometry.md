@@ -542,6 +542,7 @@ plt.ylabel('log N')
 plt.show()
 plt.close()
 ```
+Note that this program is designed for clarity rather than speed, and takes a little over a minute to run for a 1500x2100 image.  A faster version may be found [here](https://github.com/blbadger/fractal-geometry/blob/master/fractal_dimension_optimized.py), which reduces this time by a factor of two.
 
 Let's check this program by using it to calculate the fractal dimension of an object where we can easily find the Hausdorf (scaling) dimension, such as the Sierpinski triangle.  For this object, halving the length results in a copy of the original that is 1/3 the 'volume', thus this has a Hausdorff dimension of 
 
