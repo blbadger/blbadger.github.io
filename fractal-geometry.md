@@ -553,13 +553,13 @@ Using box sizes from 1 to 500 pixels, our program yields
 
 ![sierpinski_dimension]({{https://blbadger.github.io}}/fractals/sierpinski_box.png)
 
-which implies a dimension of $m = 1.5815$, which is close to the true theoretical value. 
+which implies a dimension of $d \approx 1.582$, which is close to the true value. 
 
-Using this, the log/log plot of the snowflake fractal above is
+We can also use this program to estimate the dimension of other fractals.  The ensuing log/log plot from the snowflake fractal above is
 
 ![snowflake_dimension]({{https://blbadger.github.io}}/fractals/box_counting.png)
 
-and the dimension is found to be $\approx 1.72$
+and the dimension is found to be $d \approx 1.448$
 
 ### Fractals in the natural world
 
