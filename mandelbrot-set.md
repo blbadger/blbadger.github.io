@@ -149,7 +149,7 @@ What happens if there is a small amount $b$ added upon each iteration?  Then we 
 
 The effect is quite different if the starting value $z_0 \neq 0 + 0i$. We are now departing from a true Mandelbrot set, which requires the initial value to be $0$, but a small change like setting $z_0 = a$ will result in a set that mostly resembles the Mandelbrot set $\mathscr M$.  But if some value $b$ is added upon each iteration, the set of non-diverging points changes unpredictably, reflecting the irregularity of $\mathscr M$ itself. 
 
-The following  equation shall be investigated:
+To summarize, the following equation shall be investigated:
 
 $$
 z_{n+1} = z_n^2 + a + b \\
@@ -214,7 +214,7 @@ $$
 c_n = \frac{f^{(n)}(0)}{n!}
 $$
 
-where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by noting that $f'(0) = c_0$ and $f'' (0) = 2c_2$ and $f''' (0) = 3(2)c_3$ etc.
+where $f^{(n)}$ corresponds to the nth derivative of $f$, which can be found by noting that $f'(0) = 1c_1$ and $f'' (0) = 2 \cdot 1c_2$ and $f''' (0) = 3 \cdot 2 \cdot 1c_3$ etc.
 
 Therefore if a power series exists for any function $f(x)$, it has the form
 
