@@ -186,7 +186,7 @@ The study of life, observations of which display many of the features of nonline
 
 ![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
 
-### [Limitations of NNs: adversarial negatives](/nn-limitations.md)
+### [Limitations of Neural Networks](/nn-limitations.md)
 
 ![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
 
