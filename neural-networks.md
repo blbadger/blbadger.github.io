@@ -146,7 +146,7 @@ test_data_gen2 = image_generator.flow_from_directory(directory=str(data_dir3),
     classes=list(CLASS_NAMES))
 ```
 
-An image set generation may be checked with s simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
+An image set generation may be checked with a simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
 
 ```python
 def show_batch(image_batch, label_batch):
@@ -178,9 +178,9 @@ Assigning the pair of labels to each iterable in the relevant generators,
 (x_test2, y_test2) = next(test_data_gen2)
 ```
 
-Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching architectures or other fancy neural network models, in which case the more flexible functional Keras module shouldb be used.
+Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching or recurrent architectures, in which case the more flexible functional Keras `tensorflow.keras.Model` should be used.  For an example of a network similar to the one shown below built with the functional model, see [this page](https://github.com/blbadger/neural-network/blob/master/Deep_network_model.py).
 
-The input shape must match the dataset image size, and the output must be the same number of possible classifications.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons.  After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
+For any neural network applied to image data, the input shape must match the image x- and y- dimensions, and the output must be the same number of possible classifications.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons and the input is specified by `IMG_HEIGHT, IMG_WIDTH` which in this case is defined above as 256x256.  After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
 
 ```python
 model = tf.keras.models.Sequential([
@@ -206,7 +206,9 @@ model = tf.keras.models.Sequential([
     Dense(2, activation='softmax')
 ])
 ```
-Which may be represented graphically as
+The way to reach the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
+
+The network architecture shown above may be represented graphically as
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
 
@@ -221,7 +223,7 @@ For optimal test classification accuracy at the expense of longer training times
 ])
 ```
 
-Now the network can be compiled, trained, and evaluated on the test datasets. I also include `model.summary()` in order to have the specific of the model printed.
+Now the network can be compiled, trained, and evaluated on the test datasets. I also include `model.summary()` in order to have the specific model printed, if one is interested to learn exactly how many parameters each layer contains.
 
 ```python
 model.compile(optimizer='Adam', 
@@ -305,7 +307,6 @@ plt.show()
 which yields
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
-
 
 Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being binary) but much worse than for the Snap29 dataset. Can the neural network do better?
 
