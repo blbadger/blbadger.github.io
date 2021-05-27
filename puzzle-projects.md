@@ -184,20 +184,22 @@ It is helpful to know which positions on the puzzle we need to try numbers, and 
 		for y in range(9):
 			if puzzle[x][y] == 0:
 				ls.append([x,y])
+	
+	# call backtracking function (below)
+	return backtrack(puzzle, ls)
 ```
 Now let's apply the backtracking algorithm to the puzzle, but only on the positions of values to be found, by indexing over the list `ls`.  One can define another function within the first to do so, which is not absolutely necessary but provides clarity.
 
 ```python
-	# backtracking algorithm with validation tests
-	def backtrack(puzzle, ls):
-		'''Solves the sudoku puzzle by iterating through the 
-		positions in ls and entering possible values into 
-		the puzzle array.  Backtracking occurs when no entry
-		is possible for a given space.
-		'''
-		i = 0
-		while i in range(len(ls)):
-			a, b = ls[i]
+def backtrack(puzzle, ls):
+	'''Solves the sudoku puzzle by iterating through the 
+	positions in ls and entering possible values into 
+	the puzzle array.  Backtracking occurs when no entry
+	is possible for a given space.
+	'''
+	i = 0
+	while i in range(len(ls)):
+		a, b = ls[i]
 ```
 
 so now (a, b) is set to the coordinates of the first unknown space.  This is a good time to initialize a variable `count` to be 0, which will change to 1 if a digit cannot be inserted at the unknown space.  If there are no legal moves in the first unknown space, the puzzle is not solveable!  The `count` becomes important in subsequent spaces, and signals the need to backtrack: if no digit can be insterted at a space, then count stays 0 and we will add a clause to initiate backtracking if that is the case.  Let's also initiate the variable `c`, which will store the next number to be tested as follows:
@@ -217,12 +219,12 @@ so now (a, b) is set to the coordinates of the first unknown space.  This is a g
 Now come the tests: first the row (which is equal to `puzzle[a]`), then the column (`ls2`), and finally the 3x3 box (`ls3`) are tested to see if `c` is different than every element of these three lists.
 
 ```python
-       while c < 10:
+	while c < 10:
 		if c not in puzzle[a]:
 			ls2 = []
 			for q in range(9):
 				ls2.append(puzzle[q][b])
-		
+
 			if c not in ls2:
 				ls3 = []
 				x, y = a // 3, b // 3
@@ -236,24 +238,23 @@ Now come the tests: first the row (which is equal to `puzzle[a]`), then the colu
 If `c` is a unique element, it is a possible move!  If so, we add it to the puzzle by assigment, increment our variable 'count', and increment the index of the list of coordinates to be solved (`i`) and break out of the while loop.  If any of these tests fail, `c` cannot be a valid move for the position `ls[i]`, so we increment c and continue the loop to test the next larger digit.
 
 ```python
-                            		puzzle[a][b] = c
-					count += 1
-					i += 1
-					break
+						puzzle[a][b] = c
+						count += 1
+						i += 1
+						break
 
+					else: c += 1
 				else: c += 1
 			else: c += 1
-		else: c += 1
 ```
 If no digit 1-9 is a legal move at the given position the 'count' variable stays 0 and we use this to test whether a backtrack needs to be made.  If so, we return the current position to 0 and decrement the index of the list of coordinates to be solved (`i`).  If all elements of this list have been iterated, we must have filled in a number at all positions so we can return the solved puzzle. Finally we call the intertior function `backtrack()` in the exterior function `solve()` with the arguments of the puzzle and the list of places to fill in.
 
 ```python
-	if count == 0:
-		puzzle[a][b] = 0
-		i -= 1
+		if count == 0:
+			puzzle[a][b] = 0
+			i -= 1
 	return puzzle
 	
-return backtrack(puzzle, ls)
 ```
 
 Markdown is not good a tracking spaces between code entries, so make sure to line up each if/else and loop The full sudoku solver code is available [here](https://github.com/blbadger/miscellaneous-fun-projects/blob/master/sudoku_solver1.py).
@@ -349,24 +350,33 @@ Let's define a function and attach a docstring.  A list of ships will be useful,
 
 ```python
 def validate_battlefield(field):
-    '''A function that takes a 10x10 list of lists corresponding to a 
-    battleship board as an argument and returns True if the field is
-    a legal arrangement of ships or False if not.  Ships are standard
-    (1 carrier size 4, 2 battleships size 3, 3 destroyers size 2, 4 subs
-    size 1) and ships may be touching each other.  Only the location of 
-    hits are known, not the identity of each hit.  
-    '''
-    ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+	'''A function that takes a 10x10 list of lists corresponding to a 
+	battleship board as an argument and returns True if the field is
+	a legal arrangement of ships or False if not.  Ships are standard
+	(1 carrier size 4, 2 battleships size 3, 3 destroyers size 2, 4 subs
+	size 1) and ships may be touching each other.  Only the location of 
+	hits are known, not the identity of each hit.  
+	'''
+	ships = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+	import pprint
 
-    # make a wrapper for the field for ease of iteration
-    for i in field:
-        i.insert(0, 0)
-        i.append(0)
-    field.insert(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-    
-    # preliminary check for the correct number of spaces
-    ...
+	# make a wrapper for the field for ease of iteration
+	for i in field:
+		i.insert(0, 0)
+		i.append(0)
+	field.insert(0, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+	field.append([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+	# preliminary check for the correct number of spaces
+	count = 0
+	for lst in field:
+		for element in lst:
+			if element == 1:
+				count += 1
+	if count != 20:
+		return False
+	# call a validate function on the prepared field
+	return validate(field, ships)
 ```
 
 Now comes the recursion.  To avoid re-wrapping the field with `0`s and re-checking to see if the correct number of spots are filled, we can define another function in this larger one and simply call this one.  The strategy will be iterate along the original field until we see a `1`, and then test if it can be the largest ship in the vertical direction.  If so, we remove all `1`s corresponding to this ship on the field, remove the largest ship from the list `ships`, and copy the ships list (to avoid errors during recursion).  
@@ -376,70 +386,68 @@ We then test whether this copied list is valid by calling the `validate` functio
 When `False` reaches the first `if validate()` statement, it causes the program to skip to `else`, where we add back the ship we earlier erased from the board.  Otherwise many invalid boards will be classified as valid!  The horizontal direction must also be considered at each stage, so the code above is repeated but for check along each list. At the end, a last check for any remaining ships is made, and this function is called inside `validate_battlefield()`. 
 
 ```python
-    def validate(field, ships):
-        '''Assesses the validity of a given field (field), with a 
-        list of ships that are yet to be accounted for (ships).  The
-        method is to remove ships, largest to smallest, using recursion
-        '''
-        for i in range(12):
-            for j in range(12):
-                if field[i][j] == 1:
+def validate(field, ships):
+	'''Assesses the validity of a given field (field), with a 
+	list of ships that are yet to be accounted for (ships).  The
+	method is to remove ships, largest to smallest, using recursion.
+	Returns a boolean corresponding to the possibility of the field
+	being legal or not.
+	'''
+	for i in range(12):
+		for j in range(12):
+			if field[i][j] == 1:
 
-                    k = 0
-		    # test vertical area for ship
-                    while field[i+k][j] == 1:
-                        k += 1
+				k = 0
+				while field[i+k][j] == 1:
+					k += 1
 
-                        if k == ships[0]:
-                            del ships[0]
+					if k == ships[0]:
+						del ships[0]
 
-                            for m in range(k):
-                                field[i+m][j] = 0
-                            
-                            if len(ships) == 0: 
-                                y = 1
-                                return True
+						for m in range(k):
+							field[i+m][j] = 0
+						
+						if len(ships) == 0: 
+							y = 1
+							return True
 
-                            ships2 = ships[:]
-                            if validate(field, ships2):
-                                return True
-                            
-                            else:
-                                for x in range(k):
-                                    field[i+x][j] = 1
-                                ships = [k] + ships
-                            
-                    w = 0
-		    # test horizontal area for ship
-                    while field[i][j+w] == 1:
-                        w += 1
+						ships2 = ships[:]
+						if validate(field, ships2):
+							return True
+						
+						else:
+							for x in range(k):
+								field[i+x][j] = 1
+							ships = [k] + ships
+						
+				w = 0
+				while field[i][j+w] == 1:
+					w += 1
 
-                        if w == ships[0]:
-                            del ships[0]
+					if w == ships[0]:
+						del ships[0]
 
-                            for n in range(w):
-                                field[i][j+n] = 0
-                
-                            if len(ships)==0:
-                                y = 1
-                                return True
+						for n in range(w):
+							field[i][j+n] = 0
 			
-                            ships3 = ships[:]
+						if len(ships)==0:
+							y = 1
+							return True
 
-                            if validate(field, ships3):
-                                return True
+						ships3 = ships[:]
 
-                            else:
-                                for n in range(w):
-                                    field[i][j+n] = 1
-                                ships = [w] + ships
-                            
-        if len(ships)==0:
-            return True
-        else:
-            return False
+						if validate(field, ships3):
+							return True
 
-    return validate(field, ships)
+						else:
+							for n in range(w):
+								field[i][j+n] = 1
+							ships = [w] + ships
+						
+	if len(ships)==0:
+		return True
+	else:
+		return False
 ```
 
 Let's test this out! With the battlefield shown above, we get
