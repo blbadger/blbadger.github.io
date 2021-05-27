@@ -393,7 +393,8 @@ def box_dimension(image_array, min_resolution, max_resolution):
 	"""
 	Takes an input array (converted from image) of 0s and 
 	1s and returns the calculated box counting dimension
-	over the range 5x to 500x scale
+	over the range of box size min_resolution (int) to 
+	max_resolution (int > min_resolution)
 	"""
 	assert max_resolution <= min(len(image_array), len(image_array[0])), 'resolution too high'
 
