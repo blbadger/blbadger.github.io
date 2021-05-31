@@ -1,16 +1,16 @@
-### Decidability and periodicity
+### Decidability (computability) and periodicity I
 
 [Elsewhere](https://blbadger.github.io/aperiodic-irrationals.html) we have seen that the set of all periodic dynamical systems (albeit systems as defined in a specific manner) is equinumerous with the set of solvable problems.  The set of all aperiodic systems was found to be more numerous, instead equivalent to the size of the set of all unsolvable problems.  This page will investigate a direct equivalence between the the members of the sets of solvable problems and periodic maps to arrive at a stronger conclusion: equality (with substitution) between these sets, rather than equivalence.
 
 'Unsolvable' and 'Undecidable' are here defined in terms of mathematical logic: decidability is the process of determining the validity of a $\mathfrak t, \mathfrak f$ (true or false) statement.  Validity means that the statement is always true, regardless of the inputs to the statement.  Solvable means that there is some computation procedure that applies to the given function (or problem) that is finite in length.  
 
-Decidability and solvability (in a number-theoretic setting) are equivalent concepts for this page. The solvable problem $x = 2^2$ is identical the the decision problem 'Is 4 the square of 2?'.  For this page, computable implies a 'for-what?' statement and decidable implies a 'is it true?' statement.  The law of the excluded middle is accepted, meaning that a proposed statement must be true or false but not neither. In symbols,
+Decidability and computability (in a number-theoretic setting) are equivalent concepts for this page. The computational problem $x = 2^2$ is identical the the decision problem 'Is 4 the square of 2?'.  For this page, computable implies a 'for-what?' statement and decidable implies a 'is it true?' statement.  The law of the excluded middle is accepted, meaning that a proposed statement must be true or false but not neither. In symbols,
 
 $$
 \exists x P(x) \lor \lnot \exists x P(x)
 $$
 
-### Decadiability and the Church-Turing thesis
+### The Church-Turing thesis
 
 Church and Kleene postulated that all effectively computable functions are $\lambda$-definable, and later shown that these functions are equivalent to the general recursive functions Godel defined to be computable.  
 
