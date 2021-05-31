@@ -118,10 +118,17 @@ D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
-### [Decidability & computability in dynamics and the Church-Turing thesis](/solvable-periodicity.md)
+### [Church-Turing thesis and decidable dynamics](/solvable-periodicity.md)
 
 $$
 \{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
+$$
+
+### [Computability and Periodicity](/uncomputable-aperiodics.md)
+
+$$
+X_{n+1} = 4x_n(1-x_n) \implies \\
+x_n = \sin^2(\pi 2^n \theta) 
 $$
 
 ### [Nonlinearity and dimension](/nonlinear-dimension.md)
@@ -157,15 +164,13 @@ As for any science, an attempt to explain observations and predict future ones u
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
-<!--
+
 ### [Quantum mechanics](/quantum-mechanics.md)
 
 $$
 P_{12} \neq P_1 + P_2 \\
 P_{12} = P_1 + P_2 + 2\sqrt{P_1P_2}cos \delta
 $$
-
--->
 
 ## Biology
 The study of life, observations of which display many of the features of nonlinear mathematical systems: an attractive state resistant to perturbation, lack of exact repeats, and simple instructions giving rise to intricate shapes and movements.  
