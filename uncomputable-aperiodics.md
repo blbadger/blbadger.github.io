@@ -68,7 +68,7 @@ The logistic map is not the only place where one can find the seemingly nonsensi
 
 $$
 e = \sum_{n = 0}^\infty \frac{1}{n!} \\
-\frac{\pi^2}{6} = \sum_{n = 1}^infty{1}{n^2}
+\frac{\pi^2}{6} = \sum_{n = 1}^\infty \frac{1}{n^2}
 $$
 
 The computational procedure in either case may be expressed as a simple for loop that adds together the resulting number upon substituting the loop number for $n$. But this seems somewhat counterintuitive: aperiodic sequences are inherently unpredictable, so how can they be described with a short computational procedure?  An oblique restatement is as follows: aperiodic systems are for most purposes indistinguishable from 'random' ones.  It is known that no truly random output can be made from any classical computational procedure, so how then could a (very small) classical computational procedure yield a random-like output?
@@ -89,7 +89,7 @@ These classifications correspond to the notions of
 2. Classically computable but irrational numbers: $e,\; \pi,\; \sqrt2$ etc.
 3. Classically uncomputable (irrational) numbers: Chaitlin's constant $\Omega_f$ and others
 
-With this classification, any aperiodic sequence falls in the second or third group. Of note, this group includes the sequence of [prime gaps](https://blbadger.github.io/unpredictable-primes.html), which yields the conclusion that that sequence, and therefore the number of integers one has to pass over to arrive at the subsequent prime number, can never be represented by a finite periodic computational procedure.  In computer science parlance, this means that finding a prime number will never be brought down to $O(1)$, but instead the procedure itself scales with input size.  It is clear that this problem is an example of type 2 computability, because the procedure for finding primes is itself periodic (simply iterate over all numbers $<\sqrtn$ and see if any divides $n$.
+With this classification, any aperiodic sequence falls in the second or third group. Of note, this group includes the sequence of [prime gaps](https://blbadger.github.io/unpredictable-primes.html), which yields the conclusion that that sequence, and therefore the number of integers one has to pass over to arrive at the subsequent prime number, can never be represented by a finite periodic computational procedure.  In computer science parlance, this means that finding a prime number will never be brought down to $O(1)$, but instead the procedure itself scales with input size.  It is clear that this problem is an example of type 2 computability, because the procedure for finding primes is itself periodic (simply iterate over all numbers $< \sqrtn$ and see if any divides $n$.
 
 
 
