@@ -118,14 +118,14 @@ D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
-### [Church-Turing thesis and decidable dynamics](/solvable-periodicity.md)
+### [Church-Turing thesis, Computability and Periodicity I](/solvable-periodicity.md)
 
 $$
 \\
 \{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
 $$
 
-### [Computability and Periodicity](/uncomputable-aperiodics.md)
+### [Computability and Periodicity II](/uncomputable-aperiodics.md)
 
 $$
 x_{n+1} = 4x_n(1-x_n) \implies \\
