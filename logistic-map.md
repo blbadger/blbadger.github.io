@@ -8,7 +8,7 @@ $$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
 
 where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
 
-Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries for mathematical modeling.
+Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries 
 
 ```python
 #! python3
@@ -45,7 +45,7 @@ As $r$ is increased to 2.5, a stable population is reached:
 
 ![stable iterations]({{https://blbadger.github.io}}/logistic_map/logistic_time_r2.5.png)
 
-This is called a period one trajectory, and occurs when $x_{n+1} = x_n$, so at $r=2.5$ we have
+This is called a period one trajectory because it takes one iteration to return to the starting population size.  Because period one occurs when $x_{n+1} = x_n$, we can algebraically determine the population values reached.  At $r=2.5$ we have
 
 $$
 x_n = 2.5x_n(1-x_n) \\
@@ -53,7 +53,11 @@ x_n = 2.5x_n(1-x_n) \\
 x_n = 0, \; x_n = 3/5 \\
 $$
 
-where the value of $x_n = 3/5$ is an attractor for all initial values in $(0, 1)$ and $x_{n+1} = 0$ only occurs for $x_0 = 0$. Stability for one dimensional systems may be determined using linearization, and for iterated systems like the logistic map this involves determining whether or not $\lvert f'(x) \rvert < 1$.  If so, the point is stable but if $\lvert f'(x) \rvert > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
+where the value of $x_n = 3/5$ is an attractor for all initial values except for 0, and $x_{n+1} = 0$ only occurs for $x_0 = 0$. An attractor in a dynamical system such as this is a point that other points head towards, and in this $x_n = 3/5$ is an attractor for all starting points $x_0 \in (0, 1)$.
+
+How can one tell that $x_n = 3/5$ is an attractor but $x_n = 0$ is not?  One way is simply to start from a number of different points and see where future iterations end up: this was used above.  But this method can be difficult and imprecise when many values are to be tested, so it is often best to try to determine whether or not a point is an attractor by using the following analytical method.
+
+Stability for one-dimensional systems may be determined using linearization, and for iterated equations like the logistic map this involves determining whether or not the absolute value slope of the derivative of $f(x)$ is less than one, or $\lvert f'(x) \rvert < 1$.  If so, the point is stable but if $\lvert f'(x) \rvert > 1$, it is unstable (and if it equals one, we cannot say).  For the logistic equation, $f'(x) = r-2rx$ and so at $r=2.5$,
 
 $$
 f'(x) = r - 2rx_n \\
@@ -63,19 +67,19 @@ $$
 
 and therefore $x=0$ is unstable.  On the other hand, $f'(3/5) = 3.5-4.2 = -0.7$ which means that $x=3/5$ is a stable point of period 1.  As we shall see below, stable points of finite period act as attractors, such that points in $(0, 1)$ eventually end up on the point $x=3/5$ given sufficient iterations.
 
-If $r = 3.1$, the population fluctuates, returning to the starting point every other year.  This is called 'period 2':
+Returning to models of (1), at $r = 3.1$ the population fluctuates, returning to the starting point every other year instead of every year.  This is called 'period 2':
 
 ![period 2 logistic]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
-We can find points where $x_{n+1} = x_n$, or
+At this r value, can find points where $x_{n+1} = x_n$ (meaning points of period one),
 
 $$
 x_n = rx_n(1-x_n)  \\
 0 = x_n(2.1-3.1x_n) \\
-x_n = 0, x_n \approx 0.6774...
+x_n = 0, x_n \approx 0.677
 $$
 
-but some quick numerical experimentation shows that these points are unstable: any slight deviation from the values (and indeed any finite approximation of 0.6774...) will not result in $x_{n+1} = x_n$.  
+but some quick numerical experimentation shows that these points are unstable: any slight deviation from the values (and indeed any finite approximation of 0.677...) will not result in $x_{n+1} = x_n$.  
 
 Points of period 2 may be found as follows:
 
@@ -247,7 +251,7 @@ x = 0, \; x \approx 0.39, \; x \approx 0.72, \; x \approx 0.87 \\
 (f^2(0.878))' = −17.61 \\
 $$
 
-But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, a the following technique by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the absolute value of derivative of the logistic map $f'(x) = r(1-2x)$ is minimized when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
+But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, the following technique presented by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the absolute value of derivative of the logistic map $f'(x) = r(1-2x)$ is minimized when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
 
 This is best seen using a cobweb plot, which plots the equation of interest (here $rx(1-x)$) and the line $y=x$ in order to follow iterations geometrically.  The principle is that $y=x$ is used to reflect y-values onto the x-axis, thereby allowing iterations to be plotted clearly.  The procedure is as follows: given any point on the x-axis, find the y-value that corresponds to $rx(1-x)$.  This is the value of the next iteration of (1), and this value is reflected back onto the x-axis by travelling horixontally until the $y=x$ line is reached.  The x-value of this point is the same as the y-value we just found, and therefore we can repeat the process of finding a subsequent iteration value by again finding the y-value of the curve $rx(1-x)$ and travelling horizontally to meet $y=x$.
 
