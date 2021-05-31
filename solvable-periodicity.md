@@ -244,7 +244,7 @@ $$
 \{i_0 \to O_0, \; i_1 \to O_1, \; i_2 \to O_2 ...\}
 $$
 
-To be solvable, an algorithm of finite length must be able to map all of the countably infinite inputs.  After a certain number of $n$ inputs, the decision procedure for $i_0$ must be identical to the decision procedure $\mathscr P$ for $i_{0+n}$ or else the algorithm would be of infinite size, meaning that it would be unusable as it would never halt when applied to a Turing machine.  Thus $\mathscr P$ repeats after a finite interval $n$ between inputs.  
+To be solvable (at least on this page), an algorithm of finite length must be able to map all of the countably infinite inputs.  The stipulation of finite length is important here, as it was not included in the original computability work by Turing but become important once one considers [aperiodic sequences](https://blbadger.github.io/uncomputable-aperiodics.html). After a certain number of $n$ inputs, the decision procedure for $i_0$ must be identical to the decision procedure $\mathscr P$ for $i_{0+n}$ or else the algorithm would be of infinite size, meaning that it would be unusable as it would never halt when applied to a Turing machine.  Thus $\mathscr P$ repeats after a finite interval $n$ between inputs.  
 
 As the inputs are countable, they can be arranged in sequence.  Taking the sequence of decision procedures $\mathscr D$ for all inputs, the function mapping an input $\{ i_0, i_1, i_2 ... \}$ to its decision procedure $ \{ \mathscr D_0, \mathscr D_1, \mathscr D_2 \}$ defined as $f(i)$ can be viewed as a discrete dynamical system.  
 
