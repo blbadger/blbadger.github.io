@@ -121,13 +121,14 @@ $$
 ### [Church-Turing thesis and decidable dynamics](/solvable-periodicity.md)
 
 $$
+\\
 \{i_0 \to O_0, i_1 \to O_1, i_2 \to O_2 ...\}
 $$
 
 ### [Computability and Periodicity](/uncomputable-aperiodics.md)
 
 $$
-X_{n+1} = 4x_n(1-x_n) \implies \\
+x_{n+1} = 4x_n(1-x_n) \implies \\
 x_n = \sin^2(\pi 2^n \theta) 
 $$
 
