@@ -68,6 +68,7 @@ The logistic map is not the only place where one can find the seemingly nonsensi
 
 $$
 e = \sum_{n = 0}^\infty \frac{1}{n!} \\
+\; \\
 \frac{\pi^2}{6} = \sum_{n = 1}^\infty \frac{1}{n^2}
 $$
 
@@ -86,10 +87,14 @@ These considerations suggest that it is helpful to define three basic types of c
 These classifications correspond to the notions of
 
 1. Rational numbers: $1/2$ etc.
-2. Classically computable but irrational numbers: $e,\; \pi,\; \sqrt2$ etc.
+2. Classically computable but irrational numbers: $e,\; \pi,\; \sqrt2$ and so on.
 3. Classically uncomputable (irrational) numbers: Chaitlin's constant $\Omega_f$ and others
 
 With this classification, any aperiodic sequence falls in the second or third group. Of note, this group includes the sequence of [prime gaps](https://blbadger.github.io/unpredictable-primes.html), which yields the conclusion that that sequence, and therefore the number of integers one has to pass over to arrive at the subsequent prime number, can never be represented by a finite periodic computational procedure.  In computer science parlance, this means that finding a prime number will never be brought down to $O(1)$, but instead the procedure itself scales with input size.  It is clear that this problem is an example of type 2 computability, because the procedure for finding primes is itself periodic (simply iterate over all numbers $< \sqrtn$ and see if any divides $n$.
+
+With this classification, consider the logistic map where $r=4$: the case where an arbitrary aperiodic trajectory of the logistic map for $r=4$.  It is interesting to note that the closed solution presented above is only helpful for a small subset of possible starting points $x_0 \in (0, 1)$.  This is because most real numbers are classically uncomputable (a result of the diagonal argument for procedures) and therefore approximating $\theta$ to an arbitrary degree of accuracy by a (finite) computational procedure is impossible.  
+
+Motivated by these observations, it may be best to consider a more strict definition of computability than is normally used.  For the logistic map where $r=4$, as $n \to \infty$ for an accurate computation the precision of theta must be known to an infinite number of decimal places, which is clearly not possible.  Likewise, the exact values of $e$ and $\pi$ cannot be determined without an infinite number of additions performed, also not possible.
 
 
 
