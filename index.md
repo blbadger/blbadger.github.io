@@ -118,7 +118,7 @@ D=2 \implies \\
 \forall f\in \{f_c\} \; \exists n, k: f^n(x) = f^k(x) \; if \; n \neq k
 $$
 
-### [Church-Turing thesis, Computability and Periodicity I](/solvable-periodicity.md)
+### [Computability and Periodicity I: the Church-Turing thesis](/solvable-periodicity.md)
 
 $$
 \\
