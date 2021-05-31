@@ -51,3 +51,7 @@ Expressed another way, the solution to the logistic map with r=4 is
 $$
 x_n = \sin^2(\pi 2^n \theta) 
 $$
+
+
+
+
