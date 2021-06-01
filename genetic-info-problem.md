@@ -168,19 +168,21 @@ Much of computer science can be thought of as belonging either to the study of i
 
 Definition: instructional (computational) information amount is the number of steps specified before the procedure repeats itself endlessly or halts.  
 
-This is most clearly understood in the context of the theory of general recursive functions, which we can substitute with Turing machines.  First note that a limited number of Turing machine input specifications can yield a very large number of possible instructions (before looping or halting).  A further discussion of steps taken given a Turing machine input may be [found elsewhere](https://blbadger.github.io/solvable-periodicity.html).  But for the sake of illustration, the maximum number of steps possible given a Turing machine with two symbols and n possible states $s(2, n)$ is (as documented [here](https://webusers.imj-prg.fr/~pascal.michel/ha.html)):
+This is most clearly understood in the context of the theory of general recursive functions, which we can substitute with Turing machines.  First note that a limited number of Turing machine input specifications can yield a very large number of possible instructions (before looping or halting).  A further discussion of steps taken given a Turing machine input may be [found elsewhere](https://blbadger.github.io/solvable-periodicity.html).  But for the sake of illustration, the maximum number of steps possible given a Turing machine with two symbols and n possible states, denoted $s(2, n)$ is (as documented [here](https://webusers.imj-prg.fr/~pascal.michel/ha.html)):
 
 $$
 s(2, 2) = 6 \\
 s(2, 3) = 21 \\
 s(2, 4) = 107 \\
 s(2, 5) = 47,176,870 \\
-s(2, 6) > 7.4 × 10^36534 
+s(2, 6) > 7.4 × 10^{36534} 
 $$
 
-This number grows at an incredible rate: its precise grown is uncomputable due to the fact that the halting problem itself is undecidable. 
+This number grows at an incredible rate: its precise growth is uncomputable due to the fact that the halting problem itself is undecidable. 
 
+This definition of information is similar to Shannon's with respect to the amount of information, termed informational entropy in Shannon's parlance.  For instructional information, a truly random input would have an infinite number of instructions without ever halting or looping and this mirrors how the maximum Shannon informational entropy is achieved for a random-like input. 
 
+Using the number of instructions as a definition for informational content, we can clearly see that a function with very few inputs can result in an extremely large informational output, which was what we wanted.  
 
 ### The process of protein folding
 
