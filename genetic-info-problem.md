@@ -180,7 +180,7 @@ $$
 
 This number grows at an incredible rate: its precise growth is uncomputable due to the fact that the halting problem itself is undecidable. 
 
-This definition of information is similar to Shannon's with respect to the amount of information, termed informational entropy in Shannon's parlance.  For instructional information, a truly random input would have an infinite number of instructions without ever halting or looping and this mirrors how the maximum Shannon informational entropy is achieved for a random-like input. 
+This definition of information is similar to Shannon's with respect to the amount of information, termed informational entropy in Shannon's parlance.  For instructional information, a truly random input would have an infinite number of instructions without ever halting or looping and this mirrors how the maximum Shannon informational entropy is achieved for a random-like input.  This is an important quality to retain, as it is clear that storage of real data that is noisy, or stochastic, is much more information-heavy than storage of non-noisy data.
 
 Using the number of instructions as a definition for informational content, we can clearly see that a function with very few inputs can result in an extremely large informational output, which was what we wanted.  
 
