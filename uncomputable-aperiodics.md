@@ -1,4 +1,4 @@
-## Decidability (computability) and periodicity II
+## Computability and periodicity II
 
 ### Uncomputable but definable trajectories
 
