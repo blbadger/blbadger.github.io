@@ -188,7 +188,7 @@ The study of life, observations of which display many of the features of nonline
 
 ## Neural nets and smaller software projects
 
-### [Neural Networks part I](/neural-networks.md) and [part II](neural-networks2.md)
+### Neural Networks: [part I](/neural-networks.md) and [part II](neural-networks2.md)
 
 ![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
 
