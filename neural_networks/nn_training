@@ -1,3 +1,8 @@
+Format: each array is one set of test results from 10 training runs (9 epochs each, two test results for each training run) 
+of the deeper network. Weights and biases were randomly initialized, saved, and loaded for each entry of an array.  Weights
+and biases were re-initialized between arrays.
+
+
 trained on mono_test1
 [0.75095785, 0.7176634, 0.5632184, 0.57162726, 0.45466155, 0.5243394, 0.49936143, 0.5146036, 0.48020434, 0.4798331, 0.6449553, 0.6550765, 0.6066411, 0.5799722, 0.54533845, 0.47566065, 0.5644955, 0.51738524, 0.76756066, 0.7774687]
 [0.9399745, 0.94158554, 0.9220945, 0.9137691, 0.7177522, 0.7301808, 0.88122606, 0.8706537, 0.945083, 0.94297636, 0.85057473, 0.86369956, 0.5108557, 0.4993046, 0.5108557, 0.4993046, 0.7011494, 0.7162726, 0.9323116, 0.9179416]
