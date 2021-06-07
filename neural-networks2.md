@@ -21,7 +21,28 @@ and a second test set
 
 These three datasets are similar in appearance, and are actually images of cells from three different fruit fly brains.  There is a clear pattern between the labels 'Snap29' and 'Control': there are numerous blobs inside the cells of the former but not the latter.  
 
-Now let's train the deep convolutional network on each dataset, using the other two datasets as the test sets for observation of training efficacy.
+Now let's train the deep convolutional network on each dataset, using the other two datasets as the test sets for observation of training efficacy. The results are found [here](https://github.com/blbadger/blbadger.github.io/blob/master/neural_networks/nn_training).
+
+The training results also display some more unexpected features. Firstly, one set of initial weights and biases can yield very different test classification accuracy: for example, the following array corresponds to the training accuracies achieved for one set of initial weights and biases:
+
+```python
+[0.94158554, 0.9137691, 0.7301808, 0.8706537, 0.94297636, 0.86369956, 0.4993046, 0.4993046, 0.7162726, 0.9179416]
+```
+
+And as expected, there is some variation between average test set classification accuracy depending on the initial weights and biases.
+
+The test set classification accuracies for all three datasets are as follows:
 
 ![training results](/neural_networks/nn_training.png)
+
+The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90$ percent, wereas training with the third dataset yeilds a $~50$ percent median accuracy, no better than chance as this is a binary classification. 
+
+
+
+
+
+
+
+
+
 
