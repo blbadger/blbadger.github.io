@@ -16,7 +16,7 @@ $$
 x = \frac{-b \pm \sqrt{b^2-2^2ac}}{2a}
 $$ 
 
-suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $ax^3 + ax + b$ of which a real root may be found as follows
+suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$ of which a real root may be found as follows
 
 $$
 x = \sqrt[3]{\frac{-b}{2} + \sqrt D} + \sqrt[3]{\frac{-b}{2} - \sqrt D} \\
@@ -221,7 +221,7 @@ Note that for this color map, purple corresponds to fast convergence and white s
 The roots for $z^3-1$ (dark circles in the plot above) may be plotted along a circle centered around the origin.  This is true not just for that equation but for any root of unity or indeed any root of any complex number by De Moivre's theorem,
 
 $$
-z^n = r^n(\cos n\theta + i \sin n\theta
+z^n = r^n(\cos n\theta + i \sin n\theta )
 $$
 
 where $\theta$ is in radians of counterclockwise rotation from the positive real axis.
