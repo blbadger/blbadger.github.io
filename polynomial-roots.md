@@ -16,7 +16,7 @@ $$
 x = \frac{-b \pm \sqrt{b^2-2^2ac}}{2a}
 $$ 
 
-suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $ax^3 + ax + b$ which can be rooted as follows
+suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $ax^3 + ax + b$ of which a real root may be found as follows
 
 $$
 x = \sqrt[3]{\frac{-b}{2} + \sqrt D} + \sqrt[3]{\frac{-b}{2} - \sqrt D} \\
@@ -35,7 +35,11 @@ $$
 x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
-After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots .  These values are called the 3rd roots of unity, because they are solutions to the equation $x^3 = 1$.  By tracking each iterative root guess, we can see if the method converges on a value.
+After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  
+
+Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots $\frac{-1+i\sqrt{3}}{2}$ and $\frac{-1-i\sqrt{3}}{2}$.  These values are called the cube roots of unity, because they are solutions to the equation $x^3 = 1$. The complex valued roots may be found by converting $x^3-1$ to $(x-1)(x^2+x+1)$ and then applying the quadratic formula to the second term.  
+
+How does Newton's method do for finding any of these roots? We can see by tracking each iterative root guess and looking for convergence, which is when subsequent values come closer and closer to each other until they are equivalent.  Dynamically, convergence is described as a period 1 trajectory, because there is only 1 iteration of the equation (in this case Newton's method) before the same value is reached again.  The progress of root finding with Newton's method may be tracked as follows (link to [code for this page](https://github.com/blbadger/polyroots)):
 
 ```python
 #! python3
@@ -114,7 +118,7 @@ $$
 0 = 2x^3 + 3 \left( \sqrt[3]{\frac12} x^2 \right) + 1
 $$
 
-To find this point exactly, a more difficult polynomial must be solved and the formidable cubic formula is required. Evaluating yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
+To find this point exactly, the formidable cubic formula is required. Evaluating this yields $x= -1.4337..$.  It can be appreciated now how difficult it is to find the $n^{th}$ region counting backwards from the origin that does not converge, as each iteration must be calculated in sequence.  
 
 Now consider the equation
 
@@ -152,13 +156,15 @@ and repeating this twice more yields $x_{-3}=-0.8413... \; , x_{-4}=1.47402...$.
 
 ### Newton's method in the complex plane
 
-The function defined above can be used to apply Newton's method to the equation $z^3-1$ for any complex number, for example
+The method used above for tracking progress made by Newton's method can also be applied for a complex starting number, for example
 
 ```python
 print (successive_approximations(2 + 5j, 20))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 [(2+5j), (1.325009908838684+3.3254062623860485j), (0.8644548662679195+2.199047743713538j), (0.5325816440348543+1.4253747693717602j), ... (-0.5+0.8660254037844386j), (-0.5+0.8660254037844387j)]
 ```
+
+where Newton's method finds the complex root $\frac{-1+i\sqrt{3}}{2}$.  
 
 This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
@@ -212,6 +218,14 @@ which yields
 
 Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.  John Hubbard was the first person to observe the fractal behavior of Newton's method in the complex plane, and the border between the set of non-diverging and diverging points may be considered to be a [Julia set](https://blbadger.github.io/julia-sets.html).  But by another definition, the maps presented on this page are not Julia sets because points that orbit, never settling on a root but also never diverging to infinity, are not members of the set of converging points (as they do not converge) but are members of the set of all non-diverging elements.  A Julia set can be defined as a set composed of elements that border diverging and non-diverging points, whereas the maps on this page denote points that converge on roots or do not, the latter of which do not necessarily diverge in the usual sense.
 
+The roots for $z^3-1$ (dark circles in the plot above) may be plotted along a circle centered around the origin.  This is true not just for that equation but for any root of unity or indeed any root of any complex number by De Moivre's theorem,
+
+$$
+z^n = r^n(\cos n\theta + i \sin n\theta
+$$
+
+where $\theta$ is in radians of counterclockwise rotation from the positive real axis.
+
 What happens between integer polynomial powers?  Here $z = z^2-1 \to z = z^5-1$, follow the link to see the change (right click the video while playing to loop)
 
 {% include youtube.html id='YIO_w4x1P2k' %}
@@ -229,14 +243,16 @@ $$
 Arguably the simplest polynomial that by Galois theory does not have a closed form rooted expression is
 
 $$
-y = x^5 - x - 1
+x^5 - x - 1
 $$
 
 Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical (with our original color map),
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
-This is different than the case for $z^3-1$ because an entire region fails to converge on a root, rather than individual points as before.  Now there are certainly points analagous to that observed above (for $z^3-1$) in which the tangent line is parallel to the x-axis: these exist at
+Note that the roots are no longer found in a circle centered on the origin, as the equation cannot be expressed as a root of any one complex number.  Looking at the roots more closely, there is one real and four complex roots: this is expected, as complex roots always come in pairs of a number and its conjugate.
+
+Unlike the case for $z^3-1$, an entire region fails to converge on a root, rather than individual points.  Now there are certainly points analagous to that observed above (for $z^3-1$) in which the tangent line is parallel to the x-axis: these exist at
 
 $$
 f'(x) = 0 \\
