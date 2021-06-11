@@ -2,15 +2,28 @@
 
 ### Introduction
 
-Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$ 
+Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial $y = ax + b$, setting $y$ to $0$ and solving for x yields $x = -b/a$. For a degree 2 polynomial $y = ax^2 + bx + c$, the closed form expression 
+Given a polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots, or solutions, of that equation.  At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
 $$
-x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+x = -b/a
+$$
+
+For a degree 2 polynomial $ax^2 + bx + c$, the closed form expression 
+
+$$
+x = \frac{-b \pm \sqrt{b^2-2^2ac}}{2a}
 $$ 
 
-suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 and degree 4 polynomials, this is true: closed form root expressions in terms of $a, b, c ...$ may be found even though the expressions become very long. 
+suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $ax^3 + ax + b$ which can be rooted as follows
+
+$$
+x = \sqrt[3]{\frac{-b}{2} + \sqrt D} + \sqrt[3]{\frac{-b}{2} - \sqrt D} \\
+D = \frac{a^3}{3^3} + \frac{b^2}{2^2}
+$$
+
+Similarly, for polynomials of degree 4 a closed form root expressions in terms of $a, b, c ...$ may be found even though the expression becomes quite long.
 
 It is somewhat surprising then that for a general polynomial of degree 5 or larger, there is no closed equation (with addition, subtraction, multiplication, nth roots, and division) that allows for the finding of all roots.  This is the Abel-Ruffini theorem.
 
@@ -22,7 +35,7 @@ $$
 x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
-After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$.  By tracking each iterative root guess, we can see if the method converges on a value.
+After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots .  These values are called the 3rd roots of unity, because they are solutions to the equation $x^3 = 1$.  By tracking each iterative root guess, we can see if the method converges on a value.
 
 ```python
 #! python3
