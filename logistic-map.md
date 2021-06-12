@@ -126,11 +126,11 @@ the fixed points are found again, and in addition two more points are found.  Al
 
 As demonstrated by Lorenz in his [pioneering work on flow](https://journals.ametsoc.org/doi/abs/10.1175/1520-0469(1963)020%3C0130:dnf%3E2.0.CO;2), nonlinear dissipative systems capable of aperiodic behavior are extremely sensitive to initial conditions such that long-range behavior is impossible to predict.  
 
-Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $\Delta r=3.7$:
+Observe what happens when the starting population proportion is shifted by a factor of one ten-millionth with $r=3.7$:
 
 ![aperiodic logistic shift]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.7_comp.png)
 
-The behavior is similar to the unshifted population for a while, until it changes and becomes very different.  This sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
+The two trajectories are nearly identical but then diverge.  This is sensitivity to initial conditions, and has been shown by Lorenz to be implied by and to imply aperiodicity (more on this below).
 
 In contrast, a relatively large shift of a factor of one hundreth (3 to 3.03) in initial population leads to no change to periodicity or exact values at $r=2.5$ (period 1):
 
