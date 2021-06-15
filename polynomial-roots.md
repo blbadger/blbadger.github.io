@@ -166,7 +166,7 @@ print (successive_approximations(2 + 5j, 20))
 
 where Newton's method finds the complex root $\frac{-1+i\sqrt{3}}{2}$.  
 
-This means that the complex plane may be explored. Because Newton's method requires evaluation and differentiation of a polynomial, I wrote a class `Calculate` to accomplish these tasks, starting from a polynomial written as a string (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
+This means that the complex plane may be explored. Because Newton's method requires differentiation and evaluation of a polynomial, I wrote a module `Calculate` to accomplish these tasks (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
 ```python
 # libraries
@@ -246,11 +246,11 @@ $$
 x^5 - x - 1
 $$
 
-Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.845953, 2.154047)$ for the real values on the horizontal axis and $(-1.864322i, 2.135678i)$ on the vertical (with our original color map),
+Let's explore where roots are found with Newton's method in the complex plane, ie for $z^5-z-1$.  With a scale of  $(-1.85, 2.15)$ for the real values on the horizontal axis and $(-1.86i, 2.14i)$ on the vertical (using our original color map),
 
 ![still]({{https://blbadger.github.io}}/newton-method/newton_x5_still.png)
 
-Note that the roots are no longer found in a circle centered on the origin, as the equation cannot be expressed as a root of any one complex number.  Looking at the roots more closely, there is one real and four complex roots: this is expected, as complex roots always come in pairs of a number and its conjugate.
+Note that the roots are no longer found in a circle centered on the origin, as the equation cannot be expressed as a root of any one complex number.  Looking at the roots more closely, there is one real and four complex roots: this is expected, as complex roots always come in pairs of a number and its conjugate. 
 
 Unlike the case for $z^3-1$, an entire region fails to converge on a root, rather than individual points.  Now there are certainly points analagous to that observed above (for $z^3-1$) in which the tangent line is parallel to the x-axis: these exist at
 
@@ -271,7 +271,7 @@ Newton's method yields self-similar fractals, which can be clearly observed by i
 Let's look closer at the areas that converge slowly for $z^5-z-1$. A little experimentation suggests that these areas may never converge on a root, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the central (near the origin, that is) sowly-converging area, many are found to converge on the period-3 orbit
 
 $$
--1.000257561..., -0.750321828..., 0.0833570997..., -1.000257561...
+-1.000257..., -0.750321..., 0.0833570..., -1.000257...
 $$
 
 Certainly there are some points in the plane, such as $\pm \sqrt[4]{1/5}$, which do not converge on anything at all.  But do the other starting points in the slowly-converging region eventually end up in this periodic orbit?  This can be tested for each point plotted for Newton's method (code for this section [here](https://github.com/blbadger/polynomial_roots/blob/main/newton_convergence_test.py)) After 80 iterations, nearly all points head towards a root or else to the periodic orbit above:
@@ -362,7 +362,7 @@ Follow the link for a video of this rotation:
 
 ### Incrementing powers
 
-Small changes in exponents lead to large changes for which starting points find roots quickly. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
+Maps of convergence using Newton's method display sensitivity to initial conditions: points arbitrarily nearby to each other in the complex plane may have very different times to convergence.  In addition, the exponential powers of the input equation displays analagous behavior: small changes in exponent magnitude lead to large changes for which starting points find roots quickly. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
 
