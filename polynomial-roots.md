@@ -10,13 +10,13 @@ $$
 x = -b/a
 $$
 
-For a degree 2 polynomial $ax^2 + bx + c$, the closed form expression 
+For a degree 2 polynomial $ax^2 + bx + c$, the closed form expression
 
 $$
 x = \frac{-b \pm \sqrt{b^2-2^2ac}}{2a}
 $$ 
 
-suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$ of which a real root may be found as follows
+suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables achieved by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$, and a real root of this resulting equation may be found as follows
 
 $$
 x = \sqrt[3]{\frac{-b}{2} + \sqrt D} + \sqrt[3]{\frac{-b}{2} - \sqrt D} \\
