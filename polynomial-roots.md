@@ -246,17 +246,17 @@ $$
 x^5 - x - 1
 $$
 
-This does not mean that finding the roots to this equation is impossible, but instead that there is no expression consisting of radicals ($\sqrtx$), addition, subtraction, multiplication, and division that represents the roots of this equation.  How does one know that $x^5-x-1$ cannot be rooted?  As a first step, one can find roots to an equation by attempting to factor it. Factoring here means representing a polynomial by two or more smaller polynomials, so $a(x) = b(x)c(x)$. Can the above expression be factored? 
+This does not mean that finding the roots to this equation is impossible, but instead that there is no expression consisting of radicals $ \sqrt x$, addition, subtraction, multiplication, and division that represents the roots of this equation.  How does one know that $x^5-x-1$ cannot be rooted?  As a first step, one can find roots to an equation by attempting to factor it. Factoring here means representing a polynomial by two or more smaller polynomials, so $a(x) = b(x)c(x)$. Can the above expression be factored? 
 
 Perhaps the most direct way to check if a polynomial may be factored is to use Eisenstein's irreducibility criterion, were a polynomial 
 
 $$
-a(x) = a_0 + a_1x + /cdots + a_nx^n
+a(x) = a_0 + a_1x + \cdots + a_nx^n
 $$
 
 is not reducible (not factorable) if there exists a prime number p such that p divides all $a$ except $a_n$, and $p^2$ does not divide $a_0$.  Eisenstein's criterion cannot be applied to our polynomial here because $1$ is not prime.  It can be shown that Eisenstein's criterion also applies if one substitutes $x$ for $x+a$ for any integer $a$, but this is also less than helpful.
 
-Instead, realizing that any polynomial with rational coefficients may be factored into some constant times a new polynomial with integer coefficients, we can determine if our equation has a root in $\Bbb Q$, the rational numbers. This is because for any rational root of $a(x)$, $s/t$, in smallest terms then in the notation above $s | a_0$ and $t | a_n$.  But the only $s/t$ which satisfies these conditions is 1, and by substituting $x=1$ it can clearly be seen that this value is not a root of $x^5-x-1$. 
+Instead, realizing that any polynomial with rational coefficients may be factored into some constant times a new polynomial with integer coefficients, we can determine if our equation has a root in $\Bbb Q$, the rational numbers. This is because for any rational root of $a(x)$, $s/t$, in smallest terms then in the notation above $s \lvert a_0$ and $t \lvert a_n$.  But the only $s/t$ which satisfies these conditions is 1, and by substituting $x=1$ it can clearly be seen that this value is not a root of $x^5-x-1$. 
 
 Therefore $x^5-x-1$ does not have any roots in $\Bbb Q$, and necessarily cannot be factored into a smaller polynomial of integer (or rational) values.  Now it turns out that neither can we construct all the roots for this equation with radicals (which are not in $\Bbb Q$ either) because the corresponding Galois group to this polynomial is $S_5$, the permutations of five elements.  This is to say that no finite addition of radicals can extend $\Bbb Q$ to the field of roots of our equation, and therefore no finite expression of with the terms desired may be constructed for the roots of this equation.
 
