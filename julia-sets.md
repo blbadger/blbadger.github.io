@@ -90,7 +90,7 @@ Now we can plot the image!
 
 The resolution settings (determined by h_range and w_range) are not very high in the image above because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
 
-Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere.  
+Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere as well as `diverged_in_past`, which is all `False` to begin with. 
 
 ```python
 import numpy as np 
@@ -106,9 +106,13 @@ def julia_set(h_range, w_range, max_iterations):
 	y, x = np.ogrid[1.4: -1.4: h_range*1j, -1.4: 1.4: w_range*1j]
 	z_array = x + y*1j
 	a = -0.744 + 0.148j
-	iterations_till_divergence = max_iterations + np.zeros(z_array.shape)
-	
+	iterations_until_divergence = max_iterations + np.zeros(z_array.shape)
+
+	# create array of all True
 	not_already_diverged = iterations_until_divergence < 10000
+
+	# creat array of all False
+	diverged_in_past = iterations_until_divergence > 10000
 ```
 
 Instead of examining each element of `z_array` individually, we can use a single loop to iterate (1) as follows:
@@ -120,7 +124,7 @@ Instead of examining each element of `z_array` individually, we can use a single
 
 In this loop, we can check if any element of ```z_array``` has diverged,
 $|z| > 2, z(z^* ) > 2^2 = 4$
-and make a boolean array, `diverging` is made, which contains a `True` for each position in `z_array` that is diverging at that iteration. To prevent values from diverging more than once (as the `z_array` is reset to 0 for diverging elements), we make another boolean array `diverging_now` by taking all elements of positions that are diverging but have not already diverged (denoted by boolean values in the `not_already_diverged` array).  Values of `iterations_till_divergence` that are diverging are assigned to the iteration `i`, and the `not_already_diverging` boolean array is updated.
+and make a boolean array, `diverging` is made, which contains a `True` for each position in `z_array` that is diverging at that iteration. To prevent values from diverging more than once (as the `z_array` is reset to 0 for diverging elements), we make another boolean array `diverging_now` by taking all elements of positions that are diverging but have not already diverged (denoted by boolean values in the `not_already_diverged` array).  Values of `iterations_till_divergence` that are diverging are assigned to the iteration `i`.
 
 ```python
 		z_size_array = z_array * np.conj(z_array)
@@ -130,18 +134,21 @@ and make a boolean array, `diverging` is made, which contains a `True` for each 
 		iterations_till_divergence[diverging_now] = i
 		
 		not_already_diverged = np.invert(diverging_now) & not_already_diverged
- ```
+```
 
-If a position has a magnitude greater than 2, we can set its to be 0 to try to prevent that element from going to infinity by assigning each position of the `z_array` that has a `True` value for the `divergent_array` to be 0 (although if zero diverges then this position will go to inifity anyways).  Divergence may throw an exception but not slow or stop this program.
+In order to prevent overflow due to values heading towards infinity, values that are diverging or have diverged in the past are set to 0.  It is necessary to reset values upon each iteration because for some Julia sets the value $0 + 0i$ also diverges.
+
+```python
+		# prevent overflow (values headed towards infinity) for diverging locations
+		diverged_in_past = diverged_in_past | diverging_now
+		z_array[diverged_in_past] = 0
+
+	return iterations_till_divergence
+```
 
 Finally the array of the number of iterations at each position is returned and an image is made 
 
-```python
-		z_array[divergent_array] = 0 
-
-
-	return iterations_till_divergence
-
+```
 plt.imshow(julia_set(2000, 2000, 70), cmap='twilight_shifted')
 plt.axis('off')
 plt.show()
@@ -167,6 +174,7 @@ There are a multitute of interesting Julia sets, each one defined by a different
 
 ![julia set1]({{https://blbadger.github.io}}fractals/julia_ranged_a.gif)
 
+There are many beautiful Julia sets that one can make!  To make your own, follow [this link](https://jenerator.herokuapp.com/) for a web application that generates Julia sets given user input.
 
 ### Julia sets are fractals
 
