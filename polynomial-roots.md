@@ -380,11 +380,9 @@ Follow the link for a video of this rotation:
 
 ### Incrementing powers
 
-Maps of convergence using Newton's method display sensitivity to initial conditions: points arbitrarily nearby to each other in the complex plane may have very different times to convergence.  In addition, the exponential powers of the input equation displays analagous behavior: small changes in exponent magnitude lead to large changes for which starting points find roots quickly. At $z^5-z^{1.0046}-1$ (right click to view in higher resolution)
+Maps of convergence using Newton's method display sensitivity to initial conditions: points arbitrarily nearby to each other in the complex plane may have very different times to convergence.  In addition, the exponential powers of the input equation displays analagous behavior: small changes in exponent magnitude lead to large changes for which starting points find roots quickly. As $a$ is increased past 1, $z^5-z^{a}-1$ yields (right click to view in higher resolution)
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
-
-and at $z^5-z^{1.0066}-1$
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
 
