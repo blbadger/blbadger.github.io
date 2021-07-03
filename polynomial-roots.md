@@ -238,6 +238,8 @@ $$
 
 {% include youtube.html id='qS8g6m0QOik' %}
 
+The images produced by searching the complex plane for points that converge quickly can be very beautiful.  It is fascinating to explore the exquisite shapes that are made with relatively simple polynomials, so I made a web application to allow one to explore these images freely using Newton's method (and other methods detailed towards the end of this page).  Follow [this link](https://pfinderr.herokuapp.com/) for the app.
+
 ### A simple unrootable polynomial
 
 Arguably the simplest polynomial that by Galois theory does not have a closed form rooted expression is
