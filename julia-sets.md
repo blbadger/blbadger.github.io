@@ -90,7 +90,7 @@ Now we can plot the image!
 
 The resolution settings (determined by h_range and w_range) are not very high in the image above because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
 
-Luckily we can speed things up substantially by calculating many points simultaneously.  The idea is to apply (1) to every value of `z_array` at once, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere as well as `diverged_in_past`, which is all `False` to begin with. 
+Luckily we can speed things up substantially by calculating many points simultaneously (well not really truly simultaneously, but using an optimized c array we can pretend that the calculations are happening a the same time) with numpy.  The idea is to apply (1) to every value of `z_array`, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere as well as `diverged_in_past`, which is all `False` to begin with. 
 
 ```python
 import numpy as np 
