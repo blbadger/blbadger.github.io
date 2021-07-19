@@ -189,4 +189,43 @@ In summary, neural networks that use a continuous cost function map (more than) 
 
 The implications of this are as follows: given any input and any neural net mapping inputs to a cost function in an (approximate) one-to-one manner, it is possible to find an adversarial example.  To see why no input or network is safe, consider that the points $a$, $b$, $c$, and $d$ and the mapping funciton $f$ were chosen arbitrarily.  Thus the finding that adversarial examples are [inherent features of neural nets](https://arxiv.org/abs/1905.02175) may be extended to any machine learning procedure that employs a near one-to-one mapping from input space to a cost function.
 
+# Why are adversarial examples relatively uncommon?
+
+If adversarial examples follow from the fact that any mapping from $\Bbb R^n \to \Bbb R$ is everywhere discontinuous, why are adversarial examples not found everywhere?  It is easy to see that adversarial examples must be rather rare, for otherwise training any network would be impossible.  How can we reconcile the result that adversarial examples should occur wherever there is a discontinuity in mapping from $\Bbb R^n \to \Bbb R$ with the finding that in practice such examples are not common?
+
+The answer is that in practice, one uses representations of multidimensional inputs and these representations are mappable bijectively with a one-dimensional encoded string (or integer, if one wants to think in those terms).  In effect, no one has ever trained a network on a true multidimensional input because all current computational devices represent all inputs as one dimensional sequences of bytes.  For example, the following 2-dimensional array could represent the information `abc` using one-hot vectors:
+
+```python
+[[1, 0, 0, 0, ... 0],
+ [0, 1, 0, 0, ... 0],
+ [0, 0, 1, 0, ... 0]]
+```
+
+But this 2-dimensional array is only an abstraction for the programmer: the information is actually stored in memory by a 1-dimensional sequence of bits.  This is accomplished because the following 1D array could be thought of as being equivalent to the 2D array above:
+
+```python
+[1, 0, 0, 0, ... 0, 0, 1, 0, 0, ... 0, 0, 0, 1, 0, ... 0]
+```
+
+The same holds true of two-dimensional arrays corresponding to images of physical objects, of three-dimensional arrays representing time-series data, etc.  And most importantly for this discussion, every input ever given to an artifical neural network is only a representation of a multidimensional input, an abstraction that is useful for thought but one that does not reflect the underlying 1D structure in memory. This means that every multidimensional object has already been bijectively mapped to a 1D object in the process of encoding, and therefore is not a true multidimensional object at all.
+
+But then why do adversarial examples exist at all if neural nets simply map 1D arrays to other 1D arrays, which does not necessitate any discontinuity?  This can be thought of as a result of increased resolution.  As networks get more sophisticated and inputs take up more memory, the respresentations of both grow in size to become prodigiously large.  
+
+As input size increases, the input becomes more and more similar to a truly multidimensional object with respect to an output of fixed size (usually `float` or `double`), and the existance of adversarial examples becomes more common.  This is why adversarial examples are relatively rare for small neural networks trained on low-information images (and why they have been found relatively recently in the history of machine learning research).  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
