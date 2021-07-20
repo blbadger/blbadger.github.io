@@ -189,7 +189,7 @@ In summary, neural networks that use a continuous cost function map (more than) 
 
 The implications of this are as follows: given any input and any neural net mapping inputs to a cost function in an (approximate) one-to-one manner, it is possible to find an adversarial example.  To see why no input or network is safe, consider that the points $a$, $b$, $c$, and $d$ and the mapping funciton $f$ were chosen arbitrarily.  Thus the finding that adversarial examples are [inherent features of neural nets](https://arxiv.org/abs/1905.02175) may be extended to any machine learning procedure that employs a near one-to-one mapping from input space to a cost function.
 
-# Why are adversarial examples relatively uncommon?
+## Why are adversarial examples relatively uncommon?
 
 If adversarial examples follow from the fact that any mapping from $\Bbb R^n \to \Bbb R$ is everywhere discontinuous, why are adversarial examples not found everywhere?  It is easy to see that adversarial examples must be rather rare, for otherwise training any network would be impossible.  How can we reconcile the result that adversarial examples should occur wherever there is a discontinuity in mapping from $\Bbb R^n \to \Bbb R$ with the finding that in practice such examples are not common?
 
