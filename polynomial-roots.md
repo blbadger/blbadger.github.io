@@ -226,6 +226,14 @@ $$
 
 where $\theta$ is in radians of counterclockwise rotation from the positive real axis.
 
+The above image has symmetry about the real axis (the horizontal line at the center).  Is this a coincidence, or does symmetry around the real axis necessarily occur for Newton's method?  As long as the polynomial in question $a(x)$ contains only real coefficients, the roots are symmetric around the real axis because if $a + bi$ is a root, so is its conjugate $a - bi$.  This is because we can assign a function $f(x)$ to map any point in the complex plane to its conjugate, meaning that $f(x): a - bi \to a + bi, \; a + bi \to a - bi$ for any $a, b \in \Bbb C$.  
+
+This function $f(x)$ is a homomorphism (meaning that $f(ab) = f(a)f(b)$ and because for any real number $a$, $f(a) = a$ and therefore for any polynomial with real coefficients $a(x)$, $f(a(x))$ contains the same constants and only converts $x$ to its conjugate.  This does not change the root values because $f(0) = 0$. 
+
+Moreover, the trajectory taken with Newton's method may be expressed as a series of polynomials, all of which have real coefficients if $a(x)$ has real coefficients.  Because there exists a homomorphism (actually isomorphism) from $a + bi$ to and from $a - bi$, the trajectories given equivalent $b$ are identical.
+
+### Incremental powers
+
 What happens between integer polynomial powers?  Here $z = z^2-1 \to z = z^5-1$, follow the link to see the change (right click the video while playing to loop)
 
 {% include youtube.html id='YIO_w4x1P2k' %}
@@ -377,6 +385,8 @@ the cover photo for this page found [here](https://blbadger.github.io/) is at t=
 Follow the link for a video of this rotation:
 
 {% include youtube.html id='NgZZq32in7g' %}
+
+Note that these are the first maps that are not symmetric about the real axis.  This is because the polynomial used to iterate Newton's method no longer has only real-valued coefficients, but instead imaginary values are introduced to accomplish the rotation. Now with $f(x)$ that transforms conjugates $a + bi, a - bi$ into one another, the coefficients are no longer unchanged and there is not an isomorphism that exists between regions of the complex plane.
 
 ### Incrementing powers
 
