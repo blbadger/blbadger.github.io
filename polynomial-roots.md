@@ -266,7 +266,9 @@ $$
 
 is not reducible (not factorable) if there exists a prime number p such that p divides all $a$ except $a_n$, and $p^2$ does not divide $a_0$.  Eisenstein's criterion cannot be applied to our polynomial here because $1$ is not prime.  It can be shown that Eisenstein's criterion also applies if one substitutes $x$ for $x+a$ for any integer $a$, but this is also less than helpful.
 
-Instead, realizing that any polynomial with rational coefficients may be factored into some constant times a new polynomial with integer coefficients, we can determine if our equation has a root in $\Bbb Q$, the rational numbers. This is because for any rational root of $a(x)$, $s/t$, in smallest terms then in the notation above $s \lvert a_0$ and $t \lvert a_n$.  But the only $s/t$ which satisfies these conditions is 1, and by substituting $x=1$ it can clearly be seen that this value is not a root of $x^5-x-1$. 
+Instead, realizing that any polynomial with rational coefficients may be factored into some constant times a new polynomial with integer coefficients, we can determine if our equation has a root in $\Bbb Q$, the rational numbers. This is because for any rational root of $a(x)$, $s/t$, in smallest terms then in the notation above $s \lvert a_0$ and $t \lvert a_n$.
+
+It is an interesting result that any rational root field can be converted to an integer root field, which means that if our equation above has a root, it can be expressed as an integer.  But the only $s/t$ which satisfies these conditions is 1, and by substituting $x=1$ it can clearly be seen that this value is not a root of $x^5-x-1$. 
 
 Therefore $x^5-x-1$ does not have any roots in $\Bbb Q$, and necessarily cannot be factored into a smaller polynomial of integer (or rational) values. But can we make a radical expression for any of these roots? Radicals are generally not elements of $\Bbb Q$, and so ruling out rational roots does not rule out the possibility that any root may be expressable as a finite number of integers and their roots.
 
