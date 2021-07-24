@@ -1,6 +1,8 @@
 ---
 ---
 
+@import "{{ site.theme }}";
+
 $header-bg-color: #957ce3;  
 $header-bg-color-secondary: #1399dc; 
 
@@ -11,8 +13,6 @@ $code-text-color: #494D4E;
 
 $large-breakpoint: 80em;
 $medium-breakpoint: 42em;
-
-@import "{{ site.theme }}";
 
 .youtube-wrapper {
   position: relative;
