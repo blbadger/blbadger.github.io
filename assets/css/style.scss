@@ -1,8 +1,6 @@
 ---
 ---
 
-@import "jekyll-theme-cayman";
-
 $header-bg-color: #957ce3;  
 $header-bg-color-secondary: #1399dc; 
 
@@ -13,6 +11,8 @@ $code-text-color: #494D4E;
 
 $large-breakpoint: 80em;
 $medium-breakpoint: 42em;
+
+@import "jekyll-theme-cayman";
 
 .youtube-wrapper {
   position: relative;
