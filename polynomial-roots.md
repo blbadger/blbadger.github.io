@@ -352,7 +352,7 @@ And for incremental powers between $z^1-z-1$ and $z^6-z-1$
 
 ### Newton's map rotations
 
-So far we have been considering polynomials with only real-valued constants and powers, or in other words polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$ where $a_n, b_n \in \Bbb R$.  This is not by necessity, and just as $x$ can be extended to the complex plane so can a polynomial itself be extended.  Programs to accomplish this may be found [here](https://github.com/blbadger/polyroots) (use the non-optimized versions for complex-valued polynomials, as the optimized programs do not currently support complex-valued polynomials).
+So far we have been considering polynomials with only real-valued constants and powers, or in other words polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$ where $a_n, b_n \in \Bbb R$.  This is not by necessity, and just as $x$ can be extended to the complex plane so can a polynomial itself be extended.  Programs to accomplish this may be found [here](https://github.com/blbadger/polyroots) (use the non-optimized versions for complex-valued polynomials, as the optimized programs do not currently support complex-valued polynomials).  Skip to the next section to observe what happens upon incrementing a complex power.
 
 There is one particular transformation that is especially striking  which can be accomplished by extending a polynomial's constants and powers into the complex plane. Using the identity $e^{\pi i} + 1 = 0$, we can rotate the function in the complex plane about the origin in a radius of $1/4$ as follows:
 
@@ -427,6 +427,10 @@ From $z^7-z-1$ to $z^{7.397}-z-1$,
 and from $z^7-z-1$ to $z^{7.1438555}-z-1$, incremented slowly, 
 
 {% include youtube.html id='VoxHmL-1Hys' %}
+
+In the last section, we observed some polynomials with complex values,meaning that instead of focusing on real constants and exponents and allowing the unkown to assume complex values, now $a_n, b_n \in \Bbb C$ for polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$.  The results for $z^(5 + 0i)-z-1 $ to $z^{5 + 0.2802i}-z-1$ are as follows:
+
+{% include youtube.html id='TyZGJQi0cmM' %}
 
 ### Secant method 
 
