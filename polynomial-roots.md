@@ -366,7 +366,7 @@ for i in range(max_iterations):
 		z_array = z_array - f_now / f_prime_now
 ```
 
-![transition]({{https://blbadger.github.io}}/newton-method/newton_rotated.gif)
+{% include youtube.html id='ejqFKnLRWjM' %}
 
 We can also perform a different rotation as follows:
 ```python
