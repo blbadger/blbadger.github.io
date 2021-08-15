@@ -398,8 +398,6 @@ Maps of convergence using Newton's method display sensitivity to initial conditi
 
 ![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_083.png)
 
-![still]({{https://blbadger.github.io}}/newton-method/Newton_vanishing_still_119.png)
-
 Upon incrementing $z^5-z-1 \to z^5-z^{1.033}-1$,
 
 {% include youtube.html id='Wi0EQ7WqJtU' %}
