@@ -387,7 +387,7 @@ Once again Snap29 training accuracy lags behind that of Snf7.
 
 ### AlexNet revisited
 
-To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture I used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split accross two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used an idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
+To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
 
 Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
@@ -405,7 +405,7 @@ As we have seen in the case for Snf7 dataset images, this conception is accurate
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-This observation is important because it suggests that the appropriate cost functions for neural nets need not necessarily be convex.  Convex functions are guaranteed to have a global minimum, not merely local minima: think $y=x^2$ rather than $y=\sin(x)$.  But we see above that reaching the global minima (which can be a value of 0$) for two distinct network architectures is achieved during training, but that this is negatively correlated with performance in the test dataset.
+This observation is important because it suggests that the appropriate cost functions for neural nets need not necessarily be convex.  Convex functions are guaranteed to have a global minimum, not merely local minima: think $y=x^2$ rather than $y=\sin(x)$.  But we see above that reaching the global minimum (which can be a value of $0$) for two distinct network architectures is achieved during training, but that this is negatively correlated with performance in the test dataset.
 
 ### Extensions to other datasets: fashion MNIST and flower types
 
@@ -419,7 +419,7 @@ The deep network with no other modifications than noted above performs very well
 
 AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~180,000).
 
-For some more colorful image classifications, lets turn to Alexander's flower [Kaggel photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
+For some more colorful image classifications, lets turn to Alexander's flower [Kaggle photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
 
 Examples of the deep network classifying images of roses or dandelions,
 
