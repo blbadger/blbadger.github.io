@@ -24,24 +24,24 @@ Note that these definitions restrict the following to discrete maps.  In higher 
 
 There is nothing special about our initial value $x(0)$ relative to the others obtained by iterating an equation.  So any value that is iterated from $f$ can be considered a 'starting value'.  Now suppose that we make a small change to an iterated value $x_n$ to produce $x_n^*$
 
-$$ x_n^* =  x_n + \varepsilon  $$
+$$ x_n^* =  x_n + \epsilon  $$
 
-where $\varepsilon$ is an arbitrarily small finite number. Now suppose that this small change does not change future values, such that for any iteration number $i$,
+where $\epsilon$ is an arbitrarily small finite number. Now suppose that this small change does not change future values, such that for any iteration number $i$,
 
-$$\lvert f^i(x_n) - f^i(x_n^* ) \rvert \le \varepsilon $$ 
+$$\lvert f^i(x_n) - f^i(x_n^* ) \rvert \le \epsilon $$ 
 
 ie $f^i(x_n)$ and $f^i(x_n^* )$ stay arbitrarily close to each other for all iterations.
 
-As phase space trajectories are unique (meaning that any given point of the system has only one future trajectory), this system must be periodic if in is insensitive to initial values: whenever $x_{n+i}$ is within $\varepsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat (recall that $f$ is defined to be bounded). The period may be very large, in that it may take many iterations of $f$ to come within $\varepsilon$ of $x_n$, but if $\varepsilon$ is finite then so will the period be.  
+As phase space trajectories are unique (meaning that any given point of the system has only one future trajectory), this system must be periodic if in is insensitive to initial values: whenever $x_{n+i}$ is within $\epsilon$ to $x_n$, the same iteration pattern obtained between these two points must repeat (recall that $f$ is defined to be bounded). The period may be very large, in that it may take many iterations of $f$ to come within $\epsilon$ of $x_n$, but if $\epsilon$ is finite then so will the period be.  
 
-The geometric argument for this statement is as follows: if the conditions above are satisfied and we assume that future iterations $x_{n+a}$ finitely close to a current point $x_n$ travel together, there is a small but finite ball $B$ around each point on the trajectory $T$ where the radius of $B$ is $\varepsilon$.  As the trajectory remains in a finite area by definition, it must revisit one of $B$ after infinite time because a finite area can be tiled by a finite number of $B$.  As $f$ is nonlinear,$B$ either grows or shrinks over time in the general case.  If $B$ is revisited, then $x_{n+a} - x_n \to 0$ as $t \to \infty$ and previous values are visited asymptotically.
+The geometric argument for this statement is as follows: if the conditions above are satisfied and we assume that future iterations $x_{n+a}$ finitely close to a current point $x_n$ travel together, there is a small but finite ball $B$ around each point on the trajectory $T$ where the radius of $B$ is $\epsilon$.  As the trajectory remains in a finite area by definition, it must revisit one of $B$ after infinite time because a finite area can be tiled by a finite number of $B$.  As $f$ is nonlinear,$B$ either grows or shrinks over time in the general case.  If $B$ is revisited, then $x_{n+a} - x_n \to 0$ as $t \to \infty$ and previous values are visited asymptotically.
 
 Revisiting a previous value is equivalent to periodicity, and therefore insensitivity to initial values (in this case $x_n$) implies periodicity.  Taking the contrapositive of this statement, we have it that aperiodicity implies sensitivity to initial values (for discrete maps of $f$). All together, 
 
 $$
 f(x) : f^n(x(0)) \neq f^k(x(0)) \implies \\
-\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \varepsilon, \\
-\exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \varepsilon
+\forall x_1, x_2 : \lvert x_1 - x_2 \rvert < \epsilon, \\
+\exists n \; : \lvert f^n(x_1) - f^n(x_2) \rvert > \epsilon
 $$
 
 ### Aperiodicity and sensitivity to initial values: continuous version
