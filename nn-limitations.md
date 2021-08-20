@@ -53,7 +53,7 @@ $$
 m \{f \in \mathbf C^1(X, Y)\}  << m \{f \in \mathbf C(X, Y)\} 
 $$
 
-where $m \Mathbf C$ signifies the measure of the set of $\mathf C$.  Expanding the definition of measure to be set cardinality inequality or Banach space inequality, we have:
+where $m \mathbf C$ signifies the measure of the set of $ \mathbf C$.  Expanding the definition of measure to be set cardinality inequality or Banach space inequality, we have:
 
 $$
 m \{f \in \mathbf C^1(X, Y)\}  << m \{f \in \mathbf C(X, Y)\}  << m \{f \in (X, Y)\} 
