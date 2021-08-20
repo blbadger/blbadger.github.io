@@ -45,16 +45,18 @@ $$
 \lvert \{f \in \mathbf (X, Y)\} \rvert = \lvert \Bbb R ^ \Bbb R \rvert
 $$
 
-Furthermore, as a consequence of Baire's theorem, it can be shown that the set of somewhere-differentiable functions $\{f \in \mathbf C^1(X, Y)\}$ is of the first category (negligably small, specifically a union of countably many nowhere dense subsets) in Banach space (see Hewitt & Stromberg's Real and Abstract analysis for a proof).  Thus
+Set cardinality is intuitively a rather rough measure of the size of a set: the [Cantor set](https://blbadger.github.io/fractal-geometry.html), for example, has the same cardinality as $\Bbb R$ even though the probability of choosing an element in this set for all elements over the interval $[0, 1]$ is 0, and in that sense the Cantor set has a smaller measure than the reals.
+
+More formally, as a consequence of Baire's theorem, it can be shown that the set of somewhere-differentiable functions $\{f \in \mathbf C^1(X, Y)\}$ is of the first category (negligably small, specifically a union of countably many nowhere dense subsets) in Banach space (see Hewitt & Stromberg's Real and Abstract analysis for a proof).  Thus
 
 $$
-\lvert \{f \in \mathbf C^1(X, Y)\} \rvert << \lvert \{f \in \mathbf C(X, Y)\} \rvert
+m \{f \in \mathbf C^1(X, Y)\}  << m \{f \in \mathbf C(X, Y)\} 
 $$
 
-and therefore
+where $m \Mathbf C$ signifies the measure of the set of $\mathf C$.  Expanding the definition of measure to be set cardinality inequality or Banach space inequality, we have:
 
 $$
-\lvert \{f \in \mathbf C^1(X, Y)\} \rvert << \lvert \{f \in \mathbf C(X, Y)\} \rvert << \lvert \{f \in (X, Y)\} \rvert
+m \{f \in \mathbf C^1(X, Y)\}  << m \{f \in \mathbf C(X, Y)\}  << m \{f \in (X, Y)\} 
 $$
 
 Thus size of the set of all continuous and differentiable functions is far smaller than the size of the set of all continuous functions, which is in turn far smaller than the set of all functions.  The usage of 'far smaller' does not quite do justice to the idea that each set is vanishingly tiny compared to the next.
