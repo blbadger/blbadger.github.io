@@ -8,7 +8,7 @@ From the theoretical considerations presented [here](https://blbadger.github.io/
 
 The collection of images used to train a network may be thought of as a single input (broken up into smaller pieces for convenience).  The theorem referenced above is not particular to single input images but instead applies to any input, leading to the following question: could nearly indistinguishable training datasets yield very different outputs?  Here outputs may be the cost (or objective) function values summed accross all inputs, or (more or less equivalently) the average classification accuracy.
 
-Say we have three datasets of similar size and content.  These correspond to slightly modified versions of those used in the [last section]([here](https://blbadger.github.io/nn-limitations.html), and are available in the github repository linked on this page above.
+Say we have three datasets of similar size and content.  These correspond to slightly modified versions of those used in the last section [here](https://blbadger.github.io/nn-limitations.html), and are available in the github repository linked on this page above.
 
 First there is the original training dataset,
 ![training](/neural_networks/train.png)
@@ -35,7 +35,7 @@ The test set classification accuracies for all three datasets are as follows:
 
 ![training results](/neural_networks/nn_training.png)
 
-The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90$ percent, wereas training with the third dataset yeilds a $~50$ percent median accuracy, no better than chance as this is a binary classification. 
+The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90 %$, wereas training with the third dataset yeilds a $~50 %$  median accuracy, no better than chance as this is a binary classification. 
 
 
 
