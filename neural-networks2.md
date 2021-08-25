@@ -41,7 +41,7 @@ The median test classification accuracy varies widely depending on which dataset
 
 ### One-way training
 
-More clearly, the situation in the last section is that a particular CNN in question when trained on dataset 1 has a high test accuracy when applied to dataset 2, whereas the same network when trained on dataset 2 experiences poor test accuracy on dataset 1.
+More clearly, the situation in the last section is that a particular CNN in question when trained on dataset 1 has a high test accuracy when applied to dataset 2, whereas the same network when trained on dataset 2 experiences poor test accuracy on dataset 1.  
 
 
 ### The importance of (pseudo)randomization
@@ -57,12 +57,60 @@ Stochastic gradient descent can be thought of as the foundation upon which most 
 Given a vector of a network's weights and biases $v_0$, an objective function $F$, a learning rate $\eta$, and shuffled dataset $\mathscr S$,
 
 $$
-v_{i+1} = v_i - \eta \nabla F_j(v) \forall j \in \mathscr S
+v_{i+1} = v_i - \eta \nabla F_j(v) \;
+\forall j \in \mathscr S
+\tag{1}
 $$
 
-When $i$ is equal to the size of $\mathscr S$, one epoch is completed and the entire process is repeated until $F$ is approximately minimized (or some other constraint is met).  
+When $i$ is equal to the size of $\mathscr S$, one training epoch is completed and the entire process is repeated until $F$ is approximately minimized (or some other constraint is met).  
 
-The randomization step is that the dataset is shuffled.  Why take that set in the first place?  The objective function $F$ that we are trying to minimize is usually thought of as a multidimensional 'landscape', with gradient descent being similar to rolling a ball down a hill.
+The randomization step is that the dataset is shuffled.  Why take that set in the first place?  The objective function $F$ that we are trying to minimize is usually thought of as a multidimensional 'landscape', with gradient descent being similar to finding a valley while looking at the ground under one's feet while walking.
+The local gradient, if sampled repeatedly, provides the necessary information to find the approximate minimum point if the objective function is smooth enough.  
+
+If the objective function is not smooth, gradient descent may result in the finding of a local minima that is not the true global minimum.  To prevent this from happening, gradient descent may be modified to include parameters such as momentum, or extended into optimizers like RMSprop or AdaGrad.  
+
+Now back to the original question: why does stochastic gradient descent work best if it is stochastic?  Why not enumerate all training examples and iterate through them in order, updating the network via gradient descent using $1$?  If each training example is fed to the network during one epoch, from an informational perspective would it matter whether or not one example comes before another?
+
+
+### Training memory
+
+This section will require some familiarity with [recurrent neural networks](https://en.wikipedia.org/wiki/Recurrent_neural_network), which will be given briefly here.  Recurrent neural networks are a class of feedforward neural networks that are updated sequentially as time passes.  The simplest form, a fully recurrent network, has one hidden layer that is updated at each sequential element.  For example, a text classification network performing sentiment analysis (finding if a statement expresses positive or negative emotions) of the following sentance:
+
+"The dog went to the store."
+
+would simply iterate through the sentance ('The' then 'dog' then 'went' etc.), and at each word the activation in each hidden neuron would be updated.  At the end of the sentance, the hope is that some information from early elements is retained in the hidden layer's activations, as these are then used to generate some output.  Stochastic gradient descent (or some other optimization procedure) and backpropegation are then performed on the network, updating the network's weights and biases in accordance with the output that was a result of the activations 
+
+Unfortunately, in practice recurrent neural networks suffer from the same problems as very deep networks of all kinds: unstable gradients.  
+
+Now consider the process of training a non-recurrent neural network, perhaps a convolutional net performing image classification.  The first training example (or batch of examples) is fed to the network with initial weights and biases (represented as $v_0$), resulting in some output $o_1$.  The output is then input into the objective function, and the gradient wrt output is calculated before backpropegation is used to update the network's weights and biases to $v_1$.  The process is then repeated with the second (batch) example, where the network's weights and biases configuration $v_1$ generates an output $o_1$ which then leads to updating $v_1 \to v_2$ and so on.
+
+Therefore the sequence of weight and bias configurations is
+
+$$
+(v_0, o_0), (v_1, o_1), (v_2, o_2), ... , (v_n, o_n)
+$$
+
+Now note that the final configuration $v_n$ depends not only on the prior configuration $v_{n-1}$ but also on all previous configurations and outputs as follows:
+
+$$
+v_0 + i_0 \to o_0 \to v_1 \;
+v_1 + i_1 \to o_1 \to v_2 \;
+\vdots \;
+v_{n-1} + i_n \to o_n \to v_n
+$$
+
+Therefore configuration and outputs form a directed graph 
+
+$$
+v_0 \to o_0 \to v_1 \to o_1 \to ... 
+$$
+
+But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.  
+
+To summarize, training any neural network is not instantaneous but instead occurs over a certain time interval, and therefore may be thought of as a dynamical system.  In this system, the final network configuration $v_n$ depends not only on the network inputs but also which input is fed to the network in what order.  
+
+Considered carefully, therefore, any network network undergoing training via updating weights and biases over time is a type of recurrent neural network, with training states $v_0, v_1, ... , v_n$ forming a directed graph along a temporal sequence across training examples (rather than across a elements of one input, as is the case for rnns).
+
 
  ### Backpropegation and subspace exploration
  
@@ -73,6 +121,7 @@ Neural networks were studies long before they became feasible computational mode
 Backpropegation can be thought of as an optimal graph traversal method (or a dynamic programming solution) that updates a network's weights and biases with the fewest number of computations possible.  The goal of training is to find a certain combination of weights and biases (and any other trainable parameters) that yield a small objective function, and one way this could be achieved is by simply trying all possible weights and biases.  That method is grossly infeasible, and even miniscule networks with neurons in the single digits are unable to try all possible (assuming 32 bit precision) combinations.
 
 Methods such as dropout are similar to the process of adjusting weights and biases randomly, only the process occurs withing the backpropegation framework rather than outside it, which would be far less efficient.  
+
 
 
 
