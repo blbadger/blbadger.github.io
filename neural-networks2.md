@@ -87,7 +87,7 @@ Now consider the process of training a non-recurrent neural network, perhaps a c
 Therefore the sequence of weight and bias configurations is
 
 $$
-(v_0, o_0), (v_1, o_1), (v_2, o_2), ... , (v_n, o_n)
+(v_0, o_0), (v_1, o_1), (v_2, o_2), \; \cdots \; , (v_n, o_n)
 $$
 
 Now note that the final configuration $v_n$ depends not only on the prior configuration $v_{n-1}$ but also on all previous configurations and outputs as follows:
@@ -102,7 +102,7 @@ $$
 Therefore configuration and outputs form a directed graph 
 
 $$
-v_0 \to o_0 \to v_1 \to o_1 \to ... 
+v_0 \to o_0 \to v_1 \to o_1 \to \cdots 
 $$
 
 But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.  
