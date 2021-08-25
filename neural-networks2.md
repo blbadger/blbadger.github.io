@@ -57,7 +57,7 @@ Stochastic gradient descent can be thought of as the foundation upon which most 
 Given a vector of a network's weights and biases $v_0$, an objective function $F$, a learning rate $\eta$, and shuffled dataset $\mathscr S$,
 
 $$
-v_{i+1} = v_i - \eta \nabla F_j(v) \;
+v_{i+1} = v_i - \eta \nabla F_j(v) \\
 \forall j \in \mathscr S
 \tag{1}
 $$
@@ -93,9 +93,9 @@ $$
 Now note that the final configuration $v_n$ depends not only on the prior configuration $v_{n-1}$ but also on all previous configurations and outputs as follows:
 
 $$
-v_0 + i_0 \to o_0 \to v_1 \;
-v_1 + i_1 \to o_1 \to v_2 \;
-\vdots \;
+v_0 + i_0 \to o_0 \to v_1 \\
+v_1 + i_1 \to o_1 \to v_2 \\
+\vdots \\
 v_{n-1} + i_n \to o_n \to v_n
 $$
 
@@ -112,11 +112,11 @@ To summarize, training any neural network is not instantaneous but instead occur
 Considered carefully, therefore, any network network undergoing training via updating weights and biases over time is a type of recurrent neural network, with training states $v_0, v_1, ... , v_n$ forming a directed graph along a temporal sequence across training examples (rather than across a elements of one input, as is the case for rnns).
 
 
- ### Backpropegation and subspace exploration
+### Backpropegation and subspace exploration
  
 Neural networks were studies long before they became feasible computational models, and one of the most significant breakthroughs that allowed for this transition was the discovery of backpropegation.
 
----backprop details---
+-backprop details-
 
 Backpropegation can be thought of as an optimal graph traversal method (or a dynamic programming solution) that updates a network's weights and biases with the fewest number of computations possible.  The goal of training is to find a certain combination of weights and biases (and any other trainable parameters) that yield a small objective function, and one way this could be achieved is by simply trying all possible weights and biases.  That method is grossly infeasible, and even miniscule networks with neurons in the single digits are unable to try all possible (assuming 32 bit precision) combinations.
 
