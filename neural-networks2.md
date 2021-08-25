@@ -102,7 +102,7 @@ $$
 Therefore configuration and outputs form a directed graph 
 
 $$
-v_0 \to o_0 \to v_1 \to o_1 \to \cdots 
+v_0 \to o_0 \to v_1 \to o_1 \to \cdots \to v_n 
 $$
 
 But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.  
