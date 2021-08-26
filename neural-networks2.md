@@ -1,54 +1,18 @@
-## Neural Networks II
+## Neural Networks II: 
 
-This page is a direct continuation from from [part one](https://blbadger.github.io/neural-networks.html). Code for this page is found in [this Github repo](https://github.com/blbadger/nnetworks).
+This page is a continuation from from [part one](https://blbadger.github.io/neural-networks.html). Code for this page is found in [this Github repo](https://github.com/blbadger/nnetworks).
 
------------------Currently under construction-------------
-
-### Adversarial training datasets
-
-From the theoretical considerations presented [here](https://blbadger.github.io/nn-limitations.html) and elsewhere, it is clear that one inherent limitation in neural nets is the propensity for nearly indistinguishable (in the feature space) inputs to be mapped to very different outputs.  Input examples such as these are called 'adversarial examples'. 
-
-The collection of images used to train a network may be thought of as a single input (broken up into smaller pieces for convenience).  The theorem referenced above is not particular to single input images but instead applies to any input, leading to the following question: could nearly indistinguishable training datasets yield very different outputs?  Here outputs may be the cost (or objective) function values summed accross all inputs, or (more or less equivalently) the average classification accuracy.
-
-Say we have three datasets of similar size and content.  These correspond to slightly modified versions of those used in the last section [here](https://blbadger.github.io/nn-limitations.html), and are available in the github repository linked on this page above.
-
-First there is the original training dataset,
-![training](/neural_networks/train.png)
-
-then there is the first test dataset,
-![test 1](/neural_networks/test1.png)
-
-and a second test set
-![test 2](/neural_networks/test_2.png)
-
-These three datasets are similar in appearance, and are actually images of cells from three different fruit fly brains.  There is a clear pattern between the labels 'Snap29' and 'Control': there are numerous blobs inside the cells of the former but not the latter.  
-
-Now let's train the deep convolutional network on each dataset, using the other two datasets as the test sets for observation of training efficacy. The results are found [here](https://github.com/blbadger/blbadger.github.io/blob/master/neural_networks/nn_training).
-
-The training results also display some more unexpected features. Firstly, one set of initial weights and biases can yield very different test classification accuracy: for example, the following array corresponds to the training accuracies achieved for one set of initial weights and biases:
-
-```python
-[0.94158554, 0.9137691, 0.7301808, 0.8706537, 0.94297636, 0.86369956, 0.4993046, 0.4993046, 0.7162726, 0.9179416]
-```
-
-And as expected, there is some variation between average test set classification accuracy depending on the initial weights and biases.
-
-The test set classification accuracies for all three datasets are as follows:
-
-![training results](/neural_networks/nn_training.png)
-
-The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90 %$, wereas training with the third dataset yeilds a $~50 %$  median accuracy, no better than chance as this is a binary classification. 
-
-### One-way training
-
-More clearly, the situation in the last section is that a particular CNN in question when trained on dataset 1 has a high test accuracy when applied to dataset 2, whereas the same network when trained on dataset 2 experiences poor test accuracy on dataset 1.  
-
-
-### The importance of (pseudo)randomization
+## The importance of (pseudo)randomization
 
 It is standard practice to perform pseudo-random transformations on the inputs and parameters of neural networks before and during training. Shuffling or random selection of training data, initialization of weights and biases on a Gaussian (or Poisson etc.) distribution, randomized neuron drouput, and most objective function optimization procedures like stochastic gradient descent or Adaptive moment estimation readily spring to mind when one considers current methods.
 
-It is worth asking the question of why this is: why do all these procedures involve randomization?  Some experimentation will convince one that randomization leads to better performance: for example, failing to randomize the initial weights $w_0$ and biases $b_0$ often leads to poor training and test results.  But if randomization 'works', why is this the case?
+It is worth asking the question of why this is: why do all these procedures involve randomization?  Each case is considered in the following sections.
+
+### Initialization
+
+Some experimentation will convince one that randomization leads to better performance: for example, failing to randomize the initial weights $w_0$ and biases $b_0$ often leads to poor training and test results.  But if randomization 'works', why is this the case?
+
+### Stochastic Gradient Descent
 
 To begin, let's consider gradient descent.
 
@@ -99,29 +63,76 @@ v_1 + i_1 \to o_1 \to v_2 \\
 v_{n-1} + i_n \to o_n \to v_n
 $$
 
-Therefore configuration and outputs form a directed graph 
+Therefore successive configuration and outputs form a directed graph 
 
 $$
 v_0 \to o_0 \to v_1 \to o_1 \to \cdots \to v_n 
 $$
 
-But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.  
+But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.
 
 To summarize, training any neural network is not instantaneous but instead occurs over a certain time interval, and therefore may be thought of as a dynamical system.  In this system, the final network configuration $v_n$ depends not only on the network inputs but also which input is fed to the network in what order.  
 
 Considered carefully, therefore, any network network undergoing training via updating weights and biases over time is a type of recurrent neural network, with training states $v_0, v_1, ... , v_n$ forming a directed graph along a temporal sequence across training examples (rather than across a elements of one input, as is the case for rnns).
 
+### Input randomization and training memory
+
+It was asserted in the previous section that the sequence of neural network configurations, inputs, and outputs form a directed, acyclic graph during training.  Because the graph is directed, there is no guarantee that reversing the order of $i_0, i_1, i_2, ..., i_n$ (and thus the order of outputs too) would result in the same sequence of configurations $v_0, v_1, v_2$.  This is to say that the order of training examples matters, such that the ability to minimize an objective function in the final configuration $v_n$ will vary depending on the order of training examples provided because the graph path taken is changed.
+
+Now imagine training for one epoch only, meaning that all training examples are fed to the network exactly once (singly or in batch form).  What happens if we first group the training examples by similarity, perhaps using latent space vectorization, and then feed the resulting sequence to the network?  For simplicity, suppose there are inputs two types (in equal number), those belonging to set $\mathscr A$ and other belonging to set $\mathscr B$ such that all $a \in \mathscr A$ are seen by the network before $b \in \mathscr B$.  What happens to $v_n$?
+
+Assuming that the network's hyperparameters (non-trainiable variables) are not changed during training, $v_n$ will reflect $\mathscr B$ moreso than $\mathscr A$, for the simple reason that the configuration updates for $a \in \mathscr A$ are 'overwritten' by $b \in \mathscr B$.  More precisely, the minimum distance between $v_n$ and an earlier configuration $v_m$ resulting from an update from either set is much greater for $a$ than for $b$: there are $\lvert \mathscr B \rvert$ nodes (updates) between $v_m (a)$ and $v_m (b)$.  
+
+This is to say that the network after training would be expected to classify $a \in \mathscr A$ worse than $b \in \mathscr B$.  Instead, alternating $a, b, a, b, ...$ results in a distance $v_m(a) - v_m(b) = 1$.  Without knowing a priori which elements of the training set belong to $\mathscr A$ or $\mathscr B$, simply shuffling the training set minimized the expected value of $v_m(a) - v_m(b)$ and would therefore present the best solution to the problem of recency in training memory.
+
+What about shuffling between or during training epochs?
+
 
 ### Backpropegation and subspace exploration
  
-Neural networks were studies long before they became feasible computational models, and one of the most significant breakthroughs that allowed for this transition was the discovery of backpropegation.
-
--backprop details-
+Neural networks were studies long before they became feasible computational models, and one of the most significant breakthroughs that allowed for this transition was the development of backpropegation.
 
 Backpropegation can be thought of as an optimal graph traversal method (or a dynamic programming solution) that updates a network's weights and biases with the fewest number of computations possible.  The goal of training is to find a certain combination of weights and biases (and any other trainable parameters) that yield a small objective function, and one way this could be achieved is by simply trying all possible weights and biases.  That method is grossly infeasible, and even miniscule networks with neurons in the single digits are unable to try all possible (assuming 32 bit precision) combinations.
 
 Methods such as dropout are similar to the process of adjusting weights and biases randomly, only the process occurs withing the backpropegation framework rather than outside it, which would be far less efficient.  
 
+
+### Non-commutative training and testing
+
+From the theoretical considerations presented [here](https://blbadger.github.io/nn-limitations.html) and elsewhere, it is clear that one inherent limitation in neural nets is the propensity for nearly indistinguishable (in the feature space) inputs to be mapped to very different outputs.  Input examples such as these are called 'adversarial examples'. 
+
+The collection of images used to train a network may be thought of as a single input (broken up into smaller pieces for convenience).  The theorem referenced above is not particular to single input images but instead applies to any input, leading to the following question: could nearly indistinguishable training datasets yield very different outputs?  Here outputs may be the cost (or objective) function values summed accross all inputs, or (more or less equivalently) the average classification accuracy.
+
+Say we have three datasets of similar size and content.  These correspond to slightly modified versions of those used in the last section [here](https://blbadger.github.io/nn-limitations.html), and are available in the github repository linked on this page above.
+
+First there is the original training dataset,
+![training](/neural_networks/train.png)
+
+then there is a first test dataset,
+![test 1](/neural_networks/test1.png)
+
+and a second test set
+![test 2](/neural_networks/test_2.png)
+
+These three datasets are similar in appearance, and are actually images of cells from three different fruit fly brains.  There is a clear pattern between the labels 'Snap29' and 'Control': there are numerous blobs inside the cells of the former but not the latter.  
+
+Now let's train the deep convolutional network on each dataset, using the other two datasets as the test sets for observation of training efficacy. The results are found [here](https://github.com/blbadger/blbadger.github.io/blob/master/neural_networks/nn_training).
+
+The training results also display some more unexpected features. Firstly, one set of initial weights and biases can yield very different test classification accuracy: for example, the following array corresponds to the training accuracies achieved for one set of initial weights and biases:
+
+```python
+[0.94158554, 0.9137691, 0.7301808, 0.8706537, 0.94297636, 0.86369956, 0.4993046, 0.4993046, 0.7162726, 0.9179416]
+```
+
+And as expected, there is some variation between average test set classification accuracy depending on the initial weights and biases.
+
+The test set classification accuracies for all three datasets are as follows:
+
+![training results](/neural_networks/nn_training.png)
+
+The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90 %$, wereas training with the third dataset yeilds a $~50 %$  median accuracy, no better than chance as this is a binary classification. 
+
+More clearly, the situation in the last section is that a particular CNN in question when trained on dataset 1 has a high test accuracy when applied to dataset 2, whereas the same network when trained on dataset 2 experiences poor test accuracy on dataset 1.  
 
 
 
