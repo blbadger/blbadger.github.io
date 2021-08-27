@@ -21,7 +21,7 @@ Stochastic gradient descent can be thought of as the foundation upon which most 
 Given a vector of a network's weights and biases $v_0$, an objective function $F$, a learning rate $\eta$, and shuffled dataset $\mathscr S$,
 
 $$
-v_{i+1} = v_i - \eta \nabla F_j(v) \\
+v_{i+1} = v_i - \eta \nabla F_j(v_i) \\
 \forall j \in \mathscr S
 \tag{1}
 $$
