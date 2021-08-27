@@ -123,13 +123,13 @@ $$
 
 Now suppose one epoch is completed, and $v_n$ has decreased the objective function's output but not to the global minimum.  If one wishes to begin another training epoch and further minimize the objective function's output, what sequence of inputs should be used?
 
-One option would be to use the same sequence of inputs as for the first epoch, that is, $i_0, i_1, i_2, i_3, ..., i_{n-1}$.  Now the initial configuration for the second epoch is not expected to be the same as it was before the first epoch, or $v_{02} \neq v_{0}$ and therefore the sequence $o_{02}, o_{12}, o{22}, ... o{n2}$ would not be the same either.  But it would be more similar than if $i_0, i_1, i_2, ...$ were reordered!
+One option would be to use the same sequence of inputs as for the first epoch, that is, $i_0, i_1, i_2, i_3, ..., i_{n-1}$.  Now the initial configuration for the second epoch is not expected to be the same as it was before the first epoch, or $v_{02} \neq v_{0}$ and therefore the sequence $o_{02}, o_{12}, o_{22}, ..., o_{n2}$ would not be the same either.  But it would be more similar than if $i_0, i_1, i_2, ...$ were reordered!
 
 To see why this is, observe that we can assign a vector to the input sequence $I = i_0, i_1, i_2, ... i_{n-1}$ such that the change $v_0 \to v_n$.  There are many vector additions and multiplications and other operations, but we can combine all of these into one operation $\circ$ to give $v_0 \circ I = v_n$.  
 
-Finally, is it very likely that the ideal path from $v_{00} \v_{nn}$ such that $v_{nn}$ minimized the objective function $F$ was achieved using the initial ordering $i_0, i_1, i_2 ... i_{n-1}$?  No, given that there are $\lparen n-1 \rparen !$ ways of ordering $n-1$ inputs, without prior knowledge then the chance of choosing the best initial path is $1/(n-1)!$.  Reordering the input string increases the chances of choosing a better initial path.
+Finally, is it very likely that the ideal path from $v_{00} \to v_{nn}$ such that $v_{nn}$ minimized the objective function $F$ was achieved using the initial ordering $i_0, i_1, i_2 ... i_{n-1}$?  No, given that there are $(n-1) !$ ways of ordering $n-1$ inputs, without prior knowledge then the chance of choosing the best initial path is $1/(n-1)!$  
 
-Reordering also increases the chances of an epoch being run on a 'worse' sequence of inputs than the initial ordering as well.  
+Reordering the input string increases the chances of choosing a better initial path. Reordering also increases the chances of an epoch being run on a 'worse' sequence of inputs than the initial ordering as well.  
 
 
 ### Backpropegation and subspace exploration
