@@ -428,13 +428,9 @@ and from $z^7-z-1$ to $z^{7.1438555}-z-1$, incremented slowly,
 
 {% include youtube.html id='VoxHmL-1Hys' %}
 
-In the last section, we observed some polynomials with complex values,meaning that instead of focusing on real constants and exponents and allowing the unkown to assume complex values, now $a_n, b_n \in \Bbb C$ for polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$.  The results for 
+In the last section, we observed some polynomials with complex values,meaning that instead of focusing on real constants and exponents and allowing the unkown to assume complex values, now $a_n, b_n \in \Bbb C$ for polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$.  
 
-$$
-z^{5 + 0i}-z-1$ to $z^{5 + 0.2802i}-z-1
-$$ 
-
-are as follows:
+The results for $z^{5 + 0i}-z-1$ to $z^{5 + 0.2802i}-z-1$ are as follows:
 
 {% include youtube.html id='TyZGJQi0cmM' %}
 
