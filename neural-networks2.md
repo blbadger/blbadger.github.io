@@ -46,7 +46,7 @@ would simply iterate through the sentance ('The' then 'dog' then 'went' etc.), a
 
 Unfortunately, in practice recurrent neural networks suffer from the same problems as very deep networks of all kinds: unstable gradients.  
 
-Now consider the process of training a non-recurrent neural network, perhaps a convolutional net performing image classification.  The first training example (or batch of examples) is fed to the network with initial weights and biases (represented as $v_0$), resulting in some output $o_1$.  The output is then input into the objective function, and the gradient wrt output is calculated before backpropegation is used to update the network's weights and biases to $v_1$.  The process is then repeated with the second (batch) example, where the network's weights and biases configuration $v_1$ generates an output $o_1$ which then leads to updating $v_1 \to v_2$ and so on.
+Now consider the process of training a non-recurrent neural network, perhaps a convolutional net performing image classification.  The first training example (or batch of examples) is fed to the network with initial weights and biases (represented as $v_0$), resulting in some output $o_1$.  The output is then input into the objective function, and the gradient wrt output is calculated before backpropegation is used to update the network's weights and biases to $v_1$ via $(1)$.  The process is then repeated with the second (batch) example, where the network's weights and biases configuration $v_1$ generates an output $o_1$ which then leads to updating $v_1 \to v_2$ and so on.
 
 Therefore the sequence of weight and bias configurations is
 
@@ -73,19 +73,63 @@ But this is the definition of a recurrent neural network! Most importantly for t
 
 To summarize, training any neural network is not instantaneous but instead occurs over a certain time interval, and therefore may be thought of as a dynamical system.  In this system, the final network configuration $v_n$ depends not only on the network inputs but also which input is fed to the network in what order.  
 
-Considered carefully, therefore, any network network undergoing training via updating weights and biases over time is a type of recurrent neural network, with training states $v_0, v_1, ... , v_n$ forming a directed graph along a temporal sequence across training examples (rather than across a elements of one input, as is the case for rnns).
+Considered carefully, therefore, any network network undergoing training via updating weights and biases over time is a type of recurrent neural network, with training states $v_0, v_1, ... , v_n$ forming a directed graph along a temporal sequence across training examples (rather than across a elements of one input, as is the case for rnns). 
+
+It may be beneficial, therefore, to develop a theory of extending memory gates similar to those used in LSTMs and GRUs to the training of any network, such that a network's configuration at any point $v_m$ is influenced not only by $v_{m-1}$ but also $v_{m-2}$.  
 
 ### Input randomization and training memory
 
-It was asserted in the previous section that the sequence of neural network configurations, inputs, and outputs form a directed, acyclic graph during training.  Because the graph is directed, there is no guarantee that reversing the order of $i_0, i_1, i_2, ..., i_n$ (and thus the order of outputs too) would result in the same sequence of configurations $v_0, v_1, v_2$.  This is to say that the order of training examples matters, such that the ability to minimize an objective function in the final configuration $v_n$ will vary depending on the order of training examples provided because the graph path taken is changed.
+It was asserted in the previous section that the sequence of neural network configurations, inputs, and outputs form a directed, acyclic graph during training.  Because the graph is directed, there is no guarantee that reversing the order of $i_0, i_1, i_2, ..., i_{n-1}$ (and thus the order of outputs too) would result in the same sequence of configurations $v_0, v_1, v_2$.  This is to say that the order of training examples matters, such that the ability to minimize an objective function in the final configuration $v_n$ will vary depending on the order of training examples provided because the graph path taken is changed.
 
 Now imagine training for one epoch only, meaning that all training examples are fed to the network exactly once (singly or in batch form).  What happens if we first group the training examples by similarity, perhaps using latent space vectorization, and then feed the resulting sequence to the network?  For simplicity, suppose there are inputs two types (in equal number), those belonging to set $\mathscr A$ and other belonging to set $\mathscr B$ such that all $a \in \mathscr A$ are seen by the network before $b \in \mathscr B$.  What happens to $v_n$?
 
-Assuming that the network's hyperparameters (non-trainiable variables) are not changed during training, $v_n$ will reflect $\mathscr B$ moreso than $\mathscr A$, for the simple reason that the configuration updates for $a \in \mathscr A$ are 'overwritten' by $b \in \mathscr B$.  More precisely, the minimum distance between $v_n$ and an earlier configuration $v_m$ resulting from an update from either set is much greater for $a$ than for $b$: there are $\lvert \mathscr B \rvert$ nodes (updates) between $v_m (a)$ and $v_m (b)$.  
+Assuming that the network's hyperparameters (non-trainiable variables) are not changed during training, $v_n$ will reflect $\mathscr B$ moreso than $\mathscr A$, for the simple reason that the configuration updates for $a \in \mathscr A$ are 'overwritten' by $b \in \mathscr B$.  More precisely, the minimum distance between $v_n$ and an earlier configuration $v_m$ resulting from an update from either set is much greater for $a$ than for $b$: there are $\lvert \mathscr B \rvert$ nodes (updates) between $v_{ma}$ and $v_{mb}$.  
 
-This is to say that the network after training would be expected to classify $a \in \mathscr A$ worse than $b \in \mathscr B$.  Instead, alternating $a, b, a, b, ...$ results in a distance $v_m(a) - v_m(b) = 1$.  Without knowing a priori which elements of the training set belong to $\mathscr A$ or $\mathscr B$, simply shuffling the training set minimized the expected value of $v_m(a) - v_m(b)$ and would therefore present the best solution to the problem of recency in training memory.
+This is to say that the network after training would be expected to classify $a \in \mathscr A$ worse than $b \in \mathscr B$.  Instead, alternating $a, b, a, b, ...$ results in a distance $v_m(a) - v_m(b) = 1$.  Without knowing a priori which elements of the training set belong to $\mathscr A$ or $\mathscr B$, simply shuffling the training set minimized the expected value of $v_{ma} - v_{mb}$ and would therefore present the best solution to the problem of recency in training memory.
 
-What about shuffling between or during training epochs?
+An example: 
+
+Suppose one were to attempt to infer the next letter in a word using a character level recurrent neural net, and that all inputs were slight variations on the phrase 
+
+$$
+abababab
+$$
+
+and the network was trained on the task of returning the final letter. Assuming the training was effective, the expected output given an input 
+
+$$
+abababa
+$$
+
+would be $b$.  Indeed, relatively simple tasks such as these are well-accomplished by recurrent neural nets with no fancy gating.  But now suppose that a non-recurrent (in the traditional sense) neural network were trained on a sequence of $a \in \mathscr A$ and $b \in \mathscr B$ as above.  The expected next output given sequential alternating inputs
+
+$$
+a, \; b, \; a, \; b, \; a ,..., \;a
+$$
+
+would be $b$. If the above argument (that any network while training over many inputs behaves as a recurrent neural net for one input) is accepted, the alternation in input type contributes to $v_n$ minimizing its objective function.
+
+Thus although alternating input types minimized the value of $v_{ma} - v_{mb}$, this alternation would be expected to cause the network to 'learn' that output type is alternating, and if this were not general to a test set then accuracy would necessarily follow. 
+
+### Why randomize inputs during or between epochs
+
+Randomization of inputs between or during training epochs is also effective for minimizing objective function loss. Why is this the case: once training inputs have been randomized, what further purpose would shuffling the inputs again serve?  
+
+Returning to the successive configurations $v_0, v_1, ...$ the network takes over time during training, the directed graph representing these configurations given inputs and outputs is as follows:
+
+$$
+v_0 + i_0 \to o_0 \to v_1 + i_1 \to o_1 \to \cdots \to v_n 
+$$
+
+Now suppose one epoch is completed, and $v_n$ has decreased the objective function's output but not to the global minimum.  If one wishes to begin another training epoch and further minimize the objective function's output, what sequence of inputs should be used?
+
+One option would be to use the same sequence of inputs as for the first epoch, that is, $i_0, i_1, i_2, i_3, ..., i_{n-1}$.  Now the initial configuration for the second epoch is not expected to be the same as it was before the first epoch, or $v_{02} \neq v_{0}$ and therefore the sequence $o_{02}, o_{12}, o{22}, ... o{n2}$ would not be the same either.  But it would be more similar than if $i_0, i_1, i_2, ...$ were reordered!
+
+To see why this is, observe that we can assign a vector to the input sequence $I = i_0, i_1, i_2, ... i_{n-1}$ such that the change $v_0 \to v_n$.  There are many vector additions and multiplications and other operations, but we can combine all of these into one operation $\circ$ to give $v_0 \circ I = v_n$.  
+
+Finally, is it very likely that the ideal path from $v_{00} \v_{nn}$ such that $v_{nn}$ minimized the objective function $F$ was achieved using the initial ordering $i_0, i_1, i_2 ... i_{n-1}$?  No, given that there are $\lparen n-1 \rparen !$ ways of ordering $n-1$ inputs, without prior knowledge then the chance of choosing the best initial path is $1/(n-1)!$.  Reordering the input string increases the chances of choosing a better initial path.
+
+Reordering also increases the chances of an epoch being run on a 'worse' sequence of inputs than the initial ordering as well.  
 
 
 ### Backpropegation and subspace exploration
