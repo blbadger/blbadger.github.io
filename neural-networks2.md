@@ -69,7 +69,7 @@ $$
 v_0 \to o_0 \to v_1 \to o_1 \to \cdots \to v_n 
 $$
 
-But this is the definition of a recurrent neural network! Most importantly for this discussion, this means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.
+But if we replace 'node' with 'configuration', the definition of a recurrent neural network is arrived at. This means that the final configuration $v_n$ can be thought of as retaining a 'memory' of $v_0, v_1...$ in that these weight and bias configurations were updated by future outputs, but not erased by them.  Instead of updating neuronal activations for each element in an input sample (as occurs in traditional rNNs), the configuration weights and biases are updated for each sample in an epoch (and activations do not persist between samples).  But a network's configuration determines its activations, such that the same result of memory over time exists.
 
 To summarize, training any neural network is not instantaneous but instead occurs over a certain time interval, and therefore may be thought of as a dynamical system.  In this system, the final network configuration $v_n$ depends not only on the network inputs but also which input is fed to the network in what order.  
 
