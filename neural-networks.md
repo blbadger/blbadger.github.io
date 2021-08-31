@@ -128,21 +128,25 @@ train_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir),
 The same process is repeated for the other directories, which in this case contain test image datasets.
 
 ```python
-CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
+CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') 
+			if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
 
-print (CLASS_NAMES)
-
-test_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir2), 
-    batch_size=783, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
+test_data_gen1 = image_generator.flow_from_directory(
+    directory=str(data_dir2), 
+    batch_size=783, 
+    shuffle=True, 
+    target_size=(IMG_HEIGHT,IMG_WIDTH),
     classes=list(CLASS_NAMES))
 
 
-CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
+CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') 
+			if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
 
-print (CLASS_NAMES)
-
-test_data_gen2 = image_generator.flow_from_directory(directory=str(data_dir3), 
-    batch_size=719, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH),
+test_data_gen2 = image_generator.flow_from_directory(
+    directory=str(data_dir3), 
+    batch_size=719, 
+    shuffle=True, 
+    target_size=(IMG_HEIGHT,IMG_WIDTH),
     classes=list(CLASS_NAMES))
 ```
 
@@ -178,33 +182,55 @@ Assigning the pair of labels to each iterable in the relevant generators,
 (x_test2, y_test2) = next(test_data_gen2)
 ```
 
-Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching or recurrent architectures, in which case the more flexible functional Keras `tensorflow.keras.Model` should be used.  For an example of a network similar to the one shown below built with the functional model, see [this page](https://github.com/blbadger/neural-network/blob/master/Deep_network_model.py).
+Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching or recurrent architectures, in which case the more flexible functional Keras `tensorflow.keras.Model` should be used.  Below is an example of the network implemented using `keras.Model`.  After some trial and error, the following architecture was found to be effective for the relatively noisy images here.
 
-For any neural network applied to image data, the input shape must match the image x- and y- dimensions, and the output must be the same number of possible classifications.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons and the input is specified by `IMG_HEIGHT, IMG_WIDTH` which in this case is defined above as 256x256.  After some trial and error, the following architecture was found to be effective for the relatively noisy images I was classifying:
+For any neural network applied to image data, the input shape must match the image x- and y- dimensions, and the output should be the same as the number of classification options.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons and the input is specified by `IMG_HEIGHT, IMG_WIDTH` which in this case is defined above as 256x256.  
+
+The first step when using `keras.Model` is to create a class that inherits from `keras.Model`, and it is a good idea to inherit the objects of the parent class using `super().__init__()` as well
 
 ```python
-model = tf.keras.models.Sequential([
-    Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(IMG_HEIGHT, IMG_WIDTH , 3)),
-    MaxPooling2D(),
-    Conv2D(16, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(16, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(32, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(32, 3, padding='same', activation='relu'),
-    Conv2D(32, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(64, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(64, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Conv2D(64, 3, padding='same', activation='relu'),
-    MaxPooling2D(),
-    Flatten(),
-    Dense(512, activation='relu'),
-    Dense(2, activation='softmax')
-])
+class DeepNetwork(Model):
+
+    def __init__(self):
+        super(DeepNetwork, self).__init__()
+        self.entry_conv = Conv2D(16, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1), data_format='channels_last')
+        self.conv16 = Conv2D(16, 3, padding='same', activation='relu')
+        self.conv32 = Conv2D(32, 3, padding='same', activation='relu')
+        self.conv32_2 = Conv2D(32, 3, padding='same', activation='relu')
+        self.conv64 = Conv2D(64, 3, padding='same', activation='relu')
+        self.conv64_2 = Conv2D(64, 3, padding='same', activation='relu')
+        self.max_pooling = MaxPooling2D()
+
+        self.flatten = Flatten()
+        self.d1 = Dense(512, activation='relu')
+        self.d2 = Dense(10, activation='softmax')
+        
+```
+
+Now the class method `call` may be defined.  This function will be run e
+
+```python
+    def call(self, model_input):
+        out = self.entry_conv(model_input)
+        for _ in range(2):
+            out = self.conv16(out)
+            out = self.max_pooling(out)
+        out2 = self.conv32(out)
+        out2 = self.max_pooling(out2)
+        for _ in range(2):
+            out2 = self.conv32_2(out2)
+        out3 = self.max_pooling(out2)
+        out3 = self.conv64(out3)
+        for _ in range(2):
+            out3 = self.conv64_2(out3)
+            out3 = self.max_pooling(out3)
+        output = self.flatten(out3)
+        output = self.d1(output)
+        final_output = self.d2(output)
+        return final_output
+
+model = DeepNetwork()
+
 ```
 The way to reach the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
 
@@ -212,14 +238,26 @@ The network architecture shown above may be represented graphically as
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
 
-For optimal test classification accuracy at the expense of longer training times, an extra dense layer of 50 neurons was added as follows:
+For optimal test classification accuracy at the expense of longer training times, an extra dense layer of 50 neurons was added to the above architecture. This may be accomplished by initializing `self.d2` and adding this to `call()` 
 
 ```python
-...
-    Flatten(),
-    Dense(512, activation='relu'),
-    Dense(50, activation='relu'),
-    Dense(2, activation='softmax')
+class DeepNetwork(Model):
+
+    def __init__(self):
+    ...
+    
+        self.d1 = Dense(512, activation='relu')
+	self.d2 = Dense(50, activation='relu')
+        self.d3 = Dense(10, activation='softmax')
+
+
+	def call(self, model_input):
+	...
+	    output = self.flatten(out3)
+	    ouptut = self.d1(output)
+	    output = self.d2(output)
+	    final_output = self.d3(output)
+	    return final_output
 ])
 ```
 
@@ -247,7 +285,7 @@ model.evaluate(x_test2, y_test2, verbose=1)
 
 A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one 'hot' label (usually 1), ie instead of labels such as `[3]` we have `[0, 0, 1]`.  This means that categorical crossentropy should be used instead of sparse categorical crossentropy.  
 
-Another thing to note is the lack of normalization: there are no batch normalizations applied to any layers, no dropout nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  As an explanation for this, first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive.  Second, adaptive moment estimation (Adam) is employed as our optimization method, and this algorithm was specifically designed to converge for stochastic and sparse objective function outputs.  It has become clear that normalizations such as batch norm do not act to reduce internal covariant shift, but instead acts to smooth out the objective function.  With Adam, the objective function does not need to be smooth for effective tuning of weights and biases.  Finally, dataset augmentation via rotations and translations provides another form of insurance against overfitting.
+Another thing to note is the lack of normalization: there are no batch normalizations applied to any layers, no dropout nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  As an explanation for this, first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive.  Second, adaptive moment estimation (Adam) is employed as our optimization method, and this algorithm was specifically designed to converge for stochastic and sparse objective function outputs.  It has become clear that normalizations such as batch norm do not act to reduce internal covariant shift, but instead acts to smooth out the objective function.  With Adam, the objective function does not need to be smooth for effective tuning of weights and biases.  Finally, dataset augmentation via rotations and translations provides another form of insurance against overfitting.  Finally and most importantly, training is abbreviated to avoid overfitting.
 
 ### The network mimics expert human image classification capability
 
