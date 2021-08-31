@@ -5,8 +5,8 @@
 The Clifford attractor, also known as the fractal dream attractor, is the system of equations:
 
 $$
-x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
-y_{n+1} = sin(bx_n) + d \cdot cos(by_n)
+x_{n+1} = \sin( ay_n) + c \cdot \cos (ax_n) \\
+y_{n+1} = \sin( bx_n) + d \cdot \cos (by_n)
 \tag{1}$$
 
 
