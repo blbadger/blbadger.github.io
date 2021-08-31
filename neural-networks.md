@@ -208,7 +208,9 @@ class DeepNetwork(Model):
         
 ```
 
-Now the class method `call` may be defined.  This function will be run e
+The way to read the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
+
+Now the class method `call` may be defined.  This is a special method for classes that inherit from `Module` and is called every time an input is fed into the network and specifies way the layers initialized by `__init__(self)` are stitched together to make the whole network.
 
 ```python
     def call(self, model_input):
@@ -216,26 +218,32 @@ Now the class method `call` may be defined.  This function will be run e
         for _ in range(2):
             out = self.conv16(out)
             out = self.max_pooling(out)
+	    
         out2 = self.conv32(out)
         out2 = self.max_pooling(out2)
         for _ in range(2):
             out2 = self.conv32_2(out2)
+	    
         out3 = self.max_pooling(out2)
         out3 = self.conv64(out3)
         for _ in range(2):
             out3 = self.conv64_2(out3)
             out3 = self.max_pooling(out3)
+	    
         output = self.flatten(out3)
         output = self.d1(output)
         final_output = self.d2(output)
+	
         return final_output
 
-model = DeepNetwork()
+```
+Now the model may be initialized
 
 ```
-The way to read the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
+model = DeepNetwork()
+```
 
-The network architecture shown above may be represented graphically as
+which gives a network architecture that may be represented graphically as
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
 
