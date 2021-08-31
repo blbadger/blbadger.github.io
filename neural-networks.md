@@ -75,7 +75,7 @@ import pathlib
 
 # Third-party libraries
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
+from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from PIL import Image 
@@ -172,6 +172,7 @@ def show_batch(image_batch, label_batch):
 image_batch, label_batch = next(train_data_gen1)
 show_batch(image_batch, label_batch)
 ```
+
 Assigning the pair of labels to each iterable in the relevant generators,
 
 ```python
@@ -232,7 +233,7 @@ Now the class method `call` may be defined.  This function will be run e
 model = DeepNetwork()
 
 ```
-The way to reach the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
+The way to read the `Conv2D` layer arguments is as follows: `Conv2D(16, 3, padding='same', activation='relu')` signifies 16 convolutional (aka filter) layers with a kernal size of 3, padded such that the x- and y-dimensions of each convolutional layer do not decrease, using ReLU (rectified linear units) as the neuronal activation function.  The stride length is by default 1 unit in both x- and y-directions.
 
 The network architecture shown above may be represented graphically as
 
