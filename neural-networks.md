@@ -237,13 +237,13 @@ Now the class method `call` may be defined.  This is a special method for classe
         return final_output
 
 ```
-Now the model may be initialized
+Now the class `DeepNetwork` can be instantiated as the object `model`
 
 ```
 model = DeepNetwork()
 ```
 
-which gives a network architecture that may be represented graphically as
+`model` is now a network architecture that may be represented graphically as
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
 
@@ -263,7 +263,7 @@ class DeepNetwork(Model):
 	def call(self, model_input):
 	...
 	    output = self.flatten(out3)
-	    ouptut = self.d1(output)
+	    output = self.d1(output)
 	    output = self.d2(output)
 	    final_output = self.d3(output)
 	    return final_output
