@@ -2,7 +2,9 @@
 
 ### Matrix Determinant
 
-The determinant of a matrix is a number that corresponds to change in volume for a linear transformation encoded by that matrix.  Nonzero determinants are only obtained for square (nxn) matricies, and computing determinants involves a number of patterned multiplication (and addition or subtraction for matricies larger than 2x2) steps.  Computing the determinants of small matricies is not too difficult but it becomes tedious for matricies larger than 3x3.  Imagine computing the determinant for the following matrix:
+The determinant of a matrix is a number that corresponds to change in volume for a linear transformation encoded by that matrix, and determinants are useful for everything from testing vectors for linear dependance to solving systems of linear equations (which are two tasks that are not really as different as they may seem).
+
+Nonzero determinants are only obtained for square (nxn) matricies, and computing determinants involves a number of patterned multiplication (and addition or subtraction for matricies larger than 2x2) steps.  Computing the determinants of small matricies is not too difficult but it becomes tedious for matricies larger than 3x3.  Imagine computing the determinant for the following matrix:
 
 ```python
 matrix = [
@@ -171,7 +173,7 @@ sys	0m0.012s
 
 we get the same answer, but the memoized version of the program is much faster! This one calculates matricies of under 19x19 in a reasonable amount of time, a substantial improvement over the standard recursive program.
 
-The memoized version is a little faster than the numpy `numpy.linalg.det()` for this matrix (although it becomes slower for larger matricies)
+The memoized version is a little faster than the numpy `numpy.linalg.det()` for this matrix 
 
 ```bash
 (base) bbadger@bbadger:~$ time python ~/Desktop/matrix_determinant_memoized.py
@@ -181,6 +183,8 @@ real	0m0.195s
 user	0m0.323s
 sys	0m0.221s
 ```
+
+For larger matricies, `numpy.linalg.det()` is faster than our memoized recursive solution.  How is this possible?  It turns out that while the recursive approach to matrix determinant finding is perfectly good, this is not the fastest approach: instead, there are two properties of the determinant that allow for an approach that does not use recursion at all, and is O(m+n) time complexity.
 
 ### Trailing factorial zeros
 
