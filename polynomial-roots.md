@@ -434,6 +434,10 @@ The results for $z^{5 + 0i}-z-1$ to $z^{5 + 0.2802i}-z-1$ are as follows:
 
 {% include youtube.html id='TyZGJQi0cmM' %}
 
+and for a longer video of $z^{7.11}-z-1 \to z^{7.11 + 0.002271i}-z^{1+0.002271i}-1$
+
+{% include youtube.html id='Q4xXdPizlX0' %}
+
 ### Secant method 
 
 There are other methods besides that of Newton for finding roots of an equation.  Some are closely related to Newton's method, for example see the [secant method](https://en.wikipedia.org/wiki/Secant_method) in which is analagous to a non-analytic version of Newton's method, in which two initial guesses then converge on a root. 
