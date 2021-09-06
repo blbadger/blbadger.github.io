@@ -115,6 +115,24 @@ Thus although alternating input types minimized the value of $v_{ma} - v_{mb}$, 
 
 Randomization of inputs between or during training epochs is also effective for minimizing objective function loss. Why is this the case: once training inputs have been randomized, what further purpose would shuffling the inputs again serve?  
 
+In the above sections, it was claimed that a neural net configuration $v_i$ depends not only on the inputs, but on the sequence of those inputs.  In dynamical system terms, a periodic training input 'trains' the network to expect periodic inputs in a test set regardless of whether or not the input is periodic. 
+
+Suppose we have three elements per training set, and we want to perform three epochs of training.  After randomizing the inputs, there is
+
+$$
+a, c, b
+$$
+
+such that the full training session is
+
+$$
+a, c, b, a, c, b, a, c, b
+$$
+
+But this again is a periodic sequence, with a periodicity being the size of the dataset.  Over many epochs, this periodicity becomes reflected in the final network configuration $v_n$ just as a shorter period would be.  
+
+### A possible benefit from randomized inputs during training
+
 Returning to the successive configurations $v_0, v_1, ...$ the network takes over time during training, the directed graph representing these configurations given inputs and outputs is as follows:
 
 $$
@@ -128,6 +146,8 @@ One option would be to use the same sequence of inputs as for the first epoch, t
 To see why this is, observe that we can assign a vector to the input sequence $I = i_0, i_1, i_2, ... i_{n-1}$.  There are many vector additions and multiplications and other operations involved in updating $v_0 \to v_n$, but we can combine all of these into one operation $\circ$ to give $v_0 \circ I = v_n$.  
 
 Finally, is it very likely that the ideal path from $v_{00} \to v_{nn}$ such that $v_{nn}$ minimized the objective function $F$ was achieved using the initial ordering $i_0, i_1, i_2 ... i_{n-1}$?  No, given that there are $(n-1)!$ ways of ordering $n-1$ inputs, without prior knowledge then the chance of choosing the best initial path is $1/(n-1)!$ assuming each path is unique.  Reordering the input sequence between epochs increases the chances of choosing a better path for one epoch (as well as a worse path).  
+
+If many paths are of similar 'quality', but some paths are much better, then reordering the input sequence can act to minimize the objective function in $v_n$ by increasing the chances of landing on a better path.
 
 ### Backpropegation and subspace exploration
  
