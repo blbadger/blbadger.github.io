@@ -10,7 +10,7 @@ Perhaps image classification that can be done by humans falls into the category 
 
 Supervised machine learning techniques attempt to reproduce with generalization: in the case of image classification, we already 'know' how to classify a certain number of images that becomes our training dataset, and we seek to classify other images that the program has not seen before.  In order to assess accuracy for classification on this test dataset, we need to know the true classification to be able to compare this with the predicted classification.  The ideal supervised learning technique takes a training dataset and accurately generalizes from this such that unseen datasets are classified correctly using information from this training dataset.  
 
-The current state-of-the-art method for classifying images is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are tuned in accordance to some objective, or loss function.  Perhaps the best introduction to neural networks is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and there the core algorithms of gradient descent and backpropegation that are used to train neural nets are explained.  This page will continue with the assumption of some familiarity with those ideas.
+The current state-of-the-art method for classifying images is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are tuned in accordance to some objective, or loss function.  Perhaps the best introduction to neural networks is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and there the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  This page will continue with the assumption of some familiarity with those ideas.
 
 Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise takes far longer than broadcasted computation with arrays.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation is numpy, and this library can be used to simplify and speed up the network linked earlier in this paragraph: [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py) is an implementation.  In essence, training and evaluating feed-forward neural networks by manipulating matrix elements changes the weights and biases of many 'neurons' simultaneously, which is far faster than tuning each individual neurons as above.  
 
@@ -18,40 +18,98 @@ As effective as numpy is, it is not quite ideal for speedy computations with lar
 
 Let's set up the network!  The first thing to do is to prepare the training and test datasets.  There are datsets online with many diverse images that have been prepped for use for neural network classification, but if one wishes to classify objects in images one takes, then preparation is necessary.  The primary thing that is necessary is to label the images such that the neural network knows which image represents which category.  With Keras this can be accomplished by simply putting all images of one class in one folder and putting images of another class in another folder, and then by saving the directory storing both folders as a variable before calling the appropriate data loading functions.
 
-Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  I then performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  This is a common tactic for increasing training efficacy for neural networks, and can also be performed directly using Tensorflow (preprocessing module).
+Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  This is a common tactic for increasing training efficacy for neural networks, and can also be performed directly using Tensorflow (preprocessing module).
 
 ```python
-### Image slicer- preps images for classification via NNs
 from PIL import Image
 import image_slicer
-
-for i in range(1, 30):
-	im = Image.open('/Users/badgerbl/Desktop/Control/Control_{}.jpg'.format(i))
-	image_slicer.slice('/Users/badgerbl/Desktop/Control/Control_{}.jpg'.format(i), 16)
-	
-
-### renames files with a name that is easily indexed for future iteration
 import os
 
-path = '/home/bbadger/Desktop/GFP_2/snap29'
-files = os.listdir(path)
+image_files = ['path/to/file.jpg', 'path/to/file2.png']
+image_directory = '/home/bbadger/Desktop/GFP_2/snap29'
 
-for index, file in enumerate(files):
-	os.rename(os.path.join(path, file), os.path.join(path, ''.join(['s', str(index), '.png'])))
 
-	
-### Image rotater- preps images for classification via NNs by rotation
-from PIL import Image
+class Imageprep:
 
-for i in range(1, 348):
-	im = Image.open('/Users/badgerbl/Desktop/unrotated/Control_{}.png'.format(i))
-	for j in range(-5,5):
-		im.rotate(j)
-		im.save('/Users/badgerbl/Desktop/Control_rotated/Control_{}_{}.png'.format(i, j))
+	def __init__(self, image_file):
+		self.image_files = image_files
+
+	def slice(self, slices):
+		"""
+		Divides an image into smaller images of equal dimension (l//n by w//n)
+
+		Args:
+			slices: int, the number of desired smaller images
+
+		Returns:
+			None (appends sliced files to directory)
+
+		"""
+
+		for i, file in enumerate(self.image_files):
+			im = Image.open(file)
+
+			# save images as 'path/to/file_0_1.jpg' etc.
+			image_slicer.slice('/path/to/file.jpg', slices)
+
+		return
+		
+
+	def rename(self, image_directory):
+		"""
+		Rename files with a name that is easily indexed for future iteration.
+
+		Args:
+			image_directory: str, path to directory containing images
+
+		Returns:
+			None (modifies image names in-place)
+
+		"""
+
+		path = image_directory
+		files = os.listdir(path)
+
+		for index, file in enumerate(files):
+			os.rename(os.path.join(path, file), os.path.join(path, ''.join(['s', str(index), '.png'])))
+
+		return
+
+
+	def rotate(self, image_directory):
+		"""
+		Rotate images from -5 to 5 degrees, 1 degree increments, saving each.
+
+		Args:
+			image_directory: str, path to directory of images
+
+		Returns:
+			None (saves images)
+
+		"""
+
+		path = image_directory
+		files = os.listdir(path)
+
+		for i, file in enumerate(files):
+			im = Image.open(file)
+			for j in range(-5,5):
+				im.rotate(j)
+
+				# reformat file name (assumes . only in file ending)
+				pair_ls = [i for i in file.split('.')]
+				core_name = pair_ls[0]
+				ending = pair_ls[1]
+				new_file_name = core_name + f'_{i}_{j}' + ending
+
+				im.save(new_file_name)
+
+		return
+
 ```
 
 
-Next let's design the neural network.  This will call on external APIs, so the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) is important to anyone wishing to set up a network on these libraries.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
+Now let's design the neural network.  We shall be using established libraries for this set, so reading the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) may be useful.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
 
 
 ```python
@@ -62,9 +120,7 @@ Tensorflow_sequential_deep.py
 Implementation of a Keras sequential neural network using a 
 Tensorflow backend, combined with modules to display pre- classified
 images before the network trains as well as a subset of test images
-with classification and % confidence for each image.  The latter script
-is optimized for binary classification but can be modified for more than
-two classes.
+with classification and % confidence for each image. 
 """
 
 ### Libraries
@@ -97,7 +153,8 @@ Now comes a troubleshooting step.  In both Ubuntu and MacOSX, `pathlib.Path` som
 ```python
 image_count = len(list(data_dir.glob('*/*.png')))
 
-CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') if item.name not in ['._.DS_Store', '._DS_Store', '.DS_Store']])
+CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') 
+			if item.name not in ['._.DS_Store', '._DS_Store', '.DS_Store']])
 
 print (CLASS_NAMES)
 print (image_count)
@@ -120,9 +177,13 @@ From the training dataset images located in `data_dir`, a training dataset `trai
 `image_generator` also has kwargs to specify rotations and translations to expand the training dataset, although neither of these functions are used in this example because the dataset has already been expanded via rotations.  The method returns a generator that can be iterated to obtain images of the dataset.
 
 ```python
-train_data_gen1 = image_generator.flow_from_directory(directory=str(data_dir),
-	batch_size=BATCH_SIZE, shuffle=True, target_size=(IMG_HEIGHT,IMG_WIDTH), 
-	classes=list(CLASS_NAMES), subset = 'training')
+train_data_gen1 = image_generator.flow_from_directory(
+	directory=str(data_dir),
+	batch_size=BATCH_SIZE, 
+	shuffle=True, 
+	target_size=(IMG_HEIGHT,IMG_WIDTH), 
+	classes=list(CLASS_NAMES), 
+	subset = 'training')
 ```
 
 The same process is repeated for the other directories, which in this case contain test image datasets.
