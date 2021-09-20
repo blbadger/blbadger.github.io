@@ -11,10 +11,7 @@ y = 4x^2-x-6
 y = (2x+3)(x-2)
 $$
 
-has roots at 
-$$
-x = -3/2, x = 2
-$$
+has roots at $x = -3/2, x = 2$.
 
 At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
