@@ -4,7 +4,19 @@
 
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-Given a polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots, or solutions, of that equation.  At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
+Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split apart into parts called 'factors' and vice versa. For example, the following polynomial:
+
+$$
+y = 4x^2-x-6
+y = (2x+3)(x-2)
+$$
+
+has roots at 
+$$
+x = -3/2, x = 2
+$$
+
+At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
 $$
 x = -b/a
