@@ -4,10 +4,10 @@
 
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split apart into parts called 'factors' and vice versa. For example, the following polynomial:
+Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split apart into parts called factors and vice versa. For example, the following polynomial:
 
 $$
-y = 4x^2-x-6
+y = 2x^2-x-6
 y = (2x+3)(x-2)
 $$
 
