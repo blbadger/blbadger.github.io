@@ -4,16 +4,18 @@
 
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split apart into parts called factors and vice versa. For example, the following polynomial:
+Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split into parts called factors with the root information.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots.
+
+For example, the degree two polynomial $ax^2+bx+c$ where $a=2, b=-1, c=-6$ can be factored as follows:
 
 $$
-y = 2x^2-x-6
+y = 2x^2-x-6 \\
 y = (2x+3)(x-2)
 $$
 
-has roots at $x = -3/2, x = 2$.
+and therefore this polynomial has roots (or solutions) at $x = -3/2, x = 2$.  The roots depend on the values $a, b, c$, and for a long time a central problem in algebra was to find equations that give root values for any $a, b, c, ...$.  
 
-At first glance, rooting polynomials seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
+At first glance, rooting polynomials in terms of their constants seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
 $$
 x = -b/a
@@ -34,7 +36,9 @@ $$
 
 Similarly, for polynomials of degree 4 a closed form root expressions in terms of $a, b, c ...$ may be found even though the expression becomes quite long.
 
-It is somewhat surprising then that for a general polynomial of degree 5 or larger, there is no closed equation (with addition, subtraction, multiplication, nth roots, and division) that allows for the finding of all roots.  This is the Abel-Ruffini theorem.
+It is somewhat surprising then that for a general polynomial of degree 5 or larger, there is no closed equation (with addition, subtraction, multiplication, nth roots, and division) that allows for the finding of all roots.  This is the Abel-Ruffini theorem, and exactly which polynomials can and cannot be rooted is explored in Galois theory.  
+
+The finding that there is no closed expression for any general finite polynomial implies the somewhat counterintuitive idea that some polynomials of degree 5 or more cannot be broken apart into factors (of any smaller degree) using a finite number of the fundamental operations of arithmetic, even though the polynomial itself is defined using these operations.  The inability to find a system's constituent parts given the whole system itself is a general feature of nonlinearity, and is witnessed on many pages of this site.
 
 ### Newton's method for estimating roots of polynomial equations
 
