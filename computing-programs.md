@@ -2,9 +2,46 @@
 
 ### Matrix Determinant
 
-The determinant of a matrix is a number that corresponds to change in volume for a linear transformation encoded by that matrix, and determinants are useful for everything from testing vectors for linear dependance to solving systems of linear equations (which are two tasks that are not really as different as they may seem).
+The determinant of a matrix (a two-dimensional array) is a number that corresponds to change in volume for a linear transformation encoded by that matrix, and determinants are useful for everything from testing vectors for linear dependance to solving systems of linear equations (which are two tasks that are not really as different as they may seem).  Not all matricies have determinants, but all square matricies do (although the value may be 0).
 
-Nonzero determinants are only obtained for square (nxn) matricies, and computing determinants involves a number of patterned multiplication (and addition or subtraction for matricies larger than 2x2) steps.  Computing the determinants of small matricies is not too difficult but it becomes tedious for matricies larger than 3x3.  Imagine computing the determinant for the following matrix:
+Determinant can be computed recursively, with the base case being the 2x2 matrix:
+
+$$
+\lvert A \rvert = 
+\begin{vmatrix}
+a & b \\
+c & d \\
+\end{vmatrix} = ad - bc
+$$
+
+The determinant of a 3x3 matrix can be expressed as a linear combination of 2x2 matrix determinants as follows:
+
+$$
+\begin{vmatrix}
+a & b & c \\
+d & e & f \\
+g & h & i \\
+\end{vmatrix} = 
+a
+\begin{vmatrix}
+e & f \\
+h & i \\
+\end{vmatrix}
+-b
+\begin{vmatrix}
+d & f \\
+g & i \\
+\end{vmatrix}
++c
+\begin{vmatrix}
+d & e \\
+g & h \\
+\end{vmatrix}
+$$
+
+Similarly, determinants of 4x4 matricies can be computed by converting to a combination of 3x3 determinants, which can then be converted to a combination of 2x2 determinants.
+
+Computing the determinants of small matricies using this process is not too difficult, but becomes tedious for matricies larger than 3x3.  The following matrix, for example, would take quite a long time to compute using the recursive method:
 
 ```python
 matrix = [
@@ -184,7 +221,7 @@ user	0m0.323s
 sys	0m0.221s
 ```
 
-For larger matricies, `numpy.linalg.det()` is faster than our memoized recursive solution.  How is this possible?  It turns out that while the recursive approach to matrix determinant finding is perfectly good, this is not the fastest approach: instead, there are two properties of the determinant that allow for an approach that does not use recursion at all, and is O(m+n) time complexity.
+For larger matricies, `numpy.linalg.det()` is faster than our memoized recursive solution.  How is this possible?  It turns out that while the recursive approach to matrix determinant finding is perfectly good, this is not the fastest approach: instead, there is a properties of the determinant that allow for an approach that does not use recursion at all, and is O(m+n) time complexity.  This property is that scalar multiple of one column to another does not change the determinant's value.  Therefore, determinants can be computed very rapidly by simply eliminating columns (transforming values to zeros in that column) before proceeding with the above recursive algorithm.
 
 ### Trailing factorial zeros
 
