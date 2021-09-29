@@ -56,9 +56,7 @@ matrix = [
 ]
 ```
 
-Let's try to write a program in Python that can compute matrix determinants for us!  If we review the method of computing the determinant found [here](https://en.wikipedia.org/wiki/Determinant) for a matrix of size 1x1, we see that it is simply the value of this matrix.  For a 2x2 matrix, the computation is also a matter of multiplying and subtracting entries in the matrix.  Things become more difficult for a 3x3 matrix: the computation involves addition and subtraction and multiplication of both matrix entries as well as the determinants of smaller matricies.
-
-Whenever a problem consists of some sort of base case (here the method to compute 1x1 and 2x2 matricies) that is required for other cases, recursion is a good way to proceed.  Our strategy here is as follows: we know how to compute determinants for 1x1 and 2x2 matricies, and the determinants of larger matricies can be computed by reducing down to the determinants of many 2x2 matricies.  
+Let's try to write a program in Python that can compute matrix determinants for us.  Whenever a problem consists of some sort of base case (here the method to compute 1x1 and 2x2 matricies) that is required for other cases, recursion is a good way to proceed.  Our strategy here is as follows: we know how to compute determinants for 1x1 and 2x2 matricies, and the determinants of larger matricies can be computed by reducing down to the determinants of many 2x2 matricies.  
 
 To begin, let's import a useful class `copy` and define our function, including a docstring specifying inputs and outputs.  Now we can add computations for 1x1 and 2x2 matricies such that any time this function is called with a matrix of either size, the determinant is returned.
 
