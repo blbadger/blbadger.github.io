@@ -3,7 +3,7 @@
 
 High voltage arcs.  Beautiful to witness!
 
-Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps, made from a variable-speed angle grinder with a disk (fashioned from high density polyethylene cutting board) securing four flying brass electrodes.  The electrodes are brass as iron has high RF losses and can become too hot to use with polyethylene, which is a thermoplastic and melts under high temperatures. 
+Specs: ~4 kVA power input using an ASRG spark gap running at ~500 bps, made from a variable-speed angle grinder with a disk (fashioned from high density polyethylene cutting board) securing four flying electrodes.  The electrodes are brass as iron has high RF losses and get too hot to use with polyethylene, which is a thermoplastic and melts at high temperatures. 
 
 Tesla coils are air-cored resonant transformers, and are a type of LC circuit.  The L stands for inductor, and C for capacitor and when combined with a device that allows for rapid capacitor charging (the tank circuitpower supply) and discharging (the spark gap), The primary circuit capacitor is 120nF multi-mini style capacitor made from a few hundred surplus WIMA FKP1 pulse capacitors usually found in industrial lasers. 
 
@@ -38,18 +38,18 @@ The topload is two aluminum dryer ducts forming a double stacked toroid, each st
 
 ### Very large topload test
 
-A rubber inner tube was inflated and covered in aluminum tape to make a very large toroidal topload (5' diameter).  This method is not recommended without the use of a forming substance (paper miche or plaster etc) covering the tube because the high voltage arcs will puncture the rubber even when protected via metal tape.  This is the last generation of the coil above, as the secondary base experienced severe flashovers resulting in vaporization of parts of the lower windings.  > 7' arcs!
+A rubber inner tube was inflated and covered in aluminum tape to make a very large toroidal topload (5' diameter).  This method is not recommended without the use of a forming substance (paper miche or plaster etc) covering the tube because the high voltage arcs will puncture the rubber even when protected via metal tape.  This is the last generation of the coil above, as the secondary base experienced severe flashovers during >4 kVa runs resulting in vaporization of parts of the lower windings.  > 7' arcs!
 
 ![tesla coil arcs]({{https://blbadger.github.io}}tesla_images/large_tesla.gif)
 
 
 ### Early generation coil
 
-This coil was based on a secondary coil wound on a 4" diameter PVC with 1300 turns of AWG 26 magnet wire. 3kVA input from the microwave oven transformer above but with an air core inductive current limiter, smaller dryer duct toroids, smaller primary capacitor (~ 50 nF) make from WIMA MKP-10 pulse capacitors (which are by design not as durable as FKP-1 but are cheaper).
+This coil was based on a secondary coil wound on a 4" diameter PVC with 1300 turns of AWG 26 magnet wire. A ~2.5 kVA input from the microwave oven transformers in oil (see above) was used (an air core inductive current limiter was used to reduce current) along with smaller dryer duct toroids, smaller primary capacitor (~ 50 nF) make from WIMA MKP-10 pulse capacitors These are by design not as durable as FKP-1 but are a good deal cheaper and easier to find.  I did experience a defective batch of these that could not tolerate the >400 discharges per second necessary, but nearly all others I have obtained have performed very well.
 
 ![primary capacitor]({{https://blbadger.github.io}}tesla_images/wima_mkp10.JPG)
 
-Note the bleed resistors at the top: I have not found these to be necessary for new capacitors (with no dielectric memory) used on tesla coils, but it is generally a good idea to include some form of current dissipation for large capacitors like these.
+Note the bleed resistors at the top: I have not found these to be necessary for new capacitors (ie with no dielectric memory) that are then employed for tesla coils.  Both the WIMA FKP-1 and MKP-10 mmcs mentioned on this page have not acquired any appreciable dielectric memory even after hours of total run time.  Nevertheless, it is generally a good idea to include some form of current dissipation for large capacitors like these, as the energy they can release in a small amount of time is considerable.
 
 The primary and secondary coil setup on wood supports, with an angle grinder-based ASRG in the ground to the right and the capacitor bank underneath the primary.
 
