@@ -4,16 +4,7 @@
 
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split into parts called factors with the root information.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots.
-
-For example, the degree two polynomial $ax^2+bx+c$ where $a=2, b=-1, c=-6$ can be factored as follows:
-
-$$
-y = 2x^2-x-6 \\
-y = (2x+3)(x-2)
-$$
-
-and therefore this polynomial has roots (or solutions) at $x = -3/2, x = 2$.  The roots depend on the values $a, b, c$, and for a long time a central problem in algebra was to find equations that give root values for any $a, b, c, ...$.  
+Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split into parts called factors with the root information.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots.  
 
 At first glance, rooting polynomials in terms of their constants seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
