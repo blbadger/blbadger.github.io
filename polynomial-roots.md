@@ -193,7 +193,7 @@ def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
 
 	Returns:
 		iterations_until_rooted: np.arr (2D) of iterations until a root is found
-								 at each point in y_range and x_range
+			at each point in y_range and x_range
 
 	"""
 
@@ -343,21 +343,42 @@ This can be tested by checking how long it takes for two arrays shifted by a sma
 
 ```python
 def traveling_together(equation, max_iterations, x_range, y_range):
-	y, x = np.ogrid[1.4: -1.4: y_range*1j, -2: 2: x_range*1j]
+	"""
+	Returns points that stay near points nearby in future iteration.
+
+	Args:
+		equation: str, polynomial of interest
+		max_iterations: int of iterations
+		x_range: int, number of real values per output
+		y_range: int, number of imaginary values per output
+
+	Returns:
+		iterations_until_together: np.arr[int] (2D) 
+		
+	"""
+
+	y, x = np.ogrid[2: -2: y_range*1j, -2: 2: x_range*1j]
 	z_array = x + y*1j
 	z_array_2 = z_array + 0.0000001 # arbitrary change, can be any small amount
 	iterations_until_together = max_iterations + np.zeros(z_array.shape)
+
+	# create a boolean table of all 'true'
 	not_already_together = iterations_until_together < 10000
 
+	# initialize calculate objects
+	nondiff = Calculate(equation, differentiate=False)
+	diffed = Calculate(equation, differentiate=True)
+
 	for i in range(max_iterations):
-		f_now = Calculate(equation, z_array, differentiate=False).evaluate() 
-		f_prime_now = Calculate(equation, z_array, differentiate=True).evaluate()
+		f_now = nondiff.evaluate(z_array) 
+		f_prime_now = diffed.evaluate(z_array)
 		z_array = z_array - f_now / f_prime_now
 
-		f_2_now = Calculate(equation, z_array_2, differentiate=False).evaluate() 
-		f_2_prime_now = Calculate(equation, z_array_2, differentiate=True).evaluate()		
+		f_2_now = nondiff.evaluate(z_array_2) 
+		f_2_prime_now = diffed.evaluate(z_array_2)		
 		z_array_2 = z_array_2 - f_2_now / f_2_prime_now
-		
+
+		# the boolean map is tested for rooted values
 		together = (abs(z_array - z_array_2) <= 0.0000001) & not_already_together
 		iterations_until_together[together] = i
 		not_already_together = np.invert(together) & not_already_together
