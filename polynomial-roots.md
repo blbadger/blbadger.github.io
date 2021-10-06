@@ -173,28 +173,49 @@ where Newton's method finds the complex root $\frac{-1+i\sqrt{3}}{2}$.
 This means that the complex plane may be explored. Because Newton's method requires differentiation and evaluation of a polynomial, I wrote a module `Calculate` to accomplish these tasks (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
 ```python
-# libraries
+# import third party libraries
 import numpy as np 
 import matplotlib.pyplot as plt 
-plt.style.use('dark_background')
+
 from Calculate import Calculate # see above
 
+
 def newton_raphson_map(equation, max_iterations, x_range, y_range, t):
+	"""
+	Generates a newton-raphson fractal.
+
+	Args:
+		equation: str, equation of interest
+		max_iterations: int, number of iterations 
+		x_range: int, number of real values per output
+		y_range: int, number of imaginary values per output
+		t: int
+
+	Returns:
+		iterations_until_rooted: np.arr (2D) of iterations until a root is found
+								 at each point in y_range and x_range
+
+	"""
+
 	print (equation)
-	# top left to bottom right
-	y, x = np.ogrid[5: -5: y_range*1j, -5: 5: x_range*1j]
+	y, x = np.ogrid[0.7: -0.7: y_range*1j, -1.1: 1.1: x_range*1j]
 	z_array = x + y*1j
 
 	iterations_until_rooted = max_iterations + np.zeros(z_array.shape)
 
-	 # create a boolean table of all 'true'
+	 # create a boolean gridof all 'true'
 	not_already_at_root = iterations_until_rooted < 10000
 
+	nondiff = Calculate(equation, differentiate=False)
+	diffed = Calculate(equation, differentiate=True)
+
+
 	for i in range(max_iterations):
+		print (i)
 		previous_z_array = z_array
 		z = z_array
-		f_now = Calculate(equation, z, differentiate=False).evaluate()
-		f_prime_now = Calculate(equation, z, differentiate=True).evaluate()
+		f_now = nondiff.evaluate(z)
+		f_prime_now = diffed.evaluate(z)
 		z_array = z_array - f_now / f_prime_now
 
 		# the boolean map is tested for rooted values
@@ -211,11 +232,13 @@ The idea here is to start with a grid of the complex plane points that we are te
 Now we can call this function to see how long it takes to find roots for $x^3 - 1$ as follows
 
 ```python
+plt.style.use('dark_background')
 plt.imshow(newton_raphson_map('x^3-1', 50, 1558, 1558, 30), extent=[-5, 5, -5, 5], cmap='twilight_shifted')
 plt.axis('on')
 plt.show()
 plt.close()
 ```
+
 which yields
 
 ![roots]({{https://blbadger.github.io}}/newton-method/Newton_Raphson.png)
