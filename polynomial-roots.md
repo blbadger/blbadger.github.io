@@ -508,7 +508,7 @@ $$
 
 Because there are two initial points rather than one, there is more variety in behavior for any one guess.  To simplify things, here the first guess is half the distance to the origin from the second, and the second guess ($x_1$) is the one that is plotted in the complex plane. This can be accomplished as follows:
 
-```python3
+```python
 def secant_method(equation, max_iterations, x_range, y_range, t):
 	"""
 	Returns an array of the number of iterations until a root is found
