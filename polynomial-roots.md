@@ -500,19 +500,42 @@ x_{n+1} = x_n - \frac{2f(x_n)f'(x_n)}{2(f'(x_n))^2-f(x_n)f''(x_n)}
 \;
 $$
 
-The general rate of convergence for this method is cubic rather than quadratic as for Newton's method. This can be accomplished using [Calculate](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py) as follows:
+The general rate of convergence for this method is cubic rather than quadratic as for Newton's method. This method can be implemented using [Calculate](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py) as follows:
 
 ```python
-...
+def halley_method(equation, max_iterations, x_range, y_range, t):
+	print (equation)
+	# top left to bottom right
+	y, x = np.ogrid[1: -1: y_range*1j, -1: 1: x_range*1j]
+	z_array = x + y*1j
+
+	iterations_until_rooted = max_iterations + np.zeros(z_array.shape)
+
+	 # create a boolean table of all 'true'
+	not_already_at_root = iterations_until_rooted < 10000
+
 	for i in range(max_iterations):
 		previous_z_array = z_array
 		z = z_array
-		f_now = Calculate(equation, z, differentiate=False).evaluate()
-		f_prime_now = Calculate(equation, z, differentiate=True).evaluate()
-		diff_string = Calculate(equation, z, differentiate=True).to_string()
-		f_double_prime_now = Calculate(diff_string, z, differentiate=True).evaluate()
+		
+		diff = Calculate(equation, z, differentiate=True)
+		nondiff = Calculate(equation, z, differentiate=False)
+		f_now = nondiff.evaluate()
+		f_prime_now = diff.evaluate() # first derivative evaluation
+		diff_string = diff.to_string()
+
+
+		double_diff = Calculate(diff_string, z, differentiate=True)
+
+		f_double_prime_now = double_diff.evaluate() # second derivative evaluation
 		z_array = z - (2*f_now * f_prime_now / (2*(f_prime_now)**2 - f_now * f_double_prime_now))
-		...
+
+		# test the boolean map for rooted values
+		found_root = (abs(z_array - previous_z_array) < 0.000000001) & not_already_at_root
+		iterations_until_rooted[found_root] = i
+		not_already_at_root = np.invert(found_root) & not_already_at_root
+
+	return iterations_until_rooted
 ```
 
 For $z^3-1$ the pattern in the complex plane of areas of slow convergence is similar but not identical to that observed for Newton's method (see above)
