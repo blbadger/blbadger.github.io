@@ -547,31 +547,50 @@ $$
 The general rate of convergence for this method is cubic rather than quadratic as for Newton's method. This method can be implemented using [Calculate](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py) as follows:
 
 ```python
+
 def halley_method(equation, max_iterations, x_range, y_range, t):
-	print (equation)
+	"""
+	Returns an array of the number of iterations until a root is found
+	using Halley's method in the complex plane.
+
+	Args:
+		equation: str, polynomial of interest
+		max_iterations: int of iterations
+		x_range: int, number of real values per output
+		y_range: int, number of imaginary values per output
+		t: int
+
+	Returns:
+		iterations_until_together: np.arr[int] (2D) 
+		
+	"""
+
 	# top left to bottom right
 	y, x = np.ogrid[1: -1: y_range*1j, -1: 1: x_range*1j]
 	z_array = x + y*1j
 
 	iterations_until_rooted = max_iterations + np.zeros(z_array.shape)
 
-	 # create a boolean table of all 'true'
+	# create a boolean table of all 'true'
 	not_already_at_root = iterations_until_rooted < 10000
+
+	# initialize calculate object
+	nondiff = Calculate(equation, differentiate=False)
+	diffed = Calculate(equation, differentiate=True)
+
+	# second derivative calculation
+	diff_string = diffed.to_string()
+	double_diffed = Calculate(diff_string, differentiate=True)
 
 	for i in range(max_iterations):
 		previous_z_array = z_array
 		z = z_array
-		
-		diff = Calculate(equation, z, differentiate=True)
-		nondiff = Calculate(equation, z, differentiate=False)
-		f_now = nondiff.evaluate()
-		f_prime_now = diff.evaluate() # first derivative evaluation
-		diff_string = diff.to_string()
 
+		f_now = nondiff.evaluate(z)
+		f_prime_now = diffed.evaluate(z) # first derivative evaluation
 
-		double_diff = Calculate(diff_string, z, differentiate=True)
+		f_double_prime_now = double_diffed.evaluate(z) # second derivative evaluation
 
-		f_double_prime_now = double_diff.evaluate() # second derivative evaluation
 		z_array = z - (2*f_now * f_prime_now / (2*(f_prime_now)**2 - f_now * f_double_prime_now))
 
 		# test the boolean map for rooted values
