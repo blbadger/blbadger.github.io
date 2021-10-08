@@ -115,7 +115,7 @@ y = 3x^3, y = x^3-1 \implies \\
 -\sqrt[3]{\frac12} = x
 $$
 
-Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points (not necessarily unique) along the real line that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
+Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points (not necessarily distinct) along the real line that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
 
 $$
 -\sqrt[3]{\frac12} = x - \frac{x^3-1}{3x^2} \\
