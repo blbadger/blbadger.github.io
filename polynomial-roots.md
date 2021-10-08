@@ -4,7 +4,7 @@
 
 Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
-Given any polynomial, the value or values of $x$ such that the polynomial is equal to zero are called the roots of that equation.  Such value(s) of $x$ are also called the 'solutions' of that equation because once known, the polynomial may be split into parts called factors with the root information.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots.  
+Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots.  
 
 At first glance, rooting polynomials in terms of their constants seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
@@ -115,7 +115,7 @@ y = 3x^3, y = x^3-1 \implies \\
 -\sqrt[3]{\frac12} = x
 $$
 
-Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points along the negative real numbers that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
+Which evaluates to around $-0.7937...$.  But because there is one point, there must be an infinite number of other points (not necessarily unique) along the real line that also fail to find a root because for every initial value $v_i$ that fails with this equation, there is another $v_{i2}$ such that that $v_i$ is the second iteration of Newton's method on $v_{i2}$ and so on.  To illustrate, setting the next iteration to our value just found, 
 
 $$
 -\sqrt[3]{\frac12} = x - \frac{x^3-1}{3x^2} \\
@@ -155,7 +155,7 @@ $$
 x_{-2} = 1.4745...
 $$
 
-and repeating this twice more yields $x_{-3}=-0.8413... \; , x_{-4}=1.47402...$.  
+and repeating this twice more yields $x_{-3}=-0.8413... \; , x_{-4}=1.47402...$.  It turns out there are an infinite number of distinct points of $x_n \; n \in \Bbb N$, but they are contained within the region $[-2, 2]$.
 
 
 ### Newton's method in the complex plane
