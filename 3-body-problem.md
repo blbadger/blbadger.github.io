@@ -209,6 +209,7 @@ The same is true of the second body (red for original trajectory, blue for the t
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_2.png)
 
 And of the third as well.
+
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_shifted_3.png)
 
 Plotting the distance between each point and its counterpart as follows
