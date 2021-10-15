@@ -14,11 +14,9 @@
  <meta name="Description" CONTENT="Author: Benjamin Badger, Category: Informational">
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
  </head>
- 
-Pages on [dynamical systems](#dynamics), their [boundaries](#boundaries) as well as abstract [foundations](#foundations), or related ideas in [physics](#physics) or [biology](#biology), along with some [neural networks and small projects](#neural-nets-and-smaller-software-projects) and high voltage [sparks and plasma](#high-voltage).
 
 ## Dynamics
-The mathematical approach to change over time. Most dynamical systems are nonlinear such that the sum of an ensemble is more than the parts that compose it.  Nonlinear systems are generally unsolvable, and though deterministic are unpredictable.  
+The mathematical approach to change over time. Most dynamical systems are nonlinear and thus generally unsolvable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
