@@ -36,11 +36,11 @@ $medium-breakpoint: 42em;
   margin-bottom: 0.5rem;
   color: rgba(255, 255, 255, 0.7);
   background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
   border-style: solid;
-  border-width: 1px;
+  border-width: 1.2px;
   border-radius: 0.3rem;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: color 0.4s, background-color 0.4s, border-color 0.4s;
 
   &:hover {
     color: rgba(255, 255, 255, 0.8);
