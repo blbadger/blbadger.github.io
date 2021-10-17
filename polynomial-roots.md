@@ -243,7 +243,7 @@ which yields
 
 ![roots]({{https://blbadger.github.io}}/newton-method/Newton_Raphson.png)
 
-Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.  John Hubbard was the first person to observe the fractal behavior of Newton's method in the complex plane, and the border between the set of non-diverging and diverging points may be considered to be a [Julia set](https://blbadger.github.io/julia-sets.html).  But by another definition, the maps presented on this page are not Julia sets because points that orbit, never settling on a root but also never diverging to infinity, are not members of the set of converging points (as they do not converge) but are members of the set of all non-diverging elements.  A Julia set can be defined as a set composed of elements that border diverging and non-diverging points, whereas the maps on this page denote points that converge on roots or do not, the latter of which do not necessarily diverge in the usual sense.
+Note that for this color map, purple corresponds to fast convergence and white slow, with no convergence (within the allotted iterations) in black for emphasis.  John Hubbard was the first person to observe the fractal behavior of Newton's method in the complex plane, and the border between the set of non-diverging and diverging points may be considered to be a [Julia set](https://blbadger.github.io/julia-sets.html).  
 
 The roots for $z^3-1$ (dark circles in the plot above) may be plotted along a circle centered around the origin.  This is true not just for that equation but for any root of unity or indeed any root of any complex number by De Moivre's theorem,
 
