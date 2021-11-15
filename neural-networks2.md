@@ -1,6 +1,4 @@
-## Neural Networks II: 
-
-This page is a continuation from from [part one](https://blbadger.github.io/neural-networks.html). Code for this page is found in [this Github repo](https://github.com/blbadger/nnetworks).
+## Neural Networks II: Ordering inputs
 
 ## The importance of (pseudo)randomization
 
@@ -34,7 +32,6 @@ The local gradient, if sampled repeatedly, provides the necessary information to
 If the objective function is not smooth, gradient descent may result in the finding of a local minima that is not the true global minimum.  To prevent this from happening, gradient descent may be modified to include parameters such as momentum, or extended into optimizers like RMSprop or AdaGrad.  
 
 Now back to the original question: why does stochastic gradient descent work best if it is stochastic?  Why not enumerate all training examples and iterate through them in order, updating the network via gradient descent using $1$?  If each training example is fed to the network during one epoch, from an informational perspective would it matter whether or not one example comes before another?
-
 
 ### Training memory
 
@@ -155,7 +152,6 @@ Neural networks were studies long before they became feasible computational mode
 
 Backpropegation can be thought of as an optimal graph traversal method (or a dynamic programming solution) that updates a network's weights and biases with the fewest number of computations possible.  The goal of training is to find a certain combination of weights and biases (and any other trainable parameters) that yield a small objective function, and one way this could be achieved is by simply trying all possible weights and biases.  That method is grossly infeasible, and even miniscule networks with neurons in the single digits are unable to try all possible (assuming 32 bit precision) combinations.
 
-
 ### Non-commutative training and testing
 
 From the theoretical considerations presented [here](https://blbadger.github.io/nn-limitations.html) and elsewhere, it is clear that one inherent limitation in neural nets is the propensity for nearly indistinguishable (with respect to the feature space) inputs to be mapped to very different outputs.  Input examples such as these are called 'adversarial examples'. 
@@ -190,8 +186,6 @@ The test set classification accuracies for all three datasets are as follows:
 ![training results](/neural_networks/nn_training.png)
 
 The median test classification accuracy varies widely depending on which dataset is chosen for training, even though they appear to be very similar when viewed by eye. At the extremes, the original training dataset results in a median training accuracy of $~90 %$, wereas training with the third dataset yeilds a $~50 %$  median accuracy, no better than chance as this is a binary classification. 
-
-More clearly, the situation in the last section is that a particular CNN in question when trained on dataset 1 has a high test accuracy when applied to dataset 2, whereas the same network when trained on dataset 2 experiences poor test accuracy on dataset 1.  
 
 
 
