@@ -1,7 +1,5 @@
 ### Inherent limitations in neural nets
 
-## Introduction and the no free lunch theorem
-
 ### Neural nets can approximate only a subset of all functions
 
 An oft-quoted feature of neural networks is that they are universal, meaning that they can compute any function (see [here](https://www.sciencedirect.com/science/article/abs/pii/0893608090900056) for a proof of this).  A good geometrical explanation of this is found in [Nielsen](http://neuralnetworksanddeeplearning.com/).  Being that many everyday tasks can be thought of as some kind of function, and  as neural networks are very good at a wide range of tasks (playing chess, recognizing images, language processing etc.) it can be tempting to see them as universal panacea for any problem.  This view is mistaken, however, and to see why it is best to understand what exactly universality entails before exploring the limits of neural nets or any other similar approach.
