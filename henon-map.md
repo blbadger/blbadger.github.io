@@ -92,7 +92,9 @@ Let's examine this attractor.  If we increase magnification on the top line in t
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_zoom4.png)
 
-In general terms, the Henon map is a fractal because it looks similar at widely different scales.  
+In general terms, the Henon map is a fractal because it looks similar at widely different scales.  Zooming in near the point (x, y) = (0.3114164... ,  0.234185....), we have
+
+{% include youtube.html id='jG_9x6gMleI' %}
 
 ### The boundary of the basin of attraction for the Henon map 
 
