@@ -203,7 +203,7 @@ T(3, 3, 1), \; T(3, 3, 2), \; T\star(3, 3, 3)  \cdots \\
 \vdots
 $$
 
-But this means that the new Turing machine is not present on this list, because it differs from each entry for at least one input.  The list by definition included all possible Turing machines, so a contradiction has been reached and the premise that $\exists x \; T(a, a, x)$ is computable must be false.
+But this means that the new Turing machine is not present on this list, because it differs from each entry for at least one input.  The list by definition included all possible Turing machines, so a contradiction has been reached and the premise that $\exists x \; T(a, a, x)$, assuming $a$ is free, is computable must be false.
 
 
 ### Busy Beaver Turing machines
@@ -232,7 +232,6 @@ $$
 $$
 
 takes 47176870 steps to complete.  As found in the very useful repository [here](http://www.logique.jussieu.fr/~michel/ha.html#tm52), the maximum number of steps for a six-state, two symbol Turing machine is greater than $7.4 × 10^{36534}$.  The true value is unknown, because this machine (and a number of other similar ones) are still running, with no indication of looping or stopping.  And this is for only 6 possible states and 2 possible symbols: imagine how many steps it would require to find whether all possible 11-state, 2-symbol machines halt!  An yet this number of states was used for something as simple as integer incrementation.  Clearly then, without some kind of external cue as to whether a machine halts or not the answer is unclear.
-
 
 ### Unsolvability and aperiodicity
 
@@ -289,9 +288,15 @@ $$
 
 In other words, division of one number by a second is equivalent to the number of times addition must be composed on the second number to equal the first, or the cardinality of the set of addition compositions required to transform the second number into the first.
 
-As subtraction is defined as the inverse of addition, all four arithemetical operations may be performed on terms of only addition.  How then is addition-only or multiplication-only number theory decidable, but if both operations are allowed then the theory is undecidable?
+As subtraction is defined as the inverse of addition, all four arithmetical operations may be performed on terms of only addition.  How then is addition-only or multiplication-only number theory decidable, but if both operations are allowed then the theory is undecidable?
 
-A direct answer to this question is difficult, but an interesting analogy is available with dynamical systems.  To restate, number theory with only addition is decidable, as is number theory with only multiplication but with both addition and multiplication, the theory is undecidable.  In dynamics, as seen elsewhere on [this page](https://blbadger.github.io/), transformations involving only addition are linear and solvable, and transformations of only multiplication (if bounded) are nonlinear but also solvable, as they simply expand or compress the function pre-image.  But transformations with both addition and multiplication may be aperiodic and unsolvable.
+A direct answer to this question is difficult, but one approach is to consider the nature of prime numbers.  The insight here is to note that prime numbers can only exist in an arithmetic with both addition and multiplication, because without addition every number is divisible by another smaller (non-identity) number and without multiplication there cannot be a prime number because the very definition of a prime number requires division (the inverse operation of multiplication).  
+
+The next step is to understand that in an arithmetic with only multiplication or only addition, every finite element is composed of a known number of identity elements, eg. 101 is composed of 101 1s in an addition-only arithmetic.  But this is not the case for addition with multiplication precisely because primes are non-decomposable: given an arbitrary large number, we cannot know how to divide it into smaller numbers or even if the number in question is prime or not without factoring it. Factoring requires performing an unknown number of operations, contrary to the known number of operations required to compose a number in an arithmetic with both addition and multiplication.
+
+Alternatively, consider Godel's proof of incompleteness and undecidability of arithmetic using the Godel numbers.  These are (usually very large) integers that are formed by raising prime numbers to powers depending on the formulation of any sentence, ie if $\not = 3$ and $p = 5$ then the Godel number for $\not p = 2^3 * 3^5$.  The properties of prime numbers ensure that the resulting Godel number can be converted back into a sentance unambiguously because each integer has a unique factorization.  Now one cannot apply this system to a number system without primes because there is no longer an unambiguous conversion method.
+
+An interesting analogy to decidability between these different number systems exists for dynamical systems.  To restate, number theory with only addition is decidable, as is number theory with only multiplication but with both addition and multiplication, the theory is undecidable.  In dynamics, as seen elsewhere on [this page](https://blbadger.github.io/), transformations involving only addition are linear and solvable, and transformations of only multiplication (if bounded) are nonlinear but also solvable, as they simply expand or compress the function pre-image.  But transformations with both addition and multiplication may be aperiodic and unsolvable.
 
 ### Examples of undecidably-undecidable number theoretic statements
 
@@ -317,7 +322,9 @@ $$
 \forall n \in \Bbb N, \; \exists p \in \{ primes \} : n^2 < p < (n+1)^2
 $$
 
-All are as yet unproved and yet seem true, at least they are true for all inputs observed thus far.
+All are as yet unproved and yet seem true, at least they are true for all inputs observed thus far.  Moreover, they may well turn out to be unprovable in arithmetic itself: like numerous number theoretic proofs that have been found in recent years for difficult problems, the proof may require use of analytic continuation or some other method based on limits, which is not strictly allowed for using only arithmetic. 
+
+In particular, Wiles' proof for Fermat's last theorem, that is, there is no integer solution to $a^n + b^n = c^n$ if $n$ is greater than two and $a, b, c, n$ are all integers and $a, b, c$ are distinct. This proof makes use of algebraic geometry and the theory of elliptic curves in addition to more classical (arithmetical) number theory.  This means that while Wiles' proof is a remarkable achievement indeed, it does not prove what is essentially an arithmetical statement using arithemtical alone..
 
 
 ### Computability and the axiom of choice in Banach-Tarski
