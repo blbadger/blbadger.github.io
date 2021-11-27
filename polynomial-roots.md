@@ -398,6 +398,63 @@ And for incremental powers between $z^1-z-1$ and $z^6-z-1$
 
 {% include youtube.html id='AsSwysIDTfg' %}
 
+### Julia and Mandelbrot sets in Newton's map
+
+Let's look closer at the periodic attractor in Newton's map of $z^5-z-1$
+
+![Newton zoomed]({{https://blbadger.github.io}}/newton-method/newton_zoomed.png)
+
+A keen-eyed observer may note that this region resembles a slightly squashed (and filled-in) [Julia set](https://blbadger.github.io/julia-sets.html) defined by $z_{n+1} = z_n^2 + (0.5 + 0i)$, which looks like
+
+![Julia set]({{https://blbadger.github.io}}/newton-method/julia_0.5.png)
+
+In the case of our Newton map, we are observing initial points in the complex plane that either do or do not converge on a root whereas for classically defined Julia sets, we are interested in initial points in the complex plane that either diverge to infinity or else end up in a periodic orbit.  Thus by assigning points that find roots using Newton's method to be equivalent to points that head towards infinity, we arrive at the interesting conclusion that these Newton fractals are analagous to Julia sets, broadly defined.
+
+Where there are Julia sets, one can often find a [Mandelbrot set](https://blbadger.github.io/mandelbrot-set.html).  This means that Julia sets are defined by fixing a dynamical equation and observing which initial points in the complex plane diverge or are trapped in periodic trajectories, and the generalized Mandelbrot set is defined by allowing the equation to change according to various points in the complex plane whilst holding the intial point constant at the origin.
+
+Similarly, we can see which points find a root (ie which head to 'infinity') given a starting value of $0 + 0i$ and an addition of the given point to Newton's map.  In symbols, we are interested in the map
+
+$$
+z_{n+1} = z_{n} + f(z) / f'(z) + a \\
+z_0 = 0 + 0i, a \in \Bbb C
+$$
+
+which can be observed  using the following method:
+
+```python
+def newton_boundary(equation, max_iterations, x_range, y_range, t):
+	...
+	y, x = np.ogrid[0.045: -0.045: y_range*1j, -0.045: 0.045: x_range*1j]
+	a_array = x + y*1j
+	z_array = np.zeros(a_array.shape)
+
+	iterations_until_rooted = np.zeros(z_array.shape)
+
+	 # create a boolean grid of all 'true'
+	not_already_at_root = iterations_until_rooted < 10000
+
+	nondiff = Calculate(equation, differentiate=False)
+	diffed = Calculate(equation, differentiate=True)
+
+	for i in range(max_iterations):
+		iterations_until_rooted[not_already_at_root] = i
+		previous_z_array = z_array
+		z = z_array
+		f_now = nondiff.evaluate(z)
+		f_prime_now = diffed.evaluate(z)
+		z_array = z_array - f_now / f_prime_now + a_array
+
+		# the boolean map is tested for rooted values
+		found_root = (abs(z_array - previous_z_array) < 0.0000001) & not_already_at_root
+		iterations_until_rooted[found_root] = i
+		not_already_at_root = np.invert(found_root) & not_already_at_root
+
+	return iterations_until_rooted
+```
+Looking close to the origin, we find the Manelbrot set.
+
+![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
+
 ### Newton's map rotations
 
 So far we have been considering polynomials with only real-valued constants and powers, or in other words polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$ where $a_n, b_n \in \Bbb R$.  This is not by necessity, and just as $x$ can be extended to the complex plane so can a polynomial itself be extended.  Programs to accomplish this may be found [here](https://github.com/blbadger/polyroots) (use the non-optimized versions for complex-valued polynomials, as the optimized programs do not currently support complex-valued polynomials).  Skip to the next section to observe what happens upon incrementing a complex power.
