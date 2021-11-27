@@ -461,6 +461,11 @@ Looking close to the origin, we find the Mandelbrot set has replaced our Julia s
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
+In a wider view, increasing iterations yields
+
+{% include youtube.html id='NgZZq32in7g' %}
+
+
 ### Newton's map rotations
 
 So far we have been considering polynomials with only real-valued constants and powers, or in other words polynomials $a_0x^{b_0} + a_1x^{b_1} + \cdots$ where $a_n, b_n \in \Bbb R$.  This is not by necessity, and just as $x$ can be extended to the complex plane so can a polynomial itself be extended.  Programs to accomplish this may be found [here](https://github.com/blbadger/polyroots) (use the non-optimized versions for complex-valued polynomials, as the optimized programs do not currently support complex-valued polynomials).  Skip to the next section to observe what happens upon incrementing a complex power.
