@@ -463,8 +463,7 @@ Looking close to the origin, we find the Mandelbrot set has replaced our Julia s
 
 In a wider view, increasing iterations yields
 
-{% include youtube.html id='NgZZq32in7g' %}
-
+{% include youtube.html id='VFDGHMoqgrQ' %}
 
 ### Newton's map rotations
 
