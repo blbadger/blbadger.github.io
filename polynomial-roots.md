@@ -404,11 +404,17 @@ Let's look closer at the periodic attractor in Newton's map of $z^5-z-1$
 
 ![Newton zoomed]({{https://blbadger.github.io}}/newton-method/newton_zoomed.png)
 
-A keen-eyed observer may note that this region resembles a slightly squashed (and filled-in) [Julia set](https://blbadger.github.io/julia-sets.html) defined by $z_{n+1} = z_n^2 + (0.5 + 0i)$, which looks like
+A keen-eyed observer may note that this region resembles a slightly squashed (and filled-in) [Julia set](https://blbadger.github.io/julia-sets.html) defined by 
+
+$$
+z_{n+1} = z_n^2 + (0.5 + 0i)
+$$
+
+which when mapped in the complex plane appears as
 
 ![Julia set]({{https://blbadger.github.io}}/newton-method/julia_0.5.png)
 
-In the case of our Newton map, we are observing initial points in the complex plane that either do or do not converge on a root whereas for classically defined Julia sets, we are interested in initial points in the complex plane that either diverge to infinity or else end up in a periodic orbit.  Thus by assigning points that find roots using Newton's method to be equivalent to points that head towards infinity, we arrive at the interesting conclusion that these Newton fractals are analagous to Julia sets, broadly defined.
+In the case of this Newton map, we are observing initial points in the complex plane that either do or do not converge on a root whereas for classically defined Julia sets, we are interested in initial points in the complex plane that either diverge to infinity or else end up in a periodic orbit.  Thus by assigning points that find roots using Newton's method to be equivalent to points that head towards infinity, we arrive at the interesting conclusion that these Newton fractals are analagous to Julia sets, broadly defined.
 
 Where there are Julia sets, one can often find a [Mandelbrot set](https://blbadger.github.io/mandelbrot-set.html).  This means that Julia sets are defined by fixing a dynamical equation and observing which initial points in the complex plane diverge or are trapped in periodic trajectories, and the generalized Mandelbrot set is defined by allowing the equation to change according to various points in the complex plane whilst holding the intial point constant at the origin.
 
@@ -422,7 +428,7 @@ $$
 which can be observed  using the following method:
 
 ```python
-def newton_boundary(equation, max_iterations, x_range, y_range, t):
+def newton_boundary(equation, max_iterations, x_range, y_range):
 	...
 	y, x = np.ogrid[0.045: -0.045: y_range*1j, -0.045: 0.045: x_range*1j]
 	a_array = x + y*1j
@@ -451,7 +457,7 @@ def newton_boundary(equation, max_iterations, x_range, y_range, t):
 
 	return iterations_until_rooted
 ```
-Looking close to the origin, we find the Mandelbrot set.
+Looking close to the origin, we find the Mandelbrot set has replaced our Julia set.
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
