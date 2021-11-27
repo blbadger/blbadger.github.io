@@ -41,7 +41,13 @@ $$
 
 After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  
 
-Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots $\frac{-1+i\sqrt{3}}{2}$ and $\frac{-1-i\sqrt{3}}{2}$.  These values are called the cube roots of unity, because they are solutions to the equation $x^3 = 1$. The complex valued roots may be found by converting $x^3-1$ to $(x-1)(x^2+x+1)$ and then applying the quadratic formula to the second term.  
+Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots 
+
+$$
+\frac{-1+i\sqrt{3}}{2}, \frac{-1-i\sqrt{3}}{2}
+$$
+
+These values are called the cube roots of unity, because they are solutions to the equation $x^3 = 1$. The complex valued roots may be found by converting $x^3-1$ to $(x-1)(x^2+x+1)$ and then applying the quadratic formula to the second term.  
 
 How does Newton's method do for finding any of these roots? We can see by tracking each iterative root guess and looking for convergence, which is when subsequent values come closer and closer to each other until they are equivalent.  Dynamically, convergence is described as a period 1 trajectory, because there is only 1 iteration of the equation (in this case Newton's method) before the same value is reached again.  The progress of root finding with Newton's method may be tracked as follows (link to [code for this page](https://github.com/blbadger/polyroots)):
 
