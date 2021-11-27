@@ -451,7 +451,7 @@ def newton_boundary(equation, max_iterations, x_range, y_range, t):
 
 	return iterations_until_rooted
 ```
-Looking close to the origin, we find the Manelbrot set.
+Looking close to the origin, we find the Mandelbrot set.
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
