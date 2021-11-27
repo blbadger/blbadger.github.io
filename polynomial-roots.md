@@ -421,11 +421,12 @@ Where there are Julia sets, one can often find a [Mandelbrot set](https://blbadg
 Similarly, we can see which points find a root (ie which head to 'infinity') given a starting value of $0 + 0i$ and an addition of the given point to Newton's map.  In symbols, we are interested in the map
 
 $$
-z_{n+1} = z_{n} + f(z) / f'(z) + a \\
-z_0 = 0 + 0i, a \in \Bbb C
+z_{n+1} = z_{n} + \frac{f(z)}{f'(z)} + a \\
+z_0 = 0 + 0i \\
+a \in \Bbb C
 $$
 
-which can be observed  using the following method:
+which can be observed using the following code:
 
 ```python
 def newton_boundary(equation, max_iterations, x_range, y_range):
