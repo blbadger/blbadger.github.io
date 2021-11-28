@@ -468,6 +468,23 @@ Looking close to the origin, we find the Mandelbrot set has replaced our Julia s
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
+More accurately, this is actually a mix of Mandelbrot
+
+$$
+z_{n+1} = z_{n}^2 + a \\
+$$
+
+and what has been termed Multibrot
+
+$$
+z_{n+1} = z_{n}^b + a \\
+b > 2
+$$
+
+sets, which is perhaps not altogether surprising being that our polynomial of interest is a fifth degree entity and thus encompasses both second and fourth dergree polynomials.  Zooming in by a factor of $10^7$ on one of these fourth-degree Multibrots, we have
+
+{% include youtube.html id='-M3ERdfhjaI' %}
+
 In a wider view, increasing iterations yields
 
 {% include youtube.html id='VFDGHMoqgrQ' %}
