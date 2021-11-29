@@ -265,7 +265,13 @@ where $\theta$ is in radians of counterclockwise rotation from the positive real
 
 The above image has symmetry about the real axis (the horizontal line at the center).  Is this a coincidence, or does symmetry around the real axis necessarily occur for Newton's method?  As long as the polynomial in question $a(x)$ contains only real coefficients, the roots are symmetric around the real axis because if $a + bi$ is a root, so is its conjugate $a - bi$.  This is because we can assign a function $f(x)$ to map any point in the complex plane to its conjugate, meaning that $f(x): a - bi \to a + bi, \; a + bi \to a - bi$ for any $a, b \in \Bbb C$.  
 
-This function $f(x)$ is a structure-preserving map, also called a homomorphism, because $f(ab) = f(a)f(b) \forall a, b \in \Bbb C$.  Furthermore because for any real number $a$, $f(a) = a$, for any polynomial with real coefficients $a(x)$, $f(a(x))$ contains the same constants and only converts $x$ to its conjugate.  This does not change the root values of that function because $f(0) = 0$. 
+This function $f(x)$ is a structure-preserving map, also called a homomorphism, because 
+
+$$
+f(ab) = f(a)f(b) \forall a, b \in \Bbb C
+$$
+
+Furthermore because for any real number $a$, $f(a) = a$, for any polynomial with real coefficients $a(x)$, $f(a(x))$ contains the same constants and only converts $x$ to its conjugate.  This does not change the root values of that function because $f(0) = 0$. 
 
 Moreover, the trajectory taken with Newton's method may be expressed as a series of polynomials, all of which have real coefficients if $a(x)$ has real coefficients.  Because there exists a homomorphism (actually isomorphism) from $a + bi$ to and from $a - bi$, the trajectories given equivalent $b$ are identical apart from an inversion about the real axis.
 
