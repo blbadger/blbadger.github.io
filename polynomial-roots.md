@@ -174,7 +174,11 @@ print (successive_approximations(2 + 5j, 20))
 [(2+5j), (1.325009908838684+3.3254062623860485j), (0.8644548662679195+2.199047743713538j), (0.5325816440348543+1.4253747693717602j), ... (-0.5+0.8660254037844386j), (-0.5+0.8660254037844387j)]
 ```
 
-where Newton's method finds the complex root $\frac{-1+i\sqrt{3}}{2}$.  
+where Newton's method finds the complex root 
+
+$$
+\frac{-1+i\sqrt{3}}{2}
+$$
 
 This means that the complex plane may be explored. Because Newton's method requires differentiation and evaluation of a polynomial, I wrote a module `Calculate` to accomplish these tasks (which may be found [here](https://github.com/blbadger/polynomial_roots/blob/main/Calculate.py)).   Now a map for how long it takes for each point in the complex plane to become rooted using Newton's method may be generated as follows:
 
