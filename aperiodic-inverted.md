@@ -684,7 +684,7 @@ As is the case for a=1.4, b=0.3 so also for (3) with a=0.2, b=-0.99, there are u
 The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for (3) but diverges everywhere except unstable points for (4), whereas a=0.2, b=1.05 diverges everywhere except unstable points for (3) but converges on points for (4).  In the video below, $a$ is held constant while $b$ changes as follows:
 
 $$
-a = 0.2
+a = 0.2 \\
 b = 0.95 \to b = 1.01 
 $$
 
