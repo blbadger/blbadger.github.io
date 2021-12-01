@@ -666,9 +666,9 @@ For $z^3-1$,
 
 Remembering that black denotes locations that do not converge within the maximum interations (here 50), it is clear that there are more points that fail to find a root using this method compared to Newton's, which is expected given that the convergence rate is slower than for Newton's.
 
-Rotated at a radius of $1/8$ (code found [here](https://github.com/blbadger/polynomial_roots/blob/main/secant_rotated.py)), $z^5-z-1$ yields
+Rotated at a radius of $1/8$, $z^5-z-1$ yields
 
-{% include youtube.html id='6bdghiTen0s' %}
+{% include youtube.html id='ABkcXst8Jn0' %}
 
 ### Halley's method
 
