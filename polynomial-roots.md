@@ -670,6 +670,10 @@ Rotated at a radius of $1/8$, $z^5-z-1$ yields
 
 {% include youtube.html id='ABkcXst8Jn0' %}
 
+And incrementing from $z^5-z-1$ to $z^6-z-1$ we have
+
+{% include youtube.html id='NpFupXaRvEA' %}
+
 ### Halley's method
 
 Edmond Halley (of Halley's comet fame) introduced the following algorithm to find roots for polynomial equations:
