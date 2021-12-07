@@ -140,9 +140,9 @@ with roots at $x=-3, x=1, x=2$.  Again there is more than one point on the real 
 
 ![roots]({{https://blbadger.github.io}}/newton-method/real_newton_still.png)
 
-This plot seems reasonable, as the points near the roots converge quickly.  Looking closer at the point $x=-0.8413$, 
+This plot seems reasonable, as the points near the roots converge quickly.  Looking closer at the point $x= - 0.8410713881$, 
 
-{% include youtube.html id='OGDTLGhvj9Y' %}
+{% include youtube.html id='D2fmFNISpco' %}
 
 we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but these slow- or non-converging points form a fractal.  To see which values are in the set of non-converging points, first observe that Newton's method will fail for points where $f'(x) = 0$, and for $f'(x) = 3x^2-7$ this evaluates to $x = \pm \sqrt{7/3}$.  
 
