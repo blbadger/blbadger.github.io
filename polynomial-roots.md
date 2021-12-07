@@ -412,7 +412,7 @@ All mapped points outside a certain radius from the origin stay near each other 
 
 And for incremental powers between $z^1-z-1$ and $z^6-z-1$
 
-{% include youtube.html id='AsSwysIDTfg' %}
+{% include youtube.html id='U_pdR473clA' %}
 
 ### Julia and Mandelbrot sets in Newton's map
 
