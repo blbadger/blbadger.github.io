@@ -144,20 +144,20 @@ This plot seems reasonable, as the points near the roots converge quickly.  Look
 
 {% include youtube.html id='OGDTLGhvj9Y' %}
 
-we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but these slow- or non-converging points form a fractal pattern.  To see which values are in the set of non-converging points, first observe that Newton's method will fail for points where $f'(x) = 0$, and for $f'(x) = 3x^2-7$ this evaluates to $x = \pm \sqrt{7/3}$.  
+we find a [Cantor set](fractal-geometry.md).  Not only does this polynomial exhibit many values that are slow to find a root, as was the case for $x^3 - 1$, but these slow- or non-converging points form a fractal.  To see which values are in the set of non-converging points, first observe that Newton's method will fail for points where $f'(x) = 0$, and for $f'(x) = 3x^2-7$ this evaluates to $x = \pm \sqrt{7/3}$.  
 
 We have found one non-converging value, but are there more?  Yes, because any point whose next iteration of Newton's method that lands on $\pm \sqrt{7/3}$ will also not converge.  The value that heads towards $\sqrt{7/3}$ is
 
 $$
-x_{n+1} = x + \frac{f(x)}{f'(x)} \\
-\sqrt{7/3} = x - \frac{x^3-7x+6}{3x^2-7} \\
+x_n = x_{-1} + \frac{f(x_{-1})}{f'(x_{-1})} \\
+\sqrt{7/3} = x_{-1} - \frac{x_{-1}^3-7x_{-1}+6}{3x_{-1}^2-7} \\
 x_{-1} = −0.8625...
 $$
 
-which is the second line passed on the left in the video above.  Applying Newton's method again and solving for $x_n$, 
+which is the second line passed on the left in the video above.  Applying Newton's method again and solving for $x_n$ 
 
 $$
--0.8625... = x - \frac{x^3-7x+6}{3x^2-7} \\
+-0.8625... = x_{-2} - \frac{x_{-2}^3-7x_{-2}+6}{3x_{-2}^2-7} \\
 x_{-2} = 1.4745...
 $$
 
