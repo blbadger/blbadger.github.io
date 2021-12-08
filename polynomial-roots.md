@@ -537,9 +537,6 @@ for i in range(max_iterations):
 		f_prime_now = 5 * (np.exp(3.1415j * (t/450000))/4)*z**4 - np.exp(3.1415j * (t/450000))/4
 		z_array = z_array - f_now / f_prime_now
 ```
-which starts as
-
-![rotation]({{https://blbadger.github.io}}/newton-method/Newton_all_000.png)
 
 the cover photo for this page found [here](https://blbadger.github.io/) is at t=46, and at t=205 (0.00023 of a full rotation) yields
 
