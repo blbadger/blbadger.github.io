@@ -484,7 +484,7 @@ def newton_boundary(equation, max_iterations, x_range, y_range):
 
 	return iterations_until_rooted
 ```
-Looking close to the origin, we find the Mandelbrot set has replaced our Julia set.
+Looking close to the origin, we find a (slightly distorted) Mandelbrot set has replaced our Julia set.
 
 ![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
