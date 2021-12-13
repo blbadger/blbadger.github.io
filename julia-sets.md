@@ -198,7 +198,7 @@ def julia_set(h_range, w_range, max_iterations, t):
 
 The `julia_set()` function needs to be called for every time step `t`, and one way to do this is to put it in a loop and save each image that results, with the intention of compiling the images later into a movie.  I prefer to do this rather than compile images into a movie without seeing them first.  The following code yields all 300 images being added to whatever directory the `.py` file running is held in, with the name of the image being the image's sequence number.  
 
-An important step here is to increase the `max_iterations` argument for `julia_set()` with each increase in scale!  If this is not done, no increased resolution will occur beyond a certain point even if we increase the scale of the image of interest.  To see why this is, consider what the `max_iterations` value for the true Julia set is: it is infinite!  If a value diverges after any number of iterations, then we consider it to diverge.  But at large scale, there may not be a significatn change upon increase in `max_iterations` (although this turns out to not be the case for this particular Julia set, see below), so to save time we can simply start with a smaller `max_iterations` and increase as we go, taking more and more time per image.  The true Julia set is uncomputable: it would take an infinite number of iterations to determine which $x + yi$ values diverge, and this would take infinite time.   
+An important step here is to increase the `max_iterations` argument for `julia_set()` with each increase in scale!  If this is not done, no increased resolution will occur beyond a certain point even if we increase the scale of the image of interest.  To see why this is, consider what the `max_iterations` value for the true Julia set is: it is infinite!  If a value diverges after any number of iterations, then we consider it to diverge.  But at large scale, there may not be a significatn change upon increase in `max_iterations` (although this turns out to not be the case for this particular Julia set, see below), so to save time we can simply start with a smaller `max_iterations` and increase as we go, taking more and more time per image.  The true Julia set is uncomputable: it would take an infinite number of iterations to determine which $x + yi$ values diverge for all $z \in \Bbb C$, and this would take infinite time.  
 
 ```python
 for t in range(300):
@@ -207,6 +207,8 @@ for t in range(300):
 	plt.savefig('{}.png'.format(t), dpi = 300)
 	plt.close()
 ```
+Note that keyword arguments `vmin` and `vmax` may be supplied to `plt.imshow`, for example by changing the second line to `plt.imshow(julia_set(2000, 2000, 50 + t*3, t), vmin=1, vmax=50+t*3, cmap='twilight')`.  These signify the minimum and maximum range for the color map, and are not strictly necessary to make a video but prevent `pyplot` from initializing a new automatically defined color range for each image.  This auto-scaled range is unstable, leading to consecutive images having different colors for the same numerical values which appears as flashes in the background of the video.  This becomes more important for videos of polynomial root finding algorithms, among other things.
+
 Now we have all the images ready for assembly into a movie!  For my file system, the images have to be renamed in order to be in order upon assembly.  To see if this is the case in your file system, have the folder containing the images listed.
 
 ```bash
