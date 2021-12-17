@@ -35,7 +35,7 @@ Now back to the original question: why does stochastic gradient descent work bes
 
 ### Training memory
 
-This section will require some familiarity with [recurrent neural networks](https://en.wikipedia.org/wiki/Recurrent_neural_network), which will be given briefly here.  Recurrent neural networks are a class of feedforward neural networks that are updated sequentially as time passes.  The simplest form, a fully recurrent network, has one hidden layer that is updated at each sequential element.  For example, a text classification network performing sentiment analysis (finding if a statement expresses positive or negative emotions) of the following sentance:
+This section will require some familiarity with [recurrent neural networks](https://en.wikipedia.org/wiki/Recurrent_neural_network), which will be given briefly here.  A defining characteristic of recurrent neural networks is that they are updated sequentially as time passes.  The simplest form, a fully recurrent network, has one hidden layer that is updated at each sequential element, and each element is viewed at one time step.  For example, a text classification network performing sentiment analysis (finding if a statement expresses positive or negative emotions) of the following sentance:
 
 "The dog went to the store."
 
