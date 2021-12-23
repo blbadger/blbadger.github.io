@@ -1,5 +1,7 @@
 ## Roots of polynomial equations II
 
+This page is the second of a two-part series on polynomial root-finding methods.  For a background on Newton's method as well as Halley's and the Secant method, see [part I](https://blbadger.github.io/polynomial-roots.html).
+
 ### Periodic attractor basins
 
 Let's look closer at the areas that converge slowly for Newton's method applied to the equation $z^5-z-1$. A little experimentation suggests that these areas may never converge on a root, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the central (near the origin, that is) sowly-converging area, many are found to converge on the period-3 orbit
