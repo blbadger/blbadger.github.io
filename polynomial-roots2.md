@@ -1,8 +1,8 @@
-## Roots of polynomial equations 
+## Roots of polynomial equations II
 
 ### Periodic attractor basins
 
-Let's look closer at the areas that converge slowly for $z^5-z-1$. A little experimentation suggests that these areas may never converge on a root, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the central (near the origin, that is) sowly-converging area, many are found to converge on the period-3 orbit
+Let's look closer at the areas that converge slowly for Newton's method applied to the equation $z^5-z-1$. A little experimentation suggests that these areas may never converge on a root, as increasing the maximum iteration number for Newton's method fails to change them.  Tracking iterations that start in the central (near the origin, that is) sowly-converging area, many are found to converge on the period-3 orbit
 
 $$
 -1.000257..., -0.750321..., 0.0833570..., -1.000257...
@@ -216,11 +216,25 @@ $$
 a_0x^{b_0} + a_1x^{b_1} + \cdots
 $$ 
 
-The results for $z^{5 + 0i}-z-1$ to $z^{5 + 0.2802i}-z-1$ are as follows:
+The results for 
+
+$$
+z^{5 + 0i}-z-1$ \to \\
+z^{5 + 0.2802i}-z-1
+$$ 
+
+are as follows:
 
 {% include youtube.html id='TyZGJQi0cmM' %}
 
-and for a longer video of $z^{7.11}-z-1 \to z^{7.11 + 0.002271i}-z^{1+0.002271i}-1$
+and for a longer video of 
+
+$$
+z^{7.11}-z-1 \to \\
+z^{7.11 + 0.002271i}-z^{1+0.002271i}-1
+$$
+
+we have
 
 {% include youtube.html id='Q4xXdPizlX0' %}
 
