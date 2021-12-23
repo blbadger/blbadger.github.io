@@ -147,7 +147,7 @@ $$
 z_{n+1} = z_{n}^2 + a \\
 $$
 
-and what has been termed Multibrot
+and what is sometimes called Multibrot
 
 $$
 z_{n+1} = z_{n}^b + a \\
@@ -158,9 +158,21 @@ sets, which is perhaps not altogether surprising being that our polynomial of in
 
 {% include youtube.html id='-M3ERdfhjaI' %}
 
-In a wider view, increasing iterations yields
+A true mandelbrot set may be found by proceeding with the same interation procedure described above for the equation
 
-{% include youtube.html id='VFDGHMoqgrQ' %}
+$$
+z^3 - z - 1
+$$
+
+when increasing scale by $10^7$ at the point  
+
+$$
+0.19379287 + 0.002549i
+$$
+
+we have
+
+{% include youtube.html id='vJo4nBMLycI' %}
 
 ### Incrementing powers
 
