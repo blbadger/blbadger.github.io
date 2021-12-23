@@ -1,4 +1,6 @@
-## Roots of polynomial equations part 1
+## Roots of polynomial equations part I
+
+This page is the first of a two-part series on methods to find polynomial roots.  For more exploration on Newton's method, as well as Halley's and the Secant method, see [part II](/polynomial-roots2.html).
 
 ### Introduction
 
