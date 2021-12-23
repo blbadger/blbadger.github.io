@@ -40,15 +40,18 @@ The mathematical approach to change over time. Most dynamical systems are nonlin
 ## Boundaries 
 Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders between bounded and unbounded trajectories can take on spectacular fractal geometries.  
 
-### [Polynomial roots](/polynomial-roots.md)
+### [Polynomial roots I](/polynomial-roots.md)
 
 ![roots]({{https://blbadger.github.io}}newton-method/Newton046.png)
+
+### [Polynomial roots II](/polynomial-roots2.md)
+
+![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
 
 
 ### [Julia sets](/julia-sets.md)
 
 ![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
-
 
 ### [Mandelbrot set](/mandelbrot-set.md)
 
