@@ -172,7 +172,7 @@ $$
 0.19379287 + 0.002549i
 $$
 
-we have
+we have (note that the Mandelbrot set interior fails to converge as for the multibrot above but the color was changed to highlight the border for visual flair)
 
 {% include youtube.html id='vJo4nBMLycI' %}
 
