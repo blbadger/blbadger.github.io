@@ -163,15 +163,16 @@ $$
 x_{n} = 1.4745...
 $$
 
-In other words, if $x_0 = \sqrt{7/3}$ then 
+In other words, if $x_0 = \sqrt{7/3}$ then
+
 $$
 x_{-1} = −0.8625...\\
-x_{-2} = 1.4745...\\
+x_{-2} = 1.4745... \\
 x_{-3} = -0.8413...\\
-x_{-4} = 1.47402...\\
+x_{-4} = 1.47402...
 $$
 
-all of which are algebraic but not rational.
+all of which are algebraic but none of which are rational.
 
 It turns out there are an infinite number of distinct points of $x_n \; n \in \Bbb Z$, but they are contained within $[-3, 2]$ ie the region between two of the roots.
 
