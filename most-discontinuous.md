@@ -14,7 +14,7 @@ $$
 \lvert x_1 - x_2 \rvert < \epsilon \implies \lvert f(x_1) - f(x_2) \rvert < \delta 
 $$ 
 
-for any arbitrarily small value $\epsilon$. Note that this is identical to the standard definition for continuity, which is $\lvert f(x_1) - f(x_2) \rvert < \epsilon$ for any $epsilon > 0$ implies that there exists some $\delta$ such that $\lvert x_1 - x_2 \rvert < \delta$, but with $\epsilon$ and $\delta$ reversed.
+for any arbitrarily small value $\epsilon$. Note that this is identical to the standard definition for continuity, which is $\lvert f(x_1) - f(x_2) \rvert < \epsilon$ for any $\epsilon > 0$ implies that there exists some $\delta$ such that $\lvert x_1 - x_2 \rvert < \delta$, but with $\epsilon$ and $\delta$ reversed.
 
 Thus for $\Bbb Q$ there are three options, meaning that the set of continuous functions is equivalent to the set of all sets of $\Bbb Q$ into $\{0, 1, 2\}$
 
@@ -32,7 +32,7 @@ $$
 {2^{\Bbb Q}}^{\Bbb Q} = 2^{\Bbb R} = \Bbb R ^{\Bbb R}
 $$
 
-Another, perhaps more direct, proof of this statement is found [here](https://blbadger.github.io/aperiodic-irrationals.html) in the section section.
+Another, perhaps more direct, proof of this statement is found [here](https://blbadger.github.io/aperiodic-irrationals.html).
 
 ### Discontinuous maps cannot be defined on the rationals (3)
 
@@ -46,7 +46,13 @@ Thus there can be at most $\Bbb R$ functions mapping $\Bbb Q \to \Bbb Q$, but we
 
 ### Aperiodic maps are discontinuous (4)
 
-Sensitivity to inital values can be defined such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a difference $\Delta$ in $ \lvert f^n(x_0) - f^n(x_1) \rvert \; \exists n$ where $\Delta$ is not arbitrarily small. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
+Sensitivity to inital values can be defined such that an arbitrarily small difference $\varepsilon$ bewteen $x_0$ and $x_1$ leads to a difference $\Delta$ where
+
+$$
+\exists n : \;\Delta =  \lvert f^n(x_0) - f^n(x_1) \rvert 
+$$
+
+such that $\Delta$ is not arbitrarily small. Sensitivity to initial values [implies](https://blbadger.github.io/aperiodic-irrationals.html) aperiodicity in bounded trajectories, as first recognized by Lorenz. Therefore aperiodic maps are necessarily sensitive to initial values.
 
 Function $f$ is defined to be a continuous function from $\Bbb R^3 \to \Bbb R^3$ such that future values do not match previous ones.  An example of $f$ could be an ordinary differential equation system for the Lorenz attractor.  Now define a function $g$ that is equivalent to the composition of function $f \circ f \circ f ...$.  We can call $g$ the map of $f$, in that it yields the final position of an initial value $x_0$ in $\Bbb R$ after $n$ compositions. One $f$ yields one $g$ after an infinite number of compositions 
 
@@ -62,7 +68,7 @@ Proof: Suppose, for the sake of contradiction, that $g$ is continuous.  By defin
 
 $$
 \lvert g(x_a) - g(x_b) \rvert < \epsilon \\
-whenever \;  \lvert x_a - x_b \rvert < \delta 
+\mathtt{whenever} \;  \lvert x_a - x_b \rvert < \delta 
 $$
 
 But if this was true of $g(x_a)$ and $g(x_b)$ for all $g$ then $\lvert g(x_a) - g(x_b) \rvert < \epsilon \; \forall \epsilon$ given a finite $\delta$ such that $\lvert x_a - x_b \rvert < \delta$.  But then if $x_a - x_b < \delta$ then $g(x_a)$ would stay arbitrarily close to $g(x_b)$ and $g(x)$ would not be sensitive to arbitrarily small changes in initial points $x_a, x_b...$.  This is a contradiction by the definition of $g$ above, and therefore $g(x)$ is discontinuous. $\square$
