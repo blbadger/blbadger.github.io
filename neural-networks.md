@@ -4,7 +4,7 @@ Follow the link to [this page](/nn-limitations.md) to explore some interesting l
 
 ### Using a neural network to classify images of cells
 
-In biological research it is important to be able to categorize samples accurately. For example, during the research process a histological section of tissue from an animal subjected to some treatment may be observed to be healthy or unhealthy depending on its appearance under the microscope. One way to accomplish this task of classification of healthy versus unhealthy is to have a skilled individual manually observe and interpret these images.  With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation.
+In scientific research it is important to be able to categorize samples accurately. For example, during the research process a histological section of tissue from an animal subjected to some treatment may be observed to be healthy or unhealthy depending on its appearance under the microscope. One way to accomplish this task of classification of healthy versus unhealthy is to have a skilled individual manually observe and interpret these images.  With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation.
 
 Another way to accomplish the task is to employ a computational method.  One could imagine attempting to program a machine to recognize the same features that an expert individual would take note of in order to replicate that individual's performance.  Historically this approach was taken in efforts resulting in what were called 'expert systems', but now such approaches are generally no longer attempted.  
 
@@ -16,9 +16,9 @@ Supervised machine learning techniques attempt to reproduce with generalization:
 
 The current state-of-the-art method for classifying images is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are tuned in accordance to some loss function in order to 'learn'.  These neuron are arranged in sequential layers, each representing the input in a potentially more abstract manner before the output layer is used for classification.  This sequential (and distributed across many neurons of one layer) representation may be many layers deep before reaching the output, leading to the field of study for many neural network-related approaches to be called 'deep learning'.
 
-A good hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the classic text by Goodfellow, Bengio, and Courville found [here](https://www.deeplearningbook.org/).  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
+A good hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
 
-Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise takes far longer than broadcasted computation with arrays.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation is numpy, and this library can be used to simplify and speed up the network linked earlier in this paragraph: [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py) is an implementation.  In essence, training and evaluating feed-forward neural networks by manipulating matrix elements changes the weights and biases of many 'neurons' simultaneously, which is far faster than tuning each individual neurons as above.  
+Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise takes far longer than broadcasted computation with arrays.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation is numpy, and this library can be used to simplify and speed up the network linked earlier in this paragraph: [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py) is an implementation.  In essence, training and evaluating feed-forward neural networks by manipulating matrix elements changes the weights and biases of many 'neurons' simultaneously, which is far faster than tuning each individual neurons as above.  
 
 As effective as numpy is, it is not quite ideal for speedy computations with large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written (mostly) for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  I decided to try Tensorflow (with a Keras front end) and found a number of docs extremely useful in setting up a neural network, perhaps the most accessible being the official [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
 
@@ -149,33 +149,47 @@ import matplotlib.pyplot as plt
 Now we can assign the directories storing the training and test datasets assembled above to variables that will be called later.  Here `data_dir` is our training dataset and `data_dir2` and `data_dir3` are test datasets, which link to folders I have on my Desktop.
 
 ```python
-data_dir = pathlib.Path('/home/bbadger/Desktop/neural_network_images',  fname='Combined')
-data_dir2 = pathlib.Path('/home/bbadger/Desktop/neural_network_images2', fname='Combined')
-data_dir3 = pathlib.Path('/home/bbadger/Desktop/neural_network_images3', fname='Combined')
+def data_import():
+	"""
+	Import images and convert to tensorflow.keras.preprocessing.image.ImageDataGenerator
+	object
+	
+	Args:
+		None
+		
+	Returns:
+		train_data_gen1: ImageDataGenerator object of image for training the neural net
+		test_data_gen1: ImageDataGenerator object of test images
+		test_data_gen2: ImageDataGenerator object of test images
+	"""
+	
+	data_dir = pathlib.Path('/home/bbadger/Desktop/neural_network_images',  fname='Combined')
+	data_dir2 = pathlib.Path('/home/bbadger/Desktop/neural_network_images2', fname='Combined')
+	data_dir3 = pathlib.Path('/home/bbadger/Desktop/neural_network_images3', fname='Combined')
 ```
 
 Now comes a troubleshooting step.  In both Ubuntu and MacOSX, `pathlib.Path` sometimes recognizes folders or files ending in `._.DS_Store` or a variation on this pattern.  These folders are empty and appear to be an artefact of using `pathlib`, as they are not present if the directory is listed in a terminal, and these interfere with proper classification by the neural network.  To see if there are any of these phantom files,
 
 ```python
-image_count = len(list(data_dir.glob('*/*.png')))
+	image_count = len(list(data_dir.glob('*/*.png')))
 
-CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') 
-			if item.name not in ['._.DS_Store', '._DS_Store', '.DS_Store']])
+	CLASS_NAMES = np.array([item.name for item in data_dir.glob('*') 
+				if item.name not in ['._.DS_Store', '._DS_Store', '.DS_Store']])
 
-print (CLASS_NAMES)
-print (image_count)
+	print (CLASS_NAMES)
+	print (image_count)
 ```
 prints out the number of files and the names of the folders in the `data_dir` directory of choice.  If the number of files does not match what is observed by listing in terminal, or if there are any folders or files with the `._.DS_Store` ending then one strategy is to simply copy all files of the relevant directory into a new folder and check again.
 
 Now the images can be rescaled (if they haven't been already), as all images will need to be the same size. Here all images are scaled to a heightxwidth of 256x256 pixels.  Then a batch size is specified.  This number determines the number of images seen for each training epoch.
 
 ```python
-### Rescale image bit depth to 8 (if image is 12 or 16 bits) and resize images to 256x256, if necessary
-image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
-IMG_HEIGHT, IMG_WIDTH = 256, 256
+	### Rescale image bit depth to 8 (if image is 12 or 16 bits) and resize images to 256x256, if necessary
+	image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+	IMG_HEIGHT, IMG_WIDTH = 256, 256
 
-### Determine a batch size, ie the number of image per training epoch
-BATCH_SIZE = 400
+	### Determine a batch size, ie the number of image per training epoch
+	BATCH_SIZE = 400
 
 ```
 From the training dataset images located in `data_dir`, a training dataset `train_data_1` is made by calling `image_generator` on `data_dir`.  The batch size specified above is entered, as well as the `target_size` and `classes` and `subset` kwargs.  If shuffling is to be performed between epochs, `shuffle` is set to `True`.  
@@ -183,59 +197,69 @@ From the training dataset images located in `data_dir`, a training dataset `trai
 `image_generator` also has kwargs to specify rotations and translations to expand the training dataset, although neither of these functions are used in this example because the dataset has already been expanded via rotations.  The method returns a generator that can be iterated to obtain images of the dataset.
 
 ```python
-train_data_gen1 = image_generator.flow_from_directory(
-	directory=str(data_dir),
-	batch_size=BATCH_SIZE, 
-	shuffle=True, 
-	target_size=(IMG_HEIGHT,IMG_WIDTH), 
-	classes=list(CLASS_NAMES), 
-	subset = 'training')
+	train_data_gen1 = image_generator.flow_from_directory(
+		directory=str(data_dir),
+		batch_size=BATCH_SIZE, 
+		shuffle=True, 
+		target_size=(IMG_HEIGHT,IMG_WIDTH), 
+		classes=list(CLASS_NAMES), 
+		subset = 'training')
 ```
 
 The same process is repeated for the other directories, which in this case contain test image datasets.
 
 ```python
-CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') 
-			if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
+	CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') 
+				if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
 
-test_data_gen1 = image_generator.flow_from_directory(
-    directory=str(data_dir2), 
-    batch_size=783, 
-    shuffle=True, 
-    target_size=(IMG_HEIGHT,IMG_WIDTH),
-    classes=list(CLASS_NAMES))
+	test_data_gen1 = image_generator.flow_from_directory(
+	    directory=str(data_dir2), 
+	    batch_size=783, 
+	    shuffle=True, 
+	    target_size=(IMG_HEIGHT,IMG_WIDTH),
+	    classes=list(CLASS_NAMES))
 
 
-CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') 
-			if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
+	CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') 
+				if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
 
-test_data_gen2 = image_generator.flow_from_directory(
-    directory=str(data_dir3), 
-    batch_size=719, 
-    shuffle=True, 
-    target_size=(IMG_HEIGHT,IMG_WIDTH),
-    classes=list(CLASS_NAMES))
+	test_data_gen2 = image_generator.flow_from_directory(
+	    directory=str(data_dir3), 
+	    batch_size=719, 
+	    shuffle=True, 
+	    target_size=(IMG_HEIGHT,IMG_WIDTH),
+	    classes=list(CLASS_NAMES))
+	    
+	return train_data_gen1, test_data_gen1, test_data_gen2
 ```
 
 An image set generation may be checked with a simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
 
 ```python
 def show_batch(image_batch, label_batch):
-    """Takes a set of images (image_batch) and an array of labels (label_batch)
-    from the tensorflow preprocessing modules above as arguments and subsequently
+    """
+    Takes a set of images (image_batch) and an array of labels (label_batch)
+    from the tensorflow preprocessing image_generator as arguments and subsequently
     returns a plot of a 25- member subset of the image set specified, complete
     with a classification label for each image.  
+    	
     """
+    
     plt.figure(figsize=(10,10))
+    
     for n in range(25):
         ax = plt.subplot(5, 5, n+1)
         plt.imshow(image_batch[n])
         plt.title(CLASS_NAMES[label_batch[n]==1][0].title())
         plt.axis('off')
+	
     plt.show()
+    plt.close()
+    return
+
 
 ### calls show_batch on a preprocessed dataset to view classified images
-
+train_data_gen1, test_data_gen1, test_data_gen2 = data_import()
 image_batch, label_batch = next(train_data_gen1)
 show_batch(image_batch, label_batch)
 ```
@@ -363,7 +387,7 @@ A few notes about this architecture: first, the output is a softmax layer and th
 
 Another thing to note is the lack of normalization: there are no batch normalizations applied to any layers, no dropout nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  As an explanation for this, first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive.  Second, adaptive moment estimation (Adam) is employed as our optimization method, and this algorithm was specifically designed to converge for stochastic and sparse objective function outputs.  It has become clear that normalizations such as batch norm do not act to reduce internal covariant shift, but instead acts to smooth out the objective function.  With Adam, the objective function does not need to be smooth for effective tuning of weights and biases.  Finally, dataset augmentation via rotations and translations provides another form of insurance against overfitting.  Finally and most importantly, training is abbreviated to avoid overfitting.
 
-### The network mimics expert human image classification capability
+### The network accurately classifies test set images
 
 Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
@@ -379,7 +403,8 @@ test_images, test_labels = image_batch, label_batch
 predictions = model.predict(test_images)
 
 def plot_image(i, predictions, true_label, img):
-    """ returns a test image with a predicted class, prediction
+    """ 
+    Returns a test image with a predicted class, prediction
     confidence, and true class labels that are color coded for accuracy.
     """
     prediction, true_label, img = predictions[i], true_label[i], img[i]
@@ -395,27 +420,25 @@ def plot_image(i, predictions, true_label, img):
     else:
         color = 'red'
     plt.xlabel("{} % {}, {}".format(int(100*np.max(prediction)), 
-        'Snap29' if prediction[0]>=0.5 else 'Control', 
-        'Snap29' if true_label[0]==1. else 'Control'), color = color)
+    'Snap29' if prediction[0]>=0.5 else 'Control', 
+    'Snap29' if true_label[0]==1. else 'Control'), color = color)
 
-### I am not sure why the num_cols and num_rows do not add up to the total figsize, 
-### but keep this in mind when planning for a new figure size and shape
+    return
 
 num_rows = 4
 num_cols = 3
 num_images = 24
 
-### Plot initialization
-
+# Plot initialization
 plt.figure(figsize = (num_rows, num_cols))
 
-### Plot assembly and display
-
+# Plot assembly and display
 for i in range(num_images):
   plt.subplot(num_rows, 2*num_cols, i+1)
   plot_image(i+1, predictions, test_labels, test_images)
 
 plt.show() 
+
 ```
 
 which yields
@@ -443,6 +466,7 @@ l + geom_boxplot(width=0.4) +
     ylim(50, 100) +
     ylab('Test accuracy') +
     xlab('Dataset')
+    
 ```
 
 which yields
@@ -473,6 +497,7 @@ q +
   xlab('Epoch') +
   ylim(50, 105) + 
   scale_x_continuous(breaks = seq(1, 9, by = 1))
+  
 ```
 
 As backpropegation lowers the cost function, we would expect for the classification accuracy to increase for each epoch trained. For the network trained on the Snap29 dataset, this is indeed the case: the average training accuracy increases in each epoch and reaches ~94 % after the last epoch.  But something very different is observed for the network trained on Snf7 images: a rapid increase to 100 % training accuracy by the third epoch is observed, and subsequent epochs maintain the 100 % accuracy.
@@ -503,13 +528,13 @@ Once again Snap29 training accuracy lags behind that of Snf7.
 
 To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
 
-Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [here](https://arxiv.org/abs/1611.03530) and [here](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet mimic, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
+Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [this paper](https://arxiv.org/abs/1611.03530) and [another paper](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet clone, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_10.png)
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
-There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for the deep network) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  Thirdly and most importantly, see below.
+There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for the deep network) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
 
 ### Learning (ie increasing test classification accuracy) does not equate to global minimization of a cost function during training
 
