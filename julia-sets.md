@@ -1,6 +1,6 @@
 ## Julia sets
 
-A Julia (named after Gaston Julia) set is the boundary of the sets of unbounded and bounded iterates of the family of functions
+A Julia (named after G. Julia) set is the boundary of the sets of unbounded and bounded iterates of the family of functions
 
 $$
 f_a(x) = x^2 + a 
