@@ -24,7 +24,7 @@ may be expressed as
 
 $$
 ax^2 + bx = -c \\
-x^2 + \frac{b}{a} x = - \frac{c}{a}
+x^2 + \frac{b}{a} x = - \frac{c}{a} 
 $$
 
 Completing the square by adding $b^2/4a^2$ to both sides, 
