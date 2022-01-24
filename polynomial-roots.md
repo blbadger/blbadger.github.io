@@ -4,7 +4,7 @@ This page is the first of a two-part series on methods to find polynomial roots.
 
 ### Introduction
 
-Polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
+Algebraic polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
 
 Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots. 
 
@@ -14,13 +14,46 @@ $$
 x = -b/a
 $$
 
-For a degree 2 polynomial $ax^2 + bx + c$, the closed form expression
+For a degree 2 polynomial $ax^2 + bx + c$, the roots
 
 $$
-x = \frac{-b \pm \sqrt{b^2-2^2ac}}{2a}
-$$ 
+ax^2 + bx + c = 0
+$$
 
-suffices.  There are more references to the constants (all except $c$ are referenced twice) but there is no indication that we cannot make a closed form expression for larger polynomial roots.  For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables achieved by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$, and a real root of this resulting equation may be found as follows
+may be expressed as 
+
+$$
+ax^2 + bx = -c \\
+x^2 + \frac{b}{a}x = -\frac{c}{a}
+$$
+We may complete the square by adding $b^2/4a^2$ to both sides, 
+
+$$
+ax^2 + \frac{b}{a}x - \frac{b^2}{4a^2} = \frac{b^2}{4a^2} - \frac{c}{a} \\
+\tag{1}
+$$
+
+and now the left-hand term is equal to
+
+$$
+\left( x + \frac{b}{2a} \right) ^2
+$$
+
+such that when we square root both sides of (1), 
+
+$$
+x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}}
+$$
+
+and as multiplying $b^2/4a^2 - c/a$ by $4a^2$ and simplifying gives $b^2 - 4ac$,
+
+$$
+x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+$$
+
+Which was what we wanted.  At this point, there is no clear indication that we cannot find a similar expression for any arbitrary polynomial, but there is some slight indication that finding the expression may be very difficult because completing the square is not a method that is necessarily applicable to higher powers. 
+
+For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables achieved by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$, and a real root of this resulting equation may be found as follows
 
 $$
 x = \sqrt[3]{\frac{-b}{2} + \sqrt D} + \sqrt[3]{\frac{-b}{2} - \sqrt D} \\
