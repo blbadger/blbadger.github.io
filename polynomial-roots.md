@@ -24,16 +24,17 @@ may be expressed as
 
 $$
 ax^2 + bx = -c \\
-x^2 + \frac{b}{a}x = -\frac{c}{a}
+x^2 + \frac{b}{a} x = - \frac{c}{a}
 $$
-We may complete the square by adding $b^2/4a^2$ to both sides, 
+
+Completing the square by adding $b^2/4a^2$ to both sides, 
 
 $$
 ax^2 + \frac{b}{a}x - \frac{b^2}{4a^2} = \frac{b^2}{4a^2} - \frac{c}{a} \\
 \tag{1}
 $$
 
-and now the left-hand term is equal to
+the left-hand term is now equal to
 
 $$
 \left( x + \frac{b}{2a} \right) ^2
@@ -51,7 +52,7 @@ $$
 x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
 $$
 
-Which was what we wanted.  At this point, there is no clear indication that we cannot find a similar expression for any arbitrary polynomial, but there is some slight indication that finding the expression may be very difficult because completing the square is not a method that is necessarily applicable to higher powers. 
+At this point, there is no clear indication that we cannot find a similar expression for any arbitrary polynomial, but there is some slight indication that finding the expression may be very difficult because completing the square is not a method that is necessarily applicable to higher powers. 
 
 For degree 3 polynomials of the form $ay^3 + by^2 + cy + d$, a change of variables achieved by substituting $y = x - \frac{b}{3a}$ gives $x^3 + ax + b$, and a real root of this resulting equation may be found as follows
 
