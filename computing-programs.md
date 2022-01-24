@@ -219,7 +219,7 @@ user	0m0.323s
 sys	0m0.221s
 ```
 
-For larger matricies, `numpy.linalg.det()` is faster than our memoized recursive solution.  How is this possible?  It turns out that while the recursive approach to matrix determinant finding is perfectly good, this is not the fastest approach: instead, there is a properties of the determinant that allow for an approach that does not use recursion at all, and is O(m+n) time complexity.  This property is that scalar multiple of one column to another does not change the determinant's value.  Therefore, determinants can be computed very rapidly by simply eliminating columns (transforming values to zeros in that column) before proceeding with the above recursive algorithm.
+For larger matricies, `numpy.linalg.det()` is faster than our memoized recursive solution.  How is this possible?  It turns out that while the recursive approach to matrix determinant finding is perfectly good, this is not the fastest approach: instead, there is a property of the determinant that allow for an approach that does not use recursion at all.  This property is that scalar multiple of one column to another does not change the determinant's value.  Therefore, determinants can be computed very rapidly by simply eliminating columns (transforming values to zeros in that column) thereby avoiding the above algorithm.
 
 ### Trailing factorial zeros
 
