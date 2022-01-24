@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-The mathematical approach to change over time. Most dynamical systems are nonlinear and thus generally unsolvable, and though deterministic are unpredictable.  
+The mathematical approach to change over time. Most dynamical systems are nonlinear and generally unsolvable, and though deterministic are unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
