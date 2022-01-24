@@ -16,7 +16,7 @@
  </head>
 
 ## Dynamics
-The mathematical approach to change over time. Most dynamical systems are nonlinear and generally unsolvable, and though deterministic are unpredictable.  
+The mathematical approach to change over time. Most dynamical systems are nonlinear and generally unsolvable, and though deterministic are often unpredictable.  
 
 ### [Logistic map](/logistic-map.md)
 
@@ -156,7 +156,7 @@ $$
 
 
 ## Physics
-As for any science, an attempt to explain observations and predict future ones using hypothetical theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
+As for any science, an attempt to explain observations and predict future ones using hypothetical statements called theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
 
 ### [Entropy](/entropy.md)
 
