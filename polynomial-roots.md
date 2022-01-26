@@ -4,9 +4,14 @@ This page is the first of a two-part series on methods to find polynomial roots.
 
 ### Introduction
 
-Algebraic polynomials are equations of the type $ax^n + bx^{n-1} + cx^{n-2} ... + z$  
+Algebraic polynomials are equations of the type 
 
-Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots. 
+$$
+ax^n + bx^{n-1} + cx^{n-2} ... + z
+\tag{1}
+$$
+
+Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots. By the fundamental theorem of algebra, every polynomial has at least one root and therefore (1) contains exactly $n$ (not necessarily distinct) roots in $\Bbb C$.
 
 At first glance, rooting polynomials in terms of their constants seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
@@ -31,7 +36,7 @@ Completing the square by adding $b^2/4a^2$ to both sides,
 
 $$
 ax^2 + \frac{b}{a}x + \frac{b^2}{4a^2} = \frac{b^2}{4a^2} - \frac{c}{a} \\
-\tag{1}
+\tag{2}
 $$
 
 the left-hand term is now equal to
@@ -40,13 +45,13 @@ $$
 \left( x + \frac{b}{2a} \right) ^2
 $$
 
-such that when we square root both sides of (1), 
+such that when we square root both sides of (2), 
 
 $$
 x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}}
 $$
 
-and as multiplying $b^2/4a^2 - c/a$ by $4a^2$ and simplifying gives $b^2 - 4ac$,
+and simplifying by multiplying the right hand side via multiplying by $\sqrt{4a^2} / \sqrt{4a^2}$ before subtracting $\frac{b}{2a}$ yields
 
 $$
 x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
@@ -69,13 +74,13 @@ The finding that there is no closed expression for any general finite polynomial
 
 ### Newton's method for estimating roots of polynomial equations
 
-What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal is simply to find a root, rather than all roots, we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iteratively such that the x-intercept found previously is the x-value of the new point.  This can be expressed dynamically as follows:
+What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal it to approximate a root, rather than express it with arbitrarily accuracy, we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iteratively such that the x-intercept found previously becomes the x-value of the new point.  This can be expressed dynamically as follows:
 
 $$
 x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
-After a certain number of iterations, this method settles on a root as long as our initial guess is reasonable.  
+After a certain number of iterations, this method usually settles on a root as long as our initial guess is reasonable.  
 
 Let's try it out on the equation $y = x^3 - 1$, which has one real root at $x = 1$ and two complex roots 
 
@@ -334,6 +339,8 @@ z^{3.86} - 1 \to z^{3.886}-1
 $$
 
 {% include youtube.html id='qS8g6m0QOik' %}
+
+As the polynomial's largest power is incremented, large area of poorly-converging initial points appears as a light region to the left of the origin.  This is the result of the appearance of a period-2 attractor whose points converge on the root along the negative real line as the polynomial approaches $z^4-1$
 
 The images produced by searching the complex plane for points that converge quickly can be very beautiful.  It is fascinating to explore the exquisite shapes that are made with relatively simple polynomials, so I made a web application to allow one to explore these images freely using Newton's method (and other methods detailed towards the end of this page).  Follow [this link](https://pfinderr.herokuapp.com/) for the app.
 
