@@ -87,19 +87,21 @@ Now for a function that calculates the change in velocity (acceleration) for eac
 
 ```python
 def accelerations(p1, p2, p3):
-	'''A function to calculate the derivatives of x, y, and z
+	'''
+	A function to calculate the derivatives of x, y, and z
 	given 3 object and their locations according to Newton's laws
 	'''
 	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt(np.sum([i**2 for i in p1 - p2]))**3) -  \
-	9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
+		       9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
 
 	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt(np.sum([i**2 for i in p2 - p3]))**3) -  \
-	9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
+		       9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
 
 	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt(np.sum([i**2 for i in p3 - p1]))**3) -  \
-	9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
+		       9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
 
 	return planet_1_dv, planet_2_dv, planet_3_dv
+	
 ```
 A time step size `delta_t` is chosen, which should be small for accuracy, and the number of steps are specified and an array corresponding to the trajectory of each point is initialized.  Varying initial velocites are allowed, so both position and velocity require array initialization.
 
@@ -133,7 +135,7 @@ and the velocity and position at each point is calculated for each time step.  F
 ```python
 # evolution of the system
 for i in range(steps-1):
-	#calculate derivatives
+	# calculate derivatives
 	dv1, dv2, dv3 = accelerations(p1[i], p2[i], p3[i])
 
 	v1[i + 1] = v1[i] + dv1 * delta_t
@@ -162,10 +164,11 @@ plt.axis('on')
 # ie plt.axis is set to 'on'
 ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
 
-# make pane's have the same colors as background
+# make panes have the same color as the background
 ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
 plt.show()
 plt.close()
+
 ```
 And we are done!  This yields the following map of the trajectories in 3D space. 
 
@@ -181,6 +184,7 @@ The orientation of the view can be specified using the interactive matplotlib in
 ...
 ax.view_init(elev = 10, azim = 40)
 plt.savefig('{}'.format(3_body_image), dpi=300)
+
 ```
 
 Over time (sped up for brevity) and from a slightly different perspective, the trajectory is
@@ -272,6 +276,7 @@ Plotting the trajectories of p2 and p3, we have
 This plot looks much more regular!  The trajectories form periodic orbits that, like other two body trajectories, lie along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop to show this.
 
 ```python
+
 ...
 
 for t in range(360):
@@ -287,12 +292,15 @@ for t in range(360):
 	# ie plt.axis is set to 'on'
 	ax.set_xticks([]), ax.set_yticks([]), ax.set_zticks([])
 
-	# make pane's have the same colors as background
-	ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0)), ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
+	# make panes have the same color as the background
+	ax.w_xaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
+	ax.w_yaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
+	ax.w_zaxis.set_pane_color((0.0, 0.0, 0.0, 1.0))
 	
 	ax.view_init(elev = 20, azim = t)
 	plt.savefig('{}'.format(t), dpi=300, bbox_inches='tight')
 	plt.close()
+	
 ```
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated_2.gif)
