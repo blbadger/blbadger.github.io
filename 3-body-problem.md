@@ -276,28 +276,28 @@ As we have three bodies, we can choose one of these (say `p1`) to allow to start
 Sensitivity is initialized by changing the 3 by 1 by 1 initial point for planet 1 to an array of size 3 by y_res by x_res for that planet.  For example, if we want to plot 100 points along both the x and y-axis we start with a 3x100x100 size array for `p1`.  
 
 ```python
-	def sensitivity(self, y_res, x_res, steps):
-		"""
-		Plots the sensitivity to initial values per starting point of planet 1, as
-		measured by the time until divergence.
-		"""
+def sensitivity(self, y_res, x_res, steps):
+	"""
+	Plots the sensitivity to initial values per starting point of planet 1, as
+	measured by the time until divergence.
+	"""
 
-		delta_t = self.delta_t
-		y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
-		grid = np.meshgrid(x, y)
-		grid2 = np.meshgrid(x, y)
-		
-		# grid of all -11, identical starting z-values
-		z = np.zeros(grid[0].shape) - 11
+	delta_t = self.delta_t
+	y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
+	grid = np.meshgrid(x, y)
+	grid2 = np.meshgrid(x, y)
 
-		# shift the grid by a small amount
-		grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
-		# grid of all -11, identical starting z-values
-		z_prime = np.zeros(grid[0].shape) - 11 + 1e-3
-		
-		# p1_start = x_1, y_1, z_1
-		p1 = np.array([grid[0], grid[1], z])
-		p1_prime = np.array([grid2[0], grid2[1], z_prime])
+	# grid of all -11, identical starting z-values
+	z = np.zeros(grid[0].shape) - 11
+
+	# shift the grid by a small amount
+	grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
+	# grid of all -11, identical starting z-values
+	z_prime = np.zeros(grid[0].shape) - 11 + 1e-3
+
+	# p1_start = x_1, y_1, z_1
+	p1 = np.array([grid[0], grid[1], z])
+	p1_prime = np.array([grid2[0], grid2[1], z_prime])
 		
 ```
 But now we also have to have arrays of identical dimensions for all the other planets, as their trajectories each depend on the initial points of planet 1.  This means that we must make arrays that track the motion of each planet in three-dimensional space for all points in the initial plane of possible planet 1 values.
@@ -305,28 +305,28 @@ But now we also have to have arrays of identical dimensions for all the other pl
 For example, planet two can be initialized to the same value as in our approach above, or $(0, 0, 0)$ for both position and velocity, with the following:
 
 ```python
-		p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
-		v2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
+	p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
+	v2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 		
 ```
 Sensitivity to initial values can be tested by observing if any of the `p1` trajectories have separated significantly from the shifted `p1_prime` values.  This is known as divergence, and the following function creates a boolean array to see which points have separated (diverged):
 
 ```python
-	def not_diverged(self, p1, p1_prime):
-		"""
-		Find which trajectories have diverged from their shifted values
+def not_diverged(self, p1, p1_prime):
+	"""
+	Find which trajectories have diverged from their shifted values
 
-		Args:
-			p1: np.ndarray[np.meshgrid[bool]]
-			p1_prime: np.ndarray[np.meshgrid[bool]]
+	Args:
+		p1: np.ndarray[np.meshgrid[bool]]
+		p1_prime: np.ndarray[np.meshgrid[bool]]
 
-		Return:
-			bool_arr: np.ndarray[bool]
+	Return:
+		bool_arr: np.ndarray[bool]
 
-		"""
-		separation_arr = np.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
-		bool_arr = separation_arr <= self.distance
-		return bool_arr
+	"""
+	separation_arr = np.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
+	bool_arr = separation_arr <= self.distance
+	return bool_arr
 		
 ```
 
@@ -374,7 +374,7 @@ After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (rangi
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence.png)
 
-where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently homoclinic tangles.
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle.
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
