@@ -157,16 +157,15 @@ $$
 
 
 ## Physics
-As for any science, an attempt to explain observations and predict future ones using hypothetical statements called theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
-
-### [Entropy](/entropy.md)
-
-![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
+As for any natural science, an attempt to explain observations and predict future ones using hypothetical statements called theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
 
 ### [3 body problem](/3-body-problem.md)
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
+### [Entropy](/entropy.md)
+
+![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
 
 ### [Quantum mechanics](/quantum-mechanics.md)
 
