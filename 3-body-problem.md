@@ -2,7 +2,7 @@
 
 ### Newtonian mechanics
 
-Newtonian mechanics are often thought to render the motion of celestial bodies a solved problem: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  Consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
+Newtonian mechanics are often thought to render the motion of planets and stars a solved problem: as the laws of motion have been found, the only thing left to do is to apply them to the heavenly bodies to know where they will go.  Consulting the section on Newtonian mechanics in Feynman's lectures on physics (vol. 1 section 9-9), we find this confident statement:
 
 "Now armed with the tremendous power of Newton's laws, we can not only calculate such simple motions but also, given only a machine to handle the arithmetic, even the tremendously complex motions of the planets, to as high a degree of precision as we wish!"
 
@@ -24,7 +24,13 @@ a_2 = -Gm_3\frac{p_2 - p_3}{\lvert p_2 - p_3 \rvert ^3} - Gm_1\frac{p_2 - p_1}{\
 a_3 = -Gm_1\frac{p_3 - p_1}{\lvert p_3 - p_1 \rvert ^3} - Gm_2\frac{p_3 - p_2}{\lvert p_3 - p_2 \rvert^3} 
 $$
  
-where $p_i = (x_i, y_i, z_i)$ and $a_i$ refers to the acceleration of $p_i$, ie $a_i = (\ddot x_i, \ddot y_i, \ddot z_i)$.  Note that $\lvert p_1 \rvert$ signifies a vector norm, not absolute value or cardinality. The vector norm is the distance to the origin, calculated in three dimensions as
+where $p_i = (x_i, y_i, z_i)$ and $a_i$ refers to the acceleration of $p_i$, ie 
+
+$$
+a_i = (\ddot x_i, \ddot y_i, \ddot z_i)
+$$
+
+Note that $\lvert p_1 \rvert$ signifies a vector norm, not absolute value or cardinality. The vector norm is the distance to the origin, calculated in three dimensions as
 
 $$
 \lvert p_1 \rvert = \sqrt {x_1^2 + y_1^2 + z_1^2}
@@ -87,22 +93,26 @@ Now for a function that calculates the change in velocity (acceleration) for eac
 
 ```python
 def accelerations(p1, p2, p3):
-	'''
+	"""
 	A function to calculate the derivatives of x, y, and z
 	given 3 object and their locations according to Newton's laws
-	'''
-	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt(np.sum([i**2 for i in p1 - p2]))**3) -  \
-		       9.8 * m_3 * (p1 - p3)/(np.sqrt(np.sum([i**2 for i in p1 - p3]))**3)
+	
+	"""
 
-	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt(np.sum([i**2 for i in p2 - p3]))**3) -  \
-		       9.8 * m_1 * (p2 - p1)/(np.sqrt(np.sum([i**2 for i in p2 - p1]))**3)
+	m_1, m_2, m_3 = self.m1, self.m2, self.m3
+	planet_1_dv = -9.8 * m_2 * (p1 - p2)/(np.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)**3) - \
+		       9.8 * m_3 * (p1 - p3)/(np.sqrt((p1[0] - p3[0])**2 + (p1[1] - p3[1])**2 + (p1[2] - p3[2])**2)**3)
 
-	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt(np.sum([i**2 for i in p3 - p1]))**3) -  \
-		       9.8 * m_2 * (p3 - p2)/(np.sqrt(np.sum([i**2 for i in p3 - p2]))**3)
+	planet_2_dv = -9.8 * m_3 * (p2 - p3)/(np.sqrt((p2[0] - p3[0])**2 + (p2[1] - p3[1])**2 + (p2[2] - p3[2])**2)**3) - \
+		       9.8 * m_1 * (p2 - p1)/(np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2 + (p2[2] - p1[2])**2)**3)
+
+	planet_3_dv = -9.8 * m_1 * (p3 - p1)/(np.sqrt((p3[0] - p1[0])**2 + (p3[1] - p1[1])**2 + (p3[2] - p1[2])**2)**3) - \
+		       9.8 * m_2 * (p3 - p2)/(np.sqrt((p3[0] - p2[0])**2 + (p3[1] - p2[1])**2 + (p3[2] - p2[2])**2)**3)
 
 	return planet_1_dv, planet_2_dv, planet_3_dv
 	
 ```
+
 A time step size `delta_t` is chosen, which should be small for accuracy, and the number of steps are specified and an array corresponding to the trajectory of each point is initialized.  Varying initial velocites are allowed, so both position and velocity require array initialization.
 
 ```python
@@ -125,11 +135,12 @@ v3 = np.array([[0.,0.,0.] for k in range(steps)])
 The first element of each position and velocity array is assigned to the variables denoting starting coordinates,
 
 ```python
-# starting point
+# starting point and velocity
 p1[0], p2[0], p3[0] = p1_start, p2_start, p3_start
 
 v1[0], v2[0], v3[0] = v1_start, v2_start, v3_start
 ```
+
 and the velocity and position at each point is calculated for each time step.  For clarity, a two-step approach is chosen here such that the three body eqution is used to calculate the accelerations for each body given its position.  Then the acceleration is applied using Euler's method such that a new velocity `v1[i + 1]` is calculated. Using the current velocity, the new position `p1[i + 1]` is calculated using Euler's formula.
 
 ```python
@@ -253,6 +264,117 @@ If we make slightly worse and worse initial measurements, does the inaccuracy of
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/three_body_distance.gif)
 
 Just as for the [logistic map](logistic-map.md), the benefit we achieve for getting better initial accuracies is unpredictable. Sometimes a better initial measurement will lead to larger errors in prediction!
+
+### Divergence and Homoclinic Tangles
+
+We have so far observed the behavior of only one initial set of points in three-dimensional space for each planet.  But it is especially interesting to consider the behavior of many initial points.  One could consider the behavior of all points in $\Bbb R^3$, but this is often difficult to visualize as the trajectories may form something like a solid object.  To avoid this difficulty, we can restrict our initial points to some subspace.
+
+In $\Bbb R^3$ we can choose vectors in two basis vectors, perhaps $x, y$, to vary while the third $z$ stays constant.  Allowing two basis vectors to change freely in $\Bbb R^3$ forms a two-dimensional sheet in that three-dimensional space, or in other words forms a plane. What happens to points embedded in this plane as they observe Newton's laws of gravitation, and in particular do different points in this plane have different sensitivities to initial conditions?
+
+As we have three bodies, we can choose one of these (say `p1`) to allow to start in different locations in a two-dimensional plane while holding the other two bodies fixed in their starting points before observing the trajectory resulting from each of these different starting locations.  As we are interested in divergence, we can once again compare the trajectory of the planet `p1` at each of these starting points to a slightly shifted planet `p1_prime`.  As we are now dealing with an multidimensional array of initial points rather than only three per planet, a slightly different approach is required, found in [this source code](https://github.com/blbadger/threebody/blob/master/three_body_phase_portrait.py) file.
+
+Sensitivity is initialized by changing the 3 by 1 by 1 initial point for planet 1 to an array of size 3 by y_res by x_res for that planet.  For example, if we want to plot 100 points along both the x and y-axis we start with a 3x100x100 size array for `p1`.  
+
+```python
+	def sensitivity(self, y_res, x_res, steps):
+		"""
+		Plots the sensitivity to initial values per starting point of planet 1, as
+		measured by the time until divergence.
+		"""
+
+		delta_t = self.delta_t
+		y, x = np.arange(-20, 20, 40/y_res), np.arange(-20, 20, 40/x_res)
+		grid = np.meshgrid(x, y)
+		grid2 = np.meshgrid(x, y)
+		
+		# grid of all -11, identical starting z-values
+		z = np.zeros(grid[0].shape) - 11
+
+		# shift the grid by a small amount
+		grid2 = grid2[0] + 1e-3, grid2[1] + 1e-3
+		# grid of all -11, identical starting z-values
+		z_prime = np.zeros(grid[0].shape) - 11 + 1e-3
+		
+		# p1_start = x_1, y_1, z_1
+		p1 = np.array([grid[0], grid[1], z])
+		p1_prime = np.array([grid2[0], grid2[1], z_prime])
+		
+```
+But now we also have to have arrays of identical dimensions for all the other planets, as their trajectories each depend on the initial points of planet 1.  This means that we must make arrays that track the motion of each planet in three-dimensional space for all points in the initial plane of possible planet 1 values.
+
+For example, planet two can be initialized to the same value as in our approach above, or $(0, 0, 0)$ for both position and velocity, with the following:
+
+```python
+		p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
+		v2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
+		
+```
+Sensitivity to initial values can be tested by observing if any of the `p1` trajectories have separated significantly from the shifted `p1_prime` values.  This is known as divergence, and the following function creates a boolean array to see which points have separated (diverged):
+
+```python
+	def not_diverged(self, p1, p1_prime):
+		"""
+		Find which trajectories have diverged from their shifted values
+
+		Args:
+			p1: np.ndarray[np.meshgrid[bool]]
+			p1_prime: np.ndarray[np.meshgrid[bool]]
+
+		Return:
+			bool_arr: np.ndarray[bool]
+
+		"""
+		separation_arr = np.sqrt((p1[0] - p1_prime[0])**2 + (p1[1] - p1_prime[1])**2 + (p1[2] - p1_prime[2])**2)
+		bool_arr = separation_arr <= self.distance
+		return bool_arr
+		
+```
+
+Using this function to test whether or not planet 1 has diverged from its shifted planet 1 prime,
+
+```python
+		time_array = np.zeros(grid[0].shape)
+		# bool array of all True
+		still_together = grid[0] < 1e10
+		t = time.time()
+
+		# evolution of the system
+		for i in range(self.time_steps):
+			if i % 100 == 0:
+				print (i)
+				print (f'Elapsed time: {time.time() - t} seconds')
+
+			not_diverged = self.not_diverged(p1, p1_prime)
+
+			# points still together are not diverging now and have not previously
+			still_together &= not_diverged
+
+			# apply boolean mask to ndarray time_array
+			time_array[still_together] += 1
+```
+
+now we can follow the trajectories of each planet at each initial point.  Note that these trajectories are no longer tracked, as doing so requires an enormous amount of memory.  Instead the points and velocities are simply updated at each time step.
+
+```python
+			# calculate derivatives
+			dv1, dv2, dv3 = self.accelerations(p1, p2, p3)
+			dv1_prime, dv2_prime, dv3_prime = self.accelerations(p1_prime, p2_prime, p3_prime)
+
+			nv1 = v1 + dv1 * delta_t
+			nv2 = v2 + dv2 * delta_t
+			nv3 = v3 + dv3 * delta_t
+
+			p1 = p1 + v1 * delta_t
+			p2 = p2 + v2 * delta_t
+			p3 = p3 + v3 * delta_t
+			v1, v2, v3 = nv1, nv2, nv3
+```
+
+After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes) we have
+
+![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence.png)
+
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently homoclinic tangles.
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
