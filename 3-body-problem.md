@@ -333,41 +333,43 @@ def not_diverged(self, p1, p1_prime):
 Using this function to test whether or not planet 1 has diverged from its shifted planet 1 prime,
 
 ```python
-		time_array = np.zeros(grid[0].shape)
-		# bool array of all True
-		still_together = grid[0] < 1e10
-		t = time.time()
+def sensitivity(self, y_res, x_res, steps):
+	...
+	time_array = np.zeros(grid[0].shape)
+	# bool array of all True
+	still_together = grid[0] < 1e10
+	t = time.time()
 
-		# evolution of the system
-		for i in range(self.time_steps):
-			if i % 100 == 0:
-				print (i)
-				print (f'Elapsed time: {time.time() - t} seconds')
+	# evolution of the system
+	for i in range(self.time_steps):
+		if i % 100 == 0:
+			print (i)
+			print (f'Elapsed time: {time.time() - t} seconds')
 
-			not_diverged = self.not_diverged(p1, p1_prime)
+		not_diverged = self.not_diverged(p1, p1_prime)
 
-			# points still together are not diverging now and have not previously
-			still_together &= not_diverged
+		# points still together are not diverging now and have not previously
+		still_together &= not_diverged
 
-			# apply boolean mask to ndarray time_array
-			time_array[still_together] += 1
+		# apply boolean mask to ndarray time_array
+		time_array[still_together] += 1
 ```
 
 now we can follow the trajectories of each planet at each initial point.  Note that these trajectories are no longer tracked, as doing so requires an enormous amount of memory.  Instead the points and velocities are simply updated at each time step.
 
 ```python
-			# calculate derivatives
-			dv1, dv2, dv3 = self.accelerations(p1, p2, p3)
-			dv1_prime, dv2_prime, dv3_prime = self.accelerations(p1_prime, p2_prime, p3_prime)
+		# calculate derivatives
+		dv1, dv2, dv3 = self.accelerations(p1, p2, p3)
+		dv1_prime, dv2_prime, dv3_prime = self.accelerations(p1_prime, p2_prime, p3_prime)
 
-			nv1 = v1 + dv1 * delta_t
-			nv2 = v2 + dv2 * delta_t
-			nv3 = v3 + dv3 * delta_t
+		nv1 = v1 + dv1 * delta_t
+		nv2 = v2 + dv2 * delta_t
+		nv3 = v3 + dv3 * delta_t
 
-			p1 = p1 + v1 * delta_t
-			p2 = p2 + v2 * delta_t
-			p3 = p3 + v3 * delta_t
-			v1, v2, v3 = nv1, nv2, nv3
+		p1 = p1 + v1 * delta_t
+		p2 = p2 + v2 * delta_t
+		p3 = p3 + v3 * delta_t
+		v1, v2, v3 = nv1, nv2, nv3
 ```
 
 After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes) we have
