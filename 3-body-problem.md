@@ -376,7 +376,15 @@ After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (rangi
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence.png)
 
-where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle.
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. 
+
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane after %50,000$ time steps we have
+
+![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
+
+which, going from $t_i = 0 \to t_i =  50,000$ appears as
+
+{% include youtube.html id='FqXud5wbRF0' %}
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
