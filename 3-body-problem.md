@@ -378,7 +378,7 @@ After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (rangi
 
 where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. 
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane after %50,000$ time steps we have
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
