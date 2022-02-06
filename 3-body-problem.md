@@ -374,11 +374,13 @@ now we can follow the trajectories of each planet at each initial point.  Note t
 
 After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes) we have
 
-![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence.png)
+![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_xy.png)
 
-where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. 
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. As $t_i = 0 \to t_i =  56,800$ we have
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane after $50,000$ time steps we have
+{% include youtube.html id='fS_WuRdGVac' %}
+
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane ($y$ on the horizontal axis from -30 to 30 and $z$ on the vertical from -20 to 12) after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
