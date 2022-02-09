@@ -6,11 +6,10 @@ By setting up a pendulum to obey Newton's laws, we can model how the pendulum wi
 
 $$
 \cfrac{dx}{dt} = y \\
-\cfrac{dy}{dt} = -ay - b \cdot sin(x) 
+\cfrac{dy}{dt} = -ay - b \cdot \sin(x) 
 \tag{1} $$
 
-Where the constant $a$ denotes friction and the constant $b$ represents the constant of gravity divided by the length of the pendulum.  THis system of equations is nonlinear (due to the sine term) and dissipative (from the friction, $-ay$) which means that it takes a 2D area of starting points down to a 0 area.  
-
+Where the constant $a$ denotes friction and the constant $b$ represents the constant of gravity divided by the length of the pendulum.  This system of equations is nonlinear (due to the sine term) and dissipative (from the friction, $-ay$) which means that it takes a 2D volume of starting points down to a 0 area.  
 
 It is helpful to view the vector plot for this differential system to get an idea of where a point moves at any given (x,y) coordinate:
 
@@ -113,9 +112,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 plt.style.use('dark_background')
 
-def pendulum_phase_map(x, y, a=0.2, # coefficient of friction
-b=4.9 # g/L, 9.8 / 2
-):
+def pendulum_phase_map(x, y, a=0.2, b=4.9):
 	dx = y
 	dy = -a*y - b*np.sin(x)
 	return dx, dy
@@ -225,8 +222,8 @@ This means that the Clifford attractor is sensitive to initial values, implying 
 There are a number of similarities between widely different nonlinear systems.  Perhaps the most dramatic example of this is the ubiquitous appearance of self-similar fractals in chaotic nonlinear systems.  This may be most dramatically seen when the constant parameters of certain equation systems are tweaked such that the output produces a near-copy of another equation system, a phenomenon that is surprisingly common to nonlinear systems. For example, take the Clifford attractor:
 
 $$
-x_{n+1} = sin(ay_n) + c \cdot cos(ax_n) \\
-y_{n+1} = sin(bx_n) + d \cdot cos(by_n) 
+x_{n+1} = \sin(ay_n) + c \cdot \cos(ax_n) \\
+y_{n+1} = \sin(bx_n) + d \cdot \cos(by_n) 
 \tag{3} $$
 
 This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously (see [here](/clifford-attractor.md) for more information), setting
