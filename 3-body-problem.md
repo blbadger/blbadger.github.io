@@ -376,9 +376,11 @@ After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (rangi
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_xy.png)
 
-where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. As $t_i = 0 \to t_i =  56,800$ we have
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. As $t_i = 0 \to t_i =  100,000$ we have
 
-{% include youtube.html id='fS_WuRdGVac' %}
+{% include youtube.html id='Vp4r8SfWoEA' %}
+
+It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is much slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
 This topology is not special to points on the $x, y$ plane: on the $y, z$ plane ($y$ on the horizontal axis from -30 to 30 and $z$ on the vertical from -20 to 12) after $50,000$ time steps we have
 
