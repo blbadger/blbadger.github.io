@@ -226,7 +226,7 @@ x_{n+1} = \sin(ay_n) + c \cdot \cos(ax_n) \\
 y_{n+1} = \sin(bx_n) + d \cdot \cos(by_n) 
 \tag{3} $$
 
-This is clearly and very different equation system than one modeling pendulum swinging, and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously (see [here](/clifford-attractor.md) for more information), setting
+This is clearly a very different system of equations than (1), and for most constant values it produces a variety of maps that look nothing like what is produced by the pendulum system.  But observe what happens when we iterate semicontinuously (see [here](/clifford-attractor.md) for more information), setting
 
 $$
 a=-0.3, b=0.2, c=0.5, d=0.3, \Delta t = 0.9 \\
