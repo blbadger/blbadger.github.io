@@ -33,9 +33,9 @@ To see why this theorem does not apply to instances where $D=3$, observe that if
 
 Note also that this does not apply to a nowhere-differentiable map.  Such a map is undescribable by ordinary differential equations regardless.
 
-### $D-2$ dimensions are required for unrestricted, discontinuos cross-sections
+### Postulate: $D-2$ dimensions are required for unrestricted, discontinuos cross-sections
 
-For continuous maps, aperiodic attractors form in $n-2$ dimensions.  For the case of a 2-dimensional map considered by the Poincare-Bendixson theorem, this means that the aperiodic trajectory forms in 0 dimensions, ie at a point.  As a point is by definition a period 0 attractor in phase space, there is no aperiodic trajectory in 2 dimensional phase space.
+For continuous maps, aperiodic attractors seem to form in $n-2$ dimensions.  For the case of a 2-dimensional map considered by the Poincare-Bendixson theorem, this means that the aperiodic trajectory forms in 0 dimensions, ie at a point.  As a point is by definition a period 0 attractor in phase space, there is no aperiodic trajectory in 2 dimensional phase space.
 
 Note that this only applies to phase space in which every trajectory must be unique.  Boundary maps of continuous ODEs are unsrestricted are capable of forming fractals in 2 or fewer dimensions. 
 
