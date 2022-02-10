@@ -380,15 +380,15 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 {% include youtube.html id='Vp4r8SfWoEA' %}
 
-It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is much slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
+It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
 This topology is not special to points on the $x, y$ plane: on the $y, z$ plane ($y$ on the horizontal axis from -30 to 30 and $z$ on the vertical from -20 to 12) after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
-which, going from $t_i = 0 \to t_i =  50,000$ appears as
+which, going from $t_i = 0 \to t_i =  100,000$ we have
 
-{% include youtube.html id='FqXud5wbRF0' %}
+{% include youtube.html id='C5W1OpqIaiI' %}
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
