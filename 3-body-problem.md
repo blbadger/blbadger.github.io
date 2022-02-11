@@ -372,7 +372,7 @@ now we can follow the trajectories of each planet at each initial point.  Note t
 		v1, v2, v3 = nv1, nv2, nv3
 ```
 
-After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes) we have
+After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes such that the top left is $(y, z) = (-20, -20)$ and the bottom right is $(y, z) = (20, 20)$) we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_xy.png)
 
@@ -382,7 +382,7 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane ($y$ on the horizontal axis from -20 to 20 and $z$ on the vertical also ranging from -20 to 20) after $50,000$ time steps we have
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane ($y$ on the horizontal axis from -20 to 20 and $z$ on the vertical also ranging from -20 to 20 such that the top left is $(y, z) = (-20, -20)$ and the bottom right is $(y, z) = (20, 20)$) after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
