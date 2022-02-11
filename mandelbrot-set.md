@@ -186,7 +186,7 @@ How about if we move to a complex number? The set from $b = 0 \to b = 1 + i$ loo
 Instead of moving from the origin to a given point $b$, let's try rotating about the origin at a radius $r$.  Luckily we are already working with complex numbers so this can be done using Euler's formula
 
 $$
-e^{i y} = cos(y) + isin(y)
+e^{i y} = \cos(y) + i \sin(y)
 $$
 
 so if we want one complete rotation ($2\pi$ radians) after 300 images (the usual length of the videos on this page) of a point centered at a radius of $1/3$,
