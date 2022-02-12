@@ -372,7 +372,7 @@ now we can follow the trajectories of each planet at each initial point.  Note t
 		v1, v2, v3 = nv1, nv2, nv3
 ```
 
-After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (ranging from $(-20, 20)$ on both x- and y-axes such that the top left is $(y, z) = (-20, -20)$ and the bottom right is $(y, z) = (20, 20)$) we have
+After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (y-axis running top to bottom and x-axis running left to right) on both x- and y-axes such that the top left is $(y, x) = (-20, -20)$ and the bottom right is $(y, x) = (20, 20)$) we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_xy.png)
 
