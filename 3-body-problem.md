@@ -276,7 +276,7 @@ As we have three bodies, we can choose one of these (say `p1`) to allow to start
 Sensitivity is initialized by changing the 3 by 1 by 1 initial point for planet 1 to an array of size 3 by y_res by x_res for that planet.  For example, if we want to plot 100 points along both the x and y-axis we start with a 3x100x100 size array for `p1`.  
 
 ```python
-def sensitivity(self, y_res, x_res, steps):
+def sensitivity(self, y_res, x_res, steps, double_type=True):
 	"""
 	Plots the sensitivity to initial values per starting point of planet 1, as
 	measured by the time until divergence.
@@ -307,8 +307,18 @@ For example, planet two can be initialized to the same value as in our approach 
 ```python
 	p2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
 	v2 = np.array([np.zeros(grid[0].shape), np.zeros(grid[0].shape), np.zeros(grid[0].shape)])
-		
+	...
 ```
+
+Numpy is an indespensible library for mathematical computations, but there are others that may be faster for certain computations.  To speed up the three body divergence calculations we can employ pytorch to convert these numerical arrays from `numpy.ndarray()` objects to `torch.Tensor()` as follows:
+
+```python
+	# convert numpy arrays to torch.Tensor() objects (2x speedup with cpu)
+	p1, p2, p3 = torch.Tensor(p1), torch.Tensor(p2), torch.Tensor(p3)
+	...
+```
+before doing the same for `v1`, `v2`, `v3`, `p1_prime`, etc.  If the device performing these computations contains a graphics processing unit, these arrays can be computed using that by specifying `p1 = torch.Tensor(p1, device=torch.device('cuda'))` for each `torch.Tensor()` object to speed up the computations even further.
+
 Sensitivity to initial values can be tested by observing if any of the `p1` trajectories have separated significantly from the shifted `p1_prime` values.  This is known as divergence, and the following function creates a boolean array to see which points have separated (diverged):
 
 ```python
@@ -333,7 +343,7 @@ def not_diverged(self, p1, p1_prime):
 Using this function to test whether or not planet 1 has diverged from its shifted planet 1 prime,
 
 ```python
-def sensitivity(self, y_res, x_res, steps):
+def sensitivity(self, y_res, x_res, steps, double_type=True):
 	...
 	time_array = np.zeros(grid[0].shape)
 	# bool array of all True
@@ -347,7 +357,9 @@ def sensitivity(self, y_res, x_res, steps):
 			print (f'Elapsed time: {time.time() - t} seconds')
 
 		not_diverged = self.not_diverged(p1, p1_prime)
-
+		# convert Tensor[bool] object to numpy array
+		not_diverged = not_diverged.numpy()
+		
 		# points still together are not diverging now and have not previously
 		still_together &= not_diverged
 
