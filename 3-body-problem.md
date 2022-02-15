@@ -408,11 +408,18 @@ We can address the first question as follows: something must exist in the initia
 
 Now consider the placement of planets 2 and 3 in three-dimensional space.  Which points on the $y, z$ plane are of equal distance to planets 2 and 3?  The answer is the points that are equidistant from any certain point on the line connecting planets 2 and 3, projected onto the $y, z$ plane. Each pair of points in the $y, z$ plane that are equidistant from any point on this line will thus have identical trajectories, and should therefore have equal divergence which follows from our earlier argument.
 
-Is this the case?  Recalling that $p2_z, p2_y, p2_z = 0, 0, 0$ and $p3_z, p3_y, p3_z = 10, 10, 12$ the line connecting these points projected onto the $y, z$ plane has the equation $z=(12/10)y$.  This precisely aligns with the line of mirror symmetry seen above.
+Is this the case?  Recalling that 
 
-To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  If then we imagine time moving backwards and these points heading back to their original position, we can gain some appreciation for how space in the $y, z$ plane is stretched and folded in reverse and how this relates to the divergence map.
+$$
+(p2_x, p2_y, p2_z) = (0, 0, 0) \\
+(p3_x, p3_y, p3_z) = (10, 10, 12)
+$$ 
 
-An idea of the code to do this is as follows:
+the line connecting these points projected onto the $y, z$ plane has the equation $z=(12/10)y$.  This precisely aligns with the line of mirror symmetry seen above.
+
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  If then we imagine time moving backwards and these points heading back to their original position on that line, we can gain some appreciation for how space in the $y, z$ plane near the line of symmetry is stretched and folded in reverse and how this relates to the divergence map.
+
+The code to plot :
 
 ```python
 def plot_projection(self, divergence_array, i):
