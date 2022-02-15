@@ -394,13 +394,42 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane with $z$ on the vertical axis and $y$ on the horizontal such that the top left is $(y, z) = (-20, -20)$ and the bottom right is $(y, z) = (20, 20)$ after $50,000$ time steps we have
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the topright is $(y, z) = (20, 20)$ after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
-which, going from $t_i = 0 \to t_i =  100,000$ we have
+which, going from $t_i = 0 \to t_i =  150,000$ we have
 
-{% include youtube.html id='C5W1OpqIaiI' %}
+{% include youtube.html id='aahfR5Lpqps' %}
+
+Notice something interesting in the $y, z$ divergence pattern that does not exist in the $x, y$ map: a line of mirror symmetry, running from bottom left to top right with a slope of just more than 1.  Why does this symmetry exist, and why does it not exist for the $x, y$ map?  Most importantly, why are both maps of divergence filled with such intricate detail?
+
+We can address the first question as follows: something must exist in the initial positions of the second and third planets such that symmetry results for the $y, z$ plane but not $z, y$ plane.  Thinking about this question in general terms, what would cause our first planet to behave identically with regards to divergence rate at two different locations in space?  A readily available answer is that two starting points that result in identical (up to a translation or mirror symmetry) trajectories in space should experience the same divergence rate.  After all, if the trajectories are indistinguishable then it would be very strange if one were to diverge faster than the other.
+
+Now consider the placement of planets 2 and 3 in three-dimensional space.  Which points on the $y, z$ plane are of equal distance to planets 2 and 3?  The answer is the points that are equidistant from any certain point on the line connecting planets 2 and 3, projected onto the $y, z$ plane. Each pair of points in the $y, z$ plane that are equidistant from any point on this line will thus have identical trajectories, and should therefore have equal divergence which follows from our earlier argument.
+
+Is this the case?  Recalling that $p2_z, p2_y, p2_z = 0, 0, 0$ and $p3_z, p3_y, p3_z = 10, 10, 12$ the line connecting these points projected onto the $y, z$ plane has the equation $z=(12/10)y$.  This precisely aligns with the line of mirror symmetry seen above.
+
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  If then we imagine time moving backwards and these points heading back to their original position, we can gain some appreciation for how space in the $y, z$ plane is stretched and folded in reverse and how this relates to the divergence map.
+
+An idea of the code to do this is as follows:
+
+```python
+def plot_projection(self, divergence_array, i):
+	...
+	divergence_array[(self.p1[1] * 12 - self.p1[2] * 10 < 1).numpy() & (self.p1[1] * 12 - self.p1[2] * 10 > -1).numpy()] = i
+	plt.imshow(divergence_array, cmap='inferno', extent=[-20, 20, -20, 20])
+	plt.axis('on')
+	plt.xlabel('y axis', fontsize=7)
+	plt.ylabel('z axis', fontsize=7)
+	plt.savefig('Threebody_divergence{0:04d}.png'.format(i//100), bbox_inches='tight', dpi=420)
+	plt.close()
+```
+
+which results in 
+
+![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_projection_yz.png)
+
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
