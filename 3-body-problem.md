@@ -265,7 +265,7 @@ If we make slightly worse and worse initial measurements, does the inaccuracy of
 
 Just as for the [logistic map](logistic-map.md), the benefit we achieve for getting better initial accuracies is unpredictable. Sometimes a better initial measurement will lead to larger errors in prediction!
 
-### Divergence and Homoclinic Tangles
+### Divergence, Smale's Horseshoe, and Homoclinic Tangles
 
 We have so far observed the behavior of only one initial set of points in three-dimensional space for each planet.  But it is especially interesting to consider the behavior of many initial points.  One could consider the behavior of all points in $\Bbb R^3$, but this is often difficult to visualize as the trajectories may form something like a solid object.  To avoid this difficulty, we can restrict our initial points to some subspace.
 
@@ -273,7 +273,7 @@ In $\Bbb R^3$ we can choose vectors in two basis vectors, perhaps $x, y$, to var
 
 As we have three bodies, we can choose one of these (say `p1`) to allow to start in different locations in a two-dimensional plane while holding the other two bodies fixed in their starting points before observing the trajectory resulting from each of these different starting locations.  As we are interested in divergence, we can once again compare the trajectory of the planet `p1` at each of these starting points to a slightly shifted planet `p1_prime`.  As we are now dealing with an multidimensional array of initial points rather than only three per planet, a slightly different approach is required, found in [this source code](https://github.com/blbadger/threebody/blob/master/three_body_phase_portrait.py) file.
 
-Sensitivity is initialized by changing the 3 by 1 by 1 initial point for planet 1 to an array of size 3 by y_res by x_res for that planet.  For example, if we want to plot 100 points along both the x and y-axis we start with a 3x100x100 size array for `p1`.  
+Our sensitivity computational structure is initialized by changing the 3x1x1 initial point for planet 1 to an array of size 3 byy_res by x_res for that planet.  For example, if we want to plot 100 points along both the x and y-axis we start with a 3x1000x1000 size array for `p1`.  
 
 ```python
 def sensitivity(self, y_res, x_res, steps, double_type=True):
@@ -388,7 +388,7 @@ After $50,000$ time steps, initial points on the $x, y$ plane of planet 1 (y-axi
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_xy.png)
 
-where lighter values indicate earlier divergence. The folded and stretched topology here is known as the horseshoe map, or equivalently a homoclinic tangle. As $t_i = 0 \to t_i =  100,000$ we have
+where lighter values indicate earlier divergence. The folded and stretched topology here is known as Smale's horseshoe, also known as the baker's dough topology.  This map results when a section of space is repeatedly stretched and folded in upon itself, mirroring the process of dough kneading during the bread preparation process.  As time goes by, more and more 'folds' are apparent, for example as $t_i = 0 \to t_i =  100,000$ we have
 
 {% include youtube.html id='Vp4r8SfWoEA' %}
 
@@ -415,7 +415,9 @@ $$
 (p3_x, p3_y, p3_z) = (10, 10, 12)
 $$ 
 
-the line connecting these points projected onto the $y, z$ plane has the equation $z=(12/10)y$.  This precisely aligns with the line of mirror symmetry seen above.
+the line connecting these points projected onto the $y, z$ plane has the equation $z=(12/10)y$.  Plotting this line together with the map formed by observing divergence in the $y, z$ plane for $x=-10$, we see that indeed this is our line of mirror symmetry:
+
+![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_ogproj500.png)
 
 To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  If then we imagine time moving backwards and these points heading back to their original position on that line, we can gain some appreciation for how space in the $y, z$ plane near the line of symmetry is stretched and folded in reverse and how this relates to the divergence map.
 
@@ -433,10 +435,17 @@ def plot_projection(self, divergence_array, i):
 	plt.close()
 ```
 
-which results in 
+which at $t=50,000$ results in 
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_projection_yz.png)
 
+Now we can attempt to understand how the divergence map attains the horseshoe topology by observing the points that are mapped to our line of symmetry over time, as the horseshoe map itself forms over time.  The points which map to the line $z=(12/10)y$ exist on a relatively stable manifold (see how they mostly occupy the dark regions in the divergence map) and indeed they are visibly repelled by unstable (light-color) regions. Observing as $t_i=0 \to t_i=87,800$ we have
+
+{% include youtube.html id='dl198kBuKTI' %}
+
+Notice how these points on a stable manifold continually 'interset', ie become repelled by, unstable regions such that they elongate and gradually form a web-like mesh.  This dynamic structure was termed a 'homoclinic tangle' by Poincare, and was later shown by Smale to imply and be implied by the horseshoe map. 
+
+So in one sense, the regions of quickly- and slowly-diverging points are arranged in such a complicated and detailed fashion because they result from the continual mixing of stable (slowly diverging) and unstable (quickly diverging) regions of space.
 
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
