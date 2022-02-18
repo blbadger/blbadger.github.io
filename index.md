@@ -113,7 +113,7 @@ $$
 \{ f \} \sim 2^{\Bbb R}
 $$
 
-### [Poincare-Bendixson and dimension](/continuity-poincare.md)
+### [Poincaré-Bendixson and dimension](/continuity-poincare.md)
 
 $$
 D=2 \implies \\
