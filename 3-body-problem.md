@@ -419,9 +419,11 @@ the line connecting these points projected onto the $y, z$ plane has the equatio
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_ogproj500.png)
 
-To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  If then we imagine time moving backwards and these points heading back to their original position on that line, we can gain some appreciation for how space in the $y, z$ plane near the line of symmetry is stretched and folded in reverse and how this relates to the divergence map.
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points trajectories of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  Now this region is not necessarily the line of symmetry as time progresses because the other two planets move about, such that the line of symmetry changes according to their motions.  We could very well pick any other region to investigate, but the region of initial mirror symmetry has one important simplifying aspect: the resulting map will stay symmetric about the initial line of symmetry, making it easier to see where the points are located.
 
-The code to plot :
+If then we imagine time moving backwards and these points heading back to their original position on that line, we can gain some appreciation for how space in the $y, z$ plane near the line of symmetry is stretched and folded in reverse and how this relates to the divergence map.
+
+The code to plot this is:
 
 ```python
 def plot_projection(self, divergence_array, i):
@@ -443,7 +445,7 @@ Now we can attempt to understand how the divergence map attains the horseshoe to
 
 {% include youtube.html id='dl198kBuKTI' %}
 
-Notice how these points on a stable manifold continually 'interset', ie become repelled by, unstable regions such that they elongate and gradually form a web-like mesh.  This dynamic structure was termed a 'homoclinic tangle' by Poincare, and was later shown by Smale to imply and be implied by the horseshoe map. 
+Notice how these points on a stable manifold continually intersect, or more accurately meet and become repelled by unstable regions such that they elongate and gradually form a web-like mesh.  This dynamic structure was termed a 'homoclinic tangle' by Poincaré, and was later shown by Smale to imply and be implied by the horseshoe map.
 
 So in one sense, the regions of quickly- and slowly-diverging points are arranged in such a complicated and detailed fashion because they result from the continual mixing of stable (slowly diverging) and unstable (quickly diverging) regions of space.
 
