@@ -1,5 +1,5 @@
 
-### Continuity and Poincare-Bendixson
+### Continuity and Poincaré-Bendixson
 
 For this page, *aperiodic* signifies dynamical systems that are bounded (ie do not diverge to infinity) and lack periodicity.  Specifically, continuous phase space portraits of differentiable ODEs are considered, so the trajectories of such systems are necessarily differentiable (as they are defined on differential equations).  Unbounded dynamical systems may also be thought of as being aperiodic but are not considered.  On this page but not elsewhere, a 'map' is synonymous with a 'function'. 'dimensions' are taken to be plane dimensions.
 
@@ -9,7 +9,7 @@ As seen with examples on [this page](https://blbadger.github.io/), movement from
 
 There is a good reason for this shift: the Poincare-Bendixson theorem, which among other findings states that any attractor of a continuous map in two dimensions must be periodic: the attractor is either a point or a circuit line, corresponding to a zero- or one-dimensional attractor.  
 
-### The Poincare-Bendixson Theorem: continuous dynamical systems in two dimensions are periodic
+### The Poincaré-Bendixson Theorem: continuous dynamical systems in two dimensions are periodic
 
 If continuous maps may form aperiodic attractors in three or more dimensions, why are they unable to do so in two or less?  
 
@@ -33,7 +33,7 @@ To see why this theorem does not apply to instances where $D=3$, observe that if
 
 Note also that this does not apply to a nowhere-differentiable map.  Such a map is undescribable by ordinary differential equations regardless.
 
-### Postulate: $D-2$ dimensions are required for unrestricted, discontinuos cross-sections
+### Postulate: $D-2$ dimensions are required for unrestricted, discontinuous cross-sections
 
 For continuous maps, aperiodic attractors seem to form in $n-2$ dimensions.  For the case of a 2-dimensional map considered by the Poincare-Bendixson theorem, this means that the aperiodic trajectory forms in 0 dimensions, ie at a point.  As a point is by definition a period 0 attractor in phase space, there is no aperiodic trajectory in 2 dimensional phase space.
 
@@ -41,7 +41,7 @@ Note that this only applies to phase space in which every trajectory must be uni
 
 ### Discontinuous maps may be aperiodic in 1 or more dimension
 
-In other pages on this site, it was made apparent that moving from a continuous to a discontinuous map is capable of transforming a periodic trajectory to an aperiodic one.  From the Poincare-Bendixson theorem, it is clear why this is the case: a restriction to any space as seen above is impossible if the trajectory may simply discontinuously pass through (jump through) previous trajectories.  
+In other pages on this site, it was made apparent that moving from a continuous to a discontinuous map is capable of transforming a periodic trajectory to an aperiodic one.  From the Poincaré-Bendixson theorem, it is clear why this is the case: a restriction to any space as seen above is impossible if the trajectory may simply discontinuously pass through (jump through) previous trajectories.  
 
 Careful observation of discontinuous 1-dimensional or 2-dimensional maps shows that trajectories cross each other if the map is aperiodic, or at least they would if the trajectories were continuous.  The meaning here is not that one point in phase space heads in two directions (as this would no longer be specified by a function) but instead that if one connects each individual point in succession according the the order in which they are plotted, the connecting lines must cross each other if the map is aperiodic.  An example of this was seen for the [clifford attractor](https://blbadger.github.io/clifford-attractor.html), where the map became aperiodic precisely when the trajectories crossed each other.
 
