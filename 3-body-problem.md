@@ -394,7 +394,7 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps we have
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps,
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
@@ -419,9 +419,9 @@ the line connecting these points projected onto the $y, z$ plane has the equatio
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_ogproj500.png)
 
-Why does our $x, y$ plane not exhibit such symmetry? After all, projecting the line connecting p2 and p3 onto the $x, y$ plane we have $y=x$ so why is there no line of symmetry about the diagonal?  This is because the initial velocites for both p1 as well as p3 contain non-zero x-components.  This is significant because 
+Why does our $x, y$ plane not exhibit such symmetry? After all, projecting the line connecting p2 and p3 onto the $x, y$ plane we have $y=x$ so why is there no line of symmetry about the diagonal?  This is because the initial velocites for both p1 as well as p3 contain non-zero components of $x$.  Now imagine any two initial points that are equidistant from a point on the line $y-x$.  Are the trajectories of these two points still identical given that they have different identical but non-zero starting velocities in the $x, y$ plane? They are, because for one point of the pair the initial velocity vector will cause the approach to the line of symmetry to come sooner, whereas for the other point it will be longer or may not occur at all.
 
-To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can ask the following question: which initial points  of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time?  Because the trajectory of all three bodies are completely determined by their initial positions (and velocities), for any initial value of $y_0, z_0$ that approaches the line of symmetry such that $(12/10)y_i - z_i < \delta$ then the initial value's mirror point $y'_0, z'_0$ also approaches the line, as the trajectories and distances to the line $z=(12/10)y$ are identical.
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can ask the following question: which initial points  of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time?  Because the trajectory of all three bodies are completely determined by their initial positions (and velocities), for any initial value of $y_0, z_0$ that approaches the line of symmetry such that $(12/10)y_i - z_i < \delta$ then the initial value's mirror point $y'_0, z'_0$ also approaches the line, as the trajectories and distances to that line are identical for these initial points.
 
 Thus although could very well pick any other region to investigate the question of which initial points (for p1) end up there at any time, the region of initial mirror symmetry has one important simplifying aspect: the resulting map will stay symmetric about the initial line of symmetry, making it easier to see where the points are located.
 
@@ -470,14 +470,14 @@ m_3 = 30
 p2_start = np.array([0, 0, 0])
 v2_start = np.array([-3, 0, 0])
 ```
-Plotting the trajectories of p2 and p3, we have 
+
+Plotting the trajectories of p2 and p3,
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1.png)
 
 This plot looks much more regular!  The trajectories form periodic orbits that, like other two body trajectories, lie along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop to show this.
 
 ```python
-
 ...
 
 for t in range(360):
