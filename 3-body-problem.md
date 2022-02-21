@@ -394,7 +394,7 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
-This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the topright is $(y, z) = (20, 20)$ after $50,000$ time steps we have
+This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps we have
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
@@ -419,11 +419,13 @@ the line connecting these points projected onto the $y, z$ plane has the equatio
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_ogproj500.png)
 
-To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can first ask the question of which points trajectories of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time.  Now this region is not necessarily the line of symmetry as time progresses because the other two planets move about, such that the line of symmetry changes according to their motions.  We could very well pick any other region to investigate, but the region of initial mirror symmetry has one important simplifying aspect: the resulting map will stay symmetric about the initial line of symmetry, making it easier to see where the points are located.
+Why does our $x, y$ plane not exhibit such symmetry? After all, projecting the line connecting p2 and p3 onto the $x, y$ plane we have $y=x$ so why is there no line of symmetry about the diagonal?  This is because the initial velocites for both p1 as well as p3 contain non-zero x-components.  This is significant because 
 
-If then we imagine time moving backwards and these points heading back to their original position on that line, we can gain some appreciation for how space in the $y, z$ plane near the line of symmetry is stretched and folded in reverse and how this relates to the divergence map.
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can ask the following question: which initial points  of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time?  Because the trajectory of all three bodies are completely determined by their initial positions (and velocities), for any initial value of $y_0, z_0$ that approaches the line of symmetry such that $(12/10)y_i - z_i < \delta$ then the initial value's mirror point $y'_0, z'_0$ also approaches the line, as the trajectories and distances to the line $z=(12/10)y$ are identical.
 
-The code to plot this is:
+Thus although could very well pick any other region to investigate the question of which initial points (for p1) end up there at any time, the region of initial mirror symmetry has one important simplifying aspect: the resulting map will stay symmetric about the initial line of symmetry, making it easier to see where the points are located.
+
+The code to plot this is as follows:
 
 ```python
 def plot_projection(self, divergence_array, i):
@@ -437,15 +439,19 @@ def plot_projection(self, divergence_array, i):
 	plt.close()
 ```
 
-which at $t=50,000$ results in 
+such that each initial point in the $y, z$ plane that is close to (specifically within 2 units using the Manhattan distance metric) of the line $z=(12/10)y$ appear as white spots.  At $t=50,000$, the map is as follows
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_projection_yz.png)
 
-Now we can attempt to understand how the divergence map attains the horseshoe topology by observing the points that are mapped to our line of symmetry over time, as the horseshoe map itself forms over time.  The points which map to the line $z=(12/10)y$ exist on a relatively stable manifold (see how they mostly occupy the dark regions in the divergence map) and indeed they are visibly repelled by unstable (light-color) regions. Observing as $t_i=0 \to t_i=87,800$ we have
+Now we can attempt to understand how the divergence map attains the horseshoe topology by observing the points that are mapped to our line of symmetry over time, as the horseshoe map itself forms over time.  The points which map to the line $z=(12/10)y$ exist on a relatively stable manifold (see how they mostly occupy the dark regions in the divergence map, and this is because any initial point on this line will result in all three bodies starting in a two-dimensional plane) and indeed they are visibly repelled by unstable (light-color) regions. Observing as $t_i=0 \to t_i=87,800$ we have
 
 {% include youtube.html id='dl198kBuKTI' %}
 
 Notice how these points on a stable manifold continually intersect, or more accurately meet and become repelled by unstable regions such that they elongate and gradually form a web-like mesh.  This dynamic structure was termed a 'homoclinic tangle' by Poincaré, and was later shown by Smale to imply and be implied by the horseshoe map.
+
+To see what happens when we observe a different region, here is the map of which initial points are located near the line $z=(12/10)y + 3$ at any given time from $t_i=0 \to t_i=150,000$
+
+{% include youtube.html id='YX76cAmFbkg' %}
 
 So in one sense, the regions of quickly- and slowly-diverging points are arranged in such a complicated and detailed fashion because they result from the continual mixing of stable (slowly diverging) and unstable (quickly diverging) regions of space.
 
