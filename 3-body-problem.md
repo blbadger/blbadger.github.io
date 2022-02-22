@@ -421,7 +421,7 @@ the line connecting these points projected onto the $y, z$ plane has the equatio
 
 Why does our $x, y$ plane not exhibit such symmetry? After all, projecting the line connecting p2 and p3 onto the $x, y$ plane we have $y=x$ so why is there no line of symmetry about the diagonal?  This is because the initial velocites for both p1 as well as p3 contain non-zero components of $x$.  Now imagine any two initial points that are equidistant from a point on the line $y-x$.  Are the trajectories of these two points still identical given that they have different identical but non-zero starting velocities in the $x, y$ plane? They are, because for one point of the pair the initial velocity vector will cause the approach to the line of symmetry to come sooner, whereas for the other point it will be longer or may not occur at all.
 
-To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can ask the following question: which initial points  of the $y, z$ plane land close to the line of symmetry $z=(12/10)y$ as the planets move over time?  Because the trajectory of all three bodies are completely determined by their initial positions (and velocities), for any initial value of $y_0, z_0$ that approaches the line of symmetry such that $(12/10)y_i - z_i < \delta$ then the initial value's mirror point $y'_0, z'_0$ also approaches the line, as the trajectories and distances to that line are identical for these initial points.
+To begin to answer the second question of why such detailed shapes form when we plot divergence time, one can ask the following question: which initial points  of the $y, z$ plane land close to the line of symmetry as the planets move over time?  Because the trajectory of all three bodies are completely determined by their initial positions (and velocities), for any initial value of $y_0, z_0$ that approaches the line of symmetry such that $(12/10)y_i - z_i < \delta$ then the initial value's mirror point $y'_0, z'_0$ also approaches the line, as the trajectories and distances to that line are identical for these initial points.
 
 Thus although could very well pick any other region to investigate the question of which initial points (for p1) end up there at any time, the region of initial mirror symmetry has one important simplifying aspect: the resulting map will stay symmetric about the initial line of symmetry, making it easier to see where the points are located.
 
@@ -443,7 +443,13 @@ such that each initial point in the $y, z$ plane that is close to (specifically 
 
 ![threebody projection]({{https://blbadger.github.io}}/3_body_problem/Threebody_projection_yz.png)
 
-Now we can attempt to understand how the divergence map attains the horseshoe topology by observing the points that are mapped to our line of symmetry over time, as the horseshoe map itself forms over time.  The points which map to the line $z=(12/10)y$ exist on a relatively stable manifold (see how they mostly occupy the dark regions in the divergence map, and this is because any initial point on this line will result in all three bodies starting in a two-dimensional plane) and indeed they are visibly repelled by unstable (light-color) regions. Observing as $t_i=0 \to t_i=87,800$ we have
+Now we can attempt to understand how the divergence map attains the horseshoe topology by observing the points that are mapped to our line of symmetry over time, as the horseshoe map itself forms over time.  The points which map to the line $z=(12/10)y$ exist on a relatively stable manifold.  Why is the line of symmetry relatively stable? 
+
+We can see that indeed the initial points which map to the line of symmetry also tend to be stable by simply observing that in our figure, the white points mostly occupy the dark regions in the divergence map.  But why is this the case?  All points starting exactly on the line of symmetry (meaning that p1 starts on any point where $10z = 12y$) will remain on this line because in that case all three planets exist in a plane, and with no initial velocity in the $y, z$ plane they will stay in that plane and thus are accurately modeled in two dimensions.  This means that their trajectories will be periodic (see the next section for more details) and therefore divergence will not occur, making these starting points stable.
+
+What about the case for trajectories of p1 that reach the line of symmetry after some time, why do they tend to be more stable?  We now have a far more difficult question to address, but for an investigation into one- and two-dimensional analogues of that question [this page](https://blbadger.github.io/aperiodic-inverted.html).
+
+Observing as $t_i=0 \to t_i=87,800$ we have:
 
 {% include youtube.html id='dl198kBuKTI' %}
 
@@ -475,7 +481,7 @@ Plotting the trajectories of p2 and p3,
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_1.png)
 
-This plot looks much more regular!  The trajectories form periodic orbits that, like other two body trajectories, lie along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop to show this.
+This plot looks much more regular!  As we will later see, these trajectories form periodic orbits that, like other two body trajectories, lie along a plane.  We can do some fancy rotation in three dimensional space by changing using a second loop after our array-filling loop to show this.
 
 ```python
 ...
@@ -506,7 +512,7 @@ for t in range(360):
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_rotated_2.gif)
 
-One might raise a question: aren't trajectory crossings not possible for ordinary differential equations?  For the case of a single object moving in space, this is correct, because any trajectory crossing would imply that some point heads toward two different points next, an impossibility.  But as we have two objects, crossings can occur if the other object is in a different place than before.  What is now not possible is for both objects to revisit a previously-occuppied pair of points but then to travel to a new location.
+An aside: aren't trajectory crossings impossible for ordinary differential equations?  For the case of a single object moving in space, this is correct, because any trajectory crossing would imply that some point heads toward two different points next, an impossibility for any function.  But as we have two objects, each with velocity as well as position vectors, crossings can occur if the other object is in a different place than before.  On the other hand, it would be impossible for the two planets to occupy the same position they held previously, with the same velocity vectors, without re-visiting future points.
 
 Now let's see what happens when we shift the starting value of one of the points by the same amount as before ($z_3 = 12 \to z_3 = 12.000001$).
 
@@ -517,7 +523,11 @@ The trajectories looks the same!  When both original and shifted trajectories of
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/two_body_shifted_2.png)
 
-This means that this trajectory of a two body problem is not sensitive to initial conditions: it is not chaotic.  It turns out that this is true for all two body problems: all are periodic or quasi-periodic, meaning that future trajectories are identical to past trajectories.  This means that we can remove (all but a negligable amount) of the time variable when we integrate these differential equations.  On the other hand, most three body trajectories are aperiodic.  This means that their future trajectories are never exactly like previous ones, meaning that we cannot remove time from the differential equations.  This makes them unsolveable, with respect to a solution that does not consist of adding up time steps from start to finish.
+This means that this trajectory of a two body problem is not sensitive to initial conditions: it is not chaotic.  Is this always the case regardless of the initial positions and velocities?  Indeed it is, as by the Poincaré-Bendixson theorem all continuous trajectories in two dimensions [are periodic](https://blbadger.github.io/continuity-poincare.html).  As was later shown by Lorenz and others, periodicity implies insensitivity to initial values and thus no two-dimensional continuous map can be chaotic.
+
+Thus it turns out that periodicity (and asensitivity to initial values) is the rule for all two body problems: all are periodic or quasi-periodic, meaning that future trajectories are identical to past trajectories.  This means that we can remove (all but a negligable amount) of the time variable when we integrate these differential equations.  
+
+On the other hand, most (all but a miniscule number of) three body trajectories are aperiodic.  And this in turn means that their future trajectories are never exactly like previous ones such that we cannot remove time from the differential equations.  This makes them unsolvable, with respect to a solution that does not consist of adding up time steps from start to finish.
 
 ### The three body problem is general 
 
