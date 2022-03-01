@@ -408,7 +408,7 @@ We can address the first question as follows: something must exist in the initia
 
 Now consider the placement of planets 2 and 3 in three-dimensional space.  Which points on the $y, z$ plane are of equal distance to planets 2 and 3?  The answer is the points that are equidistant from any certain point on the line connecting planets 2 and 3, projected onto the $y, z$ plane. Each pair of points in the $y, z$ plane that are equidistant from any point on this line will thus have identical trajectories, and should therefore have equal divergence which follows from our earlier argument.
 
-Is this the case?  Recalling that 
+Is this the case?  Recalling that the initial points for planet 2 and planet 3 are
 
 $$
 (p2_x, p2_y, p2_z) = (0, 0, 0) \\
