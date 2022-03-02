@@ -1,10 +1,10 @@
-## Neural Networks II: Ordering inputs
+## Neural Networks II: Ordered inputs
 
 ## The importance of (pseudo)randomization
 
 It is standard practice to perform pseudo-random transformations on the inputs and parameters of neural networks before and during training. Shuffling or random selection of training data, initialization of weights and biases on a Gaussian (or Poisson etc.) distribution, randomized neuron drouput, and most objective function optimization procedures like stochastic gradient descent or Adaptive moment estimation readily spring to mind when one considers current methods.
 
-It is worth asking the question of why this is: why do all these procedures involve randomization?  Each case is considered in the following sections.
+It is worth asking the following question: why do all these procedures involve randomization, and why not simply arrange the input examples in any arbitrary order and maintain that during training instead?  Each case is considered in the following sections.
 
 ### Initialization
 
@@ -29,11 +29,11 @@ When $i$ is equal to the size of $\mathscr S$, one training epoch is completed a
 The randomization step is that the dataset is shuffled.  Why take that set in the first place?  The objective function $F$ that we are trying to minimize is usually thought of as a multidimensional 'landscape', with gradient descent being similar to finding a valley while looking at the ground under one's feet while walking.
 The local gradient, if sampled repeatedly, provides the necessary information to find the approximate minimum point if the objective function is smooth enough.  
 
-If the objective function is not smooth, gradient descent may take many iterations to find an appropriate minimum.  To prevent this from happening, gradient descent may be modified to include parameters such as momentum, or extended into optimizers like RMSprop or AdaGrad.
+Gradient descent may take many iterations towards optimization of the loss function.  To speed up this process, gradient descent may be modified to include parameters such as momentum, or extended into optimizers like RMSprop or AdaGrad.
 
-It has sometimes been asserted in the pase that a problem with gradient-based optimization algorithms is that they are prone to becoming 'trapped' in local minima that are not optimal, or especially global minima.  But there is an easy way to test this: approaching a minimal point in any direction, the gradient vanishes, $ \nabla F_j(v_i) \to 0$ such that any sufficiently small step $v_{i+1} - v_i$ is attracted to the minimal point.  If minimal points were actually a problem for gradient-based optimization of neural networks or other models, we should see their gradients disappear prematurely.
+It has been asserted in the past that a problem with gradient-based optimization algorithms is that they are prone to becoming 'trapped' in local minima that are not optimal, or especially global minima.  There is an easy way to test this: approaching a minimal point in any direction, the gradient vanishes, $ \nabla F_j(v_i) \to 0$ such that any sufficiently small step $v_{i+1} - v_i$ is attracted to the minimal point.  If minimal points were actually a problem for gradient-based optimization of neural networks or other models, we should see their gradients disappear prematurely.
 
-In practice, this has not been observed to occur and thus it seems that even for very non-convex objective functions there is virtually no likelihood of getting 'stuck' at a local minima.  The important thing to note here is that a function can easily be non-convex without containing any local minima as it only has to contain one or more saddle points where $\nabla F_j(v_i) \to 0$ only in certain directions (ie certain dimensions).
+This can easily be tested, and the results are as follows: with a wide array of objective functions and neural net architectures, disappearing gradients have not been observed to occur and thus it seems that even for very non-convex objective functions there is virtually no likelihood of getting 'stuck' at a local minima.  The important thing to note here is that a function can easily be non-convex without containing any local minima as it only has to contain one or more saddle points where $\nabla F_j(v_i) \to 0$ only in certain directions (ie certain dimensions).
 
 This leads to an intuitive explanation as to why objective functions in high-dimensional space do not contain many if any local minima: to be a minimal point, $\nabla F_j(v_i)$ must decrease in **every** direction, which is equivalent to saying that it must increase in every basis vector space (aka dimension).  Neural network models are commonly $>100,000$ -dimensional, and each dimension near any point may increase or decrease $\nabla F_j(v_i)$.  Thus the probability of all dimensions decreasing the gradient without prior knowledge is one in $2^{100,000}$, an extremely huge number (that funnily enough evaluates to infinity on google's calculater).  
 
