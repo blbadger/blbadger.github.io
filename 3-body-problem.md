@@ -461,6 +461,12 @@ To see what happens when we observe a different region, here is the map of which
 
 So in one sense, the regions of quickly- and slowly-diverging points are arranged in such a complicated and detailed fashion because they result from the continual mixing of stable (slowly diverging) and unstable (quickly diverging) regions of space.
 
+We can also ask which points in the $y, z$ plane end up in an arbitrary region, and not limit ourselves to lines near our line of symmetry. Observing which points map to the interior of a circle of radius $5$ centered on the point $y, z = 20, 10$ we have
+
+{% include youtube.html id='mA2ca62Puus' %}
+
+This clearly shows us how for the three body system, space is stretched and folded.  Stretched here is where approximate circles are flatten out and elongated, and folded is where new regions mapped to our circle seem to appear out of nothing.
+
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
 
