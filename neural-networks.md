@@ -544,7 +544,7 @@ As we have seen in the case for Snf7 dataset images, this idea is accurate for i
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function $F_j$ when.
+In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function,  $F$.
 
 In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  $F$ evaluated on set $j$ of training examples is denoted $F_j$, and the argument for this function is the value and configuration of all model parameters, denoted $v_i$ such that the value of the objective function is
 
