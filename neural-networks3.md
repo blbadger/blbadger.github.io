@@ -12,9 +12,21 @@ The kinds of tasks mentioned in the last paragraph are sometimes called 'AI-comp
 
 This page focuses on a different but related benefit of deep learning: the ability to learn an arbitrary representation of the input, allowing one to use one  model for a very wide array of possible problems.  The interpretability, or the ability to understand how the model arrives at any prediction, of this flexible approach is then explored.
 
+### Abstract sequence modeling
+
+Deep learning approaches such as neural networks are able to learn a wide array of functions (although there are certainly limits to what any machine learning approach is able to approximate, see [here](https://blbadger.github.io/nn-limitations.html) for more details
+
+Work on this topic was in part inspired by the finding that the large language model GPT-3 was able to [learn arithmetic](https://openai.com/blog/grade-school-math/).  The research question: given that a large language model is able to learn simple functions on sequential character inputs, can a smaller model learn simple and complex functions using language-like inputs as well?  
+
+The importance of this question is that if some model were to be able to learn how to approximate certain functions on an input comprising something as general as a sequence of characters, a machine learning practitioner would be able to avoid the often difficult process of formatting each feature for each dataset of interest. In the following sections, we shall see that the answer to this question is yes.
+
 ### Input flexibility and the weaknesses of recurrent neural net architectures
 
-### Abstract sequence encoding
+Say one were to 
+
+### Structured sequence input encoding 
+
+
 
 ### Interpretable deep learning
 
