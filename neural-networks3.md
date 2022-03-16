@@ -1,4 +1,4 @@
-## Interpretable Deep Learning
+## Flexible and Interpretable Deep Learning
 
 Relying on the ability of deep learning techniques to be sufficient to learn successive representations of an input, we explore extremely flexible yet interpretable neural networks.
 
