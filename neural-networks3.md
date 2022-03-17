@@ -135,7 +135,7 @@ The importance of maintaining positional information for tasks such as these has
 
 How do we go about preserving positional information for a sequence in order to maintain feature identity for each input element?  A relatively simple but effective way of doing this is to fix the number of elements that are assigned to be a constant value $c$, and then to provide a place-holder value $v$ for however many elements that a feature is missing.  In our example above, this could be accomplished by adding an eleventh element to each tensor (which we can think of as denoting 'empty') and performing one-hot encoding using this expanded vocabulary,
 
-\$$
+$$
 x_c = [[0,1,0,0,0,0,0,0,0,0,0],[0,0,1,...] ...]\\
 x_i = [[0,0,0,0,0,0,0,0,0,0,1],[0,0,1,...] ...]
 $$
@@ -359,6 +359,7 @@ In this case, we are interested in determining whether or not this relatively sm
 |3	|2015-02-03 21:21:45	|5477	|6900	|1	|1	|2	|289	|2623	|10|
 
 where the function is
+
 $$
 y = 10c
 $$
@@ -379,7 +380,7 @@ where $b$ is the **Busy Deliverers** feature.  Once again, the model is capable 
 
 {% include youtube.html id='rZRQa3ExzTU' %}
 
-and the estimation accuracy for both positive controls diminishes as the number of training examples increases, ie some quick experimental evidence suggests that $\sum_i \haty_i - y_i \to 0$ as $i \to \inf$.
+and the estimation accuracy for both positive controls diminishes as the number of training examples increases, ie some quick experimental evidence suggests that $\sum_i \haty_i - y_i \to 0$ as $i \to \infty$.
 
 These examples show that simple functions of the inputs can indeed be learned.  
 
