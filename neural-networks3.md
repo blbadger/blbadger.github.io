@@ -60,7 +60,7 @@ $$
 x = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)
 $$
 
-There are a number of different functions $f$ may be used to transform our raw input into a form suitable for a deep learning program.  In the spirit of avoiding as much formatting as possible, we can assign $f$ to be a one-hot character encoding, and then flatten the resulting tensor if our model requires it. One-hot encodings take an input and transform this into a tensor of size $|n|$ where $n$ is the number of possible categories, where the position of the input among all options determines which element of the tensor is $1$ (the rest are zero).  For example, a one-hot encoding on the set of one-digit integers could be
+There are a number of different functions $f$ may be used to transform our raw input into a form suitable for a deep learning program.  In the spirit of avoiding as much formatting as possible, we can assign $f$ to be a one-hot character encoding, and then flatten the resulting tensor if our model requires it. One-hot encodings take an input and transform this into a tensor of size $\vert n \vert$ where $n$ is the number of possible categories, where the position of the input among all options determines which element of the tensor is $1$ (the rest are zero).  For example, a one-hot encoding on the set of one-digit integers could be
 
 $$
 f(0) = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0] \\
@@ -90,10 +90,13 @@ $$
 
 These and any other methods of encoding such that each input category is no longer linearly independent of each other (and not normed to one constant $c$) are generally bad because it introduces information about the input $x$ that is not likely to be true: if we were encoding alphabetical characters instead of integers, each character should be 'as different' from each other character but this would not be the case if we applied a linearly dependent encoding.
 
+For some perspective, we can compare this input method to a more traditional approach that is currently used for deep learning.  The strategy for that approach is as follows: inputs that are low-dimension may be supplied as one-hot encodings (or as basis vectors of another linearly independent vector space) and inputs that are high-dimensional (such as words in the english language) are first embedded using a neural network, and the result is then given as an input for the chosen deep learning implementation.
 
+Embedding is the process of attempting to recapitulate the input on the output, while using less information that originally given. The resulting embedding, also called a latent space, is no longer generally linearly independent but instead contains information about the input itself: for example, vectors for the words 'dog' and 'cat' would be expected to be more similar to each other than the vectors 'dog' and 'tree'.  
 
-It turns out that this method can be employed quite successfully.  First to appreciate why this is somewhat surprising, consider the functions that this network must learn.
+Such embeddings would certainly be possible for our character-based approach, and may even be optimal, but the following intuition may explain why they are not necessary for successful application of our sequential encoding: we know that any deep learning model will reduce dimensionality to 0 (in the case of regression) or $n$ (for n categories) depending on the output, so we can expect the model itself to perform the same tasks that an embedding would.  This is perhaps less efficient than separating out the embedding before then training a model on a given task, but it turns out that this method can be employed quite successfully.  
 
+To appreciate why it is surprising, consider the functions that this network must learn.
 
 
 ### Weaknesses of recurrent neural net architectures
