@@ -22,7 +22,7 @@ The importance of this question is that if some model were to be able to learn h
 
 ### Input Flexibility 
 
-To start with, we will use a small dataset and tailor our approach to that specific dataset before then developing a generalized approach that is capable of modeling any abitrary grid of values.  Say we were given the following training data:
+To start with, we will use a small dataset and tailor our approach to that specific dataset before then developing a generalized approach that is capable of modeling any abitrary grid of values.  Say we were given the following training data in the form of a design matrix:
 
 
 |Market	|Order Made|	Store Number	|Cost |Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Elapsed Time|
@@ -38,6 +38,7 @@ For some perspective, how would we go about predicting the **Elapsed Time** valu
 
 $$
 \hat {y} = w^Tx + b
+\tag{1}
 $$
 
 where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting `Elapsed Time`, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
@@ -94,17 +95,293 @@ For some perspective, we can compare this input method to a more traditional app
 
 Embedding is the process of attempting to recapitulate the input on the output, while using less information that originally given. The resulting embedding, also called a latent space, is no longer generally linearly independent but instead contains information about the input itself: for example, vectors for the words 'dog' and 'cat' would be expected to be more similar to each other than the vectors 'dog' and 'tree'.  
 
-Such embeddings would certainly be possible for our character-based approach, and may even be optimal, but the following intuition may explain why they are not necessary for successful application of our sequential encoding: we know that any deep learning model will reduce dimensionality to 0 (in the case of regression) or $n$ (for n categories) depending on the output, so we can expect the model itself to perform the same tasks that an embedding would.  This is perhaps less efficient than separating out the embedding before then training a model on a given task, but it turns out that this method can be employed quite successfully.  
+Such embeddings would certainly be possible for our character-based approach, and may even be optimal, but the following intuition may explain why they are not necessary for successful application of our sequential encoding: we know that any deep learning model will reduce dimensionality to 0 (in the case of regression) or $n$ (for $n$ categories) depending on the output, so we can expect the model itself to perform the same tasks that an embedding would.  This is perhaps less efficient than separating out the embedding before then training a model on a given task, but it turns out that this method can be employed quite successfully.  
 
-To appreciate why it is surprising, consider the functions that this network must learn.
-
+To summarize, we can bypass not only the need for hand-chosen formatting and normalization procedures but also for specific embeddings when using a sequential character-based input approach.
 
 ### Weaknesses of recurrent neural net architectures
 
+One choice remains: how to deal with missing features.  For models such as (1), this may be accomplished by simply removing training examples that exhibit missing features, and enforcing the validation or test datasets to have some value for all features. The same approach could be applied here, but such a strategy could lead to biased results.  What happens when not only a few but the majority of examples both for training and testing are missing data on a certain feature?  Removing all examples would eliminate the majority of information in our training dataset, and is clearly not the best way to proceed.
 
+Perhaps the simplest way to proceed would be to assign our sequence-to-tensor mapping function $f$ to map an empty feature to an empty tensor.  For example, suppose we wanted to encode an $x_i$ which was missing the first feature value of $x_c$:
+
+$$
+x_c = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218) \\
+x_i =  f( \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
+$$
+
+in this case $x_c = x_i$ except for the first 10 elements of $x_c$, which $x_i$ omits.  The non-concatenated tensors would be
+
+$$
+x_c = [[0,1,0,0,0,0,0,0,0,0],[0,0,1,...] ...]\\
+x_i = [[],[0,0,1,...] ...]
+$$
+
+which means that the concatenated versions begin as $[0,1,0...]$ for $x_c$ and $[0,0,1,...]$ for $x_i$, resulting in a variable-length $x$.
+
+A specific class of deep learning models have been designed for variable-length inputs. These are recurrent neural networks, and they operate by examining each input sequentially (ie for $x_c$ the network would first take an input as $[0,1,0,0,0,0,0,0,0,0]$), using that input to update the activations for each neuron according the the weights $w$ and biases $b$ present in that network, and then perhaps generating an output which can be viewed as an observation of the activations of the final layer of neurons. 
+
+For our regression problem, the only output that we would need to be concerned with is the output after the last input was recieved by the network. This output would then be used for loss back-propegation according to the gradient of the loss.
+
+One difficulty with recurrent neural networks is that they may suffer from exploding gradients: if each input adds to the previous, so can the gradient from each output leading to exceptionally large gradients for long sequences and thus difficulties during stochastic gradient descent.  This particular problem may be remedied a number of different ways, one of which involves gating the activations for each sequential input.  Another problem is that because network activations are added together, pure recurrent networks often have difficulty 'remembering' information fed into the network at the start of the sequence whilst nearing the end.
+
+Both of the problems in the last paragraph are addressed using the Long Short-term Memory recurrent architecture, which keeps both short-term as well as a long-term memory modules in the form of neurons that are activated and gated. However, even these and other modified recurrent nets do not address perhaps the most difficult problem of recurrence during training: the process has a tendancy to 'forget' older examples relative to non-recurrent architectures, as there is $n^2$ distance between the last update and first update with respect to parameter activations.  See [this page](https://blbadger.github.io/neural-networks2.html) for more informatino on this topic.
+
+That said, recurrent neural net architectures can be very effective deep learning procedures.  But there is a significant drawback to using them for our case: we lose information on the identity of each feature.  To explain why this is, imagine observing the following tensor as the first input: $[0,1,0...]$. There is not way a priori for you to know which feature this input tensor corresponds to, whereas in our grid of values above, we certainly would know which column (and therefore which feature) an empty value was located inside. 
+
+The importance of maintaining positional information for tasks such as these has been borne out by experiment: identical LSTM-based neural networks perform far better with respect to minimization of test error using input functions $f$ that retains positional information compared to $f$ that do not.
 
 ### Structured sequence input encoding 
 
+How do we go about preserving positional information for a sequence in order to maintain feature identity for each input element?  A relatively simple but effective way of doing this is to fix the number of elements that are assigned to be a constant value $c$, and then to provide a place-holder value $v$ for however many elements that a feature is missing.  In our example above, this could be accomplished by adding an eleventh element to each tensor (which we can think of as denoting 'empty') and performing one-hot encoding using this expanded vocabulary,
+
+\$$
+x_c = [[0,1,0,0,0,0,0,0,0,0,0],[0,0,1,...] ...]\\
+x_i = [[0,0,0,0,0,0,0,0,0,0,1],[0,0,1,...] ...]
+$$
+
+The important thing here is to keep the element denoting 'empty' to be one that is rarely if ever used to denote anything else.  For example, if we were to use the tensor for $f(0)$ to denote an empty character, we would lose information if $0$ were found in any of the features because a priori the model cannot tell if the tensor $f(0)$ denotes a zero element or an empty element.
+
+This structured input can be implemented as follows: first we import relevant libraries and then the class `Format` is specified.  Note that source code for this page may be found [here](https://github.com/blbadger/nnetworks/tree/master/interprets).
+
+```python
+# fcnet.py
+# import standard libraries
+import string
+import time
+import math
+import random
+
+# import third-party libraries
+import numpy as np 
+import matplotlib.pyplot as plt 
+import pandas as pd
+from sklearn.utils import shuffle
+
+import torch
+import torch.nn as nn
+
+class Format:
+
+	def __init__(self, file, training=True):
+
+		df = pd.read_csv(file)	
+		df = df.applymap(lambda x: '' if str(x).lower() == 'nan' else x)
+		df = df[:10000]
+		length = len(df['Elapsed Time'])
+		self.input_fields = ['Store Number', 
+							'Market', 
+							'Order Made',
+							'Cost',
+							'Total Deliverers', 
+							'Busy Deliverers', 
+							'Total Orders',
+							'Estimated Transit Time',
+							'Linear Estimation']
+
+		if training:
+			df = shuffle(df)
+			df.reset_index(inplace=True)
+
+			# 80/20 training/validation split
+			split_i = int(length * 0.8)
+
+			training = df[:][:split_i]
+			self.training_inputs = training[self.input_fields]
+			self.training_outputs = [i for i in training['positive_two'][:]]
+
+			validation_size = length - split_i
+			validation = df[:][split_i:split_i + validation_size]
+			self.validation_inputs = validation[self.input_fields]
+			self.validation_outputs = [i for i in validation['positive_two'][:]]
+			self.validation_inputs = self.validation_inputs.reset_index()
+
+		else:
+			self.training_inputs = self.df # not actually training, but matches name for stringify
+```
+Then in this class we implement a method that converts each row of our design matrix into a sequence of characters, which will be used as an argument to $f()$.
+
+```python
+class Format:
+  ...
+  
+  def stringify_input(self, index, training=True):
+		"""
+		Compose array of string versions of relevant information in self.df 
+		Maintains a consistant structure to inputs regardless of missing values.
+
+		Args:
+			index: int, position of input
+
+		Returns:
+			array: string: str of values in the row of interest
+
+		"""
+
+
+		taken_ls = [4, 1, 15, 4, 4, 4, 4, 4, 4]
+
+		string_arr = []
+		if training:
+			inputs = self.training_inputs.iloc[index]
+		else:
+			inputs = self.validation_inputs.iloc[index]
+
+		fields_ls = self.input_fields
+		for i, field in enumerate(fields_ls):
+			entry = str(inputs[field])[:taken_ls[i]]
+			while len(entry) < taken_ls[i]:
+				entry += '_'
+			string_arr.append(entry)
+
+		string = ''.join(string_arr)
+		return string
+```
+Now we implement another class method which will perform the task of $f()$, ie of converting a sequence of characters to a tensor.  In this particular example, we proceed with concatenating each character's tensor into one in the `tensor = tensor.flatten()` line because we are going to be feeding our inputs into a simple fully-connected feed-forward neural network architecture.
+
+```python
+	@classmethod
+	def string_to_tensor(self, input_string):
+		"""
+		Convert a string into a tensor
+
+		Args:
+			string: str, input as a string
+
+		Returns:
+			tensor: torch.Tensor() object
+		"""
+
+		places_dict = {s:int(s) for s in '0123456789'}
+		for i, char in '. -:_':
+			places_dict[char] = i + 10
+
+		# vocab_size x batch_size x embedding dimension (ie input length)
+		tensor_shape = (len(input_string), 1, 15) 
+		tensor = torch.zeros(tensor_shape)
+
+		for i, letter in enumerate(input_string):
+			tensor[i][0][places_dict[letter]] = 1.
+
+		tensor = tensor.flatten()
+		return tensor 
+```
+Finally we can 
+
+```python
+	def sequential_tensors(self, training=True):
+		"""
+		kwargs:
+			training: bool
+
+		Returns:
+			input_tensors: torch.Tensor objects
+			output_tensors: torch.Tensor objects
+		"""
+
+		input_tensors = []
+		output_tensors = []
+		if training:
+			inputs = self.training_inputs
+			outputs = self.training_outputs
+		else:
+			inputs = self.validation_inputs
+			outputs = self.validation_outputs
+
+		for i in range(len(inputs)):
+			input_string = self.stringify_input(i, training=training)
+			input_tensor = self.string_to_tensor(input_string)
+			input_tensors.append(input_tensor)
+
+			# convert output float to tensor directly
+			output_tensors.append(torch.Tensor([outputs[i]]))
+
+		return input_tensors, output_tensors
+```
+ now we can assign a neural network. Here we inherit from the `torch.nn.Module` library and specify a 5-layer (3 hidden layer) architecture.
+ 
+ ```python
+ class MultiLayerPerceptron(nn.Module):
+
+	def __init__(self, input_size, output_size):
+
+		super().__init__()
+		self.input_size = input_size
+		hidden1_size = 500
+		hidden2_size = 100
+		hidden3_size = 20
+		self.input2hidden = nn.Linear(input_size, hidden1_size)
+		self.hidden2hidden = nn.Linear(hidden1_size, hidden2_size)
+		self.hidden2hidden2 = nn.Linear(hidden2_size, hidden3_size)
+		self.hidden2output = nn.Linear(hidden3_size, output_size)
+		self.relu = nn.ReLU()
+		self.dropout = nn.Dropout(0.3)
+
+	def forward(self, input):
+		"""
+		Forward pass through network
+
+		Args:
+			input: torch.Tensor object of network input, size [n_letters * length]
+
+		Return: 
+			output: torch.Tensor object of size output_size
+
+		"""
+
+		out = self.input2hidden(input)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		out = self.hidden2hidden(out)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		out = self.hidden2hidden2(out)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		output = self.hidden2output(out)
+		return output
+ ```
+
+### Controls
+
+Before applying our model to the dataset in question, we can directly assess the efficacy or our sequential character encoding method by applying the model to what in experimental science is known as a positive control.  This is a (usually synthetic) dataset in which the desired outcome is known beforehand, such that if the experimental apparatus were successful in being able to perform its function then we would be able to arrive at some specific output.  
+
+In this case, we are interested in determining whether or not this relatively small neural network is capable of learning defined functions, in contrast to the as-yet undefined function that determines the actual delivery time (together with any Bayesian error). Our first control is as follows:
+
+|Market	|Order Made|	Store Number	|Cost |Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Control Output|
+| ----- | ---------| -------------- | --- | --------------- | --------------- | ----------- | --------------------- | ----------------- | ---------- |
+|1	|2015-02-06 22:24:17	|1845	|3441	|33	|14	|21	|861	|3218	|330|
+|2	|2015-02-10 21:49:25	|5477	|1900	|1	|2	|2	|690	|2818	|10|
+|3	|2015-01-22 20:39:28	|5477	|1900	|1	|0	|0	|690	|3090	|10|
+|3	|2015-02-03 21:21:45	|5477	|6900	|1	|1	|2	|289	|2623	|10|
+
+where the function is
+$$
+y = 10c
+$$
+
+where $c$ is the **Cost** feature. We can track test (previously unseen) accuracy during training on any regression by plotting the actual value agains the model's prediction: a perfect model will have all points aligned on the line $y=x$.  Plotting the results of the above model using our sequential input encoding detailed above, we have
+
+{% include youtube.html id='KgCuK6v_MgI' %}
+
+so clearly for our function, the model arrives at near-perfect accuracy fairly quickly.
+
+We can also experiment with the network learning a more complicated rule, this time the non-linear mapping
+
+$$
+y = (c/100) * b
+$$
+
+where $b$ is the **Busy Deliverers** feature.  Once again, the model is capable of very accurate estimations on the test dataset:
+
+{% include youtube.html id='rZRQa3ExzTU' %}
+
+and the estimation accuracy for both positive controls diminishes as the number of training examples increases, ie some quick experimental evidence suggests that $\sum_i \haty_i - y_i \to 0$ as $i \to \inf$.
+
+These examples show that simple functions of the inputs can indeed be learned.  
 
 ### Interpretable deep learning
 
