@@ -25,25 +25,25 @@ The importance of this question is that if some model were to be able to learn h
 To start with, we will use a small dataset and tailor our approach to that specific dataset before then developing a generalized approach that is capable of modeling any abitrary grid of values.  Say we were given the following training data:
 
 
-|Market	|Order Made|	Store Number	|Cost	Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Elapsed Time|
-| ----- | ---------| -------------- | ----------------------| --------------- | ----------- | --------------------- | ----------------- | ---------- |
+|Market	|Order Made|	Store Number	|Cost |Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Elapsed Time|
+| ----- | ---------| -------------- | --- | --------------- | --------------- | ----------- | --------------------- | ----------------- | ---------- |
 |1	|2015-02-06 22:24:17	|1845	|3441	|33	|14	|21	|861	|3218	|3779|
 |2	|2015-02-10 21:49:25	|5477	|1900	|1	|2	|2	|690	|2818	|4024|
 |3	|2015-01-22 20:39:28	|5477	|1900	|1	|0	|0	|690	|3090	|1781|
 |3	|2015-02-03 21:21:45	|5477	|6900	|1	|1	|2	|289	|2623	|3075|
 
-We have a number of different inputs and the task is to predict `Elapsed Time` necessary for a delivery. The inputs are mostly integers except for the `Order Made` feature, which is a timestamp.  The names of the third-to-last and second-to-last columns indicate that we are likely developing a boosted model, or in other words a model that takes as its input the outputs of another model.
+We have a number of different inputs and the task is to predict **Elapsed Time** necessary for a delivery. The inputs are mostly integers except for the **Order Made** feature, which is a timestamp.  The names of the third-to-last and second-to-last columns indicate that we are likely developing a boosted model, or in other words a model that takes as its input the outputs of another model.
 
-For some perspective, how would we go about predicting the `Elapsed Time` value if we were to apply more traditional machine learning methods? As most features are numerical and we want an integer output, the classical approach would be to hand-format each feature, apply normalizations as necessary, feed these into a model, and recieve an output that is then used to train the model.  This was how the `Linear Estimation` column was made: a multiple ordinary least squares regression algorithm was applied to a selection of formatted and normalized features with the desired output.  More precisely, we have fitted weight $w \in \Bbb R^n$ and bias (aka intercept) $b \in \Bbb R^n$ vectors such that the predicted value $\hat y$ is
+For some perspective, how would we go about predicting the **Elapsed Time** value if we were to apply more traditional machine learning methods? As most features are numerical and we want an integer output, the classical approach would be to hand-format each feature, apply normalizations as necessary, feed these into a model, and recieve an output that is then used to train the model.  This was how the **Linear Estimation** column was made: a multiple ordinary least squares regression algorithm was applied to a selection of formatted and normalized features with the desired output.  More precisely, we have fitted weight $w \in \Bbb R^n$ and bias (aka intercept) $b \in \Bbb R^n$ vectors such that the predicted value $\hat {y}$ is
 
 $$
-\hat y = w^Tx + b
+\hat {y} = w^Tx + b
 $$
 
 where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting `Elapsed Time`, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
 
 $$
-MSE = \frac{1}{m} \sum_i (\hat y_i - y_i)
+MSE = \frac{1}{m} \sum_i (\hat {y_i} - y_i)
 $$
 
 Other more sophisticated methods may be employed in a similar manner in order to generate a scalar $\hat y$ from $x$ via tuned values of parameter vectors $w$ and $b$.  Now consider what is necessary for our linear model to perform well: first, that the true data generating distribution is approximately linear, but most importantly for this page that the input vector $x$ is properly formatted to avoid missing values, differences in numerical scale, differences in distribution etc.
@@ -53,13 +53,48 @@ How should we deal with categorical inputs, as only numerical vectors are accept
 
 These questions and more are all implicitly or explicitly addressed when one formats data for a model such as this: the resulting vector $x$ is composed of 'hand-designed' features.  But how do we know that we have made the optimal decisions for formatting each input?  If we have many options of how to format many features, it is in practice impossible to try each combination of possible formats and therefore we do not actually know which recipe will be optimal.
 
-The approach of deep learning is to avoid hand-designed features and instead allow the model to learn the optimal method of representing the input as part of the training process.  A somewhat extreme example of this would be to simply pass a transformation (encoding) of the raw character input as our feature vector $x$
+The approach of deep learning is to avoid hand-designed features and instead allow the model to learn the optimal method of representing the input as part of the training process.  A somewhat extreme example of this would be to simply pass a transformation (encoding) $f$ of the raw character input as our feature vector $x$. For the first example in our training data above, this equates to some function of the string as follows:
+
 
 $$
-x = f(1	2015-02-06 22:24:17	1845 3441	33 14 21 861 3218)
+x = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)
 $$
 
-It turns out that this method is surprisingly successful
+There are a number of different functions $f$ may be used to transform our raw input into a form suitable for a deep learning program.  In the spirit of avoiding as much formatting as possible, we can assign $f$ to be a one-hot character encoding, and then flatten the resulting tensor if our model requires it. One-hot encodings take an input and transform this into a tensor of size $|n|$ where $n$ is the number of possible categories, where the position of the input among all options determines which element of the tensor is $1$ (the rest are zero).  For example, a one-hot encoding on the set of one-digit integers could be
+
+$$
+f(0) = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0] \\
+f(1) = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0] \\
+f(2) = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0] \\
+\vdots \\
+f(9) = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+$$
+
+Note that it does not matter which specific encoding method we use, and that any order of assignment will suffice (for example, we could swap $f(0)$ and $f(1)$).  Nor does it particularly matter that we place a $1$ in the appropriate position for our tensor: any constant $c$ would work, as long as this constant is not changed between inputs.  What **is** important is that each category of input is linearly independent of all other categories, meaning tat we cannot apply some compression such as
+
+$$
+f(0) = [1, 0] \\
+f(1) = [0, 1] \\
+f(2) = [1, 1] \\
+\vdots
+$$
+
+or even simply assign each value to a single tensor,
+
+$$
+f(0) = [0] \\
+f(1) = [1] \\
+f(2) = [2] \\
+\vdots
+$$
+
+These and any other methods of encoding such that each input category is no longer linearly independent of each other (and not normed to one constant $c$) are generally bad because it introduces information about the input $x$ that is not likely to be true: if we were encoding alphabetical characters instead of integers, each character should be 'as different' from each other character but this would not be the case if we applied a linearly dependent encoding.
+
+
+
+It turns out that this method can be employed quite successfully.  First to appreciate why this is somewhat surprising, consider the functions that this network must learn.
+
+
 
 ### Weaknesses of recurrent neural net architectures
 
