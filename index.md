@@ -187,15 +187,30 @@ The study of life, observations of which display many of the features of nonline
 ![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
 
 
-## Neural nets and smaller software projects
+## Deep Learning
 
-### Neural Networks: [part I](/neural-networks.md) and [part II](neural-networks2.md)
+### [Image Recognition and Training Velocity](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
+
+### [Training Memory](/neural-networks2.md)
+
+$$
+v_0 + i_0 \to o_0 \to v_1 \\
+v_1 + i_1 \to o_1 \to v_2 \\
+\vdots \\
+v_{n-1} + i_n \to o_n \to v_n
+$$
+
+### [Flexibility and Interpretability](/neural-networks3.md)
+
+![deep learning attributions](/neural_networks/attributions_cover.png)
 
 ### [Limitations of Neural Networks](/nn-limitations.md)
 
 ![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
+
+## Small Projects
 
 ### [Game puzzles](/puzzle-projects.md)
 
