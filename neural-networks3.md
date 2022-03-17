@@ -22,7 +22,13 @@ The importance of this question is that if some model were to be able to learn h
 
 ### Input flexibility and the weaknesses of recurrent neural net architectures
 
-Say one were to 
+|Market	|Order Made|	Store Number	|Cost	Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Elapsed Time|
+| ----- | ---------| -------------- | ----------------------| --------------- | ----------- | --------------------- | ----------------- | ---------- |
+|1	|2015-02-06 22:24:17	|1845	|3441	|33	|14	|21	|861	|3218	|3779|
+|2	|2015-02-10 21:49:25	|5477	|1900	|1	|2	|2	|690	|2818	|4024|
+|3	|2015-01-22 20:39:28	|5477	|1900	|1	|0	|0	|690	|3090	|1781|
+|3	|2015-02-03 21:21:45	|5477	|6900	|1	|1	|2	|289	|2623	|3075|
+
 
 ### Structured sequence input encoding 
 
