@@ -58,7 +58,7 @@ The approach of deep learning is to avoid hand-designed features and instead all
 
 
 $$
-x = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)
+x = f(1 \;2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)
 $$
 
 There are a number of different functions $f$ may be used to transform our raw input into a form suitable for a deep learning program.  In the spirit of avoiding as much formatting as possible, we can assign $f$ to be a one-hot character encoding, and then flatten the resulting tensor if our model requires it. One-hot encodings take an input and transform this into a tensor of size $\vert n \vert$ where $n$ is the number of possible categories, where the position of the input among all options determines which element of the tensor is $1$ (the rest are zero).  For example, a one-hot encoding on the set of one-digit integers could be
@@ -107,7 +107,7 @@ Perhaps the simplest way to proceed would be to assign our sequence-to-tensor ma
 
 $$
 x_c = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218) \\
-x_i =  f( \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
+x_i = f( \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
 $$
 
 in this case $x_c = x_i$ except for the first 10 elements of $x_c$, which $x_i$ omits.  The non-concatenated tensors would be
@@ -170,14 +170,14 @@ class Format:
 		df = df[:10000]
 		length = len(df['Elapsed Time'])
 		self.input_fields = ['Store Number', 
-							'Market', 
-							'Order Made',
-							'Cost',
-							'Total Deliverers', 
-							'Busy Deliverers', 
-							'Total Orders',
-							'Estimated Transit Time',
-							'Linear Estimation']
+				'Market', 
+				'Order Made',
+				'Cost',
+				'Total Deliverers', 
+				'Busy Deliverers', 
+				'Total Orders',
+				'Estimated Transit Time',
+				'Linear Estimation']
 
 		if training:
 			df = shuffle(df)
@@ -380,7 +380,7 @@ where $b$ is the **Busy Deliverers** feature.  Once again, the model is capable 
 
 {% include youtube.html id='rZRQa3ExzTU' %}
 
-and the estimation accuracy for both positive controls diminishes as the number of training examples increases, ie some quick experimental evidence suggests that $\sum_i \haty_i - y_i \to 0$ as $i \to \infty$.
+and the estimation accuracy for both positive controls diminishes as the number of training examples increases, which is some small experimental evidence suggests that $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
 
 These examples show that simple functions of the inputs can indeed be learned.  
 
