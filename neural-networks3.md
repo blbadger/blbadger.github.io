@@ -20,7 +20,10 @@ Work on this topic was in part inspired by the finding that the large language m
 
 The importance of this question is that if some model were to be able to learn how to approximate certain functions on an input comprising something as general as a sequence of characters, a machine learning practitioner would be able to avoid the often difficult process of formatting each feature for each dataset of interest. In the following sections, we shall see that the answer to this question is yes.
 
-### Input flexibility and the weaknesses of recurrent neural net architectures
+### Input Flexibility 
+
+To start with, we will use a small dataset and tailor our approach to that specific dataset before then developing a generalized approach that is capable of modeling any abitrary grid of values.  Say we were given the following training data:
+
 
 |Market	|Order Made|	Store Number	|Cost	Total Deliverers	|Busy Deliverers	|Total Orders	|Estimated Transit Time	|Linear Estimation	|Elapsed Time|
 | ----- | ---------| -------------- | ----------------------| --------------- | ----------- | --------------------- | ----------------- | ---------- |
@@ -29,9 +32,40 @@ The importance of this question is that if some model were to be able to learn h
 |3	|2015-01-22 20:39:28	|5477	|1900	|1	|0	|0	|690	|3090	|1781|
 |3	|2015-02-03 21:21:45	|5477	|6900	|1	|1	|2	|289	|2623	|3075|
 
+We have a number of different inputs and the task is to predict `Elapsed Time` necessary for a delivery. The inputs are mostly integers except for the `Order Made` feature, which is a timestamp.  The names of the third-to-last and second-to-last columns indicate that we are likely developing a boosted model, or in other words a model that takes as its input the outputs of another model.
+
+For some perspective, how would we go about predicting the `Elapsed Time` value if we were to apply more traditional machine learning methods? As most features are numerical and we want an integer output, the classical approach would be to hand-format each feature, apply normalizations as necessary, feed these into a model, and recieve an output that is then used to train the model.  This was how the `Linear Estimation` column was made: a multiple ordinary least squares regression algorithm was applied to a selection of formatted and normalized features with the desired output.  More precisely, we have fitted weight $w \in \Bbb R^n$ and bias (aka intercept) $b \in \Bbb R^n$ vectors such that the predicted value $\hat y$ is
+
+$$
+\hat y = w^Tx + b
+$$
+
+where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting `Elapsed Time`, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
+
+$$
+MSE = \frac{1}{m} \sum_i (\hat y_i - y_i)
+$$
+
+Other more sophisticated methods may be employed in a similar manner in order to generate a scalar $\hat y$ from $x$ via tuned values of parameter vectors $w$ and $b$.  Now consider what is necessary for our linear model to perform well: first, that the true data generating distribution is approximately linear, but most importantly for this page that the input vector $x$ is properly formatted to avoid missing values, differences in numerical scale, differences in distribution etc.
+
+When one seeks to format an input vector, there are usually many decision that one has to make.  For example: what should we do with missing values: assign a placeholder, or simply remove the example from our training data? What should we do if the scale of one feature is orders of magnitude different than another?  Should we enforce normality if the distribution for each feature, and if so what mean and standard deviation should we apply? 
+How should we deal with categorical inputs, as only numerical vectors are accepted in the linear model?  For categorical inputs with many possible options, should we perform dimensionality reduction to attempt to capture most of the  information present in a lower-dimensional form? If so, what is the minimum number of options we should use and what method should we employ: a neural network-based embedding, sparse matrix encoding, or something else?
+
+These questions and more are all implicitly or explicitly addressed when one formats data for a model such as this: the resulting vector $x$ is composed of 'hand-designed' features.  But how do we know that we have made the optimal decisions for formatting each input?  If we have many options of how to format many features, it is in practice impossible to try each combination of possible formats and therefore we do not actually know which recipe will be optimal.
+
+The approach of deep learning is to avoid hand-designed features and instead allow the model to learn the optimal method of representing the input as part of the training process.  A somewhat extreme example of this would be to simply pass a transformation (encoding) of the raw character input as our feature vector $x$
+
+$$
+x = f(1	2015-02-06 22:24:17	1845 3441	33 14 21 861 3218)
+$$
+
+It turns out that this method is surprisingly successful
+
+### Weaknesses of recurrent neural net architectures
+
+
 
 ### Structured sequence input encoding 
-
 
 
 ### Interpretable deep learning
