@@ -253,7 +253,7 @@ Now we implement another class method which will perform the task of $f()$, ie o
 		"""
 
 		places_dict = {s:int(s) for s in '0123456789'}
-		for i, char in '. -:_':
+		for i, char in enumerate('. -:_'):
 			places_dict[char] = i + 10
 
 		# vocab_size x batch_size x embedding dimension (ie input length)
@@ -298,7 +298,8 @@ Finally we can
 
 		return input_tensors, output_tensors
 ```
- now we can assign a neural network. Here we inherit from the `torch.nn.Module` library and specify a 5-layer (3 hidden layer) architecture.
+
+and now we can assemble a neural network. Here we implement a relatively simple fully-connected network by inheriting from the `torch.nn.Module` library and specify a 5-layer (3 hidden layer) architecture.
  
  ```python
  class MultiLayerPerceptron(nn.Module):
