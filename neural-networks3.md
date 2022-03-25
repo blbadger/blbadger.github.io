@@ -266,7 +266,7 @@ Now we implement another class method which will perform the task of $f()$, ie o
 		tensor = tensor.flatten()
 		return tensor 
 ```
-Finally we can 
+No we can assemble an array of input and output tensors using the `string_to_tensor` method.
 
 ```python
 	def sequential_tensors(self, training=True):
@@ -495,7 +495,6 @@ Now we can define a class function that will determine the occlusion value.  Thi
 
 		Returns:
 			occlusion_arr: array[float] of scores per input index
-
 		"""
 		input_tensor = input_tensor.flatten()
 		output_tensor = self.model(input_tensor)
@@ -546,7 +545,7 @@ $$
 g = \nabla_i f(x) * x
 $$
 
-where $\hat{y} = f(x)$ is the model output, $x$ is the model input, $i$ is the input layer, and $g$ is the gradientxinput.  Note that $\nabla_i f(x)$ and $x$ are both tensors, and as we want a tensor of the same size we use the Hadamard (element-wise) product, which when using `torch.Tensor` objects may be obtained as `t_1 * t_2$.
+where $\hat{y} = f(x)$ is the model output, $x$ is the model input, $i$ is the input layer, and $g$ is the gradientxinput.  Note that $\nabla_i f(x)$ and $x$ are both tensors, and as we want a tensor of the same size we use the Hadamard (element-wise) product, which when using `torch.Tensor` objects may be obtained as $t_1 * t_2$.
 
 ```python
 	def gradientxinput(self, input_tensor):
@@ -611,7 +610,6 @@ We want to be able to have a more readable attribution than is obtained using th
 		"""
 		...
 		"""
-		
 		attributions_arr = []
 
 		for i in range(n_observed):
@@ -628,7 +626,6 @@ We want to be able to have a more readable attribution than is obtained using th
 			average = sum([attribute[i] for attribute in attributions_arr])
 			average_arr.append(average)
 		...
-		
 		if aggregation == 'average':
 			final_arr = []
 			index = 0
@@ -638,20 +635,9 @@ We want to be able to have a more readable attribution than is obtained using th
 					sum_val += average_arr[k]
 				final_arr.append([field, sum_val/k])
 				index += i
-
 		...
-		my_cmap = plt.cm.get_cmap('viridis')
-		colors = my_cmap(final_arr)
-
 		plt.barh(self.fields_ls, final_arr, color=colors, edgecolor='black')
-		plt.yticks(np.arange(0, len(self.fields_ls)),
-				[i for i in self.fields_ls],
-				rotation='horizontal')
-
-		plt.tight_layout()
-		plt.xlabel('Importance')
-		plt.savefig('readable_{}'.format(count), dpi=400)
-		plt.close()
+		...
 		return
 ```
 
@@ -659,7 +645,7 @@ We want to be able to have a more readable attribution than is obtained using th
 
 For the trained network shown above, this yields
 
-![readable attribution](https://github.com/blbadger/blbadger.github.io/blob/master/neural_networks/readable_1.png)
+![readable attribution]({{https://blbadger.github.io}}neural_networks/readable_1.png)
 
 and the correct input is attributed to be the most important.
 
