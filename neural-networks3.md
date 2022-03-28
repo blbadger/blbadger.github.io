@@ -266,39 +266,6 @@ Now we implement another class method which will perform the task of $f()$, ie o
 		tensor = tensor.flatten()
 		return tensor 
 ```
-No we can assemble an array of input and output tensors using the `string_to_tensor` method.
-
-```python
-	def sequential_tensors(self, training=True):
-		"""
-		kwargs:
-			training: bool
-
-		Returns:
-			input_tensors: torch.Tensor objects
-			output_tensors: torch.Tensor objects
-		"""
-
-		input_tensors = []
-		output_tensors = []
-		if training:
-			inputs = self.training_inputs
-			outputs = self.training_outputs
-		else:
-			inputs = self.validation_inputs
-			outputs = self.validation_outputs
-
-		for i in range(len(inputs)):
-			input_string = self.stringify_input(i, training=training)
-			input_tensor = self.string_to_tensor(input_string)
-			input_tensors.append(input_tensor)
-
-			# convert output float to tensor directly
-			output_tensors.append(torch.Tensor([outputs[i]]))
-
-		return input_tensors, output_tensors
-```
-
 and now we can assemble a neural network. Here we implement a relatively simple fully-connected network by inheriting from the `torch.nn.Module` library and specify a 5-layer (3 hidden layer) architecture.
  
  ```python
@@ -426,14 +393,27 @@ Given any nonlinear model that performs a function approximation from inputs to 
 
 This definition leads to a straightforward and natural method of model interpretation that we can apply to virtually any machine learning approach.  This is simply to first compute the output for some input, and then compare this output to a modified output that results from removing elements of the input one by one.  This technique is sometimes called a perturbation-style input attribution, because we are actively perturbing the input in order to observe the change in the output.  More commonly this method is known as 'occlusion', as it is similar to the process of a non-transparent object occluding (shading) light on some target.
 
-There are a few different ways one can proceed with implementing occlusion.  Recall the structured input method's approach to missing values:
+There are a few different ways one can proceed with implementing occlusion. For a complete input map $x_c$ and a map of an input missing the first value ($x_i$), 
+
+$$
+x_c = f(1 \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218) \\
+x_i = f( \;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
+$$
+
+recall the structured input method's approach to missing values maps
 
 $$
 x_c=[[0,1,0,0,0,0,0,0,0,0,0],[0,0,1,...]...] \\
 x_i=[[0,0,0,0,0,0,0,0,0,0,1],[0,0,1,...]...]
 $$
 
-where $x_i$ contains a mising first character.  We can occlude the first character by simply zeroing out all elements of the first tensor,
+We generate an occluded input map $x_o$,
+
+$$
+x_o = f(_\;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
+$$
+
+where $_$ signifies an occlusion (here for the first character) in a similar way by simply zeroing out all elements of the first tensor, making the start of the occluded tensor as follows:
 
 $$
 x_c=[[0,1,0,0,0,0,0,0,0,0,0],[0,0,1,...]...] \\
@@ -446,9 +426,13 @@ $$
 v = \vert m(x_c) - m(x_o) \vert
 $$
 
-where $x_o$ is our occluded input, as this unambiguously defines an occluded input that is, importantly, different than an empty input.  This difference is important because otherwise the occluded input would be indistinguishable from an input that had a truly empty first character, such that the network's output given this occluded input might fail to be different from the actual output if simply having an empty field or not were the most important information from that field.  
+where $x_o$ is our occluded input, as this unambiguously defines an occluded input that is, importantly, different than an empty input and also different from any normally used character input as well.  This difference is important because otherwise the occluded input would be indistinguishable from an input that had a truly empty first character, such that the network's output given this occluded input might fail to be different from the actual output if simply having an empty field or not were the most important information from that field.  Thus we could also use a special character to denote an occluded input, perhaps by enlarging the character tensor size to 12 such that the mapping is given as
 
-Note too that this method is easily applied to categorical outputs, in which case the occlusion value $v$ is
+$$
+x_o=[[0,0,0,0,0,0,0,0,0,0,0,1],[0,0,1,...]...]
+$$
+
+Note that this method is easily applied to categorical outputs, in which case the occlusion value $v$ is
 
 $$
 v = \sum_i \vert m(x_c)_i - m(x_o)_i \vert
@@ -546,6 +530,50 @@ g = \nabla_i f(x) * x
 $$
 
 where $\hat{y} = f(x)$ is the model output, $x$ is the model input, $i$ is the input layer, and $g$ is the gradientxinput.  Note that $\nabla_i f(x)$ and $x$ are both tensors, and as we want a tensor of the same size we use the Hadamard (element-wise) product, which when using `torch.Tensor` objects may be obtained as $t_1 * t_2$.
+
+The intuition behind this method is a little confusing for the researcher or engineer normally used to finding the gradient of an objective function with respect to a tunable parameter in a model, so before proceeding further let's note the differences between this gradient used to interpret an input and the gradient used to train a model.  
+
+To summarize: the method by which the gradient of the objective (loss) function $J$ of the output given model a configuration $\theta$ $O(\theta)$ evaluated with respect to parameter $p$ is
+
+$$
+g = \nabla_p J(O(\theta))
+$$
+
+and we can imagine a landscape of this loss function with respect to one variable as a Cartesian graph.  The opposite of the gradient tells us the direction (and partial magnitude) with which $p$ should be changed in order to minimize $J(O(\theta))$, which can be visualized as follows
+
+![loss gradient]({{https://blbadger.github.io}}neural_networks/loss_gradient.png)
+
+For multiple variables, we can imagine this visualization as simply extending to multiple dimensions, with each parameter forming a basis in $\Bbb R^n$ space.  The gradient's component along the parameter's axis forms the direction (with some magnitude information as well) in which that parameter should be changed.
+
+Now instead of evaluating the gradient with respect to the objective function, to determine how the output alone changes we can evaluate the gradient of the output $O(\theta)$ with respect to parameter $p$
+
+$$
+g = \nabla_p O(\theta)
+$$
+
+which can be visualized as
+
+![output gradient]({{https://blbadger.github.io}}neural_networks/output1_gradient.png)
+
+now to determine which parameter is more important for determining a given output, we can compare the gradients $g_1$ and $g_2$ that are computed with respect to $p_1$ and $p_2$, respectively
+
+$$
+g_1 = \nabla_p_1 O(\theta) \\
+g_2 = \nabla_p_2 O(\theta)
+$$
+
+These can be visualized without resorting to multidimensional space as separate curves on a single two dimensional plane (for any single value of $p_1$ and $l_2$ of interest) as follows:
+
+![output gradient]({{https://blbadger.github.io}}neural_networks/output2_gradient.png)
+
+In this particular example, $g_1 > g_2$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the component vectors for a single tangent line to a surface of dimension $D-1$.
+
+The last step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $p_1, p_2 = i_1, i_2$ where $i_1$ is the first input and $i_2$ is the second.
+
+Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
+
+
+The following class method implements gradient-based saliency:
 
 ```python
 	def gradientxinput(self, input_tensor):
@@ -647,7 +675,9 @@ For the trained network shown above, this yields
 
 ![readable attribution]({{https://blbadger.github.io}}neural_networks/readable_1.png)
 
-and the correct input is attributed to be the most important.
+and the correct input is attributed to be the most important, so our positive control indicates success.
+
+Now we can apply this method to our original problem of finding which input are important for predicting a delivery time.
 
 
 
