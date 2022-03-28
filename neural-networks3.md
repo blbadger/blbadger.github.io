@@ -410,10 +410,10 @@ $$
 We generate an occluded input map $x_o$,
 
 $$
-x_o = f(_\;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
+x_o = f(\mathscr u\;	2015-02-06 \; 22:24:17 \;1845 \;3441	\;33 \;14 \;21 \;861 \;3218)  
 $$
 
-where $_$ signifies an occlusion (here for the first character) in a similar way by simply zeroing out all elements of the first tensor, making the start of the occluded tensor as follows:
+where $\mathscr u$ signifies an occlusion (here for the first character) in a similar way by simply zeroing out all elements of the first tensor, making the start of the occluded tensor as follows:
 
 $$
 x_c=[[0,1,0,0,0,0,0,0,0,0,0],[0,0,1,...]...] \\
@@ -529,11 +529,11 @@ $$
 g = \nabla_i f(x) * x
 $$
 
-where $\hat{y} = f(x)$ is the model output, $x$ is the model input, $i$ is the input layer, and $g$ is the gradientxinput.  Note that $\nabla_i f(x)$ and $x$ are both tensors, and as we want a tensor of the same size we use the Hadamard (element-wise) product, which when using `torch.Tensor` objects may be obtained as $t_1 * t_2$.
+where $\hat{y} = f(x)$ is the model output, $x$ is the model input, $i$ is the input layer, and $g$ is the gradientxinput.  Note that $\nabla_i f(x)$ and $x$ are both tensors, and as we want a tensor of the same size we use the Hadamard (element-wise) product, which when using `torch.Tensor` objects `t1, t2`, the Hadamard product may be obtained as `t1 * t2`.
 
 The intuition behind this method is a little confusing for the researcher or engineer normally used to finding the gradient of an objective function with respect to a tunable parameter in a model, so before proceeding further let's note the differences between this gradient used to interpret an input and the gradient used to train a model.  
 
-To summarize: the method by which the gradient of the objective (loss) function $J$ of the output given model a configuration $\theta$ $O(\theta)$ evaluated with respect to parameter $p$ is
+To summarize: the method by which the gradient of the objective (loss) function $J$ of the output given model a configuration $\theta$ denoted as $O(\theta)$ evaluated with respect to parameter $p$ is
 
 $$
 g = \nabla_p J(O(\theta))
@@ -558,8 +558,8 @@ which can be visualized as
 now to determine which parameter is more important for determining a given output, we can compare the gradients $g_1$ and $g_2$ that are computed with respect to $p_1$ and $p_2$, respectively
 
 $$
-g_1 = \nabla_p_1 O(\theta) \\
-g_2 = \nabla_p_2 O(\theta)
+g_1 = \nabla_{p_1} O(\theta) \\
+g_2 = \nabla_{p_2} O(\theta)
 $$
 
 These can be visualized without resorting to multidimensional space as separate curves on a single two dimensional plane (for any single value of $p_1$ and $l_2$ of interest) as follows:
@@ -568,7 +568,7 @@ These can be visualized without resorting to multidimensional space as separate 
 
 In this particular example, $g_1 > g_2$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the component vectors for a single tangent line to a surface of dimension $D-1$.
 
-The last step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $p_1, p_2 = i_1, i_2$ where $i_1$ is the first input and $i_2$ is the second.
+The last step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $(p_1, p_2) = (i_1, i_2)$ where $i_1$ is the first input and $i_2$ is the second.
 
 Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
 
