@@ -562,16 +562,31 @@ g_1 = \nabla_{p_1} O(\theta) \\
 g_2 = \nabla_{p_2} O(\theta)
 $$
 
-These can be visualized without resorting to multidimensional space as separate curves on a single two dimensional plane (for any single value of $p_1$ and $l_2$ of interest) as follows:
+These can be visualized without resorting to multidimensional space as separate curves on a single two dimensional plane (for any single value of $p_1$ and $p_2$ of interest) as follows:
 
 ![output gradient]({{https://blbadger.github.io}}neural_networks/output2_gradient.png)
 
 In this particular example, $g_1 > g_2$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the component vectors for a single tangent line to a surface of dimension $D-1$.
 
-The last step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $(p_1, p_2) = (i_1, i_2)$ where $i_1$ is the first input and $i_2$ is the second.
+The next step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $(p_1, p_2) = (i_1, i_2)$ where $i_1$ is the first input and $i_2$ is the second.
+
+Now that we have the gradient of the output with respect to the input, this gradient can be applied in some way to the input values themselves in order to determine the relation of the input gradient with the particular input of interest.  The classic way to accomplish this is to use Hadamard multiplication, in which each vector element of the first multiplicand $v$ is multiplied by its corresponding component in the second multiplicand $s$
+
+$$
+v = (v_1, v_2, v_3) \\
+s = (s_1, s_2, s_3) \\
+v * s= (v_1s_1, v_2s_2, v_3s_3, ...)
+$$
+
+and all together, we have
+
+$$
+g = \nabla_i f(x) * x
+$$
+
+This final multiplication step is perhaps the least well-motivated portion of the whole procedure.  When applied to image data in which each pixel (or in other words each input) can be expected to have a non-zero value, we would not expect to lose much information with Hadamard multiplication and furhtermore the process is fairly intuitive: brighter pixels (ie those with larger input values) that have the same gradient values as dimmer pixels are considered to be more important.  But with one-hot encodings where most input values are indeed 0, it is less clear as to whether or not this method necessarily does not lose information.  Empirically, for low-dimensional (<500 or so) tensors this is not the case.
 
 Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
-
 
 The following class method implements gradient-based saliency:
 
@@ -627,7 +642,18 @@ The following class method implements gradient-based saliency:
 		return saliency_arr
 ```
 
-This may be combined with our occlusion method by simply averaging the values obtained at each position using these methods, and the result is as follows:
+
+One criticism of pure gradient-based approaches such as gradientxinput is that they only apply to local information.  This means that when we compute
+
+$$
+\nabla_i f(x)
+$$
+
+we only learn what happens when $i$ is changed by a very small amount $\epsilon$, which follows from the definition of a gradient.  Techniques that attempt to overcome this locality challenge include integrated gradients and other such additive measures.  But those methods have their own drawbacks (integrated gradients involve modifying the input such that the gradient-based saliency may exhibit dubious relevance to the original).  
+
+Happily, we already have a locality-free (non-gradient) based approach to attribution that we can add to gradientxinput in order to overcome this limitation. The intuition behind why occlusion is non-local is as follows: there is no a priori reason as to why a modification to the input at any position should yield an occluded input that is nearly indistinguishable from the original, and thus any results obtained from comparing the two images using our model do not apply only to the first image. Furthermore, the `occlusion_size` parameter provides a clear hyperparameter to prevent any incedental locality, as simply increasing this parameter size is clearly sufficient to increase the distance between $x_o$ and $x_c$ in the relevant latent space.
+
+Thus we may combine occlusion with gradientxinput by simply averaging the values obtained at each position, and the result is as follows:
 
 {% include youtube.html id='-M15BxfmFRQ' %}
 
