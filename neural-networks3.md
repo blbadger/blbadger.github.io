@@ -562,19 +562,19 @@ g_1 = \nabla_{p_1} O(\theta) \\
 g_2 = \nabla_{p_2} O(\theta)
 $$
 
-These can be visualized without resorting to multidimensional space as separate curves on a single two dimensional plane (for any single value of $p_1$ and $p_2$ of interest) as follows:
+These can be visualized without resorting to multidimensional space as separate curves on a two dimensional plane (for any single value of $p_1$ and $p_2$ of interest) as follows:
 
 ![output gradient]({{https://blbadger.github.io}}neural_networks/output2_gradient.png)
 
-In this particular example, $g_1 > g_2$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the component vectors for a single tangent line to a surface of dimension $D-1$.
+Where the red arrows denote $-g_1$ and $-g_2$ as gradients point in the direction of steepest ascent.  In this particular example, $\vert g_1 \vert > \vert g_2 \vert$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the gradient vector's components, where each parameter $p_n$ forms a basis vector of the space and the component is a projection of the gradient vector onto each basis.
 
 The next step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $(p_1, p_2) = (i_1, i_2)$ where $i_1$ is the first input and $i_2$ is the second.
 
 Now that we have the gradient of the output with respect to the input, this gradient can be applied in some way to the input values themselves in order to determine the relation of the input gradient with the particular input of interest.  The classic way to accomplish this is to use Hadamard multiplication, in which each vector element of the first multiplicand $v$ is multiplied by its corresponding component in the second multiplicand $s$
 
 $$
-v = (v_1, v_2, v_3) \\
-s = (s_1, s_2, s_3) \\
+v = (v_1, v_2, v_3,...) \\
+s = (s_1, s_2, s_3,...) \\
 v * s= (v_1s_1, v_2s_2, v_3s_3, ...)
 $$
 
@@ -588,7 +588,7 @@ This final multiplication step is perhaps the least well-motivated portion of th
 
 Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
 
-The following class method implements gradient-based saliency:
+The following class method implements gradientxinput:
 
 ```python
 	def gradientxinput(self, input_tensor):
@@ -616,8 +616,6 @@ The following class method implements gradient-based saliency:
 
 		# compute gradient x input
 		final = torch.abs(input_tensor.grad) * input_tensor
-
-		# separate out individual characters 
 		saliency_arr = []
 		s = 0
 		for i in range(len(final)):
@@ -625,8 +623,6 @@ The following class method implements gradient-based saliency:
 				saliency_arr.append(s)
 				s = 0
 			s += float(final[i])
-
-		# append final element
 		saliency_arr.append(s)
 
 		# max norm
