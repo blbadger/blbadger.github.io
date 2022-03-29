@@ -649,11 +649,13 @@ we only learn what happens when $i$ is changed by a very small amount $\epsilon$
 
 Happily, we already have a locality-free (non-gradient) based approach to attribution that we can add to gradientxinput in order to overcome this limitation. The intuition behind why occlusion is non-local is as follows: there is no a priori reason as to why a modification to the input at any position should yield an occluded input that is nearly indistinguishable from the original, and thus any results obtained from comparing the two images using our model do not apply only to the first image. Furthermore, the `occlusion_size` parameter provides a clear hyperparameter to prevent any incedental locality, as simply increasing this parameter size is clearly sufficient to increase the distance between $x_o$ and $x_c$ in the relevant latent space.
 
-Thus we may combine occlusion with gradientxinput by simply averaging the values obtained at each position, and the result is as follows:
+Thus it is not entirely inaccurate to think of gradientxinput as a continuous version of occlusion, as the former tells us what happens if we were to change the input by a very small amount whereas the latter tells us what would happen if we changed it by a large discrete amount. 
+
+We may combine occlusion with gradientxinput by simply averaging the values obtained at each position, and the result is as follows:
 
 {% include youtube.html id='-M15BxfmFRQ' %}
 
-We want to be able to have a more readable attribution than is obtained using the heatmaps above.  This may be accomplished by averaging the attribution value of each character over a number of input examples, and then aggregating these values (using maximums or averages or another function) into single measurements for each field. An abbreviated implementation (lacking normalization and aggregation method choice) of this method is as follows:
+One may want to be able to have a more readable attribution than is obtained using the heatmaps above,  This may be accomplished by averaging the attribution value of each character over a number of input examples, and then aggregating these values (using maximums or averages or another function) into single measurements for each field. An abbreviated implementation (lacking normalization and aggregation method choice) of this method is as follows:
 
 ```python
 	def readable_interpretation(self, count, n_observed=100, method='combined', normalized=True, aggregation='average'):
