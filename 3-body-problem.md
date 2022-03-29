@@ -467,6 +467,12 @@ We can also ask which points in the $y, z$ plane end up in an arbitrary region, 
 
 This clearly shows us how for the three body system, space is stretched and folded.  Stretched here is where approximate circles are flatten out and elongated, and folded is where new regions mapped to our circle seem to appear out of nothing.
 
+Is there a specific region in which initial positions that have diverged are more likely to be found compared to positions of planet 1 that have not diverged?  One guess is that trajectories in which planets that are 'ejected', ie sent far away from each other, are those for which the divergence is more likely to occur.  We can plot the initial points where planet 1 is at least 150 units from the origin in white as follows:
+
+{% include youtube.html id='Ig3e0wW4Eyo' %}
+
+Which suggests that some but not all ejected trajectories are also diverged, and on the other hand some non-diverged trajectories are also those that experience ejection.
+
 ### A comparison: two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
 
