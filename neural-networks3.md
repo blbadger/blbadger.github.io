@@ -507,6 +507,12 @@ Now we can define a class function that will determine the occlusion value.  Thi
 		return occlusion_arr
 ```
 
+Prior to training, the attribution values would be expected to be more or less randomly assigned. When we observe a heatmap of the attribution value per sequence position (x-axis) given fifty different test examples (y-axis) we see that indeed our expectation is the case
+
+![readable attribution]({{https://blbadger.github.io}}neural_networks/attributions_0000.png)
+
+and see [the source code](https://github.com/blbadger/nnetworks/tree/master/interprets) for details on how to implement a heatmap-based visualization of model occlusion.
+
 Using one of our controls, we may observe how a network 'learns' occlusion.  Recalling that this dataset's output is defined as
 
 $$
@@ -515,7 +521,7 @@ $$
 
 where $d$ is the **Total Deliverers** input, and observing that this input occupies the 24rd through the 28th position in our input sequence (as there are fields of size 4, 1, 15, and 4 ahead of it and we are incrementing from 0 rather than 1), we expect the occlusiong attribution to be highest for these positions for the majority of inputs.  Note that the **Total Deliverers** field is closely related to the **Available Deliverers** and **Total Orders** fields that follow it, as an increase in one is likely to affect the other two.  In statistical terms, these fields are related via the underlying data generating distribution.
 
-This means that although we may expect to see the **Total Deliverers** field as the most 'important' as measured using occlusion, a statistical model would be expected to also place fairly large attributions on the fields most similar to **Total Deliverers**.  And if we observe occlusion values per character during a training run (200 epochs), indeed we see that this is the case.  See [the source code](https://github.com/blbadger/nnetworks/tree/master/interprets) for details on how to implement a heatmap-based visualization of model occlusion.
+This means that although we may expect to see the **Total Deliverers** field as the most 'important' as measured using occlusion, a statistical model would be expected to also place fairly large attributions on the fields most similar to **Total Deliverers**.  And if we observe occlusion values per character during a training run (200 epochs), indeed we see that this is the case (note how positions 24-28 are usually among the brightest in the following heatmap after training).  
 
 {% include youtube.html id='HcSUH0zTexQ' %}
 
