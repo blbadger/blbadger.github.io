@@ -638,6 +638,11 @@ The following class method implements gradientxinput:
 		return saliency_arr
 ```
 
+which results in
+
+{% include youtube.html id='2V3B3tuc6mY' %}
+
+### Combining Occlusion and Gradientxinput
 
 One criticism of pure gradient-based approaches such as gradientxinput is that they only apply to local information.  This means that when we compute
 
