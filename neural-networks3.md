@@ -313,7 +313,6 @@ and now we can assemble a neural network. Here we implement a relatively simple 
 		return output
  ```
  
- 
 This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=m^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
 
 ### Controls
@@ -339,9 +338,9 @@ where $d$ is the **Total Deliverers** input. We can track test (previously unsee
 
 {% include youtube.html id='KgCuK6v_MgI' %}
 
-so clearly for this control function, the model arrives at near-perfect accuracy fairly quickly.
+so clearly for this control function, the model arrives at near-perfect accuracy fairly quickly.  It is important here to note that this is a much more difficult problem for the model than at first it may seem because of the encoding method: rather than simply assign an appropriate weight to an input neuron encoding $d$ instead the model must learn to decode the encoding function, and then apply the appropriate weight to the decoded value.  In effect, we are enforcing a distributed representation of the input because the encoding method itself is distributed (here $4*15=60$ tensor values rather than $1$).
 
-We can also experiment with the network learning a more complicated rule, this time the non-linear mapping
+We can also experiment with the network learning a more complicated rule, this time the non-linear (with respect to the input) mapping
 
 $$
 y = (c/100) * b
@@ -353,7 +352,29 @@ where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input field. 
 
 and the estimation accuracy for both positive controls diminishes as the number of training examples increases, which is some small experimental evidence suggests that $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
 
-These examples show that simple functions of the inputs can indeed be learned.  
+These examples show that defined functions on the input are capable of being approximated quite well by the sequential character encoding method. 
+
+### Justification of sequence-based character encodings
+
+We have seen that the above encoding approach is effective, but why is this? It seems that we are simply feeding in raw information to the network and then are more or less by luck meeting with success.  Happily there are some nice theoretical considerations as to why this method is successful.
+
+Consider the network architecture above: in this case the input is a tensor of concatenated one-hot vectors, and the output after three hidden layers is a single neuron that performs a linear regression on the second-to-last layer.  Omitting most components, the architecture may be visualized as follows:
+
+![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_architecture.png)
+
+Now let's compare this to the normal approach to encoding categorical inputs that may be of high dimensionality.  Rather than employ large one-hot vectors, a better way is to perform embeddings on each of the features in question.  This may be done with autoencoder neural networks as follows: first each feature is separated and then one hidden layer of smaller dimensionality than that input feature is trained to return the input as well as possible.  The hidden layers contain what are normally called embeddings, or encodings in lower dimension, of the input.  These hidden layers may then be used as the input layer of the deep learning model that will then produce an output.  For a visualization of this process see below.
+
+![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_embeddings.png)
+
+now consider what happens when we feed the input directly into the model, bypassing the embedding stage.  If successful, each hidden layer of the model will learn on or more distributed representations of the input, meaning that the input will be represented accross the layer such that the final representation allows for the final neuron to perform a linear regression $\hat {y} = w^Tx + b$ and obtain an accurate result, regardless of the true function one attempts to model.
+
+In the model above, it is clear that each successive representation of the input will be of lower dimension than the last because each layer contains fewer parameters than the last.  But in the general case, we can also say that between the input and output, there is a representation that is of lower dimension than the input itself (otherwise training would be impossible, see the last section of [this page](https://blbadger.github.io/nn-limitations.html) for more details).  Therefore every model for some hidden layer we obtain a representation of the input in a lower dimension, or equivalently an embedding.
+
+Thus we are allowed to bypass an embedding stage because the model will be expected to obtain its own embeddings. 
+
+![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_including_embeddings.png)
+
+The traditional approach of first training embeddings using autoencoders before proceeding to use those as inputs into the model is analagous to greedy layer-wise pretraining for the first layer of the network, with the objective function being a distance measurement from the input rather than the model's objective function.  
 
 ### Interpretable deep learning: Introduction
 
