@@ -519,9 +519,9 @@ $$
 y = 10d
 $$
 
-where $d$ is the **Total Deliverers** input, and observing that this input occupies the 24rd through the 28th position in our input sequence (as there are fields of size 4, 1, 15, and 4 ahead of it and we are incrementing from 0 rather than 1), we expect the occlusiong attribution to be highest for these positions for the majority of inputs.  Note that the **Total Deliverers** field is closely related to the **Available Deliverers** and **Total Orders** fields that follow it, as an increase in one is likely to affect the other two.  In statistical terms, these fields are related via the underlying data generating distribution.
+where $d$ is the **Total Deliverers** input, and observing that this input occupies the 24th through the 27th position (inclusive) in our input sequence (as there are fields of size 4, 1, 15, and 4 ahead of it and we are incrementing from 0 rather than 1), we expect the occlusiong attribution to be highest for these positions for the majority of inputs.  Note that the **Total Deliverers** field is closely related to the **Available Deliverers** and **Total Orders** fields that follow it, as an increase in one is likely to affect the other two.  In statistical terms, these fields are related via the underlying data generating distribution.
 
-This means that although we may expect to see the **Total Deliverers** field as the most 'important' as measured using occlusion, a statistical model would be expected to also place fairly large attributions on the fields most similar to **Total Deliverers**.  And if we observe occlusion values per character during a training run (200 epochs), indeed we see that this is the case (note how positions 24-28 are usually among the brightest in the following heatmap after training).  
+This means that although we may expect to see the **Total Deliverers** field as the most 'important' as measured using occlusion, a statistical model would be expected to also place fairly large attributions on the fields most similar to **Total Deliverers**.  And if we observe occlusion values per character during a training run (200 epochs), indeed we see that this is the case (note how positions 24-27 are usually among the brightest in the following heatmap after training).  
 
 {% include youtube.html id='HcSUH0zTexQ' %}
 
@@ -710,7 +710,19 @@ For the trained network shown above, this yields
 
 ![readable attribution]({{https://blbadger.github.io}}neural_networks/readable_1.png)
 
-and the correct input is attributed to be the most important, so our positive control indicates success.
+and the correct input is attributed to be the most important, so our positive control indicates success.  What about a slightly more realistic function in which multiple input fields contribute to the output? Recall that in our nonlinear control function, the output $y$ is determined by the function
+
+$$
+y = (c/100) * b
+$$
+
+where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input.  During training we can see that the expected (20-23 and 28-32 inclusive) positions are the ones that obtain the highest attribution values for most inputs:
+
+{% include youtube.html id='ARTrheoeXEI' %}
+
+and when the average attribution per input is calculated, we see that indeed the correct fields contain the highest attribution.
+
+![readable attribution]({{https://blbadger.github.io}}neural_networks/readable_nonlinear.png)
 
 Now we can apply this method to our original problem of finding which input are important for predicting a delivery time.
 
