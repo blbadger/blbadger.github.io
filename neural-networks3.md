@@ -312,6 +312,9 @@ and now we can assemble a neural network. Here we implement a relatively simple 
 		output = self.hidden2output(out)
 		return output
  ```
+ 
+ 
+This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=m^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
 
 ### Controls
 
