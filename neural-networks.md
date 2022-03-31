@@ -508,7 +508,7 @@ The high training accuracy (100%) but low test accuracy (62 %) for the network o
 
 Overfitting is intuitively similar to memorization: both lead to an assimilation of information previously seen, without this assimilation necessarily helping the prediction power in the future.  One can memorize exactly how letters look in a serif font, but without the ability to generalize then one would be unable to indentify many letters in a sans-serif font.  The goal for statistical learning is to make predictions on hitherto unseen datasets, and thus to avoid memorization which does not guarantee this ability.
 
-Thus the network overfits (memorizes) Snf7 images but is able to effectively differentiate Snap29 images.  This makes sense from the perspective of manual classification as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
+Thus the network overfits Snf7 images but is able to effectively differentiate Snap29 images.  This makes sense from the perspective of manual classification as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
 
 A slower learning process for generalizable learning is observed compared to that which led to overfitting, but perhaps some other feature could be causing this delay in training accuracy.  The datasets used are noticeably different: Snap29 is in two colors whereas Snf7 is monocolor.  If a deeper network (with the extra layer of 50 dense neurons before the output layer) is trained on a monocolor version of the Snap29 or Snf7 datasets, the test accuracy achieved is nearly identical to what was found before,
 
@@ -534,9 +534,13 @@ Using this network, it has previously been seen that overfitting is the result o
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
-There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for the deep network) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
+There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for our custom architecture) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
 
 ### Learning (ie increasing test classification accuracy) does not equate to global minimization of a cost function during training
+
+The above experimental results are quite interesting because they suggest that, for deep learning models of quite different architecture, a model's ability to generalize depends not only on the model's parameters $\theta$ and the family of functions that it can approximate given its architecture $F_j$ but also on the choice of input $x$.  Furthermore, the input $x$ is capable of inducing overfitting in a model employing extensive measures to prevent this phenomenon (L2 regularization, batch normalization) but a different input results in minimal overfitting (in the same epoch number) in a model that has none of these measures (nor any other regularizers separate from the model architecture itself).
+
+Why is this the input so important to the behavior of the network?
 
 Neural networks learn by adjusting the weights and biases of the neurons in order to miminize a cost function, which is a continuous and differentiable representation of the accuracy of the output of the network. This is usually done with a variant on stochastic gradient descent, which involves calculating the gradient (direction of largest change) using a randomly chosen subset of images (which is why it is 'stochastic').  This is conceptually similar to rolling a ball representing the network down a surface representing the multidimensional weights and biases of the neurons.  The height of the ball represents the cost function, so the goal is to roll it to the lowest spot during training.  
 
