@@ -1,6 +1,6 @@
 ## Flexible and Interpretable Deep Learning
 
-Relying on the ability of deep learning techniques to be sufficient to learn successive representations of an input, we explore extremely flexible yet interpretable neural networks.
+Relying on the ability of deep learning to form representations of an input, we explore extremely flexible yet interpretable neural networks.
 
 ### Introduction and background
 
@@ -41,7 +41,7 @@ $$
 \tag{1}
 $$
 
-where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting `Elapsed Time`, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
+where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting **Elapsed Time**, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
 
 $$
 MSE = \frac{1}{m} \sum_i (\hat {y_i} - y_i)
@@ -740,7 +740,7 @@ $$
 y = (c/100) * b
 $$
 
-where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input.  During training we can see that the expected (20-23 and 28-32 inclusive) positions are the ones that obtain the highest attribution values for most inputs:
+where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input.  During training we can see that the expected (20-23 and 28-31 inclusive) positions are the ones that obtain the highest attribution values for most inputs:
 
 {% include youtube.html id='ARTrheoeXEI' %}
 
