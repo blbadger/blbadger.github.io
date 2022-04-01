@@ -1,10 +1,8 @@
 ## Image classification with [neural networks](https://github.com/blbadger/neural-network).
 
-Follow the link to [this page](/nn-limitations.md) to explore some interesting limitations of neural networks, with a specific focus on the presence of adversarial negatives. 
+### Introduction
 
-### Using a neural network to classify images of cells
-
-In scientific research it is important to be able to categorize samples accurately. For example, during the research process a histological section of tissue from an animal subjected to some treatment may be observed to be healthy or unhealthy depending on its appearance under the microscope. One way to accomplish this task of classification of healthy versus unhealthy is to have a skilled individual manually observe and interpret these images.  With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation.
+In scientific research it is often important to be able to categorize samples accurately. For example, during the research process a histological section of tissue from an animal subjected to some treatment may be observed to be healthy or unhealthy depending on its appearance under the microscope. One way to accomplish this task of classification of healthy versus unhealthy is to have a skilled individual manually observe and interpret these images.  With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation.
 
 Another way to accomplish the task is to employ a computational method.  One could imagine attempting to program a machine to recognize the same features that an expert individual would take note of in order to replicate that individual's performance.  Historically this approach was taken in efforts resulting in what were called 'expert systems', but now such approaches are generally no longer attempted.  
 
@@ -13,6 +11,9 @@ This is for a couple reasons: firstly because they are extremely tedious and tim
 The failures of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field that has been termed statistical learning.  Particularly delicate tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
 
 Supervised machine learning techniques attempt to reproduce with generalization: in the case of image classification, we already 'know' how to classify a certain number of images that becomes our training dataset, and we seek to classify other images that the program has not seen before.  In order to assess accuracy for classification on this test dataset, we need to know the true classification to be able to compare this with the predicted classification.  The ideal supervised learning technique takes a training dataset and accurately generalizes from this such that unseen datasets are classified correctly using information from this training dataset.  
+
+
+### Designing a neural network to classify images of cells
 
 The current state-of-the-art method for classifying images is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are tuned in accordance to some loss function in order to 'learn'.  These neuron are arranged in sequential layers, each representing the input in a potentially more abstract manner before the output layer is used for classification.  This sequential (and distributed across many neurons of one layer) representation may be many layers deep before reaching the output, leading to the field of study for many neural network-related approaches to be called 'deep learning'.
 
