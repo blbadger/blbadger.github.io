@@ -153,16 +153,16 @@ def data_import():
 	"""
 	Import images and convert to tensorflow.keras.preprocessing.image.ImageDataGenerator
 	object
-	
+
 	Args:
 		None
-		
+
 	Returns:
 		train_data_gen1: ImageDataGenerator object of image for training the neural net
 		test_data_gen1: ImageDataGenerator object of test images
 		test_data_gen2: ImageDataGenerator object of test images
 	"""
-	
+
 	data_dir = pathlib.Path('/home/bbadger/Desktop/neural_network_images',  fname='Combined')
 	data_dir2 = pathlib.Path('/home/bbadger/Desktop/neural_network_images2', fname='Combined')
 	data_dir3 = pathlib.Path('/home/bbadger/Desktop/neural_network_images3', fname='Combined')
@@ -268,9 +268,7 @@ Assigning the pair of labels to each iterable in the relevant generators,
 
 ```python
 (x_train, y_train) = next(train_data_gen1)
-
 (x_test1, y_test1) = next(test_data_gen1)
-
 (x_test2, y_test2) = next(test_data_gen2)
 ```
 
@@ -368,19 +366,11 @@ model.compile(optimizer='Adam',
 	loss = 'categorical_crossentropy', 
 	metrics=['accuracy'])
 
-### Displays details of each layer output in the model 
-
 model.summary()
-
-### Trains the neural network, and print the progress at the end of each epoch
-### (signified by verbose=2)
-
 model.fit(x_train, y_train, epochs=9, batch_size = 20, verbose=2)
-
-### Evaluates neural network on test datasets and print the results
-
 model.evaluate(x_test1, y_test1, verbose=1)
 model.evaluate(x_test2, y_test2, verbose=1)
+
 ```
 
 A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one 'hot' label (usually 1), ie instead of labels such as `[3]` we have `[0, 0, 1]`.  This means that categorical crossentropy should be used instead of sparse categorical crossentropy.  
@@ -434,8 +424,8 @@ plt.figure(figsize = (num_rows, num_cols))
 
 # Plot assembly and display
 for i in range(num_images):
-  plt.subplot(num_rows, 2*num_cols, i+1)
-  plot_image(i+1, predictions, test_labels, test_images)
+    plt.subplot(num_rows, 2*num_cols, i+1)
+    plot_image(i+1, predictions, test_labels, test_images)
 
 plt.show() 
 
