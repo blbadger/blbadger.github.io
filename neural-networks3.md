@@ -739,11 +739,17 @@ $$
 g = \nabla_i f(x) * x
 $$
 
-This final multiplication step is perhaps the least well-motivated portion of the whole procedure.  When applied to image data in which each pixel (or in other words each input) can be expected to have a non-zero value, we would not expect to lose much information with Hadamard multiplication and furhtermore the process is fairly intuitive: brighter pixels (ie those with larger input values) that have the same gradient values as dimmer pixels are considered to be more important.  But with one-hot encodings where most input values are indeed 0, it is less clear as to whether or not this method necessarily does not lose information.  Empirically, for low-dimensional (<500 or so) tensors this is not the case.
+This final multiplication step is perhaps the least well-motivated portion of the whole procedure.  When applied to image data in which each pixel (or in other words each input) can be expected to have a non-zero value, we would not expect to lose much information with Hadamard multiplication and furhtermore the process is fairly intuitive: brighter pixels (ie those with larger input values) that have the same gradient values as dimmer pixels are considered to be more important. 
 
 Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
 
-The following class method implements gradientxinput:
+The following class method implements a slightly modified version of gradientxinput.  Each 15 tensor inputs in sequence corresponds to one character, and so a natural way to accumulate the gradientxinput values is to first take the absolute values of the gradients, apply Hadamard multiplication to the inputs, and then sum up the resulting vector of size 15.  
+
+$$
+g = \sum_j \vert \nabla_j f(x) \vert * x_j
+$$
+
+A method implementing this version is as follows:
 
 ```python
 	def gradientxinput(self, input_tensor):
