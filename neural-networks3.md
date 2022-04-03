@@ -219,7 +219,7 @@ class Format:
 		"""
 
 
-		taken_ls = [4, 1, 15, 4, 4, 4, 4, 4, 4]
+		taken_ls = [4, 1, 8, 5, 3, 3, 3, 4, 4]
 
 		string_arr = []
 		if training:
@@ -332,7 +332,7 @@ $$
 y = 10d
 $$
 
-where $d$ is the **Total Deliverers** input. We can track test (previously unseen) accuracy during training on any regression by plotting the actual value (x-axis) agains the model's prediction (y-axis): a perfect model will have all points aligned on the line $y=x$.  Plotting the results of the above model using our sequential input encoding detailed above, we have
+where $d$ is the **Total Deliverers** input. We can track test (previously unseen) accuracy during training on any regression by plotting the actual value (x-axis) agains the model's prediction (y-axis): a perfect model will have all points aligned on the line $y=x$.  Plotting the results of the above model on a test (unseen during training) dataset every 23 epochs, we have
 
 {% include youtube.html id='KgCuK6v_MgI' %}
 
@@ -353,7 +353,7 @@ Close observations shows that a small number of points are poorly predicted by t
 If the cmodel is capable Observing the **Cost** input, we find that a small number of examples contain 5 digit cost values.  Our encoding scheme only takes 4 characters from that input, which results in ambiguous information being fed to the model, as $13400$ and $1340$ would be indistinguishable.  We can rectify this by assigning the **Cost** input to take 5 characters as follows:
 
 ```python
-taken_ls = [4, 1, 15, 5, 4, 4, 4, 4, 4]
+taken_ls = [4, 1, 8, 5, 3, 3, 3, 4, 4]
 ```
 which yields 
 
@@ -415,7 +415,7 @@ which is only applicable to that particular dataset.  This may be generalized a 
 
 We assemble the strings into tensors in a similar manner as above for the `string_to_tensor` method, except that the dataset's encoding may be chosen to be any general set.  For example, if we were  except encoding to all ascii characters rather than only a subset. This makes the dimension of the model's encoding rise from 15 to 128 using `places_dict = {s:i for i, s in enumerate([chr(i) for i in range(128)])}`.  
 
-Structured sequences are 
+Structured sequences are in some way similar to languages: both 
 
 A boolean argument `Flatten` may also be supplied, as some deep learning models are designed for language-like inputs
 
@@ -427,7 +427,11 @@ A boolean argument `Flatten` may also be supplied, as some deep learning models 
 			tensor = torch.flatten(tensor)
 		return tensor
 ```
+We can feed this input into a transformer encoder-based neural network of the following design
 
+![transformer]({{https://blbadger.github.io}}neural_networks/transformer.png)
+
+which can be implemented as follows: 
 
 ```python
 class Transformer(nn.Module):
