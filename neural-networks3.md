@@ -251,11 +251,9 @@ Now we implement another class method which will perform the task of $f()$, ie o
 		Returns:
 			tensor: torch.Tensor() object
 		"""
-
-		places_dict = {s:int(s) for s in '0123456789'}
-		for i, char in enumerate('. -:_'):
-			places_dict[char] = i + 10
-
+		
+		places_dict = {s:i for i, s in enumerate('0123456789. -:_')}
+		
 		# vocab_size x batch_size x embedding dimension (ie input length)
 		tensor_shape = (len(input_string), 1, 15) 
 		tensor = torch.zeros(tensor_shape)
@@ -334,7 +332,7 @@ $$
 y = 10d
 $$
 
-where $d$ is the **Total Deliverers** input. We can track test (previously unseen) accuracy during training on any regression by plotting the actual value agains the model's prediction: a perfect model will have all points aligned on the line $y=x$.  Plotting the results of the above model using our sequential input encoding detailed above, we have
+where $d$ is the **Total Deliverers** input. We can track test (previously unseen) accuracy during training on any regression by plotting the actual value (x-axis) agains the model's prediction (y-axis): a perfect model will have all points aligned on the line $y=x$.  Plotting the results of the above model using our sequential input encoding detailed above, we have
 
 {% include youtube.html id='KgCuK6v_MgI' %}
 
@@ -346,13 +344,136 @@ $$
 y = (c/100) * b
 $$
 
-where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input field.  Once again, the model is capable of very accurate estimations on the test dataset:
+where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input field.  Once again, the model is capable of very accurate estimations on the test dataset (actual outputs on the x-axis and expected outputs on the y-axis)
 
 {% include youtube.html id='rZRQa3ExzTU' %}
 
-and the estimation accuracy for both positive controls diminishes as the number of training examples increases, which is some small experimental evidence suggests that $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
+Close observations shows that a small number of points are poorly predicted by the model: they have much lower estimates than their actual outputs.  Why could this be?  On explanation is that this nonlinear function is more difficult to fit for our model, but this does not seem likely given that the model was capable of fitting a quite complicated nonlinear function to the first control.  This is because the input encoding requires the model to be able to decode a sequence of characters into a number, such that the model must learn a far more complicated function than $y=10d$.
 
-These examples show that defined functions on the input are capable of being approximated quite well by the sequential character encoding method. 
+If the cmodel is capable Observing the **Cost** input, we find that a small number of examples contain 5 digit cost values.  Our encoding scheme only takes 4 characters from that input, which results in ambiguous information being fed to the model, as $13400$ and $1340$ would be indistinguishable.  We can rectify this by assigning the **Cost** input to take 5 characters as follows:
+
+```python
+taken_ls = [4, 1, 15, 5, 4, 4, 4, 4, 4]
+```
+which yields 
+
+....
+
+The estimation accuracy for both positive controls diminishes as the number of training examples increases, which is some small experimental evidence suggests that $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
+
+These examples show that defined functions on the input are capable of being approximated quite well by a structured sequence -based encoding method. 
+
+### Generalization and language model application
+
+The greatest advantage of the structured sequence input is its flexibility: because all inputs are converted to a single data type automatically, the experimentor does not need to determine the method by which each input is encoded.  Thus we are able to combine heterogeneous inputs not only consisting of integers and timestamps but also categorical variables, language strings, images, and even audio input (provided that it has been digitized).  
+
+Up to now, the input method has been designed with only one problem in mind.  The number of elements per input field was specified as
+
+```python
+taken_ls = [4, 1, 15, 5, 4, 4, 4, 4, 4]
+```
+
+which is only applicable to that particular dataset.  This may be generalized a number of different ways, but one is as follows: we take either all or else a portion (`short=True`) of each input field, the number of elements of which is denoted by `n_taken` (which must be larger than the longest element if all characters in an input field are to be used)
+
+```python
+	def stringify_input(self, input_type='training', short=True, n_taken=4, remove_spaces=True):
+		"""
+		Compose array of string versions of relevant information in self.df 
+		Maintains a consistant structure to inputs regardless of missing values.
+
+		kwargs:
+			input_type: str, type of data input requested ('training' or 'test' or 'validation')
+			short: bool, if True then at most n_taken letters per feature is encoded
+			n_taken: int, number of letters taken per feature
+			remove_spaces: bool, if True then input feature spaces are removed before encoding
+
+		Returns:
+			array: string: str of values in the row of interest
+
+		"""
+		n = n_taken
+
+		if input_type == 'training':
+			inputs = self.training_inputs
+
+		elif input_type == 'validation':
+			inputs = self.val_inputs
+
+		else:
+			inputs = self.test_inputs
+
+		if short == True:
+			inputs = inputs.applymap(lambda x: '_'*n_taken if str(x) in ['', '(null)'] else str(x)[:n])
+		else:
+			inputs = inputs.applymap(lambda x:'_'*n_taken if str(x) in ['', '(null)'] else str(x))
+
+		inputs = inputs.applymap(lambda x: '_'*(n_taken - len(x)) + x)
+		string_arr = inputs.apply(lambda x: '_'.join(x.astype(str)), axis=1)
+
+		return string_arr
+```
+
+We assemble the strings into tensors in a similar manner as above for the `string_to_tensor` method, except that the dataset's encoding may be chosen to be any general set.  For example, if we were  except encoding to all ascii characters rather than only a subset. This makes the dimension of the model's encoding rise from 15 to 128 using `places_dict = {s:i for i, s in enumerate([chr(i) for i in range(128)])}`.  
+
+Structured sequences are 
+
+A boolean argument `Flatten` may also be supplied, as some deep learning models are designed for language-like inputs
+
+```python
+	@classmethod
+	def string_to_tensor(self, string, flatten):
+		...
+		if flatten:
+			tensor = torch.flatten(tensor)
+		return tensor
+```
+
+
+```python
+class Transformer(nn.Module):
+	"""
+	Encoder-only tranformer architecture for regression.  The approach is 
+	to average across the states yielded by the transformer encoder modules before
+	passing this to a single hidden fully connected linear layer.
+	"""
+	def __init__(self, output_size, n_letters, d_model, nhead, feedforward_size, nlayers, minibatch_size, dropout=0.3):
+
+		super().__init__()
+		self.n_letters = n_letters
+		self.posencoder = PositionalEncoding(d_model, dropout)
+		self.d_model = d_model
+		encoder_layers = TransformerEncoderLayer(d_model, nhead, feedforward_size, dropout, batch_first=True)
+		self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
+		self.transformer2hidden = nn.Linear(n_letters * d_model, 50)
+		self.hidden2output = nn.Linear(50, 1)
+		self.relu = nn.ReLU()
+		self.minibatch_size = minibatch_size
+
+	def forward(self, input_tensor):
+		"""
+		Forward pass through network
+
+		Args:
+			input_tensor: torch.Tensor of character inputs
+
+		Returns: 
+			output: torch.Tensor, linear output
+		"""
+
+		# apply (relative) positional encoding
+		input_encoded = self.posencoder(input_tensor)
+		output = self.transformer_encoder(input_encoded)
+
+		# output shape: same as input (batch size x sequence size x embedding dimension)
+		output = torch.flatten(output, start_dim=1)
+		output = self.transformer2hidden(output)
+		output = self.relu(output)
+		output = self.hidden2output(output)
+
+		# return linear-activation output
+		return output
+```
+
 
 ### Justification of sequence-based character encodings
 
