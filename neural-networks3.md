@@ -311,6 +311,8 @@ and now we can assemble a neural network. Here we implement a relatively simple 
 		return output
  ```
  
+Note that for the positive control experiments below, dropout is disabled during training.
+
 This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=m^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
 
 Finally we can choose an objective (loss) function and an optimization procedure.  Here we use L1 loss rather than MSE loss as our objective function because it usually results in less overfitting (as it fits a $\hat y$ to the median rather than the mean of an appropriate input $x$)
@@ -392,7 +394,7 @@ where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input field. 
 
 {% include youtube.html id='rZRQa3ExzTU' %}
 
-Close observations shows that a small number of points are poorly predicted by the model, to be specific the trained model yields far lower expected values compared to the actual $y$ value.  Why could this be?  On explanation is that this nonlinear function is more difficult to fit for our model, but this does not seem likely given that the model was capable of fitting a quite complicated nonlinear function to the first control.  This is because the input encoding requires the model to be able to decode a sequence of characters into a number, such that the model must learn a far more complicated function than $y=10d$.
+with the trained model achieving $R^2>0.997$, meaning that less than $0.3%$ of the variation in the actual value was not accounted for by the model's prediction. Further observation shows that a small number of points are poorly predicted by the model, to be specific the trained model yields far lower expected values compared to the actual $y$ value.  Why could this be?  On explanation is that this nonlinear function is more difficult to fit for our model, but this does not seem likely given that the model was capable of fitting a quite complicated nonlinear function to the first control.  This is because the input encoding requires the model to be able to decode a sequence of characters into a number, such that the model must learn a far more complicated function than $y=10d$.
 
 If the model is capable Observing the **Cost** input, we find that a small number of examples contain 5 digit cost values.  Our encoding scheme only takes 4 characters from that input, which results in ambiguous information being fed to the model, as $13400$ and $1340$ would be indistinguishable.  We can rectify this by assigning the **Cost** input to take 5 characters as follows:
 
@@ -459,8 +461,6 @@ which is only applicable to that particular dataset.  This may be generalized a 
 
 We assemble the strings into tensors in a similar manner as above for the `string_to_tensor` method, except that the dataset's encoding may be chosen to be any general set.  For example, if we were  except encoding to all ascii characters rather than only a subset. This makes the dimension of the model's encoding rise from 15 to 128 using `places_dict = {s:i for i, s in enumerate([chr(i) for i in range(128)])}`.  
 
-Structured sequences are in some way similar to languages: both 
-
 A boolean argument `Flatten` may also be supplied, as some deep learning models are designed for language-like inputs
 
 ```python
@@ -471,11 +471,28 @@ A boolean argument `Flatten` may also be supplied, as some deep learning models 
 			tensor = torch.flatten(tensor)
 		return tensor
 ```
-We can feed this input into a transformer encoder-based neural network of the following design
+
+Structured sequence inputs are in some way similar to natural languages: both contain a string of characters, of which only a small subset of all possible sequences ever appears as an example.  One may therefore ask the question: can we apply specialized deep learning architectures developed for natural language processing to our structured sequence modeling tasks?
+
+One architecture that is currently in use for large-scale language modeling is the transformer, which is a feedforward style network developed from recurrent neural network architectures that incorperated a concept called 'self-attention'.  In a self-attention module, each input (usually a word but here will be a letter) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $s_1$) is calculated by finding the dot product of one element's query vector with all other element's key vectors 
+
+$$
+s_1 = (q_1*k_1, q_1*k_2, q_1*k_3,...)
+$$
+
+before a linear function is applied to each element followed by a softmax transformation to the vector $s_1$ to make $s_1'$.  Finally each of the resulting scalar components of $s$ are multiplied by the value vector $V_1$ to make the activation vector $z_1$
+
+$$
+s_1' = \mathbf{softmax}(q_1*k_1*\sqrt d, q_1*k_2*\sqrt d, q_1*k_3*\sqrt d,...) \\
+s_1' = (s_{11}', s_{12}', s_{13}',...) \\
+z_1 = (V_1 * s_{11}', V_2 * s_{12}', V_3 * s_{13}',...)
+$$
+
+The transformer is based on multi-head attention, which means that multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Multiple encoder modules are usually stacked sequentially, and for this page we will be using the following architecture that employs 3 encoder modules that feed into a single fully connected layer.
 
 ![transformer]({{https://blbadger.github.io}}neural_networks/transformer.png)
 
-which can be implemented as follows: 
+The implementation for this architecture is as follows: 
 
 ```python
 class Transformer(nn.Module):
@@ -522,6 +539,11 @@ class Transformer(nn.Module):
 		return output
 ```
 
+The transformer encoder by default applies a dropout of probability $0.1$ to each layer (multi-head attention or fully connected) before layer normalization.  As dropout has been disabled for the other positive controls on this page, it was also disabled for the transformer by calling `model.eval()` before training.
+
+The transformer encoder architecture was designed to yield a representation of the input that is then fed into a decoder to gives probabilistic outputs over a set of discrete variables, usually words. In some respects, having the representation from a transformer encoder feed into a fully connected network in order to perform regression is quite a different task because the function we wish to approximate is best understood as being continuous rather than discrete.  
+
+Furthermore, the structured sequence inputs are one-hot encodings but the transformer was design to take in medium (~512) dimensional embeddings of words, which would usually not be one-hot encoded.  These embeddings (one for each word) would attempt to capture the most important aspects of that word in a sentance, 
 
 ### Justification of sequence-based character encodings
 
