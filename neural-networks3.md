@@ -539,7 +539,15 @@ class Transformer(nn.Module):
 		return output
 ```
 
-The transformer encoder by default applies a dropout of probability $0.1$ to each layer (multi-head attention or fully connected) before layer normalization.  As dropout has been disabled for the other positive controls on this page, it was also disabled for the transformer by calling `model.eval()` before training.
+The transformer encoder by default applies a dropout of probability $0.1$ to each layer (multi-head attention or fully connected) before layer normalization.  As dropout has been disabled for the other positive controls on this page, it was also disabled for the transformer by calling `model.eval()` before training.  Applied to the first control
+
+$$
+y = 10d
+$$
+
+over 200 epochs we have the following results on 2000 test examples (predicted output on the y-axis and actual on the x-axis):
+
+{% include youtube.html id='TogBbZLaVi8' %}
 
 The transformer encoder architecture was designed to yield a representation of the input that is then fed into a decoder to gives probabilistic outputs over a set of discrete variables, usually words. In some respects, having the representation from a transformer encoder feed into a fully connected network in order to perform regression is quite a different task because the function we wish to approximate is best understood as being continuous rather than discrete.  
 
