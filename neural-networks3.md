@@ -474,13 +474,13 @@ A boolean argument `Flatten` may also be supplied, as some deep learning models 
 
 Structured sequence inputs are in some way similar to natural languages: both contain a string of characters, of which only a small subset of all possible sequences ever appears as an example.  One may therefore ask the question: can we apply specialized deep learning architectures developed for natural language processing to our structured sequence modeling tasks?
 
-One architecture that is currently in use for large-scale language modeling is the transformer, which is a feedforward style network developed from recurrent neural network architectures that incorperated a concept called 'self-attention'.  In a self-attention module, each input (usually a word but here will be a letter) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product of one element's query vector with all other element's key vectors 
+One architecture that is currently in use for large-scale language modeling is the transformer, which is a feedforward style network developed from recurrent neural network architectures that incorperated a concept called 'self-attention'.  In a self-attention module, each input (usually a word but here will be a letter) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
 
 $$
 \pmb{s_1} = (q_1*k_1, q_1*k_2, q_1*k_3,...)
 $$
 
-before a linear function is applied to each element followed by a softmax transformation to the vector $s_1$ to make $s_1'$.  Finally each of the resulting scalar components of $s$ are multiplied by the value vector $V_1$ to make the activation vector $\pmb{z_1}$
+before a linear function is applied to each element followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $V_1, V_2, V_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ that is the same dimension as $V_1$
 
 $$
 \pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
