@@ -474,25 +474,31 @@ A boolean argument `Flatten` may also be supplied, as some deep learning models 
 
 Structured sequence inputs are in some way similar to natural languages: both contain a string of characters, of which only a small subset of all possible sequences ever appears as an example.  One may therefore ask the question: can we apply specialized deep learning architectures developed for natural language processing to our structured sequence modeling tasks?
 
-One architecture that is currently in use for large-scale language modeling is the transformer, which is a feedforward style network developed from recurrent neural network architectures that incorperated a concept called 'self-attention'.  In a self-attention module, each input (usually a word but here will be a letter) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $s_1$) is calculated by finding the dot product of one element's query vector with all other element's key vectors 
+One architecture that is currently in use for large-scale language modeling is the transformer, which is a feedforward style network developed from recurrent neural network architectures that incorperated a concept called 'self-attention'.  In a self-attention module, each input (usually a word but here will be a letter) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product of one element's query vector with all other element's key vectors 
 
 $$
-s_1 = (q_1*k_1, q_1*k_2, q_1*k_3,...)
+\pmb{s_1} = (q_1*k_1, q_1*k_2, q_1*k_3,...)
 $$
 
-before a linear function is applied to each element followed by a softmax transformation to the vector $s_1$ to make $s_1'$.  Finally each of the resulting scalar components of $s$ are multiplied by the value vector $V_1$ to make the activation vector $z_1$
+before a linear function is applied to each element followed by a softmax transformation to the vector $s_1$ to make $s_1'$.  Finally each of the resulting scalar components of $s$ are multiplied by the value vector $V_1$ to make the activation vector $\pmb{z_1}$
 
 $$
-s_1' = \mathbf{softmax}(q_1*k_1*\sqrt d, q_1*k_2*\sqrt d, q_1*k_3*\sqrt d,...) \\
-s_1' = (s_{11}', s_{12}', s_{13}',...) \\
-z_1 = (V_1 * s_{11}', V_2 * s_{12}', V_3 * s_{13}',...)
+\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
+\pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
+\pmb{z_1} = V_1 s_{11}' + V_2 s_{12}' + V_3 s_{13}'+ \cdots
 $$
 
 The transformer is based on multi-head attention, which means that multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Multiple encoder modules are usually stacked sequentially, and for this page we will be using the following architecture that employs 3 encoder modules that feed into a single fully connected layer.
 
+The transformer encoder and decoder modules are not particularly effective at retaining positional information from the input.  This is mostly due to the addition step used to make $\pmb{z_1}$, as after this step the resulting vector contains information of which other element is most similar to $s_1$, but not where that element was found.  To remedy this, a positional encoding is usually applied to the input prior to feeding the input to the transformer encoder.  The positional encoding may be performed a number of different ways, but one that is most common is to simply add the values of periodic functions such as $\sin, \cos$ to the input directly.  See the [code repo](https://github.com/blbadger/nnetworks/blob/master/interprets/transformer.py) for an implementation of this kind of positional encoding.
+
+An aside: it has been claimed that positional encoding is necessary for transformer-style architectures because they lose practically all positional information during the multi-head attention stage.  This is not strictly true, as can be shown experimentally: simply permuting any given input usually yields a different output from the transformer encoder, meaning that order does indeed determine the output.  
+
+All together, the architecture is as follows:
+
 ![transformer]({{https://blbadger.github.io}}neural_networks/transformer.png)
 
-The implementation for this architecture is as follows: 
+and the implementation for this architecture is as follows: 
 
 ```python
 class Transformer(nn.Module):
