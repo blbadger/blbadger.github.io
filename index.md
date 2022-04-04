@@ -202,7 +202,11 @@ v_1 + i_1 \to o_1 \to v_2 \\
 v_{n-1} + i_n \to o_n \to v_n
 $$
 
-### [Flexibility and Interpretability](/neural-networks3.md)
+### [Structured Sequence Encoding](/neural-networks3.md)
+
+![](/neural_networks/nn_including_embeddings.png)
+
+### [Interpretable Deep Learning](/nn_interpretations.md)
 
 ![deep learning attributions](/neural_networks/attributions_cover.png)
 
