@@ -319,9 +319,13 @@ $$
 L1loss = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
 $$
 
-and also employ gradient clipping 
+Here we use Adaptive moment estimation, a variant of stochastic gradient descent, as our optimization procedure.  Also employed is gradient clipping, which prevents gradient tensors with poor condition number from adversely affecting optimization.
 
 ```python
+	def __init__(self,...):
+	self.optimizer = torch.optim.Adam(self.model.parameters(), lr=1e-4)
+	...
+	
 	def train_minibatch(self, input_tensor, output_tensor, minibatch_size):
 		"""
 		Train a single minibatch
