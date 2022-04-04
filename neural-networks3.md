@@ -44,7 +44,7 @@ $$
 where $x$ is a (6-dimensional) vector containing the formatted inputs of the relevant features we want to use for predicting **Elapsed Time**, denoted $y$.  The parameters of $w, b$ for linear models usually by minimizing the mean squared error
 
 $$
-MSE = \frac{1}{m} \sum_i (\hat {y_i} - y_i)
+MSE = \frac{1}{m} \sum_i (\hat {y_i} - y_i)^2
 $$
 
 Other more sophisticated methods may be employed in a similar manner in order to generate a scalar $\hat y$ from $x$ via tuned values of parameter vectors $w$ and $b$.  Now consider what is necessary for our linear model to perform well: first, that the true data generating distribution is approximately linear, but most importantly for this page that the input vector $x$ is properly formatted to avoid missing values, differences in numerical scale, differences in distribution etc.
@@ -312,6 +312,46 @@ and now we can assemble a neural network. Here we implement a relatively simple 
  ```
  
 This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=m^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
+
+Finally we can choose an objective (loss) function and an optimization procedure.  Here we use L1 loss rather than MSE loss as our objective function because it usually results in less overfitting (as it fits a $\hat y$ to the median rather than the mean of an appropriate input $x$)
+
+$$
+L1loss = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
+$$
+
+and also employ gradient clipping 
+
+```python
+	def train_minibatch(self, input_tensor, output_tensor, minibatch_size):
+		"""
+		Train a single minibatch
+
+		Args:
+			input_tensor: torch.Tensor object 
+			output_tensor: torch.Tensor object
+			optimizer: torch.optim object
+			minibatch_size: int, number of examples per minibatch
+			model: torch.nn
+
+		Returns:
+			output: torch.Tensor of model predictions
+			loss.item(): float of loss for that minibatch
+
+		"""
+
+		output = self.model(input_tensor)
+		output_tensor = output_tensor.reshape(minibatch_size, 1)
+		loss_function = torch.nn.L1Loss()
+		loss = loss_function(output, output_tensor)
+
+		self.optimizer.zero_grad() # prevents gradients from adding between minibatches
+		loss.backward()
+
+		nn.utils.clip_grad_norm_(self.model.parameters(), 0.3)
+		self.optimizer.step()
+
+		return output, loss.item()
+```
 
 ### Controls
 
