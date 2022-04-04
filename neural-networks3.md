@@ -348,20 +348,20 @@ where $b$ is the **Busy Deliverers** input and $c$ is the **Cost** input field. 
 
 {% include youtube.html id='rZRQa3ExzTU' %}
 
-Close observations shows that a small number of points are poorly predicted by the model: they have much lower estimates than their actual outputs.  Why could this be?  On explanation is that this nonlinear function is more difficult to fit for our model, but this does not seem likely given that the model was capable of fitting a quite complicated nonlinear function to the first control.  This is because the input encoding requires the model to be able to decode a sequence of characters into a number, such that the model must learn a far more complicated function than $y=10d$.
+Close observations shows that a small number of points are poorly predicted by the model, to be specific the trained model yields far lower expected values compared to the actual $y$ value.  Why could this be?  On explanation is that this nonlinear function is more difficult to fit for our model, but this does not seem likely given that the model was capable of fitting a quite complicated nonlinear function to the first control.  This is because the input encoding requires the model to be able to decode a sequence of characters into a number, such that the model must learn a far more complicated function than $y=10d$.
 
-If the cmodel is capable Observing the **Cost** input, we find that a small number of examples contain 5 digit cost values.  Our encoding scheme only takes 4 characters from that input, which results in ambiguous information being fed to the model, as $13400$ and $1340$ would be indistinguishable.  We can rectify this by assigning the **Cost** input to take 5 characters as follows:
+If the model is capable Observing the **Cost** input, we find that a small number of examples contain 5 digit cost values.  Our encoding scheme only takes 4 characters from that input, which results in ambiguous information being fed to the model, as $13400$ and $1340$ would be indistinguishable.  We can rectify this by assigning the **Cost** input to take 5 characters as follows:
 
 ```python
 taken_ls = [4, 1, 8, 5, 3, 3, 3, 4, 4]
 ```
 which yields 
 
-....
+{% include youtube.html id='Obmzk-_MUhw' %}
 
-The estimation accuracy for both positive controls diminishes as the number of training examples increases, which is some small experimental evidence suggests that $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
+and indeed accuracy has been greatly increased for these examples.  There is some experimental evidence that the estimation accuracy for both positive controls diminishes as the number of training examples increases, or in symbols $\sum_i \hat {y_i} - y_i \to 0$ as $i \to \infty$.
 
-These examples show that defined functions on the input are capable of being approximated quite well by a structured sequence -based encoding method. 
+These examples show that certain known functions on the input are capable of being approximated quite well by a structured sequence -based encoding method when fed to a relatively small fully connected feedforward neural network.
 
 ### Generalization and language model application
 
