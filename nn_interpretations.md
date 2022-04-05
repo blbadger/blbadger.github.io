@@ -1,4 +1,8 @@
-### Interpretable deep learning: Introduction
+## Interpretable Deep Learning
+
+### Introduction
+
+This page is part II in a series, for part I see [this page](https://blbadger.github.io/neural-networks3.html).
 
 It has been claimed in the past that deep learning is somewhat of a 'black box' machine learning approach: powerful, but mysterious with respect to understanding how a model arrived at a prediction. For a clear example of a machine learning technique that is the opposite of this, let's revisit the linear regression.
 
