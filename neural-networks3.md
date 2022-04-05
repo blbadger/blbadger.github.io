@@ -318,7 +318,7 @@ This architecture may be understood as accomplishing the following: the last lay
 Finally we can choose an objective (loss) function and an optimization procedure.  Here we use L1 loss rather than MSE loss as our objective function because it usually results in less overfitting (as it fits a $\hat y$ to the median rather than the mean of an appropriate input $x$)
 
 $$
-L1 \; loss = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
+L^1_loss = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
 $$
 
 Here we use Adaptive moment estimation, a variant of stochastic gradient descent, as our optimization procedure.  Also employed is gradient clipping, which prevents gradient tensors with poor condition number from adversely affecting optimization.
