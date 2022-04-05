@@ -207,7 +207,7 @@ which can be visualized as
 
 ![output gradient]({{https://blbadger.github.io}}neural_networks/output1_gradient.png)
 
-now to determine which parameter is more important for determining a given output, we can compare the gradients $g_1$ and $g_2$ that are computed with respect to $p_1$ and $p_2$, respectively
+now to determine which parameter is more important for determining a given output, we can compare the components of the gradient vector $g$, denoted $g_1$ and $g_2$ which are computed with respect to $p_1$ and $p_2$, respectively
 
 $$
 g_1 = \nabla_{p_1} O(\theta) \\
@@ -218,7 +218,7 @@ These can be visualized without resorting to multidimensional space as separate 
 
 ![output gradient]({{https://blbadger.github.io}}neural_networks/output2_gradient.png)
 
-Where the red arrows denote $-g_1$ and $-g_2$ as gradients point in the direction of steepest ascent.  In this particular example, $\vert g_1 \vert > \vert g_2 \vert$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the gradient vector's components, where each parameter $p_n$ forms a basis vector of the space and the component is a projection of the gradient vector onto each basis.
+Where the red arrows denote $-g_1$ and $-g_2$ as gradient components point in the direction of steepest ascent.  In this particular example, $\vert g_1 \vert > \vert g_2 \vert$ as the slope of the tangent line is larger along the output curve for $p_1$ than along $p_2$ for the points of interest.  In multidimensional space, we would be comparing the gradient vector's components, where each parameter $p_n$ forms a basis vector of the space and the component is a projection of the gradient vector onto each basis.
 
 The next step is to note that as we are most interested in finding how the output changes with respect to the *input* rather than with respect to the model's true parameters, we treat the input itself as a parameter and back-propegate the gradient all the way to the input layer (which is not normally done as the input does not contain any parameters as normally defined).  Thus in our examples, $(p_1, p_2) = (i_1, i_2)$ where $i_1$ is the first input and $i_2$ is the second.
 
@@ -240,7 +240,7 @@ This final multiplication step is perhaps the least well-motivated portion of th
 
 Thus we see that what occurs during the gradientxinput calculation is somewhat similar to that for the occlusion calculation, except instead of the input being perrured in some way, here we are using the gradient to find an expectation of how the output should change if one were to perturb the input in a particular way.
 
-The following class method implements a slightly modified version of gradientxinput.  Each 15 tensor inputs in sequence corresponds to one character, and so a natural way to accumulate the gradientxinput values is to first take the absolute values of the gradients, apply Hadamard multiplication to the inputs, and then sum up the resulting vector of size 15.  
+The following class method implements a slightly modified version of gradientxinput.  Each 15 tensor inputs in sequence corresponds to one character, and so a natural way to accumulate the gradientxinput values is to first take the absolute values of the gradient components for those 15 inputs (denoted $\nabla_j f(x)$), apply Hadamard multiplication to these and the corresponding input components $x_j$, and then sum up the resulting vector.
 
 $$
 g = \sum_j \vert \nabla_j f(x) \vert * x_j
