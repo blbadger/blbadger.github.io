@@ -1,6 +1,8 @@
 ## Structured Sequence Inputs
 
-Relying on the ability of deep learning to form representations of an input, we explore neural networks' ability to learn from structured abstract sequential inputs.
+This page is part I of II, for part II see [here](https://blbadger.github.io/nn_interpretations.html).
+
+Relying on the ability of deep learning to form representations of an input, we explore neural networks' ability to learn from structured abstract sequential inputs.  
 
 ### Introduction and background
 
@@ -313,15 +315,15 @@ and now we can assemble a neural network. Here we implement a relatively simple 
  
 Note that for the positive control experiments below, dropout is disabled during training.
 
-This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=m^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
+This architecture may be understood as accomplishing the following: the last layer is equivalent to a linear model $y=w^Tx' + b$ on the final hidden layer $x'$ as an input, meaning that the hidden layers are tasked with transforming the input vector $x$ into a representation $x'$ that is capable of being modeled by (1).
 
 Finally we can choose an objective (loss) function and an optimization procedure.  Here we use L1 loss rather than MSE loss as our objective function because it usually results in less overfitting (as it fits a $\hat y$ to the median rather than the mean of an appropriate input $x$)
 
 $$
-L^1_loss = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
+L^1_{loss} = \frac{1}{m} \sum_i \vert \hat {y_i} - y_i \vert
 $$
 
-Here we use Adaptive moment estimation, a variant of stochastic gradient descent, as our optimization procedure.  Also employed is gradient clipping, which prevents gradient tensors with poor condition number from adversely affecting optimization.
+where $m$ is the number of elements indexed by $i$. Here we use Adaptive moment estimation, a variant of stochastic gradient descent, as our optimization procedure.  Also employed is gradient clipping, which prevents gradient tensors with poor condition number from adversely affecting optimization.
 
 ```python
 	def __init__(self,...):
