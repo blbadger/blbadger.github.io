@@ -28,7 +28,6 @@ $$
 may be expressed as 
 
 $$
-ax^2 + bx = -c \\
 x^2 + (b/a)x = -c/a
 $$
 
