@@ -1,4 +1,4 @@
-## Image classification with [neural networks](https://github.com/blbadger/neural-network).
+## Image Classification
 
 ### Introduction
 
@@ -559,11 +559,25 @@ $$
 
 where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters accross 3 hidden layers is capable of performing this task extremely accurately. 
 
-Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.
+Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.
 
-Now we want to observe these gradients with respect to different minibatches of the same inputs.
+Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradients, as the information content in each example is identical (the same rule is being applied to generate an output). Thus if we visualize gradients we would expect to see vectors that are approximately identical for different minibatches of that input.
 
+Choosing an epoch that exhibits a decrease in $\nabla_x J(O(\theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) we see that indeed that for 50 different minibatches of the same training set, there are quite values of $\nabla_x J(O(\theta))$.
 
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
+
+This is not the case at the start of training: 
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
+
+Regularization methods are implemented in order to decrease the distance between training and test accuracy, and are thus important for a model to prevent overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
+
+but once again this behavior is not apparent at the start of training
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
 ### Extensions to other datasets: fashion MNIST and flower types
 
