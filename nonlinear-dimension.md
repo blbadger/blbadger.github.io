@@ -6,7 +6,7 @@ Here 'nonlinear transformations' is taken to mean the set of all equations that 
 
 In set-theoretic geometry, there are as many points in a line of finite length than there are in the entire real number line, which is of infinite length.  This means that there can be some function $f$ that maps each point of a finite line segment to each point on the number line, or in other words that there is some function $f$ that maps a finite length onto an infinite one bijectively.  
 
-Therefore an object in one dimension of finite length may be mapped to the entire real line with the right transformation.  Which transformations can accomplish this?  Transformations may be defined as lines or curves or points that map the finite line segment into the real line as follows:
+Therefore an object in one dimension of finite length may be mapped to the entire real line with the right transformation.  Which transformations can accomplish this?  Transformations may be defined as lines or curves or points that map the finite line segment (specifically an open subset of $\Bbb R$, for example the points of $x \in (0, 1)$ into the real line $\Bbb R$ as follows:
 
 ![mapping]({{https://blbadger.github.io}}misc_images/function_mapping.png)
 
