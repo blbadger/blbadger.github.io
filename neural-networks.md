@@ -551,33 +551,37 @@ What is important to recognize is that, in a non-idealized scenario, $h$ can tak
 
 As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $j$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $v_i$ that lead to absolute minima of $h$ for a given input set and objective function $F_j$
 
+### Gradients are sensitive to input examples
+
 This idea runs somewhat against the current grain of intuition by many researchers, so reading the preceding paragraphs was probably not sufficient to convince an active member in the deep learning field.  But happily the concept may be shown experimentally and with clarity.  Take a relatively small network being trained to approximate some defined (and non-stochastic) function.  This practically any non-trivial function, and here we will focus on the example detailed [on this page](https://blbadger.github.io/neural-networks3.html). In this particular case, a network is trained to regress an output to approximate the function
 
 $$
 y = 10d
 $$
 
-where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters accross 3 hidden layers is capable of performing this task extremely accurately. 
+where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters across 3 hidden layers is capable of performing this task extremely accurately. 
 
-Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.
+Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.  The resulting vectors are two dimensional and may be plotted in the plane.  But we are interested in more than just the gradient of the parameters themselves: we also want to visualize the landscape of the gradients, that is, the gradients of $\nabla_x J(O(\theta))$ if we were to change $x$ slightly.  This may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1, x_2)$ that are near the network's true parameters.
 
-Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradients, as the information content in each example is identical (the same rule is being applied to generate an output). Thus if we visualize gradients we would expect to see vectors that are approximately identical for different minibatches of that input.
+Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in $\nabla_x J(O(\theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) we see that indeed that for 50 different minibatches of the same training set, there are quite values of $\nabla_x J(O(\theta))$.
+Choosing an epoch that exhibits a decrease in $\nabla_x J(O(\theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) we see that indeed that for 50 different minibatches (each of size 64) of the same training set, there are quite different vectors of $\nabla_x J(O(\theta))$ for different minibatches (and different possible parameters).
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-This is not the case at the start of training: 
+This is not the case at the start of training: instead, different minitaches lead to gradients that are weak approximations of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
 Regularization methods are implemented in order to decrease the distance between training and test accuracy, and are thus important for a model to prevent overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
 
-![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
 but once again this behavior is not apparent at the start of training
 
-![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
+
+To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch, and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent.
 
 ### Extensions to other datasets: fashion MNIST and flower types
 
