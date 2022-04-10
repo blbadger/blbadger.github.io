@@ -527,7 +527,7 @@ Using this network, it has previously been seen that overfitting is the result o
 
 There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for our custom architecture) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
 
-### Learning (ie increasing test classification accuracy) does not equate to global minimization of a cost function during training
+### Learning does not equate to global minimization of a cost function during training
 
 The above experimental results are quite interesting because they suggest that, for deep learning models of quite different architecture, a model's ability to generalize depends not only on the model's parameters $\theta$ and the family of functions that it can approximate given its architecture $F_j$ but also on the choice of input $x$.  Furthermore, the input $x$ is capable of inducing overfitting in a model employing extensive measures to prevent this phenomenon (L2 regularization, batch normalization) but a different input results in minimal overfitting (in the same epoch number) in a model that has none of these measures (nor any other regularizers separate from the model architecture itself).
 
@@ -539,7 +539,7 @@ As we have seen in the case for Snf7 dataset images, this idea is accurate for i
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function,  $F$.
+In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $F$.
 
 In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  $F$ evaluated on set $j$ of training examples is denoted $F_j$, and the argument for this function is the value and configuration of all model parameters, denoted $v_i$ such that the value of the objective function is
 
@@ -549,7 +549,20 @@ $$
 
 What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $v_i$ depending on the specific training examples used to evaluate the objecting function $F_j$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $v_i$ that minimizes $h = F_j(v_i)$ as well as the Bayesian statistical approach in which the optimal value of $v_i$ is a random variable as it is unkown whereas any estimate of $v_i$ using the data is fixed.
 
-As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $j$. This is called overfitting, and is strenuously avoided in practice because reaching this globabl minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $v_i$ that lead to absolute minima of $h$ for a given input set and objective function $F_j$
+As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $j$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $v_i$ that lead to absolute minima of $h$ for a given input set and objective function $F_j$
+
+This idea runs somewhat against the current grain of intuition by many researchers, so reading the preceding paragraphs was probably not sufficient to convince an active member in the deep learning field.  But happily the concept may be shown experimentally and with clarity.  Take a relatively small network being trained to approximate some defined (and non-stochastic) function.  This practically any non-trivial function, and here we will focus on the example detailed [on this page](https://blbadger.github.io/neural-networks3.html). In this particular case, a network is trained to regress an output to approximate the function
+
+$$
+y = 10d
+$$
+
+where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters accross 3 hidden layers is capable of performing this task extremely accurately. 
+
+Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.
+
+Now we want to observe these gradients with respect to different minibatches of the same inputs.
+
 
 
 ### Extensions to other datasets: fashion MNIST and flower types
