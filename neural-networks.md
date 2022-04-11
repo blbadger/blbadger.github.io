@@ -35,7 +35,6 @@ import os
 image_files = ['path/to/file.jpg', 'path/to/file2.png']
 image_directory = '/home/bbadger/Desktop/GFP_2/snap29'
 
-
 class Imageprep:
 
 	def __init__(self, image_file):
@@ -50,9 +49,7 @@ class Imageprep:
 
 		Returns:
 			None (appends sliced files to directory)
-
 		"""
-
 		for i, file in enumerate(self.image_files):
 			im = Image.open(file)
 
@@ -71,9 +68,7 @@ class Imageprep:
 
 		Returns:
 			None (modifies image names in-place)
-
 		"""
-
 		path = image_directory
 		files = os.listdir(path)
 
@@ -92,9 +87,7 @@ class Imageprep:
 
 		Returns:
 			None (saves images)
-
 		"""
-
 		path = image_directory
 		files = os.listdir(path)
 
@@ -110,7 +103,6 @@ class Imageprep:
 				new_file_name = core_name + f'_{i}_{j}' + ending
 
 				im.save(new_file_name)
-
 		return
 
 ```
@@ -382,57 +374,7 @@ Another thing to note is the lack of normalization: there are no batch normaliza
 
 Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
-The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  This can be achieved as follows:
-
-```python
-### Creates a panel of images classified by the trained neural network.
-
-image_batch, label_batch = next(test_data_gen1)
-
-test_images, test_labels = image_batch, label_batch
-
-predictions = model.predict(test_images)
-
-def plot_image(i, predictions, true_label, img):
-    """ 
-    Returns a test image with a predicted class, prediction
-    confidence, and true class labels that are color coded for accuracy.
-    """
-    prediction, true_label, img = predictions[i], true_label[i], img[i]
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-    plt.imshow(img)
-    predicted_label = np.argmax(predictions)
-    if prediction[0] >=0.5 and true_label[0]==1:
-        color = 'green'
-    elif prediction[0] <=0.5 and true_label[0]==0:
-        color = 'green'
-    else:
-        color = 'red'
-    plt.xlabel("{} % {}, {}".format(int(100*np.max(prediction)), 
-    'Snap29' if prediction[0]>=0.5 else 'Control', 
-    'Snap29' if true_label[0]==1. else 'Control'), color = color)
-
-    return
-
-num_rows = 4
-num_cols = 3
-num_images = 24
-
-# Plot initialization
-plt.figure(figsize = (num_rows, num_cols))
-
-# Plot assembly and display
-for i in range(num_images):
-    plt.subplot(num_rows, 2*num_cols, i+1)
-    plot_image(i+1, predictions, test_labels, test_images)
-
-plt.show() 
-
-```
-
-which yields
+The network shown above averaged ~96 % accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
@@ -463,7 +405,6 @@ l + geom_boxplot(width=0.4) +
 which yields
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_3.png)
-
 
 ### Overfitting (memorization) versus learning
 
@@ -529,7 +470,7 @@ There are a number of interesting observations from this experiment.  Firstly, t
 
 ### Learning does not equate to global minimization of a cost function during training
 
-The above experimental results are quite interesting because they suggest that, for deep learning models of quite different architecture, a model's ability to generalize depends not only on the model's parameters $\theta$ and the family of functions that it can approximate given its architecture $F_j$ but also on the choice of input $x$.  Furthermore, the input $x$ is capable of inducing overfitting in a model employing extensive measures to prevent this phenomenon (L2 regularization, batch normalization) but a different input results in minimal overfitting (in the same epoch number) in a model that has none of these measures (nor any other regularizers separate from the model architecture itself).
+The above experimental results are quite interesting because they suggest that, for deep learning models of quite different architecture, a model's ability to generalize depends not only on the model's parameters $\theta$ and the family of functions that it can approximate given its possible outputs $O_n(\theta; a)$ but also on the choice of input $a$.  Furthermore, the input $a$ is capable of inducing overfitting in a model employing extensive measures to prevent this phenomenon (L2 regularization, batch normalization) but a different input results in minimal overfitting (in the same epoch number) in a model that has none of these measures (nor any other regularizers separate from the model architecture itself).
 
 Why is this the input so important to the behavior of the network?
 
@@ -539,17 +480,17 @@ As we have seen in the case for Snf7 dataset images, this idea is accurate for i
 
 If decreasing the neural network cost function is the goal of training, why would an ideal cost function decrease (to a global minimum) not be desirable?  In our analogy of a ball rolling down the hill, something important is left out: the landscape changes after every minibatch (more accurately, after every computation of gradient descent and change to neuronal weights and biases using backpropegation).  Thus as the ball rolls, the landscape changes, and this change depends on where the ball rolls. 
 
-In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $F$.
+In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $J$.
 
-In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  $F$ evaluated on set $j$ of training examples is denoted $F_j$, and the argument for this function is the value and configuration of all model parameters, denoted $v_i$ such that the value of the objective function is
+In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parameterized by weights and biases $\theta$ is $O(\theta; a)$ such that the loss function $J(O)$ is 
 
 $$
-h = F_j(v_i)
+h = J(O(\theta; a))
 $$
 
-What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $v_i$ depending on the specific training examples used to evaluate the objecting function $F_j$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $v_i$ that minimizes $h = F_j(v_i)$ as well as the Bayesian statistical approach in which the optimal value of $v_i$ is a random variable as it is unkown whereas any estimate of $v_i$ using the data is fixed.
+What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $theta$ using the data is fixed.
 
-As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $j$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $v_i$ that lead to absolute minima of $h$ for a given input set and objective function $F_j$
+As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
 
 ### Gradients are sensitive to input examples
 
@@ -561,19 +502,21 @@ $$
 
 where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters across 3 hidden layers is capable of performing this task extremely accurately. 
 
-Now we can observe the gradient of the objective function $J(O(\theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$, denoted $\nabla_x J(O(\theta))$.  We can do this for two of the hidden layers by choosing $x$ to be any two bias components of each hidden layer.  The resulting vectors are two dimensional and may be plotted in the plane.  But we are interested in more than just the gradient of the parameters themselves: we also want to visualize the landscape of the gradients, that is, the gradients of $\nabla_x J(O(\theta))$ if we were to change $x$ slightly.  This may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1, x_2)$ that are near the network's true parameters.
+Now we can observe the gradient of the objective function $J(O(\theta; a))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(\theta; a))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient \nabla_\theta J(O(\theta; a))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the gradient, that is, the gradients of $\nabla_x J(O(\theta; ;a))$ if we were to change the parameter $x$ slightly, as this is how learning takes place.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon, x_2 + \epsilon)$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(\theta; a))$ vector is located where the central circle is found
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradient_quiver.gif)
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in $\nabla_x J(O(\theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) we see that indeed that for 50 different minibatches (each of size 64) of the same training set, there are quite different vectors of $\nabla_x J(O(\theta))$ for different minibatches (and different possible parameters).
+Choosing an epoch that exhibits a decrease in the cost function $\nabla J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) we see that for 50 different minibatches $a_1, a_2, ..., a_50 \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-This is not the case at the start of training: instead, different minitaches lead to gradients that are weak approximations of each other.
+In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are weak approximations of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
-Regularization methods are implemented in order to decrease the distance between training and test accuracy, and are thus important for a model to prevent overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
+Regularization methods are implemented in order to decrease the distance between training and test accuracy, and are thus important for a model to prevent overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta; a))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
@@ -581,7 +524,9 @@ but once again this behavior is not apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch, and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent.
+Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of $\nabla_x J(O(\theta; a_1))$ and $\nabla_x J(O(\theta; a_2))$ and $\nabla_x J(O(\theta; a_3))$ etc.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
+
+To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch $a_n$.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent. This is why the identity of the input $a$ is so important, even for a fixed dataset with no randomness.
 
 ### Extensions to other datasets: fashion MNIST and flower types
 
