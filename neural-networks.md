@@ -8,10 +8,9 @@ Another way to accomplish the task is to employ a computational method.  One cou
 
 This is for a couple reasons: firstly because they are extremely tedious and time-consuming to implement, and secondly because once implemented these methods generally fail to be very accurate. The underlying cause for both of these points of failure is that it is actually very difficult to explain complicated tasks like image recognition precisely yet generally enough to be accurate.  
 
-The failures of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field that has been termed statistical learning.  Particularly delicate tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
+The failure of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field that has been termed statistical learning.  Particularly delicate tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
 
 Supervised machine learning techniques attempt to reproduce with generalization: in the case of image classification, we already 'know' how to classify a certain number of images that becomes our training dataset, and we seek to classify other images that the program has not seen before.  In order to assess accuracy for classification on this test dataset, we need to know the true classification to be able to compare this with the predicted classification.  The ideal supervised learning technique takes a training dataset and accurately generalizes from this such that unseen datasets are classified correctly using information from this training dataset.  
-
 
 ### Designing a neural network to classify images of cells
 
@@ -52,7 +51,7 @@ class Imageprep:
 		"""
 		for i, file in enumerate(self.image_files):
 			im = Image.open(file)
-
+			
 			# save images as 'path/to/file_0_1.jpg' etc.
 			image_slicer.slice('/path/to/file.jpg', slices)
 
@@ -71,7 +70,6 @@ class Imageprep:
 		"""
 		path = image_directory
 		files = os.listdir(path)
-
 		for index, file in enumerate(files):
 			os.rename(os.path.join(path, file), os.path.join(path, ''.join(['s', str(index), '.png'])))
 
@@ -95,13 +93,12 @@ class Imageprep:
 			im = Image.open(file)
 			for j in range(-5,5):
 				im.rotate(j)
-
+				
 				# reformat file name (assumes . only in file ending)
 				pair_ls = [i for i in file.split('.')]
 				core_name = pair_ls[0]
 				ending = pair_ls[1]
 				new_file_name = core_name + f'_{i}_{j}' + ending
-
 				im.save(new_file_name)
 		return
 
@@ -112,17 +109,6 @@ Now let's design the neural network.  We shall be using established libraries fo
 
 
 ```python
-
-"""
-Tensorflow_sequential_deep.py
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Implementation of a Keras sequential neural network using a 
-Tensorflow backend, combined with modules to display pre- classified
-images before the network trains as well as a subset of test images
-with classification and % confidence for each image. 
-"""
-
-### Libraries
 # Standard library
 from __future__ import absolute_import, division, print_function, unicode_literals
 import os
@@ -199,62 +185,11 @@ From the training dataset images located in `data_dir`, a training dataset `trai
 		subset = 'training')
 ```
 
-The same process is repeated for the other directories, which in this case contain test image datasets.
+The same process is repeated for the other directories, which in this case contain test image datasets.  An image set generation may be checked with a simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
 
 ```python
-	CLASS_NAMES = np.array([item.name for item in data_dir2.glob('*') 
-				if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
-
-	test_data_gen1 = image_generator.flow_from_directory(
-	    directory=str(data_dir2), 
-	    batch_size=783, 
-	    shuffle=True, 
-	    target_size=(IMG_HEIGHT,IMG_WIDTH),
-	    classes=list(CLASS_NAMES))
-
-
-	CLASS_NAMES = np.array([item.name for item in data_dir3.glob('*') 
-				if item.name not in ['._.DS_Store', '.DS_Store', '._DS_Store']])
-
-	test_data_gen2 = image_generator.flow_from_directory(
-	    directory=str(data_dir3), 
-	    batch_size=719, 
-	    shuffle=True, 
-	    target_size=(IMG_HEIGHT,IMG_WIDTH),
-	    classes=list(CLASS_NAMES))
-	    
-	return train_data_gen1, test_data_gen1, test_data_gen2
-```
-
-An image set generation may be checked with a simple function that plots a subset of images. This is particularly useful when expanding the images using translations or rotations or other methods in the `image_generator` class, as one can view the images after modification.
-
-```python
-def show_batch(image_batch, label_batch):
-    """
-    Takes a set of images (image_batch) and an array of labels (label_batch)
-    from the tensorflow preprocessing image_generator as arguments and subsequently
-    returns a plot of a 25- member subset of the image set specified, complete
-    with a classification label for each image.  
-    	
-    """
-    
-    plt.figure(figsize=(10,10))
-    
-    for n in range(25):
-        ax = plt.subplot(5, 5, n+1)
-        plt.imshow(image_batch[n])
-        plt.title(CLASS_NAMES[label_batch[n]==1][0].title())
-        plt.axis('off')
-	
-    plt.show()
-    plt.close()
-    return
-
-
-### calls show_batch on a preprocessed dataset to view classified images
 train_data_gen1, test_data_gen1, test_data_gen2 = data_import()
 image_batch, label_batch = next(train_data_gen1)
-show_batch(image_batch, label_batch)
 ```
 
 Assigning the pair of labels to each iterable in the relevant generators,
