@@ -18,92 +18,15 @@ The current state-of-the-art method for classifying images is achieved with neur
 
 A good hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
 
-Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise takes far longer than broadcasted computation with arrays.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation is numpy, and this library can be used to simplify and speed up the network linked earlier in this paragraph: [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py) is an implementation.  In essence, training and evaluating feed-forward neural networks by manipulating matrix elements changes the weights and biases of many 'neurons' simultaneously, which is far faster than tuning each individual neurons as above.  
+Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise in high-level programming languages (C, C++, Python etc) is much less efficient than computation with low-level array optimized libraries like BLAS and LAPACK.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation is numpy, and this library can be used to simplify and speed up the network linked earlier in this paragraph: [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py) is an implementation.  In essence, training and evaluating feed-forward neural networks by manipulating matrix elements changes the weights and biases of many 'neurons' simultaneously, which is far faster than tuning each individual neurons as above.  
 
 As effective as numpy is, it is not quite ideal for speedy computations with large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written (mostly) for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  I decided to try Tensorflow (with a Keras front end) and found a number of docs extremely useful in setting up a neural network, perhaps the most accessible being the official [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
 
 Let's set up the network!  The first thing to do is to prepare the training and test datasets.  There are datsets online with many diverse images that have been prepped for use for neural network classification, but if one wishes to classify objects in images one takes, then preparation is necessary.  The primary thing that is necessary is to label the images such that the neural network knows which image represents which category.  With Keras this can be accomplished by simply putting all images of one class in one folder and putting images of another class in another folder, and then by saving the directory storing both folders as a variable before calling the appropriate data loading functions.
 
-Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  This is a common tactic for increasing training efficacy for neural networks, and can also be performed directly using Tensorflow (preprocessing module).
+Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  Code that implements this procedure is found [here](https://github.com/blbadger/nnetworks/blob/master/NN_prep_snippets.py). Similar image preparation methods are also contained in Tensorflow's preprocessing module.
 
-```python
-from PIL import Image
-import image_slicer
-import os
-
-image_files = ['path/to/file.jpg', 'path/to/file2.png']
-image_directory = '/home/bbadger/Desktop/GFP_2/snap29'
-
-class Imageprep:
-
-	def __init__(self, image_file):
-		self.image_files = image_files
-
-	def slice(self, slices):
-		"""
-		Divides an image into smaller images of equal dimension (l//n by w//n)
-
-		Args:
-			slices: int, the number of desired smaller images
-
-		Returns:
-			None (appends sliced files to directory)
-		"""
-		for i, file in enumerate(self.image_files):
-			im = Image.open(file)
-			
-			# save images as 'path/to/file_0_1.jpg' etc.
-			image_slicer.slice('/path/to/file.jpg', slices)
-
-		return
-		
-
-	def rename(self, image_directory):
-		"""
-		Rename files with a name that is easily indexed for future iteration.
-
-		Args:
-			image_directory: str, path to directory containing images
-
-		Returns:
-			None (modifies image names in-place)
-		"""
-		path = image_directory
-		files = os.listdir(path)
-		for index, file in enumerate(files):
-			os.rename(os.path.join(path, file), os.path.join(path, ''.join(['s', str(index), '.png'])))
-
-		return
-
-
-	def rotate(self, image_directory):
-		"""
-		Rotate images from -5 to 5 degrees, 1 degree increments, saving each.
-
-		Args:
-			image_directory: str, path to directory of images
-
-		Returns:
-			None (saves images)
-		"""
-		path = image_directory
-		files = os.listdir(path)
-
-		for i, file in enumerate(files):
-			im = Image.open(file)
-			for j in range(-5,5):
-				im.rotate(j)
-				
-				# reformat file name (assumes . only in file ending)
-				pair_ls = [i for i in file.split('.')]
-				core_name = pair_ls[0]
-				ending = pair_ls[1]
-				new_file_name = core_name + f'_{i}_{j}' + ending
-				im.save(new_file_name)
-		return
-
-```
-
+Rotations and translation of images are commonly used to increase the size of the dataset of interest.  These are both types of data augmentation, which is when some dataset is expanded by a defined procedure.  Data augmentation should maintain all invariants in the original dataset in order to be representative of the information found there, and in this case it means we can perform arbitrary translations and rotations.  But for other image sets, this is not the case: for example, rotating a 6 by 180 degrees yields a 9 meaning that arbitrary rotation does not maintain the invariants of images of digits.
 
 Now let's design the neural network.  We shall be using established libraries for this set, so reading the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) may be useful.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
 
@@ -158,9 +81,9 @@ Now comes a troubleshooting step.  In both Ubuntu and MacOSX, `pathlib.Path` som
 	print (CLASS_NAMES)
 	print (image_count)
 ```
-prints out the number of files and the names of the folders in the `data_dir` directory of choice.  If the number of files does not match what is observed by listing in terminal, or if there are any folders or files with the `._.DS_Store` ending then one strategy is to simply copy all files of the relevant directory into a new folder and check again.
+prints the number of files and the names of the folders in the `data_dir` directory of choice.  If the number of files does not match what is observed by listing in terminal, or if there are any folders or files with the `._.DS_Store` ending then one strategy is to simply copy all files of the relevant directory into a new folder and check again.
 
-Now the images can be rescaled (if they haven't been already), as all images will need to be the same size. Here all images are scaled to a heightxwidth of 256x256 pixels.  Then a batch size is specified.  This number determines the number of images seen for each training epoch.
+Now the images can be rescaled (if they haven't been already), as all images will need to be the same size. Here all images are scaled to a heightxwidth of 256x256 pixels.  Then a batch size is specified, which determines the number of images seen for each training epoch.
 
 ```python
 	### Rescale image bit depth to 8 (if image is 12 or 16 bits) and resize images to 256x256, if necessary
@@ -423,9 +346,9 @@ $$
 h = J(O(\theta; a))
 $$
 
-What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $theta$ using the data is fixed.
+What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples $a$ used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $\theta$ using the data is fixed.
 
-As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that one tends to actually strenuously avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
+As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that regularized models tend to actually effectively avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
 
 ### Gradients are sensitive to input examples
 
@@ -437,13 +360,13 @@ $$
 
 where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters across 3 hidden layers is capable of performing this task extremely accurately. 
 
-Now we can observe the gradient of the objective function $J(O(\theta; a))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(\theta; a))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(\theta; a))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(\theta; ;a))$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon, x_2 + \epsilon)$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(\theta; a))$ vector is located where the central circle is found
+In the last section, the landscape of $h$ was considered.  Here we will focus on the gradient of $h$, as stochastic gradient descent is not affected by the values of $h$ but only their rate of change as $\theta$ chages. We can observe the gradient of the objective function $J(O(\theta; a))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(\theta; a))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(\theta; a))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(\theta; a))$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon_1, x_2 + \epsilon_2)$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(\theta; a))$ vector is located where the central circle is found
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradient_quiver.png)
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in the cost function $\nabla J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) reflects the sensitivity of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers. One can readily see that for 50 different minibatches $a_1, a_2, ..., a_{50} \; \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
+Choosing an epoch that exhibits a decrease in the cost function $\nabla J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) reflects the sensitivity of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers. One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
@@ -459,7 +382,7 @@ but once again this behavior is not apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of $\nabla_x J(O(\theta; a_1))$ and $\nabla_x J(O(\theta; a_2))$ and $\nabla_x J(O(\theta; a_3))$ etc.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
+Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(\theta; a_n)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
 
 To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch $a_n$.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent. This is why the identity of the input $a$ is so important, even for a fixed dataset with no randomness.
 
