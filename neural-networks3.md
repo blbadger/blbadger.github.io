@@ -424,7 +424,7 @@ taken_ls = [4, 1, 15, 5, 4, 4, 4, 4, 4]
 which is only applicable to that particular dataset.  This may be generalized a number of different ways, but one is as follows: we take either all or else a portion (`short=True`) of each input field, the number of elements of which is denoted by `n_taken` (which must be larger than the longest element if all characters in an input field are to be used)
 
 ```python
-	def stringify_input(self, input_type='training', short=True, n_taken=4, remove_spaces=True):
+	def stringify_input(self, input_type='training', short=True, n_taken=5, remove_spaces=True):
 		"""
 		Compose array of string versions of relevant information in self.df 
 		Maintains a consistant structure to inputs regardless of missing values.
