@@ -340,7 +340,7 @@ If decreasing the neural network cost function is the goal of training, why woul
 
 In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $J$.
 
-In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parameterized by weights and biases $\theta$ is $O(\theta; a)$ such that the loss function $J(O)$ is 
+In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(\theta; a)$ such that the loss function $J(O)$ is 
 
 $$
 h = J(O(\theta; a))
@@ -366,7 +366,7 @@ In the last section, the landscape of $h$ was considered.  Here we will focus on
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in the cost function $\nabla J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI) reflects the sensitivity of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers. One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
+Choosing an epoch that exhibits a decrease in the cost function $J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers. One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
