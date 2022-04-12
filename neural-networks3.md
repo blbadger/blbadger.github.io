@@ -555,7 +555,11 @@ $$
 
 over 200 epochs we have the following results on 2000 test examples (predicted output on the y-axis and actual on the x-axis):
 
-{% include youtube.html id='TogBbZLaVi8' %}
+{% include youtube.html id='9VxxOfFA_TA' %}
+
+including an extra layer of 10 neurons before the output, we have a slightly better approximation
+
+{% include youtube.html id='h6EaKP_6EXE' %}
 
 The transformer encoder architecture was designed to yield a representation of the input that is then fed into a decoder to gives probabilistic outputs over a set of discrete variables, usually words. In some respects, having the representation from a transformer encoder feed into a fully connected network in order to perform regression is quite a different task because the function we wish to approximate is best understood as being continuous rather than discrete.  
 
