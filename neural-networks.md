@@ -366,11 +366,13 @@ In the last section, the landscape of $h$ was considered.  Here we will focus on
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in the cost function $J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers. One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
+Choosing an epoch that exhibits a decrease in the cost function $J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers.  The model used on this page has three hidden layers, indexed from 0, and we will observe the gradient vectors on the second and third layer.
+
+One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are weak approximations of each other.
+In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are (somewhat weak) approximatioso we might be able to see you this summer if you are thenns of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
@@ -378,9 +380,13 @@ Regularization methods are implemented in order to decrease the distance between
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
-but once again this behavior is not apparent at the start of training
+but once again this behavior is not as apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
+
+Another regularization technique is called batch normalization.  When 1-dimensional batch normalization is applied to each hidden layer, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
 
 Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(\theta; a_n)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
 
