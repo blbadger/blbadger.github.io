@@ -385,11 +385,31 @@ but once again this behavior is not as apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(\theta;a))$ may be achieved using backpropegation, but the gradient update of $x$, specifically $x + \epsilon\nabla_x J(O(\theta;a))$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive: there is at most some constant factor $b$ that separates each component contribution.  But with more layers, the changes to network components becomes exponential w.r.t. the output.  
+Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(\theta;a))$ may be achieved using backpropegation, but the gradient descent update of $x$, specifically $x - \epsilon\nabla_x J(O(\theta;a))$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive. This is due to how most deep learning models are set up: in a typical case of a fully connected layer $h$ following layer $h_{-1}$ given the weight vector for that neuron $w$ and bias scalar $b$
 
-When 1-dimensional batch normalization is applied to each hidden layer, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
+$$
+h = w^Th_{-1} + b
+$$
+
+where $w^Th_{-1}$ is a vector dot product, a linear transformation that adds all $w_nh_{-1,n}$ elements.  The gradient is computed and updated in (linear) vector space, so if a small enough $\epsilon$ is used then gradient descent should decrease $J$, assuming that computational round-off is not an issue.
+
+But with more layers, the changes to network components becomes exponential with respect to the activations at $h$. To see why this is, note that for a four-layer network with biases set to 0 and weight vectors all equal to $w$
+
+$$
+h = w^T(w^T(w^T(w^Th_{-4})))
+$$
+
+Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(\theta;a))$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
+
+Batch normalization attemps to deal with this problem by re-parametrizing each layer to have activations $h'$ such that they have a defined standard deviation $\sigma$ and mean $\mu$, where both $\mu$ and $\sigma$ are calculated per minibatch during training.  The idea is that if the weights of each layer form approximately normal distributions around a mean of 0, the effect of exponential growth in activations (and also gradients) is minimized.
+
+But curously, batch normalization also stipulates that back-propegation proceed through these values $\sigma, \mu$ such that they are changed during training in addition to changing the model parameters. This in some sense defeats the intended purpose of ameliorating the exponential effect, as the mean can drift from the origin substantially. Why then is batch normalization an effective regularizer?
+
+Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
+
+Thus we come to the interesting observation that batch normalization leads to a similar loss of stability in the gradient landscape that is seen for dropout. which in this author's opinion is a probable reason for its success as a regularizer (given dropout's demonstrated success in this area).  This helps explain why it was found that batch normalization and dropout are often able to substitute for each other in large models: it turns out that they have similar effects on the gradient landscape of hidden layers, although batch normalization in this case seems to be a more moderate inducement of this loss of stability.
 
 Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(\theta; a_n)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
 
