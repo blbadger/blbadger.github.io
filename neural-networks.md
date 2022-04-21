@@ -401,9 +401,15 @@ $$
 
 Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(\theta;a))$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
 
-Batch normalization attemps to deal with this problem by re-parametrizing each layer to have activations $h'$ such that they have a defined standard deviation $\sigma$ and mean $\mu$, where both $\mu$ and $\sigma$ are calculated per minibatch during training.  The idea is that if the weights of each layer form approximately normal distributions around a mean of 0, the effect of exponential growth in activations (and also gradients) is minimized.
+Batch normalization attemps to deal with this problem by re-parametrizing each layer to have activations $h'$ such that they have a defined standard deviation of 1 and a mean of 0, which is accomplished by using the layer's activation mean $\mu$ and standard deviation $\sigma$ values that are calculated per minibatch during training.  The idea is that if the weights of each layer form distributions of unit variance around a mean of 0, the effect of exponential growth in activations (and also gradients) is minimized.
 
-But curously, batch normalization also stipulates that back-propegation proceed through these values $\sigma, \mu$ such that they are changed during training in addition to changing the model parameters. This in some sense defeats the intended purpose of ameliorating the exponential effect, as the mean can drift from the origin substantially. Why then is batch normalization an effective regularizer?
+But curiously, batch normalization also stipulates that back-propegation proceed through these values $\sigma, \mu$ such that they are effectively changed during training in addition to changing the model parameter. Precisely, this is done by learning new parameters $\gamma, \beta$ that defined the function
+
+$$
+h'' = \gamma h' + \beta
+$$
+
+which means that the mean is multiplied by $\gamma$ before being added by $\beta$, and the standard deviation is multiplied by $\gamma$. This procedure is necessary to increase the ability of batch normalized models to approximate a wide enough array of functions, but it in some sense defeats the intended purpose of ameliorating the exponential effect, as the transformed layer $h''$ has a mean and standard deviation can drift from the origin and unit value substantially. Why then is batch normalization an effective regularizer?
 
 Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
 
