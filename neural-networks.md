@@ -376,7 +376,7 @@ In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
-Regularization methods are implemented in order to decrease the distance between training and test accuracy, and are thus important for a model to prevent overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta; a))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
+Regularization is the process of reducing the test error without necessarily reducing training error, and is thus important for overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta; a))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
@@ -384,7 +384,9 @@ but once again this behavior is not as apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-Another regularization technique is called batch normalization.  When 1-dimensional batch normalization is applied to each hidden layer, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
+Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(\theta;a))$ may be achieved using backpropegation, but the gradient update of $x$, specifically $x +epsilon\nabla_x J(O(\theta;a))$, assumes that no other parameters have been changed.  In a one-layer network, this is not a problem, but in a deep network issues arise.
+
+When 1-dimensional batch normalization is applied to each hidden layer, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
 
