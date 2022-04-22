@@ -228,7 +228,7 @@ A few notes about this architecture: first, the output is a softmax layer and th
 
 Another thing to note is the lack of normalization: there are no batch normalizations applied to any layers, no dropout nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  As an explanation for this, first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive.  Second, adaptive moment estimation (Adam) is employed as our optimization method, and this algorithm was specifically designed to converge for stochastic and sparse objective function outputs.  It has become clear that normalizations such as batch norm do not act to reduce internal covariant shift, but instead acts to smooth out the objective function.  With Adam, the objective function does not need to be smooth for effective tuning of weights and biases.  Finally, dataset augmentation via rotations and translations provides another form of insurance against overfitting.  Finally and most importantly, training is abbreviated to avoid overfitting.
 
-### The network accurately classifies test set images
+### Accurate image classification
 
 Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
@@ -294,7 +294,7 @@ As backpropegation lowers the cost function, we would expect for the classificat
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_4.png)
 
-The high training accuracy (100%) but low test accuracy (62 %) for the network on Snf7 dataset images is indicative of a phenomenon in statistical learning called overfitting.  Overfitting signifies that a statistical learning procedure is able to accurately fit the training data but is not generalizable such that it fails to achieve such accuracy on test datasets.  Statistical learning models (such as neural networks) with many degrees of freedom are somewhat prone to overfitting because small variations in the training data are able to be captured by the model regardless of whether or not they are important for true classification.  
+The high training accuracy (100%) but low test accuracy (62 %) for the network on Snf7 dataset images is indicative of a phenomenon in statistical learning called overfitting.  Overfitting signifies that a statistical learning procedure is able to accurately fit the training data but fails to generalize previously-unseen test dataset.  Statistical learning models (such as neural networks) with many degrees of freedom are somewhat prone to overfitting because small variations in the training data are able to be captured by the model regardless of whether or not they are important for true classification.  
 
 Overfitting is intuitively similar to memorization: both lead to an assimilation of information previously seen, without this assimilation necessarily helping the prediction power in the future.  One can memorize exactly how letters look in a serif font, but without the ability to generalize then one would be unable to indentify many letters in a sans-serif font.  The goal for statistical learning is to make predictions on hitherto unseen datasets, and thus to avoid memorization which does not guarantee this ability.
 
@@ -350,7 +350,7 @@ What is important to recognize is that, in a non-idealized scenario, $h$ can tak
 
 As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that regularized models tend to actually effectively avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
 
-### Gradients are sensitive to input examples
+### Gradients are sensitive to minibatch composition
 
 This idea runs somewhat against the current grain of intuition by many researchers, so reading the preceding paragraphs was probably not sufficient to convince an active member in the deep learning field.  But happily the concept may be shown experimentally and with clarity.  Take a relatively small network being trained to approximate some defined (and non-stochastic) function.  This practically any non-trivial function, and here we will focus on the example detailed [on this page](https://blbadger.github.io/neural-networks3.html). In this particular case, a network is trained to regress an output to approximate the function
 
@@ -373,7 +373,7 @@ One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are (somewhat weak) approximatioso we might be able to see you this summer if you are thenns of each other.
+In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are (somewhat weak) approximations of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
@@ -411,7 +411,7 @@ $$
 
 which means that the mean is multiplied by $\gamma$ before being added by $\beta$, and the standard deviation is multiplied by $\gamma$. This procedure is necessary to increase the ability of batch normalized models to approximate a wide enough array of functions, but it in some sense defeats the intended purpose of ameliorating the exponential effect, as the transformed layer $h''$ has a mean and standard deviation can drift from the origin and unit value substantially. Why then is batch normalization an effective regularizer?
 
-Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle but not the third layer.
+Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle layer.  As we saw for dropout and non-regularized gradients, different minibatches have very different gradient landscapes.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
 
