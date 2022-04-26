@@ -271,7 +271,7 @@ The orbit map for the quadratic equation displays the same periodicity to aperio
 Given the two equations
 
 $$
-f(x) = x^2 + c
+f(x) = x^2 + c \\
 g(x) = -adx^2 + x + d + dy
 $$
 
@@ -296,7 +296,7 @@ $$
 
 then $f(x)$ is dynamically equivalent to $g(x)$ because these are topological [conjugates](https://en.wikipedia.org/wiki/Topological_conjugacy) of one another.  
 
-Expanding these expressions and simplifying, there is
+Expanding these expressions and simplifying, we have
 
 $$
 (mx+b)^2 + c = m^2x^2 + 2mbx + b^2 + c \\
