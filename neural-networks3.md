@@ -514,7 +514,6 @@ class Transformer(nn.Module):
 		super().__init__()
 		self.n_letters = n_letters
 		self.posencoder = PositionalEncoding(d_model, dropout)
-		self.d_model = d_model
 		encoder_layers = TransformerEncoderLayer(d_model, nhead, feedforward_size, dropout, batch_first=True)
 		self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
 		self.transformer2hidden = nn.Linear(n_letters * d_model, 50)
@@ -547,7 +546,7 @@ class Transformer(nn.Module):
 		return output
 ```
 
-The transformer encoder by default applies a dropout of probability $0.1$ to each layer (multi-head attention or fully connected) before layer normalization.  As dropout has been disabled for the other positive controls on this page, it was also disabled for the transformer by calling `model.eval()` before training.  Applied to the first control
+The transformer encoder by default applies a dropout of probability $0.1$ to each layer (multi-head attention or fully connected) before layer normalization.  As normalization via dropout has been disabled for the other positive controls on this page, batch normalization was disabled by calling `model.eval()` after the first minibatch trained.  Applied to the control function
 
 $$
 y = 10d
