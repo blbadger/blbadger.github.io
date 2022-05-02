@@ -352,15 +352,19 @@ def gradientxinput(model, input_tensor, output_dim):
 ```
 although note that the figures below also have a max normalization step before returning the gradientxinput tensor.
 
-Earlier it was noted that a human may learn to distinguish between a healthy and unhealthy cell by looking for clumps of protein in the images provided.  Does a neural network perform classification the same way?  Applying our input attribution method to one particular example of an unhealthy cell image, we can observe which pixels are attributed to influence the output most by superimposing a heatmap of attribution over the original image as follows:
+Earlier it was noted that a human may learn to distinguish between a healthy and unhealthy cell by looking for clumps of protein in the images provided.  Does a neural network perform classification the same way?  Applying our input attribution method to one particular example of an unhealthy cell image for a trained model, we have
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/snf7_gradxinput.png)
 
-where the attributions are in purple and the original input image is in grayscale.  Here it may clearly be seen that the clumps of protein overlap with the regions of highest attribution.  After training, models tend to place the highest attribution on exactly these clumps accross many images ('S' denotes unhealthy and 'C' denotes healthy cells)
+where the attributions are in purple and the original input image is in grayscale.  Here it may clearly be seen that the clumps of protein overlap with the regions of highest attribution.  It is interesting to note that the same attribution is applied to images of healthy cells: 
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/snf7_gradxinput2.png)
+
+Across many input images, a trained model tend to place the highest attribution on exactly these clumps accross many images ('S' denotes unhealthy and 'C' denotes healthy cells)
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/snf7_gradxinput_grid.png)
 
-As a general rule, therefore, the deep learning models place the most importance on the same features as an expert human when attempting to classify the images.
+As a general rule, therefore, the deep learning models place the most importance on the same features as an expert human when attempting to classify the images. The models effectively learn how to discriminate between classification options by determining how much of a clump of protein exists in the image.
 
 ### Learning does not equate to global minimization of a cost function during training
 
