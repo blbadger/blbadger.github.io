@@ -330,13 +330,13 @@ This does not mean that we cannot try to understand how learning occurs regardle
 
 We can define what a model 'looks at' most in the input as the inputs that change the output of the model the most, which is called input attribution.  Attribution may be calculated in a variety of different ways, and here we will use a particularly intuitive method: gradient*input. The gradient of the output with respect to the input, projected onto the input, tells us how each input component changes when the output is moving in the direction of greatest ascent by definition. We simply multiply this gradient by the input itself to find how each input component influences the output.  Navigate over to [this page](https://blbadger.github.io/nn_interpretations.html) for a look at another attribution method and more detail behind how these are motivated.
 
-Thus we are interested in the gradient of the objective function $J$ with respect to the input
+Thus we are interested in the gradient of the model's output with respect to the input multiplied by the input itself,
 
 $$
-\nabla_i J(O(\theta; i)) * i
+\nabla_i O(\theta; i) * i
 $$
 
-where $\nabla_i$ is the gradient with respect to the input tensor (in this case a $1x256x256$ monocolor image) and $J(O(\theta; i))$ is the objective function of the output of our model with parameters $\theta$ and input $i$. This can be implemented as follows:
+where $\nabla_i$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $O(\theta; i)$ is the output of our model with parameters $\theta$ and input $i$ and $*$ denotes Hadamard (element-wise) multiplication. This can be implemented as follows:
 
 ```python
 def gradientxinput(model, input_tensor, output_dim):
