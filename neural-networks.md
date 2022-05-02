@@ -333,10 +333,10 @@ We can define what a model 'looks at' most in the input as the inputs that chang
 Thus we are interested in the gradient of the objective function $J$ with respect to the input
 
 $$
-i * \nabla_i J(O(\theta; i))
+\nabla_i J(O(\theta; i)) * i
 $$
 
-where $\nabla_i$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $J(O(\theta; i))$ is the objective function of the output of our model with parameters $\theta$ and input $i$. This can be implemented as follows:
+where $\nabla_i$ is the gradient with respect to the input tensor (in this case a $1x256x256$ monocolor image) and $J(O(\theta; i))$ is the objective function of the output of our model with parameters $\theta$ and input $i$. This can be implemented as follows:
 
 ```python
 def gradientxinput(model, input_tensor, output_dim):
