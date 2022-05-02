@@ -2,31 +2,29 @@
 
 ### Introduction
 
-In scientific research it is often important to be able to categorize samples accurately. For example, during the research process a histological section of tissue from an animal subjected to some treatment may be observed to be healthy or unhealthy depending on its appearance under the microscope. One way to accomplish this task of classification of healthy versus unhealthy is to have a skilled individual manually observe and interpret these images.  With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation.
+In scientific research it is often important to be able to categorize samples accurately. With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation. 
 
 Another way to accomplish the task is to employ a computational method.  One could imagine attempting to program a machine to recognize the same features that an expert individual would take note of in order to replicate that individual's performance.  Historically this approach was taken in efforts resulting in what were called 'expert systems', but now such approaches are generally no longer attempted.  
 
 This is for a couple reasons: firstly because they are extremely tedious and time-consuming to implement, and secondly because once implemented these methods generally fail to be very accurate. The underlying cause for both of these points of failure is that it is actually very difficult to explain complicated tasks like image recognition precisely yet generally enough to be accurate.  
 
-The failure of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field that has been termed statistical learning.  Particularly delicate tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
-
-Supervised machine learning techniques attempt to reproduce with generalization: in the case of image classification, we already 'know' how to classify a certain number of images that becomes our training dataset, and we seek to classify other images that the program has not seen before.  In order to assess accuracy for classification on this test dataset, we need to know the true classification to be able to compare this with the predicted classification.  The ideal supervised learning technique takes a training dataset and accurately generalizes from this such that unseen datasets are classified correctly using information from this training dataset.  
+The failure of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field of statistical learning.  Particularly difficult tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
 
 ### Implementing a neural network to classify images
 
-The current state-of-the-art method for classifying images is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are tuned in accordance to some loss function in order to 'learn'.  These neuron are arranged in sequential layers, each representing the input in a potentially more abstract manner before the output layer is used for classification.  This sequential (and distributed across many neurons of one layer) representation may be many layers deep before reaching the output, leading to the field of study for many neural network-related approaches to be called 'deep learning'.
+The current state-of-the-art method for classifying images via machine learning is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are adjusted in accordance to some loss function in order to 'learn' during training.  These neuron are arranged in sequential layers, each representing the input in a potentially more abstract manner before the output layer is used for classification.  This sequential representation of the input in order to accomplish a machine learning task is the core idea behind the field of deep learning, encompasses artifical neural networks along with other models such as Boltzmann machines.
 
-A good hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
+A hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
 
 Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise in high-level programming languages (C, C++, Python etc) is much less efficient than computation with low-level array optimized libraries like BLAS and LAPACK.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation, and this library can be used to simplify and speed up neural network implementations, as seen [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py). 
 
 As effective as numpy is, it is not quite ideal for speedy computations with very large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written (mostly) for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  Most of this page references code employing Tensorflow (with a Keras front end) and was inspired by the [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
 
-The first thing to do is to prepare the training and test datasets.  Say you want to train a network to classify images of objects seen from a moving car.  One way of doing this is by splitting up large wide-field images that contain the whole street view into smaller pieces that have at most one object of interest.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  Code that implements this procedure is found [here](https://github.com/blbadger/nnetworks/blob/master/NN_prep_snippets.py). Similar image preparation methods are also contained in Tensorflow's preprocessing module.
+The first thing to do is to prepare the training and test datasets.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  Code that implements this procedure is found [here](https://github.com/blbadger/nnetworks/blob/master/NN_prep_snippets.py). Similar image preparation methods are also contained in Tensorflow's preprocessing module.
 
 Rotations and translation of images are commonly used to increase the size of the dataset of interest.  These are both types of data augmentation, which is when some dataset is expanded by a defined procedure.  Data augmentation should maintain all invariants in the original dataset in order to be representative of the information found there, and in this case it means we can perform arbitrary translations and rotations.  But for other image sets, this is not the case: for example, rotating a 6 by 180 degrees yields a 9 meaning that arbitrary rotation does not maintain the invariants of images of digits.
 
-Now let's design the neural network.  We shall be using established libraries for this set, so reading the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) may be useful.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
+Now let's design the neural network architecture.  We shall be using established libraries for this set, so reading the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) may be useful.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
 
 
 ```python
@@ -222,13 +220,11 @@ model.evaluate(x_test2, y_test2, verbose=1)
 
 ```
 
-A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one 'hot' label (usually 1), ie instead of labels such as `[3]` we have `[0, 0, 1]`.  In Tensorflow's lexicon, categorical crossentropy should be used instead of sparse categorical crossentropy because of this.  
-
-Another thing to note is the lack of normalization: there are no batch or layer normalizations applied to any layers, no dropout, nor even L1 or L2 normalization applied to neuron weights.  As we shall see below, this does not prevent the network from achieving very high test classification accuracy, which seems to go against the conventional wisdom for neural network architecture.  For an explanation of this first note that convolutional layers have intrinsic protection against overfitting, as they are translation-insensitive by design.  Also note that dataset augmentation via rotations and translations provides another form of insurance against overfitting.  
+A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one-hot tensor, ie instead of labels such as `[3]` we have `[0, 0, 1]`.  In Tensorflow's lexicon, categorical crossentropy should be used instead of sparse categorical crossentropy because of this.  
 
 ### Accurate image classification
 
-Using blinded approach, I classified 93 % of images correctly for certain test dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
+We follow a test/train split on this page: the model is trained on ~80% of the sample data and then tested on the remaining 20%, which allows us to estimate the model accuracy using data not exposed to the model during training. For reference, using a blinded approach by eye I classify 93 % of images correctly for certain dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
 The network shown above averaged ~96 % binary accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  
 
@@ -262,7 +258,7 @@ which yields
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_3.png)
 
-### Overfitting (memorization) versus learning
+### Generalization and training velocity
 
 Why does the network confidently predict incorrect answers for the Snf7 dataset?  Let's see what happens during training.  One way to gain insight into neural network training is to compare the accuracy of training image classification at the end of each epoch.  This can be done in R as follows:
 
@@ -314,7 +310,7 @@ Once again Snap29 training accuracy lags behind that of Snf7.
 
 ### AlexNet revisited
 
-To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I designed a network that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
+To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I implemented a model that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
 
 Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [this paper](https://arxiv.org/abs/1611.03530) and [another paper](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet clone, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
@@ -323,6 +319,48 @@ Using this network, it has previously been seen that overfitting is the result o
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_11.png)
 
 There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for our custom architecture) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
+
+### How does learning occur?
+
+At first glance, the process of changing hundreds of thousands of parameters for a deep learning model seems to be quite mysterious. For a single layer it is perhaps simpler to understand how each component of the input influences the output such that the gradient of each component wrt. a function on the output may be computed, and once that is done the value of that parameter may be changed accordingly.  But with many layers of input representation between the input and output, how does a gradient update to one layer not affect other layers? How accurate is gradient computation using backpropegation for deep learning models?
+
+The answer to the latter question is that it is fairly accurate and not too difficult to compute the gradient itself, but the question of how the successive layers influence each other during gradient update is an outstanding one in the field of deep learning and has no clear answer as yet.
+
+This does not mean that we cannot try to understand how learning occurs regardless. One way we can do this is to observe how the accuracy or model loss function changes over time as a model is fed certain inputs, and this is done in the preceding sections on this page. A more direct question may also be addressed: what does the model learn to 'look at' in the input?
+
+We can define what a model 'looks at' most in the input as the inputs that change the output of the model the most, which is called input attribution.  Attribution may be calculated in a variety of different ways, and here we will use a particularly intuitive method: gradient*input. The gradient of the output with respect to the input, projected onto the input, tells us how each input component changes when the output is moving in the direction of greatest ascent by definition. We simply multiply this gradient by the input itself to find how each input component influences the output.  Navigate over to [this page](https://blbadger.github.io/nn_interpretations.html) for a look at another attribution method and more detail behind how these are motivated.
+
+Thus we are interested in the gradient of the objective function $J$ with respect to the input
+
+$$
+i * \nabla_i J(O(\theta; i))
+$$
+
+where $\nabla_i$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $J(O(\theta; i))$ is the objective function of the output of our model with parameters $\theta$ and input $i$. This can be implemented as follows:
+
+```python
+def gradientxinput(model, input_tensor, output_dim):
+	...
+	input_tensor.requires_grad = True
+	output = model.forward(input_tensor)
+	output = output.reshape(1, output_dim).max()
+
+	# backpropegate output gradient to input
+	output.backward(retain_graph=True)
+	gradientxinput = torch.abs(input_tensor.grad) * input_tensor
+	return gradientxinput
+```
+although note that the figures below also have a max normalization step before returning the gradientxinput tensor.
+
+Earlier it was noted that a human may learn to distinguish between a healthy and unhealthy cell by looking for clumps of protein in the images provided.  Does a neural network perform classification the same way?  Applying our input attribution method to one particular example of an unhealthy cell image, we can observe which pixels are attributed to influence the output most by superimposing a heatmap of attribution over the original image as follows:
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/snf7_gradxinput.png)
+
+where the attributions are in purple and the original input image is in grayscale.  Here it may clearly be seen that the clumps of protein overlap with the regions of highest attribution.  After training, models tend to place the highest attribution on exactly these clumps accross many images ('S' denotes unhealthy and 'C' denotes healthy cells)
+
+![gradients]({{https://blbadger.github.io}}/neural_networks/snf7_gradxinput_grid.png)
+
+As a general rule, therefore, the deep learning models place the most importance on the same features as an expert human when attempting to classify the images.
 
 ### Learning does not equate to global minimization of a cost function during training
 
