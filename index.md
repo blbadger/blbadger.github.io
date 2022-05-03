@@ -191,7 +191,7 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Image Recognition and Training Velocity](/neural-networks.md) 
 
-![neural network architecture]({{https://blbadger.github.io}}/misc_images/cNN_architecture.png)
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_slow.gif)
 
 ### [Training Memory](/neural-networks2.md)
 
