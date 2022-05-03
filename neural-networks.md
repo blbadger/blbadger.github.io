@@ -230,7 +230,7 @@ The network shown above averaged ~96 % binary accuracy (over a dozen training ru
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
-Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 70.7 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) but much worse than for the Snap29 dataset. Can the neural network do better?
+Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 71 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) but much worse than for the Snap29 dataset. Can the neural network do better?
 
 It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %, both slightly lower than my manual classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence it is incorrect for many.
 
@@ -329,10 +329,10 @@ We can define what a model 'looks at' most in the input as the inputs that chang
 Thus we are interested in the gradient of the model's output with respect to the input multiplied by the input itself,
 
 $$
-\nabla_i O(\theta; i) * i
+\nabla_a O(a; \theta) * a
 $$
 
-where $\nabla_i$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $O(\theta; i)$ is the output of our model with parameters $\theta$ and input $i$ and $*$ denotes Hadamard (element-wise) multiplication. This can be implemented as follows:
+where $\nabla_a$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $O(a; \theta)$ is the output of our model with parameters $\theta$ and input $a$ and $*$ denotes Hadamard (element-wise) multiplication. This can be implemented as follows:
 
 ```python
 def gradientxinput(model, input_tensor, output_dim):
@@ -376,10 +376,10 @@ If decreasing the neural network cost function is the goal of training, why woul
 
 In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $J$.
 
-In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(\theta; a)$ such that the loss function $J(O)$ is 
+In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(a; \theta)$ such that the loss function $J(O)$ is 
 
 $$
-h = J(O(\theta; a))
+h = J(O(a; \theta))
 $$
 
 What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples $a$ used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $\theta$ using the data is fixed.
@@ -396,8 +396,8 @@ $$
 
 where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters across 3 hidden layers is capable of performing this task extremely accurately. 
 
-In the last section, the landscape of $h$ was considered.  Here we will focus on the gradient of $h$, as stochastic gradient descent is not affected by the values of $h$ but only their rate of change as $\theta$ chages. We can observe the gradient of the objective function $J(O(\theta; a))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(\theta; a))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(\theta; a))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(\theta; a))$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon_n, x_2 + \epsilon_n)\; n \in \Bbb Z$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(\theta; a))$ vector is
-located at the center circle, and the surrounding vectors are the gradients $\nabla_x J(O(\theta; a))$ with $x$ modified to be $x_1+\epsilon_n, x_2 + \epsilon_n$ 
+In the last section, the landscape of $h$ was considered.  Here we will focus on the gradient of $h$, as stochastic gradient descent is not affected by the values of $h$ but only their rate of change as $\theta$ chages. We can observe the gradient of the objective function $J(O(a; \theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(a; \theta))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(a; \theta))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(a; \theta))$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon_n, x_2 + \epsilon_n)\; n \in \Bbb Z$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(a; \theta))$ vector is
+located at the center circle, and the surrounding vectors are the gradients $\nabla_x J(O(a; \theta))$ with $x$ modified to be $x_1+\epsilon_n, x_2 + \epsilon_n$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradient_quiver.png)
 
@@ -472,10 +472,10 @@ AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other mo
 We may observe a model's attribution on the inputs from this dataset as well in order to understand how a trained model arrives at its conclusion. Here we have our standard model architecture and we compute the gradientxinput
 
 $$
-\nabla_i O(\theta; i) * i
+\nabla_a O(a; \theta) * a
 $$
 
-where the input $i$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $i$ is $O(\theta; i)$, and $*$ denotes Hadamard (element-wise) multiplication.  This may be accomplished using Pytorch in a similar manner as above, and for some variety we can also perform the calculation using Tensorflow as follows:
+where the input $a$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $a$ is $O(a; \theta)$, and $*$ denotes Hadamard (element-wise) multiplication.  This may be accomplished using Pytorch in a similar manner as above, and for some variety we can also perform the calculation using Tensorflow as follows:
 
 ```python
 def gradientxinput(features, label):
@@ -539,6 +539,17 @@ Plotting attribution after every minibatch update to the gradient, we have
 
 {% include youtube.html id='lVcNSD0viX0' %}
 
+The deep learning models generally perform worse on flower type discrimination when they are not given color images, which makes sense being that flowers are usually quite colorful.  Before the start of training, we have a stochastic attribution: note how the model places relatively high attribution on the sky in the images with a light sky available.
+
+![flower saliency]({{https://blbadger.github.io}}/neural_networks/colorflower_attributions0000.png)
+
+In contrast, after 25 epochs of training the model has learned to place more attribution on the tulip flower body, the edge of the rose petals, and the seeds of the sunflower and dandelion.  Note that the bottom center tulip has questionable attribution: the edge of the leaves may be used to discriminate between plant types, but it is not likely that flower pot itself is a useful feature to focus on.
+
+![flower saliency]({{https://blbadger.github.io}}/neural_networks/colorflower_attributions1202.png)
+
+Plotting attribution after every minibatch update to the gradient, we have
+
+{% include youtube.html id='mz_Qo1fcmgc' %}
 
 
 
