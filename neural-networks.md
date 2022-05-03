@@ -316,7 +316,7 @@ Using this network, it has previously been seen that overfitting is the result o
 
 There are a number of interesting observations from this experiment.  Firstly, the multiple normalization methods employed by AlexNet (relative to no normalization used for our custom architecture) are incapable of preventing severe overfitting for Snf7, or even for Snap29.  Second, with no modification to hyperparameters the AlexNet architecture was able to make significant progress towards classifying Snap29 images, even though this image content is far different from the CIFAR datasets that AlexNet was designed to classify.  The third observation is detailed in the next section.
 
-### How does learning occur?
+### How learning occurs
 
 At first glance, the process of changing hundreds of thousands of parameters for a deep learning model seems to be quite mysterious. For a single layer it is perhaps simpler to understand how each component of the input influences the output such that the gradient of each component wrt. a function on the output may be computed, and once that is done the value of that parameter may be changed accordingly.  But with many layers of input representation between the input and output, how does a gradient update to one layer not affect other layers? How accurate is gradient computation using backpropegation for deep learning models?
 
@@ -403,17 +403,17 @@ located at the center circle, and the surrounding vectors are the gradients $\na
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in the cost function $J(O(\theta; a))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers.  The model used on this page has three hidden layers, indexed from 0, and we will observe the gradient vectors on the second and third layer.
+Choosing an epoch that exhibits a decrease in the cost function $J(O(a; \theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers.  The model used on this page has three hidden layers, indexed from 0, and we will observe the gradient vectors on the second and third layer.
 
-One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(\theta; a_n))$ 
+One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(a_n; \theta))$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-In contrast, at the start of training the vectors of $\nabla_x J(O(\theta; a_n))$ tend to yield gradients on $x$ that are (somewhat weak) approximations of each other.
+In contrast, at the start of training the vectors of $\nabla_x J(O(a; \theta))$ tend to yield gradients on $x$ that are (somewhat weak) approximations of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
-Regularization is the process of reducing the test error without necessarily reducing training error, and is thus important for overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(\theta; a))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
+Regularization is the process of reducing the test error without necessarily reducing training error, and is thus important for overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(a; \theta))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
@@ -421,7 +421,7 @@ but once again this behavior is not as apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(\theta;a))$ may be achieved using backpropegation, but the gradient descent update of $x$, specifically $x - \epsilon\nabla_x J(O(\theta;a))$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive. This is due to how most deep learning models are set up: in a typical case of a fully connected layer $h$ following layer $h_{-1}$ given the weight vector for that neuron $w$ and bias scalar $b$
+Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(a; \theta))$ may be achieved using backpropegation, but the gradient descent update of $x$, specifically $x - \epsilon\nabla_x J(O(a; \theta))$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive. This is due to how most deep learning models are set up: in a typical case of a fully connected layer $h$ following layer $h_{-1}$ given the weight vector for that neuron $w$ and bias scalar $b$
 
 $$
 h = w^Th_{-1} + b
@@ -435,7 +435,7 @@ $$
 h = w^T(w^T(w^T(w^Th_{-4})))
 $$
 
-Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(\theta;a))$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
+Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(a; \theta))$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
 
 Batch normalization attemps to deal with this problem by re-parametrizing each layer to have activations $h'$ such that they have a defined standard deviation of 1 and a mean of 0, which is accomplished by using the layer's activation mean $\mu$ and standard deviation $\sigma$ values that are calculated per minibatch during training.  The idea is that if the weights of each layer form distributions of unit variance around a mean of 0, the effect of exponential growth in activations (and also gradients) is minimized.
 
@@ -447,13 +447,16 @@ $$
 
 which means that the mean is multiplied by $\gamma$ before being added by $\beta$, and the standard deviation is multiplied by $\gamma$. This procedure is necessary to increase the ability of batch normalized models to approximate a wide enough array of functions, but it in some sense defeats the intended purpose of ameliorating the exponential effect, as the transformed layer $h''$ has a mean and standard deviation can drift from the origin and unit value substantially. Why then is batch normalization an effective regularizer?
 
-Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle layer.  As we saw for dropout and non-regularized gradients, different minibatches have very different gradient landscapes.
+Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\
+
+
+_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle layer.  As we saw for dropout and non-regularized gradients, different minibatches have very different gradient landscapes.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
 
 Thus we come to the interesting observation that batch normalization leads to a similar loss of stability in the gradient landscape that is seen for dropout. which in this author's opinion is a probable reason for its success as a regularizer (given dropout's demonstrated success in this area).  This helps explain why it was found that batch normalization and dropout are often able to substitute for each other in large models: it turns out that they have similar effects on the gradient landscape of hidden layers, although batch normalization in this case seems to be a more moderate inducement of this loss of stability.
 
-Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(\theta; a_n)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
+Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(a_n; \theta)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
 
 To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch $a_n$.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent. This is why the identity of the input $a$ is so important, even for a fixed dataset with no randomness.
 
