@@ -239,6 +239,7 @@ It cannot: the average training run results in 62 % classification accuracy, and
 Each time a network is trained, there is variability in how effective the training is even with the same datasets as inputs.  Because of this, it is helpful to observe a network's performance over many training runs (each run starting with a naive network and ending with a trained one)  The statistical language R (with ggplot) can be used to make a box plot of the test accuracies achieved over many training runs for these datasets, once this data has been saved as text file. Here I use a csv file in the directory shown to compare the test accuracies of Snap29 compared to Snf7 datasets
 
 ```R
+# R
 library(ggplot2)
 
 data1 = read.csv('~/Desktop/snf7_vs_snap29color_deep.csv')
@@ -263,6 +264,7 @@ which yields
 Why does the network confidently predict incorrect answers for the Snf7 dataset?  Let's see what happens during training.  One way to gain insight into neural network training is to compare the accuracy of training image classification at the end of each epoch.  This can be done in R as follows:
 
 ```R
+# R
 library(ggplot2)
 data7 = read.csv('~/Desktop/snf_training_deep.csv')
 data6 = read.csv('~/Desktop/snap29_training_deep_2col.csv')
@@ -298,13 +300,7 @@ A slower learning process for generalization is observed compared to that which 
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_5.png)
 
-And we see that this deeper network continues to confidently predict incorrect classifications for Snf7
-
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_6.png)
-
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_7.png)
-
-Once again Snap29 training accuracy lags behind that of Snf7.
+And once again Snap29 training accuracy lags behind that of Snf7.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_8.png)
 
@@ -461,7 +457,7 @@ Note that for each of the above plots, the model's parameters $\theta$ did not c
 
 To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch $a_n$.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent. This is why the identity of the input $a$ is so important, even for a fixed dataset with no randomness.
 
-### Extensions to other datasets: fashion MNIST and flower types
+### Fashion MNIST
 
 Fluorescent images of cells are unlikely to be met with in everyday life, unless you happen to be a biologist.  What about image classification for these objects, can the neural net architectures presented here learn these too?
 
@@ -472,6 +468,30 @@ The deep network with no other modifications than noted above performs very well
 ![fashion MNIST]({{https://blbadger.github.io}}/neural_networks/Fashion_mnist.png)
 
 AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~180,000).
+
+We may observe a model's attribution on the inputs from this dataset as well in order to understand how a trained model arrives at its conclusion. Here we have our standard model architecture and we compute the gradientxinput
+
+$$
+\nabla_i O(\theta; i) * i
+$$
+
+where the input $i$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $i$ is $O(\theta; i)$, and $*$ denotes Hadamard (element-wise) multiplication.  For an image of a sandal, we observe the attribution
+
+![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_gradxinput.png)
+
+which focuses on certain points where the sandal top meets the sole.  How does a deep learning model such as our convolutional network learn which regions of the input to focus on in order to minimize the cost function?  At the start of training, there is a mostly random gradientxinput attribution for each image
+
+![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution0001.png)
+
+but at the end of training, certain stereotypical features of a given image category receive a larger attribution than others: for example, the elbows and collars of coats tend to exhibit a higher attribution than the rest of the garment.
+
+![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution0505.png)
+
+It is especially illuminating to observe how attribution changes after each minibatch gradient update.  Here we go from the start of the training period (first image above) to a point where the network correctly classifies >80% of all test images.
+
+{% include youtube.html id='7SCd5YVYejc' %}
+
+### Flower Type Identification
 
 For some more colorful image classifications, lets turn to Alexander's flower [Kaggle photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
 
