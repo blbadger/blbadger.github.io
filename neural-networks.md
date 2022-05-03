@@ -527,13 +527,17 @@ and tulips or roses
 
 ![flower classes]({{https://blbadger.github.io}}/neural_networks/Figure_flowers_tulips_roses2.png)
 
+We can investigate the learning process by using gradientxinput attribution. Before the start of training, we see that there is relatively random attribution placed on various pixels of test set flower images
 
+![flower saliency]({{https://blbadger.github.io}}/neural_networks/flower_attributions0000.png)
 
+but after 25 epochs, certain features are focused upon
 
+![flower saliency]({{https://blbadger.github.io}}/neural_networks/flower_attributions1200.png)
 
+Plotting attribution after every minibatch update to the gradient, we have
 
-
-
+{% include youtube.html id='lVcNSD0viX0' %}
 
 
 
