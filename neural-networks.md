@@ -346,7 +346,7 @@ def gradientxinput(model, input_tensor, output_dim):
 	gradientxinput = torch.abs(input_tensor.grad) * input_tensor
 	return gradientxinput
 ```
-although note that the figures below also have a max normalization step before returning the gradientxinput tensor.
+although note that the figures below also have a max normalization step before returning the gradientxinput tensor.  The `gradientxinput` object returned is a `torch.Tensor()` object and happily may be viewed directly using `matplotlib.pyplot.imshow()`. 
 
 Earlier it was noted that a human may learn to distinguish between a healthy and unhealthy cell by looking for clumps of protein in the images provided.  Does a neural network perform classification the same way?  Applying our input attribution method to one particular example of an unhealthy cell image for a trained model, we have
 
@@ -475,19 +475,39 @@ $$
 \nabla_i O(\theta; i) * i
 $$
 
-where the input $i$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $i$ is $O(\theta; i)$, and $*$ denotes Hadamard (element-wise) multiplication.  For an image of a sandal, we observe the attribution
+where the input $i$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $i$ is $O(\theta; i)$, and $*$ denotes Hadamard (element-wise) multiplication.  This may be accomplished using Pytorch in a similar manner as above, and for some variety we can also perform the calculation using Tensorflow as follows:
+
+```python
+def gradientxinput(features, label):
+	...
+	optimizer = tf.keras.optimizers.Adam()
+	features = features.reshape(1, 28, 28, 1)
+	ogfeatures = features # original tensor
+	features = tf.Variable(features, dtype=tf.float32)
+	with tf.GradientTape() as tape:
+		predictions = model(features)
+
+	input_gradients = tape.gradient(predictions, features).numpy()
+	input_gradients = input_gradients.reshape(28, 28)
+	ogfeatures = ogfeatures.reshape(28, 28)
+	gradxinput = tf.abs(input_gradients) * ogfeatures
+	...
+```
+such that `ogfeatures` and `gradxinput` may be fed directly into `matplotlib.pyplot.imshow()` for viewing.  Note that the images and videos presented here were generated using pytorch, with a similar (and somewhat less involved) implementation as the one put forth in the preceding section for obtaining gradientxinput tensors. 
+
+For an image of a sandal, we observe the follopwing attribution:
 
 ![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_gradxinput.png)
 
 which focuses on certain points where the sandal top meets the sole.  How does a deep learning model such as our convolutional network learn which regions of the input to focus on in order to minimize the cost function?  At the start of training, there is a mostly random gradientxinput attribution for each image
 
-![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution0001.png)
+![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution_grid0001.png)
 
 but at the end of training, certain stereotypical features of a given image category receive a larger attribution than others: for example, the elbows and collars of coats tend to exhibit a higher attribution than the rest of the garment.
 
-![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution0505.png)
+![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_attribution_grid0505.png)
 
-It is especially illuminating to observe how attribution changes after each minibatch gradient update.  Here we go from the start of the training period (first image above) to a point where the network correctly classifies >80% of all test images.
+It is especially illuminating to observe how attribution changes after each minibatch gradient update.  Here we go from the start of the start to the end of the training as show in the preceding images, plotting attributions on a subset of test set images after each minibatch (size 16) update.
 
 {% include youtube.html id='7SCd5YVYejc' %}
 
