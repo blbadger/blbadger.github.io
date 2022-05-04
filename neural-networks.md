@@ -554,9 +554,46 @@ Plotting attribution after every minibatch update to the gradient, we have
 
 {% include youtube.html id='mz_Qo1fcmgc' %}
 
+### Adversarial Examples
 
+Considering the attribution patterns placed on various input images, it may seem that a deep learning object recognition process is similar to a human-like decision making process when identifying images: focus on the features that differ between images and learn which features correspond to what image. But there are significant differences between natural and deep learning-based object recognition, and one of the most dramatic of these differences is the presence of what has been termed 'adversarial examples', first observed by Szegedy and colleagues in their [paper](https://arxiv.org/abs/1312.6199) on this subject.
 
+To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  
 
+How might we go about finding an adversarial example?  One option is to compute the gradient of the loss function $J$ with respect to the input $a$,
 
+$$
+g = \nabla_a J(O((a; \theta)))
+$$
+
+but instead of taking a small step against the gradient (as would be the case if we were computing $\nabla_{\theta} J(O(a; \theta))$ and then taking a small step in the opposite direction during stochastic gradient descent), we first find the direction along each input tensor element that $g$ projects onto and then take a small step in this direction.
+
+$$
+a' = a + \epsilon * \mathit{sign}(g)
+$$
+
+What this procedure accomplishes is to change the input by a small amount (determined by the size of $epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.
+
+For an untrained model, this does not accomplish very much.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial0.png)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial1.png)
+
+After training, however, we see some dramatic changes in the ability of the model to accurately classify an image compared to its adversarial negative.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example0.png)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example1.png)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example6.png)
+
+although not all shifted images experience this change in predicted classification
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example13.png)
+
+It is interesting to note that the gradient sign image itself may be confidently (and necessarily incorrectly) classified too
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/gradpred_adversarial_example3.png)
 
 
