@@ -560,27 +560,29 @@ Considering the attribution patterns placed on various input images, it may seem
 
 To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  
 
-How might we go about finding an adversarial example?  One option is to compute the gradient of the loss function $J$ with respect to the input $a$,
+How might we go about finding an adversarial example?  One option is to compute the gradient $g$ of the loss function of the output $J(O)$ with respect to the input $a$ of the model with parameters $\theta$,
 
 $$
 g = \nabla_a J(O((a; \theta)))
 $$
 
-but instead of taking a small step against the gradient (as would be the case if we were computing $\nabla_{\theta} J(O(a; \theta))$ and then taking a small step in the opposite direction during stochastic gradient descent), we first find the direction along each input tensor element that $g$ projects onto and then take a small step in this direction.
+but instead of taking a small step against the gradient (as would be the case if we were computing $\nabla_{\theta} J(O(a; \theta))$ and then taking a small step in the opposite direction during stochastic gradient descent), we first find the direction along each input tensor element that $g$ projects onto with $\mathrm{sign}(g)$ and then take a small step in this direction.
 
 $$
-a' = a + \epsilon * \mathit{sign}(g)
+a' = a + \epsilon * \mathrm{sign}(g)
 $$
 
-What this procedure accomplishes is to change the input by a small amount (determined by the size of $epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.
+where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or in symbols $a_n \in \Bbb R \to <-1, 1>$ depending on the sign of $a_n$. 
 
-For an untrained model, this does not accomplish very much.
+What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.
+
+For an untrained model, $a'$ is usually not viewed differently by the model than the original input $a$. For example, the figures below display typical results from computing $\mathrm{sign}(g)$ (center) from the original input $a$ (left) with the modified input $a'$ (right). Note that the image representation of $\mathrm{sign}(g)$ clips negative values (black pixels in the image) and is not a true representation of what is actually added to $a$: the true image of $\mathrm{sign}(g)$ is 50 times dimmer than shown, and by design nothing is visible. The model's output for $a$ and $a'$ is noted above the image, with the softmax value converted to a percentage for clarity.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial0.png)
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial1.png)
 
-After training, however, we see some dramatic changes in the ability of the model to accurately classify an image compared to its adversarial negative.
+After training, however, we see some dramatic changes in the model's output (and ability to classify) the image $a$ compared to the shifted image $a'$. In the following three examples, the model's classification for $a$ is accurate, but the addition of an imperceptably small amount of the middle image to make $a'$ yields a confident but incorrect classification.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example0.png)
 
@@ -588,12 +590,11 @@ After training, however, we see some dramatic changes in the ability of the mode
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example6.png)
 
-although not all shifted images experience this change in predicted classification
+Not all shifted images experience this change in predicted classification: the following images are viewed virtually identically by the model.  After 40 epochs of training a cNN, around a third of all inputs follow this pattern such that the model does not change its output significantly when given $a'$ as an input instead of $a$.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example13.png)
 
-It is interesting to note that the gradient sign image itself may be confidently (and necessarily incorrectly) classified too
+It is interesting to note that the gradient sign image itself may be confidently (and necessarily incorrectly) classified too.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/gradpred_adversarial_example3.png)
-
 
