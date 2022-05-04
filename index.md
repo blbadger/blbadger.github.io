@@ -189,7 +189,7 @@ The study of life, observations of which display many of the features of nonline
 
 ## Deep Learning
 
-### [Image Recognition and Training Velocity](/neural-networks.md) 
+### [Image Recognition and Computer Vision](/neural-networks.md) 
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_slow.gif)
 
