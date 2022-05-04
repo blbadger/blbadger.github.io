@@ -542,7 +542,7 @@ Plotting attribution after every minibatch update to the gradient, we have
 
 {% include youtube.html id='lVcNSD0viX0' %}
 
-The deep learning models generally perform worse on flower type discrimination when they are not given color images, which makes sense being that flowers are usually quite colorful.  Before the start of training, we have a stochastic attribution: note how the model places relatively high attribution on the sky in the images with a light sky available.
+The deep learning models generally perform worse on flower type discrimination when they are not given color images, which makes sense being that flowers are usually quite colorful.  Before the start of training, we have a stochastic attribution: note how the model places relatively high attribution on the sky in the bottom three images (especially the bottom right)
 
 ![flower saliency]({{https://blbadger.github.io}}/neural_networks/colorflower_attributions0000.png)
 
