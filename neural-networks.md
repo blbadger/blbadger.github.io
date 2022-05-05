@@ -4,9 +4,7 @@
 
 In scientific research it is often important to be able to categorize samples accurately. With experience, the human eye is in many instances able to accurately discern and categorize many important features from microsopic observation. 
 
-Another way to accomplish the task is to employ a computational method.  One could imagine attempting to program a machine to recognize the same features that an expert individual would take note of in order to replicate that individual's performance.  Historically this approach was taken in efforts resulting in what were called 'expert systems', but now such approaches are generally no longer attempted.  
-
-This is for a couple reasons: firstly because they are extremely tedious and time-consuming to implement, and secondly because once implemented these methods generally fail to be very accurate. The underlying cause for both of these points of failure is that it is actually very difficult to explain complicated tasks like image recognition precisely yet generally enough to be accurate.  
+Another way to accomplish this task is to employ a computational method.  One could imagine attempting to program a machine to recognize the same features that an expert individual would take note of in order to replicate that individual's performance.  Historically this approach was taken in efforts resulting in what were called 'expert systems', but now such approaches are generally no longer attempted.  This is for a couple reasons: firstly because they are extremely tedious and time-consuming to implement, and secondly because once implemented these methods generally fail to be very accurate. The underlying cause for both of these points of failure is that it is actually very difficult to explain complicated tasks like image recognition precisely yet generally enough to be accurate.  
 
 The failure of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field of statistical learning.  Particularly difficult tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
 
@@ -16,13 +14,13 @@ The current state-of-the-art method for classifying images via machine learning 
 
 A hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
 
-Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a matrix (usually called an n-dimensional array or a tensor) multiplication or else Hadamard product element-wise in high-level programming languages (C, C++, Python etc) is much less efficient than computation with low-level array optimized libraries like BLAS and LAPACK.  In python, numpy is perhaps the most well-known and powerful library for general matrix manipulation, and this library can be used to simplify and speed up neural network implementations, as seen [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py). 
+Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a tensor product element-wise in high-level programming languages (C, C++, Python etc) is much less efficient than computation with low-level array optimized libraries like BLAS and LAPACK.  In python, `numpy` is perhaps the most well-known and powerful library for general matrix manipulation, and this library can be used to simplify and speed up neural network implementations, as seen [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py). 
 
-As effective as numpy is, it is not quite ideal for speedy computations with very large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written (mostly) for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  Most of this page references code employing Tensorflow (with a Keras front end) and was inspired by the [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
+As effective as numpy is, it is not quite ideal for speedy computations with very large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written  for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  Most of this page references code employing Tensorflow (with a Keras front end) and was inspired by the [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
 
-The first thing to do is to prepare the training and test datasets.  Neural networks work best with large training sets composed of thousands of images, so I took this approach to split up images of fields of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images, resulting in many copies of each original image at different rotations.  Code that implements this procedure is found [here](https://github.com/blbadger/nnetworks/blob/master/NN_prep_snippets.py). Similar image preparation methods are also contained in Tensorflow's preprocessing module.
+The first thing to do is to prepare the training and test datasets.  Neural networks work best with large training sets composed of thousands of images, so we split up images of hundreds of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images:  rotations and translation of images are commonly used to increase the size of the dataset of interest.  These are both types of data augmentation, which is when some dataset is expanded by a defined procedure.  Data augmentation should maintain all invariants in the original dataset in order to be representative of the information found there, and in this case we can perform arbitrary translations and rotations.  But for other image sets, this is not true: for example, rotating a 6 by 180 degrees yields a 9 meaning that arbitrary rotation does not maintain the invariants of images of digits.
 
-Rotations and translation of images are commonly used to increase the size of the dataset of interest.  These are both types of data augmentation, which is when some dataset is expanded by a defined procedure.  Data augmentation should maintain all invariants in the original dataset in order to be representative of the information found there, and in this case it means we can perform arbitrary translations and rotations.  But for other image sets, this is not the case: for example, rotating a 6 by 180 degrees yields a 9 meaning that arbitrary rotation does not maintain the invariants of images of digits.
+Code that implements this procedure is found [here](https://github.com/blbadger/nnetworks/blob/master/NN_prep_snippets.py). Similar image preparation methods are also contained in Tensorflow's preprocessing module.
 
 Now let's design the neural network architecture.  We shall be using established libraries for this set, so reading the documentation for [Keras](https://keras.io/) and [Tensorflow](https://www.tensorflow.org/api_docs) may be useful.  First we write a docstring for our program stating its purpose and output, and import the relevant libraries.
 
@@ -119,7 +117,7 @@ Assigning the pair of labels to each iterable in the relevant generators,
 (x_test2, y_test2) = next(test_data_gen2)
 ```
 
-Now comes the fun part: assigning a network architecture! The Keras `Sequential` model is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching or recurrent architectures, in which case the more flexible functional Keras `tensorflow.keras.Model` should be used.  Below is an example of the network implemented using `keras.Model`.  After some trial and error, the following architecture was found to be effective for the relatively noisy images here.
+Now comes the fun part: assigning a network architecture! The Keras `Sequential` module is a straightforward, if relatively limited, class that allows a sequential series of network architectures to be added into one model. This does not allow for branching or recurrent architectures, in which case the more flexible functional Keras `tensorflow.keras.Model` should be used, and below is an example of the network implemented with this module. After some trial and error, the following architecture was found to be effective for the relatively noisy images here.
 
 For any neural network applied to image data, the input shape must match the image x- and y- dimensions, and the output should be the same as the number of classification options.  In this case, we are performing a binary classification between two cells, so the output layer of the neural network has 2 neurons and the input is specified by `IMG_HEIGHT, IMG_WIDTH` which in this case is defined above as 256x256.  
 
@@ -226,17 +224,15 @@ A few notes about this architecture: first, the output is a softmax layer and th
 
 We follow a test/train split on this page: the model is trained on ~80% of the sample data and then tested on the remaining 20%, which allows us to estimate the model accuracy using data not exposed to the model during training. For reference, using a blinded approach by eye I classify 93 % of images correctly for certain dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
 
-The network shown above averaged ~96 % binary accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  
+The network shown above averaged >90 % binary accuracy (over a dozen training runs) for this dataset.  We can see these test images along with their predicted classification ('Control' or 'Snap29'), the confidence the trained network ascribes to each prediction, and the correct or incorrect predictions labelled green or red, respectively.  The confidence of assignment is the same as the activation of the neuron in the final layer representing each possibility.  
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
-Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 71 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) but much worse than for the Snap29 dataset. Can the neural network do better?
-
-It cannot: the average training run results in 62 % classification accuracy, and the maximum accuracy achieved was 66 %, both slightly lower than my manual classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence it is incorrect for many.
+Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 71 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) and how does the network compare? The average training run results in 62 % classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence it is incorrect for many.
 
 ![snf7 test accuracy]({{https://blbadger.github.io}}/neural_networks/nn_images_2.png)
 
-Each time a network is trained, there is variability in how effective the training is even with the same datasets as inputs.  Because of this, it is helpful to observe a network's performance over many training runs (each run starting with a naive network and ending with a trained one)  The statistical language R (with ggplot) can be used to make a box plot of the test accuracies achieved over many training runs for these datasets, once this data has been saved as text file. Here I use a csv file in the directory shown to compare the test accuracies of Snap29 compared to Snf7 datasets
+Each time a network is trained, there is variability in how effective the training is even with the same datasets as inputs.  Because of this, it is helpful to observe a network's performance over many training runs (each run starting with a naive network and ending with a trained one)  The statistical language R (with ggplot) can be used to summarize data distributions, and here we compare the test accuracies of networks trained on the two datasets.
 
 ```R
 # R
@@ -255,7 +251,7 @@ l + geom_boxplot(width=0.4) +
     
 ```
 
-which yields
+This yields
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_3.png)
 
@@ -286,7 +282,7 @@ q +
   
 ```
 
-As backpropegation lowers the cost function, we would expect for the classification accuracy to increase for each epoch trained. For the network trained on the Snap29 dataset, this is indeed the case: the average training accuracy increases in each epoch and reaches ~94 % after the last epoch.  But something very different is observed for the network trained on Snf7 images: a rapid increase to 100 % training accuracy by the third epoch is observed, and subsequent epochs maintain the 100 % accuracy.
+As backpropegation lowers the cost function, we would expect for the classification accuracy to increase for each epoch trained. For the network trained on the Snap29 dataset, this is indeed the case: the average training accuracy increases in each epoch and reaches ~94 % after the last epoch.  But something very different is observed for the network trained on Snf7 images: a rapid increase to 100 % training accuracy by the third epoch is observed.
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_4.png)
 
@@ -294,7 +290,7 @@ The high training accuracy (100%) but low test accuracy (62 %) for the network o
 
 Overfitting is intuitively similar to memorization: both lead to an assimilation of information previously seen, without this assimilation necessarily helping the prediction power in the future.  One can memorize exactly how letters look in a serif font, but without the ability to generalize then one would be unable to indentify many letters in a sans-serif font.  The goal for statistical learning is to make predictions on hitherto unseen datasets, and thus to avoid memorization which does not guarantee this ability.
 
-Thus the network overfits Snf7 images but is able to effectively differentiate Snap29 images.  This makes sense from the perspective of manual classification as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
+Thus the network overfits Snf7 images but is able to generalize for Snap29 images.  This makes intuitive sense from the perspective of manual classification, as there is a relatively clear pattern that one can use to distinguish Snap29 images, but little pattern to identify Snf7 images.  
 
 A slower learning process for generalization is observed compared to that which led to overfitting, but perhaps some other feature could be causing this delay in training accuracy.  The datasets used are noticeably different: Snap29 is in two colors whereas Snf7 is monocolor.  If a deeper network (with the extra layer of 50 dense neurons before the output layer) is trained on a monocolor version of the Snap29 or Snf7 datasets, the test accuracy achieved is nearly identical to what was found before,
 
@@ -306,7 +302,7 @@ And once again Snap29 training accuracy lags behind that of Snf7.
 
 ### AlexNet revisited
 
-To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I implemented a model that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  Finally, the output layer has only two rather than many neurons, as there are two categories of interest here.
+To see if the faster increase in training accuracy for Snf7 was peculiar to the particular network architecture used, I implemented a model that mimics the groundbreaking architecture now known as [AlexNet](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf), and the code to do this may be found [here](https://github.com/blbadger/neural-network/blob/master/AlexNet_sequential.py).  There are a couple differences between my recreation and the original that are worth mentioning: first, the original was split across two machines for training, leading to some parallelization that was not necessary for my training set.  More substantially, AlexNet used a somewhat idiosyncratic normalization method that is related to but distinct from batch normalization, which has been substituted here.  
 
 Using this network, it has previously been seen that overfitting is the result of slower increases in training accuracy relative to general learning (see [this paper](https://arxiv.org/abs/1611.03530) and [another paper](https://dl.acm.org/doi/10.5555/3305381.3305406)).  With the AlexNet clone, once again the training accuracies for Snf7 increased faster than for Snap29 (although test accuracy was poorer for both relative to the deep network above).  This suggests that faster training leading to overfitting in the Snf7 dataset is not peculiar to one particular network architecture and hyperparameter choice.
 
@@ -384,7 +380,7 @@ $$
 
 What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples $a$ used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $\theta$ using the data is fixed.
 
-As $j$ is finite, an optimal value, ie a global minimum, of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that regularized models tend to actually effectively avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
+As $j$ is finite, an optimal value (a global minimum) of $h$ can be achieved by using stochastic gradient descent without any form of regularization, provided that the model has the capacity to 'memorize' the inputs $a$. This is called overfitting, and is strenuously avoided in practice because reaching this global minimum nearly always results in a model that performs poorly on data not seen during training.  But it is important to note that this process of overfitting is indeed identical to the process of finding a global (or asymptotically global) minimum of $h$, and therefore we can also say that regularized models tend to actually effectively avoid configurations $\theta$ that lead to absolute minima of $h$ for a given input set $a$ and objective function $J$.
 
 ### Gradients are sensitive to minibatch composition
 
@@ -572,11 +568,55 @@ $$
 a' = a + \epsilon * \mathrm{sign}(g)
 $$
 
-where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or in symbols $a_n \in \Bbb R \to <-1, 1>$ depending on the sign of $a_n$. 
+where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function is $\Bbb R \to {-1, 1}$ depending on the sign of each element $a_n \in a$. 
 
-What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.
+What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.  
 
-For an untrained model, $a'$ is usually not viewed differently by the model than the original input $a$. For example, the figures below display typical results from computing $\mathrm{sign}(g)$ (center) from the original input $a$ (left) with the modified input $a'$ (right). Note that the image representation of $\mathrm{sign}(g)$ clips negative values (black pixels in the image) and is not a true representation of what is actually added to $a$: the true image of $\mathrm{sign}(g)$ is 50 times dimmer than shown, and by design nothing is visible. The model's output for $a$ and $a'$ is noted above the image, with the softmax value converted to a percentage for clarity.
+To implement this, first we need to calculate $g$, which may be accomplished as follows:
+
+```python
+def loss_gradient(model, input_tensor, true_output, output_dim):
+	... # see source code for the full method with documentation
+	true_output = true_output.reshape(1)
+	input_tensor.requires_grad = True
+	output = model.forward(input_tensor)
+	loss = loss_fn(output, true_output) # objective function applied (negative log likelihood)
+
+	# only scalars may be assigned a gradient
+	output = output.reshape(1, output_dim).max()
+
+	# backpropegate output gradient to input
+	loss.backward(retain_graph=True)
+	gradient = input_tensor.grad
+	return gradient
+```
+
+Now we need to calculate $a'$, and here we assign $\epsilon=0.01$. Next we find the model's output for $a$ as well as $a'$, and throw in an output for $g$ for good measure
+
+```python
+def generate_adversaries(model, input_tensors, output_tensors, index):
+	... # see source code for the full method with documentation
+	single_input= input_tensors[index].reshape(1, 3, 256, 256)
+	input_grad = torch.sign(loss_gradient(model, single_input, output_tensors[index], 5))
+	added_input = single_input + 0.01*input_grad
+	
+	original_pred = model(single_input)
+	grad_pred = model(0.01*input_grad)
+	adversarial_pred = model(added_input)
+```
+
+Now we can plot images of $a$ and the output of each fed to the model by reshaping the tensor for use in `plt.imshow()` before finding the output class and output confidence (as we are using a softmax output) from $O(a; \theta)$ as follows
+
+```python
+	...
+	input_img = single_input.reshape(3, 256, 256).permute(1, 2, 0).detach().numpy() # reshape for imshow 
+	original_class = class_names[int(original_pred.argmax(1))].title() # find output class
+	original_confidence = int(max(original_pred.detach().numpy()[0]) * 100) # find output confidence w/softmax output
+```
+
+and finally we can perform the same procedure to yield $g$ and $a'$.  
+
+For an untrained model with randomized $\theta$, $O(a';\theta)$ is generally quite similar to $O(a;\theta)$. The figures below display typical results from computing $\mathrm{sign}(g)$ (center) from the original input $a$ (left) with the modified input $a'$ (right). Note that the image representation of the sign of the gradient clips negative values (black pixels in the image) and is not a true representation of what is actually added to $a$: the true image of $\mathrm{sign}(g)$ is 50 times dimmer than shown (meaning $\epsilon = 0.01$), and by design nothing is visible. The model's output for $a$ and $a'$ is noted above the image, with the softmax value converted to a percentage for clarity.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial0.png)
 
