@@ -512,9 +512,7 @@ It is especially illuminating to observe how attribution changes after each mini
 
 ### Flower Type Identification
 
-For some more colorful image classifications, lets turn to Alexander's flower [Kaggle photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score, which increases to 91 % for binary discrimination between some flower types. 
-
-Examples of the deep network classifying images of roses or dandelions,
+For some more colorful image classifications, lets turn to Alexander's flower [photoset](https://www.kaggle.com/alxmamaev/flowers-recognition), containing labeled images of sunflowers, tulips, dandelions, dasies, and roses.  The deep network reaches a 61 % test classification score on this dataset, which increases to 91 % for binary discrimination between some flower types. Examples of this model classifying images of roses or dandelions,
 
 ![flower classes]({{https://blbadger.github.io}}/neural_networks/Figure_flowers2.png)
 
