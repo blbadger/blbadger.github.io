@@ -638,3 +638,8 @@ It is interesting to note that the gradient sign image itself may be confidently
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/gradpred_adversarial_example3.png)
 
+Can we find adversarial examples for simpler inputs as well as complicated ones? Indeed we can: after applying the gradient step method to 28x28 pixel Fashion MNIST images using a model trained to classify these inputs, we can find adversarial examples just as we saw for flowers.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_adversarial_example.png)
+
+
