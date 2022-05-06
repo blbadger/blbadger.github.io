@@ -466,7 +466,7 @@ The deep network with no other modifications than noted above performs very well
 
 ![fashion MNIST]({{https://blbadger.github.io}}/neural_networks/Fashion_mnist.png)
 
-AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (over ten million in this case) than the deep network (~180,000).
+AlexNet achieves a ~72% accuracy rate on this dataset with no tuning or other modifications, although it trains much slower than the deep network as it has many more parameters (>10,000,000) than the deep network (~180,000).
 
 We may observe a model's attribution on the inputs from this dataset as well in order to understand how a trained model arrives at its conclusion. Here we have our standard model architecture and we compute the gradientxinput
 
@@ -494,7 +494,7 @@ def gradientxinput(features, label):
 ```
 such that `ogfeatures` and `gradxinput` may be fed directly into `matplotlib.pyplot.imshow()` for viewing.  Note that the images and videos presented here were generated using pytorch, with a similar (and somewhat less involved) implementation as the one put forth in the preceding section for obtaining gradientxinput tensors. 
 
-For an image of a sandal, we observe the follopwing attribution:
+For an image of a sandal, we observe the following attribution:
 
 ![fashion MNIST gradientxinput]({{https://blbadger.github.io}}/neural_networks/fmnist_gradxinput.png)
 
@@ -552,7 +552,7 @@ Plotting attribution after every minibatch update to the gradient, we have
 
 Considering the attribution patterns placed on various input images, it may seem that a deep learning object recognition process is similar to a human-like decision making process when identifying images: focus on the features that differ between images and learn which features correspond to what image. But there are significant differences between natural and deep learning-based object recognition, and one of the most dramatic of these differences is the presence of what has been termed 'adversarial examples', first observed by Szegedy and colleagues in their [paper](https://arxiv.org/abs/1312.6199) on this subject.
 
-To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  
+To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  To summarize the argument on that page, there are no continuous one-to-one (bijective) mappings possible from two or more dimensions to one, we would expect to see discontinuities in a function approximating a bijective map between many and one dimension.  This is precisely what occurs when an image tensor input (which for a 28x28 image is 784-dimensional) is mapped by a deep learning model to a loss value by $J(O(a; \theta))$.
 
 How might we go about finding an adversarial example?  One option is to compute the gradient $g$ of the loss function of the output $J(O)$ with respect to the input $a$ of the model with parameters $\theta$,
 
@@ -566,7 +566,7 @@ $$
 a' = a + \epsilon * \mathrm{sign}(g)
 $$
 
-where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function is $\Bbb R \to {-1, 1}$ depending on the sign of each element $a_n \in a$. 
+where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function maps $\Bbb R \to \{-1, 1 \}$ depending on the sign of each element $a_n \in a$. 
 
 What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.  
 
