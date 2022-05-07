@@ -643,7 +643,10 @@ Can we find adversarial examples for simpler inputs as well as complicated ones?
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_adversarial_example.png)
 
-It may see strange to take the sign of the gradient per pixel rather than the projection of the gradient itself, as would be the case if $a$ were a trainable parameter during gradient descent. The authors of the work mentioned above made this decision in order to emphasize the ability of a linear transformation in the input to create adversarial examples, and went on to assert that the major cause of adversarial examples in general is excessive linearity in deep learning models.
+
+### Generative Adversarial Examples
+
+It may see strange to take the sign of the gradient per pixel rather than the projection of the gradient itself, as would be the case if $a$ were a trainable parameter during gradient descent. The authors [this work](https://arxiv.org/pdf/1412.6572.pdf) made this decision in order to emphasize the ability of a linear transformation in the input to create adversarial examples, and went on to assert that the major cause of adversarial examples in general is excessive linearity in deep learning models.
 
 It is probable that such linearity does indeed make finding adversarial examples somewhat easier, but if the argument on [this page](https://blbadger.github.io/nn-limitations.html) is accepted then attempting to prevent adversarial examples using nonlinear activation functions or specialized architectures is bound to fail, as all $f: \Bbb R^n \to \Bbb R$ are discontinuous if bijective.  Not only that, but such $f$ are everywhere discontinuous, which is why each input image will have an adversarial example if we assume that $f$ approximates a bijective function well enough.
 
@@ -656,7 +659,7 @@ $$
 onto each input element $a_n$, which tells us not only which pixels to modify but also how much to modify them. When we scale this gradient by max norming
 
 $$
-g' = \frac{g}{\mathrm{arg \; max} (g)}
+g' = \frac{g}{\mathrm{max} (g)}
 $$
 
 and then applying this normed gradient to the input $a$ to make $a'$
@@ -671,8 +674,26 @@ we once again find adversarial examples, even with very small $\epsilon$.  Here 
 
 Empirically this method performs as well if not better than the fast gradient sign procedure with respect to adversarial example generation: while keeping $\epsilon$ small enough to be unnoticeable, the majority of inputs may be found to have corresponding adversarial examples.
 
-It is interesting to observe the gradient images in more detail: here we have the continuous gradient $\epsilon * g'$ scaled to be 60 time brighter (ie larger values) than the original tensor for clarity.
+It is interesting to observe the gradient images in more detail: here we have the continuous gradient $\epsilon * g'$ scaled to be 60 times brighter (ie larger values) than $\epsilon * g'$ for clarity.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/enhanced_continuous_adversarial_example.png)
 
+Close inspection of the image of $\epsilon * g'$ reveals something interesting: the gradient tensor appears to recapitulate a number of the precise features of the original input image, except with dark blue petals instead of white and a mix of blue and yellow where the disk flourets (center yellow parts) are found in the original image.
 
+What makes this particularly remarkable is that this input image of a daisy $a$ is **not** found in the training image dataset, and therefore the model was never exposed this input image during training. The model therefore has never observed this exact combination of features in this exact location, but is nevertheless able to recapitulate the image itself from the sole informational content of the gradient of the loss function with respect to the input,
+
+$$
+\nabla_a J(O(a; \theta), y)
+$$
+
+this is not the only input that is successfully recapitulated: here some tulips and a butterfly on a daisy are formed from the gradient of the loss with respect to the input
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_tulip.png)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_butterfly.png)
+
+and the same is found for a daisy and a sunflower
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_daisy.png)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_sunflower.png)
