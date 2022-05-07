@@ -554,10 +554,10 @@ Considering the attribution patterns placed on various input images, it may seem
 
 To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  To summarize the argument on that page, there are no continuous one-to-one (bijective) mappings possible from two or more dimensions to one, we would expect to see discontinuities in a function approximating a bijective map between many and one dimension.  This is precisely what occurs when an image tensor input (which for a 28x28 image is 784-dimensional) is mapped by a deep learning model to a loss value by $J(O(a; \theta))$.
 
-How might we go about finding an adversarial example?  One option is to compute the gradient $g$ of the loss function of the output $J(O)$ with respect to the input $a$ of the model with parameters $\theta$,
+How might we go about finding an adversarial example?  One option is to compute the gradient $g$ of the loss function of the output $J(O)$ with respect to the input $a$ of the model with parameters $\theta$ with a true classification $y$,
 
 $$
-g = \nabla_a J(O((a; \theta)))
+g = \nabla_a J(O(a; \theta), y)
 $$
 
 but instead of taking a small step against the gradient (as would be the case if we were computing $\nabla_{\theta} J(O(a; \theta))$ and then taking a small step in the opposite direction during stochastic gradient descent), we first find the direction along each input tensor element that $g$ projects onto with $\mathrm{sign}(g)$ and then take a small step in this direction.
@@ -566,9 +566,9 @@ $$
 a' = a + \epsilon * \mathrm{sign}(g)
 $$
 
-where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function maps $\Bbb R \to \{-1, 1 \}$ depending on the sign of each element $a_n \in a$. 
+where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function $f: \Bbb R \to \{ -1, 1 \}$ depending on the sign of each element $a_n \in a$. This is known as the fast gradient sign method, and has been reported to yield adversarial examples for practically any CIFAR image dataset input when applied to a trained AlexNet architecture.
 
-What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input slightly different in precisely the way that makes the neural network less accurate.  
+What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input a slightly different in precisely the direction per pixel that makes the neural network less accurate.  
 
 To implement this, first we need to calculate $g$, which may be accomplished as follows:
 
@@ -628,7 +628,7 @@ After training, however, we see some dramatic changes in the model's output (and
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example6.png)
 
-Not all shifted images experience this change in predicted classification: the following images are viewed virtually identically by the model.  After 40 epochs of training a cNN, around a third of all inputs follow this pattern such that the model does not change its output significantly when given $a'$ as an input instead of $a$.
+Not all shifted images experience this change in predicted classification: the following images are viewed virtually identically by the model.  After 40 epochs of training a cNN, around a third of all inputs follow this pattern such that the model does not change its output significantly when given $a'$ as an input instead of $a$ for $\epsilon=0.01$.  Note that increasing the value of $\epsilon$ leads to nearly every input image having an adversarial example using the fast gradient sign method, even if the images are still not noticeably different.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example13.png)
 
@@ -639,5 +639,37 @@ It is interesting to note that the gradient sign image itself may be confidently
 Can we find adversarial examples for simpler inputs as well as complicated ones? Indeed we can: after applying the gradient step method to 28x28 pixel Fashion MNIST images using a model trained to classify these inputs, we can find adversarial examples just as we saw for flowers.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_adversarial_example.png)
+
+It may see strange to take the sign of the gradient per pixel rather than the projection of the gradient itself, as would be the case if $a$ were a trainable parameter during gradient descent. The authors of the work mentioned above made this decision in order to emphasize the ability of a linear transformation in the input to create adversarial examples, and went on to assert that the major cause of adversarial examples in general is excessive linearity in deep learning models.
+
+It is probable that such linearity does indeed make finding adversarial examples somewhat easier, but if the argument on [this page](https://blbadger.github.io/nn-limitations.html) is accepted then attempting to prevent adversarial examples using nonlinear activation functions or specialized architectures is bound to fail, as all $f: \Bbb R^n \to \Bbb R$ are discontinuous if bijective.
+
+What happens when we manipulate the image according to the gradient of the objective function, rather than its sign?  Geometrically this signifies taking the projection of the gradient $g$
+
+$$
+g = \nabla_a J(O(a; \theta), y)
+$$
+
+onto each input element $a_n$, which tells us not only which pixels to modify but also how much to modify them. When we scale this gradient by max norming
+
+$$
+g' = g / \mathrm{arg \; max} (g)
+$$
+
+and then applying this normed gradient to the input $a$ to make $a'$
+
+$$
+a' = a + \epsilon * g'
+$$
+
+we once again find adversarial examples, even with very small $\epsilon$.  Here the gradient tensor image is to scale: the center image is $\epsilon *g'$ and has values that are not scaled up as they were in the other images on this page (and the prediction for $a$ on the left is followed by the true classification for clarity)
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/continuous_adversarial_example.png)
+
+Empirically this method performs as well if not better than the fast gradient sign procedure with respect to adversarial example generation: while keeping $\epsilon$ small enough to be unnoticeable, the majority of inputs may be found to have corresponding adversarial examples.
+
+It is interesting to observe the gradient images in more detail: here we have the continuous gradient $\epsilon * g'$ scaled to be 60 time brighter (ie larger values) than the original tensor for clarity.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/enhanced_continuous_adversarial_example.png)
 
 
