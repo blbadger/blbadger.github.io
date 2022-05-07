@@ -372,7 +372,7 @@ If decreasing the neural network cost function is the goal of training, why woul
 
 In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $J$.
 
-In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(a; \theta)$ such that the loss function given true output $y$, $J(O, y)$, is 
+In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(a; \theta)$ such that the loss function given true output $y$ is 
 
 $$
 h = J(O(a; \theta), y)
@@ -392,24 +392,24 @@ $$
 
 where $y$ is the output and $d$ is one of 9 inputs.  The task is simple: the model must learn that $d$ is what determines the output, and must also learn to decipher the numerical input of $d$, or in other words the network needs to learn how to read numbers that are given in character form.  A modest network of 3.5 million parameters across 3 hidden layers is capable of performing this task extremely accurately. 
 
-In the last section, the landscape of $h$ was considered.  Here we will focus on the gradient of $h$, as stochastic gradient descent is not affected by the values of $h$ but only their rate of change as $\theta$ chages. We can observe the gradient of the objective function $J(O(a; \theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(a; \theta))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(a; \theta))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(a; \theta))$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon_n, x_2 + \epsilon_n)\; n \in \Bbb Z$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(a; \theta))$ vector is
-located at the center circle, and the surrounding vectors are the gradients $\nabla_x J(O(a; \theta))$ with $x$ modified to be $x_1+\epsilon_n, x_2 + \epsilon_n$ 
+In the last section, the landscape of $h$ was considered.  Here we will focus on the gradient of $h$, as stochastic gradient descent is not affected by the values of $h$ but only their rate of change as $\theta$ chages. We can observe the gradient of the objective function $J(O(a; \theta))$ with respect to certain trainable parameters, say two parameters in vector form $x = (x_1, x_2)$.  The gradient is signified by $\nabla_x J(O(a; \theta))$ and resulting vector is two dimensional and may be plotted in the plane, as $x$ is equivalent to the projection of the gradient $\nabla_\theta J(O(a; \theta))$ onto our two parameters.  But we are interested in more than just the gradient of the parameters: we also want to visualize the landscape of the possible gradients nearby, that is, the gradients of $\nabla_x J(O(a; \theta), y)$ if we were to change the parameter $x$ slightly, as this is how learning takes place during SGD.  The gradient landscape may be plotted by assigning gradients to points on a 2-dimensional grid of possible values for the parameters $(x_1 + \epsilon_n, x_2 + \epsilon_n)\; n \in \Bbb Z$ that are near the model's true parameters $x$.  In the following plot, the $\nabla_x J(O(a; \theta), y)$ vector is
+located at the center circle, and the surrounding vectors are the gradients $\nabla_{x'} J(O(a; \theta), y)$ with $x'$ signifying $x_1+\epsilon_n, x_2 + \epsilon_n$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradient_quiver.png)
 
 Because our model is learning to approximate a deterministic function applied to each input, the classical view of stochastic gradient descent suggests that different subsets of our input set will give approximately the same gradient vectors for any given parameters, as the information content in each example is identical (the same rule is being applied to generate an output). In contrast, our idea is that we should see significant differences in the gradient vectors depending on the exact composition of our inputs, regardless of whether or not their informational content is identical w.r.t. the loss function.
 
-Choosing an epoch that exhibits a decrease in the cost function $J(O(a; \theta))$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers.  The model used on this page has three hidden layers, indexed from 0, and we will observe the gradient vectors on the second and third layer.
+Choosing an epoch that exhibits a decrease in the cost function $J(O(a; \theta), y)$ (corresponding to 6 seconds into [this video](https://www.youtube.com/watch?v=KgCuK6v_MgI)) allows us to investigate the sensitivity (or lack thereof) of the model's gradients to input $a$ during the learning process. As above the gradient's projection onto $(x_1, x_2)$ is plotted but now we observe the first two bias parameters in two hidden layers.  The model used on this page has three hidden layers, indexed from 0, and we will observe the gradient vectors on the second and third layer.
 
-One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(a_n; \theta))$ 
+One can readily see that for 50 different minibatches $a_1, a_2,...,a_{50} \in a$ (each of size 64) of the same training set, there are quite different (sometimes opposite) vectors of $\nabla_x J(O(a_n; \theta), y)$ 
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_eval.gif)
 
-In contrast, at the start of training the vectors of $\nabla_x J(O(a; \theta))$ tend to yield gradients on $x$ that are (somewhat weak) approximations of each other.
+In contrast, at the start of training the vectors of $\nabla_x J(O(a; \theta), y)$ tend to yield gradients on $x$ that are (somewhat weak) approximations of each other.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start_eval.gif)
 
-Regularization is the process of reducing the test error without necessarily reducing training error, and is thus important for overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(a; \theta))$ between minibatches during training, but we see the opposite: instead, dropout leads to extremely unstable gradient vectors
+Regularization is the process of reducing the test error without necessarily reducing training error, and is thus important for overfitting.  One nearly ubiquitous regularization strategy is dropout, which is where individual neurons are stochastically de-activated during training in order to force the model to learn a family of closely related functions rather than only one.  It might be assumed that dropout prevents this difference in $\nabla_x J(O(a; \theta), y)$ between minibatches during training, but it does not: we still have very different gradient landscapes depending on the input minibatch. Note too how dropout leads to unstable gradient landscapes, where adjacent gradient projections are unpredictably different from one another.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10.gif)
 
@@ -417,7 +417,7 @@ but once again this behavior is not as apparent at the start of training
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_start.gif)
 
-Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(a; \theta))$ may be achieved using backpropegation, but the gradient descent update of $x$, specifically $x - \epsilon\nabla_x J(O(a; \theta))$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive. This is due to how most deep learning models are set up: in a typical case of a fully connected layer $h$ following layer $h_{-1}$ given the weight vector for that neuron $w$ and bias scalar $b$
+Another technique used for regularization is batch normalization.  This method is motivated by an intrinsic problem associated with deep learning: the process of finding the gradient of the cost function $J$ with respect to parameters $x$ with respect to the cost function $\nabla_x J(O(a; \theta), y)$ may be achieved using backpropegation, but the gradient descent update of $x$, specifically $x - \epsilon\nabla_x J(O(a; \theta), y)$, assumes that no other parameters have been changed.  In a one-layer (inputs are connected directly to outputs) network this is not much of a problem because the contribution of $x_n$ (ie the weights) to the output's activations are additive. This is due to how most deep learning models are set up: in a typical case of a fully connected layer $h$ following layer $h_{-1}$ given the weight vector for that neuron $w$ and bias scalar $b$
 
 $$
 h = w^Th_{-1} + b
@@ -431,7 +431,7 @@ $$
 h = w^T(w^T(w^T(w^Th_{-4})))
 $$
 
-Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(a; \theta))$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
+Now updates to these weight vectors, $w - \epsilon\nabla_w J(O(a; \theta), y)$ are no longer linear with respect to the activation $h$.  In other words, depending on the values of the components of the model a small increase in one layer may lead to a large change in other layers' activations, which goes against the assumption of linearity implicit in the gradient calculation and update procedure.
 
 Batch normalization attemps to deal with this problem by re-parametrizing each layer to have activations $h'$ such that they have a defined standard deviation of 1 and a mean of 0, which is accomplished by using the layer's activation mean $\mu$ and standard deviation $\sigma$ values that are calculated per minibatch during training.  The idea is that if the weights of each layer form distributions of unit variance around a mean of 0, the effect of exponential growth in activations (and also gradients) is minimized.
 
@@ -443,16 +443,13 @@ $$
 
 which means that the mean is multiplied by $\gamma$ before being added by $\beta$, and the standard deviation is multiplied by $\gamma$. This procedure is necessary to increase the ability of batch normalized models to approximate a wide enough array of functions, but it in some sense defeats the intended purpose of ameliorating the exponential effect, as the transformed layer $h''$ has a mean and standard deviation can drift from the origin and unit value substantially. Why then is batch normalization an effective regularizer?
 
-Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\
-
-
-_x J(O(\theta; a))$ exhibits relatively unstable gradient vectors in the middle layer.  As we saw for dropout and non-regularized gradients, different minibatches have very different gradient landscapes.
+Let's investigate by applying batch normalization to our model and observing the effect on the gradint landscape during training. When 1-dimensional batch normalization is applied to each hidden layer of our model above, we find at 10 epochs that $\nabla_x J(O(\theta; a), y)$ exhibits relatively unstable gradient vectors in the middle layer.  As we saw for dropout and non-regularized gradients, different minibatches have very different gradient landscapes.
 
 ![gradients]({{https://blbadger.github.io}}/neural_networks/gradients_epoch10_batchnorm.gif)
 
 Thus we come to the interesting observation that batch normalization leads to a similar loss of stability in the gradient landscape that is seen for dropout. which in this author's opinion is a probable reason for its success as a regularizer (given dropout's demonstrated success in this area).  This helps explain why it was found that batch normalization and dropout are often able to substitute for each other in large models: it turns out that they have similar effects on the gradient landscape of hidden layers, although batch normalization in this case seems to be a more moderate inducement of this loss of stability.
 
-Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(a_n; \theta)) \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
+Note that for each of the above plots, the model's parameters $\theta$ did not change between evaluation of different minibatches $a_n$, of in symbols there is an invariant between $\nabla_x J(O(a_n; \theta), y) \; \forall n$.  This means that the direction of stochastic gradient descent does indeed depend on the exact composition of the minibatch $a_n$.
 
 To summarize, we find that the gradient with respect to four parameters can change drastically depending on the training examples that make of the given minibatch $a_n$.  As the network parameters are updated between minibatches, both the identity of the inputs per minibatch and the order in which the same inputs are used to update a network determine the path of stochastic gradient descent. This is why the identity of the input $a$ is so important, even for a fixed dataset with no randomness.
 
@@ -552,7 +549,7 @@ Plotting attribution after every minibatch update to the gradient, we have
 
 Considering the attribution patterns placed on various input images, it may seem that a deep learning object recognition process is similar to a human-like decision making process when identifying images: focus on the features that differ between images and learn which features correspond to what image. But there are significant differences between natural and deep learning-based object recognition, and one of the most dramatic of these differences is the presence of what has been termed 'adversarial examples', first observed by Szegedy and colleagues in their [paper](https://arxiv.org/abs/1312.6199) on this subject.
 
-To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  To summarize the argument on that page, there are no continuous one-to-one (bijective) mappings possible from two or more dimensions to one, we would expect to see discontinuities in a function approximating a bijective map between many and one dimension.  This is precisely what occurs when an image tensor input (which for a 28x28 image is 784-dimensional) is mapped by a deep learning model to a loss value by $J(O(a; \theta))$.
+To those of you who have read [this page](https://blbadger.github.io/nn-limitations.html) on the subject, the presence of adversarial examples should come as no surprise: as a model becomes able to discriminate between more and more input images it better and better approximates a one-to-one mapping between a multidimensional input (the image) and a one-dimensional output (the cost function).  To summarize the argument on that page, there are no continuous one-to-one (bijective) mappings possible from two or more dimensions to one, we would expect to see discontinuities in a function approximating a bijective map between many and one dimension.  This is precisely what occurs when an image tensor input (which for a 28x28 image is 784-dimensional) is mapped by a deep learning model to a loss value by $J(O(a; \theta), y)$.
 
 How might we go about finding an adversarial example?  One option is to compute the gradient $g$ of the loss function of the output $J(O)$ with respect to the input $a$ of the model with parameters $\theta$ with a true classification $y$,
 
@@ -566,7 +563,13 @@ $$
 a' = a + \epsilon * \mathrm{sign}(g)
 $$
 
-where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function $f: \Bbb R \to \{ -1, 1 \}$ depending on the sign of each element $a_n \in a$. This is known as the fast gradient sign method, and has been reported to yield adversarial examples for practically any CIFAR image dataset input when applied to a trained AlexNet architecture.
+where the $\mathrm{sign}()$ function the real-valued elements of a tensor $a$ to either 1 or -1, or more precisely this function 
+
+$$
+f: \Bbb R \to \{ -1, 1 \} 
+$$ 
+
+depending on the sign of each element $a_n \in a$. This is known as the fast gradient sign method, and has been reported to yield adversarial examples for practically any CIFAR image dataset input when applied to a trained AlexNet architecture.
 
 What this procedure accomplishes is to change the input by a small amount (determined by the size of $\epsilon$) in the direction that makes the cost function $J$ increase the most, which intuitively is effectively the same as making the input a slightly different in precisely the direction per pixel that makes the neural network less accurate.  
 
@@ -614,7 +617,7 @@ Now we can plot images of $a$ and the output of each fed to the model by reshapi
 
 and finally we can perform the same procedure to yield $g$ and $a'$.  
 
-For an untrained model with randomized $\theta$, $O(a';\theta)$ is generally quite similar to $O(a;\theta)$. The figures below display typical results from computing $\mathrm{sign}(g)$ (center) from the original input $a$ (left) with the modified input $a'$ (right). Note that the image representation of the sign of the gradient clips negative values (black pixels in the image) and is not a true representation of what is actually added to $a$: the true image of $\mathrm{sign}(g)$ is 50 times dimmer than shown (meaning $\epsilon = 0.01$), and by design nothing is visible. The model's output for $a$ and $a'$ is noted above the image, with the softmax value converted to a percentage for clarity.
+For an untrained model with randomized $\theta$, $O(a';\theta)$ is generally quite similar to $O(a;\theta)$. The figures below display typical results from computing $\mathrm{sign}(g)$ (center) from the original input $a$ (left) with the modified input $a'$ (right). Note that the image representation of the sign of the gradient clips negative values (black pixels in the image) and is not a true representation of what is actually added to $a$: the true image of $\mathrm{sign}(g)$ is 50 times dimmer than shown because by design $\epsilon * \mathrm{sign}(g)$ is practically invisible. The model's output for $a$ and $a'$ is noted above the image, with the softmax value converted to a percentage for clarity.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_start_adversarial0.png)
 
@@ -642,7 +645,7 @@ Can we find adversarial examples for simpler inputs as well as complicated ones?
 
 It may see strange to take the sign of the gradient per pixel rather than the projection of the gradient itself, as would be the case if $a$ were a trainable parameter during gradient descent. The authors of the work mentioned above made this decision in order to emphasize the ability of a linear transformation in the input to create adversarial examples, and went on to assert that the major cause of adversarial examples in general is excessive linearity in deep learning models.
 
-It is probable that such linearity does indeed make finding adversarial examples somewhat easier, but if the argument on [this page](https://blbadger.github.io/nn-limitations.html) is accepted then attempting to prevent adversarial examples using nonlinear activation functions or specialized architectures is bound to fail, as all $f: \Bbb R^n \to \Bbb R$ are discontinuous if bijective.
+It is probable that such linearity does indeed make finding adversarial examples somewhat easier, but if the argument on [this page](https://blbadger.github.io/nn-limitations.html) is accepted then attempting to prevent adversarial examples using nonlinear activation functions or specialized architectures is bound to fail, as all $f: \Bbb R^n \to \Bbb R$ are discontinuous if bijective.  Not only that, but such $f$ are everywhere discontinuous, which is why each input image will have an adversarial example if we assume that $f$ approximates a bijective function well enough.
 
 What happens when we manipulate the image according to the gradient of the objective function, rather than its sign?  Geometrically this signifies taking the projection of the gradient $g$
 
@@ -653,7 +656,7 @@ $$
 onto each input element $a_n$, which tells us not only which pixels to modify but also how much to modify them. When we scale this gradient by max norming
 
 $$
-g' = g / \mathrm{arg \; max} (g)
+g' = \frac{g}{\mathrm{arg \; max} (g)}
 $$
 
 and then applying this normed gradient to the input $a$ to make $a'$
