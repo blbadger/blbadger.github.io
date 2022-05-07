@@ -372,10 +372,10 @@ If decreasing the neural network cost function is the goal of training, why woul
 
 In more precise terms, for any given fixed neural network or similar deep learning approach we can fix the model architecture to include some set of parameters that we change using stochastic gradient descent to minimize some objective function.  The 'height' $h$ of our landscape is the value of the objective function, $J$.
 
-In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(a; \theta)$ such that the loss function $J(O)$ is 
+In this idealized scenario, the objective function $F$ is evaluated on an infinite number of input examples, but practically we can only evaluate it on a finite number of training examples.  The output $O$ evaluated on set $a$ of training examples $a$ parametrized by weights and biases $\theta$ is $O(a; \theta)$ such that the loss function given true output $y$, $J(O, y)$, is 
 
 $$
-h = J(O(a; \theta))
+h = J(O(a; \theta), y)
 $$
 
 What is important to recognize is that, in a non-idealized scenario, $h$ can take on many different values for any given model configuration $\theta$ depending on the specific training examples $a$ used to evaluate the objecting function $J$.  Thus the 'landscape' of $h$ changes depending on the order and identity of inputs $j$ fed to the model during training, even for a model of fixed architecture.  This is true for both the frequentist statistical approach in which there is some single optimal value of $\theta$ that minimizes $h$ as well as the Bayesian statistical approach in which the optimal value of $\theta$ is a random variable as it is unkown whereas any estimate of $\theta$ using the data is fixed.
