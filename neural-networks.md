@@ -643,9 +643,6 @@ Can we find adversarial examples for simpler inputs as well as complicated ones?
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_adversarial_example.png)
 
-
-### Generative Adversarial Examples
-
 It may see strange to take the sign of the gradient per pixel rather than the projection of the gradient itself, as would be the case if $a$ were a trainable parameter during gradient descent. The authors [this work](https://arxiv.org/pdf/1412.6572.pdf) made this decision in order to emphasize the ability of a linear transformation in the input to create adversarial examples, and went on to assert that the major cause of adversarial examples in general is excessive linearity in deep learning models.
 
 It is probable that such linearity does indeed make finding adversarial examples somewhat easier, but if the argument on [this page](https://blbadger.github.io/nn-limitations.html) is accepted then attempting to prevent adversarial examples using nonlinear activation functions or specialized architectures is bound to fail, as all $f: \Bbb R^n \to \Bbb R$ are discontinuous if bijective.  Not only that, but such $f$ are everywhere discontinuous, which is why each input image will have an adversarial example if we assume that $f$ approximates a bijective function well enough.
@@ -680,13 +677,15 @@ It is interesting to observe the gradient images in more detail: here we have th
 
 Close inspection of the image of $\epsilon * g'$ reveals something interesting: the gradient tensor appears to recapitulate a number of the precise features of the original input image, except with dark blue petals instead of white and a mix of blue and yellow where the disk flourets (center yellow parts) are found in the original image.
 
-What makes this particularly remarkable is that this input image of a daisy $a$ is **not** found in the training image dataset, and therefore the model was never exposed this input image during training. The model therefore has never observed this exact combination of features in this exact location, but is nevertheless able to recapitulate the image itself from the sole informational content of the gradient of the loss function with respect to the input,
+What makes this particularly remarkable is that this input image of a daisy $a$ is not found in the training image dataset, and therefore the model was never exposed this input image during training. The model therefore has never observed this exact combination of features in this exact location, but is nevertheless able to recapitulate features of image itself from the sole informational content of the gradient of the loss function with respect to the input,
 
 $$
 \nabla_a J(O(a; \theta), y)
 $$
 
-this is not the only input that is successfully recapitulated: here some tulips and a butterfly on a daisy are formed from the gradient of the loss with respect to the input
+Recalling how forward followed by backpropegation is used in order to compute this gradient, we find that these features remain after nearly two dozen operations, none of which are necessarily feature-preserving.  
+
+The above image is not the only input that has features that are recapitulated in the input gradient: here some tulips and a butterfly on a daisy are formed from the gradient of the loss with respect to the input
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_tulip.png)
 
@@ -697,3 +696,7 @@ and the same is found for a daisy and a sunflower
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_daisy.png)
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_sunflower.png)
+
+It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  The training process, however (here 40 epochs) leads to this preservation as follows:
+
+{% include youtube.html id='sflMrJLlb0g' %}
