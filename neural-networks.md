@@ -675,15 +675,13 @@ It is interesting to observe the gradient images in more detail: here we have th
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/enhanced_continuous_adversarial_example.png)
 
-Close inspection of the image of $\epsilon * g'$ reveals something interesting: the gradient tensor appears to recapitulate a number of the precise features of the original input image, except with dark blue petals instead of white and a mix of blue and yellow where the disk flourets (center yellow parts) are found in the original image.
-
-What makes this particularly remarkable is that this input image of a daisy $a$ is not found in the training image dataset, and therefore the model was never exposed this input image during training. The model therefore has never observed this exact combination of features in this exact location, but is nevertheless able to recapitulate features of image itself from the sole informational content of the gradient of the loss function with respect to the input,
+Close inspection of the image of $\epsilon * g'$ reveals something interesting: the gradient tensor appears to mirror a number of the features of the original input image, except with dark blue petals instead of white and a mix of blue and yellow where the disk flourets (center yellow parts) are found in the original image. This may be thought of as a recapitulation of the features of an input image itself from the sole informational content of the gradient of the loss function with respect to the input,
 
 $$
 \nabla_a J(O(a; \theta), y)
 $$
 
-Recalling how forward followed by backpropegation is used in order to compute this gradient, we find that these features remain after nearly two dozen operations, none of which are necessarily feature-preserving.  
+Recalling how forward propegation followed by backpropegation is used in order to compute this gradient, we find that these features remain after nearly two dozen vector arithmetic operations, none of which are necessarily feature-preserving.  From an informational perspective, one can think of this as the information from the input being fed into the neural network, stored as activations in the network's various layers, before that information is then used to find the gradient of the loss function with respect to the input.
 
 The above image is not the only input that has features that are recapitulated in the input gradient: here some tulips and a butterfly on a daisy are formed from the gradient of the loss with respect to the input
 
@@ -700,3 +698,27 @@ and the same is found for a daisy and a sunflower
 It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  The training process, however (here 40 epochs) leads to this preservation as follows:
 
 {% include youtube.html id='sflMrJLlb0g' %}
+
+### Generative Adversarial Networks
+
+The observation that a deep learning model may be able to capture much of the inportant information in the input image leads to a hypothesis: perhaps we could use a trained model in reverse to generate inputs that resemble the training inputs.
+
+In the previous section we saw that the loss gradient with respect to the input $\nabla_a J(O(a; \theta), y)$ of a trained model is able to capture certain features of input images: in particular, the gradient mirrors edges and certain colors that exist in the input.  This observation leads to an idea: perhaps we could use this gradient to try to make our own input image by starting with some known distribution and repeatedly applying the loss gradient to the input.  This process mirrors how stochastic gradient descent applies the loss gradient with respect to the model parameters each minibatch step, but instead of modifying the model parameters instead we are going to modify the input itself.
+
+If we want to apply the loss gradient w.r.t the input to the input, we need a trained model, and input, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\hat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our $\hat{y}$
+
+
+$$
+a' = a - \epsilon\nabla_a J(O(a; \theta), \hat{y})
+$$
+
+
+
+
+
+
+
+
+
+
+
