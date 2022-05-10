@@ -699,23 +699,75 @@ It is important to note that untrained models are incapable of preserving practi
 
 {% include youtube.html id='sflMrJLlb0g' %}
 
-### Generative Adversarial Networks
+Gradientxinput has been criticized for relying entirely on locality: the gradient of a point in multidimensional space is only accurate in an infinitesmal region around that point by definition.  Practically this means that if an input were to change substantially, a pure gradient-based input attribution method may not be able to correctly attribute that change to the output (or loss function) if there is not a local-to-global equivalence in the model in question.
+
+There are a number of ways to ameliorate this problem.  One is to directly interfere with (occlude) the input, usually in some fairly large way before observing the effect on the output.  For image data, this could mean zeroing out all pixels in a given region that scans over the entire input.  For sequential data as seen [here](https://blbadger.github.io/nn_interpretations.html), successive characters can be modified as the model output is observed.  Occlusion usually introduces substantial changes from the original input meaning that the observed output changes are not the result of local changes.  Occlusion can be combined with gradientxinput to make a fairly robust attribution method.
+
+Another way to address locality is to 
+
+### Generating an input via gradient descent
 
 The observation that a deep learning model may be able to capture much of the inportant information in the input image leads to a hypothesis: perhaps we could use a trained model in reverse to generate inputs that resemble the training inputs.
 
 In the previous section we saw that the loss gradient with respect to the input $\nabla_a J(O(a; \theta), y)$ of a trained model is able to capture certain features of input images: in particular, the gradient mirrors edges and certain colors that exist in the input.  This observation leads to an idea: perhaps we could use this gradient to try to make our own input image by starting with some known distribution and repeatedly applying the loss gradient to the input.  This process mirrors how stochastic gradient descent applies the loss gradient with respect to the model parameters each minibatch step, but instead of modifying the model parameters instead we are going to modify the input itself.
 
-If we want to apply the loss gradient w.r.t the input to the input, we need a trained model, and input, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\hat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our $\hat{y}$
+If we want to apply the loss gradient (of the input) to the input, we need three things: a trained model with parameters $\theta$, and input $a$, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\hat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our target output $\hat{y}$
 
+Each step of this process, the current input $a_n$ is modified to become $a_{n+1}$ as follows
 
 $$
-a' = a - \epsilon\nabla_a J(O(a; \theta), \hat{y})
+a_{n+1} = a_n - \epsilon\nabla_a J(O(a; \theta), \hat{y})
 $$
 
+Intuitively, a trained model should know what a given output category generally 'looks like', and performing gradient-based updates on an image while keeping the output constant (as a given category) is similar to the model instructing the input as to what it should become to match the model's expectation.
 
+To implement this algorithm, first we need a function that can calculate the gradient of the loss function with respect to the input
 
+```python
+def loss_gradient(model, input_tensor, true_output, output_dim):
+	...
+	true_output = true_output.reshape(1)
+	input_tensor.requires_grad = True
+	output = model.forward(input_tensor)
+	loss = loss_fn(output, true_output) # loss applied to y_hat and y
 
+	# backpropegate output gradient to input
+	loss.backward(retain_graph=True)
+	gradient = input_tensor.grad
+	return gradient
+```
 
+Then the gradient update can be made at each step
+
+```python
+
+def generate_input(model, input_tensors, output_tensors, index, count):
+	... 
+	target_input = input_tensors[index].reshape(1, 3, 256, 256)
+	single_input = target_input.clone()
+	single_input = torch.rand(1, 3, 256, 256) # uniform distribution initialization
+
+	for i in range(1000):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		predicted_output = output_tensors[index].argmax(0)
+		input_grad = loss_gradient(model, single_input, predicted_output, 5) # compute the input gradient
+		single_input = single_input - 10000*input_grad # gradient descent step
+
+```
+
+`single_input` can then be viewed with the target label denoted
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy.png)
+
+but the output does not really look anything like an actual daisy. What went wrong? 
+
+There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is usually extremely small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient must be scaled up (`10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. Another problem are the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.
+
+In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.
+
+### Generative Adversarial Networks
+
+Perhaps the primary challenge of the gradient descent on the input method for generating new inputs is that the trained model in question was not tasked with generating inputs but with mapping them to outputs.  With complicated ensembles composed of many nonlinear functions like neural networks, forward and reverse functions may behave quite differently. Instead of relying on our model trained for classification, it may be a better idea to directly train the model to generate images.
 
 
 
