@@ -832,7 +832,7 @@ $$
 where
 
 $$
-v(\theta_d, \theta_g) = \Bbb E_{x \~ p(data)} \log d(x) + \Bbb E_{x \~ p(model)}\ log(1-d(x))
+v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)}\ log(1-d(x))
 $$
 
 the goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
