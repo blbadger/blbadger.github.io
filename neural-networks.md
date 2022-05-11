@@ -782,7 +782,7 @@ In practice we see both problems at once: gradient descent of the input is extre
 One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
 $$
-a_{n+1} = a_n - \epsilon \mathrm {sign} (\; \nabla_a J(O(a; \theta), \hat{y}))
+a_{n+1} = a_n - \epsilon \mathrm {sign} \; \nabla_a J(O(a; \theta), \hat{y})
 $$
 
 which for $\epsilon=0.01$ can be implemented as
@@ -826,16 +826,51 @@ This method is of historical significance because it was a point of departure fr
 For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
 
 $$
-g = \mathrm{arg} \underset{g}{\mathrm{min}} \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
+g = \mathrm{arg} \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
 $$
 
+where
+
+$$
+v(\theta_d, \theta_g) = \Bbb E_{x ~ p(data)}log d(x) + \Bbb E_{x ~ p(model)}log(1-d(x))
+$$
+
+the goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
+
+Unfortunately, this is a rather unstable arrangement and it has been found by Goodfellow and colleages that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator.
+
+```python
+def train_generative_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn, epochs):
+	discriminator.train()
+	generator.train()
+
+	for e in range(epochs):
+		for batch, (x, y) in enumerate(dataloader):
+			random_output = torch.randn(16, 5)
+			generated_samples = generator(random_output)
+			input_dataset = torch.cat([x, generated_samples]) # or torch.cat([x, torch.rand(x.shape)])
+			output_labels = torch.cat([torch.ones(len(y), dtype=int), torch.zeros(len(generated_samples), dtype=int)])
+			discriminator_prediction = discriminator(input_dataset)
+			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
+
+			discriminator_optimizer.zero_grad()
+			discriminator_loss.backward()
+			discriminator_optimizer.step()
+
+			generated_outputs = generator(random_output)
+			discriminator_outputs = discriminator(generated_outputs)
+			generator_loss = loss_fn(discriminator_outputs, torch.ones(len(y), dtype=int)) 
+			
+			generator_optimizer.zero_grad()
+			generator_loss.backward()
+			generator_optimizer.step()
+
+
+```
 
 
 
-
-
-
-
+{% include youtube.html id='aU0tjn2Ik4Q' %}
 
 
 
