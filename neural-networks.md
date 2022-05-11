@@ -171,6 +171,8 @@ Now the class method `call` may be defined.  This is a special method for classe
         return final_output
 
 ```
+The output being 10 neurons corresponding to 10 class types, which could be the genotypes of cells or some similar attribute.  
+
 Now the class `DeepNetwork` can be instantiated as the object `model`
 
 ```
@@ -220,6 +222,10 @@ model.evaluate(x_test2, y_test2, verbose=1)
 
 A few notes about this architecture: first, the output is a softmax layer and therefore yields a probability distribution for an easy-to-interpret result.  The data labels are one-hot encoded, meaning that the label is denoted by a vector with one-hot tensor, ie instead of labels such as `[3]` we have `[0, 0, 1]`.  In Tensorflow's lexicon, categorical crossentropy should be used instead of sparse categorical crossentropy because of this.  
 
+Second, as there are only two categories used for the experiments below, the final layer was changed to have a 2-neuron output.  Softmax was again used as the output activation function, which is not particularly advisable being that a 2-category softmax will tend to be unstable and result in high confidences for various predictions compared to the use of a sigmoid activation combined with a single-unit output (which is similar to a logistic regression for the final layer). 
+
+Softmax was retained in the final layer in the experiments below in order to purposefully add some instability to the final layer and force the network to choose between options confidently.
+
 ### Accurate image classification
 
 We follow a test/train split on this page: the model is trained on ~80% of the sample data and then tested on the remaining 20%, which allows us to estimate the model accuracy using data not exposed to the model during training. For reference, using a blinded approach by eye I classify 93 % of images correctly for certain dataset, which we can call 'Snap29' after the gene name of the protein that is depleted in the cells of half the dataset (termed 'Snap29') along with cells that do not have the protein depleted ('Control').  There is a fairly consistent pattern in these images that differentiates 'Control' from 'Snap29' images: depletion leads to the formation of aggregates of fluorescent protein in 'Snap29' cells.
@@ -228,7 +234,7 @@ The network shown above averaged >90 % binary accuracy (over a dozen training ru
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/nn_images_1.png)
 
-Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 71 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) and how does the network compare? The average training run results in 62 % classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence it is incorrect for many.
+Let's see what happens when the network is applied to an image set without a clear difference between the 'Control' and experimental group (this time 'Snf7', named  after the protein depleted from these cells in this instance).  After being blinded to the true classification labels, I correctly classified 71 % of images of this dataset.  This is better than chance (50 % classification accuracy being that this is a balanced binary dataset) and how does the network compare? The average training run results in 62 % classification accuracy.  We can see the results of one particular training run: the network confidently predicts the classification of nearly all images, but despite this confidence it is incorrect for many. Note that the confidence is a result of the use of softmax in the final layer.
 
 ![snf7 test accuracy]({{https://blbadger.github.io}}/neural_networks/nn_images_2.png)
 
@@ -765,13 +771,49 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 `single_input` can then be viewed with the target label denoted
 
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy_nosign.png)
+
+but the output does not really look like a daisy, or a field of daisies.  
+
+There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is usually extremely small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient must be scaled up (one method to do this is to use a constat scale, perhaps `10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. Another problem are the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.
+
+In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.  
+
+One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
+
+$$
+a_{n+1} = a_n - \epsilon \mathrm {sign} (\; \nabla_a J(O(a; \theta), \hat{y}))
+$$
+
+which for $\epsilon=0.01$ can be implemented as
+
+```python
+	...
+	for i in range(100):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		# predicted_output = output_tensors[index].argmax(0)
+		input_grad = loss_gradient(model, single_input, target_output, 5) # compute input gradient
+		single_input = single_input - 0.01*torch.sign(input_grad) # gradient descent step
+```
+
+Secondly, instead of starting with a random input we can instead start with some given flower image from the dataset.  The motivation behind this is to note that the model has been trained to discriminate between images of flowers, not recognize images of flowers compared to all possible images in $\Bbb R^n$ with $n$ being the dimension of the input.  
+
+This method is more successful: when the target label is a tulip, observe how a base and stalk is added to a light region of an input image
+
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip.png)
+
+and how a rock is modified to appear more like a field of tulips
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy2.png)
+
+and likewise with a daisy
+
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy.png)
 
-but the output does not really look anything like an actual daisy. What went wrong? 
+but generally speaking images of tulips are changed less
 
-There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is usually extremely small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient must be scaled up (`10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. Another problem are the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.
-
-In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip_orig.png)
 
 ### Generative Adversarial Networks
 
