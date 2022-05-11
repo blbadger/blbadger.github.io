@@ -714,7 +714,7 @@ Another way to address locality is to add up gradients as the input is formed in
 An alternative to this approach could be to integrate input gradients but instead of varying inputs for a trained network, we integrate the input gradients during training for one given input $a$.  If we were to use the loss gradient, for each configuration $\theta_n$ of the model during training we have
 
 $$
-g = \sum_{n} nabla_a J(O(a; \theta_n), y)
+g = \sum_{n} \nabla_a J(O(a; \theta_n), y)
 $$
 
 This method may be used for any input type, regardless of an ability to transform from a baseline.
@@ -730,7 +730,7 @@ If we want to apply the loss gradient (of the input) to the input, we need three
 Each step of this process, the current input $a_n$ is modified to become $a_{n+1}$ as follows
 
 $$
-a_{n+1} = a_n - \epsilon\nabla_a J(O(a; \theta), \hat{y})
+a_{n+1} = a_n - \epsilon \nabla_a J(O(a; \theta), \hat{y})
 $$
 
 Intuitively, a trained model should know what a given output category generally 'looks like', and performing gradient-based updates on an image while keeping the output constant (as a given category) is similar to the model instructing the input as to what it should become to match the model's expectation.
@@ -846,14 +846,18 @@ def train_generative_adversaries(dataloader, discriminator, discriminator_optimi
 
 	for e in range(epochs):
 		for batch, (x, y) in enumerate(dataloader):
-			random_output = torch.randn(16, 5)
-			generated_samples = generator(random_output)
-			input_dataset = torch.cat([x, generated_samples]) # or torch.cat([x, torch.rand(x.shape)])
-			output_labels = torch.cat([torch.ones(len(y), dtype=int), torch.zeros(len(generated_samples), dtype=int)])
-			discriminator_prediction = discriminator(input_dataset)
-			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
-
 			discriminator_optimizer.zero_grad()
+			random_output = torch.randn(16, 5)
+			
+			generated_samples = generator(random_output)
+			discriminator_prediction = discriminator(generated_samples)
+			output_labels = torch.zeros(len(y), dtype=int) # generated examples have label 0
+			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
+			discriminator_loss.backward()
+
+			discriminator_prediction = discriminator(x)
+			output_labels = torch.ones(len(y), dtype=int) # true examples have label 1
+			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
 			discriminator_loss.backward()
 			discriminator_optimizer.step()
 
