@@ -703,7 +703,15 @@ Gradientxinput has been criticized for relying entirely on locality: the gradien
 
 There are a number of ways to ameliorate this problem.  One is to directly interfere with (occlude) the input, usually in some fairly large way before observing the effect on the output.  For image data, this could mean zeroing out all pixels in a given region that scans over the entire input.  For sequential data as seen [here](https://blbadger.github.io/nn_interpretations.html), successive characters can be modified as the model output is observed.  Occlusion usually introduces substantial changes from the original input meaning that the observed output changes are not the result of local changes.  Occlusion can be combined with gradientxinput to make a fairly robust attribution method.
 
-Another way to address locality is to 
+Another way to address locality is to add up gradients as the input is formed in a straight-line path from some null reference, an approach put forward in [this paper](https://arxiv.org/abs/1703.01365) by Yan and colleages.  More concretely, a blank image may serve as a null reference and the true image may be formed by increasing brightness (our straight-line path) until the true image is recovered.  At certain points along this process, the gradients of the model with respect to the input may be added to make one integrated gradient measurment. This method has some benefits but also has a significant downside: for many types of input, there is no clear straight-line path.  Image input data has a couple clear paths (brightness and contrast) but discrete inputs such as language encodings do not.
+
+An alternative to this approach could be to integrate input gradients but instead of varying inputs for a trained network, we integrate the input gradients during training for one given input $a$.  If we were to use the loss gradient, for each configuration $\theta_n$ of the model during training we have
+
+$$
+g = \sum_{n} nabla_a J(O(a; \theta_n), y)
+$$
+
+This method may be used for any input type, regardless of an ability to transform from a baseline.
 
 ### Generating an input via gradient descent
 
@@ -768,6 +776,48 @@ In practice we see both problems at once: gradient descent of the input is extre
 ### Generative Adversarial Networks
 
 Perhaps the primary challenge of the gradient descent on the input method for generating new inputs is that the trained model in question was not tasked with generating inputs but with mapping them to outputs.  With complicated ensembles composed of many nonlinear functions like neural networks, forward and reverse functions may behave quite differently. Instead of relying on our model trained for classification, it may be a better idea to directly train the model to generate images.
+
+One method that takes this approach is the generative adversarial network model [introduced](https://arxiv.org/abs/1406.2661) by Goodfellow and colleages.  This method used two neural networks that compete against each other (hence the term 'adversarial', which seems to have a different motivation than this term is used in the context of 'adversarial examples').  One network, the discriminator, attempts to distinguish between real samples that come from a certain dataset and the generated samples that come from another network, appropriately named the generator.  
+
+This method is of historical significance because it was a point of departure from other generative methods (Markov processes, inference networks etc.) that rely on averaging, either over the output space or the model parameter space.  Generative adversarial networks generate samples with no averaging of either.
+
+For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
+
+$$
+g = \mathrm{arg} \underset{g}{\mathrm{min}} \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
