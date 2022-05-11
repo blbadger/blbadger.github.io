@@ -782,7 +782,7 @@ In practice we see both problems at once: gradient descent of the input is extre
 One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
 $$
-a_{n+1} = a_n - \epsilon \mathrm {sign} \; \nabla_a J(O(a; \theta), \hat{y})
+a_{n+1} = a_n - \epsilon \; \mathrm {sign} \; \nabla_a J(O(a; \theta), \hat{y})
 $$
 
 which for $\epsilon=0.01$ can be implemented as
@@ -826,13 +826,13 @@ This method is of historical significance because it was a point of departure fr
 For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
 
 $$
-g = \mathrm{arg} \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
+g = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
 $$
 
 where
 
 $$
-v(\theta_d, \theta_g) = \Bbb E_{x ~ p(data)}log d(x) + \Bbb E_{x ~ p(model)}log(1-d(x))
+v(\theta_d, \theta_g) = \Bbb E_{x \~ p(data)} \log d(x) + \Bbb E_{x \~ p(model)}\ log(1-d(x))
 $$
 
 the goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
@@ -868,7 +868,9 @@ def train_generative_adversaries(dataloader, discriminator, discriminator_optimi
 
 ```
 
+The discriminator's architecture is the same as any other network that maps $\Bbb R^n \to \{0, 1\}$.  For a small image set such as the Fashion MNIST, we could have a multilayer perceptron with input of size `28*28=784`, followed by a hidden layer of size 100, followed by another hidden layer of size 10, and finally an output layer of size 1. 
 
+The generator's architecture can be different than the discriminator's but here we can simply reverse the architecture.  If we have a tensor of 5 random numbers as our latent space as shown above in the code example, we can have a size-5 layer input followed by a size-10 hidden layer, followed by a size-100 hidden layer, feeding into our 784-size output that becomes the generated image.  Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we have the following during training:
 
 {% include youtube.html id='aU0tjn2Ik4Q' %}
 
