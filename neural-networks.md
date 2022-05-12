@@ -940,7 +940,13 @@ Using a latent space input of 100 random variables assigned in a normal distribu
 
 Generative adversarial networks can go beyond simply producing images that look like they came from some real dataset: they can also be used to observe similarities in the inputs in a (usually) lower-dimensional tensor, the latent space.  For the above video, each image is produced from 100 random numbers drawn from a normal distribution.  If we change those numbers slightly, we might find changes in the output that lead to one image being transformed into another. In particular, the hope is that some low-dimensional transformation in the latent space yields a high-dimensional transformation in th egenerator's output.
 
-Somewhat surprisingly, this is indeed what we find: if move about in the latent space, the generated output changes fairly continuously from one clothing type to another. As an example, we can move through the 100-dimensional latent space in a 2-dimensional plane defined by simply adding or subtracting certain values from some random normal input. In the following program, each
+Somewhat surprisingly, this is indeed what we find: if move about in the latent space, the generated output changes fairly continuously from one clothing type to another. As an example, we can move through the 100-dimensional latent space in a 2-dimensional plane defined by simply adding or subtracting certain values from some random normal input.  We can move in different ways, and one is as follows:
+
+$$
+f(a, i, j) = a_{0:19} + i/4, \; a_{20:39} - j/4, \; a_{40:59} + i/4, \; a_{60:79} - j/4, \; a_{80:99} - j/4
+$$
+
+which may be implemented as follows:
 
 ```python
 discriminator.load_state_dict(torch.load('discriminator.pth'))
@@ -962,11 +968,12 @@ for i in range(10):
 
 fixed_input = fixed_input[1:]
 output = generator(fixed_input)
+output = output.reshape(100, 28, 28).cpu().detach().numpy()
 ```
 
 when we observe the elements of `output` arranged such that the y-axis corresponds to increass in `i` and the x-axis (horizontal) corresponds to increases in `j`, we have the following:
 
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
+![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
 
 
 
