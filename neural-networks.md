@@ -934,14 +934,39 @@ class InvertedFC(nn.Module):
 		return out
 ```
 
-Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we have the following during training:
+Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we find that the generator is able to produce images that are similar to the fashion mnist dataset.  Here we observe a random sample of 100 latent space vectors over the training process (50 epochs)
 
 {% include youtube.html id='7FdAfskr4is' %}
 
+Generative adversarial networks can go beyond simply producing images that look like they came from some real dataset: they can also be used to observe similarities in the inputs in a (usually) lower-dimensional tensor, the latent space.  For the above video, each image is produced from 100 random numbers drawn from a normal distribution.  If we change those numbers slightly, we might find changes in the output that lead to one image being transformed into another. In particular, the hope is that some low-dimensional transformation in the latent space yields a high-dimensional transformation in th egenerator's output.
 
+Somewhat surprisingly, this is indeed what we find: if move about in the latent space, the generated output changes fairly continuously from one clothing type to another. As an example, we can move through the 100-dimensional latent space in a 2-dimensional plane defined by simply adding or subtracting certain values from some random normal input. In the following program, each
 
+```python
+discriminator.load_state_dict(torch.load('discriminator.pth'))
+generator.load_state_dict(torch.load('generator.pth'))
 
+fixed_input = torch.randn(1, 100)
+print (fixed_input)
+original_input = fixed_input.clone()
 
+for i in range(10):
+	for j in range(10):
+		next_input = original_input.clone()
+		next_input[0][0:20] += .25 * (i+1)
+		next_input[0][20:40] -= .25 * (j+1)
+		next_input[0][40:60] += .25 * (j+1)
+		next_input[0][60:80] -= .25 * (j+1)
+		next_input[0][80:100] += .25 * (j+1)
+		fixed_input = torch.cat([fixed_input, next_input])
+
+fixed_input = fixed_input[1:]
+output = generator(fixed_input)
+```
+
+when we observe the elements of `output` arranged such that the y-axis corresponds to increass in `i` and the x-axis (horizontal) corresponds to increases in `j`, we have the following:
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
 
 
 
