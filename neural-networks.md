@@ -872,13 +872,71 @@ def train_generative_adversaries(dataloader, discriminator, discriminator_optimi
 
 ```
 
-The discriminator's architecture is the same as any other network that maps $\Bbb R^n \to \{0, 1\}$.  For a small image set such as the Fashion MNIST, we could have a multilayer perceptron with input of size `28*28=784`, followed by a hidden layer of size 100, followed by another hidden layer of size 10, and finally an output layer of size 1. 
+The discriminator's architecture is the same as any other network that maps $\Bbb R^n \to \{0, 1\}$.  For a small image set such as the Fashion MNIST, we could have a multilayer perceptron with input of size `28*28=784`, followed by a hidden layers and an output of size 1 as follows
 
-The generator's architecture can be different than the discriminator's but here we can simply reverse the architecture.  If we have a tensor of 5 random numbers as our latent space as shown above in the code example, we can have a size-5 layer input followed by a size-10 hidden layer, followed by a size-100 hidden layer, feeding into our 784-size output that becomes the generated image.  Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we have the following during training:
+```python
+class FCnet(nn.Module):
 
-{% include youtube.html id='aU0tjn2Ik4Q' %}
+	def __init__(self):
+		super().__init__()
+		self.input_transform = nn.Linear(28*28, 1000)
+		self.d1 = nn.Linear(1000, 400)
+		self.d2 = nn.Linear(400, 200)
+		self.d3 = nn.Linear(200, 1)
+		self.relu = nn.ReLU()
+		self.sigmoid = nn.Sigmoid()
+		self.dropout = nn.Dropout(0.1)
 
-For larger images, fully connected networks become unwieldy due to the number of trainable parameters they possess. Using a relatively small convolutional architecture
+	def forward(self, input_tensor):
+		out = self.input_transform(input_tensor)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		out = self.d1(out)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		out = self.d2(out)
+		out = self.relu(out)
+		out = self.dropout(out)
+
+		out = self.d3(out)
+		out = self.sigmoid(out)
+		return out
+```
+
+The generator may be a different architecture altogether, but here we can use an interted form of our MLP above.  The latent space consists of 50 elements, which we will feed as 50 floating point numbers from a normal distribution.
+
+```python
+class InvertedFC(nn.Module):
+
+	def __init__(self):
+		super().__init__()
+		self.input_transform = nn.Linear(1000, 28*28)
+		self.d3 = nn.Linear(400, 1000)
+		self.d2 = nn.Linear(200, 400)
+		self.d1 = nn.Linear(50, 200)
+		self.relu = nn.ReLU()
+		self.tanh= nn.Tanh()
+
+	def forward(self, input_tensor):
+		out = self.d1(input_tensor)
+		out = self.relu(out)
+		
+		out = self.d2(out)
+		out = self.relu(out)
+		
+		out = self.d3(out)
+		out = self.relu(out)
+		
+		out = self.input_transform(out)
+		out = self.tanh(out)
+		return out
+```
+
+Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we have the following during training:
+
+{% include youtube.html id='7FdAfskr4is' %}
 
 
 
