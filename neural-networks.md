@@ -777,7 +777,7 @@ but the output does not really look like a daisy, or a field of daisies.
 
 There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is usually extremely small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient must be scaled up (one method to do this is to use a constat scale, perhaps `10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. Another problem are the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.
 
-In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.  
+In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper].
 
 One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
@@ -800,7 +800,6 @@ Secondly, instead of starting with a random input we can instead start with some
 
 This method is more successful: when the target label is a tulip, observe how a base and stalk is added to a light region of an input image
 
-
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip.png)
 
 and how a rock is modified to appear more like a field of tulips
@@ -814,6 +813,8 @@ and likewise with a daisy
 but generally speaking images of tulips are changed less
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip_orig.png)
+
+Another method to make more natural images using the input gradient is to specify a prior over the gradient descent process, as noted [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)
 
 ### Generative Adversarial Networks
 
