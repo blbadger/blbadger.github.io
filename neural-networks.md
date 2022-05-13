@@ -944,7 +944,11 @@ Generative adversarial networks can go beyond simply producing images that look 
 Somewhat surprisingly, this is indeed what we find: if move about in the latent space, the generated output changes fairly continuously from one clothing type to another. As an example, we can move through the 100-dimensional latent space in a 2-dimensional plane defined by simply adding or subtracting certain values from some random normal input.  We can move in different ways, and one is as follows:
 
 $$
-f(a, i, j) = a_{0:19} + i/4, \; a_{20:39} - j/4, \; a_{40:59} + i/4, \; a_{60:79} - j/4, \; a_{80:99} - j/4
+f(a, i, j) = a_{0:19} + i/4,\\
+	a_{20:39} - j/4, \\
+	a_{40:59} + i/4, \\
+	a_{60:79} - j/4, \\
+	a_{80:99} - j/4
 $$
 
 which may be implemented as follows:
