@@ -1016,7 +1016,7 @@ class InvertedFC(nn.Module):
 		...
 ```
 
-Now we can 
+Now that the latent space is two-dimensional, we can observe the manifold more clearly in a plane. As generator latent space inputs are random normal variables ($\mu=0$, $\sigma=1$), we know most of the inputs are in near the origin. Tracing out a square from (-2, -2) to (2, 2)
 
 ```python
 discriminator.load_state_dict(torch.load('discriminator.pth'))
@@ -1033,6 +1033,7 @@ for i in range(16):
 
 fixed_input = fixed_input[1:]
 ```
+we see that indeed nearly every digit is found in this region of the latent space, as expected.
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/mnist_2latent_fig.png)
 
