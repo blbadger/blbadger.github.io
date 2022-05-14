@@ -948,7 +948,7 @@ f(a, i, j) = a_{0:19} + i/4,\\
 	a_{20:39} - j/4, \\
 	a_{40:59} + i/4, \\
 	a_{60:79} - j/4, \\
-	a_{80:99} - j/4
+	a_{80:99} + j/4
 $$
 
 which may be implemented as follows:
@@ -958,17 +958,16 @@ discriminator.load_state_dict(torch.load('discriminator.pth'))
 generator.load_state_dict(torch.load('generator.pth'))
 
 fixed_input = torch.randn(1, 100)
-print (fixed_input)
 original_input = fixed_input.clone()
 
 for i in range(10):
 	for j in range(10):
 		next_input = original_input.clone()
-		next_input[0][0:20] += .25 * (i+1)
-		next_input[0][20:40] -= .25 * (j+1)
-		next_input[0][40:60] += .25 * (j+1)
-		next_input[0][60:80] -= .25 * (j+1)
-		next_input[0][80:100] += .25 * (j+1)
+		next_input[0][0:20] += .25 * i
+		next_input[0][20:40] -= .25 * j
+		next_input[0][40:60] += .25 * i
+		next_input[0][60:80] -= .25 * j
+		next_input[0][80:100] += .25 * j
 		fixed_input = torch.cat([fixed_input, next_input])
 
 fixed_input = fixed_input[1:]
@@ -980,8 +979,62 @@ when we observe the elements of `output` arranged such that the y-axis correspon
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
 
+Does manifold learning occur for generative adversarial networks trained on other datasets?  We can apply our model to the MNIST handwritted digit dataset by loading the training data
 
+```python
+train_data = torchvision.datasets.MNIST(
+	root = '.',
+	train = True,
+	transform = tensorify_and_normalize,
+  	download = True
+	)
+```
+Now most images in the MNIST dataset contain lots of blank space, meaning that for a typical input most tensor elements are 0s.  This make GAN learning difficult, so it is a good idea to enforce a non-zero mean on our inputs.  One option that seems to work well is to set the mean $\mu$ and standard deviation $\sigma$ to be given values by performing the following element-wise operation
 
+$$
+a_i = \frac{a_i - \mu}{\sigma}
+$$
+
+and this can be implemented using `torchvision.transforms` as follows:
+
+```python
+tensorify_and_normalize = transforms.Compose(
+    [transforms.ToTensor(), transforms.Normalize((0.5), (0.5))]
+)
+```
+
+In the last illustration, we moved through 100-dimensional space along a 2-dimensional hyperplane to observe the latent space manifold.  This makes it somewhat confusing to visualize, so instead we can simply begin with a 2-dimensional manifold as our latent space, with a generator architecture as follows:
+
+```python
+class InvertedFC(nn.Module):
+	def __init__(self):
+		super().__init__()
+		self.input_transform = nn.Linear(1024, 28*28)
+		self.d3 = nn.Linear(512, 1024)
+		self.d2 = nn.Linear(248, 512)
+		self.d1 = nn.Linear(2, 248)
+		...
+```
+
+Now we can 
+
+```python
+discriminator.load_state_dict(torch.load('discriminator.pth'))
+generator.load_state_dict(torch.load('generator.pth'))
+fixed_input = torch.tensor([[0.,  0.]]).to(device)
+original_input = fixed_input.clone()
+
+for i in range(16):
+  for j in range(16):
+    next_input = original_input.clone()
+    next_input[0][0] = 2 - (1/4) * (i) + original_input[0][0]
+    next_input[0][1] = -2 + (1/4) * (j) + original_input[0][1]
+    fixed_input = torch.cat([fixed_input, next_input])
+
+fixed_input = fixed_input[1:]
+```
+
+![manifold]({{https://blbadger.github.io}}/neural_networks/mnist_2latent_fig.png)
 
 
 
