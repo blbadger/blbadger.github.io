@@ -827,7 +827,7 @@ This method is of historical significance because it was a point of departure fr
 For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
 
 $$
-g = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} v(\theta_d, \theta_g)
+g = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} \; v(\theta_d, \theta_g)
 $$
 
 where
@@ -1037,11 +1037,159 @@ we see that indeed nearly every digit is found in this region of the latent spac
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/mnist_2latent_fig.png)
 
+We can perform the same procedure for the Fashion MNIST dataset by training a GAN with a latent space of size 2. 
+
+![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
+
+Do generative adversarial networks tend to prefer one latent space over another?
 
 
+### Continuity in the latent space and GAN stability
+
+For many deep learning models 
+
+### Convolutional GANs
 
 
+For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in the model.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
 
+Convolutional neural networks have been historically viewed as difficult to use as discriminator/generator pairs in the GAN model.  Empirically this has been attributed to their tendancy to lead to instabilities while training: either the discriminator may become much more effective than the generator such that all generated inputs are confidently rejected, or else the generator may be able to fool the discriminator early in the training program, which reduces the objective gradient for the discriminator and thus prevents effective learning.
+
+Some of the difficult stems from the nature of the convolution, which as defined in the context of deep learning signifies a mathematical function on tensors of real numbers that is strictly non-invertable as it is non-injective.  To see why this is, take the simple example of a convolution on a two-element array of one dimension, with a filter of $\gamma= [\gamma_1, \gamma_2]$ and no padding:
+
+$$
+f([a, b], \gamma) = a*\gamma_1 + b*\gamma_2 = c
+$$
+
+Is there any way, if one knows $c$ and $\gamma$ to compute $[a, b]$? There is not, as different values of $a, b$ would give equivalent values of $c$ and thus this function is not injective.
+
+This is important because it means that there is no way to unambiguously invert a convolutional discriminator architecture.  We could of course use a convolutional net for a discriminator and a fully connected architecture for the generator, but doing so risks the instabilities mentioned above.  
+
+In spite of these challenges, we can go ahead and implement a convolutional GAN to see how it performs.  For the discriminator, we can use the same architecure used elsewhere on this page for classifying flower types, with two notable changes: firstly, dropout is introduced to the fully connected layers and secondly we now store the indices identified by the max pooling steps (which signifies the indices of the elements that contributes their values to the subsequent pooling layer). Max pooling by itself non-injective and thus non-invertible function, and using the indicies of the discriminator is one way to allow make max pooling invertible.
+
+```python
+class MediumNetwork(nn.Module):
+
+	def __init__(self):
+		super(MediumNetwork, self).__init__()
+		self.entry_conv = Conv2d(3, 16, 3, padding=(1, 1))
+		self.conv16 = Conv2d(16, 16, 3, padding=(1, 1))
+		self.conv32 = Conv2d(16, 32, 3, padding=(1, 1))
+
+		self.max_pooling = nn.MaxPool2d(2, return_indices=True)
+		self.flatten = nn.Flatten()
+		self.relu = nn.ReLU()
+		self.d1 = nn.Linear(2048, 512)
+		self.d2 = nn.Linear(512, 50)
+		self.d3 = nn.Linear(50, 1)
+		self.sigmoid = nn.Sigmoid()
+		self.dropout = nn.Dropout(0.1)
+		self.index1, self.index2, self.index3, self.index4 = [], [], [], [] # save indicies for max unpooling in generator
+		
+	def forward(self, model_input):
+		out = self.relu(self.entry_conv(model_input))
+		out, self.index1 = self.max_pooling(out)
+		out = self.relu(self.conv16(out))
+		out, self.index2 = self.max_pooling(out)
+		out = self.relu(self.conv16(out))
+		out, self.index3 = self.max_pooling(out)
+		out = self.relu(self.conv32(out))
+		out, self.index4 = self.max_pooling(out)
+		output = torch.flatten(out, 1, 3)
+
+		output = self.d1(output)
+		output = self.relu(output)
+		output = self.dropout(output)
+
+		output = self.d2(output)
+		output = self.relu(output)
+		output = self.dropout(output)
+
+		final_output = self.d3(output)
+		final_output = self.sigmoid(final_output)
+		return final_output
+```
+
+Now we can make essentially the same architecture in reverse, but starting with a latent space of size 50. The model below uses the max pooling indicies obtained by the discriminator at each step of the training process, which is a somewhat dubious choice as doing so has the potential to bring about memorization of the training set.  
+
+```
+class InvertedMediumNet(nn.Module):
+
+	def __init__(self, minibatch_size):
+		super(InvertedMediumNet, self).__init__()
+		self.entry_conv = Conv2d(16, 3, 3, padding=(1, 1))
+		self.conv16 = Conv2d(16, 16, 3, padding=(1, 1))
+		self.conv32 = Conv2d(32, 16, 3, padding=(1, 1))
+
+		self.max_pooling = nn.MaxUnpool2d(2)
+		self.minibatch_size
+		self.relu = nn.ReLU()
+		self.tanh = nn.Tanh()
+		self.d1 = nn.Linear(512, 2048)
+		self.d2 = nn.Linear(50, 512)
+
+	def forward(self, final_output):
+		output = self.d2(final_output)
+		output = self.relu(output)
+		output = self.d1(output)
+		output = self.relu(output)
+
+		out = torch.reshape(output, (self.minibatch_size, 32, 8, 8)) # reshape for convolutions
+		out = self.max_pooling(out, discriminator.index4)
+		out = self.relu(self.conv32(out))
+		out = self.max_pooling(out, discriminator.index3)
+		out = self.relu(self.conv16(out))
+		out = self.max_pooling(out, discriminator.index2)
+		out = self.relu(self.conv16(out))
+		out = self.max_pooling(out, discriminator.index1)
+		out = self.tanh(self.entry_conv(out))
+		return out
+```
+
+In practice, however, the use of an input's max pooling indicies appears to not result in memorization a sigmoid unit discriminator output is combined with binary cross-entropy. If a softmax output layer is used instead, weak memorization early in the training process has been observed.  If memorization is suspected to become a problem, it is not difficult to avoid the issue of transfer of max pooling indicies by either fixing them in place or else using the pooling indicies of a the discriminator applied to a generated example rather than a true input.
+
+The training procedure 
+
+```python
+
+def train_colorgan_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn, epochs):
+	discriminator.train()
+	generator.train()
+	fixed_input = torch.randn(minibatch_size, 50) # latent space of 50
+
+	for e in range(epochs):
+		for batch, (x, y) in enumerate(dataloader):
+			count += 1
+			_ = discriminator(x) # initialize the index arrays
+
+			random_output = torch.randn(minibatch_size, 50)
+			generated_samples = generator(random_output)
+			input_dataset = torch.cat([x, generated_samples]) 
+			output_labels = torch.cat([torch.ones(len(y)), torch.zeros(len(generated_samples))])
+			discriminator_prediction = discriminator(input_dataset).reshape(minibatch_size*2)
+			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
+
+			discriminator_optimizer.zero_grad()
+			discriminator_loss.backward()
+			discriminator_optimizer.step()
+
+			_ = discriminator(x) # reset index dims to 16-element minibatch size
+			generated_outputs = generator(random_output)
+			discriminator_outputs = discriminator(generated_outputs).reshape(minibatch_size)
+			generator_loss = loss_fn(discriminator_outputs, torch.ones(len(y))) # pretend that all generated inputs are in the dataset
+
+			generator_optimizer.zero_grad()
+			generator_loss.backward()
+			generator_optimizer.step()
+
+	return
+```
+
+This method is at least somewhat successful: comparing six training input images to six generated inputs from our flower identification dataset, we see there is some general resemblance between the generated data and the original.
+
+![manifold]({{https://blbadger.github.io}}/neural_networks/custom_flowergan.png)
+
+But unfortunately this architecture tends to be unstable while training, and in particular the generator seems to be often incapable of producing images that challenge the discriminator's ability to discern them from the real inputs.  
 
 
 
