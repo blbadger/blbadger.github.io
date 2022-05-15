@@ -1039,7 +1039,7 @@ we see that indeed nearly every digit is found in this region of the latent spac
 
 We can perform the same procedure for the Fashion MNIST dataset by training a GAN with a latent space of size 2. 
 
-![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold.png)
+![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold2.png)
 
 Do generative adversarial networks tend to prefer one latent space over another?
 
@@ -1112,7 +1112,7 @@ class MediumNetwork(nn.Module):
 
 Now we can make essentially the same architecture in reverse, but starting with a latent space of size 50. The model below uses the max pooling indicies obtained by the discriminator at each step of the training process, which is a somewhat dubious choice as doing so has the potential to bring about memorization of the training set.  
 
-```
+```python
 class InvertedMediumNet(nn.Module):
 
 	def __init__(self, minibatch_size):
@@ -1148,41 +1148,17 @@ class InvertedMediumNet(nn.Module):
 
 In practice, however, the use of an input's max pooling indicies appears to not result in memorization a sigmoid unit discriminator output is combined with binary cross-entropy. If a softmax output layer is used instead, weak memorization early in the training process has been observed.  If memorization is suspected to become a problem, it is not difficult to avoid the issue of transfer of max pooling indicies by either fixing them in place or else using the pooling indicies of a the discriminator applied to a generated example rather than a true input.
 
-The training procedure 
+The training proceeds the same way as the other GAN examples, except we need to initialize the generator's max unpooling indicies.  Below the indicies from the discrimantor applied to the input tensor `x` are used for initialization.
 
 ```python
-
-def train_colorgan_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn, epochs):
-	discriminator.train()
-	generator.train()
+def train_colorgan_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn):
 	fixed_input = torch.randn(minibatch_size, 50) # latent space of 50
-
-	for e in range(epochs):
-		for batch, (x, y) in enumerate(dataloader):
-			count += 1
-			_ = discriminator(x) # initialize the index arrays
-
-			random_output = torch.randn(minibatch_size, 50)
-			generated_samples = generator(random_output)
-			input_dataset = torch.cat([x, generated_samples]) 
-			output_labels = torch.cat([torch.ones(len(y)), torch.zeros(len(generated_samples))])
-			discriminator_prediction = discriminator(input_dataset).reshape(minibatch_size*2)
-			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
-
-			discriminator_optimizer.zero_grad()
-			discriminator_loss.backward()
-			discriminator_optimizer.step()
-
-			_ = discriminator(x) # reset index dims to 16-element minibatch size
-			generated_outputs = generator(random_output)
-			discriminator_outputs = discriminator(generated_outputs).reshape(minibatch_size)
-			generator_loss = loss_fn(discriminator_outputs, torch.ones(len(y))) # pretend that all generated inputs are in the dataset
-
-			generator_optimizer.zero_grad()
-			generator_loss.backward()
-			generator_optimizer.step()
-
-	return
+	for batch, (x, y) in enumerate(dataloader):
+		count += 1
+		_ = discriminator(x) # initialize the index arrays
+		random_output = torch.randn(minibatch_size, 50)
+		generated_samples = generator(random_output)
+		...
 ```
 
 This method is at least somewhat successful: comparing six training input images to six generated inputs from our flower identification dataset, we see there is some general resemblance between the generated data and the original.
