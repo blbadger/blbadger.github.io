@@ -1156,7 +1156,7 @@ def train_colorgan_adversaries(dataloader, discriminator, discriminator_optimize
 	for batch, (x, y) in enumerate(dataloader):
 		count += 1
 		_ = discriminator(x) # initialize the index arrays
-		random_output = torch.randn(minibatch_size, 50)
+		random_output = torch.randn(minibatch_size, 50).to(device)
 		generated_samples = generator(random_output)
 		...
 ```
@@ -1167,6 +1167,110 @@ This method is at least somewhat successful: comparing six training input images
 
 But unfortunately this architecture tends to be unstable while training, and in particular the generator seems to be often incapable of producing images that challenge the discriminator's ability to discern them from the real inputs.  
 
+
+### Stable Convolutional GANs
+
+Difficulties with generative adversarial networks based on deep convolutional networks were well documented in the early days of research into GANs.  One approach to working around this problem is that taken by [Radford and colleagues](https://arxiv.org/abs/1511.06434).  They detail a model architecture in which both generator and discriminator are composed entirely of convolutional layers as opposed to a mixture of convolutional and fully connected hidden layers, batch normalization is used for both generator and discriminator hidden layers, and unpooling is replaced with fractional convolutional layers.  The architecture published in the paper above is now referred to as 'DCGAN', id deep convolutional GAN.
+
+Using these principles, we can make a DCGAN-like discriminator that takes 3x128x128 color images as inputs and returns a sigmoid transformation with image $y\in(0, 1)$ which corresponds to whether or not a given image is one from our training dataset. 
+
+```python
+class StableDiscriminator(nn.Module):
+
+	def __init__(self):
+		super(StableDiscriminator, self).__init__()
+		# switch second index to 3 for color
+		self.conv1 = nn.Conv2d(3, 64, 4, stride=2, padding=1) # 3x128x128 image input
+		self.conv2 = nn.Conv2d(64, 128, 4, stride=2, padding=1)
+		self.conv3 = nn.Conv2d(128, 256, 4, stride=2, padding=1)
+		self.conv4 = nn.Conv2d(256, 512, 4, stride=2, padding=1)
+		self.conv5 = nn.Conv2d(512, 1024, 4, stride=2, padding=1)
+		self.conv6 = nn.Conv2d(1024, 1, 4, stride=1, padding=0)
+
+		self.leakyrelu = nn.LeakyReLU(negative_slope=0.2)
+		self.batchnorm2 = nn.BatchNorm2d(128)
+		self.batchnorm3 = nn.BatchNorm2d(256)
+		self.batchnorm4 = nn.BatchNorm2d(512)
+		self.batchnorm5 = nn.BatchNorm2d(1024)
+		self.sigmoid = nn.Sigmoid()
+
+	def forward(self, input):
+		out = self.conv1(input)
+		out = self.leakyrelu(out)
+
+		out = self.conv2(out)
+		out = self.leakyrelu(out)
+		out = self.batchnorm2(out)
+		
+		out = self.conv3(out)
+		out = self.leakyrelu(out)
+		out = self.batchnorm3(out)
+
+		out = self.conv4(out)
+		out = self.leakyrelu(out)
+		out = self.batchnorm4(out)
+
+		out = self.conv5(out)
+		out = self.leakyrelu(out)
+		out = self.batchnorm5(out)
+
+		out = self.conv6(out)
+		out = self.sigmoid(out)
+		return out
+```
+
+For the generator again we follow the original DCGAN layer dimensions fairly closely, but deviate in a couple key areas to allow for a 100-dimensional latent space input to give a 3x128x128 generated image output.  Note that in the original paper, the exact choice of transformation between the input layer and the first convolutional layer is somewhat ambiguous: either a fully connected layer (with no activation function) or else a direct reshape and projection are potential implementations. We take the latter approach (also taken [here](https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html)) as the former tends to lead to the problem of diminishing gradients that convolutional netowrks with deep fully connected hidden layers seem to face.
+
+```python
+class StableGenerator(nn.Module):
+
+	def __init__(self, minibatch_size):
+		super(StableGenerator, self).__init__()
+		self.input_transform = nn.ConvTranspose2d(100, 1024, 4, 1, padding=0) # expects an input of shape 1x100
+		self.conv1 = nn.ConvTranspose2d(1024, 512, 4, stride=2, padding=1) 
+		self.conv2 = nn.ConvTranspose2d(512, 256, 4, stride=2, padding=1)
+		self.conv3 = nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1)
+		self.conv4 = nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1)
+		self.conv5 = nn.ConvTranspose2d(64, 3, 4, stride=2, padding=1) # end with shape minibatch_sizex3x128x128
+
+		self.relu = nn.ReLU()
+		self.tanh = nn.Tanh()
+		self.minibatch_size = minibatch_size
+		self.batchnorm1 = nn.BatchNorm2d(512)
+		self.batchnorm2 = nn.BatchNorm2d(256)
+		self.batchnorm3 = nn.BatchNorm2d(128)
+		self.batchnorm4 = nn.BatchNorm2d(64)
+
+
+	def forward(self, input):
+		input = input.reshape(minibatch_size, 100, 1, 1)
+		transformed_input = self.input_transform(input)
+		out = self.conv1(transformed_input)
+		out = self.relu(out)
+		out = self.batchnorm1(out)
+
+		out = self.conv2(out)
+		out = self.relu(out)
+		out = self.batchnorm2(out)
+
+		out = self.conv3(out)
+		out = self.relu(out)
+		out = self.batchnorm3(out)
+
+		out = self.conv4(out)
+		out = self.relu(out)
+		out = self.batchnorm4(out)
+
+		out = self.conv5(out)
+		out = self.tanh(out)
+		return out
+```
+
+Lastly, our original flower image dataset contained a wide array of images (some of which did not contain any flowers at all), making generative learning difficult.  A small (n=249) subset of rose and tulip flower images were selected for training using the DCGAN -style model.  This small dataset brings its own challenges, as deep learning in general tends to be easier with larger sample sizes.  
+
+The results are fairly realistic-looking, with many images being very good recapitulations of watercolor paintings.  
+
+![manifold]({{https://blbadger.github.io}}/neural_networks/stablegan_flowers.png)
 
 
 
