@@ -189,9 +189,35 @@ The study of life, observations of which display many of the features of nonline
 
 ## Deep Learning
 
-### [Image Recognition and Computer Vision](/neural-networks.md) 
+### [Image Classification](/neural-networks.md) 
+
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+
+
+### [Input Attribution and Adversarial Examples](/input-adversarials.md)
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_slow.gif)
+
+
+### [Generative Adversarial Networks](/generative-adversarials.md)
+
+![network architecture](/neural_networks/mnist_2latent_fig.png)
+
+
+### [Normalization and Gradient Stability](/gradient-landscapes.md)
+
+![network architecture](/neural_networks/gradient_quivercover.png)
+
+
+### [Small Language Models for Abstract Sequences](/neural-networks3.md)
+
+![network architecture](/neural_networks/nn_including_embeddings.png)
+
+
+### [Interpreting Sequence Models](/nn_interpretations.md)
+
+![deep learning attributions](/neural_networks/attributions_cover.png)
+
 
 ### [Training Memory](/neural-networks2.md)
 
@@ -202,17 +228,11 @@ v_1 + i_1 \to o_1 \to v_2 \\
 v_{n-1} + i_n \to o_n \to v_n
 $$
 
-### [Structured Sequence Encoding](/neural-networks3.md)
-
-![](/neural_networks/nn_including_embeddings.png)
-
-### [Interpretable Deep Learning](/nn_interpretations.md)
-
-![deep learning attributions](/neural_networks/attributions_cover.png)
 
 ### [Limitations of Neural Networks](/nn-limitations.md)
 
 ![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
+
 
 ## Small Projects
 
