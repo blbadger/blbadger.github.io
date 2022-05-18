@@ -230,9 +230,11 @@ $$
 
 Recalling how forward propegation followed by backpropegation is used in order to compute this gradient, we find that these features remain after nearly two dozen vector arithmetic operations, none of which are necessarily feature-preserving.  From an informational perspective, one can think of this as the information from the input being fed into the neural network, stored as activations in the network's various layers, before that information is then used to find the gradient of the loss function with respect to the input.
 
-The above image is not the only input that has features that are recapitulated in the input gradient: here some tulips and a butterfly on a daisy are formed from the gradient of the loss with respect to the input
+The above image is not the only input that has features that are recapitulated in the input gradient: here some tulips 
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_tulip.png)
+
+and a butterfly on a dandelion 
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_butterfly.png)
 
@@ -242,7 +244,11 @@ and the same is found for a daisy and a sunflower
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_sunflower.png)
 
-It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  The training process, however (here 40 epochs) leads to this preservation as follows:
+It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  
+
+### Additive Attributions for Non-Locality
+
+In the last section, we saw that the training process (here 40 epochs) leads to a preservation of certain features of the input image in the gradient of the input with respect to the loss function.  To make this more clear, we can observe this 
 
 {% include youtube.html id='sflMrJLlb0g' %}
 
@@ -260,7 +266,7 @@ $$
 
 This method may be used for any input type, regardless of an ability to transform from a baseline.
 
-### Generating an input via gradient descent
+### Modifying an input via gradient descent
 
 The observation that a deep learning model may be able to capture much of the inportant information in the input image leads to a hypothesis: perhaps we could use a trained model in reverse to generate inputs that resemble the training inputs.
 
@@ -316,11 +322,17 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 but the output does not really look like a daisy, or a field of daisies.  
 
-There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is usually extremely small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient must be scaled up (one method to do this is to use a constat scale, perhaps `10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. Another problem are the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.
+There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is sometimes small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient often must be scaled up (one method to do this is to use a constat scale, perhaps `10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. 
 
-In practice we see both problems at once: gradient descent of the input is extremely slow unless the gradient is scaled up, and the loss gradient is extremely unstable such that small changes can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper].
+The second problem is more pervasive: the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.  It has been hypothesized that adversarial examples exist in spite of the high accuracy achieved various test datasets because they are very low-probability inputs.  In some respects this is true, as the addition of a small vector in a random direction (rather than the direction of the gradient with respect to the output) very rarely changes the model's output.
 
-One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_random_addition.png)
+
+But this is only the case when we look at images that are approximations of inputs that the model might see in a training or test set.  In the adversarial example approaches taken above, small shifts are made to each element (pixel) of a real image to make an approximately real image.  If we no longer restrict ourselves in this way, we will see that adversarial examples are actually much more common.  Indeed that almost any input that a standard image classification model would classify as any given label with high confidence does not resemble a real image.  For more information on this topic, see the next section.
+
+In practice the second problem is more difficult to deal with than the first, which can be overcome with clever scaling and normalization of the gradient.  The main problem is therefore that the gradient of the loss (or the output, for that matter) with respect to the input $a$, $\nabla_a J(O(a, \theta))$ is approximately discontinuous in certain directions can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper].
+
+One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This introduces the prior assumption that   This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
 $$
 a_{n+1} = a_n - \epsilon \; \mathrm {sign} \; \nabla_a J(O(a; \theta), \hat{y})
@@ -339,20 +351,37 @@ which for $\epsilon=0.01$ can be implemented as
 
 Secondly, instead of starting with a random input we can instead start with some given flower image from the dataset.  The motivation behind this is to note that the model has been trained to discriminate between images of flowers, not recognize images of flowers compared to all possible images in $\Bbb R^n$ with $n$ being the dimension of the input.  
 
-This method is more successful: when the target label is a tulip, observe how a base and stalk is added to a light region of an input image
+This method is more successful: when the target label is a tulip, observe how a base and stalk is added to a light region of an image of a field of sunflowers,
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip.png)
 
-and how a rock is modified to appear more like a field of tulips
+and how a rock is modified to appear more like a field of tulips,
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy2.png)
 
-and likewise with a daisy
+and likewise a daisy's features (white petals etc.) are modified to 
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy.png)
 
-but generally speaking images of tulips are changed less
+but generally images of tulips are changed less, which is to be expected given that the gradient of the loss function with respect to the input will be smaller if our target output matches our actual output.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip_orig.png)
 
-Another method to make more natural images using the input gradient is to specify a prior over the gradient descent process, as noted [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)
+### Generating Images using Prior Assumptions
+
+In the last section we saw that using the gradient of the output with respect to the input $\nabla_a J(O(a, \theta))$ may be used to modify the input in order to make it more like what the model expects a given parameter label to be.  But applying this gradient to an initial input of pure noise was not found to give a realistic representation of the desired type fo flower, because the loss function is discontinuous with respect to the input.  Instead we find a type of adversarial example which is confidently assigned to the correct label by the model, but does not actually resemble any kind of flower at all.
+
+Is there some way we can prevent our trained deep learning models from making unrealistic images during gradient descent on a random input?  Research into this question has found that indeed there is a way: restrict the image modification process such that some quality of a real image is enforced.
+
+Which qualities of a real image should be enforced during gradient descent? A good paper on this topic by [Olah and colleages](https://distill.pub/2017/feature-visualization/) details how different research groups have attempted to restrict a variety of qualities, but most fall into fouor categories: input or gradient regularization, frequency penalization, transformational invariance, and a learned prior. 
+
+We will focus on the first three of these restrictions in this section.  
+
+Suppose we want to maximize 
+
+[here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)
+
+
+
+
+
