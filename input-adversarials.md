@@ -2,8 +2,6 @@
 
 ### Introduction: Fashion MNIST
 
-Fluorescent images of cells are unlikely to be met with in everyday life, unless you happen to be a biologist.  What about image classification for these objects, can the neural net architectures presented here learn these too?
-
 The [fashion MNIST dataset](https://github.com/zalandoresearch/fashion-mnist) is a set of 28x28 monocolor images of articles of 10 types of clothing, labelled accordingly.  Because these images are much smaller than the 256x256 pixel biological images above, the architectures used above must be modified (or else the input images must be reformatted to 256x256).  The reason for this is because max pooling (or convolutions with no padding) lead to reductions in subsequent layer size, eventually resulting in a 0-dimensional layer.  Thus the last four max pooling layers were removed from the deep network, and the last two from the AlexNet clone ([code](https://github.com/blbadger/neural-network/blob/master/fmnist_bench.py) for these networks).  
 
 The deep network with no other modifications than noted above performs very well on the task of classifying the fashion MNIST dataset, and >91 % accuracy rate on test datasets achieved with no hyperparameter tuning. 
@@ -377,7 +375,29 @@ Which qualities of a real image should be enforced during gradient descent? A go
 
 We will focus on the first three of these restrictions in this section.  
 
-Suppose we want to maximize 
+Suppose we want to transform an original input image of noise into an image of some category for which a model was trained to discern.  We could do this by performing gradient descent using the gradient of the loss with respect to the input
+
+$$
+a' = a - \epsilon \nabla_a J(O(a, \theta))
+$$
+
+which was attempted above.  One difficulty with this approach is that many models use a softmax activation function on the final layer (called logits pre-activation) to make a posterior probability distribution, allowing for an experimentor to find the probability assigned to each class.  Minimizing $J(\mathrm{softmax} O(a, \theta))$ may occur via maximizing the value of $O_n(a, \theta)$ where $O_n$ is the index of the target class, the category of output we are attempting to represent in the input.  But as pointed out by [Simonyan and colleagues](https://arxiv.org/pdf/1312.6034v2.pdf), minimization of this value may also occur via minimization of $O_{-n}$, ie minimimization of all outputs at indicies not equal to the target class index.
+
+To avoid this difficulty, we will arrange our loss function such that we maximize the value of $O_n(a, \theta)$ where $O_n$ signifies the logit at index n.  A trivial way to maximize this value would be to simply maximize the values of all logits at once, and so to prevent this we use L1 regularization (althogh L2 or other regularizers should work well too).  We can either regularize with respect to the activations of the final layer, or else with respect to the input directly.  As the model's parameters $\theta$ do not change during this gradient descent, these approaches are equivalent and so we take the latter.
+
+The objective function we will minimize is therefore
+
+$$
+J'(a) = J(O_n(a, \theta)) + \sum_i \vert a_i \vert
+$$
+
+and for our primary loss function we also have a number of possible choices. Here we will take the L1 metric to some large constant $C$
+
+$$
+J'(a) = (C - O_n(a, \theta)) + \sum_i \vert a_i \vert
+$$
+
+
 
 [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)
 
