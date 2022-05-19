@@ -518,9 +518,13 @@ We can compare the effects of adding transformations to the modification process
 
 ![generated tennisballs]({{https://blbadger.github.io}}/neural_networks/generated_tennisball_comparison.png)
 
-Some inputs are now unmistakeable, such as this badger's profile.
+Some inputs are now unmistakeable, such as this badger's profile
 
 ![generated badger]({{https://blbadger.github.io}}/neural_networks/generated_singlebadger.png)
+
+or 'Chainmail'
+
+![generated badger]({{https://blbadger.github.io}}/neural_networks/generated_chainmail_multiscalejitter.png)
 
 Note, however, that transformational invariance does not necessarily lead to a more recognizable image for all class types: ants, for example, are generally clearer when not transformed.
 
