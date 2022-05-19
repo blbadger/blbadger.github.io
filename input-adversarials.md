@@ -369,7 +369,7 @@ but generally images of tulips are changed less, which is to be expected given t
 
 In the last section we saw that using the gradient of the output with respect to the input $\nabla_a J(O(a, \theta))$ may be used to modify the input in order to make it more like what the model expects a given parameter label to be.  But applying this gradient to an initial input of pure noise was not found to give a realistic representation of the desired type fo flower, because the loss function is discontinuous with respect to the input.  Instead we find a type of adversarial example which is confidently assigned to the correct label by the model, but does not actually resemble any kind of flower at all.
 
-Is there some way we can prevent our trained deep learning models from making unrealistic images during gradient descent on a random input?  Research into this question has found that indeed there is a way: restrict the image modification process such that some quality of a real image is enforced.
+Is there some way we can prevent our trained deep learning models from making unrealistic images during gradient descent on a random input?  Research into this question has found that indeed there is a way: restrict the image modification process such that some quality of a real image is enforced.  We will proceed with this investigation using an Inceptionv3 (aka GoogleNetv3) trained on the full ImageNet dataset, which consists of labelled images of 1000 classes.
 
 Which qualities of a real image should be enforced during gradient descent? A good paper on this topic by [Olah and colleages](https://distill.pub/2017/feature-visualization/) details how different research groups have attempted to restrict a variety of qualities, but most fall into fouor categories: input or gradient regularization, frequency penalization, transformational invariance, and a learned prior. 
 
@@ -397,9 +397,59 @@ $$
 J'(a) = (C - O_n(a, \theta)) + \sum_i \vert a_i \vert
 $$
 
+and this may be implemented using pytorch as follows:
+
+```
+def layer_gradient(model, input_tensor, true_output):
+	...
+	input_tensor.requires_grad = True
+	output = model(input_tensor)
+	loss = torch.abs(200 - output[0][int(true_output)]) + 0.001 * torch.abs(input_tensor).sum() # maximize output val and minimize L1 norm of the input
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient
+```
+
+Note that we are expecting the model to give logits as outputs rather than the softmax values.  The pytorch version of InceptionV3 does so automatically, which means that we can simply use the output directly without having to use a hook to find the appropriate values.
+
+In a related vein, we will also change our starting tensor allow for more stable gradients, leading to a more stable loss as well. Instead of using a uniform random distribution ${x: x \in (0, 1)}$ alone, the random uniform distribution is scaled down by a factor of 25 and centerd at $1/2$ as follows:
+
+```python
+single_input = (torch.rand(1, 3, 256, 256))/25 + 0.5 
+```
+
+Now we can use our trained `model` combined with the `layer_gradient` to retrieve the gradient of our logit loss with respect to the input, and modify the input to reduce this loss.  
+
+```python
+def generate_input(model, input_tensors, output_tensors, index, count):
+	...
+	class_index = 292
+	single_input = (torch.rand(1, 3, 256, 256))/25 + 0.5 # scaled normal distribution initialization
+ 
+	single_input = single_input.to(device)
+	single_input = single_input.reshape(1, 3, 256, 256)
+	original_input = torch.clone(single_input).reshape(3, 256, 256).permute(1, 2, 0).cpu().detach().numpy()
+	target_output = torch.tensor([class_index], dtype=int)
+
+	for i in range(100):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		predicted_output = model(single_input)
+		input_grad = layer_gradient(model, single_input, target_output) # compute input gradient
+		single_input = single_input - 0.15 * input_grad # gradient descent step
+```
+
+It should be noted that this input generation process is fairly tricky: challenges include unstable gradients resulting learning rates (here `0.15`) being too high or initial inputs not being scaled correctly, or else the learning rate not being matchd with the number of iterations being performed.  Features like learning rate decay and gradient normalization were not found to result in substantial improvements to the resulting images.
+
+For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
+
+A minority of classes do have recognizable images generated: when we select for 'washing machine', the round class cover feature is visible in the center reight and bottom right of this resulting image.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
 
 
-[here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)
+The second prior we will enforce is that we will make adjacent pixels correlate with each other, detailed [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html).
 
 
 
