@@ -384,23 +384,18 @@ class StableDiscriminator(nn.Module):
 	def forward(self, input):
 		out = self.conv1(input)
 		out = self.leakyrelu(out)
-
 		out = self.conv2(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm2(out)
-		
 		out = self.conv3(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm3(out)
-
 		out = self.conv4(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm4(out)
-
 		out = self.conv5(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm5(out)
-
 		out = self.conv6(out)
 		out = self.sigmoid(out)
 		return out
@@ -435,19 +430,15 @@ class StableGenerator(nn.Module):
 		out = self.conv1(transformed_input)
 		out = self.relu(out)
 		out = self.batchnorm1(out)
-
 		out = self.conv2(out)
 		out = self.relu(out)
 		out = self.batchnorm2(out)
-
 		out = self.conv3(out)
 		out = self.relu(out)
 		out = self.batchnorm3(out)
-
 		out = self.conv4(out)
 		out = self.relu(out)
 		out = self.batchnorm4(out)
-
 		out = self.conv5(out)
 		out = self.tanh(out)
 		return out
@@ -463,12 +454,11 @@ Upon observing the gradient of the generator's loss function over time, we can f
 
 {% include youtube.html id='RXykSUv0GZ4' %}
 
-This is often called catastrophic forgetting, and is an area of current research in deep learning. Note that this phenomenon is also observed when an exact replica of the DCGAN architecture is used (with 64x64 input and generated image sizes, one less convolutional layer, no bias parameter in the fractional convolutional layers, and slightly different stride and padding parameters) and so is not the result of modifications made: instead it is likely that the forgetting is due to the very small sample size.
+In the literature this is termed catastrophic forgetting, and is an area of current research in deep learning. Note that this phenomenon is also observed when an exact replica of the DCGAN architecture is used (with 64x64 input and generated image sizes, one less convolutional layer, no bias parameter in the fractional convolutional layers, and slightly different stride and padding parameters) and so is not the result of modifications made: instead it is likely that the forgetting is due to the very small sample size.
 
-A fully connected architecture seemed to be effective for 
+A fully connected architecture seemed to be effective for small (28x28) monocolor image generation using the MNIST datasets.  Can a similar architecture applied to our small flower dataset yield realistic images? We can try a very large gut fairly shallow model: here the discriminator has the following architecture:
 
-We can try a very large gut fairly shallow model.  Here the discriminator has the following architecture:
-
+```
 +------------------------+------------+
 |        Modules         | Parameters |
 +------------------------+------------+
@@ -481,6 +471,7 @@ We can try a very large gut fairly shallow model.  Here the discriminator has th
 |       d3.weight        |    512     |
 |        d3.bias         |     1      |
 +------------------------+------------+
+```
 
 and the generator mirrors this but with a latent space of 100, meaning that the entire network is over 230 million parameters which nears the GPU memory limit on colab for 32-digit float parameters.
 
