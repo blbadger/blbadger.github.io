@@ -236,17 +236,15 @@ and a butterfly on a dandelion
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_butterfly.png)
 
-and the same is found for a daisy and a sunflower
+and the same is found for a daisy.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_daisy.png)
-
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_gen_sunflower.png)
 
 It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  
 
 ### Additive Attributions for Non-Locality
 
-In the last section, we saw that the training process (here 40 epochs) leads to a preservation of certain features of the input image in the gradient of the input with respect to the loss function.  To make this more clear, we can observe this 
+In the last section, we saw that the training process (here 40 epochs) leads to a preservation of certain features of the input image in the gradient of the input with respect to the loss function.  We can observe the process of feature preservation during model training as follows:
 
 {% include youtube.html id='sflMrJLlb0g' %}
 
@@ -439,17 +437,17 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 It should be noted that this input generation process is fairly tricky: challenges include unstable gradients resulting learning rates (here `0.15`) being too high or initial inputs not being scaled correctly, or else the learning rate not being matchd with the number of iterations being performed.  Features like learning rate decay and gradient normalization were not found to result in substantial improvements to the resulting images.
 
-For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  On the left is the starting image, and on the right is the generated one.
+For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  The initial random image is transformed as the class activation (logit) increases for the appropriate index.
 
-![ant]({{https://blbadger.github.io}}/neural_networks/generated_ant_noblur.png)
+{% include youtube.html id='x5ydF_bORFQ' %}
 
-A minority of classes do have recognizable images generated: when we select for 'washing machine', the round class cover feature is visible in the center reight and bottom right of this resulting image.
+A minority of classes do have vaguely recognizable images generated: when we use the category 'washing machine' as our target, the glass covers of side-loading washing machines are represented as small round objects in distorted rectangles.
 
 ![washer]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
 
-The second prior we will enforce is that images will not be too variable from one pixel to the next.  Reducing variability between adjacent pixels increases their correlation correlation with each other (see here for an account on pixel correlation [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)) such that that neighboring pixels are constrained to resemble each other, in effect smoothing out an image.  One way to reduce variability between nearby pixels is to perform a convolution, the same operation which our model uses judiciously in neural network form for image classification.  
+The second Bayesian prior we will enforce is that images will not be too variable from one pixel to the next.  Reducing variability between adjacent pixels increases their correlation correlation with each other (see here for an account on pixel correlation [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)) such that that neighboring pixels are constrained to resemble each other, in effect smoothing out an image.  One way to reduce variability between nearby pixels is to perform a convolution, the same operation which our model uses judiciously in neural network form for image classification.  
 
-One choice for convolution is to use a Gaussian kernal.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a schedule, where it is applied at every iteration before the 3/4 mark in the process.
+One choice for convolution is to use a Gaussian kernal.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
@@ -459,6 +457,9 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 		if i < (max_iterations - max_iterations/4):
 			single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3)
 ```
+
+
+{% include youtube.html id='5oOgiRQfDyQ' %}
 
 
 
