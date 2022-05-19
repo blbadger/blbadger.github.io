@@ -440,9 +440,9 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 It should be noted that this input generation process is fairly tricky: challenges include unstable gradients resulting learning rates (here `0.15`) being too high or initial inputs not being scaled correctly, or else the learning rate not being matchd with the number of iterations being performed.  Features like learning rate decay and gradient normalization were not found to result in substantial improvements to the resulting images.
 
-For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  
+For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  On the left is the starting image, and on the right is the generated one.
 
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_ant2.png)
 
 A minority of classes do have recognizable images generated: when we select for 'washing machine', the round class cover feature is visible in the center reight and bottom right of this resulting image.
 
