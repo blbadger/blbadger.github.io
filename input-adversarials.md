@@ -299,7 +299,6 @@ def loss_gradient(model, input_tensor, true_output, output_dim):
 Then the gradient update can be made at each step
 
 ```python
-
 def generate_input(model, input_tensors, output_tensors, index, count):
 	... 
 	target_input = input_tensors[index].reshape(1, 3, 256, 256)
@@ -399,7 +398,7 @@ $$
 
 and this may be implemented using pytorch as follows:
 
-```
+```python
 def layer_gradient(model, input_tensor, true_output):
 	...
 	input_tensor.requires_grad = True
@@ -442,14 +441,26 @@ It should be noted that this input generation process is fairly tricky: challeng
 
 For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  On the left is the starting image, and on the right is the generated one.
 
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_ant2.png)
+![ant]({{https://blbadger.github.io}}/neural_networks/generated_ant_noblur.png)
 
 A minority of classes do have recognizable images generated: when we select for 'washing machine', the round class cover feature is visible in the center reight and bottom right of this resulting image.
 
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
+![washer]({{https://blbadger.github.io}}/neural_networks/generated_washer.png)
+
+The second prior we will enforce is that images will not be too variable from one pixel to the next.  Reducing variability between adjacent pixels increases their correlation correlation with each other (see here for an account on pixel correlation [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)) such that that neighboring pixels are constrained to resemble each other, in effect smoothing out an image.  One way to reduce variability between nearby pixels is to perform a convolution, the same operation which our model uses judiciously in neural network form for image classification.  
+
+One choice for convolution is to use a Gaussian kernal.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a schedule, where it is applied at every iteration before the 3/4 mark in the process.
+
+```python
+def generate_input(model, input_tensors, output_tensors, index, count):
+	max_iterations = 100
+	for i in range(max_iterations):
+		...
+		if i < (max_iterations - max_iterations/4):
+			single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3)
+```
 
 
-The second prior we will enforce is that we will make adjacent pixels correlate with each other, detailed [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html).
 
 
 
