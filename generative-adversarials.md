@@ -234,7 +234,6 @@ Do generative adversarial networks tend to prefer one latent space over another?
 
 ### Continuity in the latent space and GAN stability
 
-For many deep learning models 
 
 ### Convolutional GANs
 
@@ -459,3 +458,33 @@ Lastly, our original flower image dataset contained a wide array of images (some
 The results are fairly realistic-looking, with many images being very good recapitulations of watercolor paintings.  
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/stablegan_flowers.png)
+
+Upon observing the gradient of the generator's loss function over time, we can find spikes at certain times which suggests that our architecture and design choices are not entirely stable. Indeed, observing a subset of the generator's outputs during learning shows that there are periods in which the model appears to 'forget' how to make accurate images and has to re-learn. 
+
+{% include youtube.html id='RXykSUv0GZ4' %}
+
+This is often called catastrophic forgetting, and is an area of current research in deep learning. Note that this phenomenon is also observed when an exact replica of the DCGAN architecture is used (with 64x64 input and generated image sizes, one less convolutional layer, no bias parameter in the fractional convolutional layers, and slightly different stride and padding parameters) and so is not the result of modifications made: instead it is likely that the forgetting is due to the very small sample size.
+
+A fully connected architecture seemed to be effective for 
+
+We can try a very large gut fairly shallow model.  Here the discriminator has the following architecture:
+
++------------------------+------------+
+|        Modules         | Parameters |
++------------------------+------------+
+| input_transform.weight | 100663296  |
+|  input_transform.bias  |    8192    |
+|       d1.weight        |  8388608   |
+|        d1.bias         |    2048    |
+|       d2.weight        |  1048576   |
+|        d2.bias         |    512     |
+|       d3.weight        |    512     |
+|        d3.bias         |     1      |
++------------------------+------------+
+
+and the generator mirrors this but with a latent space of 100, meaning that the entire network is over 230 million parameters which nears the GPU memory limit on colab for 32-digit float parameters.
+
+This network and a half-sized version (half the first layer's neurons) both make remarkably realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses are made.
+
+![manifold]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
+
