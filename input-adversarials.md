@@ -459,10 +459,10 @@ $$
 \end{bmatrix}
 $$
 
-To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  To see how this kernal blurs an input, say the following pixel values were found somewhere in an image:
+To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  To see how this kernal blurs an input, say the following pixel values were found somewhere in an image $f(x, y)$:
 
 $$
-\omega = 
+f(x, y) = 
 \begin{bmatrix}
 1 & 2 & 3 \\
 0 & 10 & 2 \\
@@ -487,7 +487,7 @@ $$
 1 & 1 & 1 \\
 \end{bmatrix} 
 \\
-= 1/9 (1 \dot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
+= 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
 = 22/9 \approx 2.44 < 10
 $$
 
