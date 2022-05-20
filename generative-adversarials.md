@@ -1,6 +1,6 @@
 ## Generative Adversarial Networks
 
-### Introduction: Minimax and Information
+### Introduction
 
 Perhaps the primary challenge of the gradient descent on the input method for generating new inputs is that the trained model in question was not tasked with generating inputs but with mapping them to outputs.  With complicated ensembles composed of many nonlinear functions like neural networks, forward and reverse functions may behave quite differently. Instead of relying on our model trained for classification, it may be a better idea to directly train the model to generate images.
 
@@ -24,7 +24,7 @@ the goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $
 
 Unfortunately, this is a rather unstable arrangement: it has been found by Goodfellow and colleages that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator.
 
-### Implementing a GAN for image production
+### Implementing a GAN
 
 The process of training a generative adversarial network may be thought of as consisting of many iterations of the two steps of our minimax program above: first the discriminator is taught how to differentiate between real and generated images, and then the generator is taught how to make images that fool the discriminator.
 
@@ -126,6 +126,8 @@ class InvertedFC(nn.Module):
 Using a latent space input of 100 random variables assigned in a normal distribution with $\sigma=1$ and $\mu=0$ followed by hidden layers of size 256, 512, and 1024 we find that the generator is able to produce images that are similar to the fashion mnist dataset.  Here we observe a random sample of 100 latent space vectors over the training process (50 epochs)
 
 {% include youtube.html id='7FdAfskr4is' %}
+
+### Latent Space Exploration
 
 Generative adversarial networks can go beyond simply producing images that look like they came from some real dataset: they can also be used to observe similarities in the inputs in a (usually) lower-dimensional tensor, the latent space.  For the above video, each image is produced from 100 random numbers drawn from a normal distribution.  If we change those numbers slightly, we might find changes in the output that lead to one image being transformed into another. In particular, the hope is that some low-dimensional transformation in the latent space yields a high-dimensional transformation in th egenerator's output.
 
@@ -229,14 +231,15 @@ We can perform the same procedure for the Fashion MNIST dataset by training a GA
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold2.png)
 
-Do generative adversarial networks tend to prefer one latent space over another?
+Do generative adversarial networks tend to prefer a stereotypical generator configuration $\theta_s$ on the latent space over other possible configurations? To be concrete, do GANs of one particular architecture when trained repeatedly on the same dataset tend to generate the same images for a given coordinate $a_1, a_2, ...a_n$ in the latent space?
+
+Visualization (and indeed any form of exploration is difficult for a high-dimensional latent space, but is perfectly approachable in two dimensions. 
+
+### Continuity and GAN stability
 
 
-### Continuity in the latent space and GAN stability
 
-
-### Convolutional GANs
-
+### Semi Stable Convolutional GANs
 
 For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in the model.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
 
@@ -354,7 +357,6 @@ This method is at least somewhat successful: comparing six training input images
 
 But unfortunately this architecture tends to be unstable while training, and in particular the generator seems to be often incapable of producing images that challenge the discriminator's ability to discern them from the real inputs.  
 
-
 ### Stable Convolutional GANs
 
 Difficulties with generative adversarial networks based on deep convolutional networks were well documented in the early days of research into GANs.  One approach to working around this problem is that taken by [Radford and colleagues](https://arxiv.org/abs/1511.06434).  They detail a model architecture in which both generator and discriminator are composed entirely of convolutional layers as opposed to a mixture of convolutional and fully connected hidden layers, batch normalization is used for both generator and discriminator hidden layers, and unpooling is replaced with fractional convolutional layers.  The architecture published in the paper above is now referred to as 'DCGAN', id deep convolutional GAN.
@@ -384,18 +386,23 @@ class StableDiscriminator(nn.Module):
 	def forward(self, input):
 		out = self.conv1(input)
 		out = self.leakyrelu(out)
+		
 		out = self.conv2(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm2(out)
+		
 		out = self.conv3(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm3(out)
+		
 		out = self.conv4(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm4(out)
+		
 		out = self.conv5(out)
 		out = self.leakyrelu(out)
 		out = self.batchnorm5(out)
+		
 		out = self.conv6(out)
 		out = self.sigmoid(out)
 		return out
@@ -430,15 +437,19 @@ class StableGenerator(nn.Module):
 		out = self.conv1(transformed_input)
 		out = self.relu(out)
 		out = self.batchnorm1(out)
+		
 		out = self.conv2(out)
 		out = self.relu(out)
 		out = self.batchnorm2(out)
+		
 		out = self.conv3(out)
 		out = self.relu(out)
 		out = self.batchnorm3(out)
+		
 		out = self.conv4(out)
 		out = self.relu(out)
 		out = self.batchnorm4(out)
+		
 		out = self.conv5(out)
 		out = self.tanh(out)
 		return out
@@ -446,11 +457,11 @@ class StableGenerator(nn.Module):
 
 Lastly, our original flower image dataset contained a wide array of images (some of which did not contain any flowers at all), making generative learning difficult.  A small (n=249) subset of rose and tulip flower images were selected for training using the DCGAN -style model.  This small dataset brings its own challenges, as deep learning in general tends to be easier with larger sample sizes.  
 
-The results are fairly realistic-looking, with many images being very good recapitulations of watercolor paintings.  
+The results are fairly realistic-looking, and some generated images have a marked similarity to watercolor images of roses or tulips.  
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/stablegan_flowers.png)
 
-Upon observing the gradient of the generator's loss function over time, we can find spikes at certain times which suggests that our architecture and design choices are not entirely stable. Indeed, observing a subset of the generator's outputs during learning shows that there are periods in which the model appears to 'forget' how to make accurate images and has to re-learn. 
+Spikes, ie sudden increases, are found uppon observing the generator's loss function over time. This suggests that our architecture and design choices are not as stable as one would wish. Indeed, observing a subset of the generator's outputs during learning shows that there are periods in which the model appears to 'forget' how to make accurate images of flowers and has to re-learn how to do so multiple times during the dataset.  These correspond to times at which the discriminator is able to confidently reject all outputs by the generator, and appear in the following video when flower-like images dissipate into abstract patterns.
 
 {% include youtube.html id='RXykSUv0GZ4' %}
 
@@ -477,5 +488,6 @@ and the generator mirrors this but with a latent space of 100, meaning that the 
 
 This network and a half-sized version (half the first layer's neurons) both make remarkably realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses are made.
 
-![manifold]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
+![large fcgan]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
+
 
