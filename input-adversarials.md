@@ -487,7 +487,8 @@ $$
 1 & 1 & 1 \\
 \end{bmatrix} 
 \\
-= 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
+= 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 \\
++ 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
 = 22/9 \approx 2.44 < 10
 $$
 
@@ -520,7 +521,7 @@ $$
 One choice for convolution is to use a Gaussian kernal with a 3x3 size.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  A Gaussian distribution in two dimensions $x, y$ is as follows:
 
 $$
-G(x, y) = \frac{1}{2 \pi \sigma^2} exp(frac{x^2 + y^2}{2 \sigma^2})
+G(x, y) = \frac{1}{2 \pi \sigma^2} \mathrm{exp}(\frac{x^2 + y^2}{2 \sigma^2})
 $$
 
 where $\sigma$ is the standard deviation, which we can specify.  Using the functional Gaussian blur module of `torchvision`, the default value for a 3x3 kernal is $\sigma=0.8$ such that the kernal we will use is to a reasonable approximation
@@ -577,7 +578,7 @@ although for other classes, few perspectives are reached: observe that for 'Keyb
 
 The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
 
-In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, `c` is chosen from a uniform random distribution of $epsilon \in [-c, c]$ and then added to pixel $x, y$ of input $a_{x, y}$ to make $a_{x, y}'= a{x, y} + \epsilon.  Here we sample $\epsilon$ from a uniform distribution $[-0.0001, 0.0001]$.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
+In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, `c` is chosen from a uniform random distribution of $epsilon \in [-c, c]$ and then added to pixel $x, y$ of input $a_{x, y}$ to make $a_{x, y}'= a{x, y} + \epsilon$.  Here we sample $\epsilon$ from a uniform distribution $[-0.0001, 0.0001]$.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
