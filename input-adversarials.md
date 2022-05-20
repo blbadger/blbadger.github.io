@@ -447,7 +447,41 @@ A minority of classes do have vaguely recognizable images generated: when we use
 
 The second Bayesian prior we will enforce is that images will not be too variable from one pixel to the next.  Reducing variability between adjacent pixels increases their correlation correlation with each other (see here for an account on pixel correlation [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)) such that that neighboring pixels are constrained to resemble each other, in effect smoothing out an image.  One way to reduce variability between nearby pixels is to perform a convolution, the same operation which our model uses judiciously in neural network form for image classification.  
 
-One choice for convolution is to use a Gaussian kernal.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
+To recap, a convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight. Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
+
+$$
+\frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+\end{bmatrix}
+$$
+
+To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  This is called a normalized box blur, and as the name suggests it blurs the input slightly. 
+
+But depending on the kernal, we can choose to not blur an image at all. Here is the identity kernal, which gives an output image that is identical with the input.
+
+$$
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+We can even sharpen an input, ie decrease the correlation between neighboring pixels, with the following kernal.
+
+$$
+\begin{bmatrix}
+0 & -1/2 & 0 \\
+-1/2 & 2 & -1/2 \\
+0 & -1/2 & 0 \\
+\end{bmatrix}
+$$
+
+One choice for convolution is to use a Gaussian kernal with a 3x3 size.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
+
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
