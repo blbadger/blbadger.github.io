@@ -57,8 +57,6 @@ def train_generative_adversaries(dataloader, discriminator, discriminator_optimi
 			generator_optimizer.zero_grad()
 			generator_loss.backward()
 			generator_optimizer.step()
-
-
 ```
 
 The discriminator's architecture is the same as any other network that maps $\Bbb R^n \to \{0, 1\}$.  For a small image set such as the Fashion MNIST, we could have a multilayer perceptron with input of size `28*28=784`, followed by a hidden layers and an output of size 1 as follows
@@ -245,13 +243,13 @@ For large images, fully connected network GANs become less practical due to the 
 
 Convolutional neural networks have been historically viewed as difficult to use as discriminator/generator pairs in the GAN model.  Empirically this has been attributed to their tendancy to lead to instabilities while training: either the discriminator may become much more effective than the generator such that all generated inputs are confidently rejected, or else the generator may be able to fool the discriminator early in the training program, which reduces the objective gradient for the discriminator and thus prevents effective learning.
 
-Some of the difficult stems from the nature of the convolution, which as defined in the context of deep learning signifies a mathematical function on tensors of real numbers that is strictly non-invertable as it is non-injective.  To see why this is, take the simple example of a convolution on a two-element array of one dimension, with a filter of $\gamma= [\gamma_1, \gamma_2]$ and no padding:
+Some of the difficult stems from the nature of the convolution, which as defined in the context of deep learning signifies a mathematical function on tensors of real numbers that is strictly non-invertable as it is non-injective.  To see why this is, take the simple example of a convolution on a two-element array of one dimension, with a kernal of $\gamma= [\gamma_1, \gamma_2]$ and no padding:
 
 $$
-f([a, b], \gamma) = a*\gamma_1 + b*\gamma_2 = c
+f([a, b], \gamma) = a \gamma_1 + b \gamma_2 = c
 $$
 
-Is there any way, if one knows $c$ and $\gamma$ to compute $[a, b]$? There is not, as different values of $a, b$ would give equivalent values of $c$ and thus this function is not injective.
+Is there any way, if one knows $c$ and $\gamma$ to compute $[a, b]$? There is not, as different values of $a, b$ would give equivalent values of $c$ and thus this function is not injective.  More precisely, any linear combination of $a + b = c$ will suffice.
 
 This is important because it means that there is no way to unambiguously invert a convolutional discriminator architecture.  We could of course use a convolutional net for a discriminator and a fully connected architecture for the generator, but doing so risks the instabilities mentioned above.  
 
