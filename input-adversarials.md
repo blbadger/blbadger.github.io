@@ -321,7 +321,7 @@ There are a few problems with this approach.  Firstly, it is extremely slow: the
 
 The second problem is more pervasive: the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.  It has been hypothesized that adversarial examples exist in spite of the high accuracy achieved various test datasets because they are very low-probability inputs.  In some respects this is true, as the addition of a small vector in a random direction (rather than the direction of the gradient with respect to the output) very rarely changes the model's output.
 
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_random_addition.png)
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_random_addition2.png)
 
 But this is only the case when we look at images that are approximations of inputs that the model might see in a training or test set.  In the adversarial example approaches taken above, small shifts are made to each element (pixel) of a real image to make an approximately real image.  If we no longer restrict ourselves in this way, we will see that adversarial examples are actually much more common.  Indeed that almost any input that a standard image classification model would classify as any given label with high confidence does not resemble a real image.  For more information on this topic, see the next section.
 
@@ -458,7 +458,40 @@ $$
 \end{bmatrix}
 $$
 
-To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  This is called a normalized box blur, and as the name suggests it blurs the input slightly. 
+To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  To see how this kernal blurs an input, say the following pixel values were found somewhere in an image:
+
+$$
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & 10 & 2 \\
+1 & 3 & 0 \\
+\end{bmatrix}
+$$
+
+The convolution operation applied to this center element with pixel intensity $10$ now is
+
+$$
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & 10 & 2 \\
+1 & 3 & 0 \\
+\end{bmatrix}
+*
+
+\frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+\end{bmatrix} 
+\\
+= 1/9 (1 \dot 1 + 1 \dot 2 + 1 \dot 3 + 1 \dot 0 + 1 \dot 10 + 1 \dot 2 + 1 \dot 1 + 1 \dot3 + 1 \dot 0) \\
+= 22/9 \approx 2.44 < 10
+$$
+
+This means that this spike in pixel intensity has been reduced relative to the surrounding pixels. The convolutional operation simply repeats this process for the rest of the pixels in the image, and the resulting product is the new pixel value for the output image.
+
+A convolution applied using this kernal is called a normalized box blur, and as the name suggests it blurs the input slightly. 
 
 But depending on the kernal, we can choose to not blur an image at all. Here is the identity kernal, which gives an output image that is identical with the input.
 
