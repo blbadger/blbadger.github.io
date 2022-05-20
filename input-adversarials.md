@@ -466,19 +466,21 @@ Smoothness along leads to a number of more recognizable images being formed,
 
 ![convolved array]({{https://blbadger.github.io}}/neural_networks/generated_blurred.png)
 
+Observe that these images are somewhat dim.  This results from the presence of spikes in pixel intensity for very small regions, which the smoothing process does not completely prevent.  The rest of the images using the smoothness prior alone (but no others) displayed below have been adjusted for brightness and contrast for clarity. 
+
 Depending on the initial input given to the model, different outputs will form.  For a target class of 'Tractor', different initial inputs give images that tend to show different aspect of a tractor: sometimes the distinctive tyre tread, sometimes the side of the wheel, sometimes the smokestack is visible.
 
 ![convolved tractor]({{https://blbadger.github.io}}/neural_networks/generated_tractor_array.png)
 
-This is perhaps in part the result of the ImageNet training set containing images where not the entire tractor is visible at once.  If we optimize for 'Badger', we usually see the distinctive face pattern and at least some of the rest of the body, even though each generated image is still unique
+This is perhaps in part the result of the ImageNet training set containing images where not the entire tractor is visible at once.  This appears to be a typical result for this image generation technique: if we optimize for 'Badger', we usually see the distinctive face pattern but in a variety of orientations
 
 ![convolved badgers]({{https://blbadger.github.io}}/neural_networks/generated_badgers.png)
 
-although for other animals, different perspectives are generated.  Here for 'Ant' we have
+Here for 'Ant' we have
 
 ![convolved ant]({{https://blbadger.github.io}}/neural_networks/generated_ant.png)
 
-and for other classes, few features are focused upon: observe that for 'Keyboard' the geometry of the keys but not the letters on the keys are consistently generated.
+although for other classes, few perspectives are reached: observe that for 'Keyboard' the geometry of the keys but not the letters on the keys are consistently generated.
 
 ![convolved keyboard]({{https://blbadger.github.io}}/neural_networks/generated_keyboard.png)
 
@@ -504,7 +506,7 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 				single_input = torch.nn.functional.interpolate(single_input, 200)
 ```
 
-The class label (and input gradient) tends to be fairly unstable during training, but the resulting images can be fairly recognizable: observe the lion's chin and mane appear in the upper left hand corner during input modification:
+The class label (and input gradient) tends to be fairly unstable during training, but the resulting images can be fairly recognizable: observe the lion's chin and mane appear in the upper left hand corner during input modification.
 
 {% include youtube.html id='yp9axdNcCG8' %}
 
@@ -512,7 +514,7 @@ And this is not atypical, as for half of our 16 random input we get a recognizab
 
 ![generated lion]({{https://blbadger.github.io}}/neural_networks/generated_multiscalejitter_lion.png)
 
-We can compare the effects of adding transformations to the modification process to the resulting image. 
+We can compare the effects of adding transformations to the modification process to the resulting image.  Here the convolved (such that smoothness is enforced) images are not adjusted for brightness and contrast as they were above.  The figures below demonstrates ho how re-sizing during input modification effectively prevents spikes in pixel intensity.  For a soccer ball and a tennis ball, we have
 
 ![generated soccerballs]({{https://blbadger.github.io}}/neural_networks/generated_soccerball_comparison.png)
 
@@ -528,6 +530,6 @@ or 'Chainmail'
 
 Note, however, that transformational invariance does not necessarily lead to a more recognizable image for all class types: ants, for example, are generally clearer when not transformed.
 
-We can also add rotations and translations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' that is perhaps not color-accurate but is pattern-accurate.
+We can also add rotations and translations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
 
-![generated badger]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
+![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
