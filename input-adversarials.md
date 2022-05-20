@@ -492,7 +492,7 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 	for i in range(max_iterations):
 		...
 		single_input = torchvision.transforms.ColorJitter(0.0001)(single_input)
-		if i < (max_iterations - max_iterations/4):
+		if i < 76:
 			...
 			if i % 5 == 0:
 				single_input = torch.nn.functional.interpolate(single_input, 256)
@@ -504,6 +504,8 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 				single_input = torch.nn.functional.interpolate(single_input, 100)
 			elif i % 5 == 4:
 				single_input = torch.nn.functional.interpolate(single_input, 200)
+			# optional: resize back to 256x256
+			# single_input = single_input = torch.nn.functional.interpolate(single_input, 256)
 ```
 
 The class label (and input gradient) tends to be fairly unstable during training, but the resulting images can be fairly recognizable: observe the lion's chin and mane appear in the upper left hand corner during input modification.
