@@ -535,7 +535,9 @@ $$
 \end{bmatrix}
 $$
 
-Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
+where the $1/2$ and $1/4$ values are more precisely just over $201/400$ and $101/400$.
+
+Here we apply a Gaussian convolution to the input in a curriculum in which our convolution is applied at every iteration until three quarters the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
 
 
 ```python
@@ -573,7 +575,9 @@ although for other classes, few perspectives are reached: observe that for 'Keyb
 
 ![convolved keyboard]({{https://blbadger.github.io}}/neural_networks/generated_keyboard.png)
 
-The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Here a very small color change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter()`, and then for the first $3/4$ of all images one of five re-sizing steps are taken.
+The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
+
+In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, `c` is chosen from a uniform random distribution of $epsilon \in [-c, c]$ and then added to pixel $x, y$ of input $a_{x, y}$ to make $a_{x, y}'= a{x, y} + \epsilon.  Here we sample $\epsilon$ from a uniform distribution $[-0.0001, 0.0001]$.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
@@ -593,6 +597,7 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 				single_input = torch.nn.functional.interpolate(single_input, 100)
 			elif i % 5 == 4:
 				single_input = torch.nn.functional.interpolate(single_input, 200)
+				
 			# optional: resize back to 256x256
 			# single_input = single_input = torch.nn.functional.interpolate(single_input, 256)
 ```
