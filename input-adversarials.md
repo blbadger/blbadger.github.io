@@ -447,9 +447,10 @@ A minority of classes do have vaguely recognizable images generated: when we use
 
 The second Bayesian prior we will enforce is that images will not be too variable from one pixel to the next.  Reducing variability between adjacent pixels increases their correlation correlation with each other (see here for an account on pixel correlation [here](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)) such that that neighboring pixels are constrained to resemble each other, in effect smoothing out an image.  One way to reduce variability between nearby pixels is to perform a convolution, the same operation which our model uses judiciously in neural network form for image classification.  
 
-To recap, a convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight. Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
+To recap, a convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight.  The weights are called the kernal or filter, and are usually denoted as $\omega$ Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
 
 $$
+\omega = 
 \frac{1}{9}
 \begin{bmatrix}
 1 & 1 & 1 \\
@@ -461,6 +462,7 @@ $$
 To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  To see how this kernal blurs an input, say the following pixel values were found somewhere in an image:
 
 $$
+\omega = 
 \begin{bmatrix}
 1 & 2 & 3 \\
 0 & 10 & 2 \\
@@ -468,16 +470,16 @@ $$
 \end{bmatrix}
 $$
 
-The convolution operation applied to this center element with pixel intensity $10$ now is
+The convolution operation applied to this center element of the original image $f(x_1, y_1)$ with pixel intensity $10$ now is
 
 $$
+\omega * f(x_1, y_1) = 
 \begin{bmatrix}
 1 & 2 & 3 \\
 0 & 10 & 2 \\
 1 & 3 & 0 \\
 \end{bmatrix}
 *
-
 \frac{1}{9}
 \begin{bmatrix}
 1 & 1 & 1 \\
@@ -485,7 +487,7 @@ $$
 1 & 1 & 1 \\
 \end{bmatrix} 
 \\
-= 1/9 (1 \dot 1 + 1 \dot 2 + 1 \dot 3 + 1 \dot 0 + 1 \dot 10 + 1 \dot 2 + 1 \dot 1 + 1 \dot3 + 1 \dot 0) \\
+= 1/9 (1 \dot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
 = 22/9 \approx 2.44 < 10
 $$
 
@@ -496,6 +498,7 @@ A convolution applied using this kernal is called a normalized box blur, and as 
 But depending on the kernal, we can choose to not blur an image at all. Here is the identity kernal, which gives an output image that is identical with the input.
 
 $$
+\omega = 
 \begin{bmatrix}
 0 & 0 & 0 \\
 0 & 1 & 0 \\
@@ -506,6 +509,7 @@ $$
 We can even sharpen an input, ie decrease the correlation between neighboring pixels, with the following kernal.
 
 $$
+\omega = 
 \begin{bmatrix}
 0 & -1/2 & 0 \\
 -1/2 & 2 & -1/2 \\
@@ -513,7 +517,25 @@ $$
 \end{bmatrix}
 $$
 
-One choice for convolution is to use a Gaussian kernal with a 3x3 size.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
+One choice for convolution is to use a Gaussian kernal with a 3x3 size.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  A Gaussian distribution in two dimensions $x, y$ is as follows:
+
+$$
+G(x, y) = \frac{1}{2 \pi \sigma^2} exp(frac{x^2 + y^2}{2 \sigma^2})
+$$
+
+where $\sigma$ is the standard deviation, which we can specify.  Using the functional Gaussian blur module of `torchvision`, the default value for a 3x3 kernal is $\sigma=0.8$ such that the kernal we will use is to a reasonable approximation
+
+$$
+\omega = 
+9/4
+\begin{bmatrix}
+1/4 & 1/2 & 1/4 \\
+1/2 & 1 & 1/2 \\
+1/4 & 1/2 & 1/4 \\
+\end{bmatrix}
+$$
+
+Here we apply a gaussian convolution to the input in a curriculum, in which Gaussian convolution is applied at every iteration untl $3/4$ the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
 
 
 ```python
