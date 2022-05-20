@@ -239,7 +239,7 @@ Visualization (and indeed any form of exploration is difficult for a high-dimens
 
 
 
-### Semi Stable Convolutional GANs
+### Unstable Stable Convolutional GANs
 
 For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in the model.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
 
@@ -357,7 +357,7 @@ This method is at least somewhat successful: comparing six training input images
 
 But unfortunately this architecture tends to be unstable while training, and in particular the generator seems to be often incapable of producing images that challenge the discriminator's ability to discern them from the real inputs.  
 
-### Stable Convolutional GANs
+### Semi Stable Convolutional GANs
 
 Difficulties with generative adversarial networks based on deep convolutional networks were well documented in the early days of research into GANs.  One approach to working around this problem is that taken by [Radford and colleagues](https://arxiv.org/abs/1511.06434).  They detail a model architecture in which both generator and discriminator are composed entirely of convolutional layers as opposed to a mixture of convolutional and fully connected hidden layers, batch normalization is used for both generator and discriminator hidden layers, and unpooling is replaced with fractional convolutional layers.  The architecture published in the paper above is now referred to as 'DCGAN', id deep convolutional GAN.
 
