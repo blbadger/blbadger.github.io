@@ -378,7 +378,7 @@ $$
 a' = a - \epsilon \nabla_a J(O(a, \theta))
 $$
 
-which was attempted above.  One difficulty with this approach is that many models use a softmax activation function on the final layer (called logits pre-activation) to make a posterior probability distribution, allowing for an experimentor to find the probability assigned to each class.  Minimizing $J(\mathrm{softmax} O(a, \theta))$ may occur via maximizing the value of $O_n(a, \theta)$ where $O_n$ is the index of the target class, the category of output we are attempting to represent in the input.  But as pointed out by [Simonyan and colleagues](https://arxiv.org/pdf/1312.6034v2.pdf), minimization of this value may also occur via minimization of $O_{-n}$, ie minimimization of all outputs at indicies not equal to the target class index.
+which was attempted above.  One difficulty with this approach is that many models use a softmax activation function on the final layer (called logits pre-activation) to make a posterior probability distribution, allowing for an experimentor to find the probability assigned to each class.  Minimizing $J(\mathrm{softmax} \; O(a, \theta))$ may occur via maximizing the value of $O_n(a, \theta)$ where $O_n$ is the index of the target class, the category of output we are attempting to represent in the input.  But as pointed out by [Simonyan and colleagues](https://arxiv.org/pdf/1312.6034v2.pdf), minimization of this value may also occur via minimization of $O_{-n}$, ie minimimization of all outputs at indicies not equal to the target class index.
 
 To avoid this difficulty, we will arrange our loss function such that we maximize the value of $O_n(a, \theta)$ where $O_n$ signifies the logit at index n.  A trivial way to maximize this value would be to simply maximize the values of all logits at once, and so to prevent this we use L1 regularization (althogh L2 or other regularizers should work well too).  We can either regularize with respect to the activations of the final layer, or else with respect to the input directly.  As the model's parameters $\theta$ do not change during this gradient descent, these approaches are equivalent and so we take the latter.
 
@@ -473,22 +473,24 @@ $$
 The convolution operation applied to this center element of the original image $f(x_1, y_1)$ with pixel intensity $10$ now is
 
 $$
-\omega * f(x_1, y_1) = 
-\begin{bmatrix}
-1 & 2 & 3 \\
-0 & 10 & 2 \\
-1 & 3 & 0 \\
-\end{bmatrix}
-*
+\omega * f(x_1, y_1) =
 \frac{1}{9}
 \begin{bmatrix}
 1 & 1 & 1 \\
 1 & 1 & 1 \\
 1 & 1 & 1 \\
 \end{bmatrix} 
+*
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & 10 & 2 \\
+1 & 3 & 0 \\
+\end{bmatrix}
+
+ \\
 \\
-= 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 \\
-+ 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
+= 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + 1 \cdot 0 + \\
+1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
 = 22/9 \approx 2.44 < 10
 $$
 
@@ -521,7 +523,7 @@ $$
 One choice for convolution is to use a Gaussian kernal with a 3x3 size.  The Gaussian distribution has a number of interesting properties, and arguably introduces the least amount of information in its assumption.  A Gaussian distribution in two dimensions $x, y$ is as follows:
 
 $$
-G(x, y) = \frac{1}{2 \pi \sigma^2} \mathrm{exp}(\frac{x^2 + y^2}{2 \sigma^2})
+G(x, y) = \frac{1}{2 \pi \sigma^2} \mathrm{exp} \left( \frac{x^2 + y^2}{2 \sigma^2} \right)
 $$
 
 where $\sigma$ is the standard deviation, which we can specify.  Using the functional Gaussian blur module of `torchvision`, the default value for a 3x3 kernal is $\sigma=0.8$ such that the kernal we will use is to a reasonable approximation
