@@ -493,22 +493,23 @@ The two-dimensional convolution operation is computed in an analagous way to the
 The calculation for the convolution is as follows:
 
 $$
-\omega * f(x_1, y_1) = 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + \\
+\omega * f(x_2, y_2) = 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + \\
 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
-= 22/9 \approx 2.44 < 10
+= 22/9 \\
+\approx 2.44 < 10
 $$
 
-so that the convolved output $a$ will have a value of $2.4$ in the same place as the unconvolved input $f(x, y)$ had value 10
+so that the convolved output $f'(x, y)$ will have a value of $2.4$ in the same place as the unconvolved input $f(x, y)$ had value 10.  
 
-$$ a = 
+$$ f'(x, y) = 
 \begin{bmatrix}
 a_{1, 1} & a_{1, 2} & a_{1, 3} \\
-a_{2, 1} & a_{2, 2} = 2.4 & a_{2, 3} \\
+a_{2, 1} & a_{2, 2} = 22/9 & a_{2, 3} \\
 a_{3, 1} & a_{3, 2} & a_{3, 3} \\
 \end{bmatrix}
 $$
 
-This means that the in pixel intensity of $f(x, y)$ has been reduced.  If we calculate the other values of $a$, we find that it is more similar to the values of the surrounding pixels compared to the as well. The full convolutional operation simply repeats this process for the rest of the pixels in the image to calculate $a_{1, 1}, ..., a{n, m}$.  A convolution applied using this particular kernal is sometimes called a normalized box blur, and as the name suggests it blurs the input slightly. 
+Thus the pixel intensity of $f'(x, y)$ at position $m, n = 2, 2$ has been reduced.  If we calculate the other values of $a$, we find that it is more similar to the values of the surrounding pixels compared to the as well. The full convolutional operation simply repeats this process for the rest of the pixels in the image to calculate $f'(x_1, y_1), ..., f'(x_m, y_n)$.  A convolution applied using this particular kernal is sometimes called a normalized box blur, and as the name suggests it blurs the input slightly. 
 
 But depending on the kernal, we can choose to not blur an image at all. Here is the identity kernal, which gives an output image that is identical with the input.
 
