@@ -31,23 +31,32 @@ As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \t
 Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, 
 
 $$
-\Bbb E_{x \sim p(model)} \log(1-d(x)) = \log(1 - 1) 
+\Bbb E_{x \sim p(model)} \log(1-d(x)) = \log(1 - 1) \\
 = -\infty
-$$ a perfect generator has minimized $v$.
+$$ 
 
-This expression is somewhat confusing, as it appears similar to a Kullback-Leibler divergence metric
+it has also minimized minimized $v$.
+
+The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images. We are not guaranteed convergence using
+
+Formulating the generative adversarial network in the form of the zero-sum minimax game above is the theoretical basis for GAN implementation.  Unfortunately, this is a rather unstable arrangement as if we use $v$ and $-v$ as the payoff values, the generator's gradient tends to vanish when the discriminator confidently rejects all generated inputs.  During typical training runs this tends to happen, meaning that training tends to This does not mean that one could not train a GAN using a zero-sum minimax, but that choosing a value function might be difficult.
+
+Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
+
+It is worth considering what this reformulation entails. For a single binary random variable, the self-entropy is as follows:
 
 $$
-D_{KL}(P || Q) = \Bbb E_{x \sim P} (\log P(x) - \log Q(x))
+H(x) = p \log (p) - (1-p) \log(1-p)
 $$
 
-The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
-
-Now that we have a goal for both $g$ and $d$, we can specify objective functions that we will minimize in order to train $\theta_g$ and $\theta_d$ within the framework provided by $f(d, g)$.  For the discriminator the objective function is clear: we want $d$ to classify any image as either belonging to the original input set or else as belonging to the generated set, which is to say that we want an objective function for a binary classification.  Perhaps the most natural loss function for binary classification is binary cross-entropy.
-
+Plotting this equation with $p$ on the x-axis and $H(x)$ on the y-axis, we have
 ![entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
 
-A logical loss function for the generator is also binary cross-entropy, this time of the inverse of the generator, $d(1-g(x))$.  Unfortunately, this is a rather unstable arrangement.  Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator.
+Entropy is largest where $p = 1-p = 1/2$.  Now binary cross-entropy for $N$ values is
+
+$$
+H(x) = -1/N \sum_n p_n \log (p_n) - (1-p_n) \log(1-p_n)
+$$
 
 ### Implementing a GAN
 
