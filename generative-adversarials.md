@@ -4,24 +4,33 @@
 
 Perhaps the primary challenge of the gradient descent on the input method for generating new inputs is that the trained model in question was not tasked with generating inputs but with mapping them to outputs.  With complicated ensembles composed of many nonlinear functions like neural networks, forward and reverse functions may behave quite differently. Instead of relying on our model trained for classification, it may be a better idea to directly train the model to generate images.
 
-One method that takes this approach is the generative adversarial network model [introduced](https://arxiv.org/abs/1406.2661) by Goodfellow and colleages.  This method used two neural networks that compete against each other (hence the term 'adversarial', which seems to have a different motivation than this term is used in the context of 'adversarial examples').  One network, the discriminator, attempts to distinguish between real samples that come from a certain dataset and the generated samples that come from another network, appropriately named the generator.  
+One method that takes this approach is the generative adversarial network model [introduced](https://arxiv.org/abs/1406.2661) by Goodfellow and colleages.  This model used two neural networks that compete against each other (hence the term 'adversarial', which seems to have a different motivation than this term is used in the context of 'adversarial examples').  One network, the discriminator, attempts to distinguish between real samples that come from a certain dataset and the generated samples that come from another network, appropriately named the generator.  Theoretically, these two networks can compete against each other using the minimax algorithm to play a zero-sum game, although in practice GANs are implemented slightly differently.
 
 This method is of historical significance because it was a point of departure from other generative methods (Markov processes, inference networks etc.) that rely on averaging, either over the output space or the model parameter space.  Generative adversarial networks generate samples with no averaging of either.
 
-For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
+A zero-sum game for two players 
+
+For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$
 
 $$
 f(d, g) = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} \; v(\theta_d, \theta_g)
 $$
 
-where
+Following the zero-sum game, the minimax theorem posits that one player (the discriminator) wishes to maximize $v(\theta_d, \theta_g)$ and the other (in this case the generator) wishes to minimize $-v(\theta_d, \theta_g)$.  We therefore want a value functions $v$ that grows as $d(x)$ becomes more accurate given samples $x$ taken from the data generating distribution $\p(\mathrm{data})$ and shrinks (ie grows negatively) as $x$ is taken from outputs of the generator, denoted $p(\mathrm{model})$.  One such option is as follows:
 
 $$
 v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
 $$
 
-and $ x \sim p(\mathrm{model})$ denotes the examples that are generated using $\theta_g$.  This expression $v(\theta_d, \theta_g)$ may seem fairly complicated at first glance, but what it expresses is a straightforward function: $v$ is a function with arguments of the parameters of the discriminator $\theta_d$ and the parameters of the generator $\theta_g$ equal to the expected value of the logarithm of the output of the discriminator with respect to input $x$ drawn from the real data distribution $p(\mathrm{data})$, plus the expected value of the logarithm of the output of the inverse of the output of the discriminator with respect to input $x$ drawn from generator-produced data $p(\mathrm{model})$.
+It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set of all real examples $x \sim p(data)$, $\Bbb E_{x \sim p(data)} = 1$ and $\Bbb E_{x \sim p(model)} = 0$ and therefore the second term of $v(\theta_d, \theta_g)$ reduces to nil ($0 \log 0 = 1$ is assumed in information theory). A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making $\Bbb E_{x \sim p(data)} \log d(x) = 0$.  As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases.
 
+Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, $\Bbb E_{x \sim p(model)} \log(1-d(x)) = 1 * \log(1 - 1) = -\infty$ a perfect generator has minimized $v$.
+
+This expression is somewhat confusing, as it appears similar to a Kullback-Leibler divergence metric
+
+$$
+D_{KL}(P || Q) = \Bbb E_{x \sim P} (\log P(x) - \log Q(x)
+$$
 
 The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
 
