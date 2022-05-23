@@ -191,12 +191,17 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Image Classification](/neural-networks.md) 
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/neural_network.png)
+![neural network architecture](/neural_networks/neural_network.png)
 
 
 ### [Input Attribution and Adversarial Examples](/input-adversarials.md)
 
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_slow.gif)
+
+
+### [Input Generation with Trained Models](/input-generation.md)
+
+![generated badger](/neural_networks/generated_singlebadger.png)
 
 
 ### [Generative Adversarial Networks](/generative-adversarials.md)
