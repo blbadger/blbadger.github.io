@@ -30,6 +30,13 @@ $medium-breakpoint: 42em;
   border: 0;
 }
 
+pre
+{
+    -moz-tab-size: 4;
+    -o-tab-size:   4;
+    tab-size:      4;
+}
+
 .btn {
   display: inline-block;
   margin-top: 0.5rem;
