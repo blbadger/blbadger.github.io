@@ -268,12 +268,12 @@ The observation that a deep learning model may be able to capture much of the in
 
 In the previous section we saw that the loss gradient with respect to the input $\nabla_a J(O(a; \theta), y)$ of a trained model is able to capture certain features of input images: in particular, the gradient mirrors edges and certain colors that exist in the input.  This observation leads to an idea: perhaps we could use this gradient to try to make our own input image by starting with some known distribution and repeatedly applying the loss gradient to the input.  This process mirrors how stochastic gradient descent applies the loss gradient with respect to the model parameters each minibatch step, but instead of modifying the model parameters instead we are going to modify the input itself.
 
-If we want to apply the loss gradient (of the input) to the input, we need three things: a trained model with parameters $\theta$, and input $a$, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\hat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our target output $\hat{y}$
+If we want to apply the loss gradient (of the input) to the input, we need three things: a trained model with parameters $\theta$, and input $a$, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\widehat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our target output $\widehat{y}$
 
 Each step of this process, the current input $a_n$ is modified to become $a_{n+1}$ as follows
 
 $$
-a_{n+1} = a_n - \epsilon \nabla_a J(O(a; \theta), \hat{y})
+a_{n+1} = a_n - \epsilon \nabla_a J(O(a; \theta), \widehat{y})
 $$
 
 Intuitively, a trained model should know what a given output category generally 'looks like', and performing gradient-based updates on an image while keeping the output constant (as a given category) is similar to the model instructing the input as to what it should become to match the model's expectation.
@@ -325,12 +325,12 @@ The second problem is more pervasive: the discontinuities present in the model o
 
 But this is only the case when we look at images that are approximations of inputs that the model might see in a training or test set.  In the adversarial example approaches taken above, small shifts are made to each element (pixel) of a real image to make an approximately real image.  If we no longer restrict ourselves in this way, we will see that adversarial examples are actually much more common.  Indeed that almost any input that a standard image classification model would classify as any given label with high confidence does not resemble a real image.  For more information on this topic, see the next section.
 
-In practice the second problem is more difficult to deal with than the first, which can be overcome with clever scaling and normalization of the gradient.  The main problem is therefore that the gradient of the loss (or the output, for that matter) with respect to the input $a$, $\nabla_a J(O(a, \theta))$ is approximately discontinuous in certain directions can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper].
+In practice the second problem is more difficult to deal with than the first, which can be overcome with clever scaling and normalization of the gradient.  The main problem is therefore that the gradient of the loss (or the output, for that matter) with respect to the input $a$, $\nabla_a J(O(a, \theta))$ is approximately discontinuous in certain directions can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper](https://arxiv.org/abs/1412.1897).
 
 One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This introduces the prior assumption that   This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
 $$
-a_{n+1} = a_n - \epsilon \; \mathrm {sign} \; \nabla_a J(O(a; \theta), \hat{y})
+a_{n+1} = a_n - \epsilon \; \mathrm {sign} \; (\nabla_a J(O(a; \theta), \widehat{y}))
 $$
 
 which for $\epsilon=0.01$ can be implemented as
@@ -580,7 +580,7 @@ although for other classes, few perspectives are reached: observe that for 'Keyb
 
 The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
 
-In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, `c` is chosen from a uniform random distribution of $epsilon \in [-c, c]$ and then added to pixel $x, y$ of input $a_{x, y}$ to make $a_{x, y}'= a{x, y} + \epsilon$.  Here we sample $\epsilon$ from a uniform distribution $[-0.0001, 0.0001]$.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
+In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, $\epsilon \in [-c, c]$ is added to element $a_{x, y}$ of input $a$ to make element $a_{x, y}'= a{x, y} + \epsilon$ of a transformed input $a'$.  In the code sample below, we assign $\epsilon \in [0.0001,0.0001]$ but this choice is somewhat arbitrary.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
@@ -592,14 +592,8 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 			...
 			if i % 5 == 0:
 				single_input = torch.nn.functional.interpolate(single_input, 256)
-			elif i % 5 == 1:
-				single_input = torch.nn.functional.interpolate(single_input, 128)
-			elif i % 5 == 2:
-				single_input = torch.nn.functional.interpolate(single_input, 160)
-			elif i % 5 == 3:
-				single_input = torch.nn.functional.interpolate(single_input, 100)
-			elif i % 5 == 4:
-				single_input = torch.nn.functional.interpolate(single_input, 200)
+			else:
+				single_input = torch.nn.functional.interpolate(single_input, 100 + 28*(i % 5 - 1))
 				
 			# optional: resize back to 256x256
 			# single_input = single_input = torch.nn.functional.interpolate(single_input, 256)
