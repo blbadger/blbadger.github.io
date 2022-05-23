@@ -43,7 +43,8 @@ Formulating the generative adversarial network in the form of the zero-sum minim
 
 Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
 
-It is worth considering what this reformulation entails. For a single binary random variable, the self-entropy is as follows:
+```
+It is worth considering what this reformulation entails. For a single binary random variable, the Shannon entropy is as follows:
 
 $$
 H(x) = p \log (p) - (1-p) \log(1-p)
@@ -57,6 +58,21 @@ Entropy is largest where $p = 1-p = 1/2$.  Now binary cross-entropy for $N$ valu
 $$
 H(x) = -1/N \sum_n p_n \log (p_n) - (1-p_n) \log(1-p_n)
 $$
+```
+
+The loss for the discrimator is
+
+$$
+J_d(x) = \Bbb E_{x \sim P} Q(x)
+$$
+
+where $P(x)$ is equal to the distribution of $x$ over a mix of real and generated input and $Q(x)$ is the distribution of correct classifications of $P(x)$.  In contrast, the generator's ojective is to fool the discriminator and is
+
+$$
+J_g(x) = \Bbb E_{x \sim P'} Q(x)
+$$
+
+where $P(x)$ is equal to the distribution of $x$ over generated input $Q(x)$ is equal to the distribution of incorrect classifications of $P(x)$.
 
 ### Implementing a GAN
 
