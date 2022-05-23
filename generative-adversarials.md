@@ -8,28 +8,37 @@ One method that takes this approach is the generative adversarial network model 
 
 This method is of historical significance because it was a point of departure from other generative methods (Markov processes, inference networks etc.) that rely on averaging, either over the output space or the model parameter space.  Generative adversarial networks generate samples with no averaging of either.
 
-A zero-sum game for two players 
-
 For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$
 
 $$
 f(d, g) = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} \; v(\theta_d, \theta_g)
 $$
 
-Following the zero-sum game, the minimax theorem posits that one player (the discriminator) wishes to maximize $v(\theta_d, \theta_g)$ and the other (in this case the generator) wishes to minimize $-v(\theta_d, \theta_g)$.  We therefore want a value functions $v$ that grows as $d(x)$ becomes more accurate given samples $x$ taken from the data generating distribution $\p(\mathrm{data})$ and shrinks (ie grows negatively) as $x$ is taken from outputs of the generator, denoted $p(\mathrm{model})$.  One such option is as follows:
+Following the zero-sum game, the minimax theorem posits that one player (the discriminator) wishes to maximize $v(\theta_d, \theta_g)$ and the other (in this case the generator) wishes to minimize $-v(\theta_d, \theta_g)$.  We therefore want a value functions $v$ that grows as $d(x)$ becomes more accurate given samples $x$ taken from the data generating distribution $p(\mathrm{data})$ and shrinks (ie grows negatively) as $x$ is taken from outputs of the generator, denoted $p(\mathrm{model})$.  One such option is as follows:
 
 $$
 v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
 $$
 
-It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set of all real examples $x \sim p(data)$, $\Bbb E_{x \sim p(data)} = 1$ and $\Bbb E_{x \sim p(model)} = 0$ and therefore the second term of $v(\theta_d, \theta_g)$ reduces to nil ($0 \log 0 = 1$ is assumed in information theory). A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making $\Bbb E_{x \sim p(data)} \log d(x) = 0$.  As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases.
+It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set of all real examples $x \sim p(data)$, $\Bbb E_{x \sim p(data)} = 1$ and $\Bbb E_{x \sim p(model)} = 0$ and therefore the second term of $v(\theta_d, \theta_g)$ reduces to nil ($0 \log 0 = 1$ is assumed in information theory). A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making 
 
-Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, $\Bbb E_{x \sim p(model)} \log(1-d(x)) = 1 * \log(1 - 1) = -\infty$ a perfect generator has minimized $v$.
+$$
+\Bbb E_{x \sim p(data)} \log d(x) = 0
+$$
+
+As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases.
+
+Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, 
+
+$$
+\Bbb E_{x \sim p(model)} \log(1-d(x)) = 1 * \log(1 - 1) 
+= -\infty
+$$ a perfect generator has minimized $v$.
 
 This expression is somewhat confusing, as it appears similar to a Kullback-Leibler divergence metric
 
 $$
-D_{KL}(P || Q) = \Bbb E_{x \sim P} (\log P(x) - \log Q(x)
+D_{KL}(P || Q) = \Bbb E_{x \sim P} (\log P(x) - \log Q(x))
 $$
 
 The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
