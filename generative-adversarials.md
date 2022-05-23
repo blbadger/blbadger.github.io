@@ -244,7 +244,7 @@ Visualization (and indeed any form of exploration is difficult for a high-dimens
 
 
 
-### Unstable Convolutional GAN
+### Unstable Convolutional GANs
 
 For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in the model.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
 
