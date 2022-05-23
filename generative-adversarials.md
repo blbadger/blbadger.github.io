@@ -72,11 +72,11 @@ $$
 J_g(x) = \Bbb E_{x \sim P'} Q(x)
 $$
 
-where $P(x)$ is equal to the distribution of $x$ over generated input $Q(x)$ is equal to the distribution of incorrect classifications of $P(x)$.
+where $P(x)$ is equal to the distribution of $x$ over generated input and $Q(x)$ is equal to the distribution of incorrect classifications of $P(x)$.
 
 ### Implementing a GAN
 
-The process of training a generative adversarial network may be thought of as consisting of many iterations of the two steps of our minimax program above: first the discriminator is taught how to differentiate between real and generated images, and then the generator is taught how to make images that fool the discriminator.
+The process of training a generative adversarial network may be thought of as consisting of many iterations of the two steps of our minimax program above: first the discriminator is taught how to differentiate between real and generated images by applying the binary cross-entropy loss to a discriminator's predictions for a set of generated samples and their labels followed by real samples and their labels,
 
 ```python
 def train_generative_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn, epochs):
@@ -99,7 +99,11 @@ def train_generative_adversaries(dataloader, discriminator, discriminator_optimi
 			discriminator_loss = loss_fn(discriminator_prediction, output_labels)
 			discriminator_loss.backward() # add to previous loss
 			discriminator_optimizer.step()
+```
 
+and then the generator is taught how to make images that fool the discriminator by finding the loss between the discriminator's predictions for generated samples and a set of labels for real data.
+```python
+			...
 			generated_outputs = generator(random_output)
 			discriminator_outputs = discriminator(generated_outputs)
 			generator_loss = loss_fn(discriminator_outputs, torch.ones(len(y), dtype=int)) 
