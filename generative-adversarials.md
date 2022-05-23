@@ -20,7 +20,7 @@ $$
 v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
 $$
 
-It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set of all real examples $x \sim p(data)$, $\Bbb E_{x \sim p(data)} = 1$ and $\Bbb E_{x \sim p(model)} = 0$ and therefore the second term of $v(\theta_d, \theta_g)$ reduces to nil ($0 \log 0 = 1$ is assumed in information theory). A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making 
+It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set $x$ of only real examples $x \sim p(data)$, $\Bbb E_{x \sim p(model)} \log(1-d(x))$ can be disregarded as this is now an expectation over an empty set. A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making 
 
 $$
 \Bbb E_{x \sim p(data)} \log d(x) = 0
@@ -31,7 +31,7 @@ As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \t
 Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, 
 
 $$
-\Bbb E_{x \sim p(model)} \log(1-d(x)) = 1 * \log(1 - 1) 
+\Bbb E_{x \sim p(model)} \log(1-d(x)) = \log(1 - 1) 
 = -\infty
 $$ a perfect generator has minimized $v$.
 
