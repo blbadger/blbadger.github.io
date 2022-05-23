@@ -20,7 +20,7 @@ $$
 v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
 $$
 
-and $x \sim p(model)}$ denotes the examples that are generated using $\theta_g$.  This expression $v(\theta_d, \theta_g)$ may seem fairly complicated at first glance, but what it expresses is a straightforward function: $v$ is a function with arguments of the parameters of the discriminator $\theta_d$ and the parameters of the generator $\theta_g$ equal to the expected value of the logarithm of the output of the discriminator with respect to input $x$ drawn from the real data distribution $p(data)$, plus the expected value of the logarithm of the output of the inverse of the output of the discriminator with respect to input $x$ drawn from generator-produced data $p(model)$.
+and $ x \sim p(\mathrm{model})$ denotes the examples that are generated using $\theta_g$.  This expression $v(\theta_d, \theta_g)$ may seem fairly complicated at first glance, but what it expresses is a straightforward function: $v$ is a function with arguments of the parameters of the discriminator $\theta_d$ and the parameters of the generator $\theta_g$ equal to the expected value of the logarithm of the output of the discriminator with respect to input $x$ drawn from the real data distribution $p(\mathrm{data})$, plus the expected value of the logarithm of the output of the inverse of the output of the discriminator with respect to input $x$ drawn from generator-produced data $p(\mathrm{model})$.
 
 
 The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
