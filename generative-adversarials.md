@@ -11,7 +11,7 @@ This method is of historical significance because it was a point of departure fr
 For discriminator model parameters $\theta_d$ and generator parameters $\theta_g$,
 
 $$
-g = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} \; v(\theta_d, \theta_g)
+f(d, g) = \mathrm{arg} \; \underset{g}{\mathrm{min}} \; \underset{d}{\mathrm{max}} \; v(\theta_d, \theta_g)
 $$
 
 where
@@ -20,9 +20,16 @@ $$
 v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
 $$
 
+and $x \sim p(model)}$ denotes the examples that are generated using $\theta_g$.  This expression $v(\theta_d, \theta_g)$ may seem fairly complicated at first glance, but what it expresses is a straightforward function: $v$ is a function with arguments of the parameters of the discriminator $\theta_d$ and the parameters of the generator $\theta_g$ equal to the expected value of the logarithm of the output of the discriminator with respect to input $x$ drawn from the real data distribution $p(data)$, plus the expected value of the logarithm of the output of the inverse of the output of the discriminator with respect to input $x$ drawn from generator-produced data $p(model)$.
+
+
 The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images.
 
-Perhaps the most natural way to Unfortunately, this is a rather unstable arrangement: it has been found by Goodfellow and colleages that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator.
+Now that we have a goal for both $g$ and $d$, we can specify objective functions that we will minimize in order to train $\theta_g$ and $\theta_d$ within the framework provided by $f(d, g)$.  For the discriminator the objective function is clear: we want $d$ to classify any image as either belonging to the original input set or else as belonging to the generated set, which is to say that we want an objective function for a binary classification.  Perhaps the most natural loss function for binary classification is binary cross-entropy.
+
+![entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
+
+A logical loss function for the generator is also binary cross-entropy, this time of the inverse of the generator, $d(1-g(x))$.  Unfortunately, this is a rather unstable arrangement.  Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator.
 
 ### Implementing a GAN
 
