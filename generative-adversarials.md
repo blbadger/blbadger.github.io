@@ -43,6 +43,17 @@ Formulating the generative adversarial network in the form of the zero-sum minim
 
 Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
 
+The loss for the discrimator is binary cross-entropy between the predicted outputs $d \in {y, 1-y}$ and actual labels $q \in {\widehat y, 1 - \widehat y}$
+
+$$
+H(d, q) = -\sum_i d_i \log q_i \\
+= -y log \widehat y - (1-y) \log(1-\widehat y) 
+$$
+
+where $P(x)$ is equal to the distribution of $x$ over a mix of real and generated input and $Q(x)$ is the distribution of correct classifications of $P(x)$.  
+
+In contrast, the generator's ojective is to fool the discriminator and so the target distribution $q'$ becomes $q' = 1 - q \in {\widehat y, 1 - \widehat y}$, or in other words the generator uses the same binary cross-entropy applied to the discriminator but now with the labels reversed.
+
 <!---
 It is worth considering what this reformulation entails. For a single binary random variable, the Shannon entropy is as follows:
 
@@ -53,26 +64,8 @@ $$
 Plotting this equation with $p$ on the x-axis and $H(x)$ on the y-axis, we have
 ![entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
 
-Entropy is largest where $p = 1-p = 1/2$.  Now binary cross-entropy for $N$ values is
-
-$$
-H(x) = -1/N \sum_n p_n \log (p_n) - (1-p_n) \log(1-p_n)
-$$
+Shannon entropy is largest where $p = 1-p = 1/2$.  
 --->
-
-The loss for the discrimator is
-
-$$
-J_d(x) = \Bbb E_{x \sim P} Q(x)
-$$
-
-where $P(x)$ is equal to the distribution of $x$ over a mix of real and generated input and $Q(x)$ is the distribution of correct classifications of $P(x)$.  In contrast, the generator's ojective is to fool the discriminator and so it has a loss function of
-
-$$
-J_g(x) = \Bbb E_{x \sim P'} \not Q(x)
-$$
-
-where $P'(x)$ is equal to the distribution of $x$ over generated input and $\not Q(x)$ is equal to the distribution of incorrect classifications of $P(x)$.
 
 ### Implementing a GAN
 
