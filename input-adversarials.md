@@ -1,4 +1,4 @@
-## Input Attribution, Adversarial Examples, and Input Generation
+## Input Attribution and Adversarial Examples
 
 ### Introduction: Fashion MNIST
 
@@ -16,25 +16,22 @@ $$
 \nabla_a O(a; \theta) * a
 $$
 
-where the input $a$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $a$ is $O(a; \theta)$, and $*$ denotes Hadamard (element-wise) multiplication.  This may be accomplished using Pytorch in a similar manner as above, and for some variety we can also perform the calculation using Tensorflow as follows:
+where the input $a$ is a tensor of the input image (28x28), the output of the model with parameters $\theta$ and input $a$ is $O(a; \theta)$, and $*$ denotes Hadamard (element-wise) multiplication.  Here we implement gradientxinput using pytorch as follows:
 
 ```python
-def gradientxinput(features, label):
+def gradientxinput(model, input_tensor, output_dim):
 	...
-	optimizer = tf.keras.optimizers.Adam()
-	features = features.reshape(1, 28, 28, 1)
-	ogfeatures = features # original tensor
-	features = tf.Variable(features, dtype=tf.float32)
-	with tf.GradientTape() as tape:
-		predictions = model(features)
+	input_tensor.requires_grad = True
+	output = model.forward(input_tensor)
+	output = output.reshape(1, output_dim).max()
 
-	input_gradients = tape.gradient(predictions, features).numpy()
-	input_gradients = input_gradients.reshape(28, 28)
-	ogfeatures = ogfeatures.reshape(28, 28)
-	gradxinput = tf.abs(input_gradients) * ogfeatures
-	...
+	# backpropegate output gradient to input
+	output.backward(retain_graph=True)
+	gradientxinput = torch.abs(input_tensor.grad) * input_tensor
+	return gradientxinput
 ```
-such that `ogfeatures` and `gradxinput` may be fed directly into `matplotlib.pyplot.imshow()` for viewing.  Note that the images and videos presented here were generated using pytorch, with a similar (and somewhat less involved) implementation as the one put forth in the preceding section for obtaining gradientxinput tensors. 
+
+Note that the figures below also have a max normalization step before returning the gradientxinput tensor.  The `gradientxinput` object returned is a `torch.Tensor()` object and happily may be viewed directly using `matplotlib.pyplot.imshow()`. 
 
 For an image of a sandal, we observe the following attribution:
 
