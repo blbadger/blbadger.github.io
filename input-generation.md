@@ -289,13 +289,15 @@ or 'Chainmail'
 
 ![generated badger]({{https://blbadger.github.io}}/neural_networks/generated_chainmail_multiscalejitter.png)
 
-Note, however, that transformational invariance does not necessarily lead to a more recognizable image for all class types: ants, for example, are generally clearer when not transformed.
+Note, however, that transformational invariance does not necessarily lead to a noticeable increase in recognizability for all class types: ants, for example, are not as substantially improved when we use transformational invariance 
 
-We can also add rotations and translations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
+![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_ant_transformed.png)
+
+We can also add rotations and translations to our jitter and convolutions and interpolations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
 
 ![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
 
-# Image Transformation
+### Image Transformation
 
 It is worth appreciating exactly what we were able to do in the last section.  Using a deep learning model trained for image classification combined with a few general principles of how natural images should look, we were able to reconstruct a variety of recognizable images representing various desired classes.  
 
@@ -305,7 +307,7 @@ To begin with, it may be illuminating to perform a control experiment in which t
 
 ![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_dalmatian.png)
 
-The dalmatian's spots are slightly exaggerated, but aside from some general lack of resolution the dalmatians are still clearly visible. Now let's make a relatively small transformation from one breed of dog to another.  Beginning again with images of dalmatians but this time performing the input gradient procedure with a target class of 'Siberian Husky', we have
+The dalmatian's spots are slightly exaggerated, but aside from some general lack of resolution the dalmatians are still clearly visible. Now let's make a relatively small transformation from one breed of dog to another.  Beginning again with images of dalmatians but this time performing the input gradient procedure with a target class of 'Siberian Husky' we have
 
 ![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_husky.png)
 
@@ -323,8 +325,11 @@ Other transformations are possible, such as this badger from a rose bush
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/flower_badger_single.png)
 
+or this tulip bed into a 'Tractor'
 
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/rose_into_tractor2.png)
 
+or these flowers transformed into 'Soccer ball"
 
-
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_soccerball.png)
 
