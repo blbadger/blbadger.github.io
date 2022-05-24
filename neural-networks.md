@@ -8,15 +8,122 @@ Another way to accomplish this task is to employ a computational method.  One co
 
 The failure of attempts to directly replicate complex tasks programatically has led to increased interest in the use of probability theory to make estimations rather than absolute statements, resulting in the expansion of a field of statistical learning.  Particularly difficult tasks like image classification often require particularly detailed computational methods for best accuracy, and this computationally-focused statistical learning is called machine learning.
 
-### Implementing a neural network to classify images
-
 The current state-of-the-art method for classifying images via machine learning is achieved with neural networks.  These are programs that use nodes called artificial 'neurons' that have associated weights and biases that are adjusted in accordance to some loss function in order to 'learn' during training.  These neuron are arranged in sequential layers, each representing the input in a potentially more abstract manner before the output layer is used for classification.  This sequential representation of the input in order to accomplish a machine learning task is the core idea behind the field of deep learning, encompasses artifical neural networks along with other models such as Boltzmann machines.
 
-A hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.
+A hands-on introduction to the theory and utility of neural networks for image classification is found in Nielsen's [book](http://neuralnetworksanddeeplearning.com/), and the core algorithms of stochastic gradient descent and backpropegation that are used to train neural nets on this page are explained there.  For a deeper and more comprehensive study of this and related topics, perhaps the best resource is the [classic text](https://www.deeplearningbook.org/) by Goodfellow, Bengio, and Courville.  This page will continue with the assumption of some familiarity with the fundamental ideas behind deep learning.  Note thatexplanation of the utility of convolutions is given below, as this topic is particularly important to this page and is somewhat specialized to image-based deep learning models.
 
 Neural networks are by no means simple constructions, but are not so prohibitively complicated that they cannot be constructed from scratch such that each operation to every individual neuron is clearly defined (see [this repo](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork_scratch.py) for an example).  But this approach is relatively slow: computing a tensor product element-wise in high-level programming languages (C, C++, Python etc) is much less efficient than computation with low-level array optimized libraries like BLAS and LAPACK.  In python, `numpy` is perhaps the most well-known and powerful library for general matrix manipulation, and this library can be used to simplify and speed up neural network implementations, as seen [here](https://github.com/blbadger/neural-network/blob/master/connected/fcnetwork.py). 
 
 As effective as numpy is, it is not quite ideal for speedy computations with very large arrays, specifically because it does not optimize memory allocation and cannot make use of a GPU for many simultaneous calculations. To remedy this situation, there are a number of libraries were written  for the purpose of rapid computations with the tensors, with Tensorflow and PyTorch being the most popular.  Most of this page references code employing Tensorflow (with a Keras front end) and was inspired by the [Keras introduction](https://www.tensorflow.org/tutorials/keras/classification) and [load image](https://www.tensorflow.org/tutorials/load_data/images?hl=TR) tutorials.  
+
+### Convolutions Explained
+
+A convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight.  The weights are called the kernal or filter, and are usually denoted as $\omega$ Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
+
+$$
+\omega = 
+\frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+\end{bmatrix}
+$$
+
+To perform a convolution, this kernal is applied to each pixel in the input to produce an output image in which each pixel corresponds to the average of itself along with all adjacent pixels.  To see how this kernal blurs an input, say the following pixel values were found somewhere in an image $f(x, y)$:
+
+$$
+f(x, y) = 
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & 10 & 2 \\
+1 & 3 & 0 \\
+\end{bmatrix}
+$$
+
+The convolution operation applied to this center element of the original image $f(x_1, y_1)$ with pixel intensity $10$ now is
+
+$$
+\omega * f(x_1, y_1) =
+\frac{1}{9}
+\begin{bmatrix}
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+1 & 1 & 1 \\
+\end{bmatrix} 
+*
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & 10 & 2 \\
+1 & 3 & 0 \\
+\end{bmatrix}
+$$
+
+The two-dimensional convolution operation is computed in an analagous way to the one-dimensional vector dot (scalar) product.  Indeed, the convolutional operation is what is called an inner product, which is a generalization of the dot product into two or more dimensions.  Dot products convey information of both magnitude and the angle between vectors, and similarly inner products convey both a generalized magnitude magnitude and a kind of multi-dimensional angle between operands.  
+
+The calculation for the convolution is as follows:
+
+$$
+\omega * f(x_2, y_2) = 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + \\
+1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
+= 22/9 \\
+\approx 2.44 < 10
+$$
+
+so that the convolved output $f'(x, y)$ will have a value of $2.4$ in the same place as the unconvolved input $f(x, y)$ had value 10.  
+
+$$ f'(x, y) = 
+\begin{bmatrix}
+a_{1, 1} & a_{1, 2} & a_{1, 3} \\
+a_{2, 1} & a_{2, 2} = 22/9 & a_{2, 3} \\
+a_{3, 1} & a_{3, 2} & a_{3, 3} \\
+\end{bmatrix}
+$$
+
+Thus the pixel intensity of $f'(x, y)$ at position $m, n = 2, 2$ has been reduced.  If we calculate the other values of $a$, we find that it is more similar to the values of the surrounding pixels compared to the as well. The full convolutional operation simply repeats this process for the rest of the pixels in the image to calculate $f'(x_1, y_1), ..., f'(x_m, y_n)$.  A convolution applied using this particular kernal is sometimes called a normalized box blur, and as the name suggests it blurs the input slightly. 
+
+But depending on the kernal, we can choose to not blur an image at all. Here is the identity kernal, which gives an output image that is identical with the input.
+
+$$
+\omega = 
+\begin{bmatrix}
+0 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+We can even sharpen an input, ie decrease the correlation between neighboring pixels, with the following kernal.
+
+$$
+\omega = 
+\begin{bmatrix}
+0 & -1/2 & 0 \\
+-1/2 & 2 & -1/2 \\
+0 & -1/2 & 0 \\
+\end{bmatrix}
+$$
+
+Why would convolutions be useful for deep learning models applied to images?
+
+Feed-forward neural networks are composed of layers that sequentially represent the input in a better and better way until the final layer is able to perform some task.  This sequential representation is learned by the model and not specified prior to training, allowing neural networks to accomplish an extremely wide array of possible tasks.
+
+When passing information from one layer to the next, perhaps the simplest approach is to have each node ('artificial neuron') from the previous layer connect with each node in the next.  This means that for one node in the second layer of width $n$, the activation $a_{m, n}$ is computed by adding all the weighted activations from the previous layer of width $m$ to the bias for that node $b_n$
+
+$$
+a_{m, n} =  \left( \sum_m w_m z_m \right ) + b_n
+$$
+
+where $z_m$ is the result of a (usually nonlinear) function applied to the activation $a_m$ of the previous layer's node to result in an output.  The same function is then applied to $a_{m, n}$ to make the output for one neuron of the second layer, and the process is repeated for all node in layer $n$.
+
+This is called a fully connected architecture, as each node from one layer is connected to all the nodes in the adjacent layers.  For a two-layer network,  it is apparent that the space complexity of this architecture with regards to storing the model's parameters scales quadratically with $m*n$, meaning that for even moderately sized inputs the number of parameters becomes extremely large if the second layer is not very small.
+
+One approach to dealing with this issue is to simply not connect all the nodes from each layer to the next.  If we use a convolution, we can learn only the parameters necessary to define that convolution, which can be a very small number (9 + 1 for a 3x3 kernal with a bias parameter).  The weights learned for a kernal are not changed as the kernal is scanned accross the input image (or previous layer), although it is common practice to learn multiple kernals at once in order to allow more information to pass between layers.
+
+Practicality aside, convolutions are very useful for image-based deep learning models.  In this section, we have seen how different kernals are able to sharpen, blur, or else do nothing to an input image.  This is not all: kernals can also transform an input to perform edge detection, texture filtering, and more.  The ability of a neural network to learn the weights of a kernal allows it to learn which of these operations should be performed across the entire image.
+
+
+### Implementing a neural network to classify images
 
 The first thing to do is to prepare the training and test datasets.  Neural networks work best with large training sets composed of thousands of images, so we split up images of hundreds of cells into many smaller images of one or a few cells.  We can also performed a series of rotations on these images:  rotations and translation of images are commonly used to increase the size of the dataset of interest.  These are both types of data augmentation, which is when some dataset is expanded by a defined procedure.  Data augmentation should maintain all invariants in the original dataset in order to be representative of the information found there, and in this case we can perform arbitrary translations and rotations.  But for other image sets, this is not true: for example, rotating a 6 by 180 degrees yields a 9 meaning that arbitrary rotation does not maintain the invariants of images of digits.
 
@@ -334,21 +441,25 @@ $$
 \nabla_a O(a; \theta) * a
 $$
 
-where $\nabla_a$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $O(a; \theta)$ is the output of our model with parameters $\theta$ and input $a$ and $*$ denotes Hadamard (element-wise) multiplication. This can be implemented as follows:
+where $\nabla_a$ is the gradient with respect to the input tensor (in this case a 1x256x256 monocolor image) and $O(a; \theta)$ is the output of our model with parameters $\theta$ and input $a$ and $*$ denotes Hadamard (element-wise) multiplication.  This may be accomplished in Tensorflow as follows:
 
 ```python
-def gradientxinput(model, input_tensor, output_dim):
+def gradientxinput(features, label):
 	...
-	input_tensor.requires_grad = True
-	output = model.forward(input_tensor)
-	output = output.reshape(1, output_dim).max()
+	optimizer = tf.keras.optimizers.Adam()
+	features = features.reshape(1, 28, 28, 1)
+	ogfeatures = features # original tensor
+	features = tf.Variable(features, dtype=tf.float32)
+	with tf.GradientTape() as tape:
+		predictions = model(features)
 
-	# backpropegate output gradient to input
-	output.backward(retain_graph=True)
-	gradientxinput = torch.abs(input_tensor.grad) * input_tensor
-	return gradientxinput
+	input_gradients = tape.gradient(predictions, features).numpy()
+	input_gradients = input_gradients.reshape(28, 28)
+	ogfeatures = ogfeatures.reshape(28, 28)
+	gradxinput = tf.abs(input_gradients) * ogfeatures
+	...
 ```
-although note that the figures below also have a max normalization step before returning the gradientxinput tensor.  The `gradientxinput` object returned is a `torch.Tensor()` object and happily may be viewed directly using `matplotlib.pyplot.imshow()`. 
+such that `ogfeatures` and `gradxinput` may be fed directly into `matplotlib.pyplot.imshow()` for viewing. 
 
 Earlier it was noted that a human may learn to distinguish between a healthy and unhealthy cell by looking for clumps of protein in the images provided.  Does a neural network perform classification the same way?  Applying our input attribution method to one particular example of an unhealthy cell image for a trained model, we have
 
