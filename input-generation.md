@@ -175,7 +175,7 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 It should be noted that this input generation process is fairly tricky: challenges include unstable gradients resulting learning rates (here `0.15`) being too high or initial inputs not being scaled correctly, or else the learning rate not being matchd with the number of iterations being performed.  Features like learning rate decay and gradient normalization were not found to result in substantial improvements to the resulting images.
 
-For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  The initial random image is transformed as the class activation (logit) increases for the appropriate index.
+For most ImageNet categories, the preceeding approach does not yield very recognizable images.  Features of a given category are often muddled together or dispered throughout the generated input.  Below is a typical result, in this case when 'ant' is chosen (`class_index = 310`).  The initial random image is transformed as the class activation (logit) increases for the appropriate index.  Logits for the model (InceptionV3) given the input to the left are displayed as a scatterplot, with the desired output in red.
 
 {% include youtube.html id='x5ydF_bORFQ' %}
 
@@ -257,11 +257,14 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 			...
 			if i % 5 == 0:
 				single_input = torch.nn.functional.interpolate(single_input, 256)
-			else:
-				single_input = torch.nn.functional.interpolate(single_input, 100 + 28*(i % 5 - 1))
-				
-			# optional: resize back to 256x256
-			# single_input = single_input = torch.nn.functional.interpolate(single_input, 256)
+			elif i % 5 == 1:
+				single_input = torch.nn.functional.interpolate(single_input, 198)
+			elif i % 5 == 2:
+				single_input = torch.nn.functional.interpolate(single_input, 160)
+			elif i % 5 == 3:
+				single_input = torch.nn.functional.interpolate(single_input, 180)
+			elif i % 5 == 4:
+				single_input = torch.nn.functional.interpolate(single_input, 200)
 ```
 
 The class label (and input gradient) tends to be fairly unstable during training, but the resulting images can be fairly recognizable: observe the lion's chin and mane appear in the upper left hand corner during input modification.
@@ -291,3 +294,37 @@ Note, however, that transformational invariance does not necessarily lead to a m
 We can also add rotations and translations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
 
 ![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
+
+# Image Transformation
+
+It is worth appreciating exactly what we were able to do in the last section.  Using a deep learning model trained for image classification combined with a few general principles of how natural images should look, we were able to reconstruct a variety of recognizable images representing various desired classes.  
+
+This is remarkable because the model in question (InceptionV3) was not designed or trained to generate anything at all, merely to make accurate classifications.  Moreover, the initial input being used as a baseline for image generation (a scaled uniform or normal random distribution) is quite different from anything that exists in the training dataset Imagenet, as these are all real images.  What happens if we start with a real image and then apply our input gradient descent method to that?
+
+To begin with, it may be illuminating to perform a control experiment in which the input is the same as the targeted class.  In this case we would expect to simply see an exaggeration of the features that distinguish the object of the class compared to other classes.  Applying our transformation-resistatant and Gaussian-convolved input gradient method to images of dalmations that are not found in the original Imagenet training dataset, we have
+
+![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_dalmatian.png)
+
+The dalmatian's spots are slightly exaggerated, but aside from some general lack of resolution the dalmatians are still clearly visible. Now let's make a relatively small transformation from one breed of dog to another.  Beginning again with images of dalmatians but this time performing the input gradient procedure with a target class of 'Siberian Husky', we have
+
+![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_husky.png)
+
+The spots have all but disappeared, replaced by thicker fur and the grey stripes typical of Huskies.  Note how even smaller detailes are changed: in the bottom right, note how the iris color changes from dark brown to light blue, another common Husky characteristic.
+
+Transforming an input from one breed of dog to another may not seem difficult, but the input gradient procedure is capable of some very impressive changes.  Here we begin with images of flowers and target the 'Castle' class
+
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_castle.png)
+
+and once again we have recognizable images of the target class formed.  Even with as substantial a change as this, some outputs are unmistakable, such as this castle tower 
+
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/single_castle.png)
+
+Other transformations are possible, such as this badger from a rose bush
+
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/flower_badger_single.png)
+
+
+
+
+
+
