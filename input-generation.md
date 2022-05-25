@@ -106,7 +106,48 @@ In the last section we saw that using the gradient of the output with respect to
 
 Is there some way we can prevent our trained deep learning models from making unrealistic images during gradient descent on a random input?  Research into this question has found that indeed there is a way: restrict the image modification process such that some quality of a real image is enforced.  We will proceed with this investigation using an Inceptionv3 (aka GoogleNetv3) trained on the full ImageNet dataset, which consists of labelled images of 1000 classes.
 
-Which qualities of a real image should be enforced during gradient descent? A good paper on this topic by [Olah and colleages](https://distill.pub/2017/feature-visualization/) details how different research groups have attempted to restrict a variety of qualities, but most fall into fouor categories: input or gradient regularization, frequency penalization, transformational invariance, and a learned prior. 
+The inception architecture was designed to allow for deeper networks without an exorbitant increase in the number of parameters used.  InceptionV3 is a slight reformulation of the original architecture, and as published [here](https://arxiv.org/pdf/1512.00567v3.pdf) and has the following architecture:
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/inceptionv3_architecture.png)
+
+(image source: Google [docs](https://cloud.google.com/tpu/docs/inception-v3-advanced))
+
+After loading the model with `model = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=True).to(device)`, we can use the following function
+
+```python
+
+def count_parameters(model):
+	table = PrettyTable(['Modules', 'Parameters'])
+	total_params = 0
+	for name, parameter in model.named_parameters():
+		if not parameter.requires_grad:
+			continue
+		param = parameter.numel()
+		table.add_row([name, param])
+		total_params += param 
+	print (table)
+	print (f'Total trainable parameters: {total_params}')
+	return total_params
+```
+to find that this is a fairly large model with `27161264`, or just over 27 million, trainable parameters.
+
+```python
++--------------------------------------+------------+
+|               Modules                | Parameters |
++--------------------------------------+------------+
+|      Conv2d_1a_3x3.conv.weight       |    864     |
+|       Conv2d_1a_3x3.bn.weight        |     32     |
+|        Conv2d_1a_3x3.bn.bias         |     32     |
+|      Conv2d_2a_3x3.conv.weight       |    9216    |
+|       Conv2d_2a_3x3.bn.weight        |     32     |
+|        Conv2d_2a_3x3.bn.bias         |     32     |
+... (shortened for brevity)
+|              fc.weight               |  2048000   |
+|               fc.bias                |    1000    |
++--------------------------------------+------------+
+```
+
+Now that we have our trained model, which qualities of a real image should be enforced during gradient descent? A good paper on this topic by [Olah and colleages](https://distill.pub/2017/feature-visualization/) details how different research groups have attempted to restrict a variety of qualities, but most fall into fouor categories: input or gradient regularization, frequency penalization, transformational invariance, and a learned prior. 
 
 We will focus on the first three of these restrictions in this section.  
 
