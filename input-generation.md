@@ -374,3 +374,87 @@ or these flowers transformed into 'Soccer ball"
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_soccerball.png)
 
+Earlier it was noted that image resizing with `torch.nn.functional.interpolate()` leads to translation when downsampling the input. This can be avoided by switching the interpolation mode away from nearest neighbor, to instead average either using a bilinear or bicubic method.  This can be done in `torch.nn.functional.interpolate()` by specifying the correct keyword argument, or else we can make use of the module `torchvision.transforms.Resize()`, which defaults to bilinear mode.  The latter is the same method we used to import our images, and was employed below.  Notice how there is now no more translation in the input image.
+
+![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_strawberry.png)
+
+### Input Generation from Other Inceptionv3 Layers
+
+We have seen how representatives of each image class of the training dataset may be generated using gradient descent on the input with the addition of a few reasonable priors, and how this procedure is also capable of transforming images of one class to another.  Generation of an image matching a specific class requires an output layer trained to perform this task, and for most models this means that we are limited to one possible layer.  But InceptionV3 is a somewhat unique architecture in that it has another output layer, called the auxiliary output, which is employed during training to stabilize gradients and then deactivated during evaluation with $model.eval()$.
+
+Let's investigate whether we can perform gradient descent to generate images using this auxiliary output rather than the usual output layer.  The architecture we want to use is
+
+![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/inception_aux.png)
+
+Note that the Pytorch implementation of the above architecture does not include the softmax layer on either the auxiliary or main output.
+
+Pytorch uses an approach to automatic differentiation called symbol-to-number differentiation, which is also employed by Caffe.  In this approach, the derivatives (in the form of Jacobian matricies) of each layer are specified at the start of runtime, and computed to form numerical values for each node upon forward and backpropegation.  This approach is in contrast to symbolic differentiation, in which extra nodes are added to each model node (ie layer) that provides a symbolic description of the derivatives of those nodes.  The computational graph for performing backpropegation is identical between these two approaches, but the former hides the graph itself and the latter exposes it at the expense of extra memory.  The latter approach is taken by libraries like Theano and Tensorflow.
+
+We wish to back-propegate from a leaf node of our model, but this node is not returned as an output during evaluation mode. Switching to training mode is not an option because the batch normalization layers of the model will attain new parameters, interfering with the model's ability to classify images.  
+
+In symbolic differentiation -based libraries, computing the gradient of the input with respect to a layer that is not the output is relatively straighforward: the output and loss from the specific layer of interest are specified, and backpropegation can then proceed directly from that layer. But in Pytorch this is not possible, as all we would have from an internal node is a number representing the gradient with respect to the output, rather than instruction for obtaining a gradient from that node itself.
+
+So instead we must modify our model itself.  If we were not using an open-source model this would not be feasible, but as we are indeed using a freely accessible model we can do this a number of different ways.  One way is to make a new class that inherits from `nn.Module` and is passed as an initialization argument the original Inceptionv3 model.  We then provide a new `forward()` method that modifies the original inceptionv3 method (located [here](https://github.com/pytorch/vision/blob/main/torchvision/models/inception.py)) such that the layer of choice is returned.
+
+```python
+class NewModel(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x):
+		# N x 3 x 299 x 299
+		x = self.model.Conv2d_1a_3x3(x)
+		# N x 32 x 149 x 149
+		x = self.model.Conv2d_2a_3x3(x)
+		# N x 32 x 147 x 147
+		x = self.model.Conv2d_2b_3x3(x)
+		# N x 64 x 147 x 147
+		x = self.model.maxpool1(x)
+		# N x 64 x 73 x 73
+		x = self.model.Conv2d_3b_1x1(x)
+		# N x 80 x 73 x 73
+		x = self.model.Conv2d_4a_3x3(x)
+		# N x 192 x 71 x 71
+		x = self.model.maxpool2(x)
+		# N x 192 x 35 x 35
+		x = self.model.Mixed_5b(x)
+		# N x 256 x 35 x 35
+		x = self.model.Mixed_5c(x)
+		# N x 288 x 35 x 35
+		x = self.model.Mixed_5d(x)
+		# N x 288 x 35 x 35
+		x = self.model.Mixed_6a(x)
+		# N x 768 x 17 x 17
+		x = self.model.Mixed_6b(x)
+		# N x 768 x 17 x 17
+		x = self.model.Mixed_6c(x)
+		# N x 768 x 17 x 17
+		x = self.model.Mixed_6d(x)
+		# N x 768 x 17 x 17
+		x = self.model.Mixed_6e(x)
+		# N x 768 x 17 x 17
+		aux = self.model.AuxLogits(x)
+		return aux
+```
+
+One important thing to note is that the Inceptionv3 module is quite flexible with regards to the input image size when used normally in evaluation mode, but now that we have modified the network it must be given images of size 299x299 or the dimensions of the hidden layers will not align with what is required.  This can be enforced by something as straightforward as
+
+```python
+image = torchvision.transforms.Resize(size=[299, 299])(image)
+```
+in the `__getitem__()` special method of our data loader (see the source code for more information). 
+
+The gradients in this layer also tend to be slightly smaller than the original output gradients, so some re-scaling of our gradient descent constant $\epsilon$ is necessary. For clarity, at each iteration of our descent starting with input $a_n$, we make input $a_{n+1}$ by finding the L1-normalized loss of the auxiliary output layer $O'(a; \theta)$ with respect to the desired output $\widehat{y}$,
+
+$$
+a_{n+1} = a_n - \epsilon \nabla_a J(O'(a; \theta), \widehat{y})
+$$
+
+The results are interesting: perhaps slightly clearer than when we used the normal output layer, but less organized as well.
+
+![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/auxiliary_flowers_castle.png)
+
+
+
