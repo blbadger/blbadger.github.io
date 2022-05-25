@@ -1,4 +1,4 @@
-## Input Generation from Trained Classifiers
+## Input Generation from Classification Models
 
 ### Modifying an input via gradient descent
 
@@ -286,7 +286,13 @@ although for other classes, few perspectives are reached: observe that for 'Keyb
 
 The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
 
+Re-sizing may be accomplished using the `torch.nn.functional.interpolate()` module, which defaults to a interpolation mode of nearest neighbors.  This is identical to the k-nearest neighbors algorithm with a value of $k=1$ fixed.  For images, the value of the center of a pixel is taken to be the value across the area of the entire pixel such that the new pixel's center always lies inside one pixel or another (or on a border).  To make this clearaer, suppose we were down-sampling an image by a factor of around 1.5. For the new pixel centered on a red dot for clarity, there is
+
+![convolved keyboard]({{https://blbadger.github.io}}/neural_networks/interpolation_explanation2.png)
+
 In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, $\epsilon \in [-c, c]$ is added to element $a_{x, y}$ of input $a$ to make element $a_{x, y}'= a{x, y} + \epsilon$ of a transformed input $a'$.  In the code sample below, we assign $\epsilon \in [0.0001,0.0001]$ but this choice is somewhat arbitrary.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
+
+One note of warning: `torchvision.transforms.ColorJitter()` is a difficult method for which to set a deterministic seed. `random.seen()`, `torch.set_seed()`, and `np.seed()` together are not sufficient to make the color jitter deterministic, so it is not clear how exact reproduction would occur using this method. If a deterministic reproduction is desired, it may be best to avoid using this module.
 
 ```python
 def generate_input(model, input_tensors, output_tensors, index, count):
@@ -312,7 +318,13 @@ The class label (and input gradient) tends to be fairly unstable during training
 
 {% include youtube.html id='yp9axdNcCG8' %}
 
-And this is not atypical, as for half of our 16 random input we get a recognizable lion face and mane.
+There is a noticeable translation in the image from the top left to the bottom right during the initial 75 iterations with the function above.  This is the result of using nearest neighbor interpolation while resampling using `torch.nn.functional.interpolate`.  It appears that in the case where multiple pixels are equidistant from the target, the upper left-most pixel is chosen as the nearest neighbor.  When downsampling an input, we are guaranteed to have four pixels that are nearest neighbors to the new pixels.
+
+This can be remedied by choosing an interpolation method that averages over pixels rather than picking only one pixel value.  The following diagram illustrates the upper-left nearest neighbor interpolation method compared to a bilinear interpolation. Note how the upper left pixel becomes centered down and to the right of its original center for nearest neighbor interpolation, whereas in contrast the bilinear interpolation simply averages all pixels together and does not 'move' the top left value to the center.
+
+![interpolation explanation]({{https://blbadger.github.io}}/neural_networks/interpolation_explanation.png)
+
+We therefore have a method that effectively translates as well as resizes our original images, which is applied in addition to the Gaussian convolution and jitter mentioned above. For around half of our 16 random input we get a recognizable lion face and mane, and for others a paw is found
 
 ![generated lion]({{https://blbadger.github.io}}/neural_networks/generated_multiscalejitter_lion.png)
 
@@ -332,7 +344,7 @@ or 'Chainmail'
 
 Note, however, that transformational invariance does not necessarily lead to a noticeable increase in recognizability for all class types: ants, for example, are not as substantially improved when we use transformational invariance 
 
-![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_ant_transformed.png)
+![generated ant]({{https://blbadger.github.io}}/neural_networks/generated_ant_transformed.png)
 
 We can also add rotations and translations to our jitter and convolutions and interpolations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
 
