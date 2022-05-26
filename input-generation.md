@@ -1,4 +1,4 @@
-## Input Generation from Classification Models
+## Image Generation with Classification Models
 
 ### Modifying an input via gradient descent
 
@@ -100,7 +100,7 @@ but generally images of tulips are changed less, which is to be expected given t
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip_orig.png)
 
-### Generating Images using Prior Assumptions
+### Generating Images using a Smoothness Prior
 
 In the last section we saw that using the gradient of the output with respect to the input $\nabla_a J(O(a, \theta))$ may be used to modify the input in order to make it more like what the model expects a given parameter label to be.  But applying this gradient to an initial input of pure noise was not found to give a realistic representation of the desired type fo flower, because the loss function is discontinuous with respect to the input.  Instead we find a type of adversarial example which is confidently assigned to the correct label by the model, but does not actually resemble any kind of flower at all.
 
@@ -284,7 +284,9 @@ although for other classes, few perspectives are reached: observe that for 'Keyb
 
 ![convolved keyboard]({{https://blbadger.github.io}}/neural_networks/generated_keyboard.png)
 
-The final prior we will add is for transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
+### Generating Images using Transformation Resiliency
+
+Next we will add transformational resiliency.  The idea here is that we want to generate images that the model does not classify very differently if a small transformation is applied.  This transformation could be a slight change in color, a change in image resolution, a translation or rotation, among other possibilities.  Along with a Gaussian convolution, we also apply to the first three quarters of all images one of five re-sizing transformations.
 
 Re-sizing may be accomplished using the `torch.nn.functional.interpolate()` module, which defaults to a interpolation mode of nearest neighbors.  This is identical to the k-nearest neighbors algorithm with a value of $k=1$ fixed.  For images, the value of the center of a pixel is taken to be the value across the area of the entire pixel such that the new pixel's center always lies inside one pixel or another (or on a border).  To make this clearaer, suppose we were down-sampling an image by a factor of around 1.5. For the new pixel centered on a red dot for clarity, there is
 
@@ -390,7 +392,7 @@ Earlier it was noted that image resizing with `torch.nn.functional.interpolate()
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_strawberry.png)
 
-### Input Generation from Other Inceptionv3 Layers
+### Input Generation with Auxiliary Outputs
 
 We have seen how representatives of each image class of the training dataset may be generated using gradient descent on the input with the addition of a few reasonable priors, and how this procedure is also capable of transforming images of one class to another.  Generation of an image matching a specific class requires an output layer trained to perform this task, and for most models this means that we are limited to one possible layer.  But InceptionV3 is a somewhat unique architecture in that it has another output layer, called the auxiliary output, which is employed during training to stabilize gradients and then deactivated during evaluation with $model.eval()$.
 
