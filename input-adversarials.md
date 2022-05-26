@@ -1,6 +1,6 @@
 ## Input Attribution and Adversarial Examples
 
-### Introduction: Fashion MNIST
+### Classification of Fashion MNIST images
 
 The [fashion MNIST dataset](https://github.com/zalandoresearch/fashion-mnist) is a set of 28x28 monocolor images of articles of 10 types of clothing, labelled accordingly.  Because these images are much smaller than the 256x256 pixel biological images above, the architectures used above must be modified (or else the input images must be reformatted to 256x256).  The reason for this is because max pooling (or convolutions with no padding) lead to reductions in subsequent layer size, eventually resulting in a 0-dimensional layer.  Thus the last four max pooling layers were removed from the deep network, and the last two from the AlexNet clone ([code](https://github.com/blbadger/neural-network/blob/master/fmnist_bench.py) for these networks).  
 
@@ -239,7 +239,7 @@ and the same is found for a daisy.
 
 It is important to note that untrained models are incapable of preserving practically any input features in the input gradient.  This is to be expected given that the component operations of forward and backpropegation have no guarantee to preserve any information.  
 
-### Additive Attributions for Non-Locality
+### Additive Attributions for Nonlocality
 
 In the last section, we saw that the training process (here 40 epochs) leads to a preservation of certain features of the input image in the gradient of the input with respect to the loss function.  We can observe the process of feature preservation during model training as follows:
 
