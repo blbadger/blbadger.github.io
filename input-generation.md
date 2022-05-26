@@ -288,7 +288,7 @@ The final prior we will add is for transformational resiliency.  The idea here i
 
 Re-sizing may be accomplished using the `torch.nn.functional.interpolate()` module, which defaults to a interpolation mode of nearest neighbors.  This is identical to the k-nearest neighbors algorithm with a value of $k=1$ fixed.  For images, the value of the center of a pixel is taken to be the value across the area of the entire pixel such that the new pixel's center always lies inside one pixel or another (or on a border).  To make this clearaer, suppose we were down-sampling an image by a factor of around 1.5. For the new pixel centered on a red dot for clarity, there is
 
-![convolved keyboard]({{https://blbadger.github.io}}/neural_networks/interpolation_explanation2.png)
+![interpolation explanation]({{https://blbadger.github.io}}/neural_networks/interpolation_explanation2.png)
 
 In addition, a small intensity change is applied to each pixel at random for each iteration using `torchvision.transforms.ColorJitter(c)` where `c` is a value of choice.  Specifically, $\epsilon \in [-c, c]$ is added to element $a_{x, y}$ of input $a$ to make element $a_{x, y}'= a{x, y} + \epsilon$ of a transformed input $a'$.  In the code sample below, we assign $\epsilon \in [0.0001,0.0001]$ but this choice is somewhat arbitrary.  Note that this transformation may also be undertaked with much larger values (empirically up to around $\epsilon = 0.05$) and for color, contrast, and saturation as well as brightness by modifying the arguments to `torchvision.transforms.ColorJitter()`.
 
@@ -464,9 +464,9 @@ $$
 a_{n+1} = a_n - \epsilon \nabla_a J(O'(a; \theta), \widehat{y})
 $$
 
-The results are interesting: perhaps slightly clearer than when we used the normal output layer, but less organized as well.
+The results are interesting: perhaps slightly clearer than when we used the normal output layer, but maybe less organized as well.
 
-![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/auxiliary_flowers_castle.png)
+![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/auxiliary_flowers_array.png)
 
 
 
