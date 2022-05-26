@@ -352,31 +352,31 @@ We can also add rotations and translations to our jitter and convolutions and in
 
 ![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
 
-### Image Transformation
+### Image Transfiguration
 
 It is worth appreciating exactly what we were able to do in the last section.  Using a deep learning model trained for image classification combined with a few general principles of how natural images should look, we were able to reconstruct a variety of recognizable images representing various desired classes.  
 
-This is remarkable because the model in question (InceptionV3) was not designed or trained to generate anything at all, merely to make accurate classifications.  Moreover, the initial input being used as a baseline for image generation (a scaled uniform or normal random distribution) is quite different from anything that exists in the training dataset Imagenet, as these are all real images.  What happens if we start with a real image and then apply our input gradient descent method to that?
+This is remarkable because the model in question (InceptionV3) was not designed or trained to generate anything at all, merely to make accurate classifications.  Moreover, the initial input being used as a baseline for image generation (a scaled uniform or normal random distribution) is quite different from anything that exists in the training dataset Imagenet, as these are all real images.  What happens if we start with a real image and then apply our input gradient descent method to that?  This process will be termed 'transfiguration' on this page to avoid confusion with 'transformation', which is reserved for the jitters, interpolations, rotations, and translations applied to an input.
 
 To begin with, it may be illuminating to perform a control experiment in which the input is the same as the targeted class.  In this case we would expect to simply see an exaggeration of the features that distinguish the object of the class compared to other classes.  Applying our transformation-resistatant and Gaussian-convolved input gradient method to images of dalmations that are not found in the original Imagenet training dataset, we have
 
-![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_dalmatian.png)
+![transfigured dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_dalmatian.png)
 
-The dalmatian's spots are slightly exaggerated, but aside from some general lack of resolution the dalmatians are still clearly visible. Now let's make a relatively small transformation from one breed of dog to another.  Beginning again with images of dalmatians but this time performing the input gradient procedure with a target class of 'Siberian Husky' we have
+The dalmatian's spots are slightly exaggerated, but aside from some general lack of resolution the dalmatians are still clearly visible. Now let's make a relatively small transfiguration from one breed of dog to another.  Beginning again with images of dalmatians but this time performing the input gradient procedure with a target class of 'Siberian Husky' we have
 
-![transformed dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_husky.png)
+![transfigured dalmatian]({{https://blbadger.github.io}}/neural_networks/transformed_dalmatian_husky.png)
 
 The spots have all but disappeared, replaced by thicker fur and the grey stripes typical of Huskies.  Note how even smaller detailes are changed: in the bottom right, note how the iris color changes from dark brown to light blue, another common Husky characteristic.
 
 Transforming an input from one breed of dog to another may not seem difficult, but the input gradient procedure is capable of some very impressive changes.  Here we begin with images of flowers and target the 'Castle' class
 
-![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_castle.png)
+![transfigured flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_castle.png)
 
 and once again we have recognizable images of the target class formed.  Even with as substantial a change as this, some outputs are unmistakable, such as this castle tower 
 
-![transformed flowers]({{https://blbadger.github.io}}/neural_networks/single_castle.png)
+![transfigured flowers]({{https://blbadger.github.io}}/neural_networks/single_castle.png)
 
-Other transformations are possible, such as this badger from a rose bush
+Other transfigurations are possible, such as this badger from a rose bush
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/flower_badger_single.png)
 
@@ -384,13 +384,13 @@ or this tulip bed into a 'Tractor'
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/rose_into_tractor2.png)
 
-or these flowers transformed into 'Soccer ball"
+or these flowers transfigured into 'Soccer ball"
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_soccerball.png)
 
 Earlier it was noted that image resizing with `torch.nn.functional.interpolate()` leads to translation when downsampling the input. This can be avoided by switching the interpolation mode away from nearest neighbor, to instead average either using a bilinear or bicubic method.  This can be done in `torch.nn.functional.interpolate()` by specifying the correct keyword argument, or else we can make use of the module `torchvision.transforms.Resize()`, which defaults to bilinear mode.  The latter is the same method we used to import our images, and was employed below.  Notice how there is now no more translation in the input image.
 
-![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_strawberry.png)
+![transfigured flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_strawberry.png)
 
 ### Input Generation with Auxiliary Outputs
 
