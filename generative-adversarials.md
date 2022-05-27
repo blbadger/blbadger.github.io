@@ -26,7 +26,7 @@ $$
 \Bbb E_{x \sim p(data)} \log d(x) = 0
 $$
 
-As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases.
+As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases, meaning that the discriminator has maximized $v$.
 
 Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, 
 
@@ -35,7 +35,7 @@ $$
 = -\infty
 $$ 
 
-it has also minimized minimized $v$.
+then so too is $-v$ minimized, which was what we wanted.
 
 The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images. We are not guaranteed convergence using
 
@@ -475,7 +475,6 @@ class StableGenerator(nn.Module):
 		self.batchnorm3 = nn.BatchNorm2d(128)
 		self.batchnorm4 = nn.BatchNorm2d(64)
 
-
 	def forward(self, input):
 		input = input.reshape(minibatch_size, 100, 1, 1)
 		transformed_input = self.input_transform(input)
@@ -531,8 +530,8 @@ A fully connected architecture seemed to be effective for small (28x28) monocolo
 
 and the generator mirrors this but with a latent space of 100, meaning that the entire network is over 230 million parameters which nears the GPU memory limit on colab for 32-digit float parameters.
 
-This network and a half-sized version (half the first layer's neurons) both make remarkably realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses are made.
+This network and a half-sized version (half the first layer's neurons) both make realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses are made.
 
 ![large fcgan]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
 
-
+These images look quite realistic, but 
