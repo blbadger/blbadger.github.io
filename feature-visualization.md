@@ -1,4 +1,4 @@
-## Feature Visualization and Deep Dream
+## Feature Visualization and Deep Dreams
 
 ### Introduction
 
