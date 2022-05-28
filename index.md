@@ -201,7 +201,7 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Input Generation and Transfiguration](/input-generation.md)
 
-![generated badger](/neural_networks/generated_singlebadger.png)
+![generated badger](/neural_networks/generated_badgers.png)
 
 
 ### [Feature Visualization](/feature-visualization.md)
