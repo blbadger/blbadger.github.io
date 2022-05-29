@@ -274,7 +274,7 @@ Depending on the initial input given to the model, different outputs will form. 
 
 This is perhaps in part the result of the ImageNet training set containing images where not the entire tractor is visible at once.  This appears to be a typical result for this image generation technique: if we optimize for 'Badger', we usually see the distinctive face pattern but in a variety of orientations
 
-![convolved badgers]({{https://blbadger.github.io}}/neural_networks/generated_badgers.png)
+![convolved badgers]({{https://blbadger.github.io}}/neural_networks/generated_badger_array.png)
 
 Here for 'Ant' we have
 
