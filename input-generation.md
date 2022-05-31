@@ -499,6 +499,33 @@ The generated images shown so far on this page exhibit to some extent or another
 
 One way to address the problem of high frequency and apparent chaos in the input gradient during image generation is to apply the gradient at different scales. This idea was pioneered in the context of feature visualization by Mordvintsev and colleages and published in the [Deep dream](https://www.tensorflow.org/tutorials/generative/deepdream) tutorial, and is conceptually fairly straightforward: one can observe that generated images (of both features or target classes) have small-scale patterns and large-scale patterns, and often these scales do not properly interact.  When a lack of interaction occurs, the result is smaller versions of something that is found elsewhere in the images, but in a place that reduces image clarity.
 
+The implementation of this idea is fairly simple: we train as before, using Gaussian blurring to limit too many high-frequency patterns from forming and iterate through gradient descent.  
+
+```python
+def generate_singleinput(model, input_tensors, output_tensors, index, count, random_input=True):
+	...
+	for i in range(150):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		input_grad = layer_gradient(model, single_input, target_output) # compute input gradient
+		input_grad = clip_gradient(input_grad)
+		single_input = single_input - 0.25 * input_grad # gradient descent step
+		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 5)
+```
+
+And now we the image is enlarged before performing more iterations of gradient descent,
+```python
+	single_input = torchvision.transforms.Resize([310, 310])(single_input)
+	for i in range(100):
+		single_input = random_crop(single_input)
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		input_grad = layer_gradient(model, single_input, target_output) # compute input gradient
+		input_grad = clip_gradient(input_grad)
+		single_input = single_input - 0.05 * input_grad # gradient descent step
+		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3, sigma=2-i/100)
+```
+
+and this can be repeated with larger and larger initial images.
+
 ### GoogleNet
 
 It is worth noting again that the process of enforcing the priors for natural images as we are doing on this page brings into question what the images generated mean.  
