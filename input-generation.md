@@ -512,7 +512,7 @@ def generate_singleinput(model, input_tensors, output_tensors, index, count, ran
 		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 5)
 ```
 
-And now we the image is enlarged before performing more iterations of gradient descent,
+And now we the image is enlarged before performing more iterations of gradient descent (usually with slightly smaller learning rate as well),
 ```python
 	single_input = torchvision.transforms.Resize([310, 310])(single_input)
 	for i in range(100):
@@ -526,11 +526,8 @@ And now we the image is enlarged before performing more iterations of gradient d
 
 and this can be repeated with larger and larger initial images.
 
+
 ### GoogleNet
-
-It is worth noting again that the process of enforcing the priors for natural images as we are doing on this page brings into question what the images generated mean.  
-
-
 
 
 
