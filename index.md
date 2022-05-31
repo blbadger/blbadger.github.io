@@ -196,7 +196,7 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Input Attribution and Adversarial Examples](/input-adversarials.md)
 
-![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_slow.gif)
+![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_cropped.gif)
 
 
 ### [Input Generation and Transfiguration](/input-generation.md)
