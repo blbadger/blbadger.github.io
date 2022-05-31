@@ -489,9 +489,31 @@ $$
 a_{n+1} = a_n - \epsilon \nabla_a J(O'(a; \theta), \widehat{y})
 $$
 
-The results are interesting: perhaps slightly clearer than when we used the normal output layer, but maybe less organized as well.
+The results are interesting: perhaps slightly clearer (ie higher resolution) than when we used the normal output layer, but maybe less organized as well.
 
 ![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/auxiliary_flowers_array.png)
+
+### Octaves 
+
+The generated images shown so far on this page exhibit to some extent or another the presence of high-frequency patterns, which can be deleterious to the ability to make an image that is accurate to a real-world example.  High frequency between image pixels often appears as areas of bright dots set near each other, or else sometimes as dark lines that seem to overlay light regions.  The wavy, almost ripple-like appearance of some of the images above appears to be the result of application of smoothing (via Gaussian kernal convolution or re-sizing) to the often chaotic and high-frequency gradient applied to the images during generation.
+
+One way to address the problem of high frequency and apparent chaos in the input gradient during image generation is to apply the gradient at different scales. This idea was pioneered in the context of feature visualization by Mordvintsev and colleages and published in the [Deep dream](https://www.tensorflow.org/tutorials/generative/deepdream) tutorial, and is conceptually fairly straightforward: one can observe that generated images (of both features or target classes) have small-scale patterns and large-scale patterns, and often these scales do not properly interact.  When a lack of interaction occurs, the result is smaller versions of something that is found elsewhere in the images, but in a place that reduces image clarity.
+
+### GoogleNet
+
+It is worth noting again that the process of enforcing the priors for natural images as we are doing on this page brings into question what the images generated mean.  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
