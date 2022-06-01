@@ -380,7 +380,7 @@ $$
 L_1 (a) = \sum_i \lvert a_i \rvert
 $$
 
-Using this method, we go from $(\widehat y_{250}, \widehat y_{251} = (c, 0)$ to $(\widehat y_{250}, \widehat y_{251} = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251} = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes.  After running some experiments, we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
+Using this method, we go from $(\widehat y_{250}, \widehat y_{251}) = (c, 0)$ to $(\widehat y_{250}, \widehat y_{251}) = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251}) = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes.  After running some experiments, we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
 
 {% include youtube.html id='1bdpG1caKMk' %}
 
