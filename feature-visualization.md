@@ -20,23 +20,38 @@ One way to address this question is to try to figure out which elements of the i
 
 Another way is to try to understand what the representation of each layer actually respond to with regards to the input, and then try to understand how this response occurs.  Perhaps the most natural way to study this is to feed many input into the model and observe which input give a higher activation to any layer or neuron or even subset of neurons across many layers, and which images yield a lower activation.  
 
+
+There is a problem with this approach, however: images as a rule do not contain only one characteristic that could become a feature, and furthermore even if some did there is little way of knowing how features would be combined together between layers being that nonlinear transformations are applied to all layers in a typical deep learning model.  
+
+Instead we can approach the question of what each neuron, subset of neurons, or layer responds to by having the neurons in question act as if they are our model's outputs, and performing gradient ascent on the input.  We have seen [elsewhere](https://github.com/blbadger/blbadger.github.io/blob/master/input-generation.md) that an output can effectively specify the expected image on the input using gradient ascent combined with a limited number of priors that are common to nearly all natural images (pixel correlation, transformational resiliency, etc.) so it is logical to postulate that the same may be true for outputs that are actually hidden layers, albeit that maximizing the activation of a hidden layer neuron or layer does not have an intrinsic meaning w.r.t the true output.
+
+To make this more precise, what we are searching for is an input $a'$ such that the activation of our chosen hidden layer or neuron is maximized,
+
+$$
+a' = \mathrm {arg \; max} z^l
+$$
+
 For a convolutional layer with $n$ filters, the total activation (pre-nonlinearity applied) at layer $l$ would be 
 
 $$
 z^l = \sum_m \sum_n z^l_{m, n}
 $$
 
-There is a problem with this approach, however: images as a rule do not contain only one characteristic that could become a feature, and furthermore even if some did there is little way of knowing how features would be combined together between layers being that nonlinear transformations are applied to all layers in a typical deep learning model.  
+and for a subset of neurons in layer $l$, say all in row $n$, 
 
-Instead we can approach the question of what each neuron, subset of neurons, or layer responds to by having the neurons in question act as if they are our model's outputs, and performing gradient ascent on the input.  We have seen [elsewhere](https://github.com/blbadger/blbadger.github.io/blob/master/input-generation.md) that an output can effectively specify the expected image on the input using gradient ascent combined with a limited number of priors that are common to nearly all natural images (pixel correlation, transformational resiliency, etc.) so it is logical to postulate that the same may be true for outputs that are actually hidden layers, albeit that maximizing the activation of a hidden layer neuron or layer does not have an intrinsic meaning w.r.t the true output.
+$$
+z^{l, n} = \sum_n z^l_{m, n}
+$$
+
+An approximation for the input $a'$ such that when given to our model gives $O(a', \theta)$ that maximized $z^l$ may be found via gradient descent.
 
 We will be using Pytorch for our experiments on this page.  As explained [elsewhere](https://blbadger.github.io/input-generation.html#input-generation-with-auxiliary-outputs), Pytorch uses symbol-to-number differentiation as opposed to symbol-to-symbol differentiation which means that the automatic differentiation engine must be told which gradients are to be computed before forward propegation begins. Practically speaking, this means that getting the gradient of a model's parameters with respect to a hidden layer is difficult without special methods. 
 
 Rather than deal with these somewhat tricky functions, we can instead simply modify the model in question in order to make whichever layer is of interest to be our new output.  This section will focus on the InceptionV3 model, which is as follows:
 
-![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/inceptionv3_architecture.png)
+![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/inception3_labelled.png)
 
-(image source: Google [docs](https://cloud.google.com/tpu/docs/inception-v3-advanced))
+(image retrieved and modified from Google [docs](https://cloud.google.com/tpu/docs/inception-v3-advanced))
 
 and may be found on the following [github repo](https://github.com/pytorch/vision/blob/main/torchvision/models/inception.py).  Inspecting this repository will show us how the inceptionv3 model has been implemented, and that there are a few differences between the origina model and the open-source Pytorch version (most notably that the last layers do not contain softmax layers by default).
 
@@ -76,7 +91,7 @@ newmodel = NewModel(Inception3)
 ```
 we can now use our `newmodel` class to find the activation of the `Conv2d_3b_1x1` layer and perform backpropegation to the input, which is necessary to find the gradient of the output of this layer with respect to the input image.
 
-To be specific, we want to find the gradient of the output of our layer in question $O(l)$ with respect to the input $x$
+To be specific, we want to find the gradient of the output of our layer in question $O^l$ with respect to the input $x$
 
 $$
 g = \nabla_a O^l(a, \theta)
@@ -95,7 +110,45 @@ def layer_gradient(model, input_tensor, desired_output):
 	return gradient
 ```
 
-We can use this procedure to visualize the input generated by maximizing the output of the given neuron, or layer.  If we choose module `mixed_6b` and maximize the activations of neurons in the 654th (of 738 possible) feature map of this module, we find an interesting pattern is formed.
+Now that we have the gradient of the output (which is our hidden layer of interest in the original InceptionV3 model) with respect to the input, we can perform gradient descent on the input in order to maximize the activations of that layer.  Note that this process is sometimes called 'gradient ascent', as we are modifying the input in order to maximize a value in the output.  But as our loss is the $L_1$ distance from a tensor with all elements assigned to be a large constant $C=200$, gradient descent is the preferred terminology on this page as this loss is indeed minimized by moving against the gradient.
+
+Performing gradient descent on a randomized input alone does not yield very recognizable images.  As for the generation of images for output classes, this is most likely the result of deep learning classification models being in general discontinuous with respect to the loss.  
+
+Thus we need to enforce some kind of restrictions on what kind of images can be generated by our procedure.  These restrictions may be thought of as Bayesian priors that we introduce, knowing certain characteristics that natural images possess.  The three characteristics that are implemented below are relative smoothness (enforced by Guassian convolution via `torchvision.transforms.functional.gaussian_blur`), resolution invariance (using `torchvision.transforms.Resize()`) and small transformational invariance (with `torchvision.transforms.ColorJitter`). 
+```
+def generate_singleinput(model, input_tensors, index, count, random_input=True):
+	...
+	manualSeed = 999
+	random.seed(manualSeed)
+	torch.manual_seed(manualSeed)
+	single_input = (torch.rand(1, 3, 299, 299))/5 + 0.5 # scaled  distribution initialization
+
+	single_input = single_input.reshape(1, 3, 299, 299).to(device)
+	original_input = torch.clone(single_input).reshape(3, 299, 299).permute(1, 2, 0).cpu().detach().numpy()
+
+	for i in range(200):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		input_grad = layer_gradient(model, single_input, index) # compute input gradient
+		single_input = single_input - 0.15 * input_grad # gradient descent step
+		if i < 176:
+			if i < 100:
+				single_input = torchvision.transforms.functional.gaussian_blur(single_input, 5)
+			else:
+				single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3)
+			if i % 5 == 1:
+				single_input = torchvision.transforms.Resize(128)(single_input)
+			elif i % 5 == 2:
+				single_input = torchvision.transforms.Resize(160)(single_input)
+			elif i % 5 == 3:
+				single_input = torchvision.transforms.Resize(250)(single_input)
+			elif i % 5 == 4:
+				single_input = torchvision.transforms.Resize(220)(single_input)
+
+			single_input = torchvision.transforms.Resize(299)(single_input)
+		single_input = torchvision.transforms.ColorJitter(0.01, 0.01, 0.01, 0.01)(single_input)
+```
+
+We can use this procedure of gradient descent on the input combined with priors to visualize the input generated by maximizing the output of the given neuron, or layer.  If we choose module `mixed_6b` and maximize the activations of neurons in the 654th (of 738 possible) feature map of this module, we find an interesting pattern is formed.
 
 ![654 visualization]({{https://blbadger.github.io}}/neural_networks/inception_654.png)
 
@@ -105,7 +158,29 @@ When the same procedure is applied to the 415th feature map of the same module, 
 
 ![654 visualization]({{https://blbadger.github.io}}/neural_networks/inception_415.png)
 
-Something interesting to note is that the neuron at position $[415, 9, 9]$ in the `mixed_6b` module is activated by a number of different patterns at once, which is notably different than the neuron at position $[354, 6, 0]$ which is maximally activated by one chain-like pattern but no other clearly noticable pattersns.
+Something interesting to note is that the neuron at position $[415, 9, 9]$ in the `mixed_6b` module is activated by a number of different patterns at once, which is notably different than the neuron at position $[354, 6, 0]$ which is maximally activated by one rope-like pattern alone.
+
+### Mapping Feature Visualization
+
+In the pioneering work on feature visualization in the original Googlenet architecture (aka InceptionV1), [Olah and colleagues](https://distill.pub/2017/feature-visualization/) observed an increase in the complexity of the images resulting from maximizing the activation of successive layers in that model: the deeper into the network the authors looked, the more information could be gleaned from the input after performing gradient descent to maximize the layer's activation.  Early layers show maze-like patterns typical of early convolutional layers, which give way to more complicated patterns and textures and eventually whole objects.  Curiously, the last layers were reported to contain multiple objects jumbled together, a phenomenon this author has observed [elsewhere](https://blbadger.github.io/input-generation.html).
+
+The InceptionV3 architecture differs somewhat from the GoogleNet that was thoroughly explored, so it is worth investigating whether or not the same phenomenon is observed for this model as well.  
+
+For the mixed layer 6c-6e, which comprise most of the intermediate section of the InceptionV3 model,
+
+![inception3 map]({{https://blbadger.github.io}}/neural_networks/inception3_focused.png)
+
+Optimizing the input for 16 different features of the Mixed 6c module (specifically layers in the red concatenated tensor at the end of the 6c module as shown above), we see mostly patterns and textures formed.
+
+![layer 6c]({{https://blbadger.github.io}}/neural_networks/mixed_6c_layeropt.png)
+
+And for 16 layers in in the Mixed 6d,
+
+![layer 6d]({{https://blbadger.github.io}}/neural_networks/mixed_6d_layeropt.png)
+
+and 16 layers in Mixed 6e we see more complicated and at times chaotic patters.
+
+![layer 6e]({{https://blbadger.github.io}}/neural_networks/mixed_6e_layeropt.png)
 
 ### Layer and Neuron Interactions
 
