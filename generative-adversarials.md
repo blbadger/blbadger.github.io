@@ -43,11 +43,11 @@ Formulating the generative adversarial network in the form of the zero-sum minim
 
 Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
 
-The loss for the discrimator is binary cross-entropy between the predicted outputs $d \in {y, 1-y}$ and actual labels $q \in {\widehat y, 1 - \widehat y}$
+The loss for the discrimator is binary cross-entropy between the predicted outputs $d \in \{ y, 1-y \}$ and actual labels $q \in \{ \widehat y, 1 - \widehat y \}$
 
 $$
 H(d, q) = -\sum_i d_i \log q_i \\
-= -y log \widehat y - (1-y) \log(1-\widehat y) 
+= -y \log \widehat y - (1-y) \log(1-\widehat y) 
 $$
 
 where $P(x)$ is equal to the distribution of $x$ over a mix of real and generated input and $Q(x)$ is the distribution of correct classifications of $P(x)$.  
@@ -282,7 +282,7 @@ Visualization (and indeed any form of exploration is difficult for a high-dimens
 
 ### Continuity and GAN stability
 
-
+tbc
 
 ### Unstable Convolutional GANs
 
