@@ -371,16 +371,16 @@ The spots have all but disappeared, replaced by thicker fur and the grey stripes
 We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
 
 $$
-J_n(O(a, \theta)) = \left( c - \widehat y_{250} * \frac{q-n}{q} \right) + \left( c - \widehat y_{251} * \frac{n}{q} \right) + L_1
+J_n(O(a, \theta)) = \left( c - \widehat y_{250} * \frac{q-n}{q} \right) + \left( c - \widehat y_{251} * \frac{n}{q} \right) 
 $$
 
-where $L-1$ is the manhattan metric regularizer, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
+and to the sume on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
 
 $$
 L_1 (a) = \sum_i \lvert a_i \rvert
 $$
 
-Using this method, we go from $(\widehat y_250, \widehat y_{251} = (c, 0)$ to $(\widehat y_{250}, \widehat y_251 = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251} = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes.  After running some experiments, we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
+Using this method, we go from $(\widehat y_{250}, \widehat y_{251} = (c, 0)$ to $(\widehat y_{250}, \widehat y_{251} = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251} = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes.  After running some experiments, we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
 
 {% include youtube.html id='1bdpG1caKMk' %}
 
