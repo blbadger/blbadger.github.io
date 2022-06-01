@@ -138,11 +138,18 @@ In the first of these regions, convolutions are applied in a sequential manner w
 
 ![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/inception3_entry_convs.png)
 
-It is interesting to note that there are practially no patterns at all in the input when we optimize for activation of the Conv2d 1a layer. Instead, it appears that the InceptionV3 network has learned a modified version of the CMYK color pallate, in which yellow has been substituted for a combination of yellow and blue (ie green). To this author's knowledge it has not been found previously that a network has learned a similar
+It is interesting to note that there are practially no patterns at all in the input when we optimize for activation of the Conv2d 1a layer. Instead, it appears that the InceptionV3 network has learned a modified version of the CMYK color pallate, in which yellow has been substituted for a combination of yellow and blue (ie green). To this author's knowledge it has not been found previously that a deep learning model has learned a color pallate, so it is unknown whether or not this behavior is specific to Inceptionv3.
+
+Note that the gray filters signify a lack of gradient in that feature with respect to the input. 
+
+The second convolutional layer begins to respont to patterns in the image, and in the following layers the features become more detailed.
 
 Next we come to the mixed convolutional layers, which are composed of modules (sometimes called inception units) that contain convolutional layers in parallel, which become concatenated together at the end of the module to make one stack of the features combining all features from these formerly parallel unit.
 
-![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/inception3_early_mixed.png)
+![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_early_mixed.png)
+
+
+![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_late_mixed.png)
 
 ### Layer and Neuron Interactions
 
