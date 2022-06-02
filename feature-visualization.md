@@ -28,7 +28,7 @@ Instead we can approach the question of what each neuron, subset of neurons, or 
 To make this more precise, what we are searching for is an input $a'$ such that the activation of our chosen hidden layer or neuron $z^l$ (given the model configuration $\theta$ and input $a$) denoted by $z^l(a, \theta)$ is maximized,
 
 $$
-a' = \underset{a} \mathrm{arg \; max} \; z^l(a, \theta)
+a' = \underset{a}{\mathrm{arg \; max}} \; z^l(a, \theta)
 $$
 
 For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation at layer (ie feature) $l$ is
