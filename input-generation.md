@@ -526,8 +526,12 @@ And now we the image is enlarged before performing more iterations of gradient d
 
 and this can be repeated with larger and larger initial images.
 
-
 ### GoogleNet
+
+The generated images presented on this page are recognizable but have a noticable imperfection: they are not
+
+In images of inputs generated using gradient descent published by [Mordvintsev and colleagues](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), the inputs are better-formed and much less noisy.  While they did not publish their code, Øygard [investigated](https://www.auduno.com/2015/07/29/visualizing-googlenet-classes/) possible methods by which these images were obtained and found a way to produce more or less equivalent images and authored a helpful [Github repo](https://github.com/auduno/deepdraw) with the programs responsible.
+
 
 
 
