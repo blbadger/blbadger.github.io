@@ -1,4 +1,4 @@
-## Feature Visualization and Deep Dream
+## Feature Visualization and Deep Dreams
 
 ### Introduction
 
@@ -25,29 +25,45 @@ There is a problem with this approach, however: images as a rule do not contain 
 
 Instead we can approach the question of what each neuron, subset of neurons, or layer responds to by having the neurons in question act as if they are our model's outputs, and performing gradient ascent on the input.  We have seen [elsewhere](https://github.com/blbadger/blbadger.github.io/blob/master/input-generation.md) that an output can effectively specify the expected image on the input using gradient ascent combined with a limited number of priors that are common to nearly all natural images (pixel correlation, transformational resiliency, etc.) so it is logical to postulate that the same may be true for outputs that are actually hidden layers, albeit that maximizing the activation of a hidden layer neuron or layer does not have an intrinsic meaning w.r.t the true output.
 
-To make this more precise, what we are searching for is an input $a'$ such that the activation of our chosen hidden layer or neuron is maximized,
+To make this more precise, what we are searching for is an input $a'$ such that the activation of our chosen hidden layer or neuron $z^l$ (given the model configuration $\theta$ and input $a$) is maximized,
 
 $$
-a' = \mathrm {arg \; max} z^l
+a' = \mathrm \underset{a} {arg \; max} \; z^l(a, \theta)
 $$
 
-For a convolutional layer with $n$ filters, the total activation (pre-nonlinearity applied) at layer $l$ would be 
+For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation (pre-nonlinearity applied) at layer (ie feature) $l$ is
 
 $$
 z^l = \sum_m \sum_n z^l_{m, n}
 $$
 
+In tensor notation, this would be written as `[zl, :, :]` where `:` indicates all elements of the appropriate index.
+
 and for a subset of neurons in layer $l$, say all in row $n$, 
 
 $$
-z^{l, n} = \sum_n z^l_{m, n}
+z^l_m = \sum_n z^l_{m, n}
 $$
 
-An approximation for the input $a'$ such that when given to our model gives $O(a', \theta)$ that maximized $z^l$ may be found via gradient descent.
+which is denoted `[zl, m, :]`, and that the element of row `m` and column `n` is denoted `[xl, m, n]`.
+
+Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs. An approximation for the input $a'$ such that when given to our model gives $O(a', \theta)$ that maximizes $z^l$ may be found via gradient descent.  The gradient in question is the gradient of the activation of a specific layer (or a subset of this layer) $z^l$
+
+$$
+g = \nabla_a (C - z^l(a, \theta))
+$$
+
+where $C$ is a large constant. At each step of the gradient descent procedure, the input at point $a_k$ is updated to make $a_{k+1} as follows
+
+$$
+a_{k+1} = a_k - \epsilon \cdot g
+$$
+
+with the  hope that the sequence $a_k, a_{k+1}, a_{k+2}, ..., a_j$ converges to $a'$.
 
 We will be using Pytorch for our experiments on this page.  As explained [elsewhere](https://blbadger.github.io/input-generation.html#input-generation-with-auxiliary-outputs), Pytorch uses symbol-to-number differentiation as opposed to symbol-to-symbol differentiation which means that the automatic differentiation engine must be told which gradients are to be computed before forward propegation begins. Practically speaking, this means that getting the gradient of a model's parameters with respect to a hidden layer is difficult without special methods. 
 
-Rather than deal with these somewhat tricky functions, we can instead simply modify the model in question in order to make whichever layer is of interest to be our new output.  This section will focus on the InceptionV3 model, which is as follows:
+Rather than deal with these somewhat tricky special functions, we can instead simply modify the model in question in order to make whichever layer is of interest to be our new output.  This section will focus on the InceptionV3 model, which is as follows:
 
 ![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/inception3_labelled.png)
 
