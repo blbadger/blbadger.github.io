@@ -120,11 +120,54 @@ We can use this procedure of gradient descent on the input combined with priors 
 
 The first thing to note is that the tensor indicies for 'row' and 'column' do indeed accurately reflect the position of the pixels affected by maximization of the output of the neuron of a given position.
 
-When the same procedure is applied to the 415th feature map of the same module, a somewhat more abstract pattern is formed.  Observe how the single neuron exhibits a much broader field of influence on the input when it is optimized compared to the previous layer: this is a common feature of interior (ie not near layer 0 or 738) versus exterior (close to 0 or 748 in this particular module).  This is likely the result of differences in the inception module's architecture for different layers that have been concatenated to make the single `mixed_6b` output.
+It is interesting to consider how exactly the feature pattern forms from tiles of each row and column's contribution.  For each feature map in module `mixed_6b`, we have a 17x17 grid and can therefore iterate through each element of the grid, left to right and top to bottom, like reading a book.  Slicing tensors into non-rectangular subsets can be difficult, so instead the process is to compose the loss of two rectangular slices: one for all columns of each row preceding the current row, and another rectangle for the current row up to the appropriate column.
+
+```python
+def layer_gradient(model, input_tensor, desired_output, index):
+	...
+	input_tensor.requires_grad = True
+	output = model(input_tensor).to(device)
+	row, col = index // 17, index % 17
+	if row > 0:
+		focus = output[0, 415, :row, :] # first rectangle of prior rows
+		focus2 = output[0, 415, row, :col+1] # second rectangle of the last row
+		target = torch.ones(focus.shape).to(device)*200
+		target2 = torch.ones(focus2.shape).to(device)*200
+		loss = torch.sum(target - focus)
+		loss += torch.sum(target2 - focus2) # add losses
+
+	else:
+		focus = output[0, 415, 0, :col+1]
+		target = torch.ones(focus.shape).to(device)*200
+		loss = torch.sum(target - focus)
+
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient
+```
+
+Note that we must also set our random seed in order to make reproducable images.  This can be done as follows:
+
+```python
+manualSeed = 999
+random.seed(manualSeed)
+torch.manual_seed(manualSeed)
+```
+
+and this results in
+
+{% include youtube.html id='EJo1fUzheSU' %}
+
+We come to an intersting observation: each neuron when optimized visibly affects only a small area that corresponds to that neuron's position in the `[row, col]` position in the feature tensor, but when we optimize multiple neurons the addition of one more affects the entire image, rather than the area that it would affect if it were optimized alone.  This can be seen by observing how the rope-like segments near the top left corner continue to change upon addition of neurons that alone only affect the bottom-right corner.
+
+How is this possible? Neurons of any one particular layer are usually considered to be linearly independent units, and assumption that provides the basis for being able to apply the gradient of the loss to each element of a layer during training.  But if the neurons of layer `mixed_65 654` were linearly independent with respect to the input maps formed when optimizing these neuron's activations, we would not observe any change in areas unaffected by each neuron.  It is at present not clear why this pattern occurs.
+
+For the 415th feature map of the same module, a somewhat more abstract pattern is formed.  Observe how a single neuron exhibits a much broader field of influence on the input when it is optimized compared to the previous layer: this is a common feature of interior (ie not near layer 0 or 738) versus exterior (close to 0 or 748 in this particular module).  This is likely the result of differences in the inception module's architecture for different layers that have been concatenated to make the single `mixed_6b` output.
 
 ![654 visualization]({{https://blbadger.github.io}}/neural_networks/inception_415.png)
 
 Something interesting to note is that the neuron at position $[415, 9, 9]$ in the `mixed_6b` module is activated by a number of different patterns at once, which is notably different than the neuron at position $[354, 6, 0]$ which is maximally activated by one rope-like pattern alone.
+
 
 The above method for introducing transformational invariance leads to fairly low-resolution images by design (for speed). 
 The Octave method without cropping or padding may be implemented as follows:
