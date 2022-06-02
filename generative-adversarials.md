@@ -546,4 +546,4 @@ This network and a half-sized version (half the first layer's neurons) both make
 
 ![large fcgan]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
 
-These images look quite realistic, but 
+These images look quite realistic, but the truth is that they are far from what we want from a GAN: the are both overfit and underfit at the same time.
