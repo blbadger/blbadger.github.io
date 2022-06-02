@@ -1,4 +1,4 @@
-## Feature Visualization and Deep Dreams
+## Feature Visualization and Deep Dream
 
 ### Introduction
 
@@ -144,10 +144,15 @@ Note that the gray filters signify a lack of gradient in that feature with respe
 
 The second convolutional layer begins to respont to patterns in the image, and in the following layers the features become more detailed.
 
-Next we come to the mixed convolutional layers, which are composed of modules (sometimes called inception units) that contain convolutional layers in parallel, which become concatenated together at the end of the module to make one stack of the features combining all features from these formerly parallel unit.
+Next we come to the mixed convolutional layers, which are composed of modules (sometimes called inception units) that contain convolutional layers in parallel, which become concatenated together at the end of the module to make one stack of the features combining all features from these units.  The first three mixed units
 
 ![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_early_mixed.png)
 
+At the middle mixed layers, we have
+
+![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_middle_mixed.png)
+
+and in the late mixed layers, many patterns appear 
 
 ![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_late_mixed.png)
 
