@@ -528,20 +528,59 @@ and this can be repeated with larger and larger initial images.
 
 ### GoogleNet
 
-The generated images presented on this page are recognizable but have a noticable imperfection: they are not
+The generated images presented on this page are recognizable but have a noticable imperfection: they are rather noisy, with different colors in close juxtaposition such that the overall patterns are somewhat obscured and the color is often quite inaccurate.
 
 In images of inputs generated using gradient descent published by [Mordvintsev and colleagues](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), the inputs are better-formed and much less noisy.  While they did not publish their code, Øygard [investigated](https://www.auduno.com/2015/07/29/visualizing-googlenet-classes/) possible methods by which these images were obtained and found a way to produce more or less equivalent images and authored a helpful [Github repo](https://github.com/auduno/deepdraw) with the programs responsible.
 
+Both referenced studies have observed images that are in general clearer than most of the images on this page.  Øygard adapted a method modified from an approach in the Tensorflow deep dream [tutorial](https://www.tensorflow.org/tutorials/generative/deepdream) that is termed 'octaves', in which the input image is up-scaled between rounds of gradient descent using Gaussian convolution.  
 
+The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.
 
+Another difference is that instead of maintaining a constant learning rate $\eta$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
 
+```python
+def octave(single_input, target_output, iterations, learning_rates, sigmas, size, pad=False, crop=True):
+	...
+	start_lr, end_lr = learning_rates
+	start_sigma, end_sigma = sigmas
 
+	for i in range(iterations):
+		if crop:
+			cropped_input, crop_height, crop_width = random_crop(single_input.detach(), size)
+		else:
+			cropped_input, crop_height, crop_width = random_crop(single_input.detach(), len(single_input[0][0]))
+			size = len(single_input[0][0])
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		input_grad = layer_gradient(Inception, cropped_input, target_output) # compute input gradient
+		single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)* input_grad # gradient descent step
+		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3, sigma=(start_sigma*(iterations-i)/iterations + end_sigma*i/iterations))
+		if pad:
+			single_input = torchvision.transforms.Pad([1, 1], fill=0.7)(single_input)
 
+	return single_input
+```
 
+There are a number of different ways that octave-based gradient descent may be applied, but here we choose to apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was modified).  
 
+The results show some increased clarity but also that images remain noisy with respect to the colors and textures that are formed. 
 
+![Inception output]({{https://blbadger.github.io}}/neural_networks/octaves_inception3_test.png)
 
+A wide array of possible modifications to the octave gradient descent method were attempted with little improvement on the clarity displayed above.  This led to the idea that perhaps it is the model itself rather than the optimization method that was responsible for the increased noise relative to what other researchers have found.
 
+The cited works in this section all used the original GoogleNet architecture to generate images.  This may be depicted as follows:
+
+![GoogleNet architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_architecture.png)
+
+It may be appreciated that this network is a good deal shallower than InceptionV3 (22 versus 48 layers, respectively) but otherwise contains a number of the same general features.  
+
+One notable change from the original is that the Pytorch version of GoogleNet uses Batch normalization, whereas the original did not. 
+
+Optimizing for the 'Stop Light' ImageNet class, we now have a much more coherent image in terms of color and patterns over two octaves.
+
+{% include youtube.html id='QEJeSm9xNa8' %}
+
+For generated images of the entire suite of ImageNet classes, see [here](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
 
 
 
