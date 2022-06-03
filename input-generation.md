@@ -348,10 +348,6 @@ Note, however, that transformational invariance does not necessarily lead to a n
 
 ![generated ant]({{https://blbadger.github.io}}/neural_networks/generated_ant_transformed.png)
 
-We can also add rotations and translations to our jitter and convolutions and interpolations.  If one expects an image class to contain examples for any arbitrary angle, we can train whilst rotating the input in place.  Here we have a 'Strawberry' 
-
-![generated strawberry]({{https://blbadger.github.io}}/neural_networks/generated_transformed_strawberry.png)
-
 ### Image Transfiguration
 
 It is worth appreciating exactly what we were able to do in the last section.  Using a deep learning model trained for image classification combined with a few general principles of how natural images should look, we were able to reconstruct a variety of recognizable images representing various desired classes.  
@@ -417,7 +413,7 @@ Earlier it was noted that image resizing with `torch.nn.functional.interpolate()
 
 ### Input Generation with Auxiliary Outputs
 
-We have seen how representatives of each image class of the training dataset may be generated using gradient descent on the input with the addition of a few reasonable priors, and how this procedure is also capable of transforming images of one class to another.  Generation of an image matching a specific class requires an output layer trained to perform this task, and for most models this means that we are limited to one possible layer.  But InceptionV3 is a somewhat unique architecture in that it has another output layer, called the auxiliary output, which is employed during training to stabilize gradients and then deactivated during evaluation with $model.eval()$.
+We have seen how representatives of each image class of the training dataset may be generated using gradient descent on the input with the addition of a few reasonable priors, and how this procedure is also capable of transforming images of one class to another.  Generation of an image matching a specific class requires an output layer trained to perform this task, and for most models this means that we are limited to one possible layer.  But InceptionV3 is a somewhat unique architecture in that it has another output layer, called the auxiliary output, which is employed during training to stabilize gradients and then deactivated during evaluation with `model.eval()` if one is using Pytorch.
 
 Let's investigate whether we can perform gradient descent to generate images using this auxiliary output rather than the usual output layer.  The architecture we want to use is
 
@@ -497,49 +493,14 @@ The results are interesting: perhaps slightly clearer (ie higher resolution) tha
 
 The generated images shown so far on this page exhibit to some extent or another the presence of high-frequency patterns, which can be deleterious to the ability to make an image that is accurate to a real-world example.  High frequency between image pixels often appears as areas of bright dots set near each other, or else sometimes as dark lines that seem to overlay light regions.  The wavy, almost ripple-like appearance of some of the images above appears to be the result of application of smoothing (via Gaussian kernal convolution or re-sizing) to the often chaotic and high-frequency gradient applied to the images during generation.
 
-One way to address the problem of high frequency and apparent chaos in the input gradient during image generation is to apply the gradient at different scales. This idea was pioneered in the context of feature visualization by Mordvintsev and colleages and published in the [Deep dream](https://www.tensorflow.org/tutorials/generative/deepdream) tutorial, and is conceptually fairly straightforward: one can observe that generated images (of both features or target classes) have small-scale patterns and large-scale patterns, and often these scales do not properly interact.  When a lack of interaction occurs, the result is smaller versions of something that is found elsewhere in the images, but in a place that reduces image clarity.
+One way to address the problem of high frequency and apparent chaos in the input gradient during image generation is to apply the gradient at different scales. This idea was pioneered in the context of feature visualization by Mordvintsev and colleages and published in the [Deep dream](https://www.tensorflow.org/tutorials/generative/deepdream) tutorial, and is conceptually fairly straightforward: one can observe that generated images (of both features or target classes) have small-scale patterns and large-scale patterns, and often these scales do not properly interact.  When a lack of interaction occurs, the result is smaller versions of something that is found elsewhere in the images, but in a place that reduces image clarity.  The idea is to apply the gradient to different scales of the input image to address this issue.
 
-The implementation of this idea is fairly simple: we train as before, using Gaussian blurring to limit too many high-frequency patterns from forming and iterate through gradient descent.  
+One octave interval is very much like the gradient descent with Gaussian convolution detalied earlier. The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.  Another difference is that instead of maintaining a constant learning rate $\epsilon$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
 
-```python
-def generate_singleinput(model, input_tensors, output_tensors, index, count, random_input=True):
-	...
-	for i in range(150):
-		single_input = single_input.detach() # remove the gradient for the input (if present)
-		input_grad = layer_gradient(model, single_input, target_output) # compute input gradient
-		input_grad = clip_gradient(input_grad)
-		single_input = single_input - 0.25 * input_grad # gradient descent step
-		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 5)
-```
-
-And now we the image is enlarged before performing more iterations of gradient descent (usually with slightly smaller learning rate as well),
-```python
-	single_input = torchvision.transforms.Resize([310, 310])(single_input)
-	for i in range(100):
-		single_input = random_crop(single_input)
-		single_input = single_input.detach() # remove the gradient for the input (if present)
-		input_grad = layer_gradient(model, single_input, target_output) # compute input gradient
-		input_grad = clip_gradient(input_grad)
-		single_input = single_input - 0.05 * input_grad # gradient descent step
-		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3, sigma=2-i/100)
-```
-
-and this can be repeated with larger and larger initial images.
-
-### GoogleNet
-
-The generated images presented on this page are recognizable but have a noticable imperfection: they are rather noisy, with different colors in close juxtaposition such that the overall patterns are somewhat obscured and the color is often quite inaccurate.
-
-In images of inputs generated using gradient descent published by [Mordvintsev and colleagues](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), the inputs are better-formed and much less noisy.  While they did not publish their code, Øygard [investigated](https://www.auduno.com/2015/07/29/visualizing-googlenet-classes/) possible methods by which these images were obtained and found a way to produce more or less equivalent images and authored a helpful [Github repo](https://github.com/auduno/deepdraw) with the programs responsible.
-
-Both referenced studies have observed images that are in general clearer than most of the images on this page.  Øygard adapted a method modified from an approach in the Tensorflow deep dream [tutorial](https://www.tensorflow.org/tutorials/generative/deepdream) that is termed 'octaves', in which the input image is up-scaled between rounds of gradient descent using Gaussian convolution.  
-
-The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.
-
-Another difference is that instead of maintaining a constant learning rate $\eta$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
+There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).
 
 ```python
-def octave(single_input, target_output, iterations, learning_rates, sigmas, size, pad=False, crop=True):
+def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
 	...
 	start_lr, end_lr = learning_rates
 	start_sigma, end_sigma = sigmas
@@ -554,17 +515,33 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 		input_grad = layer_gradient(Inception, cropped_input, target_output) # compute input gradient
 		single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)* input_grad # gradient descent step
 		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3, sigma=(start_sigma*(iterations-i)/iterations + end_sigma*i/iterations))
-		if pad:
-			single_input = torchvision.transforms.Pad([1, 1], fill=0.7)(single_input)
 
 	return single_input
 ```
 
-There are a number of different ways that octave-based gradient descent may be applied, but here we choose to apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was modified).  
+Usually multiple octaves are performed during gradient descent, and this can be achieved by chaining the previous function to resized inputs. Here we have three octaves in total, bringing an initial image of size 299x299 to an output of size 390x390.
 
-The results show some increased clarity but also that images remain noisy with respect to the colors and textures that are formed. 
+```python
+# 1x3x299x299 input
+single_input = octave(single_input, target_output, 100, [1.5, 1], [2.4, 0.8], 0, crop=False)
+
+single_input = torchvision.transforms.Resize([340, 340])(single_input)
+single_input = octave(single_input, target_output, 100, [1.3, 0.45], [1.5, 0.4], 320, crop=True)
+
+single_input = torchvision.transforms.Resize([390, 390])(single_input)
+single_input = octave(single_input, target_output, 100, [1.3, 0.45], [1.5, 0.4], 390, crop=False)
+```
+
+The results show some increased clarity, but also that images remain noisy with respect to the colors and textures that are formed. At least for InceptionV3, rescaling does not appear to resolve the problem of gradients being applied at different scales, although it does increase the final image resolution and clarity.
 
 ![Inception output]({{https://blbadger.github.io}}/neural_networks/octaves_inception3_test.png)
+
+
+### GoogleNet Image Generation
+
+In images of inputs generated using gradient descent published by [Mordvintsev and colleagues](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), generated images are generally better-formed and much less noisy than they appear on this page.  Øygard [investigated](https://www.auduno.com/2015/07/29/visualizing-googlenet-classes/) possible methods by which these images were obtained (as the previous group did not publish their image generation code) and found a way to produce more or less equivalent images and authored a helpful [Github repo](https://github.com/auduno/deepdraw) with the programs responsible.
+
+Both referenced studies have observed images that are in general clearer than most of the images on this page.  Øygard adapted a method modified from an approach in the Tensorflow deep dream [tutorial](https://www.tensorflow.org/tutorials/generative/deepdream) that is termed 'octaves', in which the input image is up-scaled between rounds of gradient descent using Gaussian convolution.  
 
 A wide array of possible modifications to the octave gradient descent method were attempted with little improvement on the clarity displayed above.  This led to the idea that perhaps it is the model itself rather than the optimization method that was responsible for the increased noise relative to what other researchers have found.
 
@@ -580,7 +557,37 @@ Optimizing for the 'Stop Light' ImageNet class, we now have a much more coherent
 
 {% include youtube.html id='QEJeSm9xNa8' %}
 
+Observing more of the images, we find that our octave-based input generation technique is effective for birds
+
+![birds]({{https://blbadger.github.io}}/neural_networks/googlenet_birds.png)
+
+as well as dogs and other animals
+
+![birds]({{https://blbadger.github.io}}/neural_networks/googlenet_animal.png)
+
 For generated images of the entire suite of ImageNet classes, see [here](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
+
+
+### Padding in the first octave
+
+For certain ImageNet classes, generated images tend to have most of their relevant features focused on the periphery, as that is where the gradient is largest.  For example, optimizing for class 19 (chickadee) gives an image in which images of the bird of interest are well-formed but entirely near the image perimeter.
+
+![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee.png)
+
+It is interesting that certain classes tend to exhibit this phenomenon while others almost never do, and why gradient descent would lead to such a pattern is not clear.  Nevertheless, this can be effectively prevented using
+
+```python
+def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
+	...
+		if pad:
+			single_input = torchvision.transforms.Pad([1, 1], fill=0.7)(single_input)
+```
+
+This padding technique is most effective at preventing the peripheral gradient problem, and does not noticeably reduce the image quality.
+
+![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee.png)
+
+{% include youtube.html id='Asl-hV8P1wA' %}
 
 
 
