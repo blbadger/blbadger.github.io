@@ -565,16 +565,21 @@ as well as dogs and other animals
 
 ![birds]({{https://blbadger.github.io}}/neural_networks/googlenet_animal.png)
 
-For generated images of the entire suite of ImageNet classes, see [here](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
+Flames and fires are particularly 
 
+![flames]({{https://blbadger.github.io}}/neural_networks/googlenet_flames.png)
+
+Note how the image generated for 'stove' has much larger flames than are realistic.  This kind of exaggeration is seen for a number of objects in which there is some differentiating features.  On the other hand, the Imagenet dataset has no classes that differentiate faces, and observe how the faces for 'neck brace' below are animal-like, not a surprise being that Googlenet will have seen far more dog and other animal faces than human ones.
+
+![misc]({{https://blbadger.github.io}}/neural_networks/googlenet_highlights.png)
+
+Also observe the fine point accuracy in some of the these images: we even find a sine wave forming in the image of 'oscilloscope', and the 'bolo tie' even has a silver fastener at the end of the tie.
+
+For generated images of the entire suite of ImageNet classes, see [here](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
 
 ### Padding in the first octave
 
-For certain ImageNet classes, generated images tend to have most of their relevant features focused on the periphery, as that is where the gradient is largest.  For example, optimizing for class 19 (chickadee) gives an image in which images of the bird of interest are well-formed but entirely near the image perimeter.
-
-![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee.png)
-
-It is interesting that certain classes tend to exhibit this phenomenon while others almost never do, and why gradient descent would lead to such a pattern is not clear.  Nevertheless, this can be effectively prevented using
+For certain ImageNet classes, generated images tend to have most of their relevant features focused on the periphery, as that is where the gradient is largest.  For example, optimizing for class 19 (chickadee) gives an image in which images of the bird of interest are well-formed but entirely near the image perimeter. It is interesting that certain classes tend to exhibit this phenomenon while others almost never do, and why gradient descent would lead to such a pattern is not clear.  Nevertheless, this can be effectively prevented using
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
@@ -585,9 +590,11 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 
 This padding technique is most effective at preventing the peripheral gradient problem, and does not noticeably reduce the image quality.
 
-![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee2.png)
+![chickadee]({{https://blbadger.github.io}}/neural_networks/googlenet_chickadees.png)
 
 {% include youtube.html id='Asl-hV8P1wA' %}
 
+Comparing this the images obtained using Googlenet compared to InceptionV3 above, we find much more coherent images for familiar objects.
 
+![chickadee]({{https://blbadger.github.io}}/neural_networks/googlenet_comparisons.png)
 
