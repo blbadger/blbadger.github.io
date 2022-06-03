@@ -561,11 +561,11 @@ Observing more of the images, we find that our octave-based input generation tec
 
 ![birds]({{https://blbadger.github.io}}/neural_networks/googlenet_birds.png)
 
-as well as dogs and other animals
+as well as dogs and other animals.
 
 ![birds]({{https://blbadger.github.io}}/neural_networks/googlenet_animal.png)
 
-Flames and fires are particularly 
+Flames and fires are particularly accurate as well.
 
 ![flames]({{https://blbadger.github.io}}/neural_networks/googlenet_flames.png)
 
@@ -573,7 +573,11 @@ Note how the image generated for 'stove' has much larger flames than are realist
 
 ![misc]({{https://blbadger.github.io}}/neural_networks/googlenet_highlights.png)
 
-Also observe the fine point accuracy in some of the these images: we even find a sine wave forming in the image of 'oscilloscope', and the 'bolo tie' even has a silver fastener at the end of the tie.
+Also observe the fine point accuracy in some of the these images: we even find a sine wave forming in the image of 'oscilloscope', and the 'bolo tie' even has a silver fastener at the end of the tie. 
+
+As reported previously, some many of an object contain peripheral features: observe how optimizing for a 'barbell' output includes an arm to pick up the barbell.
+
+![misc]({{https://blbadger.github.io}}/neural_networks/googlenet_barbell.png)
 
 For generated images of the entire suite of ImageNet classes, see [here](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
 
