@@ -585,7 +585,7 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 
 This padding technique is most effective at preventing the peripheral gradient problem, and does not noticeably reduce the image quality.
 
-![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee.png)
+![chickadee]({{https://blbadger.github.io}}/neural_networks/Class 0019- chickadee2.png)
 
 {% include youtube.html id='Asl-hV8P1wA' %}
 
