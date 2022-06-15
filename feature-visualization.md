@@ -37,7 +37,7 @@ $$
 z^l = \sum_m \sum_n z^l_{m, n}
 $$
 
-In tensor notation, this would be written as `[zl, :, :]` where `:` indicates all elements of the appropriate index.
+In tensor notation, this would be written as the total activation of the tensor `[zl, :, :]` where `:` indicates all elements of the appropriate index.
 
 For a subset of neurons in layer $l$, say all neruons in row $n$, 
 
