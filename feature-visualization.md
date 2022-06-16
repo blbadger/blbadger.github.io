@@ -261,6 +261,10 @@ In the late mixed layers, feature activation optimization often leads to recogni
 
 ### Layer and Neuron Interactions
 
+During the process of image classification, different activations per neuron, feature, and layer may be observed. 
+
+![inceptionv3 architecture]({{https://blbadger.github.io}}/neural_networks/Inception3_layer_interaction.png)
+
 ### Mapping GoogleNet Features
 
 ### Mapping ResNet Features
