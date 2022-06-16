@@ -55,15 +55,17 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 
 but the output does not really look like a daisy, or a field of daisies.  
 
-There are a few problems with this approach.  Firstly, it is extremely slow: the gradient of the input is sometimes small, and so updating the input using a fraction of the gradient is not feasible. Instead the gradient often must be scaled up (one method to do this is to use a constat scale, perhaps `10000*input_grad`) but doing so brings no guarantee that $a_{n+1}$ will actually have a lower loss than $a_n$. 
+There are a few challenges using this approach.  Firstly, in general many iterations are required such that updating the input may take a good deal of computational power, and furthermore it may be difficult to predict how large to make $\epsilon$ without prior experimentation.
 
-The second problem is more pervasive: the discontinuities present in the model output $O(a; \theta)$ (see the section on adversarial examples above), which necessarily make the reverse function also discontinuous.  It has been hypothesized that adversarial examples exist in spite of the high accuracy achieved various test datasets because they are very low-probability inputs.  In some respects this is true, as the addition of a small vector in a random direction (rather than the direction of the gradient with respect to the output) very rarely changes the model's output.
+The second problem is that in general there are discontinuities present in the mathematical function describing the mapping of an input $a$ to the output loss $J(O(a; \theta))$ which necessarily makes the reverse function from output to input also discontinuous.  We are not strictly using the inverse of forward propegation but instead use the gradient of this loss function to generate the input, but if $J(O(a; \theta))$ is discontinuous then so will its gradients be too.
+
+It has been hypothesized that adversarial examples exist in spite of the high accuracy achieved various test datasets because they are very low-probability inputs.  In some respects this is true, as the addition of a small vector in a random direction (rather than the direction of the gradient with respect to the output) very rarely changes the model's output.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_random_addition2.png)
 
-But this is only the case when we look at images that are approximations of inputs that the model might see in a training or test set.  In the adversarial example approaches taken above, small shifts are made to each element (pixel) of a real image to make an approximately real image.  If we no longer restrict ourselves in this way, we will see that adversarial examples are actually much more common.  Indeed that almost any input that a standard image classification model would classify as any given label with high confidence does not resemble a real image.  For more information on this topic, see the next section.
+But this is only the case when we look at images that are approximations of inputs that the model might see in a training or test set.  In the adversarial example approaches taken on [this page](https://blbadger.github.io/input-adversarials.html), small shifts are made to each element (pixel) of a real image to make an approximately real image.  If we no longer restrict ourselves in this way, we will see that adversarial examples are actually much more common.  Indeed that almost any input that a standard image classification model would classify as any given label with high confidence does not resemble a real image.  For more information on this topic, see the next section.
 
-In practice the second problem is more difficult to deal with than the first, which can be overcome with clever scaling and normalization of the gradient.  The main problem is therefore that the gradient of the loss (or the output, for that matter) with respect to the input $a$, $\nabla_a J(O(a, \theta))$ is approximately discontinuous in certain directions can cause a drop in the loss function even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper](https://arxiv.org/abs/1412.1897).
+In practice the second problem is more difficult to deal with than the first, which can be overcome with clever scaling and normalization of the gradient.  The main challenge for input generation is therefore that the gradient of the loss (or the output, for that matter) with respect to the input $a$, $\nabla_a J(O(a, \theta))$ is approximately discontinuous in certain directions, which can cause a drop in the loss even though the input is far from a realistic image.  The result is that more or less unrecognizable images like the one above are confidently but erroneously classified as being an example of the correct label. For more on the topic of confident but erroneous classification using deep learning, see [this paper](https://arxiv.org/abs/1412.1897).
 
 One way to ameliorate these problems is to go back to our gradient sign method rather than to use the actual gradient.  This introduces the prior assumption that   This allows us to restrict the changes at each iteration to a constant step, stabilizing the gradient update. 
 
@@ -92,7 +94,7 @@ and how a rock is modified to appear more like a field of tulips,
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy2.png)
 
-and likewise a daisy's features (white petals etc.) are modified to 
+and likewise a daisy's features (white petals etc.) are modified too
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy.png)
 
@@ -106,7 +108,7 @@ In the last section we saw that using the gradient of the output with respect to
 
 Is there some way we can prevent our trained deep learning models from making unrealistic images during gradient descent on a random input?  Research into this question has found that indeed there is a way: restrict the image modification process such that some quality of a real image is enforced.  We will proceed with this investigation using an Inceptionv3 (aka GoogleNetv3) trained on the full ImageNet dataset, which consists of labelled images of 1000 classes.
 
-The inception architecture was designed to allow for deeper networks without an exorbitant increase in the number of parameters used.  InceptionV3 is a slight reformulation of the original architecture, and as published [here](https://arxiv.org/pdf/1512.00567v3.pdf) and has the following architecture:
+The inception architecture was designed to allow for deeper networks without an exorbitant increase in the number of parameters used.  InceptionV3 (as published [here](https://arxiv.org/pdf/1512.00567v3.pdf)) has the following architecture:
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/inceptionv3_architecture.png)
 
@@ -131,7 +133,7 @@ def count_parameters(model):
 ```
 to find that this is a fairly large model with `27161264`, or just over 27 million, trainable parameters.
 
-```python
+```
 +--------------------------------------+------------+
 |               Modules                | Parameters |
 +--------------------------------------+------------+
@@ -141,7 +143,7 @@ to find that this is a fairly large model with `27161264`, or just over 27 milli
 |      Conv2d_2a_3x3.conv.weight       |    9216    |
 |       Conv2d_2a_3x3.bn.weight        |     32     |
 |        Conv2d_2a_3x3.bn.bias         |     32     |
-... (shortened for brevity)
+... (shortened for brevity)...
 |              fc.weight               |  2048000   |
 |               fc.bias                |    1000    |
 +--------------------------------------+------------+
@@ -364,10 +366,10 @@ The dalmatian's spots are slightly exaggerated, but aside from some general lack
 
 The spots have all but disappeared, replaced by thicker fur and the grey stripes typical of Huskies.  Note how even smaller detailes are changed: in the bottom right, note how the iris color changes from dark brown to light blue, another common Husky characteristic.
 
-We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
+We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{0}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{1}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
 
 $$
-J_n(O(a, \theta)) = \left( c - \widehat y_{250} * \frac{q-n}{q} \right) + \left( c - \widehat y_{251} * \frac{n}{q} \right) 
+J_n(O(a, \theta)) = \left(c - \widehat y_{0} * \frac{q-n}{q} \right) + \left(c - \widehat y_{1} * \frac{n}{q} \right) 
 $$
 
 and to the sume on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
@@ -403,7 +405,7 @@ or this tulip bed into a 'Tractor'
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/rose_into_tractor2.png)
 
-or these flowers transfigured into 'Soccer ball".
+or these flowers transfigured into 'Soccer ball'.
 
 ![transformed flowers]({{https://blbadger.github.io}}/neural_networks/transformed_flowers_soccerball.png)
 
