@@ -366,13 +366,13 @@ The dalmatian's spots are slightly exaggerated, but aside from some general lack
 
 The spots have all but disappeared, replaced by thicker fur and the grey stripes typical of Huskies.  Note how even smaller detailes are changed: in the bottom right, note how the iris color changes from dark brown to light blue, another common Husky characteristic.
 
-We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{0}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{1}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
+We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
 
 $$
-J_n(O(a, \theta)) = \left(c - \widehat y_{0} * \frac{q-n}{q} \right) + \left(c - \widehat y_{1} * \frac{n}{q} \right) 
+J_n(O(a, \theta)) = \left(c - \widehat y_{250} * \frac{q-n}{q} \right) + \left(c - \widehat y_{251} * \frac{n}{q} \right) 
 $$
 
-and to the sume on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
+and to the sum on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
 
 $$
 L_1 (a) = \sum_i \lvert a_i \rvert
@@ -585,7 +585,7 @@ For generated images of the entire suite of ImageNet classes, see [here](https:/
 
 ### Padding in the first octave
 
-For certain ImageNet classes, generated images tend to have most of their relevant features focused on the periphery, as that is where the gradient is largest.  For example, optimizing for class 19 (chickadee) gives an image in which images of the bird of interest are well-formed but entirely near the image perimeter. It is interesting that certain classes tend to exhibit this phenomenon while others almost never do, and why gradient descent would lead to such a pattern is not clear.  Nevertheless, this can be effectively prevented using
+For certain ImageNet classes, generated images tend to have most of their relevant features focused on the periphery, as that is where the gradient is largest.  For example, optimizing for class 19 (chickadee) gives an image in which images of the bird of interest are well-formed but entirely near the image perimeter. It is interesting that certain classes tend to exhibit this phenomenon while others almost never do, and why gradient descent would lead to such a pattern is not clear.  Nevertheless, this can be effectively prevented using the following code:
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
@@ -594,13 +594,28 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 			single_input = torchvision.transforms.Pad([1, 1], fill=0.7)(single_input)
 ```
 
-This padding technique is most effective at preventing the peripheral gradient problem, and does not noticeably reduce the image quality.
+Adding a padding step to the first octave is most effective at preventing the peripheral gradient problem, and does not noticeably reduce the image quality.
 
 ![chickadee]({{https://blbadger.github.io}}/neural_networks/googlenet_chickadees.png)
 
 {% include youtube.html id='Asl-hV8P1wA' %}
 
-Comparing this the images obtained using Googlenet compared to InceptionV3 above, we find much more coherent images for familiar objects.
+Comparing the images obtained using Googlenet compared to InceptionV3 (above), we find more coherent images for familiar objects.
 
-![chickadee]({{https://blbadger.github.io}}/neural_networks/googlenet_comparisons.png)
+![comparisons]({{https://blbadger.github.io}}/neural_networks/googlenet_comparisons.png)
+
+### InceptionV3 and GoogleNet Compared
+
+It is worth investigating why inputs generated using GoogleNet are more coherent than those generated using InceptionV3, which is somewhat surprising being that InceptionV3 tends to be more accurate on ImageNet-based image identification challenges.
+
+As a first step in this investigation, we can observe the process of input generation.  Below are videos with each gradient descent iteration plotted over time, with a scatterplot of the activation values for each output class at that iteration on the right. First we have GoogleNet generating an input for target class 'Stoplight':
+
+{% include youtube.html id='mZi42au8rtQ' %}
+
+and now we have InceptionV3 generating an image for the same class, using the same optimization technique with octaves:
+
+{% include youtube.html id='Xybz0He5MLs' %}
+
+One can observe that the classification of InceptionV3 for its generated input is less stable from one iteration to the next than what is found for GoogleNet, particularly in the second octave.  
+
 
