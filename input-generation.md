@@ -322,6 +322,8 @@ The class label (and input gradient) tends to be fairly unstable during training
 
 {% include youtube.html id='yp9axdNcCG8' %}
 
+Note that much of the fluctuation in the class activation scatterplot to the right is due to the change in input image resolution, which changes the activation value for each class even if it does not change the relative activation values of the target class compared with the others.
+
 There is a noticeable translation in the image from the top left to the bottom right during the initial 75 iterations with the function above.  This is the result of using nearest neighbor interpolation while resampling using `torch.nn.functional.interpolate`.  It appears that in the case where multiple pixels are equidistant from the target, the upper left-most pixel is chosen as the nearest neighbor.  When downsampling an input, we are guaranteed to have four pixels that are nearest neighbors to the new pixels.
 
 This can be remedied by choosing an interpolation method that averages over pixels rather than picking only one pixel value.  The following diagram illustrates the upper-left nearest neighbor interpolation method compared to a bilinear interpolation. Note how the upper left pixel becomes centered down and to the right of its original center for nearest neighbor interpolation, whereas in contrast the bilinear interpolation simply averages all pixels together and does not 'move' the top left value to the center.
@@ -366,10 +368,11 @@ The dalmatian's spots are slightly exaggerated, but aside from some general lack
 
 The spots have all but disappeared, replaced by thicker fur and the grey stripes typical of Huskies.  Note how even smaller detailes are changed: in the bottom right, note how the iris color changes from dark brown to light blue, another common Husky characteristic.
 
-We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J(0(a, \theta))$ $q$ maximum interations, at iteration number $n$ as follows:
+We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J_n(0(a, \theta))$ $n=q$ maximum interations, at iteration number $n$ as follows:
 
 $$
-J_n(O(a, \theta)) = \left(c - \widehat y_{250} * \frac{q-n}{q} \right) + \left(c - \widehat y_{251} * \frac{n}{q} \right) 
+J_n(O(a, \theta)) \\
+= \left(c - \widehat y_{250} * \frac{q-n}{q} \right) + \left(c - \widehat y_{251} * \frac{n}{q} \right) 
 $$
 
 and to the sum on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
@@ -383,7 +386,6 @@ Using this method, we go from $(\widehat y_{250}, \widehat y_{251}) = (c, 0)$ to
 {% include youtube.html id='1bdpG1caKMk' %}
 
 {% include youtube.html id='PBssSJoLOhU' %}
-
 
 Transforming an input from one breed of dog to another may not seem difficult, but the input gradient procedure is capable of some very impressive changes.  Here we begin with images of flowers and target the 'Castle' class
 
