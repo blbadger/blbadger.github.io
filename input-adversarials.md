@@ -173,6 +173,10 @@ After training, however, we see some dramatic changes in the model's output (and
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example6.png)
 
+In contrast, the addition of pixels that are randomly assigned only rarely changes the model's output significantly. The following is a typical example of the result of addition of a random tensor to a given input image.
+
+![adversarial example]({{https://blbadger.github.io}}/neural_networks/flower_random_addition2.png)
+
 Not all shifted images experience this change in predicted classification: the following images are viewed virtually identically by the model.  After 40 epochs of training a cNN, around a third of all inputs follow this pattern such that the model does not change its output significantly when given $a'$ as an input instead of $a$ for $\epsilon=0.01$.  Note that increasing the value of $\epsilon$ leads to nearly every input image having an adversarial example using the fast gradient sign method, even if the images are still not noticeably different.
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/adversarial_example13.png)
