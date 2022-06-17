@@ -162,19 +162,23 @@ def layer_gradient(model, input_tensor, desired_output, index):
 	return gradient
 ```
 
-Note that we must also set our random seed in order to make reproducable images.  This can be done as follows:
+Note that we must also set our random seed in order to make reproducable images.  This can be done by adding
 
 ```python
-manualSeed = 999
-random.seed(manualSeed)
-torch.manual_seed(manualSeed)
+seed = 999
+random.seed(seed)
+torch.manual_seed(seed)
 ```
 
-and this results in
+to the function that is called to make each input such that the above code is processed before every call to `layer_gradient()`.  
+
+One important note on reproducing a set seed: the above will not lead to reproducibility (meaning identical outputs each time the code is run) using Google Colab.  For reasons that are not currently clear, image generation programs that appropriately set the necessary random seeds (as above) yield identical output images each time they are run on a local machine, but different output images each time they are run on Colab.  Preliminary observations give the impression that this issue is not due to incorrect seed setting but rather some kind of round-off error specific to Colab, but this has not been thoroughly investigated.
+
+Running our program on a local machine to enforce reproducibility between initializations, we have
 
 {% include youtube.html id='EJo1fUzheSU' %}
 
-We come to an intersting observation: each neuron when optimized visibly affects only a small area that corresponds to that neuron's position in the `[row, col]` position in the feature tensor, but when we optimize multiple neurons the addition of one more affects the entire image, rather than the area that it would affect if it were optimized alone.  This can be seen by observing how the rope-like segments near the top left corner continue to change upon addition of neurons that alone only affect the bottom-right corner.
+We come to an interesting observation: each neuron when optimized visibly affects only a small area that corresponds to that neuron's position in the `[row, col]` position in the feature tensor, but when we optimize multiple neurons the addition of one more affects the entire image, rather than the area that it would affect if it were optimized alone.  This can be seen by observing how the rope-like segments near the top left corner continue to change upon addition of neurons that alone only affect the bottom-right corner.
 
 How is this possible? Neurons of any one particular layer are usually considered to be linearly independent units, and assumption that provides the basis for being able to apply the gradient of the loss to each element of a layer during training.  But if the neurons of layer `mixed_65 654` were linearly independent with respect to the input maps formed when optimizing these neuron's activations, we would not observe any change in areas unaffected by each neuron.  It is at present not clear why this pattern occurs.
 
@@ -184,9 +188,7 @@ For the 415th feature map of the same module, a somewhat more abstract pattern i
 
 Something interesting to note is that the neuron at position $[415, 9, 9]$ in the `mixed_6b` module is activated by a number of different patterns at once, which is notably different than the neuron at position $[354, 6, 0]$ which is maximally activated by one rope-like pattern alone.
 
-
-The above method for introducing transformational invariance leads to fairly low-resolution images by design (for speed). 
-The Octave method without cropping or padding may be implemented as follows:
+The approach detailed above for introducing transformational invariance leads to fairly low-resolution images by design (which allows for less time to be taken while generating an image). The octave method increases resolution and clarity at the expense of more time per image generated, and may be implemented as follows:
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas):
