@@ -268,13 +268,13 @@ A first step to understanding how neurons work together has already been shown, 
 We therefore seek an input $a'$ that maximizes multiple multiple layers $l_1, l_2, ..., l_n$, which can be equated to maximizing a single value that is the sum of the activations of those layers.
 
 $$
-a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{l_0}^{l_n} z^{l_n}(a, \theta)
+a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{i=0}^{n} z^{l_i}(a, \theta)
 $$
 
-For only two features in separate layers, the loss may be found by finding the sum of the $L_1$ distances between each layer's activation and some large constant $C$, and therefore the gradient used to find an approximation of the target input $a'$ is
+For only two features in separate layers $l$ and $k$, the loss may be found by finding the sum of the $L_1$ distances between each layer's activation and some large constant $C$, and therefore the gradient used to find an approximation of the target input $a'$ is
 
 $$
-g = \nabla_a (C - z^{l_1}(a, \theta) + C - z^{l_2}(a, \theta))
+g = \nabla_a (C - z^{l}(a, \theta) + C - z^{k}(a, \theta))
 $$
 
 It could be wondered if it would not be better to separate the gradients for each layer and then add them together during the gradient descent step
@@ -312,6 +312,7 @@ There are a couple different ways we could specify the layers `output` and `outp
 ```python
 
 class NewModel2(nn.Module):
+
 	def __init__(self, model):
 		super().__init__()
 		self.model = model
@@ -322,6 +323,7 @@ class NewModel2(nn.Module):
 		return x
 		
 class NewModel(nn.Module):
+
 	def __init__(self, model):
 		super().__init__()
 		self.model = model
@@ -332,7 +334,6 @@ class NewModel(nn.Module):
 		# N x 32 x 149 x 149
 		x = self.model.Conv2d_2a_3x3(x)
 		return x
-		
 ```
 
 and these two model classes may be called using a pretrained InceptionV4 model.
