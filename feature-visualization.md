@@ -350,10 +350,26 @@ We can now observe how two features from arbitrary layers interact. For feature 
 
 ![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/inception3_layer_interaction.png)
 
+Observe how the combination is far from linear: in certain areas of the image, eyes from layer Mixed 6b are found, wheras in other areas they are completely absent. 
 
 ### Mapping GoogleNet Features
 
+In [another article](https://blbadger.github.io/input-generation.html), we saw how there were differences between how recognizable a generated input representative of a certain ImageNet training class was between various neural networks.  In particular, InceptionV3 generally yielded less-recognizable images than GoogleNet.  This brings about the question of whether or not the feature maps in the previous section might also be less recognizable than those for GoogleNet, and this can be easily explored.  
 
+To recap, GoogleNet was the first published model to use the Inception architecture in which different convolutional layers are made in parallel before being joined.  GoogleNet is only about half as deep as InceptionV3, and has the following architecture:
+
+![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_architecture.png)
+
+Initializing our model with an implementation of GoogleNet trained on ImageNet
+
+```python
+model = torch.hub.load('pytorch/vision:v0.10.0', 'googlenet', pretrained=True, init_weights=True).to(device)
+```
+For the last two mixed convolutional layers, we have the following feature maps using the same optimization procedure denoted in the previous section:
+
+![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/googlenet_5a5b.png)
+
+Compared to the final two layers of InceptionV3, we find that indeed there are more coherent images produced by GoogleNet (particularly for features of layer 5a, which contains recognizable snakes and bird faces). 
 
 ### Mapping ResNet Features
 
