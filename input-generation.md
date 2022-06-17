@@ -246,7 +246,7 @@ $$
 \end{bmatrix}
 $$
 
-where the $1/2$ and $1/4$ values are more precisely just over $201/400$ and $101/400$.
+where the $1/2$ and $1/4$ values are more precisely just over $201/400$ and $101/400$.  
 
 Here we apply a Gaussian convolution to the input in a curriculum in which our convolution is applied at every iteration until three quarters the way through gradient descent, at which time it is no longer applied for the remaining iterations.  Heuristically this should a general shape to form before details are filled in.
 
@@ -348,9 +348,7 @@ or 'Chainmail'
 
 ![generated badger]({{https://blbadger.github.io}}/neural_networks/generated_chainmail_multiscalejitter.png)
 
-Note, however, that transformational invariance does not necessarily lead to a noticeable increase in recognizability for all class types: ants, for example, are not as substantially improved when we use transformational invariance 
-
-![generated ant]({{https://blbadger.github.io}}/neural_networks/generated_ant_transformed.png)
+Note, however, that transformational invariance does not necessarily lead to a noticeable increase in recognizability for all class types.
 
 ### Image Transfiguration
 
