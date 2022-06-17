@@ -268,7 +268,7 @@ A first step to understanding how neurons work together has already been shown, 
 We therefore seek an input $a'$ that maximizes multiple multiple layers $l_1, l_2, ..., l_n$, which can be equated to maximizing a single value that is the sum of the activations of those layers.
 
 $$
-a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{i=0}^{n} z^{l_i}(a, \theta)
+a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{i=1}^{n} z^{l_i}(a, \theta)
 $$
 
 For only two features in separate layers $l$ and $k$, the loss may be found by finding the sum of the $L_1$ distances between each layer's activation and some large constant $C$, and therefore the gradient used to find an approximation of the target input $a'$ is
