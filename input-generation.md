@@ -610,6 +610,10 @@ Comparing the images obtained using Googlenet compared to InceptionV3 (above), w
 
 ### InceptionV3 and GoogleNet Compared
 
+So far this page has documented a variety of different methods across two models that allow for the generation of a coherent (ie human-recognizable) input using gradient descent on an initial input of noise, with varying degrees of success.  Measuring image coherence is somewhat difficult, as our metric is inherently subjective to the observer's preference.  Nevertheless, the octave method used with Googlenet has been observed to yield the most recognizable images thus far.
+
+It may be wondered whether or not gradient descent using the same octaves would lead to similarly coherent images if applied to the InceptionV3 model, being that the choice of parameters, learning rates, and regularizers has optimized extensively for clarity whereas the octave approach for InceptionV3 documented above was not.  Perhaps most importantly, more iterations were used and no L1 regularization was employed during gradient descent on the optimized octaves, as somewhat paradoxically L1 regularization on either the gradient or input led to an increase in noise.  Using the optimized octave approach, images generated for all 1000 ImageNet classes using [InceptionV3](https://drive.google.com/drive/folders/1dR7Mgd6LYz3MnFbY8FNhSbKgGFPIDU5F?usp=sharing) can be compared to the images produced using [GoogleNet](https://drive.google.com/drive/folders/1TrOa6sXWG8WVPhKQRYzG4lJVvwBPJ_iR?usp=sharing).
+
 It is worth investigating why inputs generated using GoogleNet are more coherent than those generated using InceptionV3, which is somewhat surprising being that InceptionV3 tends to be more accurate on ImageNet-based image identification challenges.
 
 As a first step in this investigation, we can observe the process of input generation.  Below are videos with each gradient descent iteration plotted over time, with a scatterplot of the activation values for each output class at that iteration on the right. First we have GoogleNet generating an input for target class 'Stoplight':
