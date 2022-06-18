@@ -312,7 +312,6 @@ def double_layer_gradient(model, input_tensor, desired_output, index):
 There are a couple different ways we could specify the layers `output` and `output2`.  Pytorch uses an automatic differentiation approach that requires all gradient sources to be specified as outputs prior to the start of forward propegation.  One option to enforce this requirement is to have one model return multiple outputs, but for clarity the above method assumes multiple models are instantiated.  For features in layers `Conv2d_1z_3x3` and `Conv2d_2z_3x3`, this can be done as follows:
 
 ```python
-
 class NewModel2(nn.Module):
 
 	def __init__(self, model):
@@ -372,6 +371,21 @@ For the last two mixed convolutional layers, we have the following feature maps 
 Compared to the final two layers of InceptionV3, we find that indeed there are more coherent images produced by GoogleNet (particularly for features of layer 5a, which contains recognizable snakes and bird faces). 
 
 ### Mapping ResNet Features
+
+Both GoogleNet and InceptionV3 architectures are based on variants of what was originally called the Inception module, where multiple convolutional layers are applied in parallel. It may be wondered how much this architecture contributes to the feature maps that we have observed above: would a convolutional network without parallel layers also exhibit a similar tendancy for early layers to respond to simple patterns, middle layers to be activated by objects, and late layers activated by many objects together?
+
+Another well-performing network on ImageNet is [ResNet](https://arxiv.org/abs/1512.03385), an architecture named after its judicious use of residual connections.  These connections consist of a normal convolutional layer added elementwise to the convolutional operation input
+
+![residual connections]({{https://blbadger.github.io}}/neural_networks/residual_connections.png)
+
+The intuition behind this architecture is that each convolutional layer learns some function $F(x)$ that is 'referenced' to the original input $x$, meaning that $F(x)$ is not the sole source of information for the next layer as it normally is, but instead the original information in the input $x$ is retained somewhat through addition.
+
+The original [ResNet](https://arxiv.org/abs/1512.03385) paper published a variety of closely related architectures,
+
+![Resnet architectures]({{https://blbadger.github.io}}/neural_networks/residual_connections.png)
+
+where each of the sub-modules contain residual connections.  On this page we will employ a ResNet with 50 layers.
+
 
 ### Deep Dream
 
