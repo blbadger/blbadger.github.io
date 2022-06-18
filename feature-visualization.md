@@ -376,18 +376,22 @@ Both GoogleNet and InceptionV3 architectures are based on variants of what was o
 
 Another well-performing network on ImageNet is [ResNet](https://arxiv.org/abs/1512.03385), an architecture named after its judicious use of residual connections.  These connections consist of a normal convolutional layer added elementwise to the convolutional operation input
 
-![residual connections]({{https://blbadger.github.io}}/neural_networks/residual_connections.png)
+![residual connections]({{https://blbadger.github.io}}/neural_networks/residual_.png)
 
 The intuition behind this architecture is that each convolutional layer learns some function $F(x)$ that is 'referenced' to the original input $x$, meaning that $F(x)$ is not the sole source of information for the next layer as it normally is, but instead the original information in the input $x$ is retained somewhat through addition.
 
 The original [ResNet](https://arxiv.org/abs/1512.03385) paper published a variety of closely related architectures,
 
-![Resnet architectures]({{https://blbadger.github.io}}/neural_networks/residual_connections.png)
+![Resnet architectures]({{https://blbadger.github.io}}/neural_networks/resnet_architecture.png)
 
-where each of the sub-modules contain residual connections.  On this page we will employ a ResNet with 50 layers.
+where each of the sub-modules contain residual connections.  For the 50-layer version of ResNet, 8 of the first 16 features at the final layer of each module are shown below.
 
+![Resnet features]({{https://blbadger.github.io}}/neural_networks/resnet_features.png)
+
+Upon examination, we see the same general features as for GoogleNet and InceptionV3: a color filter in the first convolutional layer followed by simple patterns that become more complex shapes and recognizable parts of animals in later layers. Note too that just as for both other models, features in the final layer appear to contain objects and colors that are rather jumbled together and are less coherent than in prior layers.
 
 ### Deep Dream
+
 
 
 
