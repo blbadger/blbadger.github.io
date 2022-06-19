@@ -374,9 +374,9 @@ Compared to the final two layers of InceptionV3, we find that indeed there are m
 
 Both GoogleNet and InceptionV3 architectures are based on variants of what was originally called the Inception module, where multiple convolutional layers are applied in parallel. It may be wondered how much this architecture contributes to the feature maps that we have observed above: would a convolutional network without parallel layers also exhibit a similar tendancy for early layers to respond to simple patterns, middle layers to be activated by objects, and late layers activated by many objects together?
 
-Another well-performing network on ImageNet is [ResNet](https://arxiv.org/abs/1512.03385), an architecture named after its judicious use of residual connections.  These connections consist of a normal convolutional layer added elementwise to the convolutional operation input
+Another well-performing network for ImageNet-based tasks is [ResNet](https://arxiv.org/abs/1512.03385), an architecture named after its judicious use of residual connections.  These connections consist of a normal convolutional layer added elementwise to the convolutional operation input
 
-![residual connections]({{https://blbadger.github.io}}/neural_networks/residual_.png)
+![residual connections]({{https://blbadger.github.io}}/neural_networks/residual_connection.png)
 
 The intuition behind this architecture is that each convolutional layer learns some function $F(x)$ that is 'referenced' to the original input $x$, meaning that $F(x)$ is not the sole source of information for the next layer as it normally is, but instead the original information in the input $x$ is retained somewhat through addition.
 
