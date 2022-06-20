@@ -355,15 +355,27 @@ Observe how the combination is far from linear: in certain areas of the image, e
 
 In [another article](https://blbadger.github.io/input-generation.html), we saw how there were differences between how recognizable a generated input representative of a certain ImageNet training class was between various neural networks.  In particular, InceptionV3 generally yielded less-recognizable images than GoogleNet.  This brings about the question of whether or not the feature maps in the previous section might also be less recognizable than those for GoogleNet, and this can be easily explored.  
 
-To recap, GoogleNet was the first published model to use the Inception architecture in which different convolutional layers are made in parallel before being joined.  GoogleNet is only about half as deep as InceptionV3, and has the following architecture:
+To recap, GoogleNet was the first published model to use the Inception architecture in which different convolutional layers are made in parallel before being joined.  GoogleNet is only about half as deep as InceptionV3, and has the following architecture (layer names modified for clarity):
 
-![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_architecture.png)
+![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/annotated_googlenet.png)
 
 Initializing our model with an implementation of GoogleNet trained on ImageNet
 
 ```python
 model = torch.hub.load('pytorch/vision:v0.10.0', 'googlenet', pretrained=True, init_weights=True).to(device)
 ```
+
+The starting convolutional layers are similar to what is found in the InceptionV3 model: solid colors and simple patterns are found.
+
+![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_convlayers.png)
+
+
+
+![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_layer3.png)
+
+
+![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_layer4.png)
+
 For the last two mixed convolutional layers, we have the following feature maps using the same optimization procedure denoted in the previous section:
 
 ![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/googlenet_5a5b.png)
