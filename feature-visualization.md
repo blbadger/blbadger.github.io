@@ -365,18 +365,17 @@ Initializing our model with an implementation of GoogleNet trained on ImageNet
 model = torch.hub.load('pytorch/vision:v0.10.0', 'googlenet', pretrained=True, init_weights=True).to(device)
 ```
 
-The starting convolutional layers are similar to what is found in the InceptionV3 model: solid colors and simple patterns are found.
+We have the following feature maps using the same optimization procedure denoted in the previous section. The starting convolutional layers are similar to what is found in the InceptionV3 model: solid colors and simple patterns are found.
 
 ![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_convlayers.png)
 
-
+Relatively early, more complex patterns are formed and objects such as small parts on animal faces are observed.
 
 ![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_layer3.png)
 
-
 ![googlenet_architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_layer4.png)
 
-For the last two mixed convolutional layers, we have the following feature maps using the same optimization procedure denoted in the previous section:
+For the last two mixed convolutional layers,
 
 ![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/googlenet_5a5b.png)
 
