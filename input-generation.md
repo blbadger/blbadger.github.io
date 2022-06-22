@@ -636,23 +636,22 @@ On the other hand, within this 1000-dimensional space we can view each class as 
 
 On a memorable episode of the popular comedy 'Seinfeld', the character George decides to do the opposite of what he would normally do with appropriately comedic results.  But one might wonder: what is the opposite?  For a number of ideas, there seems to be a natural opposite (light and dark, open and closed) but for others ideas or objects it is more difficult to identify an opposite: for example, what is the opposite of a mountian?  One might say a valley, but this is far from the only option.  Likewise, objects like a tree and actions like walking do not have clear opposites.
 
-Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  We want to perform gradient descent on the negative of the activation of the output category of interest $O_i()$, which is
+Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  We want to perform gradient descent on the negative of the activation of the output category of interest $O_i$, which is
 
 $$
-g = \nabla_a - O_i(a, \theta)
+g = - \nabla_a (O_i(a, \theta))
 $$
 
 and this can be implemented by simply assigning the loss to be the output of the output category as minimization is equivalent to maximization of a negative value.
 
 ```python
 def layer_gradient(model, input_tensor, desired_output):
-	...
+    ...
     input_tensor.requires_grad = True
     output = model(input_tensor)
     loss = output[0][int(desired_output)] # minimize the output class activation
     loss.backward()
     gradient = input_tensor.grad
-
     return gradient
 ```
 
@@ -664,10 +663,26 @@ $$
 
 In geometric terms, this procedure is equivalent to the process of moving in the input space in a direction that coresponds with moving in the output space along the negative axis of the dimension of the output category as far as possible.  
 
-At first glance this might not seem to be likely to yield any meaningful input $a_n$, as there is no guarantee that moving away from some class would not yield an input that is a mix of many different objects.  
+At first consideration, this procedure might not seem to be likely to yield any meaningful input $a_n$, as there is no guarantee that moving away from some class would not yield an input that is a mix of many different objects.  And indeed many generated opposite images are apparently a mix of a number of objects, for example this 'Piano' opposite that appears to be the image of a few different insects, or the opposite of 'Bonnet' that appears to be a mousetrap spring on fire.
 
+![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites_mix.png)
 
+Most opposite images generated are a mix of ImageNet classes, but we can find the one class that our model views as most likely to be reflected in 
 
+```python
+predicted = int(torch.argmax(output))
+```
+this yields
+
+![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites.png)
+
+Some objects have reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.
+
+![object opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites_2.png)
+
+Dogs are perhaps the most interesting image category for opposites: nearly every ImageNet dog class has a coherent opposite that is also a dog, and the opposites generated seem to be logically motivated: observe how the opposites for large, long-haired dogs with no visible ears are small, thin, and perky-eared breeds.
+
+![object opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_shaggy_opposites.png)
 
 
 
