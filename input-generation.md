@@ -667,20 +667,19 @@ At first consideration, this procedure might not seem to be likely to yield any 
 
 ![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites_mix.png)
 
-Most opposite images generated are a mix of ImageNet classes, but we can find the one class that our model views as most likely to be reflected in 
+Despite it being unlikely that any of the 1000 ImageNet categories would have only one opposite, we can find the category of the image as classified by our model of choice (GoogleNet) by finding which element of the tensor of the model's output $O(a_n, \theta)$, denoted `output`, has the maximum activation.
 
 ```python
 predicted = int(torch.argmax(output))
 ```
-this yields
+
+Now we can label each generated image according to which ImageNet category it most activates using a model of choice, here GoogleNet to be consistent with the image generation.
 
 ![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites.png)
 
 Some objects have reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.
 
-![object opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites_2.png)
-
-Dogs are perhaps the most interesting image category for opposites: nearly every ImageNet dog class has a coherent opposite that is also a dog, and the opposites generated seem to be logically motivated: observe how the opposites for large, long-haired dogs with no visible ears are small, thin, and perky-eared breeds.
+Dogs are perhaps the most interesting image category for this procedure nearly every ImageNet dog class has a coherent opposite that is also a dog, and the opposites generated seem to be logically motivated: observe how the opposites for large, long-haired dogs with no visible ears are small, thin, and perky-eared breeds.
 
 ![object opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_shaggy_opposites.png)
 
