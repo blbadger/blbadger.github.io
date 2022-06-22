@@ -677,15 +677,21 @@ Now we can label each generated image according to which ImageNet category it mo
 
 ![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites.png)
 
-Some objects have reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.
+Some objects have reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.  
 
 Dogs are perhaps the most interesting image category for this procedure nearly every ImageNet dog class has a coherent opposite that is also a dog, and the opposites generated seem to be logically motivated: observe how the opposites for large, long-haired dogs with no visible ears are small, thin, and perky-eared breeds.
 
-![object opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_shaggy_opposites.png)
+![dog opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_shaggy_opposites.png)
 
+and likewise the opposites of a dog with longer fur and a pointed face (border collie) is one with short fur and squashed face (bloodhound), and the opposite of an image of a small dog with pointed ears (Ibizan hound) is a large dog with droopy ears (Tibetan Mastiff). Observe that opposites are rarely commutative: here we see a close but not quite commutative relation, where the opposite of an Ibizan is a Mastiff but the opposite of a Mastiff is a Terrier.  In general opposites are further from being commutative than this example.
 
+![dog opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_nonshaggy_opposites.png)
 
+It is fascinating to see the generated images for the opposites of other animal classes.  
 
+![animal opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_animal_opposites.png)
+
+The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.
 
 
 
