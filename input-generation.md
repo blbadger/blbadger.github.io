@@ -658,7 +658,7 @@ def layer_gradient(model, input_tensor, desired_output):
 and as before this gradient is used to perform gradient descent on the input
 
 $$
-a_{n+1} = a_n - \epsilon \; \mathrm {sign} \; g
+a_{n+1} = a_n - \epsilon *  g
 $$
 
 In geometric terms, this procedure is equivalent to the process of moving in the input space in a direction that coresponds with moving in the output space along the negative axis of the dimension of the output category as far as possible.  
