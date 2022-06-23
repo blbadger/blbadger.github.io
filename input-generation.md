@@ -636,13 +636,19 @@ On the other hand, within this 1000-dimensional space we can view each class as 
 
 On a memorable episode of the popular comedy 'Seinfeld', the character George decides to do the opposite of what he would normally do with appropriately comedic results.  But one might wonder: what is the opposite?  For a number of ideas, there seems to be a natural opposite (light and dark, open and closed) but for others ideas or objects it is more difficult to identify an opposite: for example, what is the opposite of a mountian?  One might say a valley, but this is far from the only option.  Likewise, objects like a tree and actions like walking do not have clear opposites.
 
-Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  We want to perform gradient descent on the negative of the activation of the output category of interest $O_i$, which is
+Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  UWe want to perform gradient descent on the input $a$ in order to minimize the activation of the output category of interest $O_i$, meaning that our loss function $J$ is
 
 $$
-g = - \nabla_a (O_i(a, \theta))
+J(O(a, \theta)) = O_i(a, \theta)
 $$
 
-and this can be implemented by simply assigning the loss to be the output of the output category as minimization is equivalent to maximization of a negative value.
+and the gradient we want is the gradient of this loss with respect to the input, which is
+
+$$
+g = \nabla_a (O_i(a, \theta))
+$$
+
+The above formula can be implemented by simply assigning the loss to be the output of the output category as minimization is equivalent to maximization of a negative value.
 
 ```python
 def layer_gradient(model, input_tensor, desired_output):
@@ -655,13 +661,13 @@ def layer_gradient(model, input_tensor, desired_output):
     return gradient
 ```
 
-and as before this gradient is used to perform gradient descent on the input
+and as before this gradient $g$ is used to perform gradient descent on the input, but now we will minimize rather than maximize the category of interest.
 
 $$
 a_{n+1} = a_n - \epsilon *  g
 $$
 
-In geometric terms, this procedure is equivalent to the process of moving in the input space in a direction that coresponds with moving in the output space along the negative axis of the dimension of the output category as far as possible.  
+In geometric terms, this procedure is equivalent to the process of moving in the input space in a direction that corresponds with moving in the output space towards the negative axis of the dimension of the output category as far as possible.  
 
 At first consideration, this procedure might not seem to be likely to yield any meaningful input $a_n$, as there is no guarantee that moving away from some class would not yield an input that is a mix of many different objects.  And indeed many generated opposite images are apparently a mix of a number of objects, for example this 'Piano' opposite that appears to be the image of a few different insects, or the opposite of 'Bonnet' that appears to be a mousetrap spring on fire.
 
@@ -693,7 +699,9 @@ It is fascinating to see the generated images for the opposites of other animal 
 
 ![animal opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_animal_opposites.png)
 
-The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.
+The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.  Opposites to all ImageNet classes may be found by following [this link](https://drive.google.com/drive/folders/1nE9X0PkG51RIL5euIHwOHfuV5OWWQm0i?usp=sharing). 
+
+Particularly for animals but also for other animals, the ability of our model to find a meaningful opposite of some output class suggests that indeed the output is a form of a latent space.  This observation lets us continue to investigate
 
 
 
