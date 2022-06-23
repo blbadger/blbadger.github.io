@@ -403,12 +403,15 @@ Upon examination, we see the same general features as for GoogleNet and Inceptio
 
 ### Deep Dream
 
+The images above are generated starting with noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.
 
+With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
 
+![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_dream.png)
 
+One can also modify the input $a$ such that multiple layers are maximally activated: here we have features from layers 'Mixed 6d' and 'Mixed 6e' jointly optimized, again using a collection of flowers $a_0$.
 
-
-
+![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_Mixed6e_dream.png)
 
 
 
