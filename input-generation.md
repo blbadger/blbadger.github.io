@@ -673,11 +673,13 @@ Despite it being unlikely that any of the 1000 ImageNet categories would have on
 predicted = int(torch.argmax(output))
 ```
 
-Now we can label each generated image according to which ImageNet category it most activates using a model of choice, here GoogleNet to be consistent with the image generation.
+Now we can label each generated image according to which ImageNet category it most activates using a model of choice, here GoogleNet to be consistent with the image generation.  The following video shows the generation of an input $a$ that minimizes the GoogleNet activation for ImageNet class 55: Green Snake (red dot in the scatterplot to the right). Once again, two octaves with Gaussian convolutions are applied during gradient descent.
+
+{% include youtube.html id='czayyaAi1cw' %}
+
+Notice how a number of different categories have been maximized, and how the image appears to be a combination of different parts (an axolotl's gills with the feet and scales of a crocodile are perhaps the two most obvious).  Some objects have more coherent, even reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.  
 
 ![opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_opposites.png)
-
-Some objects have reasonable opposites: toilet paper is soft, flat, and waivy whereas syringes are thing and pointy.  
 
 Dogs are perhaps the most interesting image category for this procedure nearly every ImageNet dog class has a coherent opposite that is also a dog, and the opposites generated seem to be logically motivated: observe how the opposites for large, long-haired dogs with no visible ears are small, thin, and perky-eared breeds.
 
