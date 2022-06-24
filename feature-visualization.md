@@ -413,6 +413,18 @@ One can also modify the input $a$ such that multiple layers are maximally activa
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_Mixed6e_dream.png)
 
+It may be wondered what would happen if the input image were optimized without enforcing a prior requiring smoothness in the final image.  Omitting smoothness has a fairly clear justification in this scenario: the starting input is a natural image that contains the smoothness and other statistical features of other natural images, so as long as we do not modify this image too much then we would expect to end with something that resembles a natural image.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
