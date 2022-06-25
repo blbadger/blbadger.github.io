@@ -31,26 +31,26 @@ $$
 a' = \underset{a}{\mathrm{arg \; max}} \; z^l(a, \theta)
 $$
 
-For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation $z$ at layer $l$ for feature $f$ for a given feature is
+Convolutional layers typically have many feature maps, each specified by a separate set of parameters. We will mostly focus on finding inputs $a'$ that maximally activate a single feature, rather than all features for a layer given that there may be hundreds of features per layer. For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation $z$ at layer $l$ for feature $f$ is denoted
 
 $$
-z^l = \sum_m \sum_n z^l_{f, m, n}
+z^l_f = \sum_m \sum_n z^l_{f, m, n}
 $$
 
 In tensor notation, this would be written as the total activation of the tensor `[f, :, :]` where `:` indicates all elements of the appropriate index.
 
-For a subset of neurons in layer $l$, say all neurons in row $n$, 
+For a subset of neurons in layer $l$ and feature $f$, the total activation of all neurons in row $n$, denoted
 
 $$
-z^l_m = \sum_n z^l_{f, m, n}
+z^l_{f, m} = \sum_n z^l_{f, m, n}
 $$
 
 which is denoted `[f, m, :]`, and that the element of row `m` and column `n` is denoted `[xl, m, n]`.
 
-Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs. An approximation for the input $a'$ such that when given to our model gives an approximate maximum value of $z^l(a', \theta)$ may be found via gradient descent.  The gradient in question used on this page is the gradient of the $L_1$ metric between large constant $C$ and the activation of a specific layer (or a subset of this layer) $z^l$
+Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs. An approximation for the input $a'$ such that when given to our model gives an approximate maximum value of $z^l_f(a', \theta)$ may be found via gradient descent.  The gradient in question used on this page is the gradient of the $L_1$ metric between large constant $C$ and the activation of a specific layer and feature (or a subset of this layer) $z^l_f$
 
 $$
-g = \nabla_a (C - z^l(a, \theta))
+g = \nabla_a (C - z^l_f(a, \theta))
 $$
 
 At each step of the gradient descent procedure, the input at point $a_k$ is updated to make $a_{k+1}$ as follows
