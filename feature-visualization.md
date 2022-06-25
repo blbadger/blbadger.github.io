@@ -31,21 +31,21 @@ $$
 a' = \underset{a}{\mathrm{arg \; max}} \; z^l(a, \theta)
 $$
 
-For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation at layer (ie feature) $l$ is
+For a two-dimensional convolutional layer with $m$ rows and $n$ columns, the total activation $z$ at layer $l$ for feature $f$ for a given feature is
 
 $$
-z^l = \sum_m \sum_n z^l_{m, n}
+z^l = \sum_m \sum_n z^l_{f, m, n}
 $$
 
-In tensor notation, this would be written as the total activation of the tensor `[zl, :, :]` where `:` indicates all elements of the appropriate index.
+In tensor notation, this would be written as the total activation of the tensor `[f, :, :]` where `:` indicates all elements of the appropriate index.
 
-For a subset of neurons in layer $l$, say all neruons in row $n$, 
+For a subset of neurons in layer $l$, say all neurons in row $n$, 
 
 $$
-z^l_m = \sum_n z^l_{m, n}
+z^l_m = \sum_n z^l_{f, m, n}
 $$
 
-which is denoted `[zl, m, :]`, and that the element of row `m` and column `n` is denoted `[xl, m, n]`.
+which is denoted `[f, m, :]`, and that the element of row `m` and column `n` is denoted `[xl, m, n]`.
 
 Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs. An approximation for the input $a'$ such that when given to our model gives an approximate maximum value of $z^l(a', \theta)$ may be found via gradient descent.  The gradient in question used on this page is the gradient of the $L_1$ metric between large constant $C$ and the activation of a specific layer (or a subset of this layer) $z^l$
 
@@ -415,16 +415,40 @@ One can also modify the input $a$ such that multiple layers are maximally activa
 
 It may be wondered what would happen if the input image were optimized without enforcing a prior requiring smoothness in the final image.  Omitting smoothness has a fairly clear justification in this scenario: the starting input is a natural image that contains the smoothness and other statistical features of other natural images, so as long as we do not modify this image too much then we would expect to end with something that resembles a natural image.
 
+This being the case, we can implement gradient descent using octaves without 
 
+```python
 
+def octave(single_input, target_output, iterations, learning_rates, sigmas, index):
+	...
+	start_lr, end_lr = learning_rates
+	start_sigma, end_sigma = sigmas
+	for i in range(iterations):
+		single_input = single_input.detach() # remove the gradient for the input (if present)
+		input_grad = layer_gradient(newmodel, input, target_output, index) # compute input gradient
+		single_input -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)* input_grad # gradient descent step
+	return single_input
+```
 
+The other change we will make is to optimize the activations of an entire layer rather than only one or two features.  
 
+$$
+z^l = \sum_f \sum_m \sum_n z^l_{f, m, n}
+$$
 
+which is denoted as the sum of the tensor `[:, :, :]` of layer $l$. Using InceptionV3 as our model and applying gradient descent to an input of flowers, we have
 
+![Dream]({{https://blbadger.github.io}}/neural_networks/dream_mixed6b.png)
 
+Other models yield similar results, with ResNet50
 
+![Dream]({{https://blbadger.github.io}}/neural_networks/Resnet50_layer3_dream.png)
 
+As for feature maps, we can apply the gradient descent procedure on inputs of abitrary resolution because each layer is convolutional, meaning that only the weights and biases of kernals are specified such that any size of image may be used as input $a$ without having to change the model parameters $\theta$.  Note that this is only true if all layers up to the final are convolutionl: as soon as one desires use of a fully connected architecture, it is usually necessary to use a fized input size.
 
+![Dream]({{https://blbadger.github.io}}/neural_networks/Inception3_dream_mixed6b_layer.png)
+
+![Dream]({{https://blbadger.github.io}}/neural_networks/Inception3_dream_mixed6b_layer_hres2.png)
 
 
 
