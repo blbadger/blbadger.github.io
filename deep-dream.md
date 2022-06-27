@@ -57,6 +57,34 @@ As for feature maps, we can apply the gradient descent procedure on inputs of ab
 
 Note, however, that there is a clear limit to this procedure: although the input image resolution may be increased without bound, the convolutional kernals of the model in question (here InceptionV3) during training were learned only for the resolution that training inputs existed at.  This is why an increase in resolution yields smaller details introduced relative to the whole image, as the changes during gradient descent are made by a model that learned to expect images of a lower resolution.
 
+### How Deep Dream makes Coherent Images
+
+It may be wondered how deep dream makes any kind of recognizable image at all.  For [input image generation](https://blbadger.github.io/input-generation.html), we saw that gradient descent on an initial input of random noise did not yield any recognizable images, and this was for only one neuron or feature at a time rather than for many features as we have here.  It was only after the addition of a smoothness Bayesian prior that gradient descent was able to begin to produce recognizable images, but smoothness is typically not added during deep dream.
+
+Futhermore, when one considers how a convolutional layer works for image classification, it is not immediately clear how optimizing the activation of many layers together would give anything other than an incoherent jumble.  This is because during feed-forward operation each feature map in a convolutional layer is expected to have a different activation corresponding to which features are found in the image one wants to classify.  Activating all the feature maps is equivalent to saying that one wants an image that has all possible features, and for deeper layers with many (>= 256) features one may reasonably expect that this image will not look like much of anything at all, especially when no smoothness constraint is enforced.
+
+
+
+
+![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
