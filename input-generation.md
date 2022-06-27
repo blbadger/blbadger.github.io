@@ -482,7 +482,7 @@ One way to address the problem of high frequency and apparent chaos in the input
 
 One octave interval is very much like the gradient descent with Gaussian convolution detalied earlier. The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.  Another difference is that instead of maintaining a constant learning rate $\epsilon$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
 
-There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).  This approach is identical to a positional jitter method that has been used previously, where a prior of positional invariance is added to image generation.
+There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).  This approach is identical to a positional jitter method that has been used elsewhere, where a prior of positional invariance is added to image generation. 
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
@@ -527,7 +527,11 @@ Note the light grey border on both images above.  This is the result of performi
 single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)*input_grad 
 ```
 
-Further optimizing for a coherent input with two octave-based jitters over 720 iterations,
+To see how using cropped portions of octaves implements a positional jitter, consider two consecutive updates to an image $a$.  The model (InceptionV3 in this case) receives inputs that are small translations of each other (along with the addition of a gradient descent step) such that the gradient $g$ of each input with respect to the output class that is being optimized does not depend on the exact position of each pixel value, only the relative (and approximate) position. 
+
+![Inception output]({{https://blbadger.github.io}}/neural_networks/cropped_octave_explanation.png)
+
+Further optimizing for a coherent input with two cropped octave-based jitters over 720 iterations,
 
 ```python
 single_input = octave(single_input, target_output, 220, [6, 5], [2.4, 0.8], 0, pad=False, crop=False)
