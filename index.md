@@ -138,6 +138,7 @@ $$
 
 ![mapping]({{https://blbadger.github.io}}misc_images/curve_mapping.png)
 
+
 ### [Reversibility and periodicity](/aperiodic-inverted.md)
 
 $$
@@ -199,7 +200,7 @@ The study of life, observations of which display many of the features of nonline
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_cropped.gif)
 
 
-### [Input Generation and Transfiguration I](/input-generation.md)
+### [Input Generation I](/input-generation.md)
 
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
