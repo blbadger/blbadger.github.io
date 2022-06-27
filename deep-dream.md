@@ -2,7 +2,7 @@
 
 ### Introduction
 
-The images above are generated starting with noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.
+In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning features were investigated by constructing an input that made the highest total activation in that feature, starting with random noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.
 
 With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
 
