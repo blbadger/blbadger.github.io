@@ -493,7 +493,7 @@ The results are interesting: perhaps slightly clearer (ie higher resolution) tha
 
 ![Inception Architecture]({{https://blbadger.github.io}}/neural_networks/auxiliary_flowers_array.png)
 
-### Octaves 
+### Jitter using Cropped Octaves
 
 The generated images shown so far on this page exhibit to some extent or another the presence of high-frequency patterns, which can be deleterious to the ability to make an image that is accurate to a real-world example.  High frequency between image pixels often appears as areas of bright dots set near each other, or else sometimes as dark lines that seem to overlay light regions.  The wavy, almost ripple-like appearance of some of the images above appears to be the result of application of smoothing (via Gaussian kernal convolution or re-sizing) to the often chaotic and high-frequency gradient applied to the images during generation.
 
@@ -501,7 +501,7 @@ One way to address the problem of high frequency and apparent chaos in the input
 
 One octave interval is very much like the gradient descent with Gaussian convolution detalied earlier. The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.  Another difference is that instead of maintaining a constant learning rate $\epsilon$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
 
-There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).
+There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).  This approach is identical to a positional jitter method that has been used previously, where a prior of positional invariance is added to image generation.
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
@@ -517,7 +517,7 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 			size = len(single_input[0][0])
 		single_input = single_input.detach() # remove the gradient for the input (if present)
 		input_grad = layer_gradient(Inception, cropped_input, target_output) # compute input gradient
-		single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)* input_grad # gradient descent step
+		single_input -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)*input_grad # gradient descent step
 		single_input = torchvision.transforms.functional.gaussian_blur(single_input, 3, sigma=(start_sigma*(iterations-i)/iterations + end_sigma*i/iterations))
 
 	return single_input
@@ -536,10 +536,28 @@ single_input = torchvision.transforms.Resize([390, 390])(single_input)
 single_input = octave(single_input, target_output, 100, [1.3, 0.45], [1.5, 0.4], 390, crop=False)
 ```
 
-The results show some increased clarity, but also that images remain noisy with respect to the colors and textures that are formed. At least for InceptionV3, rescaling does not appear to resolve the problem of gradients being applied at different scales, although it does increase the final image resolution and clarity.
+The results show some increased clarity, but also that images remain somewhat noisy with respect to the colors and textures that are formed. 
 
 ![Inception output]({{https://blbadger.github.io}}/neural_networks/octaves_inception3_test.png)
 
+Note the light grey border on both images above.  This is the result of performing Gaussian blurring on the entire image whilst only performing a gradient-based update on a cropped portion, meaning that the areas not included in the crop are blurred but not updated and tend to wash out.  These borders may be cropped from the final image or else we may only blur the areas that were updated as follows:
+
+```python
+single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= (start_lr*(iterations-i)/iterations + end_lr*i/iterations)*input_grad 
+```
+
+Further optimizing for a coherent input with two octave-based jitters over 720 iterations,
+
+```python
+single_input = octave(single_input, target_output, 220, [6, 5], [2.4, 0.8], 0, pad=False, crop=False)
+
+single_input = torchvision.transforms.Resize([490, 490])(single_input)
+single_input = octave(single_input, target_output, 500, [1.3, 0.45], [1.5, 0.4], 470, pad=False, crop=True) 
+```
+
+gives 
+
+![Inception output]({{https://blbadger.github.io}}/neural_networks/octaves_inception3_test2.png)
 
 ### GoogleNet Image Generation
 
