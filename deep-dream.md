@@ -63,12 +63,19 @@ It may be wondered how deep dream makes any kind of recognizable image at all.  
 
 Futhermore, when one considers how a convolutional layer works for image classification, it is not immediately clear how optimizing the activation of many layers together would give anything other than an incoherent jumble.  This is because during feed-forward operation each feature map in a convolutional layer is expected to have a different activation corresponding to which features are found in the image one wants to classify.  Activating all the feature maps is equivalent to saying that one wants an image that has all possible features, and for deeper layers with many (>= 256) features one may reasonably expect that this image will not look like much of anything at all, especially when no smoothness constraint is enforced.
 
+After some consideration, the situation may not seem as bad as at first glance.  The deep dream process begins using a natural image rather than noise, and therefore although we don't enforce statistical characteristics of natural images during gradient descent we have enforced them at the beginning of gradient descent.  
 
+To see why optimizing the activation of many features at once does not necessarily lead to a nonsensical image, consider the following example in which first one, then five, and then all 768 features of InceptionV3's layer Mixed 6c are optimized.  As we saw in [part 1](https://blbadger.github.io/feature-visualization.html), the following maps were found to maximally activate each of the first five features of layer Mixed6c:
 
+![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation2.png)
+
+These inputs were generated from noise, but nevertheless if one particular feature were to be activated by a certain pattern, one would expect this to be the case if the starting point were not noise but instead an image of some kind.  Indeed we see that is the case: observe how feature 4 gives a very similar yarn-like appearance when the starting point is a picture of a dalmation (top right below) as when it is noise (above).
 
 ![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation.png)
 
+Thus we come to the idea that some features cannot be optimized simultaneously.  
 
+{% include youtube.html id='l__HrW5spn0' %}
 
 
 
