@@ -206,7 +206,12 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Feature Visualization](/feature-visualization.md)
 
-![features](/neural_networks/featuremap_cover.png)
+![features](/neural_networks/featuremap_cover2.png)
+
+
+### [Deep Dream](/deep-dream.md)
+
+![features](/neural_networks/deep_dream_cover.png)
 
 
 ### [Generative Adversarial Networks](/generative-adversarials.md)
