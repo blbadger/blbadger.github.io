@@ -199,17 +199,22 @@ The study of life, observations of which display many of the features of nonline
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_cropped.gif)
 
 
-### [Input Generation and Transfiguration](/input-generation.md)
+### [Input Generation and Transfiguration I](/input-generation.md)
 
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
 
-### [Feature Visualization](/feature-visualization.md)
+### [Input Generation II: Latent Space](/input-generation.md)
+
+![generated badger](/neural_networks/googlenet_shaggy_opposites.png)
+
+
+### [Feature Visualization I](/feature-visualization.md)
 
 ![features](/neural_networks/featuremap_cover2.png)
 
 
-### [Deep Dream](/deep-dream.md)
+### [Feature Visualization II: Deep Dream](/deep-dream.md)
 
 ![features](/neural_networks/deep_dream_cover.png)
 
