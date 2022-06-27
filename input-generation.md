@@ -4,7 +4,7 @@
 
 The observation that a deep learning model may be able to capture much of the inportant information in the input image leads to a hypothesis: perhaps we could use a trained model in reverse to generate inputs that resemble the training inputs.
 
-In the previous section we saw that the loss gradient with respect to the input $\nabla_a J(O(a; \theta), y)$ of a trained model is able to capture certain features of input images: in particular, the gradient mirrors edges and certain colors that exist in the input.  This observation leads to an idea: perhaps we could use this gradient to try to make our own input image by starting with some known distribution and repeatedly applying the loss gradient to the input.  This process mirrors how stochastic gradient descent applies the loss gradient with respect to the model parameters each minibatch step, but instead of modifying the model parameters instead we are going to modify the input itself.
+On [this page](https://blbadger.github.io/input-adversarials.html) we saw that the loss gradient with respect to the input $\nabla_a J(O(a; \theta), y)$ of a trained model is able to capture certain features of input images: in particular, the gradient mirrors edges and certain colors that exist in the input.  This observation leads to an idea: perhaps we could use this gradient to try to make our own input image by starting with some known distribution and repeatedly applying the loss gradient to the input.  This process mirrors how stochastic gradient descent applies the loss gradient with respect to the model parameters each minibatch step, but instead of modifying the model parameters instead we are going to modify the input itself.
 
 If we want to apply the loss gradient (of the input) to the input, we need three things: a trained model with parameters $\theta$, and input $a$, and an output $y$.  One can assign various distributions to be the input $a$, and arbitrarily we can begin with a stochastic distribution rather than a uniform one.  Next we need an output $y$ that will determine our loss function value: the close the input $a$ becomes to a target input $a'$ that the model expects from learning a dataset given some output $y$, the smaller the loss value.  We can also arbitrarily choose an expected output $\widehat{y}$ with which we use to modify the input, but for a categorical image task it may be best to choose one image label as our target output $\widehat{y}$
 
@@ -700,8 +700,6 @@ It is fascinating to see the generated images for the opposites of other animal 
 ![animal opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_animal_opposites.png)
 
 The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.  Opposites to all ImageNet classes may be found by following [this link](https://drive.google.com/drive/folders/1nE9X0PkG51RIL5euIHwOHfuV5OWWQm0i?usp=sharing). 
-
-Particularly for animals but also for other animals, the ability of our model to find a meaningful opposite of some output class suggests that indeed the output is a form of a latent space.  This observation lets us continue to investigate
 
 
 
