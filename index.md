@@ -204,7 +204,7 @@ The study of life, observations of which display many of the features of nonline
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
 
-### [Input Generation II: Latent Space](/input-generation.md)
+### [Input Generation II: Latent Space](/latent_output.md)
 
 ![generated badger](/neural_networks/googlenet_shaggy_opposites.png)
 
