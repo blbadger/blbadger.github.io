@@ -18,7 +18,7 @@ As effective as numpy is, it is not quite ideal for speedy computations with ver
 
 ### Convolutions Explained
 
-A convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight.  The weights are called the kernal or filter, and are usually denoted as $\omega$ Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
+A convolution (in the context of image processing) is a function in which a pixel's value is added to that of its neighbors according to some given weight.  The set of weights are called the kernal or filter, and are usually denoted as $\omega$. Arguably the simplest example is the uniform kernal, which in 3x3 is as follows:
 
 $$
 \omega = 
@@ -59,7 +59,7 @@ $$
 \end{bmatrix}
 $$
 
-The two-dimensional convolution operation is computed in an analagous way to the one-dimensional vector dot (scalar) product.  Indeed, the convolutional operation is what is called an inner product, which is a generalization of the dot product into two or more dimensions.  Dot products convey information of both magnitude and the angle between vectors, and similarly inner products convey both a generalized magnitude magnitude and a kind of multi-dimensional angle between operands.  
+The two-dimensional convolution operation is computed in an analagous way to the one-dimensional vector dot (scalar) product.  Indeed, the convolutional operation is what is called an inner product, which is a generalization of the dot product into two or more dimensions.  Dot products convey information of both magnitude and the angle between vectors, and similarly inner products convey both a generalized magnitude and a kind of multi-dimensional angle between operands.  
 
 The calculation for the convolution is as follows:
 
@@ -116,9 +116,17 @@ $$
 
 where $z_m$ is the result of a (usually nonlinear) function applied to the activation $a_m$ of the previous layer's node to result in an output.  The same function is then applied to $a_{m, n}$ to make the output for one neuron of the second layer, and the process is repeated for all node in layer $n$.
 
-This is called a fully connected architecture, as each node from one layer is connected to all the nodes in the adjacent layers.  For a two-layer network,  it is apparent that the space complexity of this architecture with regards to storing the model's parameters scales quadratically with $m*n$, meaning that for even moderately sized inputs the number of parameters becomes extremely large if the second layer is not very small.
+This is called a fully connected architecture, as each node from one layer is connected to all the nodes in the adjacent layers.  For a two-layer network,  it is apparent that the space complexity of this architecture with regards to storing the model's parameters scales quadratically with $mn$, meaning that for even moderately sized inputs the number of parameters becomes extremely large if the second layer is not very small.
 
-One approach to dealing with this issue is to simply not connect all the nodes from each layer to the next.  If we use a convolution, we can learn only the parameters necessary to define that convolution, which can be a very small number (9 + 1 for a 3x3 kernal with a bias parameter).  The weights learned for a kernal are not changed as the kernal is scanned accross the input image (or previous layer), although it is common practice to learn multiple kernals at once in order to allow more information to pass between layers.
+One approach to dealing with this issue is to simply not connect all the nodes from each layer to the next.  If we use a convolution, we can learn only the parameters necessary to define that convolution, which can be a very small number (9 + 1 for a 3x3 kernal with a bias parameter).  The weights learned for a kernal are not changed as the kernal is scanned accross the input image (or previous layer), although it is common practice to learn multiple kernals at once in order to allow more information to pass between layers.  
+
+The convolutional operation is slightly different when applied to inputs with many sub-layers, usually termed 'features'.  One example of this would be a natural image of 3 colors, each with its own sub-layer (R, G, B). It is standard practice to have each kernal learn a set of weights for each feature in the input, rather than share the weights for all features. Precisely, this means that for a 10x10 color image (with three color features), a 3x3 kernal will learn $10*3*3$ weight and one bias parameters, which are used to calculate the output value 
+
+$$
+a_{m, n} =  \sum_f \sum_k \sum_l w_{f, k, l} z_{f, m+k, n+l}  + b_n
+$$
+
+Each feature of the output learns a new kernal, meaning that for a $10x10$ input image with $3$ features $f_i$ and an output of $6$ features $f_o$ for the same kernal with $k$ parameters (here 3x3), there are $k * f_i * f_o = (3*3)*3*6 = 162$ weight parameters in total.  Note that the number of parameters required increases quadratically with the number of features in the input and output of the convolution, meaning that practical convolutional layers are limited in terms of how many features they can possibly learn.
 
 Practicality aside, convolutions are very useful for image-based deep learning models.  In this section, we have seen how different kernals are able to sharpen, blur, or else do nothing to an input image.  This is not all: kernals can also transform an input to perform edge detection, texture filtering, and more.  The ability of a neural network to learn the weights of a kernal allows it to learn which of these operations should be performed across the entire image.
 
