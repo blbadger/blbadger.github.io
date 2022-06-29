@@ -123,10 +123,10 @@ One approach to dealing with this issue is to simply not connect all the nodes f
 The convolutional operation is slightly different when applied to inputs with many sub-layers, usually termed 'features'.  One example of this would be a natural image of 3 colors, each with its own sub-layer (R, G, B). It is standard practice to have each kernal learn a set of weights for each feature in the input, rather than share the weights for all features. Precisely, this means that for a 10x10 color image (with three color features), a 3x3 kernal will learn $10*3*3$ weight and one bias parameters, which are used to calculate the output value 
 
 $$
-a_{m, n} =  \sum_f \sum_k \sum_l w_{f, k, l} z_{f, m+k, n+l}  + b_n
+a_{m, n} =  \sum_f \sum_k \sum_l w_{f, k, l} z_{f, m+k, n+l} + b_n
 $$
 
-Each feature of the output learns a new kernal, meaning that for a $10x10$ input image with $3$ features $f_i$ and an output of $6$ features $f_o$ for the same kernal with $k$ parameters (here 3x3), there are $k * f_i * f_o = (3*3)*3*6 = 162$ weight parameters in total.  Note that the number of parameters required increases quadratically with the number of features in the input and output of the convolution, meaning that practical convolutional layers are limited in terms of how many features they can possibly learn.
+Each feature of the output learns a new kernal, meaning that for a 10x10 pixel input image with $3$ features $f_i$ and an output of $6$ features $f_o$ for the same kernal with $k$ parameters (here 3x3), there are $k * f_i * f_o = ( 3* 3) * 3* 6 = 162$ weight parameters in total.  Note that the number of parameters required increases quadratically with the number of features in the input and output of the convolution, meaning that practical convolutional layers are limited in terms of how many features they can possibly learn.
 
 Practicality aside, convolutions are very useful for image-based deep learning models.  In this section, we have seen how different kernals are able to sharpen, blur, or else do nothing to an input image.  This is not all: kernals can also transform an input to perform edge detection, texture filtering, and more.  The ability of a neural network to learn the weights of a kernal allows it to learn which of these operations should be performed across the entire image.
 
