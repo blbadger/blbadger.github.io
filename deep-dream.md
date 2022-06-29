@@ -78,7 +78,7 @@ On the bottom row, multiple features are optimized simultaneously.  It is necess
 $$
 g = C +  \nabla_a z^l \\
 = C + \nabla_a \sum_f \sum_m \sum_n z^l_{f, m, n} \\
-= C + \sum_f \sum_m \sum_n \nabla_a z^l_{f, m, n} 
+= C + \sum_f \nabla_a \sum_m \sum_n z^l_{f, m, n} 
 $$
 
 This means that the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.
@@ -91,30 +91,30 @@ How then can we hope to make a coherent image if we are adding small gradients f
 
 $$
 g_0 = 
-\begin{matrix}
+\begin{bmatrix}
 1 & -1  \\
 -1 & 1  \\
-\end{matrix}
+\end{bmatrix}
 $$
 
 whereas another feature's gradient $g_1$ is
 
 $$
 g_1 = 
-\begin{matrix}
+\begin{bmatrix}
 -1 & 1  \\
 1 & -1  \\
-\end{matrix}
+\end{bmatrix}
 $$
 
 now as gradients are additive, the total gradient is
 
 $$
 g_1 = 
-\begin{matrix}
+\begin{bmatrix}
 0 & 0  \\
 0 & 0  \\
-\end{matrix}
+\end{bmatrix}
 $$
 
 which when applied to the original input $a$ will simply yield $a$, so clearly neither feature's activations are optimized.
