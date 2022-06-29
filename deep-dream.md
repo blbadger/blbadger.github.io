@@ -73,15 +73,15 @@ These inputs were generated from noise, but nevertheless if one particular featu
 
 ![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation.png)
 
-On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie as there are a littler under 1000 (768 to be exact) features, we can divide the gradient of the layer by 1000. This is because gradients are additive, such that for some constant $C$,
+On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie if there are around 1000 features in a given layer, we can divide the gradient of the layer by 1000. This is because gradients are additive, meaning that the gradient of an entire layer $z^l$ is equivalent to the gradient of each feature added together,
 
 $$
-g = C +  \nabla_a z^l \\
-= C + \nabla_a \sum_f \sum_m \sum_n z^l_{f, m, n} \\
-= C + \sum_f \nabla_a \sum_m \sum_n z^l_{f, m, n} 
+g = \nabla_a(z^l) \\
+= \nabla_a \left( \sum_f \sum_m \sum_n z^l_{f, m, n} \right) \\
+= \sum_f \nabla_a\\left( \sum_m \sum_n z^l_{f, m, n} \right)
 $$
 
-This means that the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.
+Therefore the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.  In the example above, $b=1/1000$ and
 
 $$
 a_{n+1} = a_n - \epsilon * b * g
@@ -110,7 +110,7 @@ $$
 now as gradients are additive, the total gradient is
 
 $$
-g_1 = 
+g = 
 \begin{bmatrix}
 0 & 0  \\
 0 & 0  \\
