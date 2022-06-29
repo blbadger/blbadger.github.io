@@ -83,7 +83,7 @@ These inputs were generated from noise, but nevertheless if one particular featu
 
 ![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation.png)
 
-On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie if there are around 1000 features in a given layer, we can divide the gradient of the layer by 1000. This is because gradients are additive, meaning that the gradient of an entire layer $z^l$ is equivalent to the gradient of each feature added together,
+On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie if there are around 1000 features in a given layer, we can divide the gradient of the layer by 1000. This is because the gradient is a linear operator and is therefore additive, meaning that the gradient of an entire layer $z^l$ is equivalent to the gradient of each feature added together,
 
 $$
 g = J(O(a; \theta)) = \nabla_a(z^l) \\
