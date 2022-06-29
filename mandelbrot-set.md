@@ -231,8 +231,8 @@ $$
 and the same is true for sine and cosine, which are
 
 $$
-sin(x) = \sum_{n=0}^\infty (-1)^n\frac{z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \\
-cos(x) = \sum_{n=0}^\infty (-1)^{n}\frac{z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
+\sin(x) = \sum_{n=0}^\infty (-1)^n\frac{z^{2n+1}}{(2n+1)!} = z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \\
+\cos(x) = \sum_{n=0}^\infty (-1)^{n}\frac{z^{2n}}{(2n)!} = 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots
 $$
 
 Expressing $e^{iz}$ as an infinite sum proceeds by substituting $x = iz$ and remembering that successive powers of $i$ yield the 4-cycle $(i, \; -1, \; -i,\; 1, \dots)$  which altogether is
@@ -247,7 +247,7 @@ and now splitting the series by taking every other term,
 $$
 e^{iz} = \left( 1 - \frac{z^2}{2!} + \frac{z^4}{4!} - \cdots \right) + \\
 i \left( z - \frac{z^3}{3!} + \frac{z^5}{5!} - \cdots \right) \\
-e^{iz} = cos(z) + isin(z)
+e^{iz} = \cos(z) + i \sin(z)
 $$
 
 Evaluating Euler's formula with $x= i\pi$ gives the beautiful identity
@@ -257,14 +257,6 @@ e^{i\pi} + 1 = 0
 $$
 
 which relates two of the best known transcendental numbers with the two arithmetic identities.
-
-
-
-
-
-
-
-
 
 
 
