@@ -566,25 +566,59 @@ Furthermore, the structured sequence inputs are one-hot encodings but the transf
 
 ### Justification of sequence-based character encodings
 
-We have seen that the above encoding approach is effective, but why is this? It seems that we are simply feeding in raw information to the network and then are more or less by luck meeting with success.  Happily there are some nice theoretical considerations as to why this method is successful.
+We have seen that the above encoding approach is effective, but why is this? It seems that we are simply feeding in raw information to the network and then are more or less by luck meeting with success.  Happily there is a clear explanation as to why this method is successful.
 
 Consider the network architecture above: in this case the input is a tensor of concatenated one-hot vectors, and the output after three hidden layers is a single neuron that performs a linear regression on the second-to-last layer.  Omitting most components, the architecture may be visualized as follows:
 
 ![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_architecture.png)
 
-Now let's compare this to the normal approach to encoding categorical inputs that may be of high dimensionality.  Rather than employ large one-hot vectors, a better way is to perform embeddings on each of the features in question.  This may be done with autoencoder neural networks as follows: first each feature is separated and then one hidden layer of smaller dimensionality than that input feature is trained to return the input as well as possible.  The hidden layers contain what are normally called embeddings, or encodings in lower dimension, of the input.  These hidden layers may then be used as the input layer of the deep learning model that will then produce an output.  For a visualization of this process see below.
+Now let's compare this to the normal approach to encoding categorical inputs that may be of high dimensionality.  Rather than employ large one-hot vectors, a better way is to perform embeddings on each of the features in question.  This may be done with autoencoder neural networks as follows: first each feature is separated and then one hidden layer of smaller dimensionality than that input feature is trained to return the input as well as possible.  The hidden layers contain what are normally called embeddings of the input.  
+
+Broadly speaking, an embedding is a structure-preserving map of one abstract object in another, for example the natural numbers in the integers. In the context of machine learning, embeddings are usually defined as vector spaces in which some distance metric of points in that space corresponds to a metric of those points outside the space in some significant measure.  This means that more 'similar' examples (using some measure of significance to the machine learning task) will tend to be more 'similar', or in other words closer together, in the embedding.  Useful embeddings are usually of lower dimension than the space of the inputs.
+
+These hidden layers may then be used as the input layer of the deep learning model that will then produce an output.  For a visualization of this process see below.
 
 ![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_embeddings.png)
 
-now consider what happens when we feed the input directly into the model, bypassing the embedding stage.  If successful, each hidden layer of the model will learn on or more distributed representations of the input, meaning that the input will be represented accross the layer such that the final representation allows for the final neuron to perform a linear regression $\hat {y} = w^Tx + b$ and obtain an accurate result, regardless of the true function one attempts to model.
+Consider what happens when we feed the input directly into the model, bypassing the embedding stage.  If successful, each hidden layer of the model will learn one or more distributed representations of the input, meaning that the input will be represented accross each hidden layer such that the final representation allows for the final neuron to perform a linear regression $\hat {y} = w^Tx + b$ and obtain an accurate result, regardless of the true function one attempts to model.
 
-In the model above, it is clear that each successive representation of the input will be of lower dimension than the last because each layer contains fewer parameters than the last.  But in the general case, we can also say that between the input and output, there is a representation that is of lower dimension than the input itself (otherwise training would be impossible, see the last section of [this page](https://blbadger.github.io/nn-limitations.html) for more details).  Therefore every model for some hidden layer we obtain a representation of the input in a lower dimension, or equivalently an embedding.
+In the model above, it is clear that each successive representation of the input will be of lower dimension than the last because each layer contains fewer parameters than the last.  But in the general case, we can also say that between the input and output there is a representation that is of lower dimension than the input itself (otherwise training would be impossible, see the last section of [this page](https://blbadger.github.io/nn-limitations.html) for more details).  
 
-Thus we are allowed to bypass an embedding stage because the model will be expected to obtain its own embeddings. 
+Containing input information in a space of smaller dimension than the input itself does not mean that deep learning models contain embeddings. But because we know that each layer is composed of a relatively simple continuous non-linear transformation of the prior layer, the second-to-last layer of an accurate deep learning model must be able to provide information necessary for the final layer to carry out its task with only one non-linear transformation.  We know that the final layer's vector space must reflect the measure of significance placed on the input, and therefore we can expect that the second-to-last layer's vector space will also reflect this same measure of the input as most single non-linear used in deep learning applications transformations preserve relative distance.
+
+Thus we are allowed to bypass an embedding stage because the model will be expected to obtain its own embeddings in each layer. 
 
 ![deep learning architecture]({{https://blbadger.github.io}}neural_networks/nn_including_embeddings.png)
 
 The traditional approach of first training embeddings using autoencoders before proceeding to use those as inputs into the model is analagous to greedy layer-wise pretraining for the first layer of the network, with the objective function being a distance measurement from the input rather than the model's objective function.  
+
+Despite the theoretical reasons behind why an embedding would be expected to exist in a trained deep learning model, it may be wondered if there is any evidence for the claim that a feed-forward neural network learns a set of embeddings on the input.  Happily we can simply use the (machine learning) definition of an embedding in order to test for the presence of this in a layer of a trained neural network.
+
+Taking a trained version of the fully connected architecture shown in a previous section of this page, applied to the dataset with the output being a linear function of one input,
+
+$$
+y=10d
+$$
+
+we can test whether any layer forms an embedding on the inputs of this dataset by observing the correlation between the desired metric ($y$) for pairs of input examples versus some distance metric, say $L^2$, on the activations of a hidden layer.  Choosing the last hidden layer, we have
+
+![deep learning architecture]({{https://blbadger.github.io}}neural_networks/control_embedding_100.png)
+
+The clear correlation (though not linear) between desired and hidden layer $L^2$ distance indicates that indeed the last hidden layer has formed a 20-dimensional embedding on the input. This is also the case when we apply the same model architecture to the non-linear control
+
+$$
+y = (c/100) * b
+$$
+
+![deep learning architecture]({{https://blbadger.github.io}}neural_networks/control2_embedding_100.png)
+
+which over 100 epochs of training yields the following scatterplots comparing the last hidden layer's distance to the $y$.
+
+{% include youtube.html id='SjQy9XvJkgk' %}
+
+
+
+
 
 
 
