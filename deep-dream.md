@@ -78,7 +78,7 @@ On the bottom row, multiple features are optimized simultaneously.  It is necess
 $$
 g = \nabla_a(z^l) \\
 = \nabla_a \left( \sum_f \sum_m \sum_n z^l_{f, m, n} \right) \\
-= \sum_f \nabla_a\\left( \sum_m \sum_n z^l_{f, m, n} \right)
+= \sum_f \nabla_a \left( \sum_m \sum_n z^l_{f, m, n} \right)
 $$
 
 Therefore the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.  In the example above, $b=1/1000$ and
