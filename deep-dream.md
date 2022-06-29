@@ -11,7 +11,7 @@ $$
 On the page referenced in the previous paragraph, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) with Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$.  The actual update to gradient descent
 
 $$
-a_{n+1} = \left( \mathcal{N} \mathscr{J} (a_n + \epsilon g))
+a_{n+1} =\mathscr{J} \left( \mathcal{N}(a_n + \epsilon g) \right)
 $$
 
 With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
