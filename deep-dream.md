@@ -2,7 +2,17 @@
 
 ### Introduction: Feature Optimization
 
-In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning feature maps were investigated by constructing an input that made the highest total activation in that feature, starting with random noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.
+In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning feature maps were investigated by constructing an input that made the highest total activation in that feature, starting with random noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.  To recap, an input $a$ may be modified via gradient descent where the gradient in question is some loss function of the output $J(O)$ on the input $a$, given model parameters $\theta$,
+
+$$
+g = \nabla_a J(O(a, \theta))
+$$
+
+On the page referenced in the previous paragraph, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) with Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$.  The actual update to gradient descent
+
+$$
+a_{n+1} = \left( \mathcal{N} \mathscr{J} (a_n + \epsilon g))
+$$
 
 With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
 
@@ -16,7 +26,7 @@ One can also modify the input $a$ such that multiple layers are maximally activa
 
 It may be wondered what would happen if the input image were optimized without enforcing a prior requiring smoothness in the final image.  Omitting smoothness has a fairly clear justification in this scenario: the starting input is a natural image that contains the smoothness and other statistical features of other natural images, so as long as we do not modify this image too much then we would expect to end with something that resembles a natural image.
 
-This being the case, we can implement gradient descent using octaves without 
+This being the case, we can implement gradient descent using octaves but without Gaussian convolution as follows:
 
 ```python
 
@@ -76,7 +86,7 @@ These inputs were generated from noise, but nevertheless if one particular featu
 On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie if there are around 1000 features in a given layer, we can divide the gradient of the layer by 1000. This is because gradients are additive, meaning that the gradient of an entire layer $z^l$ is equivalent to the gradient of each feature added together,
 
 $$
-g = \nabla_a(z^l) \\
+g = J(O(a; \theta)) = \nabla_a(z^l) \\
 = \nabla_a \left( \sum_f \sum_m \sum_n z^l_{f, m, n} \right) \\
 = \sum_f \nabla_a \left( \sum_m \sum_n z^l_{f, m, n} \right)
 $$
