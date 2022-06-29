@@ -73,7 +73,55 @@ These inputs were generated from noise, but nevertheless if one particular featu
 
 ![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/deep_dream_explanation.png)
 
-Thus we come to the idea that some features cannot be optimized simultaneously.  
+On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie as there are a littler under 1000 (768 to be exact) features, we can divide the gradient of the layer by 1000. This is because gradients are additive, such that for some constant $C$,
+
+$$
+g = C +  \nabla_a z^l \\
+= C + \nabla_a \sum_f \sum_m \sum_n z^l_{f, m, n} \\
+= C + \sum_f \sum_m \sum_n \nabla_a z^l_{f, m, n} 
+$$
+
+This means that the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.
+
+$$
+a_{n+1} = a_n - \epsilon * b * g
+$$
+
+How then can we hope to make a coherent image if we are adding small gradients from nearly 1000 features?  The important thing to remember is that a single image cannot possibly optimize all features at once.  Consider the following simple example where we want to optimize the output of two features, where the gradient of the first feature $g_0$ for a 2x2 input $a$ is
+
+$$
+g_0 = 
+\begin{matrix}
+1 & -1  \\
+-1 & 1  \\
+\end{matrix}
+$$
+
+whereas another feature's gradient $g_1$ is
+
+$$
+g_1 = 
+\begin{matrix}
+-1 & 1  \\
+1 & -1  \\
+\end{matrix}
+$$
+
+now as gradients are additive, the total gradient is
+
+$$
+g_1 = 
+\begin{matrix}
+0 & 0  \\
+0 & 0  \\
+\end{matrix}
+$$
+
+which when applied to the original input $a$ will simply yield $a$, so clearly neither feature's activations are optimized.
+
+What this means is that the deep dream procedure gives what can be thought of as a kind of 'average' across all features in the layers of interest.  As each layer must pass the entirety of the necessary information from the input to the output for accurate classification, one can expect for the dream procedure to produce shapes that are most common in the training dataset used, provided the features recognizing these images may be optimized from the input.  This is why deep dream performed on sufficiently deep layers generally introduces animal objects, whereas a dataset trained on landscapes generates images of landscapes and buildings during deep dream ([reference](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html)).
+
+We can observe this inability to optimize all features during the dream process. Observe how the average feature activation does not change for many features even after 3 octaves of deep dream:
 
 {% include youtube.html id='l__HrW5spn0' %}
 
