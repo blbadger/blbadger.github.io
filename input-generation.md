@@ -482,7 +482,7 @@ One way to address the problem of high frequency and apparent chaos in the input
 
 One octave interval is very much like the gradient descent with Gaussian convolution detalied earlier. The main idea compared to the previous technique of image resizing is that the image is up-sampled rather than down-sampled for higher resolution, and that this up-sampling occurs in discrete intervals rather than at each iteration.  Another difference is that instead of maintaining a constant learning rate $\epsilon$ and Gaussian convolution standard deviation before removing the convolution, both are gradually decreased as iterations increase.
 
-There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).  This approach is identical to a positional jitter method that has been used elsewhere, where a prior of positional invariance is added to image generation. 
+There are a number of different ways that octave-based gradient descent may be applied, but here we choose to have the option to perform gradient descent on a cropped copy of the input image, and apply a Gaussian convolution to the entire image at each step (rather than only to the portion that was cropped and modified via gradient descent).  This approach is similarto a positional jitter method that has been used elsewhere, but incorperates an increase in scale at specific stages of the positional jitter.
 
 ```python
 def octave(single_input, target_output, iterations, learning_rates, sigmas, size, crop=True):
@@ -504,8 +504,7 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, size
 	return single_input
 ```
 
-Usually multiple octaves are performed during gradient descent, and this can be achieved by chaining the previous function to resized inputs. Here we have three octaves in total, bringing an initial image of size 299x299 to an output of size 390x390.
-
+Usually multiple octaves are performed during gradient descent, and this can be achieved by chaining the previous function to resized inputs. Here we have three octaves in total, bringing an initial image of size 299x299 to an output of size 390x390.  
 ```python
 # 1x3x299x299 input
 single_input = octave(single_input, target_output, 100, [1.5, 1], [2.4, 0.8], 0, crop=False)
@@ -529,6 +528,8 @@ single_input[:, :, crop_height:crop_height+size, crop_width:crop_width+size] -= 
 
 To see how using cropped portions of octaves implements a positional jitter, consider two consecutive updates to an image $a$.  The model (InceptionV3 in this case) receives inputs that are small translations of each other (along with the addition of a gradient descent step) such that the gradient $g$ of each input with respect to the output class that is being optimized does not depend on the exact position of each pixel value, only the relative (and approximate) position. 
 
+Note that the size of the cropped portion of $a$ that is fed to the model has undetermined dimensions $h$ and $w$. Some model architectures require an input of a fixed size, while others are more flexible.  Implementations of models used for experimentation on this page are generally flexible, mostly due to their convolutional and pooling layers. Increasing the $h$ and $w$ resolution of the portion of the image that is used as an input to the model allows for the application of gradients at smaller scales, leading to a more detailed image at the expense of some coherence between portions of the imag
+
 ![Inception output]({{https://blbadger.github.io}}/neural_networks/cropped_octave_explanation.png)
 
 Further optimizing for a coherent input with two cropped octave-based jitters over 720 iterations,
@@ -548,17 +549,15 @@ gives
 
 In images of inputs generated using gradient descent published by [Mordvintsev and colleagues](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), generated images are generally better-formed and much less noisy than they appear on this page.  Øygard [investigated](https://www.auduno.com/2015/07/29/visualizing-googlenet-classes/) possible methods by which these images were obtained (as the previous group did not publish their image generation code) and found a way to produce more or less equivalent images and authored a helpful [Github repo](https://github.com/auduno/deepdraw) with the programs responsible.
 
-Both referenced studies have observed images that are in general clearer than most of the images on this page.  Øygard adapted a method modified from an approach in the Tensorflow deep dream [tutorial](https://www.tensorflow.org/tutorials/generative/deepdream) that is termed 'octaves', in which the input image is up-scaled between rounds of gradient descent using Gaussian convolution.  
+Both referenced studies have observed images that are in general clearer than most of the images on this page.  Øygard adapted a method modified from an approach in the Tensorflow deep dream [tutorial](https://www.tensorflow.org/tutorials/generative/deepdream) octave method, which resulted in impressively clear images.
 
-A wide array of possible modifications to the octave gradient descent method were attempted with little improvement on the clarity displayed above.  This led to the idea that perhaps it is the model itself rather than the optimization method that was responsible for the increased noise relative to what other researchers have found.
+A wide array of possible modifications to the octave gradient descent method were attempted with little improvement on the clarity displayed in the last section.  This led to the idea that perhaps it is the model itself rather than the optimization method that was responsible for the increased noise relative to what other researchers have found.
 
-The cited works in this section all used the original GoogleNet architecture to generate images.  This may be depicted as follows:
+The cited works in this section all used the original GoogleNet architecture to generate images. whereas this page has so far focused on the related InceptionV3 model.  GoogleNet may be depicted as follows:
 
 ![GoogleNet architecture]({{https://blbadger.github.io}}/neural_networks/googlenet_architecture.png)
 
-It may be appreciated that this network is a good deal shallower than InceptionV3 (22 versus 48 layers, respectively) but otherwise contains a number of the same general features.  
-
-One notable change from the original is that the Pytorch version of GoogleNet uses Batch normalization, whereas the original did not. 
+It may be appreciated that this network is a good deal shallower than InceptionV3 (22 versus 48 layers, respectively) but otherwise contains a number of the same general features.  One notable change from the original is that the Pytorch version of GoogleNet uses Batch normalization, whereas the original did not. 
 
 Optimizing for the 'Stop Light' ImageNet class, we now have a much more coherent image in terms of color and patterns over two octaves.
 
