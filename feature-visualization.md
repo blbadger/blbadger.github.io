@@ -267,17 +267,20 @@ In the late mixed layers, feature activation optimization often leads to recogni
 
 It may be wondered how specific these feature maps are to the optimization process, and in particular whether minimization of different metrics between the feature activations $z^l_f$ and $C$ lead to different feature maps.  This is equivalent to wondering whether instead of maximizing the total activation ($L^1$ metric), we instead weight the maximization of smaller elements higher compared to maximization of larger elements of $z^l_f$ (corresponding to the $L^2$ metric) or else find use the metric with the largest absolute value, $L^\infty$.
 
-Focusing on mapping features from InceptionV3 layer Mixed 6b, we optimize the input using the $L^2$ metric
+Focusing on mapping features from InceptionV3 layer Mixed 6b, we optimize the input using the $L^2$ metric of the distance between the feature's activations and some large constant,
 
 ```python
 loss = 5*torch.sqrt(torch.sum((target-focus)**2))
 ```
-
-or the $L^infty$ metric
+as well as the $L^infty$ metric of that same distance, which can be implemented as follows:
 
 ```python
 loss = torch.linalg.norm((target-focus), ord=np.inf)
 ```
+For the first four features of InceptionV3's layer Mixed 6b, we can see that the same qualitative objects and patterns are formed regardles of the metric used.  Note, however, that in general the $L^1$ metric has the smallest amount of high-frequency noise in the final image and is therefore preferred.
+
+![metrics and layer optimizations]({{https://blbadger.github.io}}/neural_networks/metric_invariance.png)
+
 In conclusion, the feature maps presented here are mostly invariant with respect to the specific measurement used to determine how to maximize the feature activations.
 
 ### Layer and Neuron Interactions
