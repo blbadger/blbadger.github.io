@@ -8,10 +8,10 @@ $$
 g = \nabla_a J(O(a, \theta))
 $$
 
-On the page referenced in the previous paragraph, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) with Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$.  The actual update to gradient descent
+On the page referenced in the previous paragraph, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) via Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$, were employed with the gradient for input $a_n$, denoted $g_n$.  The actual update to gradient descent
 
 $$
-a_{n+1} =\mathscr{J} \left( \mathcal{N}(a_n + \epsilon g) \right)
+a_{n+1} =\mathscr{J} \left( \mathcal{N}(a_n + \epsilon g_n) \right)
 $$
 
 With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
@@ -47,11 +47,11 @@ $$
 z^l = \sum_f \sum_m \sum_n z^l_{f, m, n}
 $$
 
-which is denoted as the sum of the tensor `[:, :, :]` of layer $l$. Using InceptionV3 as our model and applying gradient descent in 3 octaves to an input of flowers, we have
+which is denoted as the sum of the tensor `[:, :, :]` of layer $l$. Using InceptionV3 as our model and applying gradient descent in 3 octaves to an input of flowers, when optimizing layer Mixed 6b we have
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/dream_mixed6b.png)
 
-Other models yield similar results, with ResNet50
+Other models yield similar results, for example optimizing layer 3 of ResNet gives
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/Resnet50_layer3_dream.png)
 
@@ -86,7 +86,7 @@ These inputs were generated from noise, but nevertheless if one particular featu
 On the bottom row, multiple features are optimized simultaneously.  It is necessary to scale back the gradient to avoid producing very high-frequency or saturated final inputs, and we can do this by simply weighting the gradient of the entire layer by a fraction corresponding to the inverse of the number of features in that layer: ie if there are around 1000 features in a given layer, we can divide the gradient of the layer by 1000. This is because the gradient is a linear operator and is therefore additive, meaning that the gradient of an entire layer $z^l$ is equivalent to the gradient of each feature added together,
 
 $$
-g = J(O(a; \theta)) = \nabla_a(z^l) \\
+g = \nabla_a(J(O(a; \theta))) = \nabla_a(z^l) \\
 = \nabla_a \left( \sum_f \sum_m \sum_n z^l_{f, m, n} \right) \\
 = \sum_f \nabla_a \left( \sum_m \sum_n z^l_{f, m, n} \right)
 $$
@@ -134,6 +134,31 @@ What this means is that the deep dream procedure gives what can be thought of as
 We can observe this inability to optimize all features during the dream process. Observe how the average feature activation does not change for many features even after 3 octaves of deep dream:
 
 {% include youtube.html id='l__HrW5spn0' %}
+
+### Enhancement with Layer Optimization
+
+In the previous section it was observed that not all features of the layer of interest were capable of increasing their mean activation during deep dream.  Do certain features tend to exhibit an increase in activation, leading to a similar change in the input image for all starting images or does the image generated (and therefore the features that are activated) depend on the original input?  In other words, if the dream procedure tends to generate an image that is representative of the more common examples in the dataset used to train a network, what influence does the original input image have?  In the original deep dream [article](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), it was observed that the dream procedure tends to amplify objects that the model's layer of interest 'sees' in original images.  It remains to be seen what influence the input has on a dream, or whether the same objects tend to be amplified no matter what input is given.
+
+We will use GoogleNet as the model for this section. For reference, this model's architecture is as follows:
+
+![annotated googlenet]({{https://blbadger.github.io}}/neural_networks/annotated_googlenet.png)
+
+On [this page](https://blbadger.github.io/input-generation.html) it was observed that a gradient descent on the input was capable of producing images that were confidently predicted to be of one output category.  To test whether or not deep dream enhances characteristics of those categories or chooses new ones, these generated representative images will be used as initial inputs $a_0$.  We apply the 3-octave gradient descent without smoothness or positional jitter, meaning the update is
+
+$$
+a_{n+1} = a_n + \epsilon * g_n
+$$
+
+For some layers it is clear that certain characteristics are introduced irrespective of the original image $a_0$.  Optimizing layer 4b leads to the appearance of fur and animal faces on most representative ImageNet categories, for example on this image for 'Stoplight'
+
+![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_stoplight_4bdream.png)
+
+
+
+
+### Directed Dream
+
+
 
 
 
