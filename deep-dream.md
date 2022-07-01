@@ -2,23 +2,67 @@
 
 ### Introduction: Feature Optimization
 
-In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning feature maps were investigated by constructing an input that made the highest total activation in that feature, starting with random noise.  But ImageNet does not contain many images that resemble this, making the initial input $a_0$ somewhat artificial.  Instead we can start with a real image for $a_0$ and modify it using gradient descent.  To recap, an input $a$ may be modified via gradient descent where the gradient in question is some loss function of the output $J(O)$ on the input $a$, given model parameters $\theta$,
+In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning model convolutional features were investigated by constructing an input that resulted in the highest total activation in that feature, starting with random noise.  But the training dataset for the models used (ImageNet) does not contain any images that resemble pure noise, making the initial input $a_0$ somewhat artificial.  What happens if we start with a real image for $a_0$ rather than noise and modify that image using gradient descent?
+
+To recap, an input $a$ may be modified via gradient descent where the gradient at step $n$, denoted $g_n$, is some loss function of the output $J(O)$ on the input $a_n$, given model parameters $\theta$,
 
 $$
-g = \nabla_a J(O(a, \theta))
+g_n = \nabla_a J(O(a_n, \theta))
 $$
 
-On the page referenced in the previous paragraph, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) via Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$, were employed with the gradient for input $a_n$, denoted $g_n$.  The actual update to gradient descent
+On the page referenced above, we optimized the output activation of interest $\widehat y_n$ by assigning the loss function of the output layer $J(O)$ to be the difference  $J(O(a, \theta)) = C - \widehat y_n$ where $C$ is some large constant and the initial input $a_0$ is a scaled normal distribution.  But gradient descent alone was not found to be very effective in producing recognizable images on $a_0$, so two additional Bayesian priors were added: smoothness (ie pixel cross-correlation) via Gaussian convolution $\mathcal{N}$ and translational invariance with Octave-based jitter, here denoted $\mathscr{J}$, were employed with the gradient for input $a_n$, denoted $g_n$.  The actual update procedure is
 
 $$
 a_{n+1} =\mathscr{J} \left( \mathcal{N}(a_n + \epsilon g_n) \right)
 $$
 
-With features from layer Mixed 6d in InceptionV3 maximized by modifying inputs where $a_0$ are selections of flowers, we have
+Now we will investigate a similar update, but using octaves without jitter (denoted $\mathscr{O}$).  This is done by increasing the image resolution and feeding the entire image into the model, rather than a randomly cropped version.  
+
+$$
+a_{n+1} =\mathscr{O} \left( \mathcal{N}(a_n + \epsilon g_n) \right)
+$$
+
+A three-octave approach was found to result in clear images.
+
+```python
+# original image size: 299x299
+single_input = directed_octave(single_input, target_output, 100, [0.5, 0.4], [2.4, 0.8], 0, index, crop=False)
+
+single_input = torchvision.transforms.Resize([380, 380])(single_input)
+single_input = directed_octave(single_input, target_output, 100, [0.4, 0.3], [1.5, 0.4], 330, index, crop=False)
+
+single_input = torchvision.transforms.Resize([460, 460])(single_input)
+single_input = directed_octave(single_input, target_output, 100, [0.3, 0.2], [1.1, 0.3], 375, index, crop=False)
+
+```
+
+We will start by optimizing one or two features at a time.  To do this, we want to increase the activation of each neuron in that feature using gradient descent. One way to accomplish this is to assign the loss function $J(O(a, \theta))$ to be the sum of the difference between each neuron's activation in the feature of interest, as a tensor denoted $z^l_f$, and some large constant $C$.
+
+$$
+g = \nabla_a(J(O(a; \theta))) = \nabla_a(C - z^l_f) \\
+= \nabla_a \left(\sum_m \sum_n C - z^l_{f, m, n} \right) \\
+$$
+
+As was done for feature visualization, computation of the gradient can be implemented with $C=200$ as follows:
+
+```python
+def layer_gradient(model, input_tensor, desired_output, index):
+	...
+	input_tensor.requires_grad = True
+	output = model(input_tensor).to(device)
+	focus = output[0][:][:][:] # optimize the entire layer
+	target = torch.ones(focus.shape).to(device)*200
+	loss = torch.sum(target - focus)
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient
+```
+
+For this procedure applied to 8 features from layer Mixed 6d in InceptionV3 $a_0$ are selections of flowers, we have
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_dream.png)
 
-One can also modify the input $a$ such that multiple layers are maximally activated: here we have features from layers 'Mixed 6d' and 'Mixed 6e' jointly optimized, again using a collection of flowers $a_0$.
+One can also modify the input $a$ such that multiple layers are maximally activated: here we have features from layers 'Mixed 6d' and 'Mixed 6e' jointly optimized by assigning the total loss to be the sum of the loss of each feature, again using a collection of flowers $a_0$.
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_Mixed6e_dream.png)
 
@@ -94,7 +138,7 @@ $$
 Therefore the gradient descent update performed may be scaled by the constant $b$ while keeping the same update $\epsilon$ as was used for optimization for an individual feature.  In the example above, $b=1/1000$ and
 
 $$
-a_{n+1} = a_n - \epsilon * b * g
+a_{n+1} = a_n - \epsilon * b * g_n
 $$
 
 How then can we hope to make a coherent image if we are adding small gradients from nearly 1000 features?  The important thing to remember is that a single image cannot possibly optimize all features at once.  Consider the following simple example where we want to optimize the output of two features, where the gradient of the first feature $g_0$ for a 2x2 input $a$ is
@@ -110,7 +154,7 @@ $$
 whereas another feature's gradient $g_1$ is
 
 $$
-g_1 = 
+g_2 = 
 \begin{bmatrix}
 -1 & 1  \\
 1 & -1  \\
