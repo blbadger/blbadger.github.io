@@ -193,11 +193,11 @@ $$
 a_{n+1} = a_n + \epsilon * g_n
 $$
 
-For some layers it is clear that certain characteristics are introduced irrespective of the original image $a_0$.  Optimizing layer 4b leads to the appearance of fur and animal faces on most representative ImageNet categories, for example on this image for 'Stoplight'
+ Optimizing layer 4c leads to an increase in the resolution on most representative ImageNet categories, for example on this image for 'Stoplight'
 
-![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_stoplight_4bdream.png)
+![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_stoplight_4cdream.png)
 
-But this is not the case when we optimize the activations of other layers: layer 4a has introduced animal eyes and fur, but layer 5a does not seem to have contributed much beyond some general textures.  Particularly of note is that optimization of layer 4c has enhanced the city features of the original image (note the bridges, doors, clouds, and trees) and is of somewhat higher resolution.
+For some layers it is clear that certain characteristics are introduced irrespective of the original image $a_0$: layer 4a has introduced animal eyes and fur and layer 4b tends to add animal faces whereas layer 5a does not seem to have contributed much beyond some general textures.  Particularly of note is that optimization of layer 4c has enhanced the city features of the original image (note the bridges, doors, clouds, and trees) and is of somewhat higher resolution.
 
 ![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/stoplight_dreams.png)
 
@@ -253,9 +253,17 @@ $$
 a_{n+1} = \mathcal{N}(a_n + \epsilon * (cg_t))
 $$
 
-we find that the bubbles resulting are of noticeably lower resolution, mirroring what was observed when layer optimization was performed with the starting image being one that targeted some specific class. 
+we find that the bubbles resulting are of somewhat lower resolution, mirroring what was observed in the last section of this page.
 
 ![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_transfiguration.png)
+
+The increase in resolution for directed dreams relative to image transfigurations (using only the gradient of the target class) is most apparent when the target is an animal.  For the target class 'Lion', observe how the directed dream with Layer 4c which is as follows
+
+![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_lion_dream4c.png)
+
+introduces lions with much higher resolution than transfiguration of the same target.
+
+![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_lion_transfiguration3.png)
 
 Directed dreams can introduce practically any of the 1000 ImageNet target categories, or a combination of these categories. Observe the result of the dream on Layer 4c with a target class of 'Torch': 
 
