@@ -232,7 +232,7 @@ As we observed in the last section, the dream procedure tends to be somewhat arb
 Perhaps the simplest way to direct a dream towards one object is to perform layer optimization as well as a target optimization.  This can be done using gradient descent on both the layer of interest, whose gradient is $g_l$, as well as on the target with gradient $g_t$.  These gradients usually have to be scaled independently, accomplished by multiplying by tensors of some constants $a$ and $b$,
 
 $$
-a_{n+1} = a_n + \epsilon * (ag_l + bg_t)$
+a_{n+1} = a_n + \epsilon * (ag_l + bg_t)
 $$
 
 A bit of experimentation is enough to convince on that this alone does not yield any kind of coherent image, as the same problems experienced for optimizing the gradient of the target output on [this page](https://blbadger.github.io/input-generation.html).  Namely, optimization of an output without smoothness leads to the presence of an adversarial negative with near-certainty, meaning that we cannot direct our dream by simply adding the gradient of the output class. 
@@ -240,7 +240,7 @@ A bit of experimentation is enough to convince on that this alone does not yield
 Instead we can enforce a small amount of smoothness using Gaussian convolution $\mathcal N$ on the modified image
 
 $$
-a_{n+1} = \mathcal{N}(a_n + \epsilon * (ag_l + bg_t))$
+a_{n+1} = \mathcal{N}(a_n + \epsilon * (ag_l + bg_t))
 $$
 
 where \mathcal{N} is applied only every 5 or 10 steps.  Now the dream image usually contains recognizable images of the target class along with additional features that the dream might introduce.  For the target class 'Bubble' and optimizing the activation of Layer 4c, observe how bubbles are present along with a house and some animals
@@ -250,7 +250,7 @@ where \mathcal{N} is applied only every 5 or 10 steps.  Now the dream image usua
 Besides introducing some desired element into the dream, it is also apparent that this procedure results in higher resolution than occurs for [image transfiguration](https://blbadger.github.io/input-generation.html) where only the target class is optimized. If we apply the same smoothing procedure but with a newly scaled gradient
 
 $$
-a_{n+1} = \mathcal{N}(a_n + \epsilon * (cg_t))$
+a_{n+1} = \mathcal{N}(a_n + \epsilon * (cg_t))
 $$
 
 we find that the bubbles resulting are of noticeably lower resolution, mirroring what was observed when layer optimization was performed with the starting image being one that targeted some specific class. 
