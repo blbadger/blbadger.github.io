@@ -179,7 +179,7 @@ We can observe this inability to optimize all features during the dream process.
 
 {% include youtube.html id='l__HrW5spn0' %}
 
-### Enhancement with Layer Optimization
+### Enhancements with Dreams
 
 In the previous section it was observed that not all features of the layer of interest were capable of increasing their mean activation during deep dream.  Do certain features tend to exhibit an increase in activation, leading to a similar change in the input image for all starting images or does the image generated (and therefore the features that are activated) depend on the original input?  In other words, if the dream procedure tends to generate an image that is representative of the more common examples in the dataset used to train a network, what influence does the original input image have?  In the original deep dream [article](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), it was observed that the dream procedure tends to amplify objects that the model's layer of interest 'sees' in original images.  It remains to be seen what influence the input has on a dream, or whether the same objects tend to be amplified no matter what input is given.
 
@@ -209,15 +209,53 @@ although other layers yield similar additions as for 'Stoplight'
 
 ![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/volcano_dreams.png)
 
+and indeed we can see that the same patterns exist for most other input images, as for example
+
+![deep dream badger]({{https://blbadger.github.io}}/neural_networks/badger_dreams.png)
+
+It is apparent that the final image after deep dream is of higher resolution than the initial, which is partly but not completely (see the next section) because the input generation procedure uses Gaussian blurring, but deep dream does not.  This increased resolution comes at the price of some amount of precision, however, as the resulting image may not match the target category quite as well. Observe how optimizing layer 4c for an input representing 'Lion'
+
+![deep dream lion]({{https://blbadger.github.io}}/neural_networks/googlenet_lion_4cdream.png)
+
+and optimizing layer 4c for an input representing 'Guinea Pig'
+
+![deep dream guinea pig]({{https://blbadger.github.io}}/neural_networks/googlenet_guineapig_4cdream.png)
+
+both lead to a substantial increase in resolution without high-frequency noise but do introduce certain characteristics of animals that are not the target class.
+
+It is interesting that optimizing the activations of a hidden layer of our feed-forward network is capable of increasing the resolution of an input image.  Performing gradient descent using only the output as a target nearly inevitably leads to the presence of high-frequency, incoherent structures unless some form of smoothness or local correlation is applied to the input or else the gradient.
 
 ### Directed Dream
 
+As we observed in the last section, the dream procedure tends to be somewhat arbitrary with the modifications it makes to a given input: for some it introduces many new objects (usually animal faces) and for others it does not.  Can the dream procedure be directed in order to introduce features that we want?
 
+Perhaps the simplest way to direct a dream towards one object is to perform layer optimization as well as a target optimization.  This can be done using gradient descent on both the layer of interest, whose gradient is $g_l$, as well as on the target with gradient $g_t$.  These gradients usually have to be scaled independently, accomplished by multiplying by tensors of some constants $a$ and $b$,
 
+$$
+a_{n+1} = a_n + \epsilon * (ag_l + bg_t)$
+$$
 
+A bit of experimentation is enough to convince on that this alone does not yield any kind of coherent image, as the same problems experienced for optimizing the gradient of the target output on [this page](https://blbadger.github.io/input-generation.html).  Namely, optimization of an output without smoothness leads to the presence of an adversarial negative with near-certainty, meaning that we cannot direct our dream by simply adding the gradient of the output class. 
 
+Instead we can enforce a small amount of smoothness using Gaussian convolution $\mathcal N$ on the modified image
 
+$$
+a_{n+1} = \mathcal{N}(a_n + \epsilon * (ag_l + bg_t))$
+$$
 
+where \mathcal{N} is applied only every 5 or 10 steps.  Now the dream image usually contains recognizable images of the target class along with additional features that the dream might introduce.  For the target class 'Bubble', observe how bubbles are present along with a house and some animals
+
+![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_dream.png)
+
+Besides introducing some desired element into the dream, it is also apparent that this procedure results in higher resolution than occurs for [image transfiguration](https://blbadger.github.io/input-generation.html) where only the target class is optimized. If we apply the same smoothing procedure but with a newly scaled gradient
+
+$$
+a_{n+1} = \mathcal{N}(a_n + \epsilon * (cg_t))$
+$$
+
+we find that the bubbles resulting are of noticeably lower resolution, mirroring what was observed when layer optimization was performed with the starting image being one that targeted some specific class.
+
+![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_transfiguration..png)
 
 
 
