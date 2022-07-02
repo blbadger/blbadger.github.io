@@ -36,10 +36,10 @@ single_input = directed_octave(single_input, target_output, 100, [0.3, 0.2], [1.
 
 ```
 
-We will start by optimizing one or two features at a time.  To do this, we want to increase the activation of each neuron in that feature using gradient descent. One way to accomplish this is to assign the loss function $J(O(a, \theta))$ to be the sum of the difference between each neuron's activation in the feature of interest, as a tensor denoted $z^l_f$, and some large constant $C$.
+We will start by optimizing one or two features at a time.  To do this, we want to increase the activation of each neuron in that feature using gradient descent. One way to accomplish this is to assign the loss function $J(O(a, \theta))$ to be the sum of the difference between each neuron's activation in the feature of interest, as a tensor denoted $z^l_f$, and some large constant $C$ (denoted as a tensor as $\pmb{C}$.
 
 $$
-g = \nabla_a(J(O(a; \theta))) = \nabla_a(C - z^l_f) \\
+g = \nabla_a(J(O(a; \theta))) = \nabla_a(\pmb{C} - z^l_f) \\
 = \nabla_a \left(\sum_m \sum_n C - z^l_{f, m, n} \right) \\
 $$
 
@@ -85,10 +85,10 @@ def octave(single_input, target_output, iterations, learning_rates, sigmas, inde
 	return single_input
 ```
 
-The other change we will make is to optimize the activations of an entire layer rather than only one or two features.  
+The other change we will make is to optimize the activations of an entire layer $\pmb z$ rather than only one or two features.  One way to do this is to optimize the sum $z^l$ of the activations of layer $\pmb z^l$
 
 $$
-z^l = \sum_f \sum_m \sum_n z^l_{f, m, n}
+z^l = \sum_f \sum_m \sum_n \pmb{z}^l_{f, m, n}
 $$
 
 which is denoted as the sum of the tensor `[:, :, :]` of layer $l$. Using InceptionV3 as our model and applying gradient descent in 3 octaves to an input of flowers, when optimizing layer Mixed 6b we have
@@ -154,14 +154,14 @@ $$
 whereas another feature's gradient $g_1$ is
 
 $$
-g_2 = 
+g_1 = 
 \begin{bmatrix}
 -1 & 1  \\
 1 & -1  \\
 \end{bmatrix}
 $$
 
-now as gradients are additive, the total gradient is
+now as gradients are additive, the total gradient $g = g_0 + g_1$ is
 
 $$
 g = 
@@ -197,7 +197,17 @@ For some layers it is clear that certain characteristics are introduced irrespec
 
 ![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_stoplight_4bdream.png)
 
+But this is not the case when we optimize the activations of other layers: layer 4a has introduced animal eyes and fur, but layer 4c has enhanced the city features of the original image (note the bridges, doors, clouds, and trees) and layer 5a does not seem to have contributed much beyond some general textures.
 
+![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/stoplight_dreams.png)
+
+For another non-animal $a_0$, we see a different result: optimization of layer 4c for 'Volcano' leads to the introduction of surprisingly high-resolution animal faces as well as clouds and other more realistic features
+
+![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_volcano_4cdream.png)
+
+although other layers yield similar additions as for 'Stoplight'
+
+![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/volcano_dreams.png)
 
 
 ### Directed Dream
