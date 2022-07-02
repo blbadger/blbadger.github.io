@@ -602,7 +602,7 @@ $$
 
 we can test whether any layer forms an embedding on the inputs of this dataset by observing the correlation between the desired metric ($y$) for pairs of input examples versus some distance metric, say $L^1$, on the activations of a hidden layer.  Choosing the last hidden layer, we have the following 
 
-![deep learning embedding]({{https://blbadger.github.io}}neural_networks/linear_control_embedding_distance.png)
+![deep learning embedding]({{https://blbadger.github.io}}neural_networks/trained_linear_embedding.png)
 
 {% include youtube.html id='YZJ3iokAzgk' %}
 
@@ -612,6 +612,9 @@ $$
 y = (c/100) * b
 $$
 
+Before training, there is no correlation between pairs of examples in terms of actual distance ($L^1$ metric) versus embedding distance
+
+![deep learning embedding]({{https://blbadger.github.io}}neural_networks/untrained_embedding.png)
 
 
 
