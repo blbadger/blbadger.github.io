@@ -197,7 +197,7 @@ For some layers it is clear that certain characteristics are introduced irrespec
 
 ![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/googlenet_stoplight_4bdream.png)
 
-But this is not the case when we optimize the activations of other layers: layer 4a has introduced animal eyes and fur, but layer 4c has enhanced the city features of the original image (note the bridges, doors, clouds, and trees) and layer 5a does not seem to have contributed much beyond some general textures.
+But this is not the case when we optimize the activations of other layers: layer 4a has introduced animal eyes and fur, but layer 5a does not seem to have contributed much beyond some general textures.  Particularly of note is that optimization of layer 4c has enhanced the city features of the original image (note the bridges, doors, clouds, and trees) and is of somewhat higher resolution.
 
 ![deep dream stoplight]({{https://blbadger.github.io}}/neural_networks/stoplight_dreams.png)
 
@@ -243,7 +243,7 @@ $$
 a_{n+1} = \mathcal{N}(a_n + \epsilon * (ag_l + bg_t))$
 $$
 
-where \mathcal{N} is applied only every 5 or 10 steps.  Now the dream image usually contains recognizable images of the target class along with additional features that the dream might introduce.  For the target class 'Bubble', observe how bubbles are present along with a house and some animals
+where \mathcal{N} is applied only every 5 or 10 steps.  Now the dream image usually contains recognizable images of the target class along with additional features that the dream might introduce.  For the target class 'Bubble' and optimizing the activation of Layer 4c, observe how bubbles are present along with a house and some animals
 
 ![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_dream.png)
 
@@ -253,9 +253,13 @@ $$
 a_{n+1} = \mathcal{N}(a_n + \epsilon * (cg_t))$
 $$
 
-we find that the bubbles resulting are of noticeably lower resolution, mirroring what was observed when layer optimization was performed with the starting image being one that targeted some specific class.
+we find that the bubbles resulting are of noticeably lower resolution, mirroring what was observed when layer optimization was performed with the starting image being one that targeted some specific class. 
 
-![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_transfiguration..png)
+![deep dream bubbles]({{https://blbadger.github.io}}/neural_networks/flower_bubble_transfiguration.png)
+
+Directed dreams can introduce practically any of the 1000 ImageNet target categories, or a combination of these categories. Observe the result of the dream on Layer 4c with a target class of 'Torch': 
+
+![deep dream torch]({{https://blbadger.github.io}}/neural_networks/googlenet_4c_torch_dream.png)
 
 
 
