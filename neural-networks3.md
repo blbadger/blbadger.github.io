@@ -600,13 +600,13 @@ $$
 y=10d
 $$
 
-we can test whether any layer forms an embedding on the inputs of this dataset by observing the correlation between the desired metric ($y$) for pairs of input examples versus some distance metric, say $L^2$, on the activations of a hidden layer.  Choosing the last hidden layer, we have the following 
+we can test whether any layer forms an embedding on the inputs of this dataset by observing the correlation between the desired metric ($y$) for pairs of input examples versus some distance metric, say $L^1$, on the activations of a hidden layer.  Choosing the last hidden layer, we have the following 
 
 ![deep learning embedding]({{https://blbadger.github.io}}neural_networks/linear_control_embedding_distance.png)
 
 {% include youtube.html id='YZJ3iokAzgk' %}
 
-Thus we observe a correlation between desired metric and hidden layer $L^2$ distance indicates that indeed the last hidden layer has formed a 20-dimensional embedding on the input. This is also the case when we apply the same model architecture to the non-linear control
+Thus we observe a correlation between desired metric and hidden layer $L^1$ distance indicates that indeed the last hidden layer has formed a 20-dimensional embedding on the input. This is also the case when we apply the same model architecture to the non-linear control
 
 $$
 y = (c/100) * b
