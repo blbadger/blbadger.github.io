@@ -612,11 +612,11 @@ $$
 y = (c/100) * b
 $$
 
-Before training, there is no correlation between pairs of examples in terms of actual distance ($L^1$ metric) versus embedding distance
+Before training, there is no correlation between pairs of examples in terms of actual distance versus embedding distance (both $L^1$ metric)
 
 ![deep learning embedding]({{https://blbadger.github.io}}neural_networks/untrained_embedding.png)
 
-
+{% include youtube.html id='KenWfEU2SLQ' %}
 
 
 
