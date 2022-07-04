@@ -606,7 +606,7 @@ we can test whether any layer forms an embedding on the inputs of this dataset b
 
 {% include youtube.html id='YZJ3iokAzgk' %}
 
-Thus we observe a correlation between desired metric and hidden layer $L^1$ distance indicates that indeed the last hidden layer has formed a 20-dimensional embedding on the input. This is also the case when we apply the same model architecture to the non-linear control
+Thus we observe a correlation between the $l^1$ distance and the desired metric ($y$) and the final hidden layer for pairs of examples, which indicates that indeed the last hidden layer has formed a useful embedding on the input. We can also test whether the same model learns an embedding of the same inputs where the desired metric is
 
 $$
 y = (c/100) * b
@@ -615,6 +615,10 @@ $$
 Before training, there is no correlation between pairs of examples in terms of actual distance versus embedding distance (both $L^1$ metric)
 
 ![deep learning embedding]({{https://blbadger.github.io}}neural_networks/untrained_embedding.png)
+
+But after training, the correlation is found 
+
+![deep learning embedding]({{https://blbadger.github.io}}neural_networks/trained_nonlinear_embedding.png)
 
 {% include youtube.html id='KenWfEU2SLQ' %}
 
