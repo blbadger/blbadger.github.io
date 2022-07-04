@@ -608,6 +608,10 @@ Comparing the images obtained using Googlenet compared to InceptionV3 (above), w
 
 ![comparisons]({{https://blbadger.github.io}}/neural_networks/googlenet_comparisons.png)
 
+### ResNet Image Generation
+
+One of the best-performing models for image recognition has a number of interesting differences from GoogleNet and InceptionV3.
+
 ### InceptionV3 and GoogleNet Compared
 
 So far this page has documented a variety of different methods across two models that allow for the generation of a coherent (ie human-recognizable) input using gradient descent on an initial input of noise, with varying degrees of success.  Measuring image coherence is somewhat difficult, as our metric is inherently subjective to the observer's preference.  Nevertheless, the octave method used with Googlenet has been observed to yield the most recognizable images thus far.
