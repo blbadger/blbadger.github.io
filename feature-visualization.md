@@ -272,7 +272,7 @@ Focusing on mapping features from InceptionV3 layer Mixed 6b, we optimize the in
 ```python
 loss = 5*torch.sqrt(torch.sum((target-focus)**2))
 ```
-as well as the $L^infty$ metric of that same distance, which can be implemented as follows:
+as well as the $L^\infty$ metric of that same distance, which can be implemented as follows:
 
 ```python
 loss = torch.linalg.norm((target-focus), ord=np.inf)
@@ -282,96 +282,6 @@ For the first four features of InceptionV3's layer Mixed 6b, we can see that the
 ![metrics and layer optimizations]({{https://blbadger.github.io}}/neural_networks/metric_invariance.png)
 
 In conclusion, the feature maps presented here are mostly invariant with respect to the specific measurement used to determine how to maximize the feature activations.
-
-### Layer and Neuron Interactions
-
-Observing the images that result from gradient descent on noise gives some coherent and sometimes quite interesting feature maps. One may next wonder how all these maps work together to produce an appropriate classification label during forward propegation, or else how they can work together to [generate an input](https://blbadger.github.io/input-generation.html) representative of a certain target output category.
-
-A first step to understanding how neurons work together has already been shown, where different neurons of one feature have been shown to be somewhat coordinated with respect to the image that results from optimizing their activations simultaneously.  What about multiple neurons or even features, how do they interact in the context of generating an input image?
-
-We therefore seek an input $a'$ that maximizes multiple multiple layers $l_1, l_2, ..., l_n$, which can be equated to maximizing a single value that is the sum of the activations of those layers.
-
-$$
-a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{i=1}^{n} z^{l_i}(a, \theta)
-$$
-
-For only two features in separate layers $l$ and $k$, the loss may be found by finding the sum of the $L_1$ distances between each layer's activation and some large constant $C$, and therefore the gradient used to find an approximation of the target input $a'$ is
-
-$$
-g = \nabla_a (C - z^{l}(a, \theta) + C - z^{k}(a, \theta))
-$$
-
-It could be wondered if it would not be better to separate the gradients for each layer and then add them together during the gradient descent step
-
-$$
-a_{k+1} = a_k - \epsilon * g
-$$
-
-in order to ensure that both features are maximized (and not only one of these).  In practical terms, the automatic differentiation engine in Pytorch gives nearly identical outputs for these two methods, so for simplicity the addition is performed before the gradient descent step.  The following method implements the above equation for two features `focus` and `focus2` that exist in layers `output` and `output2`
-
-```python
-def double_layer_gradient(model, input_tensor, desired_output, index):
-	...
-	input_tensor.requires_grad = True
-	output = model(input_tensor).to(device)
-	output2 = newmodel2(input_tensor).to(device)
-
-	focus = output[0][index][:][:]
-	focus2 = output2[0][index][:][:]
-
-	target = torch.ones(focus.shape).to(device)*200
-	target2 = torch.ones(focus2.shape).to(device)*200
-
-	output = model(input_tensor)
-	loss = torch.sum(torch.abs(output))
-	loss = (torch.sum(target - focus) + torch.sum(target2 - focus2)
-	loss.backward() # back-propegate loss
-	gradient = input_tensor.grad
-
-	return gradient
-```
-
-There are a couple different ways we could specify the layers `output` and `output2`.  Pytorch uses an automatic differentiation approach that requires all gradient sources to be specified as outputs prior to the start of forward propegation.  One option to enforce this requirement is to have one model return multiple outputs, but for clarity the above method assumes multiple models are instantiated.  For features in layers `Conv2d_1z_3x3` and `Conv2d_2z_3x3`, this can be done as follows:
-
-```python
-class NewModel2(nn.Module):
-
-	def __init__(self, model):
-		super().__init__()
-		self.model = model
-
-	def forward(self, x):
-		# N x 3 x 299 x 299
-		x = self.model.Conv2d_1a_3x3(x)
-		return x
-		
-class NewModel(nn.Module):
-
-	def __init__(self, model):
-		super().__init__()
-		self.model = model
-
-	def forward(self, x):
-		# N x 3 x 299 x 299
-		x = self.model.Conv2d_1a_3x3(x)
-		# N x 32 x 149 x 149
-		x = self.model.Conv2d_2a_3x3(x)
-		return x
-```
-
-and these two model classes may be called using a pretrained InceptionV4 model.
-
-```python
-Inception3 = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=True).to(device)
-newmodel = NewModel(Inception3)
-newmodel2 = NewModel2(Inception3)
-```
-
-We can now observe how two features from arbitrary layers interact. For feature 199 of layer Mixed 6a combined with feature 201 of layer Mixed 6b, we have
-
-![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/inception3_layer_interaction.png)
-
-Observe how the combination is far from linear: in certain areas of the image, eyes from layer Mixed 6b are found, wheras in other areas they are completely absent. 
 
 ### Mapping GoogleNet Features
 
@@ -423,6 +333,94 @@ where each of the sub-modules contain residual connections.  For the 50-layer ve
 
 Upon examination, we see the same general features as for GoogleNet and InceptionV3: a color filter in the first convolutional layer followed by simple patterns that become more complex shapes and recognizable parts of animals in later layers. Note too that just as for both other models, features in the final layer appear to contain objects and colors that are rather jumbled together and are less coherent than in prior layers.
 
+### Layer and Neuron Interactions
 
+Observing the images that result from gradient descent on noise gives some coherent and sometimes quite interesting feature maps. One may next wonder how all these maps work together to produce an appropriate classification label during forward propegation, or else how they can work together to [generate an input](https://blbadger.github.io/input-generation.html) representative of a certain target output category.
 
+A first step to understanding how neurons work together has already been shown, where different neurons of one feature have been shown to be somewhat coordinated with respect to the image that results from optimizing their activations simultaneously.  What about multiple neurons or even features, how do they interact in the context of generating an input image?
 
+We therefore seek an input $a'$ that maximizes multiple multiple layers $l_1, l_2, ..., l_n$, which can be equated to maximizing a single value that is the sum of the activations of those layers.
+
+$$
+a' = \underset{a}{\mathrm{arg \; max}} \; \sum_{i=1}^{n} z^{l_i}(a, \theta)
+$$
+
+For only two features in separate layers $l$ and $k$, the loss may be found by finding the sum of the $L_1$ distances between each layer's activation and some large constant $C$, and therefore the gradient used to find an approximation of the target input $a'$ is
+
+$$
+g = \nabla_a (C - z^{l}(a, \theta) + C - z^{k}(a, \theta))
+$$
+
+It could be wondered if it would not be better to separate the gradients for each layer and then add them together during the gradient descent step
+
+$$
+a_{k+1} = a_k - \epsilon * g
+$$
+
+in order to ensure that both features are maximized (and not only one of these).  In practical terms, the automatic differentiation engine in Pytorch gives nearly identical outputs for these two methods, so for simplicity the addition is performed before the gradient descent step.  The following method implements the above equation for two features `focus` and `focus2` that exist in layers `output` and `output2`
+
+```python
+def double_layer_gradient(model, input_tensor, desired_output, index):
+	...
+	input_tensor.requires_grad = True
+	output = model(input_tensor).to(device)
+	output2 = newmodel2(input_tensor).to(device)
+
+	focus = output[0][index][:][:]
+	focus2 = output2[0][index][:][:]
+
+	target = torch.ones(focus.shape).to(device)*200
+	target2 = torch.ones(focus2.shape).to(device)*200
+
+	output = model(input_tensor)
+	loss = torch.sum(torch.abs(output))
+	loss = (torch.sum(target - focus) + torch.sum(target2 - focus2)
+	loss.backward() # back-propegate loss
+	gradient = input_tensor.grad
+
+	return gradient
+```
+
+There are a couple different ways we could specify the layers `output` and `output2`.  Pytorch uses an automatic differentiation approach that requires all gradient sources to be specified as outputs prior to the start of forward propegation.  One option to enforce this requirement is to have one model return multiple outputs, but for clarity the above method assumes multiple models are instantiated.  For features in layers `Conv2d_1z_3x3` and `Conv2d_2z_3x3` of InceptionV3, this can be done as follows:
+
+```python
+class NewModel2(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x):
+		# N x 3 x 299 x 299
+		x = self.model.Conv2d_1a_3x3(x)
+		return x
+		
+class NewModel(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x):
+		# N x 3 x 299 x 299
+		x = self.model.Conv2d_1a_3x3(x)
+		# N x 32 x 149 x 149
+		x = self.model.Conv2d_2a_3x3(x)
+		return x
+```
+
+and these two model classes may be called using a pretrained InceptionV4 model.
+
+```python
+Inception3 = torch.hub.load('pytorch/vision:v0.10.0', 'inception_v3', pretrained=True).to(device)
+newmodel = NewModel(Inception3)
+newmodel2 = NewModel2(Inception3)
+```
+
+We can now observe how two features from arbitrary layers interact. For feature 199 of layer Mixed 6a combined with feature 201 of layer Mixed 6b, we have
+
+![inceptionv3 layer combo]({{https://blbadger.github.io}}/neural_networks/inception3_layer_interaction.png)
+
+Observe how the combination is far from linear: in certain areas of the image, eyes from layer Mixed 6b are found, wheras in other areas they are completely absent. 
+
+For a detailed look at the optimization of many features at once when the original input $a_0$ is a natural image, see [part II](https://blbadger.github.io/deep-dream.html).
