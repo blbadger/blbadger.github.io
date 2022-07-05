@@ -77,9 +77,13 @@ One can also modify the input $a$ such that multiple layers are maximally activa
 
 ### Layer Optimization
 
-It may be wondered what would happen if the input image were optimized without enforcing a prior requiring smoothness in the final image.  Omitting smoothness has a fairly clear justification in this scenario: the starting input is a natural image that contains the smoothness and other statistical features of other natural images, so as long as we do not modify this image too much then we would expect to end with something that resembles a natural image.
+What happens if the input image were optimized without enforcing smoothness, or in other words omitting the Gaussian convolutional step during gradient descent?  We can implement gradient descent using octaves but without Gaussian convolution,
 
-This being the case, we can implement gradient descent using octaves but without Gaussian convolution as follows:
+$$
+a_{n+1} =\mathscr{O} (a_n + \epsilon g_n)
+$$
+
+as follows:
 
 ```python
 
@@ -203,6 +207,14 @@ We can observe this inability to optimize all features during the dream process.
 
 {% include youtube.html id='l__HrW5spn0' %}
 
+Omitting smoothness has a notable justification: the starting input is a natural image that contains the smoothness and other statistical features of other natural images, so as long as we do not modify this image too much then we would expect to end with something that resembles a natural image.  But if we try to optimize the activation of some output category without smoothness, say to make an image of a 'Junco, Snowbird', we find that only noise has been added to the original image.
+
+![deep dream explanation]({{https://blbadger.github.io}}/neural_networks/flower_directed_nonsmooth_13.png)
+
+This suggests that simply starting with a natural image is not the reason why smoothness can be omitted from gradient descent during deep dream.  Instead, observe how the average feature activation increased smoothly in the last video, and compare that to the discontinuous increases seen in the first video on [this page](https://blbadger.github.io/input-generation.html) (in which gradient descent without smoothness is used to optimize an output category).  As the loss function in both cases is a measure of the values displayed at each time step of those videos, it is apparent that the output of a layer is continous with respect to the input, but the output of the final layer is not.
+
+Discontinuities in the output of the final layer with respect to the input are to be expected for most classification models of sufficient power to approximate a one-to-one function (see [this link](https://blbadger.github.io/nn-limitations.html) for the reason why this is) but it appears that internal layers are not discontinuous with respect to the input.  Exactly why this is the case is currently unclear.
+
 ### Enhancements with Dreams
 
 In the previous section it was observed that not all features of the layer of interest were capable of increasing their mean activation during deep dream.  Do certain features tend to exhibit an increase in activation, leading to a similar change in the input image for all starting images or does the image generated (and therefore the features that are activated) depend on the original input?  In other words, if the dream procedure tends to generate an image that is representative of the more common examples in the dataset used to train a network, what influence does the original input image have?  In the original deep dream [article](https://ai.googleblog.com/2015/06/inceptionism-going-deeper-into-neural.html), it was observed that the dream procedure tends to amplify objects that the model's layer of interest 'sees' in original images.  It remains to be seen what influence the input has on a dream, or whether the same objects tend to be amplified no matter what input is given.
@@ -293,9 +305,9 @@ Directed dreams can introduce practically any of the 1000 ImageNet target catego
 
 ![deep dream torch]({{https://blbadger.github.io}}/neural_networks/googlenet_4c_torch_dream.png)
 
+or 'Junco, Snowbird' (note the birds on the left and right hand side of the image)
 
-
-
+![deep dream torch]({{https://blbadger.github.io}}/neural_networks/directed_dream_4c_junco.png)
 
 
 
