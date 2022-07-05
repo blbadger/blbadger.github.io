@@ -106,6 +106,13 @@ Using InceptionV3 as our model for this experiment, we have  we see that this is
 
 We have so far seen that it is possible to generate recognizable images $a'$ that represent the opposites of some original input $a$, where the gradient descent procedure makes the input $a' = -a$ according to how the model views each input.  Likewise it has been observed that linear combinations of the output corresponding to two breeds of dog yield recognizable images where $a' = ba_0 + ca_1$ for some constant $d$ such that $b + c = d$.
 
+We can explore other vector operations.  Vector addition is the process of adding the component vectors in a space, and may be thought of as resulting in a vector that contains some of the qualities of both operands. 
+
+![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_1.png)
+
+![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_2.png)
+
+
 ### Feature Latent Space
 
 Suppose one were to want to understand which of the ImageNet categories were more or less similar to another.  For example, is an image of a cat more similar to a fox or a wolf?  Specifically we want this question answered with abstract ideas like facial and tail structure, rather than some simple metric like color alone.
