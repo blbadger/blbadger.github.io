@@ -50,7 +50,7 @@ def layer_gradient(model, input_tensor, desired_output, index):
 	...
 	input_tensor.requires_grad = True
 	output = model(input_tensor).to(device)
-	focus = output[0][:][:][:] # optimize the entire layer
+	focus = output[0][index][:][:] # optimize the feature of interest
 	target = torch.ones(focus.shape).to(device)*200
 	loss = torch.sum(target - focus)
 	loss.backward()
@@ -58,9 +58,18 @@ def layer_gradient(model, input_tensor, desired_output, index):
 	return gradient
 ```
 
-For this procedure applied to 8 features from layer Mixed 6d in InceptionV3 $a_0$ are selections of flowers, we have
+For this procedure applied to 8 features from layer Mixed 6e in InceptionV3 where the original input $a_0$ is an image of flowers, we have
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/InceptionV3_mixed6d_dream.png)
+
+It may be wondered if there is any meaningful difference between this procedure and [feature visualization](https://blbadger.github.io/feature-visualization.html) in which $a_0$ is scaled Gaussian noise.  Are there noticable differences after gradient descent when certain features are optimized with noise or real images as the original inputs?  We can investigate this question by comparing the images generated above to those using the same optimization method but starting from the following scaled normal distribution
+
+```python
+single_input = (torch.rand(1, 3, 299, 299))/10 + 0.5 # scaled distribution initialization
+```
+and it is apparent that the input does influence the optimized image noticably for a number of features in Layer Mixed 6e.
+
+![Dream]({{https://blbadger.github.io}}/neural_networks/inception_dream_layer_comparison.png)
 
 One can also modify the input $a$ such that multiple layers are maximally activated: here we have features from layers 'Mixed 6d' and 'Mixed 6e' jointly optimized by assigning the total loss to be the sum of the loss of each feature, again using a collection of flowers $a_0$.
 
@@ -91,7 +100,22 @@ $$
 z^l = \sum_f \sum_m \sum_n \pmb{z}^l_{f, m, n}
 $$
 
-which is denoted as the sum of the tensor `[:, :, :]` of layer $l$. Using InceptionV3 as our model and applying gradient descent in 3 octaves to an input of flowers, when optimizing layer Mixed 6b we have
+which is denoted as the sum of the tensor `[:, :, :]` of layer $l$.  The optimization of all the features in a layer may be implemented as follows: 
+
+```python
+def layer_gradient(model, input_tensor, desired_output, index):
+	...
+	input_tensor.requires_grad = True
+	output = model(input_tensor).to(device)
+	focus = output[0][:][:][:] # optimize all features of an input
+	target = torch.ones(focus.shape).to(device)*200
+	loss = torch.sum(target - focus)
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient
+```
+
+Using InceptionV3 as our model and applying gradient descent in 3 octaves to an input of flowers, when optimizing layer Mixed 6b we have
 
 ![Dream]({{https://blbadger.github.io}}/neural_networks/dream_mixed6b.png)
 
