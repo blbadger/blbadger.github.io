@@ -1,28 +1,6 @@
-## Feature Visualization II: Latent Space in the Output
+## Input Generation II: Vectorization
 
-This page is part II on generating inputs using deep learning models trained for image classification. FOr part I, follow [this link](https://blbadger.github.io/input-generation.html)
-
-### Introduction with Transfiguration of Dogs
-
-We can view the difference between a Husky and a Dalmatian according to the model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J_n(0(a, \theta))$ $n=q$ maximum interations, at iteration number $n$ as follows:
-
-$$
-J_n(O(a, \theta)) \\
-= \left(c - \widehat y_{250} * \frac{q-n}{q} \right) + \left(c - \widehat y_{251} * \frac{n}{q} \right) 
-$$
-
-and to the sum on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
-
-$$
-L_1 (a) = \sum_i \lvert a_i \rvert
-$$
-
-Using this method, we go from $(\widehat y_{250}, \widehat y_{251}) = (c, 0)$ to $(\widehat y_{250}, \widehat y_{251}) = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251}) = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes.  After running some experiments, we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
-
-{% include youtube.html id='1bdpG1caKMk' %}
-
-{% include youtube.html id='PBssSJoLOhU' %}
-
+This page is part II on generating inputs using deep learning models trained for image classification. For part I, follow [this link](https://blbadger.github.io/input-generation.html)
 
 ### Introduction to a Latent Space Output with Opposites
 
@@ -32,7 +10,7 @@ These observations lead to a natural idea: perhaps we can treat the output tenso
 
 We will consider the final 1000-dimensional fully connected layer activation of possible ImageNet categories as the output in question. At first glance it is not clear that this could be any kind of latent space: during training, each category is denoted by a one-hot vector in this space such that all possible categories are the same distance apart from each other.  This means that there is no prior information encoded in one output class versus another, which is exactly what one wants when training for classification without prior knowledge.
 
-On the other hand, within this 1000-dimensional space we can view each class as a basis vector for this space and instead consider the possible vectors that exist in this space. To be a latent space, points that are closer together in this output space should yield more similar generated input images, and indeed this is what we have seen when we transformed a generated image of one breed of dog into another.  Thus in the sense of image generation, the output may indeed be viewed as a latent space.  Why is this important?  A meaningful vector space of the outputs allows us to explore interesting questions by simply converting each question into a vector arithmetic operation.  
+On the other hand, within this 1000-dimensional space we can view each class as a basis vector for this space and instead consider the possible vectors that exist in this space. A meaningful vector space of the outputs allows us to explore interesting questions by simply converting each question into a vector arithmetic operation.  
 
 On a memorable episode of the popular comedy 'Seinfeld', the character George decides to do the opposite of what he would normally do with appropriately comedic results.  But one might wonder: what is the opposite?  For a number of ideas, there seems to be a natural opposite (light and dark, open and closed) but for others ideas or objects it is more difficult to identify an opposite: for example, what is the opposite of a mountian?  One might say a valley, but this is far from the only option.  Likewise, objects like a tree and actions like walking do not have clear opposites.
 
@@ -99,7 +77,46 @@ It is fascinating to see the generated images for the opposites of other animal 
 
 ![animal opposites]({{https://blbadger.github.io}}/neural_networks/googlenet_animal_opposites.png)
 
-The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.  Opposites to all ImageNet classes may be found by following [this link](https://drive.google.com/drive/folders/1nE9X0PkG51RIL5euIHwOHfuV5OWWQm0i?usp=sharing). 
+The opposites of snakes are curiously usually lizards (including crocodiles) or amphibians (including axolotls) and the opposites of a number of birds are species of fish.  Opposites to all ImageNet class images according to GoogleNet may be found by following [this link](https://drive.google.com/drive/folders/1nE9X0PkG51RIL5euIHwOHfuV5OWWQm0i?usp=sharing). 
+
+### Dog Transfiguration
+
+We can view the difference between a Husky and a Dalmatian according to some deep learning model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J_n(0(a, \theta))$ $n=q$ maximum interations, at iteration number $n$ as follows:
+
+$$
+J_n(O(a, \theta)) \\
+= \left(c - \widehat y_{250} * \frac{q-n}{q} \right) + \left(c - \widehat y_{251} * \frac{n}{q} \right) 
+$$
+
+and to the sum on the right we can add an $L^1$ regularizer if desired, applied to either the input directly or the output.  Applied to the input, the regularizer is as follows:
+
+$$
+L_1 (a) = \sum_i \lvert a_i \rvert
+$$
+
+Using this method, we go from $(\widehat y_{250}, \widehat y_{251}) = (c, 0)$ to $(\widehat y_{250}, \widehat y_{251}) = (0, c)$ as $n \to q$.  The intuition behind this approach is that $(\widehat y_{250}, \widehat y_{251}) = (c/2, c/2)$ or any other linear combination of $c$ should provide a mix of characteristics between target classes. 
+
+{% include youtube.html id='1bdpG1caKMk' %}
+
+Using InceptionV3 as our model for this experiment, we have  we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
+
+{% include youtube.html id='PBssSJoLOhU' %}
+
+### Vector Addition and Subtraction
+
+We have so far seen that it is possible to generate recognizable images $a'$ that represent the opposites of some original input $a$, where the gradient descent procedure makes the input $a' = -a$ according to how the model views each input.  Likewise it has been observed that linear combinations of the output corresponding to two breeds of dog yield recognizable images where $a' = ba_0 + ca_1$ for some constant $d$ such that $b + c = d$.
+
+### Feature Latent Space
+
+Suppose one were to want to understand which of the ImageNet categories were more or less similar to another.  For example, is an image of a cat more similar to a fox or a wolf?  Specifically we want this question answered with abstract ideas like facial and tail structure, rather than some simple metric like color alone.
+
+This question is not at all easy to address.  We seek a metric that will determine how far ImageNet category is from every other category, but the usual metrics one can place on an image will not be sufficient.  Perhaps the simplest way to get this metric is to take the average image for each category (by averaging the values of all images of one category pixel per pixel) and measure the $L^2$ or $L^1$ distance between each image.  This is almost certain to fail in our case because there is no guarantee that such a distance would correspond to higher-level characteristics rather than lower-level characteristics like color or hue.
+
+Instead we want a measurement that corresponds to more abstract quantities, like the presence of eyes, number of legs, or roundness of an object in an image. We could use those three traits alone, and make a three-dimensional representation called an embedding consisting of points in space where the basis of the vector space is precisely the values attached to each of these characteristics.  For example, if we have some object where `[eyes, legs, roundness] = [4, 10, 0.2]` we would likely have some kind of insect, whereas the point `[-10, -2, 10]` would most likely be an inanimate object like a beach ball.
+
+Happily for us, deep learning models are capable of observing high-level characteristics of an image.  We have seen that [feature maps](https://blbadger.github.io/feature-visualization.html) of certain hidden layers of these models tend to be activated by distinctive patterns, meaning that we can use the total or average activation of a feature map as one of our basis vectors.
+
+
 
 
 
