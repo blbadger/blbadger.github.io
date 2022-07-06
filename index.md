@@ -207,7 +207,7 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Input Generation II: Vectorization](/latent_output.md)
 
-![generated badger](/neural_networks/googlenet_shaggy_opposites.png)
+![generated badger](/neural_networks/vectorized_resnet_1.png)
 
 
 ### [Feature Visualization I](/feature-visualization.md)
