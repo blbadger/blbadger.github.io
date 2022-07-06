@@ -620,7 +620,7 @@ We can generate inputs representative of each ImageNet class using this model as
 
 Earlier on this page it was noted that while the Octave method is able to make images that are far beyond the 299x299 resolution of the ImageNet training samples, there is a limit to how high a resolution one can hope to achieve because applying the gradient at different scales leads to incoherent images.  This can be illustrated using the ResNet model fairly easily due to the high quality of the images this model generates. Observe how changing the last Octave to 750x750 (with a 720x720 crop size) while optimizing for 'Collie' leads to the appearance of the dog's face at widely different scales in the bottom right, which leads to a somewhat more confusing if higher resolution image.
 
-![comparisons]({{https://blbadger.github.io}}/neural_networks/resnet_generated_examples.png)
+![comparisons]({{https://blbadger.github.io}}/neural_networks/resnet_resolution_comparison.png)
 
 ### InceptionV3 and GoogleNet Compared
 
