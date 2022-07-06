@@ -123,6 +123,80 @@ Instead we want a measurement that corresponds to more abstract quantities, like
 
 Happily for us, deep learning models are capable of observing high-level characteristics of an image.  We have seen that [feature maps](https://blbadger.github.io/feature-visualization.html) of certain hidden layers of these models tend to be activated by distinctive patterns, meaning that we can use the total or average activation of a feature map as one of our basis vectors.
 
+Somewhat arbitrarily, let's choose two features from GoogleNet's layer 5a as our basis vectors.  For reference, here are the maps for the features of interest (meaning that the following images were found to maximally activate the features via gradient descent):
+
+![resnet_addition]({{https://blbadger.github.io}}/neural_networks/googlenet_features_latent.png)
+
+Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot
+
+```
+x, y, labels_arr = [], [], []
+for i, image in enumerate(images):
+    label = image[1]
+    image = image[0].reshape(1, 3, 299, 299).to(device)
+    output = network(image)
+    x.append(float(torch.mean(output[0, 0, :, :])))
+    y.append(float(torch.mean(output[0, 1, :, :])))
+    i = 11
+    while label[i] not in ',.':
+        i += 1
+    labels_arr.append(label[11:i])
+    
+plt.figure(figsize=(18, 18))
+plt.scatter(x, y)
+for i, label in enumerate(labels_arr):
+    plt.annotate(label, (x[i], y[i]))
+plt.show()
+plt.close()
+```
+
+this yields
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding.png)
+
+
+When we consider the distribution of average activations of both features,
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution.png)
+
+it is apparent that both are approximately normally distributed.  This is beceause each convolutional layer in the Pytorch implementation of GoogleNet is followed by a Batch Normalization layer, which enforces a normal distribution on the outputs of those layers.  We can remove this batch normalization from the final layer by setting the Batch Norm layer weights to the multiplicative identity 1 and the bias to the additive identity 0.
+
+```python
+def blank_batchnorm(layer):
+    layer.reset_parameters()
+    layer.eval()
+    with torch.no_grad():
+        layer.weight.fill_(1.0)
+        layer.bias.zero_()
+    return
+```
+
+This can be enforced in our model as follows:
+
+```python
+class NewGoogleNet(nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+        self.model.inception5a.branch1.bn.apply(blank_batchnorm) # only this is necessary for features 0 and 4
+        self.model.inception5a.branch2[1].bn.apply(blank_batchnorm)
+        self.model.inception5a.branch3[1].bn.apply(blank_batchnorm)
+```
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding_noBN.png)
+
+and we can see that indeed the distributions of activations for both features are slightly less well-approximated by a Gaussian distribution.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png)
+
+
+
+
+
+
+
+
 
 
 
