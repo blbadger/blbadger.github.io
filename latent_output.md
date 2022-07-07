@@ -106,11 +106,38 @@ Using InceptionV3 as our model for this experiment, we have  we see that this is
 
 We have so far seen that it is possible to generate recognizable images $a'$ that represent the opposites of some original input $a$, where the gradient descent procedure makes the input $a' = -a$ according to how the model views each input.  Likewise it has been observed that linear combinations of the output corresponding to two breeds of dog yield recognizable images where $a' = ba_0 + ca_1$ for some constant $d$ such that $b + c = d$.
 
-We can explore other vector operations.  Vector addition is the process of adding the component vectors in a space, and may be thought of as resulting in a vector that contains some of the qualities of both operands. 
+We can explore other vector operations.  Vector addition is the process of adding the component vectors in a space, and may be thought of as resulting in a vector that contains some of the qualities of both operands. One way to perform vector addition during gradient descent on the input is to perform each update $a' = a + \epsilon g$ such that the gradient is
+
+$$
+g = \nabla_a (C - O_1(a, \theta)) + \nabla_a(C - O_2(a, \theta)) \\
+ = \nabla_a (2C - O_1(a, \theta) - O_2(a, \theta)) \tag{1}
+$$
+
+which leads to the appearance of merged objects, for example this turtle and snowbird
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_1.png)
 
+This sort of addition we can call a 'merging', as characteristics of both target classes $a_1, a_0$ are found in the same contiguous object.  Merging is fairly common using the above gradient.
+
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_2.png)
+
+Some target classes tend to make recognizable shapes of one but not both $a_0, a_1$.  Instead we can try to optimize the activation of these categories separately, choosing to optimize the least-activated neuron at each iteration.
+
+$$
+g =
+\begin{cases}
+\nabla_a(C - O_2(a, \theta)),  & \text{if O_1 \geq O_2} \\
+\nabla_a(C - O_1(a, \theta)),  & \text{if O_1 < O_2}
+\end{cases} \tag{2}
+$$
+
+This method (2) more often than (1) does give an image which places both target objects in the image but often separated, which we can call juxtaposition.
+
+![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_3.png)
+
+However the addition is performed, there are instances in which the output is neither the merging nor juxtaposition of target class objects.  For example, (1) applied to addition of a snowbird to a tarantual yields an indeterminate image somewhat resembling a black widow.
+
+![resnet_addition]({{https://blbadger.github.io}}/neural_networks/resnet_junco_tarantula.png)
 
 
 ### Feature Latent Space
@@ -129,7 +156,7 @@ Somewhat arbitrarily, let's choose two features from GoogleNet's layer 5a as our
 
 Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot
 
-```
+```python
 x, y, labels_arr = [], [], []
 for i, image in enumerate(images):
     label = image[1]
@@ -153,7 +180,6 @@ plt.close()
 this yields
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding.png)
-
 
 When we consider the distribution of average activations of both features,
 
@@ -202,15 +228,15 @@ $$
 y = O(a, \theta)
 $$
 
-Now if we use real images from some category, there is no guarantee that $v$ will be unchanged and it is unclear which $v$ best respresents the image category.  Instead we can use an image $a'$ generated to maximize the output category of interest (for more information on this, see [here](https://blbadger.github.io/input-generation.html)) as an approximation of the input that will most resemble the output category of interest $\widehat y_n = O_n(a, theta)$.
+Now if we use real images from some category, there is no guarantee that $v$ will be unchanged and it is unclear which $v$ best respresents the image category.  Instead we can use an image $a'$ generated to maximize the output category of interest (for more information on this, see [here](https://blbadger.github.io/input-generation.html)) as an approximation of the input that will most resemble the output category of interest $\widehat y_n = O_n(a, \theta)$.
 
 $$
-a' = \mathrm{arg} \; \underset{a}{\mathrm{max}} O_n(a, \theta)
+a' = \mathrm{arg} \; \underset{a}{\mathrm{max}} \; O_n(a, \theta)
 $$
 
-Using these representative inputs $a'$ applied to $O$, we can find the coordinates of all model outputs $y_n \in \Bbb R^1000$.  This means that we can find the coordinates of the representative input $a'$ in the 1000-dimensional output space. 
+Using these representative inputs $a'$ applied to $O$, we can find the coordinates of all model outputs $y_n \in \Bbb R^{1000}$.  This means that we can find the coordinates of the representative input $a'$ in the 1000-dimensional output space. 
 
-As spaces with more than two or three dimensions are hard to visualize, we can perform a dimensionality reduction method for visualization, and here we will find a function $f$ to take $f: y_n \in \Bbb R^1000 \to z_n \in \Bbb R^2$.  We shall employ principle component analysis, which is defined as the function $f(y)$ that produces the embedding $z$ such that a decoding function $g$ such that $x \approx g(f(y))$, where $g(y) = Dy$ and $D \in \Bbb R^{1000x2}$.  Therefore PCA is defined as the encoding function $f$ that minimized the distance of the encoded value $z$ from the original value $y$ subjected to the constraint that the decoding process be a matrix multiplication.  To further simplify things, $D$ is constrained to have linearly independent columns of unit norm.  The minimization procedure may be accomplished using eigendecomposition and does not requre gradient descent.
+As spaces with more than two or three dimensions are hard to visualize, we can perform a dimensionality reduction method for visualization, and here we will find a function $f$ to take $f: y_n \in \Bbb R^{1000} \to z_n \in \Bbb R^2$.  We shall employ principle component analysis, which is defined as the function $f(y)$ that produces the embedding $z$ such that a decoding function $g$ such that $x \approx g(f(y))$, where $g(y) = Dy$ and $D \in \Bbb R^{1000x2}$.  Therefore PCA is defined as the encoding function $f$ that minimized the distance of the encoded value $z$ from the original value $y$ subjected to the constraint that the decoding process be a matrix multiplication.  To further simplify things, $D$ is constrained to have linearly independent columns of unit norm.  The minimization procedure may be accomplished using eigendecomposition and does not requre gradient descent.
 
 When we find the coordinates of $y_n$ for all $n$ ImageNet categories using GoogleNet and then map these points using the first two principle components
 
@@ -218,7 +244,7 @@ When we find the coordinates of $y_n$ for all $n$ ImageNet categories using Goog
 
 but the result is quite underwhelming.  There does not appear to be any noticable pattern in how the categories are arranged along these components, which when we investigate the percentage of variance explained is not surprising: these components account for only $1.8$ and $1.6$ percent of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
 
-Why is this the case?  The primary failure lies in PCA's expectation of a linear space, in which transformations $f$ are additive and scaling
+Why is this the case?  The failure lies in PCA's expectation of a linear space, in which transformations $f$ are additive and scaling
 
 $$
 af(x + y) = f(ax) + f(ay)
