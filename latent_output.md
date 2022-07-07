@@ -126,8 +126,8 @@ Some target classes tend to make recognizable shapes of one but not both $a_0, a
 $$
 g =
 \begin{cases}
-\nabla_a(C - O_2(a, \theta)),  & \text{if O_1 \geq O_2} \\
-\nabla_a(C - O_1(a, \theta)),  & \text{if O_1 < O_2}
+\nabla_a(C - O_2(a, \theta)),  & \text{if} O_1 \geq O_2 \\
+\nabla_a(C - O_1(a, \theta)),  & \text{if} O_1 < O_2}
 \end{cases} \tag{2}
 $$
 
