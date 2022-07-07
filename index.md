@@ -153,7 +153,7 @@ $$
 
 ### [Fractal geometry](/fractal-geometry.md)
 
-![snowflake]({{https://blbadger.github.io}}/fractals/snowflake_fractal.gif)
+![snowflake]({{https://blbadger.github.io}}/misc_images/fractal_cover.png)
 
 
 ## Physics
