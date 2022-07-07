@@ -46,7 +46,6 @@ def generate_input(model, input_tensors, output_tensors, index, count):
 		predicted_output = output_tensors[index].argmax(0)
 		input_grad = loss_gradient(model, single_input, predicted_output, 5) # compute the input gradient
 		single_input = single_input - 10000*input_grad # gradient descent step
-
 ```
 
 `single_input` can then be viewed with the target label denoted
@@ -90,13 +89,9 @@ This method is more successful: when the target label is a tulip, observe how a 
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_tulip.png)
 
-and how a rock is modified to appear more like a field of tulips,
+and how an image of a daisy and a rock is modified to appear more like a field of tulips,
 
 ![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy2.png)
-
-and likewise a daisy's features (white petals etc.) are modified too
-
-![adversarial example]({{https://blbadger.github.io}}/neural_networks/generated_daisy.png)
 
 but generally images of tulips are changed less, which is to be expected given that the gradient of the loss function with respect to the input will be smaller if our target output matches our actual output.
 
