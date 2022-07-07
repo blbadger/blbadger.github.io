@@ -190,10 +190,31 @@ and we can see that indeed the distributions of activations for both features ar
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png)
 
+### Output Latent Space
 
+The embeddings of ImageNet examples for two features of one layer of GoogleNet were explored in the previous section.  But these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model.  Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.
 
+All this is to say that although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
 
+One method to address this is to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
 
+$$
+y = O(a, \theta)
+$$
+
+Now if we use real images from some category, there is no guarantee that $v$ will be unchanged and it is unclear which $v$ best respresents the image category.  Instead we can use an image $a'$ generated to maximize the output category of interest (for more information on this, see [here](https://blbadger.github.io/input-generation.html)) as an approximation of the input that will most resemble the output category of interest $\widehat y_n = O_n(a, theta)$.
+
+$$
+a' = \mathrm{arg} \; \underset{a}{\mathrm{max}} O_n(a, \theta)
+$$
+
+Using these representative inputs $a'$ applied to $O$, we can find the coordinates of all model outputs $y_n \in \Bbb R^1000$.  This means that we can find the coordinates of the representative input $a'$ in the 1000-dimensional output space. 
+
+As spaces with more than two or three dimensions are hard to visualize, we can perform a dimensionality reduction method for visualization, and here we will find a function $f$ to take $f: y_n \in \Bbb R^1000 \to z_n \in \Bbb R^2$.  We shall employ principle component analysis, which is defined as the function $f(y)$ that produces the embedding $z$ such that a decoding function $g$ such that $x \approx g(f(y))$, where $g(y) = Dy$ and $D \in \Bbb R^{1000x2}$.  Therefore PCA is defined as the encoding function $f$ that minimized the distance of the encoded value $z$ from the original value $y$ subjected to the constraint that the decoding process be a matrix multiplication.  To further simplify things, $D$ is constrained to have linearly independent columns of unit norm.  The minimization procedure may be accomplished using eigendecomposition and does not requre gradient descent.
+
+When we find the coordinates of $y_n$ for all $n$ ImageNet categories using GoogleNet and then map these points using the first two principle coordinates
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/output_embedding_pca.png)
 
 
 
