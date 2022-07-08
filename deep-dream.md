@@ -1,6 +1,6 @@
 ## Feature Visualization II: Deep Dream
 
-### Introduction: Feature Optimization
+### Introduction with Feature Optimization
 
 In [Part I](https://blbadger.github.io/feature-visualization.html), deep learning model convolutional features were investigated by constructing an input that resulted in the highest total activation in that feature, starting with random noise.  But the training dataset for the models used (ImageNet) does not contain any images that resemble pure noise, making the initial input $a_0$ somewhat artificial.  What happens if we start with a real image for $a_0$ rather than noise and modify that image using gradient descent?
 
