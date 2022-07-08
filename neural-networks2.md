@@ -1,12 +1,10 @@
-## Neural Networks II: Ordered inputs
+## Training Memory
 
-## The importance of (pseudo)randomization
+## The Importance of Randomization
 
 It is standard practice to perform pseudo-random transformations on the inputs and parameters of neural networks before and during training. Shuffling or random selection of training data, initialization of weights and biases on a Gaussian (or Poisson etc.) distribution, randomized neuron drouput, and most objective function optimization procedures like stochastic gradient descent or Adaptive moment estimation readily spring to mind when one considers current methods.
 
 It is worth asking the following question: why do all these procedures involve randomization, and why not simply arrange the input examples in any arbitrary order and maintain that during training instead?  Each case is considered in the following sections.
-
-### Initialization
 
 Some experimentation will convince one that randomization leads to better performance: for example, failing to randomize the initial weights $w_0$ and biases $b_0$ often leads to poor training and test results.  But if randomization 'works', why is this the case?
 
