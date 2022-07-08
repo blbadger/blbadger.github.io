@@ -175,7 +175,7 @@ This means that although we may expect to see the **Total Deliverers** field as 
 
 {% include youtube.html id='HcSUH0zTexQ' %}
 
-### Saliency-based attribution using gradients
+### Attribution via Saliency
 
 Occlusion is not the only way to obtain insight into which input elements are more or less important for a given output: another way we can learn this is to exploit the nature of the process of learning using a neural network or other similar deep learning models.  This particular method is applicable to any model that uses a differentiable objective function, and thus is unsuitable for most tree-based machine learning models but is happily applicable to neural networks.  Gradient-based input attribution is sometimes termed 'saliency'.
 
