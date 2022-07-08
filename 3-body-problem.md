@@ -49,7 +49,7 @@ For more information, see [Wolfram's notes](https://www.wolframscience.com/refer
 
 Unfortunately for us, there is no general solution to the three body problem: we cannot actually tell where three bodies will be at an arbitrary time point in the future, let alone four or five bodies.  This is an inversion with respect to what is stated in the quotation above: armed with the power of Newton's laws, we cannot calculate, with arbitrary precision in finite time, the paths of any system of more than two objects.  
 
-### Bounded trajectories of 3 objects are (almost always) aperiodic
+### Bounded trajectories of 3 objects are almost always aperiodic
 
 Why is there a solution to the two body problem but not three body problem?  One can imagine that a problem with thousands of objects would be much harder to deal with than two objects, but why does adding only one more object create such a difficult problem?
 
@@ -265,7 +265,7 @@ If we make slightly worse and worse initial measurements, does the inaccuracy of
 
 Just as for the [logistic map](logistic-map.md), the benefit we achieve for getting better initial accuracies is unpredictable. Sometimes a better initial measurement will lead to larger errors in prediction!
 
-### Divergence, Smale's Horseshoe, and Homoclinic Tangles
+### Divergence and Smale Horseshoes with Homoclinic Tangles
 
 We have so far observed the behavior of only one initial set of points in three-dimensional space for each planet.  But it is especially interesting to consider the behavior of many initial points.  One could consider the behavior of all points in $\Bbb R^3$, but this is often difficult to visualize as the trajectories may form something like a solid object.  To avoid this difficulty, we can restrict our initial points to some subspace.
 
@@ -473,7 +473,7 @@ Is there a specific region in which initial positions that have diverged are mor
 
 Which suggests that some but not all ejected trajectories are also diverged, and on the other hand some non-diverged trajectories are also those that experience ejection.
 
-### A comparison: two body versus three body problems
+### Two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
 
 ```python
