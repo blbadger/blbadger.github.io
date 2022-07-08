@@ -2,7 +2,7 @@
 
 Images of [nonlinear dynamical systems](https://blbadger.github.io/) are typically fractals.  Here we explore the origin and meaning of this term.
 
-### Origin and Cantor's set
+### Origin and Cantor sets
 
 The term *Fractal* was chosen by Mandelbrot (after the Latin *Fractus*) to signify irregular, fragmented objects.  These often but do not necessarily have a fractional scaling dimension, and the surface of these objects is non-differentiable.  Spectacular examples of fractals such as the Julia and Mandelbrot sets are often brought to mind when one thinks of fractals, but they are far older and richer than these examples alone.  Nearly a century before the word fractal had been invented, the foundations for this branch of math were established and are here roughly detailed.
 
@@ -199,7 +199,7 @@ Now the true Peano curves are infinitely recursive, therefore this the distance 
 
 Imagine moving along the surface created by either peano curve. An arbitrarily small movement in one direction along this surface does not necessarily lead to a small movement along the curve itself.  Indeed it can be shown that any mapping from two to one dimensions (which could be considered to be equivalent to the definition of a space filling curve) is nowhere-continuous if the mapping is one-to-one and onto.  For some interesting repercussions of this on machine learning methods such as neural networks, see [here](/neural-networks.md).
 
-### Fractals: objects of multiple dimensions
+### Fractals as objects of multiple dimensions
 
 The Koch curve may be drawn as follows
 
@@ -288,7 +288,7 @@ which is somewhere between $0$ and $1$, and this matches the observations that $
 
 Fractals are defined as shapes that have a Hausdorff dimension greater than their topological dimension.  For the shapes presented on this page, Hausdorff and scaling dimensions are equal.  Thus the curves in this section are all fractals, as are the Cantor set and both space-filling Peano curves.  
 
-### More self-similar fractals
+### More Selfsimilar fractals
 
 The Sierpinski triangle (which will resemble a triforce for those of you who played Zelda) is one of the most distinctive fractals presented in the book. There are two orientations the curve takes, which means that the drawing proceeds as follows:
 
