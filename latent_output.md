@@ -250,9 +250,9 @@ $$
 af(x + y) = f(ax) + f(ay)
 $$
 
-and where in particular the intuitive metric of distance stands.  But we have already seen that the output space $y = O(a', \theta)$ does not obey the familiar requirements for a linear metric space because $m(a, b) \neq m(b, a)$, or in words because distance measurements are not commutative. We therefore can expect the output space $y$ to be nonlinear and to be poorly approximated by any matrix multiplication-based method like PCA, as these are composed of linear operations.
+and where in particular the intuitive metric of distance stands.  As points in this space were generated using a nonlinear function (gradient descent of GoogleNet on a scaled normal input), there is no reason to think that a linear decomposition would be capable of capturing much of the variance in that function.
 
-But happily there is a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.
+There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  But we have already seen that in the output space $y = O(a', \theta)$ does not obey the familiar requirements for a linear metric space because $m(a, b) \neq m(b, a)$, or in words because distances are non-symmetric.
 
 
 
