@@ -221,13 +221,17 @@ and we can see that indeed the distributions of activations for both features ar
 
 ### Output Latent Space
 
-Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model.  Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.
+Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model. To be specific, the embedding diagram in the last section denotes that 'Jay' is the ImageNet class most similar to 'Indigo Bunting' for GoogleNet, but only for two out of over 700 features of one specific layer.
 
-Therefore although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
+Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.  Therefore although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
 
-There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  But we have already seen that in the output space $y = O(a', \theta)$ does not obey the familiar requirements for a linear metric space because $m(a, b) \neq m(b, a)$, or in words because distances are non-symmetric.
+There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  
 
-One method to address this is to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
+
+There exists a problem with using this approach as our similarity measure, however: $y = O(a', \theta)$ is asymmetric, or in other words $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
+
+
+Instead of finding the second largest output for our generated inputs, we can find the ImageNet class corresponding to the second closest point (including the point of interest) to our point in the output space. This means that we wish to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
 
 $$
 y = O(a, \theta)
