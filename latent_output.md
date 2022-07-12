@@ -163,7 +163,7 @@ for i, image in enumerate(images):
     image = image[0].reshape(1, 3, 299, 299).to(device)
     output = network(image)
     x.append(float(torch.mean(output[0, 0, :, :])))
-    y.append(float(torch.mean(output[0, 1, :, :])))
+    y.append(float(torch.mean(output[0, 4, :, :])))
     i = 11
     while label[i] not in ',.':
         i += 1
@@ -181,10 +181,13 @@ this yields
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding.png)
 
-When we consider the distribution of average activations of both features,
+which has a distribution of
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution.png)
 
+It appears that Feature 0 corresponds to a measure of something similar to 'brightly-colored bird' whereas Feature 4 is less clear but is most activated by ImageNet categories that are man-made objects.
+
+<!-- 
 it is apparent that both are approximately normally distributed.  This is beceause each convolutional layer in the Pytorch implementation of GoogleNet is followed by a Batch Normalization layer, which enforces a normal distribution on the outputs of those layers.  We can remove this batch normalization from the final layer by setting the Batch Norm layer weights to the multiplicative identity 1 and the bias to the additive identity 0.
 
 ```python
@@ -214,13 +217,15 @@ class NewGoogleNet(nn.Module):
 
 and we can see that indeed the distributions of activations for both features are slightly less well-approximated by a Gaussian distribution.
 
-![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png)
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png) -->
 
 ### Output Latent Space
 
-The embeddings of ImageNet examples for two features of one layer of GoogleNet were explored in the previous section.  But these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model.  Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.
+Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model.  Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.
 
-All this is to say that although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
+Therefore although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
+
+There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  But we have already seen that in the output space $y = O(a', \theta)$ does not obey the familiar requirements for a linear metric space because $m(a, b) \neq m(b, a)$, or in words because distances are non-symmetric.
 
 One method to address this is to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
 
@@ -242,7 +247,7 @@ When we find the coordinates of $y_n$ for all $n$ ImageNet categories using Goog
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_output_embedding.png)
 
-but the result is quite underwhelming.  There does not appear to be any noticable pattern in how the categories are arranged along these components, which when we investigate the percentage of variance explained is not surprising: these components account for only $1.8$ and $1.6$ percent of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
+but the result is somewhat underwhelming.  There does not appear to be any noticable pattern in how the categories are arranged along these components, which when we investigate the percentage of variance explained is not surprising: these components account for only $1.8$ and $1.6$ percent of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
 
 Why is this the case?  The failure lies in PCA's expectation of a linear space, in which transformations $f$ are additive and scaling
 
@@ -252,7 +257,6 @@ $$
 
 and where in particular the intuitive metric of distance stands.  As points in this space were generated using a nonlinear function (gradient descent of GoogleNet on a scaled normal input), there is no reason to think that a linear decomposition would be capable of capturing much of the variance in that function.
 
-There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  But we have already seen that in the output space $y = O(a', \theta)$ does not obey the familiar requirements for a linear metric space because $m(a, b) \neq m(b, a)$, or in words because distances are non-symmetric.
 
 
 
