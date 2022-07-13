@@ -154,7 +154,7 @@ Somewhat arbitrarily, let's choose two features from GoogleNet's layer 5a as our
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/googlenet_features_latent.png)
 
-Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot the embedding performed by these two layers
+Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot the embedding performed by these features by plotting the average activation of the two features for each generated output.
 
 ```python
 def plot_embedding():
@@ -183,7 +183,7 @@ this yields
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding.png)
 
-which has a distribution of
+which has noticeably skewed distribution,
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution.png)
 
@@ -195,11 +195,12 @@ Investigating which ImageNet categories are more or less similar than each other
 
 Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.  Therefore although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
 
-There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  
-
-There exists a problem with using the this approach as a true similarity measure, however: $y = O(a', \theta)$ is asymmetric, or in other words $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
+There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitudes of the components of this vector.  
+There exists a problem with using the this approach as a true similarity metric, however: $y = O(a', \theta)$ is not guaranteed to be symmetric, or in other words generally $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
 
 But because pairs of points exhibit an asymmetric measurement, we cannot portray this as a metric space.  But it is possible to portray these points as an abstract graph, with nodes corresponding to ImageNet categories (ie outputs) and verticies corresponding to relationships between them.  We will start by only plotting the 'nearest neighbor' relationship, which is defined as the output that is most activated by the generated image distinct from the target output $\widehat y$.  
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbor_explanation.png)
 
 ```python
 import networkx as nx
@@ -254,7 +255,9 @@ $$
 a' = \mathrm{arg} \; \underset{a}{\mathrm{max}} \; O_n(a, \theta)
 $$
 
-Using these representative inputs $a'$ applied to $O$, we can find the coordinates of all model outputs $y_n \in \Bbb R^{1000}$.  This means that we can find the coordinates of the representative input $a'$ in the 1000-dimensional output space. 
+Using these representative inputs $a'$ applied to $O$, we can find the coordinates of all model outputs $y_n \in \Bbb R^{1000}$.  This means that we can find the coordinates of the representative input $a'$ in the 1000-dimensional output space. For a three-dimensional example of this method see the following figure.  Note that the metric $m(y_1, y_2)$ may be chosen from any number of possible methods.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/vector_output_explanation.png)
 
 As spaces with more than two or three dimensions are hard to visualize, we can perform a dimensionality reduction method for visualization, and here we will find a function $f$ to take $f: y_n \in \Bbb R^{1000} \to z_n \in \Bbb R^2$.  We shall employ principle component analysis, which is defined as the function $f(y)$ that produces the embedding $z$ such that a decoding function $g$ such that $x \approx g(f(y))$, where $g(y) = Dy$ and $D \in \Bbb R^{1000x2}$.  Therefore PCA is defined as the encoding function $f$ that minimized the distance of the encoded value $z$ from the original value $y$ subjected to the constraint that the decoding process be a matrix multiplication.  To further simplify things, $D$ is constrained to have linearly independent columns of unit norm.  The minimization procedure may be accomplished using eigendecomposition and does not requre gradient descent.
 
