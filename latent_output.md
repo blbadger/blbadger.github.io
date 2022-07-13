@@ -110,7 +110,7 @@ We can explore other vector operations.  Vector addition is the process of addin
 
 $$
 g = \nabla_a (C - O_1(a, \theta)) + \nabla_a(C - O_2(a, \theta)) \\
- = \nabla_a (2C - O_1(a, \theta) - O_2(a, \theta)) 
+= \nabla_a (2C - O_1(a, \theta) - O_2(a, \theta)) 
 $$
 
 which leads to the appearance of merged objects, for example this turtle and snowbird
@@ -128,13 +128,14 @@ g' =
 \begin{cases}
 \nabla_a(C - O_2(a, \theta)),  & \text{if} \; O_1 \geq O_2 \\
 \nabla_a(C - O_1(a, \theta)),  & \text{if} \; O_1 < O_2
+\end{cases}
 $$
 
-This $g'$ more often than $g$ when applied to gradient descent does give an image which places both target objects in the image but often separated, which we can call juxtaposition.
+This $g'$ more often than $g$ when applied to gradient descent does give an image which places both target objects are recognizable and separated in the final image, which we can call juxtaposition.
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_3.png)
 
-However the addition is performed, there are instances in which the output is neither the merging nor juxtaposition of target class objects.  For example, (1) applied to addition of a snowbird to a tarantual yields an indeterminate image somewhat resembling a black widow.
+However the addition is performed, there are instances in which the output is neither the merging nor juxtaposition of target class objects.  For example, (1) applied to addition of a snowbird to a tarantula yields an indeterminate image somewhat resembling a black widow.
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/resnet_junco_tarantula.png)
 
@@ -153,27 +154,29 @@ Somewhat arbitrarily, let's choose two features from GoogleNet's layer 5a as our
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/googlenet_features_latent.png)
 
-Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot
+Feature 0 seems to respond to a brightly colored bird-like pattern whereas feature 4 is maximally activated by something resembling a snake's head and scales.  We can observe the activation of these layers for GoogleNet-generated images representing each ImageNet class in order to get an idea of which categories these layers score as more or less similar from each other.  The following code allows us to plot the embedding performed by these two layers
 
 ```python
-x, y, labels_arr = [], [], []
-for i, image in enumerate(images):
-    label = image[1]
-    image = image[0].reshape(1, 3, 299, 299).to(device)
-    output = network(image)
-    x.append(float(torch.mean(output[0, 0, :, :])))
-    y.append(float(torch.mean(output[0, 4, :, :])))
-    i = 11
-    while label[i] not in ',.':
-        i += 1
-    labels_arr.append(label[11:i])
-    
-plt.figure(figsize=(18, 18))
-plt.scatter(x, y)
-for i, label in enumerate(labels_arr):
-    plt.annotate(label, (x[i], y[i]))
-plt.show()
-plt.close()
+def plot_embedding():
+    x, y, labels_arr = [], [], []
+    for i, image in enumerate(images):
+        label = image[1]
+        image = image[0].reshape(1, 3, 299, 299).to(device)
+        output = network(image)
+        x.append(float(torch.mean(output[0, 0, :, :])))
+        y.append(float(torch.mean(output[0, 4, :, :])))
+        i = 11
+        while label[i] not in ',.':
+            i += 1
+        labels_arr.append(label[11:i])
+
+    plt.figure(figsize=(18, 18))
+    plt.scatter(x, y)
+    for i, label in enumerate(labels_arr):
+        plt.annotate(label, (x[i], y[i]))
+    plt.show()
+    plt.close()
+    return
 ```
 
 this yields
@@ -201,25 +204,27 @@ But because pairs of points exhibit an asymmetric measurement, we cannot portray
 ```python
 import networkx as nx
 
-# convert array of pairs of strings to adjacency dict
-closest_dict = {}
-for pair in closest_array:
-    if pair[0] in closest_dict:
-        closest_dict[pair[0]].append(pair[1])
-    else:
-        closest_dict[pair[0]] = [pair[1]]
+def graph_nearest():
+    # convert array of pairs of strings to adjacency dict
+    closest_dict = {}
+    for pair in closest_array:
+        if pair[0] in closest_dict:
+            closest_dict[pair[0]].append(pair[1])
+        else:
+            closest_dict[pair[0]] = [pair[1]]
 
-G = nx.Graph(closest_dict)
-nx.draw_networkx(G, with_labels=True, font_size=12, node_size=200, node_color='skyblue')
-plt.show()
-plt.close()
+    G = nx.Graph(closest_dict)
+    nx.draw_networkx(G, with_labels=True, font_size=12, node_size=200, node_color='skyblue')
+    plt.show()
+    plt.close()
+    return
 ```
 
 The first half of the 1000 ImageNet categories are mostly animals, and plotting a graphs for them yields
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbors_animal_embedding.png)
 
-Nodes that are connected together form a 'component' of the graph, and nodes that are all connected to each other form a complete component called a 'clique'.  Cliques are apparently rare for this graph but non-trivial components abound, often with very interesting an logical structure.  Observe how cats form one component, and terrier dogs preside in another.
+Nodes that are connected together form a 'component' of the graph, and nodes that are all connected to each other form a complete component called a 'clique'.  Cliques of more that two nodes are extremely rare for ImageNet nearest neighbors, but non-trivial (ie those with more than two nodes) components abound, often with very interesting and logical structures.  Observe how cats form one component, and terrier dogs preside in another, and mustelids and small mammals in another
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/animal_components.png)
 
