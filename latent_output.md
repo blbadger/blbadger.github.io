@@ -110,7 +110,7 @@ We can explore other vector operations.  Vector addition is the process of addin
 
 $$
 g = \nabla_a (C - O_1(a, \theta)) + \nabla_a(C - O_2(a, \theta)) \\
- = \nabla_a (2C - O_1(a, \theta) - O_2(a, \theta)) \tag{1}
+ = \nabla_a (2C - O_1(a, \theta) - O_2(a, \theta)) 
 $$
 
 which leads to the appearance of merged objects, for example this turtle and snowbird
@@ -121,17 +121,16 @@ This sort of addition we can call a 'merging', as characteristics of both target
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_2.png)
 
-Some target classes tend to make recognizable shapes of one but not both $a_0, a_1$.  Instead we can try to optimize the activation of these categories separately, choosing to optimize the least-activated neuron at each iteration.
+Some target classes tend to make recognizable shapes of one but not both $a_0, a_1$.  Instead we can try to optimize the activation of these categories separately, choosing to optimize the least-activated neuron at each iteration. The gradient is therefore
 
 $$
-g =
+g' =
 \begin{cases}
 \nabla_a(C - O_2(a, \theta)),  & \text{if} \; O_1 \geq O_2 \\
 \nabla_a(C - O_1(a, \theta)),  & \text{if} \; O_1 < O_2
-\end{cases} \tag{2}
 $$
 
-This method (2) more often than (1) does give an image which places both target objects in the image but often separated, which we can call juxtaposition.
+This $g'$ more often than $g$ when applied to gradient descent does give an image which places both target objects in the image but often separated, which we can call juxtaposition.
 
 ![resnet_addition]({{https://blbadger.github.io}}/neural_networks/vectorized_resnet_3.png)
 
@@ -186,39 +185,6 @@ which has a distribution of
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution.png)
 
 It appears that Feature 0 corresponds to a measure of something similar to 'brightly-colored bird' whereas Feature 4 is less clear but is most activated by ImageNet categories that are man-made objects.
-
-<!-- 
-it is apparent that both are approximately normally distributed.  This is beceause each convolutional layer in the Pytorch implementation of GoogleNet is followed by a Batch Normalization layer, which enforces a normal distribution on the outputs of those layers.  We can remove this batch normalization from the final layer by setting the Batch Norm layer weights to the multiplicative identity 1 and the bias to the additive identity 0.
-
-```python
-def blank_batchnorm(layer):
-    layer.reset_parameters()
-    layer.eval()
-    with torch.no_grad():
-        layer.weight.fill_(1.0)
-        layer.bias.zero_()
-    return
-```
-
-This can be enforced in our model as follows:
-
-```python
-class NewGoogleNet(nn.Module):
-
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-        self.model.inception5a.branch1.bn.apply(blank_batchnorm) # only this is necessary for features 0 and 4
-        self.model.inception5a.branch2[1].bn.apply(blank_batchnorm)
-        self.model.inception5a.branch3[1].bn.apply(blank_batchnorm)
-```
-
-![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_04_embedding_noBN.png)
-
-and we can see that indeed the distributions of activations for both features are slightly less well-approximated by a Gaussian distribution.
-
-![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png) -->
-
 
 ### Graphs on ImageNet classes
 
