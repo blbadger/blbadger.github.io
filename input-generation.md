@@ -633,8 +633,9 @@ and now we have InceptionV3 generating an image for the same class, using the sa
 
 {% include youtube.html id='Xybz0He5MLs' %}
 
-One can observe that the classification of InceptionV3 for its generated input is less stable from one iteration to the next than what is found for GoogleNet, particularly in the second octave.  
+One can observe that the classification of InceptionV3 for its generated input is less stable from one iteration to the next than what is found for GoogleNet, particularly in the second octave.  Resnet60 appears to be similar to GoogleNet with regards to activation stability.
 
+{% include youtube.html id='1NXcvVckrgA' %}
 
 
 
