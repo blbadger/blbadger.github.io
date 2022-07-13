@@ -219,7 +219,8 @@ and we can see that indeed the distributions of activations for both features ar
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_5a_distribution_nobn.png) -->
 
-### Output Latent Space
+
+### Graphs on ImageNet classes
 
 Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model. To be specific, the embedding diagram in the last section denotes that 'Jay' is the ImageNet class most similar to 'Indigo Bunting' for GoogleNet, but only for two out of over 700 features of one specific layer.
 
@@ -227,11 +228,50 @@ Each of the features and layers are important to the final classification predic
 
 There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitude of the components of this vector.  
 
+There exists a problem with using the this approach as a true similarity measure, however: $y = O(a', \theta)$ is asymmetric, or in other words $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
 
-There exists a problem with using this approach as our similarity measure, however: $y = O(a', \theta)$ is asymmetric, or in other words $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
+But because pairs of points exhibit an asymmetric measurement, we cannot portray this as a metric space.  But it is possible to portray these points as an abstract graph, with nodes corresponding to ImageNet categories (ie outputs) and verticies corresponding to relationships between them.  We will start by only plotting the 'nearest neighbor' relationship, which is defined as the output that is most activated by the generated image distinct from the target output $\widehat y$.  
 
+```python
+import networkx as nx
 
-Instead of finding the second largest output for our generated inputs, we can find the ImageNet class corresponding to the second closest point (including the point of interest) to our point in the output space. This means that we wish to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
+# convert array of pairs of strings to adjacency dict
+closest_dict = {}
+for pair in closest_array:
+    if pair[0] in closest_dict:
+        closest_dict[pair[0]].append(pair[1])
+    else:
+        closest_dict[pair[0]] = [pair[1]]
+
+G = nx.Graph(closest_dict)
+nx.draw_networkx(G, with_labels=True, font_size=12, node_size=200, node_color='skyblue')
+plt.show()
+plt.close()
+```
+
+The first half of the 1000 ImageNet categories are mostly animals, and plotting a graphs for them yields
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbors_animal_embedding.png)
+
+Nodes that are connected together form a 'component' of the graph, and nodes that are all connected to each other form a complete component called a 'clique'.  Cliques are apparently rare for this graph but non-trivial components abound, often with very interesting an logical structure.  Observe how cats form one component, and terrier dogs preside in another.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/animal_components.png)
+
+For the non-animal half of ImageNet, graphing nearest neighbors yields a component with more members than was observed for any animal component.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbors_nonanimal_embedding.png)
+
+This contains many diverse objects, yet often still exhibit relationships that seem reasonable to a human.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nonanimal_components1.png)
+
+Smaller components are often the most illuminating: observe the sports balls clustering together in one component, and the utensils in another component
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nonanimal_components2.png)
+
+### Output Latent Space
+
+The above measurement is illuminating but is not a true metric space.  Instead of finding the second largest output for our generated inputs, we can find the ImageNet class corresponding to the second closest point (including the point of interest) to our point in the output space. This means that we wish to perform an embedding of the output with respect to the model.  The reasoning here is that our trained GoogleNet model with parameters $\theta$ may be viewed as a (very complicated) function $O$ that maps input images $a$ to an output $y$, which is a 1000-dimensional vector where the element of index $n$ denoted by $y_n$.
 
 $$
 y = O(a, \theta)
@@ -251,7 +291,7 @@ When we find the coordinates of $y_n$ for all $n$ ImageNet categories using Goog
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_output_embedding.png)
 
-but the result is somewhat underwhelming.  There does not appear to be any noticable pattern in how the categories are arranged along these components, which when we investigate the percentage of variance explained is not surprising: these components account for only $1.8$ and $1.6$ percent of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
+but the result is somewhat underwhelming.  Principle conponents 1 and 2 account for only $15$ and $4$ percent (respectively) of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
 
 Why is this the case?  The failure lies in PCA's expectation of a linear space, in which transformations $f$ are additive and scaling
 
