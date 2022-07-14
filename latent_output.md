@@ -1,4 +1,4 @@
-## Input Generation II: Vectorization
+## Input Generation II: Vectorization and Latent Space Exploration
 
 This page is part II on generating inputs using deep learning models trained for image classification. For part I, follow [this link](https://blbadger.github.io/input-generation.html)
 
@@ -14,7 +14,7 @@ On the other hand, within this 1000-dimensional space we can view each class as 
 
 On a memorable episode of the popular comedy 'Seinfeld', the character George decides to do the opposite of what he would normally do with appropriately comedic results.  But one might wonder: what is the opposite?  For a number of ideas, there seems to be a natural opposite (light and dark, open and closed) but for others ideas or objects it is more difficult to identify an opposite: for example, what is the opposite of a mountian?  One might say a valley, but this is far from the only option.  Likewise, objects like a tree and actions like walking do not have clear opposites.
 
-Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  UWe want to perform gradient descent on the input $a$ in order to minimize the activation of the output category of interest $O_i$, meaning that our loss function $J$ is
+Fortunately, finding a meaningful opposite using our image-generating deep learning models will not be difficult if the output is indeed a latent space.  We want to perform gradient descent on the input $a$ in order to minimize the activation of the output category of interest $O_i$, meaning that our loss function $J$ is
 
 $$
 J(O(a, \theta)) = O_i(a, \theta)
@@ -42,7 +42,7 @@ def layer_gradient(model, input_tensor, desired_output):
 and as before this gradient $g$ is used to perform gradient descent on the input, but now we will minimize rather than maximize the category of interest.
 
 $$
-a_{n+1} = a_n - \epsilon *  g
+a_{n+1} = a_n - \epsilon * g
 $$
 
 In geometric terms, this procedure is equivalent to the process of moving in the input space in a direction that corresponds with moving in the output space towards the negative axis of the dimension of the output category as far as possible.  
@@ -81,6 +81,8 @@ The opposites of snakes are curiously usually lizards (including crocodiles) or 
 
 ### Dog Transfiguration
 
+In the last section, opposites were generated using gradient descent such that the gradient used to minimize the activation of the ImageNet class in question $g'$ was $g' \approx -\g$, or approximately the gradient used to maximize the activation value multiplied by negative one.  Multiplying by negative one is far from the only transformation we can perform, however: here we explore linear combinations of two target classes using InceptionV3, with a real image as a starting point.
+
 We can view the difference between a Husky and a Dalmatian according to some deep learning model by observing what changes as our target class shifts from 'Husky' to 'Dalmatian', all using a picture of a dalmatian as an input.  To do this we need to be able to gradually shift the target from the 'Husky' class (which is $\widehat y_{250}$ in ImageNet) to the 'Dalmatian' class, corresponding to $\widehat y_{251}$.  This can be accomplished by assigning the loss $J_n(0(a, \theta))$ $n=q$ maximum interations, at iteration number $n$ as follows:
 
 $$
@@ -98,7 +100,7 @@ Using this method, we go from $(\widehat y_{250}, \widehat y_{251}) = (c, 0)$ to
 
 {% include youtube.html id='1bdpG1caKMk' %}
 
-Using InceptionV3 as our model for this experiment, we have  we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
+Using InceptionV3 as our model for this experiment, we have we see that this is indeed the case: observe how the fluffy husky tail becomes thin, dark spots form on the fur, and the eye color darkens as $n$ increases.
 
 {% include youtube.html id='PBssSJoLOhU' %}
 
