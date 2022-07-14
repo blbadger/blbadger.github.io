@@ -204,7 +204,7 @@ The study of life, observations of which display many of the features of nonline
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
 
-### [Input Generation II: Vectorization](/latent_output.md)
+### [Input Generation II: Vectorization and Latent Space](/latent_output.md)
 
 ![generated badger](/neural_networks/vectorized_resnet_1.png)
 
