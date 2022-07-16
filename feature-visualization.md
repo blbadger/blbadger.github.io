@@ -229,6 +229,12 @@ It is worth assessing how representative the images produced using octaves and G
 
 The images are clearly somewhat different, but the qualitative patterns are more or less unchanged. These results have been observed for features in other layers as well, providing the impetus for proceeding with using octaves and Gaussian convolutions with gradient descent to optimize the layers in images on the rest of the page.
 
+We can observe the process of generating an image using this octave method by plotting the average activation for each feature in a layer of interest, while attempting to maximize the total activation of some given feature.  Maximizing the total activation of GoogleNet's Feature 5 of Layer 5a (denoted in red) and plotting the average activation for all features of Layer 5a,
+
+{% include youtube.html id='WshX-WCQHno' %}
+
+It is apparent that the process of maximizing the total activation of a given feature does not lead the others unchanged.  In particular, a feature near 350 has an average activation that is only slightly less than the activation of the target feature.  What this means is that an image that is optimized for activating feature 5 inadvertently activates this other feature as well, meaning that these are in a sense similar features.  Using this method it is possible to map how similar each feature is from each other. 
+
 ### Mapping InceptionV3 Features
 
 In the pioneering work on feature visualization in the original Googlenet architecture (aka InceptionV1), [Olah and colleagues](https://distill.pub/2017/feature-visualization/) observed an increase in the complexity of the images resulting from maximizing the activation of successive layers in that model: the deeper into the network the authors looked, the more information could be gleaned from the input after performing gradient descent to maximize the layer's activation.  Early layers show maze-like patterns typical of early convolutional layers, which give way to more complicated patterns and textures and eventually whole objects.  Curiously, the last layers were reported to contain multiple objects jumbled together, a phenomenon this author has observed [elsewhere](https://blbadger.github.io/input-generation.html).
