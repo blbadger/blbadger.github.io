@@ -277,6 +277,70 @@ $$
 
 and where in particular the intuitive metric of distance stands.  As points in this space were generated using a nonlinear function (gradient descent of GoogleNet on a scaled normal input), there is no reason to think that a linear decomposition would be capable of capturing much of the variance in that function.
 
+### Model Similarity Vector Space
+
+In [part I](https://blbadger.github.io/input-generation.html#inceptionv3-and-googlenet-compared), it was observed that different models generate slightly different representations of each ImageNet input class.  It may be wondered whether or not we can use the gradients of two models to make an input, perhaps by combining the gradients of a model with parameters $\theta_1$ and another with parameters $\theta_2$ to make a gradient $g'$
+
+$$
+g' = \nabla_a (d*(C - O_i(a, \theta_1)) + e*(C - O_i(a, \theta_2)))
+$$
+
+where $d, e$ are constants used to scale the gradients of models $\theta_1, \theta_2$ appropriately.  For GoogleNet and Resnet, we approximate $d = 2, e = 1$ by applying the constant only to $C$ as follows (note that there is little difference in applying the constant to the gradient or the constant alone)
+
+```python
+def layer_gradient(model, input_tensor, desired_output):
+    ...
+    loss = 0.5*((200 - output[0][int(desired_output)]) + (400 - output2[0][int(desired_output)]))
+    ...
+```
+
+![googlenet and resnet input]({{https://blbadger.github.io}}/neural_networks/combined_mousetrap.png)
+
+Images of all 1000 ImageNet classes generated using the combined gradient of GoogleNet and ResNet are available [here](https://drive.google.com/drive/folders/1mhj8vBm02Fd6QkQwEQ4jhI9yq34ZOtR0?usp=sharing). From these images it is clear that the combined gradient is as good as or superior to the gradients from only ResNet or GoogleNet with respect to producing a coherent input image, which suggests that the gradients from these models are not substantially dissimilar.
+
+The above observation motivates the following question: can we attempt to understand the differences between models by generating an image representing the difference between the output activations for any image $a$? 
+
+It is also apparent that the similarities and differences in model output may be compared by viewing the output as a vector space.  Say two models were to give very similar outputs for a representation of one ImageNet class but different outputs for another class. The identities of the classes may help inform an understanding of the the difference between models.
+
+Moreover, it may also be possible to train one model to become 'more like' another model using the output of the second as the target for the output of the first.  Consider one standard method of training using maximum likelihood estimation via minimization of cross-entropy betwen the true output $Q$ and the model output $Q$ given input $x$,
+
+$$
+J(O(a, \theta), \widehat y) = H(P, Q) = -\Bbb E_{x \sim P} \log Q(x)
+$$
+
+The true output $Q$ is usually denoted as a one-hot vector, ie for an image that belongs to the first ImageNet category we have $[1, 0, 0, 0...]$.  A cross-entropy loss function measures the similarity between the output distribution model output $Q$ and this one-hot tensor $Q$.  
+
+But there are indications that this is not an optimal training loss.  Earlier on this page we have seen that for trained models, some ImageNet categories are more similar with respect to the output activations $O(a, \theta)$ to some other ImageNet categories, and different from others.  These similarities moreover are by a nearest neighbors graphical representation intuitive for a human observer, meaning that it is indeed likely that some inputs are more similar than others.
+
+Training requires the separation of the distributions $P_1, P_2, ... P_n$ for each imagenet category $n$ in order to make accurate predictions. But if we have a trained model that has achieved sufficient separation, the information that the model has difficulty separating certain images from others (meaning that these are more similar ImageNet categories by our output metric) is likely to be useful information in training a model.  This information is not likely to be found prior to training, and thus is useful for transfer learning.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
