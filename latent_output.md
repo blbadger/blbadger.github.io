@@ -14,7 +14,7 @@ On the other hand, within this 1000-dimensional space we can view each class as 
 
 On a memorable episode of the popular comedy 'Seinfeld', the character George decides to do the opposite of what he would normally do with appropriately comedic results.  But one might wonder: what is the opposite?  For a number of ideas, there seems to be a natural opposite (light and dark, open and closed) but for others ideas or objects it is more difficult to identify an opposite: for example, what is the opposite of a mountian?  One might say a valley, but this is far from the only option.  Likewise, objects like a tree and actions like walking do not have clear opposites.
 
-In [part I](https://blbadger.github.io/input-generation.html) we saw that deep learning models are capable of forming an image that represents some target output $\widehad y$.  This target output was usually a vector in which the entry at the index (signifying the ImageNet class) of choice was a large constant and zeros everywhere else, and the input image was modified using gradient descent in order to miminize the loss metric between the output and the target output.  With certain restrictions on how the gradient can be applied (smoothness in the input, for example) coherent and recognizable images can be generated.  Observation of the outputs shows that indeed the class of interest is maximized, as for example GoogleNet applied to maximize the activation of element 920 (signifying 'stoplight')
+In [part I](https://blbadger.github.io/input-generation.html) we saw that deep learning models are capable of forming an image that represents some target output $\widehat y$.  This target output was usually a vector in which the entry at the index (signifying the ImageNet class) of choice was a large constant and zeros everywhere else, and the input image was modified using gradient descent in order to miminize the loss metric between the output and the target output.  With certain restrictions on how the gradient can be applied (smoothness in the input, for example) coherent and recognizable images can be generated.  Observation of the outputs shows that indeed the class of interest is maximized, as for example GoogleNet applied to maximize the activation of element 920 (signifying 'stoplight')
 
 ![opposite example]({{https://blbadger.github.io}}/neural_networks/negatives_example.png)
 
@@ -23,7 +23,7 @@ Observe that even though only index 920 was optimized, other output class activa
 More formally, we want to find the index $k$ 
 
 $$
-k = \mathrm{arg} \; \underset{i} {\mathrm{min}} O_i(a; \theta)
+k = \mathrm{arg} \; \underset{i} {\mathrm{min}} \; O_i(a; \theta)
 $$
 
 where $a$ is an input generated to maximize some output class and $\theta$ denotes the configuration and parameters of the model used. 
