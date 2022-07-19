@@ -358,7 +358,7 @@ def train(model, input_tensor, target_output):
 Note that more commonly-used metrics like $L^1$ or $L^2$ empirically do not lead to significantly different results as our RSS metric here.  Whichever objective function is chosen, it can be minimized by gradient descent on the model parameters given an input image $a$ is
 
 $$
-\theta_1^' = \theta_1 + \epsilon * \nabla_{\theta_1} J(O(a, \theta_1))
+\theta_1'= \theta_1 + \epsilon * \nabla_{\theta_1} J(O(a, \theta_1))
 $$
 
 which may be implemented as
@@ -427,7 +427,6 @@ If this method is successful, it would suggest that our model of interest $\thet
 The ability of the right point in output space to mimick the representation by another model (for some given class) is even more dramatic when the model's representations of that class are noticeably different.  For example, observe the representation of 'Class 11: Goldfinch' by ResNet and GoogleNet in the images on the left and center below.  ResNet (more accurately) portrays this class using a yellow-and-black color scheme with a dark face whereas GoogleNet's portrayal has reddish feathers and no dark face.  But if we perform the above procedure to ResNet, it too mimicks the GoogleNet output.
 
 ![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
-
 
 
 
