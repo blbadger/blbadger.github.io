@@ -318,7 +318,13 @@ The above observation motivates the following question: can we attempt to unders
 
 It is also apparent that the similarities and differences in model output may be compared by viewing the output as a vector space.  Say two models were to give very similar outputs for a representation of one ImageNet class but different outputs for another class. The identities of the classes may help inform an understanding of the the difference between models.
 
-Moreover, it may also be possible to train one model to become 'more like' another model using the output of the second as the target for the output of the first.  Consider one standard method of training using maximum likelihood estimation via minimization of cross-entropy betwen the true output $Q$ and the model output $Q$ given input $x$,
+### Model Merging
+
+In the last section it was observed that we can understand some of the similarities and differences between models by viewing the output as a vector space, with each model's output on each ImageNet representation being a point in this space.
+
+What if we want one model to generate a representation of an ImageNet class that is similar to another model's representation?  We have already seen that some models (GoogleNet and Resnet) generally yield recognizable input representations whereas others (InceptionV3) yield somewhat less-recognizable inputs.  But if we were stuck with only using InceptionV3 as our image-generation source, can we try to use some information present from the other models in order to generate a more-recognizalbe image?
+
+One may hypothesize that it could be possible to train one model to become 'more like' another model using the output of the second as the target for the output of the first.  Consider one standard method of training using maximum likelihood estimation via minimization of cross-entropy betwen the true output $Q$ and the model output $Q$ given input $x$,
 
 $$
 J(O(a, \theta), \widehat y) = H(P, Q) = -\Bbb E_{x \sim P} \log Q(x)
