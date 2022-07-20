@@ -283,7 +283,7 @@ When we find the coordinates of $y_n$ for all $n$ ImageNet categories using Goog
 
 ![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/googlenet_output_embedding.png)
 
-but the result is somewhat underwhelming.  Principle conponents 1 and 2 account for only $15$ and $4$ percent (respectively) of the variance which means that they are nearly meaningless as they capture very little of the original distribution.
+but the result is somewhat underwhelming.  Principle conponents 1 and 2 account for only $15$ and $4$ percent (respectively) of the variance, meaning that they capture very little of the original distribution.
 
 Why is this the case?  The failure lies in PCA's expectation of a linear space, in which transformations $f$ are additive and scaling
 
@@ -396,7 +396,7 @@ $$
 
 or in words the target vector is the output of the model of interest $\theta_1$ when the input supplied is the representation of some class for the model we want to emulate.
 
-Now rather than performing gradient descent using a target $C \Bbb R^n$ being a vector with a large constant in the appropriate index for our class of interest and zeros elsewhere, we instead try to reduce the distance between $O(a_0, \theta_1)$ and the target vector $\widehat{y}$. Again this distance can be any familiar metric, perhaps $L^1$ which makes the computation as follows:
+Now rather than performing gradient descent using a target $C \in \Bbb R^n$ being a vector with a large constant in the appropriate index for our class of interest and zeros elsewhere, we instead try to reduce the distance between $O(a_0, \theta_1)$ and the target vector $\widehat{y}$. Again this distance can be any familiar metric, perhaps $L^1$ which makes the computation as follows:
 
 $$
 g = \nabla_a \sum_n \lvert \widehat{y_n} - O_n(a, \theta_1) \rvert \\
