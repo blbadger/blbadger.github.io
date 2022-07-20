@@ -209,7 +209,7 @@ The study of life, observations of which display many of the features of nonline
 ![generated badger](/neural_networks/nearest_neighbors_animal_embedding.png)
 
 
-### [Input Generation III: Representations](/input-representations.md)
+### [Input Generation III: Representations](/input-representation.md)
 
 ![generated badger](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
