@@ -204,9 +204,14 @@ The study of life, observations of which display many of the features of nonline
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
 
-### [Input Generation II: Vectorization and Latent Space](/latent_output.md)
+### [Input Generation II: Vectorization and Latent Space Embedding](/latent_output.md)
 
-![generated badger](/neural_networks/vectorized_resnet_1.png)
+![generated badger](/neural_networks/nearest_neighbors_animal_embedding.png)
+
+
+### [Input Generation III: Autoencoding with Classification Models](/input-autoencoders.md)
+
+![generated badger](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
 ### [Feature Visualization I](/feature-visualization.md)
