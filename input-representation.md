@@ -135,6 +135,10 @@ The ability of the right point in output space to mimick the representation by a
 
 ![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
+It may be wondered whether we can apply our gradient descent method to form representations of natural images, rather than generated ones representing some ImageNet category.  All that is required is to change $a_{\theta_2}$ to be some given target image $a_{t}$ before performing the same octave-based gradient descent procedure.  When we choose two images of Dalmatians as our targets, we see that the representations are indeed accurate and that the features they portray are significant: observe how the top image's representation focuses on the body and legs (which are present in the input) whereas the bottom focuses on the face (body and legs not being present in the input).
+
+![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_output_embedding_comparison.png)
+
 ### Trivial Autoencoding ability decreases with model depth
 
 It is worth examining again what we have done in the last section: an input $a$ is fed to a model $\theta_1$ to make a target output
@@ -143,7 +147,7 @@ $$
 \widehat{y} = O(a, \theta_1) 
 $$
 
-This target output may be understood as the coordinates in a latent space ($\Bbb R^1000$ for ImageNet categories), and the gradient of the distance between the target output $\widehat{y}$ and the actual model's output $y$ is minimized via gradient descent.  In effect the model recieves an input and attempts to copy it using only the knowledge of the coordinates of the chosen latent space, which means that gradient descent on the input to match some latent space coordinates can accurately be described as an autoencoding of the input. 
+This target output may be understood as the coordinates in a latent space ($\Bbb R^{1000}$ for ImageNet categories), and the gradient of the distance between the target output $\widehat{y}$ and the actual model's output $y$ is minimized via gradient descent.  In effect the model recieves an input and attempts to copy it using only the knowledge of the coordinates of the chosen latent space, which means that gradient descent on the input to match some latent space coordinates can accurately be described as an autoencoding of the input. 
 
 Autoencoders have long been studied as generative models.  The ability of an autoencoder to capture important features of an input without gaining the ability to exactly copy the input makes these models useful for dimensional reduction as well. And it is this feature that we will explore with our classification model-based autoencoder.
 
@@ -151,7 +155,7 @@ In the mid-2010s, [Goodfellow and colleages](https://arxiv.org/abs/1312.6082) ob
 
 It has been hypothesized that deep models generalize better because they can be viewed as expressing a program with more steps than shallow models.  But it is unclear why a program with more intructions would generalize better than a program with fewer, indeed the assumption would be that a more specific program would lead to lower generalization via overfitting because the program would be expected to become more specific to the training data set.  If we think about functions instead of programs, a more complicated function is more likely to be able to overfit a general training data set, making it unclear what benefit depth would bring to generalization.
 
-For a typical classification task using deep learning, we seek a model that has approximated some function $p(y | x)$ or else some family of functions out of all possible functions in existence. In the context of feedforward neural networks overfitting may be understood as the result of perfect representation of a model on its input, such that the model has simply approximated a (discontinuous) identity function rather than the function or family of functions desired.  In the feedforward classification setting, an identity function would be the mapping of some input image to a given output such that an arbitrarily small change in the input yields a different output.  In contrast the desired function one wishes to approximate is usually approximately continuous, existing on some manifold.
+For a typical classification task using deep learning, we seek a model that has approximated some function $p(y \lvert x)$ or else some family of functions out of all possible functions in existence. In the context of feedforward neural networks overfitting may be understood as the result of perfect representation of a model on its input, such that the model has simply approximated a (discontinuous) identity function rather than the function or family of functions desired.  In the feedforward classification setting, an identity function would be the mapping of some input image to a given output such that an arbitrarily small change in the input yields a different output.  In contrast the desired function one wishes to approximate is usually approximately continuous, existing on some manifold.
 
 Perfect representation requires that a model be able to pass all the input information to the model's final layer, or else an identity function would not be approximated as many inputs could give one output.  Common regularizers like weight decay or early stopping act to prevent perfect representation by diminishing a model's capacity to represent the input exactly.
 
@@ -169,7 +173,7 @@ $$
 Now that the vector $\widehat y$ has been found, we want to generate an input that will approximate this vector for layer $l$.  The approximation can be achieved using a variety of different metrics but here we choose $L^1$ for speed and simplicity, making the gradient of interest 
 
 $$
-g = \nabla_a_n \sum_i \lvert \widehat y - O_l(a_n, \theta) \rvert
+g = \nabla_{a_n} \sum_i \lvert \widehat y - O_l(a_n, \theta) \rvert
 $$
 
 The original input $a_0$ is a scaled normal distribution 
@@ -194,15 +198,17 @@ We will first focus on the ResNet 50 model.  Each resnet module has a residual c
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/residual_connection_diagram.png)
 
-Now we will test for each layer's ability to represent the input using our autoencoding method.  We find that early layers are capable of approximately copying the input, but as depth increases this ability diminishes. 
+Now we will test for each layer's ability to represent the input using our autoencoding method.  We find that early layers are capable of approximately copying the input, but as depth increases this ability diminishes and instead a non-trivial representation is found.
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer.png)
 
+For each layer, the image formed can be viewed as a result of a trivial (ie approximate copy) and non-trivial (not an approximate copy) representation of the input. In particular, observe the pattern of spots on the dog's fur.  Trivial representations would exactly copy this patter whereas non-trivial ones would not unless this precise patter were necessary for identification (and it is not).  Intuitively a trivial representation would not require any model training to approximately copy the input, as long as the decoder function is sufficiently powerful.  Thus we can search for the presence of trivial representations by repeating the above procedure but for an untrained version of the same model.
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer2.png)
 
+Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (non-trivial) representation is found for trained models.
 
-
+Our original hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
 
 
 
