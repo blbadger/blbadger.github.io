@@ -1,4 +1,4 @@
-## Input Generation III: Model Similarity and Autoencoders
+## Input Generation III: Model Similarity and Autoencoding Representations
 
 ### Model Similarity Vector Space
 
@@ -149,11 +149,55 @@ Autoencoders have long been studied as generative models.  The ability of an aut
 
 In the mid-2010s, [Goodfellow and colleages](https://arxiv.org/abs/1312.6082) observed empirically that an increase in model depth led to greater generalization, at least for the convolutional neural networks the group was focusing on.  It remains unclear, however, why greater model depth would lead to better generalization.  All else equal, greater model depth requires a larger number of parameters but the same group found that increasing parameter number beyond a certain amount actually decreased generalization, likely due to the propensity for larger models to overfit. 
 
-It has been hypothesized that deep models generalize better because they can be viewed as expressing a program with more steps than shallow models.  But it is unclear why a program with more intructions would generalize better than a program with fewer, indeed the assumption would be that a more specific program would lead to lower generalization via overfitting because the program would be expected to become more specific to the training data set.  If we think about functions instead of programs, a more complicated function is more likely to be able to overfit a general training data set, making it unclear what benefit this would bring to generalization.
+It has been hypothesized that deep models generalize better because they can be viewed as expressing a program with more steps than shallow models.  But it is unclear why a program with more intructions would generalize better than a program with fewer, indeed the assumption would be that a more specific program would lead to lower generalization via overfitting because the program would be expected to become more specific to the training data set.  If we think about functions instead of programs, a more complicated function is more likely to be able to overfit a general training data set, making it unclear what benefit depth would bring to generalization.
 
-Happily, however, we now have a good way to experimentally test a relationship between model depth and generalization (specifically overfitting, which we will focus on for this section). 
+For a typical classification task using deep learning, we seek a model that has approximated some function $p(y | x)$ or else some family of functions out of all possible functions in existence. In the context of feedforward neural networks overfitting may be understood as the result of perfect representation of a model on its input, such that the model has simply approximated a (discontinuous) identity function rather than the function or family of functions desired.  In the feedforward classification setting, an identity function would be the mapping of some input image to a given output such that an arbitrarily small change in the input yields a different output.  In contrast the desired function one wishes to approximate is usually approximately continuous, existing on some manifold.
+
+Perfect representation requires that a model be able to pass all the input information to the model's final layer, or else an identity function would not be approximated as many inputs could give one output.  Common regularizers like weight decay or early stopping act to prevent perfect representation by diminishing a model's capacity to represent the input exactly.
+
+Being that overfitting results from perfect representation and that greater model depth (for cNN-based vision models) prevents overfitting, it may be hypothesized that an increase in model depth prevents perfect representation of the input. 
+
+Are deep learning classification models capable of perfect representation?  This question is somewhat difficult to answer theoretically as it depends on the possible inputs given to a model and the model's configuration, but happily we now have a good way to experimentally test a relationship between model depth and representation capacity. 
+
+
+The method we will use is the capability of each layer to perform an autoencoding on the input using gradient descent on a random vector as our decoder.  First we pass some target image $a_t$ into a feedforward classification network of choice $\theta$ and find the activations of some given output layer $O_l$
+
+$$
+\widehat y = O_l(a_t, \theta)
+$$
+
+Now that the vector $\widehat y$ has been found, we want to generate an input that will approximate this vector for layer $l$.  The approximation can be achieved using a variety of different metrics but here we choose $L^1$ for speed and simplicity, making the gradient of interest 
+
+$$
+g = \nabla_a_n \sum_i \lvert \widehat y - O_l(a_n, \theta) \rvert
+$$
+
+The original input $a_0$ is a scaled normal distribution 
+
+$$
+a_0 = \mathcal {N}(0.7, 1/20)
+$$
+
+and a Gaussian convolution $\mathcal{N_c}$ is applied at each gradient descent to enforce smoothness.
+
+$$
+a_{n+1} = \mathcal{N_c} (a_n - \epsilon * g)
+$$
+
+Thus the feed-forward network encoder may be viewed as the forward pass to the layer of interest, and the decoder as the back-propegation of the gradient combined with this specific gradient descent procedure.
+
+First we will investigate the ResNet family of models which have the following architecture:
+
+![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_architecture.png)
+
+We will first focus on the ResNet 50 model.  Each resnet module has a residual connection, which is formed as follows:
+
+![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/residual_connection_diagram.png)
+
+Now we will test for each layer's ability to represent the input using our autoencoding method.  We find that early layers are capable of approximately copying the input, but as depth increases this ability diminishes. 
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer.png)
+
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer2.png)
 
