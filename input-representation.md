@@ -206,9 +206,13 @@ For each layer, the image formed can be viewed as a result of a trivial (ie appr
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer2.png)
 
-Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (non-trivial) representation is found for trained models.
+Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (and in this case non-trivial) representation is found for trained models.
 
-Our original hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
+Can deep learning models learn trivial representations regardless of depth?  There is evidence that indeed they can, as observed by [Zhang and colleagues](https://arxiv.org/pdf/1611.03530.pdf): common vision architectures (including GoogleNet) have enough effective capacity to memorize the entire CIFAR10 dataset in which labels were randomly assigned.  But this bears the question: if these models are capable of learning trivial representations, why do they not when they can learn non-trivial ones?  Clearly a non-trivial representation for a model of sufficient depth is in some way more likely to be learned than a trivial one, and indeed Zhang and colleagues observed that models learn non-trivial representations more quickly than trivial ones.
+
+This page provides an explanation as to why deep models may prefer to learn non-trivial representations: they are necessarily less detailed (as the number of possible functions describing the input has decreased) meaning fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  
+
+Our original hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations (without some sort of training) of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
 
 
 
