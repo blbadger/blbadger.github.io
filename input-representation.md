@@ -5,7 +5,7 @@
 In [part I](https://blbadger.github.io/input-generation.html#inceptionv3-and-googlenet-compared), it was observed that different models generate slightly different representations of each ImageNet input class.  It may be wondered whether or not we can use the gradients of two models to make an input, perhaps by combining the gradients of a model with parameters $\theta_1$ and another with parameters $\theta_2$ to make a gradient $g'$
 
 $$
-g' = \nabla_a \left( d*(C - O_i(a, \theta_1)) + e*(C - O_i(a, \theta_2)) \right)
+g' = \nabla_a \left( d(C - O_i(a, \theta_1)) + e(C - O_i(a, \theta_2)) \right)
 $$
 
 where $d, e$ are constants used to scale the gradients of models $\theta_1, \theta_2$ appropriately.  For GoogleNet and Resnet, we approximate $d = 2, e = 1$ by applying the constant only to $C$ as follows (note that there is little difference in applying the constant to the gradient or the constant alone)
@@ -47,7 +47,7 @@ Training requires the separation of the distributions $P_1, P_2, ... P_n$ for ea
 These observations motivate the hypothesis that we may be able to use the information present in the output of one model $\theta_1$ to train another model $\theta_2$ to be able to represent an input in a similar way to $\theta_1$.  More precisely, one can use gradient descent on the parameters of model 1, $\theta_1$ to make some metric between the outputs $m(O(a, \theta_1), O(a, \theta_2))$ as small as possible. In the following example, we seek to minimize  the sum-of-squares residual as our metric
 
 $$
-J(O(a, \theta_1) = L_{RSS} = \sum_i \left(O_i(a, \theta_1) - O_i(a, \theta_2) \right)^2 
+J(O(a, \theta_1) = \sum_i \left(O_i(a, \theta_1) - O_i(a, \theta_2) \right)^2 
 $$
 
 which can be implemented as
@@ -134,5 +134,45 @@ If this method is successful, it would suggest that our model of interest $\thet
 The ability of the right point in output space to mimick the representation by another model (for some given class) is even more dramatic when the model's representations of that class are noticeably different.  For example, observe the representation of 'Class 11: Goldfinch' by ResNet and GoogleNet in the images on the left and center below.  ResNet (more accurately) portrays this class using a yellow-and-black color scheme with a dark face whereas GoogleNet's portrayal has reddish feathers and no dark face.  But if we perform the above procedure to ResNet, it too mimicks the GoogleNet output.
 
 ![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
+
+### Trivial Autoencoding ability decreases with model depth
+
+It is worth examining again what we have done in the last section: an input $a$ is fed to a model $\theta_1$ to make a target output
+
+$$
+\widehat{y} = O(a, \theta_1) 
+$$
+
+This target output may be understood as the coordinates in a latent space ($\Bbb R^1000$ for ImageNet categories), and the gradient of the distance between the target output $\widehat{y}$ and the actual model's output $y$ is minimized via gradient descent.  In effect the model recieves an input and attempts to copy it using only the knowledge of the coordinates of the chosen latent space, which means that gradient descent on the input to match some latent space coordinates can accurately be described as an autoencoding of the input. 
+
+Autoencoders have long been studied as generative models.  The ability of an autoencoder to capture important features of an input without gaining the ability to exactly copy the input makes these models useful for dimensional reduction as well. And it is this feature that we will explore with our classification model-based autoencoder.
+
+In the mid-2010s, [Goodfellow and colleages](https://arxiv.org/abs/1312.6082) observed empirically that an increase in model depth led to greater generalization, at least for the convolutional neural networks the group was focusing on.  It remains unclear, however, why greater model depth would lead to better generalization.  All else equal, greater model depth requires a larger number of parameters but the same group found that increasing parameter number beyond a certain amount actually decreased generalization, likely due to the propensity for larger models to overfit. 
+
+It has been hypothesized that deep models generalize better because they can be viewed as expressing a program with more steps than shallow models.  But it is unclear why a program with more intructions would generalize better than a program with fewer, indeed the assumption would be that a more specific program would lead to lower generalization via overfitting because the program would be expected to become more specific to the training data set.  If we think about functions instead of programs, a more complicated function is more likely to be able to overfit a general training data set, making it unclear what benefit this would bring to generalization.
+
+Happily, however, we now have a good way to experimentally test a relationship between model depth and generalization (specifically overfitting, which we will focus on for this section). 
+
+![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer.png)
+
+![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer2.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
