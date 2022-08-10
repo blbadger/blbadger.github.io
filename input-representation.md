@@ -224,7 +224,7 @@ $$
 a_{n+1} = a_n + \epsilon \nabla_{a_n} O(a_n, \theta)
 $$
 
-in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  For an $L^2$ metric, the measure is 
+in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  For an $L^2$ metric, the measure is denoted as
 
 $$
 m = ||O(a_g, \theta) - O(a, \theta)||_2
@@ -242,12 +242,33 @@ $$
 
 Then the gradient scale problem is averted.  But the initialization process of ResNet50 does indeed set the $\gamma, \beta$ parameters to $1, 0$ respectively, meaning that there is no reason why we would expect to experience problems finding an appropriate $\epsilon$.  Futhermore, general statistical measures of the gradient $\nabla_a O(a, \theta)$ are little changes when comparing deep to shallow layers, suggesting that the gradient used to update $a_n$ is not why the representation is poor.
 
-Thuse we consider whether the forward pass is the culprit of our poor representation.  We can test this by observing whether the output of our generated image does indeed approximate the tensor $y$ that we attempted to approximate: if so, then the gradient descent process was successful but the forward propegation loses too much information for an accurate representation.
+Thuse we consider whether the forward pass is somehow the culprit of our poor representation.  We can test this by observing whether the output of our generated image does indeed approximate the tensor $y$ that we attempted to approximate: if so, then the gradient descent process was successful but the forward propegation loses too much information for an accurate representation.
 
+We can test whether the layer output $O(a, \theta)$ approximates $y$ using the $L^2$ metric above, thereby findin the measure of the 'distance' between these two points in the space defined by the number of parameters of the layer in question.  Without knowing the specifics of the values of $\theta$ in all layers leading up to the output layer, however, it is unclear what eactly this metric means, or in other words exactly how small it should be in order to determine if an output really approximates the desired $y$.  
 
+Therefore a comparative metric is introduced: a small (ie visually nearly invisible) shift is made to the original input $a$ and the resulting $L^2$ metric between the output of the original image $y = O(a, \theta)$ and the output of this shifted image
+
+$$
+m_r = ||O(a, \theta) - O(a', \theta)||_2
+$$
+
+is obtained as a reference.  This reference $m_r$ can then be compared to the metric obtained by comparing the original output to the output obtained by passing in the generated image $a_g$
+
+$$
+m_g = ||O(a, \theta) - O(a_g, \theta)||_2
+$$
+
+First we obtain $a'$ by adding a scaled random normal distribution to the original,
+
+$$
+a' = a + \mathcal N (0, 1/25)
+$$
+
+and then we can obtain the metrics $m_r, m_g$ in question.
 
 ![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances.png)
 
+Observe that an early layer (Conv2) seems to reflect what one observes visually: the distance between $a', a$ is smaller than the distance between $a_g, a$ as $a'$ is a slightly better approximation of $a$.  On the other hand, the late layer Conv5 exhbits a smaller distance between $a_g, a$ compared to $a', a$ which means that according to the layer in question (and assuming smoothness), there generated input $a_g$ is a better approximation of $a$ than $a'$.
 
 ### Implications of imperfect input representation
 
