@@ -230,7 +230,21 @@ $$
 m = ||O(a_g, \theta) - O(a, \theta)||_2
 $$
 
-Thus we can think of the representation visualization process as being composed of two parts: first a forward pass and then multiple gradient backpropegation steps.  An inability to represent an input 
+Thus we can think of each step of the representation visualization process as being composed of two parts: first a forward pass and then a gradient backpropegation step.  An inability to represent an input is likely to be due to one of these two parts, and the gradient backpropegation will be considered first.
+
+It is well known that gradients tend to scale poorly over deeper models, with many layers.  The underlying problem is that the process of composing many functions together makes finding an appropriate scale for the constant of gradient update $\epsilon$ very difficult.  Batch normalization was introduced to prevent this gradient scale problem, but although effective in the training of deep learning models it does not appear that batch normalization actually necessarily prevents gradient scaling issues. 
+
+However, if batch normalization is modified such that each layer is determined by variance factor $\gamma = 1$ and mean $\beta = 0$ for a layer output $y$,
+
+$$
+y' = \gamma y + \beta
+$$
+
+Then the gradient scale problem is averted.  But the initialization process of ResNet50 does indeed set the $\gamma, \beta$ parameters to $1, 0$ respectively, meaning that there is no reason why we would expect to experience problems finding an appropriate $\epsilon$.  Futhermore, general statistical measures of the gradient $\nabla_a O(a, \theta)$ are little changes when comparing deep to shallow layers, suggesting that the gradient used to update $a_n$ is not why the representation is poor.
+
+Thuse we consider whether the forward pass is the culprit of our poor representation.  We can test this by observing whether the output of our generated image does indeed approximate the tensor $y$ that we attempted to approximate: if so, then the gradient descent process was successful but the forward propegation loses too much information for an accurate representation.
+
+
 
 ![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances.png)
 
