@@ -206,11 +206,40 @@ For each layer, the image formed can be viewed as a result of a trivial (ie appr
 
 ![Resnet layer autoencoding]({{https://blbadger.github.io}}/neural_networks/resnet_autoencoding_perlayer2.png)
 
-Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (and in this case non-trivial) representation is found for trained models. 
+Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (and in this case non-trivial) representation are found for trained models. 
+
+### Imperfect representations are due to non-unique approximation
+
+Why do deep layers of ResNet50 appear to be incapable of forming trivial autoencodings of an input image?  Take layer Conv5 of an untrained ResNet50. This layer has more than 200,000 parameters and therefore viewing this layer as an autoencoder hidden layer $h$ would imply that it is capable of copying the input exactly, as the input has only $299*299=89401$ elements.  Indeed we see in the next section that a kind of identity function may indeed be learned by this layer, but this does not explain why an input cannot be approximately represented in a later layer.
+
+To understand why a late layer in an untrained deep learning model is not capable of very accurate input representation, it is helpful to consider what exactly is happening to make the input representation.  First an input $a$ is introduced and a forward pass generates a tensor $y$ that is the output of a layer of interest in our model,
+
+$$
+y = O(a, \theta)
+$$
+
+This tensor $y$ may be thought of as containing the representation of input $a$ in the layer in question.  To observe this representation, we then perform gradient descent on an initially randomized input $a_0$ 
+
+$$
+a_{n+1} = a_n + \epsilon \nabla_{a_n} O(a_n, \theta)
+$$
+
+in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  For an $L^2$ metric, the measure is 
+
+$$
+m = ||O(a_g, \theta) - O(a, \theta)||_2
+$$
+
+Thus we can think of the representation visualization process as being composed of two parts: first a forward pass and then multiple gradient backpropegation steps.  An inability to represent an input 
+
+![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances.png)
+
+
+### Implications of imperfect input representation
 
 Can deep learning models learn trivial representations regardless of depth?  There is evidence that indeed they can, as observed by [Zhang and colleagues](https://arxiv.org/pdf/1611.03530.pdf): common vision architectures (including GoogleNet) have enough effective capacity to memorize the entire CIFAR10 dataset in which labels were randomly assigned.  But this bears the question: if these models are capable of learning trivial representations, why do they not when they can learn non-trivial ones?  Clearly a non-trivial representation for a model of sufficient depth is in some way more likely to be learned than a trivial one, and indeed Zhang and colleagues observed that models learn non-trivial representations more quickly than trivial ones.
 
-Learning a trivial representation is conceptually similar to the later layers in the model above learning to de-noise the earlier layers.  De-noising autoencoders with ma parameter dimension higher than an input dimension are termed overcomplete, and are capable of approximately copying the input upon training.  Being that ResNet and similar models contain far more parameters (>1 million) than inputs (299x299 = 89,410), it is of little surprise that deep learning models are capable of learning to de-noise an input from early layers.
+Learning a trivial representation is conceptually similar to the later layers in the model above learning to de-noise the earlier layers.  De-noising autoencoders with parameter higher than a input dimension number are termed overcomplete, and are capable of approximately copying the input upon training.  Being that ResNet and similar models contain far more parameters (>1 million) than inputs (299x299 = 89,401), it is of little surprise that deep learning models are capable of learning to de-noise an input from early layers.
 
 This theory also provides an explanation as to why deep models may prefer to learn non-trivial representations. As the number of possible functions describing the input is smaller in non-trivial versus trivial representation, on average fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  This is likely why non-trivial representations are learned before trivial ones.
 
