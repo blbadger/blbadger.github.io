@@ -270,6 +270,18 @@ and then we can obtain the metrics $m_r, m_g$ in question.
 
 Observe that an early layer (Conv2) seems to reflect what one observes visually: the distance between $a', a$ is smaller than the distance between $a_g, a$ as $a'$ is a slightly better approximation of $a$.  On the other hand, the late layer Conv5 exhbits a smaller distance between $a_g, a$ compared to $a', a$ which means that according to the layer in question (and assuming smoothness), there generated input $a_g$ is a better approximation of $a$ than $a'$.
 
+It may be wondered whether this phenomenon is seen for other architectures or is specific to the ResNet50 model.  Typical results for an untrained ResNet18,
+
+![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances_resnet18.png)
+
+and an untrained ResNet152
+
+![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances_resnet152.png)
+
+show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is inaccurate but because forward propegation results in a non-unique approximations to the input.
+
+
+
 ### Implications of imperfect input representation
 
 Can deep learning models learn trivial representations regardless of depth?  There is evidence that indeed they can, as observed by [Zhang and colleagues](https://arxiv.org/pdf/1611.03530.pdf): common vision architectures (including GoogleNet) have enough effective capacity to memorize the entire CIFAR10 dataset in which labels were randomly assigned.  But this bears the question: if these models are capable of learning trivial representations, why do they not when they can learn non-trivial ones?  Clearly a non-trivial representation for a model of sufficient depth is in some way more likely to be learned than a trivial one, and indeed Zhang and colleagues observed that models learn non-trivial representations more quickly than trivial ones.
