@@ -280,6 +280,9 @@ and an untrained ResNet152
 
 show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is inaccurate but because forward propegation results in a non-unique approximations to the input.
 
+### Why depth leads to non-unique trivial representations
+
+
 
 
 ### Implications of imperfect input representation
