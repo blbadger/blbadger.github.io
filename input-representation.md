@@ -282,7 +282,12 @@ show that early and late layer representations both make good approximations (re
 
 ### Why depth leads to non-unique trivial representations
 
+There is a clear theoretical basis for why input representation ability would decrease with depth now that we understand what this representation ability requires.  
 
+$$
+y' = y + \epsilon \\
+O(a, \theta) = y*y*y*y*y...*y
+$$
 
 
 ### Implications of imperfect input representation
