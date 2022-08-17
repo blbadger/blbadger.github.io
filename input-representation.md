@@ -280,14 +280,65 @@ and an untrained ResNet152
 
 show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is inaccurate but because forward propegation results in a non-unique approximations to the input.
 
+### Training generally does not lead to more accurate approximations
+
+
+
 ### Why depth leads to nonunique trivial representations
 
-There is a clear theoretical basis for why input representation ability would decrease with depth now that we understand what this representation ability requires.  
+From the previous few sections, it was seen first that deeper layers are less able to accurately represent an input image than earlier layers for untrained models, and secondly that this poor representation is not due to a failure in the input gradient descent procedure used to visualize the representation but instead results from the layer's inability to distinguish between very different inputs $(a, a_g)$.  It remains to be explored why depth would relate to a reduction in discernment between different inputs.  In this section we explore two contributing factors to this decrease in accuracy from a theoretical point of view before considering their implications to model architectures.
+
+The first contributing factor may be stated of in terms of an analytical argument as an exponential expansion of an $\epsilon$ - neighborhood upon function composition.  Consider function $f$ that takes as an input a tensor $x$ and gives an output $y$.  Upon the addition of some small amount $\epsilon$ to each element of $x$, we have an output $y$ that is shifted by some amount less than a corresponding amount $\delta$
 
 $$
-y' = y + \epsilon \\
-O(a, \theta) = y*y*y*y*y...*y
+\delta > y' - y = f(x + \epsilon) - f(x)
 $$
+
+If $f(x)$ is a continuous function then for any arbitrary $\delta$ we are able to find some $\epsilon$ that fulfills this inequality.  A composition of continuous functions are also continuous such that for any arbitrary $\delta$ we are able to find some $\epsilon$ that fulfills the inequality
+
+$$
+\delta > y'_n - y_n = f^n(x + \epsilon) - f^n(x)
+$$
+
+This does not mean, however, that the minimum value of $\delta$ with respect to $\epsilon$ to fulfill the above inequality is unchanged with functional composition, however: quite the opposite, the minimum allowable value of $\delta$ grows exponentially with $n$ for near-linear functions $f$.  For the most common hidden layer activation function Rectified Linear Units (ReLU), 
+
+$$
+y = f(x) =
+\begin{cases}
+0,  & \text{if $x$ $\leq$ 0} \\
+x, & \text{if $x$ > 0}
+\end{cases}
+$$
+
+Now consider the difference between two inputs $a, a'$ to be a vector denoted as $\epsilon$ .  Assuming random normal weight initialization (and constant bias initialization) then as long as each sum of weights multiplied by $a' - a$ is less than one, the metric 
+
+$$
+m(f^n(a), f^n(a + \epsilon))
+$$
+
+stays less than one and there is no exponential increase in $\epsilon$. But as the number of layers increases, the probability that all layers will have a norm of less than one diminishes and as soon as one layer has a norm greater, the norm grows exponentially in subsequent layers.
+
+Note that batch normalization does not prevent this increase in $\epsilon$-neighborhood at the start of training, given that it is common practice to set all $\gamma$ weight parameters to 1 upon initialization.  
+
+For most vision-based deep learning models, the vector norm explosion observed above is not likely to occur for most model architectures. Indeed, observe that input representation accuracy diminished drastically for ResNet18 on layer Conv5 (as well as for GoogleNet's later layers) even in the absence of vector norm explosion.  This suggests that for these models a second factor is most likely to be most important.
+
+Deep learning vision models are today based on convolutional operations.  To recap exactly what this means...
+
+In the context of image processing, the convolutional operation is non-invertible: given some input tensor $f(x, y)$, the convolution
+
+$$
+\omega f(x, y) = f'(x, y)
+$$
+
+does not have a unique inverse operation 
+
+$$
+\omega^{-1}f'(x, y) = f(x, y)
+$$
+
+Specifically, a convolutional operation across an image is non-invertible with respect to the elements that are observed at any given time.  Thus, generally speaking, pixels within the kernal's dimensions may be swapped without changing the ouptut.
+
+Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs to generate some output also increases exponentially.
 
 
 ### Implications of imperfect input representation
