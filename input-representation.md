@@ -208,7 +208,7 @@ For each layer, the image formed can be viewed as a result of a trivial (ie appr
 
 Thus we see that the untrained (and therefore necessarily trivial) representation of the input disappears in the same deeper layers that the learned (and in this case non-trivial) representation are found for trained models. 
 
-### Imperfect representations are due to non-unique approximation
+### Imperfect representations are due to nonunique approximation
 
 Why do deep layers of ResNet50 appear to be incapable of forming trivial autoencodings of an input image?  Take layer Conv5 of an untrained ResNet50. This layer has more than 200,000 parameters and therefore viewing this layer as an autoencoder hidden layer $h$ would imply that it is capable of copying the input exactly, as the input has only $299*299=89401$ elements.  Indeed we see in the next section that a kind of identity function may indeed be learned by this layer, but this does not explain why an input cannot be approximately represented in a later layer.
 
@@ -280,7 +280,7 @@ and an untrained ResNet152
 
 show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is inaccurate but because forward propegation results in a non-unique approximations to the input.
 
-### Why depth leads to non-unique trivial representations
+### Why depth leads to nonunique trivial representations
 
 There is a clear theoretical basis for why input representation ability would decrease with depth now that we understand what this representation ability requires.  
 
@@ -298,7 +298,7 @@ Learning a trivial representation is conceptually similar to the later layers in
 
 This theory also provides an explanation as to why deep models may prefer to learn non-trivial representations. As the number of possible functions describing the input is smaller in non-trivial versus trivial representation, on average fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  This is likely why non-trivial representations are learned before trivial ones.
 
-Our original hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations (without some sort of training) of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
+The hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations (without some sort of training) of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
 
 
 
