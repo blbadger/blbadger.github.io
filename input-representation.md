@@ -210,7 +210,7 @@ Thus we see that the untrained (and therefore necessarily trivial) representatio
 
 ### Imperfect representations are due to nonunique approximation
 
-Why do deep layers of ResNet50 appear to be incapable of forming trivial autoencodings of an input image?  Take layer Conv5 of an untrained ResNet50. This layer has more than 200,000 parameters and therefore viewing this layer as an autoencoder hidden layer $h$ would imply that it is capable of copying the input exactly, as the input has only $299*299=89401$ elements.  Indeed we see in the next section that a kind of identity function may indeed be learned by this layer, but this does not explain why an input cannot be approximately represented in a later layer.
+Why do deep layers of ResNet50 appear to be incapable of forming trivial autoencodings of an input image?  Take layer Conv5 of an untrained ResNet50. This layer has more than 200,000 parameters and therefore viewing this layer as an autoencoder hidden layer $h$ would imply that it is capable of copying the input exactly, as the input has only $299*299=89401$ elements.  
 
 To understand why a late layer in an untrained deep learning model is not capable of very accurate input representation, it is helpful to consider what exactly is happening to make the input representation.  First an input $a$ is introduced and a forward pass generates a tensor $y$ that is the output of a layer of interest in our model,
 
@@ -230,9 +230,11 @@ $$
 m = ||O(a_g, \theta) - O(a, \theta)||_2
 $$
 
-Thus we can think of each step of the representation visualization process as being composed of two parts: first a forward pass and then a gradient backpropegation step.  An inability to represent an input is likely to be due to one of these two parts, and the gradient backpropegation will be considered first.
+which is the $L^2$ norm of the vector difference between representations $O(a_g, \theta)$ and $O(a, \theta)$.
 
-It is well known that gradients tend to scale poorly over deeper models, with many layers.  The underlying problem is that the process of composing many functions together makes finding an appropriate scale for the constant of gradient update $\epsilon$ very difficult.  Batch normalization was introduced to prevent this gradient scale problem, but although effective in the training of deep learning models it does not appear that batch normalization actually necessarily prevents gradient scaling issues. 
+One can think of each step of the representation visualization process as being composed of two parts: first a forward pass and then a gradient backpropegation step.  An inability to represent an input is likely to be due to one of these two parts, and the gradient backpropegation will be considered first.
+
+It is well known that gradients tend to scale poorly over deeper models with many layers.  The underlying problem is that the process of composing many functions together makes finding an appropriate scale for the constant of gradient update $\epsilon$ very difficult between different layers, and for some instances for multiple elements within one given layer.  Batch normalization was introduced to prevent this gradient scale problem, but although effective in the training of deep learning models it does not appear that batch normalization actually necessarily prevents gradient scaling issues. 
 
 However, if batch normalization is modified such that each layer is determined by variance factor $\gamma = 1$ and mean $\beta = 0$ for a layer output $y$,
 
@@ -240,7 +242,7 @@ $$
 y' = \gamma y + \beta
 $$
 
-Then the gradient scale problem is averted.  But the initialization process of ResNet50 does indeed set the $\gamma, \beta$ parameters to $1, 0$ respectively, meaning that there is no reason why we would expect to experience problems finding an appropriate $\epsilon$.  Futhermore, general statistical measures of the gradient $\nabla_a O(a, \theta)$ are little changes when comparing deep to shallow layers, suggesting that the gradient used to update $a_n$ is not why the representation is poor.
+Then the gradient scale problem is averted.  But the initialization process of ResNet50 does indeed set the $\gamma, \beta$ parameters to $1, 0$ respectively, meaning that there is no reason why we would expect to experience problems finding an appropriate $\epsilon$.  Futhermore, general statistical measures of the gradient $\nabla_a O(a, \theta)$ are little changed when comparing deep to shallow layers, suggesting that the gradient used to update $a_n$ is not why the representation is poor.  
 
 Thuse we consider whether the forward pass is somehow the culprit of our poor representation.  We can test this by observing whether the output of our generated image does indeed approximate the tensor $y$ that we attempted to approximate: if so, then the gradient descent process was successful but the forward propegation loses too much information for an accurate representation.
 
@@ -282,7 +284,7 @@ show that early and late layer representations both make good approximations (re
 
 ### Why depth leads to nonunique trivial representations
 
-From the previous few sections, it was seen first that deeper layers are less able to accurately represent an input image than earlier layers for untrained models, and secondly that this poor representation is not due to a failure in the input gradient descent procedure used to visualize the representation but instead results from the layer's inability to distinguish between very different inputs $(a, a_g)$.  It remains to be explored why depth would relate to a reduction in discernment between different inputs.  In this section we explore two contributing factors to this decrease in accuracy from a theoretical point of view before considering their implications to model architectures.
+From the previous few sections, it was seen first that deeper layers are less able to accurately represent an input image than earlier layers for untrained models, and secondly that this poor representation is not due to a failure in the input gradient descent procedure used to visualize the representation but instead results from the layer's inability to distinguish between very different inputs $(a, a_g)$.  It remains to be explored why depth would relate to a reduction in discernment between different inputs.  In this section we explore some contributing factors to this decrease in accuracy from a theoretical point of view before considering their implications to model architectures.
 
 Deep learning vision models are today based on convolutional operations.  To recap exactly what this means...
 
@@ -300,7 +302,7 @@ $$
 
 Specifically, a convolutional operation across an image is non-invertible with respect to the elements that are observed at any given time.  Thus, generally speaking, pixels within the kernal's dimensions may be swapped without changing the ouptut.
 
-Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs to generate some output also increases exponentially.
+Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs that generate some output vector also increases exponentially.  Therefore it is little wonder why there are different input $a_g, a, a'$ that all yield a similar output given that many input can be shown to give one single output even with perfect computational accuracy. 
 
 One can experimentally test whether or not non-uniqueness leads to poor representations using simple fully connected architectures.  It should be noted that nearly all fully connected architectures used for classification are composed of non-invertible operations that necessarily lead to non-uniqueness in representation. Specifically, a forward pass from any fully connected layer $x$ to another that is smaller than the previous, $y$, is represented by a non-square matrix multiplication operation. Such matricies are non-invertible, an in particular the case above is expressed with a matrix $A_{mxn}, m < n$ such that there are an infinite number of linear combinations of elements of $x$.
 
@@ -403,8 +405,7 @@ $$
 
 In this case, the number of neurons per layer required for non-uniqueness is usually much greater than the number of input elements, usually by a factor of around 2.  The exact amount depends on the number of neurons that fulfill the first if condition in the equation above, and if we make the reasonable assumption that $1/2$ of all neurons in a layer do get zeroed out then we would need twice the number of total neurons in that layer compared to input features in order to make an accurate representation.
 
-If we consider the simplified case of a model composed of fully connected layers without nonlinear activation functions, we have a model that is in essence a composition of matrix multiplications. But something somewhat confusing is observed even in this simplified model.
-
+While there are undoubtedly more reasons why depth leads to poorer (untrained) input representations, the last of particular note that will be presented here is that the input representations do indeed require 
 
 ### Training generally does not lead to more accurate approximations
 
