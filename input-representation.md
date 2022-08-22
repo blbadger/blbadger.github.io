@@ -346,7 +346,13 @@ $$
 ABCDx = Ex
 $$
 
-Now consider how this multiplication transforms space in $x$ dimensions.  Some basis vectors end up becoming much more compressed or expanded than others upon composition.  Consider the case for two dimensions such that the transformation $Ex$ shrinks $x_1$ by a factor of 1000 but leaves $x_2$ unchanged.  Now consider what happens when we add a vector of some small amount $\epsilon$ to $x$ and find $|| E(\epsilon) ||$, the difference of between transformed points $x$ and $x + \epsilon$.  We would end up with a value very near $epsilon_2$.  For example, we could have 
+Now consider how this multiplication transforms space in $x$ dimensions.  Some basis vectors end up becoming much more compressed or expanded than others upon composition.  Consider the case for two dimensions such that the transformation $Ex$ shrinks $x_1$ by a factor of 1000 but leaves $x_2$ unchanged.  Now consider what happens when we add a vector of some small amount $\epsilon$ to $x$ and find 
+
+$$
+|| E(\epsilon) ||
+$$ 
+
+the difference of between transformed points $x$ and $x + \epsilon$.  We would end up with a value very near $epsilon_2$.  For example, we could have 
 
 $$ 
 \epsilon = 
@@ -356,7 +362,13 @@ $$
 \end{bmatrix}
 $$
 
-But now consider all the possible inputs $a$ that could make $|| E(a) || \approx || E(\epsilon) ||$.  What if we start with the vector
+But now consider all the possible inputs $a$ that could make 
+
+$$
+|| E(a) || \approx || E(\epsilon) ||
+$$
+
+If we have the vector
 
 $$ 
 a = 
@@ -366,7 +378,16 @@ a =
 \end{bmatrix}
 $$
 
-Clearly $||E(x - a)|| = 1$ which is approximates $||E(x - e)|| = 1.001$, even though $||x - a|| = 100 > \sqrt{2} = ||x - e||$.  Thus we have found an example that fulfills the necessary conditions.
+Clearly 
+$$
+||E(x - a)|| = 1 \approx || E(x - e) || = 1.001
+$$ 
+
+even though 
+
+$$
+||x - a|| = 100 > \sqrt{2} = ||x - e||
+$$  
 
 This example is instructive because it shows us how equations (1) and (2) may be simultanously fulfilled: all we need is a transformation that is contractive much more in some dimensions rather than others.  Most deep learning initializations lead to this phenomenon, meaning that the composition of linear layers gives a transformation that when applied to an n-dimensional ball as an input gives a spiky ball, where the spikes correspond to dimensions that are contracted much more than others.
 
@@ -390,8 +411,8 @@ If we consider the simplified case of a model composed of fully connected layers
 What happens to the poor representations in deeper layers upon model training?  We have already seen that training leads to the formation of what was termed a non-trivial representation, ie something that is not simply an approximate copy of the input.  As successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased, it may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$, or more precisely for an $L^2$ distance, the measure decreases toward 0 as the model configuration at the start of training $\theta_0$ is updated during training
 
 $$
-||O(a, \theta) - O(a_g, \theta)||_2 \to 0 \\
-\text{as} \theta_0 \to theta_{\infty}
+||O(a, \theta_n) - O(a_g, \theta_n)||_2 \to 0 \\
+\text{as} \; n \to \infty
 $$
 
 Intuitively this hypothesis seems reasonable: if a model is trained to recognize images of dalmations as existing in one specific class, it may learn to represent all dalmations in approximately the same way such that a generated image of a dalmatian is in the model's representation more and more similar to any actual dalmatian as training proceeds.  Or put another way, one would expect for a class of images to be represented in approximately the same way such that the distance in that representation for any two inputs decreases during training.
