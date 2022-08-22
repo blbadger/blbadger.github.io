@@ -280,44 +280,9 @@ and an untrained ResNet152
 
 show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is necessarily inaccurate but because forward propegation results in a non-unique approximations to the input.
 
-
 ### Why depth leads to nonunique trivial representations
 
 From the previous few sections, it was seen first that deeper layers are less able to accurately represent an input image than earlier layers for untrained models, and secondly that this poor representation is not due to a failure in the input gradient descent procedure used to visualize the representation but instead results from the layer's inability to distinguish between very different inputs $(a, a_g)$.  It remains to be explored why depth would relate to a reduction in discernment between different inputs.  In this section we explore two contributing factors to this decrease in accuracy from a theoretical point of view before considering their implications to model architectures.
-
-The first contributing factor may be stated of in terms of an analytical argument as an exponential expansion of an $\epsilon$ - neighborhood upon function composition.  Consider function $f$ that takes as an input a tensor $x$ and gives an output $y$.  Upon the addition of some small amount $\epsilon$ to each element of $x$, we have an output $y$ that is shifted by some amount less than a corresponding amount $\delta$
-
-$$
-\delta > y' - y = f(x + \epsilon) - f(x)
-$$
-
-If $f(x)$ is a continuous function then for any arbitrary $\delta$ we are able to find some $\epsilon$ that fulfills this inequality.  A composition of continuous functions are also continuous such that for any arbitrary $\delta$ we are able to find some $\epsilon$ that fulfills the inequality
-
-$$
-\delta > y'_n - y_n = f^n(x + \epsilon) - f^n(x)
-$$
-
-This does not mean, however, that the minimum value of $\delta$ with respect to $\epsilon$ to fulfill the above inequality is unchanged with functional composition, however: quite the opposite, the minimum allowable value of $\delta$ grows exponentially with $n$ for near-linear functions $f$.  For the most common hidden layer activation function Rectified Linear Units (ReLU), 
-
-$$
-y = f(x) =
-\begin{cases}
-0,  & \text{if $x$ $\leq$ 0} \\
-x, & \text{if $x$ > 0}
-\end{cases}
-$$
-
-Now consider the difference between two inputs $a, a'$ to be a vector denoted as $\epsilon$ .  Assuming random normal weight initialization (and constant bias initialization) then as long as each sum of weights multiplied by $a' - a$ is less than one, the metric 
-
-$$
-m(f^n(a), f^n(a + \epsilon))
-$$
-
-stays less than one and there is no exponential increase in $\epsilon$. But as the number of layers increases, the probability that all layers will have a norm of less than one diminishes and as soon as one layer has a norm greater, the norm grows exponentially in subsequent layers.
-
-Note that batch normalization does not prevent this increase in $\epsilon$-neighborhood at the start of training, given that it is common practice to set all $\gamma$ weight parameters to 1 upon initialization.  
-
-For most vision-based deep learning models, the vector norm explosion observed above is not likely to occur for most model architectures. Indeed, observe that input representation accuracy diminished drastically for ResNet18 on layer Conv5 (as well as for GoogleNet's later layers) even in the absence of vector norm explosion.  This suggests that for these models a second factor is most likely to be most important.
 
 Deep learning vision models are today based on convolutional operations.  To recap exactly what this means...
 
@@ -337,6 +302,89 @@ Specifically, a convolutional operation across an image is non-invertible with r
 
 Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs to generate some output also increases exponentially.
 
+One can experimentally test whether or not non-uniqueness leads to poor representations using simple fully connected architectures.  It should be noted that nearly all fully connected architectures used for classification are composed of non-invertible operations that necessarily lead to non-uniqueness in representation. Specifically, a forward pass from any fully connected layer $x$ to another that is smaller than the previous, $y$, is represented by a non-square matrix multiplication operation. Such matricies are non-invertible, an in particular the case above is expressed with a matrix $A_{mxn}, m < n$ such that there are an infinite number of linear combinations of elements of $x$.
+
+$$
+y = Ax \\
+A^{-1}y = x
+$$
+
+Whithin a specific range, there are only a finite number of linear combinations but this number increases exponentially upon matrix multiplication composition, where
+
+$$
+y = ABCDx \\
+$$
+
+This theory is borne out in experimentation, where it appears impossible to make a unique trivial representation of an input of size $a$ with a layer of size $b < a$.  But something unexpected is observed for architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
+
+How could this be?  Each layer is uniquely defined by the last, so non-uniqueness is no longer an issue.  And indeed, if we increase the number of iterations of our gradient descent method for visualization the representation does indeed appear to approximate an input to an arbitrary degree. To be precise, therefore, it is observed for deep models that there are two seemingly contradictory observations: 
+
+$$
+m_g = ||O(a, \theta) - O(a_g, \theta)||_2 \\
+m_{a'} = ||O(a, \theta) - O(a', \theta)||_2
+$$
+
+we can find some input $a_g$ such that
+
+$$
+m_{a'} > m_g 
+\tag{1}
+$$
+
+but for this input $a_g$, 
+
+$$
+|| a - a' ||_2 < || a - a_g ||_2
+\tag{2}
+$$
+
+which is an exact way of saying that the representation is worse even though it makes as good an approximation of $O(a, \theta)$ as $a'$.  
+
+If the properties of composed matrix multiplication are considered, we find that there is indeed a sufficient theory as to how this could occur.  Consider first that a composition of matrix multiplications is itself equal to another matrix multiplication,
+
+$$
+ABCDx = Ex
+$$
+
+Now consider how this multiplication transforms space in $x$ dimensions.  Some basis vectors end up becoming much more compressed or expanded than others upon composition.  Consider the case for two dimensions such that the transformation $Ex$ shrinks $x_1$ by a factor of 1000 but leaves $x_2$ unchanged.  Now consider what happens when we add a vector of some small amount $\epsilon$ to $x$ and find $|| E(\epsilon) ||$, the difference of between transformed points $x$ and $x + \epsilon$.  We would end up with a value very near $epsilon_2$.  For example, we could have 
+
+$$ 
+\epsilon = 
+\begin{bmatrix}
+1 \\
+1 \\
+\end{bmatrix}
+$$
+
+But now consider all the possible inputs $a$ that could make $|| E(a) || \approx || E(\epsilon) ||$.  What if we start with the vector
+
+$$ 
+a = 
+\begin{bmatrix}
+1000 \\
+0 \\
+\end{bmatrix}
+$$
+
+Clearly $||E(x - a)|| = 1$ which is approximates $||E(x - e)|| = 1.001$, even though $||x - a|| = 100 > \sqrt{2} = ||x - e||$.  Thus we have found an example that fulfills the necessary conditions.
+
+This example is instructive because it shows us how equations (1) and (2) may be simultanously fulfilled: all we need is a transformation that is contractive much more in some dimensions rather than others.  Most deep learning initializations lead to this phenomenon, meaning that the composition of linear layers gives a transformation that when applied to an n-dimensional ball as an input gives a spiky ball, where the spikes correspond to dimensions that are contracted much more than others.
+
+How many neurons per layer are required for perfect representation of the input? Most classification models make use of Rectified Linear Units (ReLU), defined as
+
+$$
+y = f(x) =
+\begin{cases}
+0,  & \text{if $x$ $\leq$ 0} \\
+x, & \text{if $x$ > 0}
+\end{cases}
+$$
+
+In this case, the number of neurons per layer required for non-uniqueness is usually much greater than the number of input elements, usually by a factor of around 2.  The exact amount depends on the number of neurons that fulfill the first if condition in the equation above, and if we make the reasonable assumption that $1/2$ of all neurons in a layer do get zeroed out then we would need twice the number of total neurons in that layer compared to input features in order to make an accurate representation.
+
+If we consider the simplified case of a model composed of fully connected layers without nonlinear activation functions, we have a model that is in essence a composition of matrix multiplications. But something somewhat confusing is observed even in this simplified model.
+
+
 ### Training generally does not lead to more accurate approximations
 
 What happens to the poor representations in deeper layers upon model training?  We have already seen that training leads to the formation of what was termed a non-trivial representation, ie something that is not simply an approximate copy of the input.  As successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased, it may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$, or more precisely for an $L^2$ distance, the measure decreases toward 0 as the model configuration at the start of training $\theta_0$ is updated during training
@@ -354,7 +402,7 @@ It is somewhat surprising then that this is not the case: the representations fo
 
 The generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
 
-Instead, it appears that the possible inputs that make some representation close to the target tensor is re-arranged such that now the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even if the non-uniqueness remains.
+Instead, it appears that during training the possible inputs that make some representation close to the target tensor are re-arranged such that the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even if the non-uniqueness remains.
 
 
 ### Implications of imperfect input representation
