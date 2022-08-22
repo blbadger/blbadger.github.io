@@ -278,10 +278,7 @@ and an untrained ResNet152
 
 ![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/layer_distances_resnet152.png)
 
-show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is inaccurate but because forward propegation results in a non-unique approximations to the input.
-
-### Training generally does not lead to more accurate approximations
-
+show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is necessarily inaccurate but because forward propegation results in a non-unique approximations to the input.
 
 
 ### Why depth leads to nonunique trivial representations
@@ -339,6 +336,25 @@ $$
 Specifically, a convolutional operation across an image is non-invertible with respect to the elements that are observed at any given time.  Thus, generally speaking, pixels within the kernal's dimensions may be swapped without changing the ouptut.
 
 Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs to generate some output also increases exponentially.
+
+### Training generally does not lead to more accurate approximations
+
+What happens to the poor representations in deeper layers upon model training?  We have already seen that training leads to the formation of what was termed a non-trivial representation, ie something that is not simply an approximate copy of the input.  As successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased, it may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$, or more precisely for an $L^2$ distance, the measure decreases toward 0 as the model configuration at the start of training $\theta_0$ is updated during training
+
+$$
+||O(a, \theta) - O(a_g, \theta)||_2 \to 0 \\
+\text{as} \theta_0 \to theta_{\infty}
+$$
+
+Intuitively this hypothesis seems reasonable: if a model is trained to recognize images of dalmations as existing in one specific class, it may learn to represent all dalmations in approximately the same way such that a generated image of a dalmatian is in the model's representation more and more similar to any actual dalmatian as training proceeds.  Or put another way, one would expect for a class of images to be represented in approximately the same way such that the distance in that representation for any two inputs decreases during training.
+
+It is somewhat surprising then that this is not the case: the representations for generated versus example dalmatians do not decrease in $L^2$ distance during training.  Nor does the distance between the original input $a$ and the shifted input $a'$ for trained models in the general case. 
+
+![figure insert]()
+
+The generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
+
+Instead, it appears that the possible inputs that make some representation close to the target tensor is re-arranged such that now the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even if the non-uniqueness remains.
 
 
 ### Implications of imperfect input representation
