@@ -47,13 +47,8 @@ $$
 such that when we square root both sides of (2), 
 
 $$
-x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}}
-$$
-
-and simplifying by multiplying the right hand side via multiplying by $\sqrt{4a^2} / \sqrt{4a^2}$ before subtracting $\frac{b}{2a}$ yields
-
-$$
-x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}} \\
+= \frac{-b \pm \sqrt{b^2-4ac}}{2a}
 $$
 
 At this point, there is no clear indication that we cannot find a similar expression for any arbitrary polynomial, but there is some slight indication that finding the expression may be very difficult because completing the square is not a method that is necessarily applicable to higher powers. 
@@ -318,7 +313,7 @@ The above image has symmetry about the real axis (the horizontal line at the cen
 This function $f(x)$ is a structure-preserving map, also called a homomorphism, because 
 
 $$
-f(ab) = f(a)f(b) \forall a, b \in \Bbb C
+f(ab) = f(a)f(b) \; \forall a, b \in \Bbb C
 $$
 
 Furthermore because for any real number $a$, $f(a) = a$, for any polynomial with real coefficients $a(x)$, $f(a(x))$ contains the same constants and only converts $x$ to its conjugate.  This does not change the root values of that function because $f(0) = 0$. 
