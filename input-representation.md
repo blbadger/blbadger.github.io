@@ -321,6 +321,10 @@ This theory is borne out in experimentation, where it appears impossible to make
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/under_versus_overcomplete.png)
 
+From the above figure, it may be argued that perhaps the representation generation algorithm is simply not strong enough to capture an accurate representation of the input for smaller layers.  This can be shown to be not the case: plotting the representation accuracies achieved using various iterations of our representation generator, we find that only models with a minimum layer size greater than the input dimension are capable of making arbitrarily accurate representtions.
+
+![iterations and width]({{https://blbadger.github.io}}/neural_networks/width_increased_iterations.png)
+
 But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/overcomplete_depth.png)
