@@ -422,7 +422,7 @@ It is interesting that increasing the number of deep layer neurons is capable of
 
 Thus we come to the conclusion that the ideal model architecture for trivial representation and thus memorization is the inverse of the architectures commonly used, such that the number of trainable parameters increases at each layer rather than decreases.
 
-### Training generally does not lead to more accurate approximations
+### Training does not lead to more accurate approximations
 
 What happens to the poor representations in deeper layers upon model training?  We have already seen that training leads to the formation of what was termed a non-trivial representation, ie something that is not simply an approximate copy of the input.  As successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased, it may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$, or more precisely for an $L^2$ distance, the measure decreases toward 0 as the model configuration at the start of training $\theta_0$ is updated during training
 
@@ -433,14 +433,13 @@ $$
 
 Intuitively this hypothesis seems reasonable: if a model is trained to recognize images of dalmations as existing in one specific class, it may learn to represent all dalmations in approximately the same way such that a generated image of a dalmatian is in the model's representation more and more similar to any actual dalmatian as training proceeds.  Or put another way, one would expect for a class of images to be represented in approximately the same way such that the distance in that representation for any two inputs decreases during training.
 
-It is somewhat surprising then that this is not the case: the representations for generated versus example dalmatians do not decrease in $L^2$ distance during training.  Nor does the distance between the original input $a$ and the shifted input $a'$ for trained models in the general case. 
+It is somewhat surprising then that this is not the case: the representations for generated versus example dalmatians do not decrease in $L^2$ distance upon a full training run.  Nor does the distance between the original input $a$ and the shifted input $a'$ for trained models in the general case. 
 
 ![figure insert]()
 
 The generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
 
 Instead, it appears that during training the possible inputs that make some representation close to the target tensor are re-arranged such that the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even if the non-uniqueness remains.
-
 
 ### Implications of imperfect input representation
 
