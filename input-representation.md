@@ -317,7 +317,13 @@ $$
 y = ABCDx \\
 $$
 
-This theory is borne out in experimentation, where it appears impossible to make a unique trivial representation of an input of size $a$ with a layer of size $b < a$.  But something unexpected is observed for architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
+This theory is borne out in experimentation, where it appears impossible to make a unique trivial representation of an input of size $a$ with a layer of size $b < a$. 
+
+![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/under_versus_overcomplete.png)
+
+But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
+
+![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/overcomplete_depth.png)
 
 How could this be?  Each layer is uniquely defined by the last, so non-uniqueness is no longer an issue.  And indeed, if we increase the number of iterations of our gradient descent method for visualization the representation does indeed appear to approximate an input to an arbitrary degree. To be precise, therefore, it is observed for deep models that there are two seemingly contradictory observations: 
 
@@ -418,7 +424,7 @@ Input representations require a substantial amount of information from the gradi
 
 But curiously enough there is a way to reduce the number of steps necessary: add neurons to the later layers.  Experimentally, increasing the number of neurons in these layers leads to a more accurate representation.  As this cannot result from an increase in information during the forward pass, it instead results from a more accurate gradient passed to the input during backpropegation. 
 
-[insert figure]
+![middle layer influence]({{https://blbadger.github.io}}/neural_networks/gradient_middle_layer.png)
 
 It is interesting that increasing the number of deep layer neurons is capable of leading to a better input representation for a deep layer even for overcomplete architectures with more layer neurons than input elements. It is probable that increased deep layer neurons prevent scaling problems of gradients within each layer.
 
