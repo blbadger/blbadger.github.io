@@ -321,9 +321,13 @@ This theory is borne out in experimentation, where it appears impossible to make
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/under_versus_overcomplete.png)
 
-From the above figure, it may be argued that perhaps the representation generation algorithm is simply not strong enough to capture an accurate representation of the input for smaller layers.  This can be shown to be not the case: plotting the representation accuracies achieved using various iterations of our representation generator, we find that only models with a minimum layer size greater than the input dimension are capable of making arbitrarily accurate representtions.  For the below figure, note that if we continue to trade the 3000-width model, an exponential decay is still observed such that very low (0.1) distance is achieved after 200,000 iterations. On the other hand, the 2000-width model has no decrease in distance from 1,000 to more than 40k iterations even as the embedding distance follows an exponential decay.
+From the above figure, it may be argued that perhaps the representation generation algorithm is simply not strong enough to capture an accurate representation of the input for smaller layers.  This can be shown to be not the case: plotting the representation accuracies achieved using various iterations of our representation generator, we find that only models with a minimum layer size greater than the input dimension are capable of making arbitrarily accurate representtions.  For the below figure, note that if we continue to trade the 3000-width model, an exponential decay is still observed such that very low (0.1) distance is achieved after 200,000 iterations. 
 
 ![iterations and width]({{https://blbadger.github.io}}/neural_networks/width_increased_iterations.png)
+
+On the other hand, the 2000-width model has no decrease in distance from 1,000 to 100,000 iterations even as the embedding distance follows an exponential decay.  These observations provide evidence for the idea that the input representation quality is poor for models with at least one layer with fewer nodes than input elements because of non-uniqueness rather than poor output approximation.
+
+![iterations and width]({{https://blbadger.github.io}}/neural_networks/middle_width_accuracy.png)
 
 But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
 
