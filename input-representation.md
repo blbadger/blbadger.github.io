@@ -421,7 +421,7 @@ In some respects, $a'$ provides a kind of lower bound to how accurate a point at
 This an be investigated experimentally. Ceasing to ignore biases, we can design a model such that each layer is invertible by making the number of neurons per layer equal to the number of elements in the input.  We design a four-layer network of linear layers only, without any nonlinearities for simplicity.  For each layer, any output $o$ will have a unique corresponding input $x$ that may be calculated by multiplying the output minus the bias vector by the inverse of the weight matrix.
 
 $$
-o = Wx + b \implies
+o = Wx + b \implies \\
 x = W^{-1}(o-b)
 $$
 
@@ -430,12 +430,12 @@ Inverting large matricies requires a number of operations, and it appears that t
 With this ability in hand, we can investigate how likely one is to find a point within a certain distance from a target $O(a, \theta)$, denoted $O(a'', \theta)$ such that the input is within some distance of $a$.  We can do this by finding random points near $O(a, \theta)$ by 
 
 $$
-O(a'', \theta) = O(a, \theta) + \mathcal{N}0, 1/1000)
+O(a'', \theta) = O(a, \theta) + \mathcal{N}(0, 1/1000)
 $$
 
 and we can compare the distances between $a''$ and $a$ to the distance between $a'$ and $a$.  The latter is denoted in the upper portion of the following figure, and the distribution of the former in the lower portion.  Observe how nearly all points $a''$ are much farther from $a$ (note the scale: the median distance if more than 40,000) than $a'$ (which is under 3).  This suggests that indeed $a'$ is unusually good at approximating $a$ for points in the neighborhood of $O(a, \theta)$, which is not particularly surprising given that $a'$ was chosen to be a small distance from $a$.
 
-What is more surprising is that we also find that the gradient descent method for visualizing the representation of the output is also far more accurate to the orginal input $a$ than almost all other points in the neighborhood.  In the below example, a short (220 iterations) run of the gradient descent method yields an input $a_g$ such that $m(a, a_g)=2.84$ but $m(O(a, \theta), O(a_g, \theta)) = 0.52$, which is far larger in output space than the neighborhood explored above but far smaller in input space. Why this occurs is currently unclear.
+What is more surprising is that we also find that the gradient descent method for visualizing the representation of the output is also far more accurate to the orginal input $a$ than almost all other points in the neighborhood.  In the below example, a short (220 iterations) run of the gradient descent method yields an input $a_g$ such that $m(a, a_g)=2.84$ for an $L^2$ metric but $m(O(a, \theta), O(a_g, \theta)) = 0.52$ with the same metric, which is far larger in output space than the neighborhood explored above but far smaller in input space. Why gradient descent should give such an unusually good approximation of the input for some output neighborhood is currently not clear.
 
 ![inverted distances]({{https://blbadger.github.io}}/neural_networks/inverted_distances.png)
 
