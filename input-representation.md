@@ -356,7 +356,7 @@ $$
 
 which is an exact way of saying that the representation is worse even though it makes as good an approximation of $O(a, \theta)$ as $a'$.  
 
-If the properties of composed matrix multiplication are considered, we find that there is indeed a sufficient theory as to how this could occur.  Consider first that a composition of matrix multiplications is itself equal to another matrix multiplication,
+Ignoring biases for now, fully connected linear layers are equivalent to matrix multiplication operations.  If the properties of composed matrix multiplication are considered, we find that there is indeed a sufficient theory as to how this could occur.  Consider first that a composition of matrix multiplications is itself equal to another matrix multiplication,
 
 $$
 ABCDx = Ex
@@ -412,9 +412,32 @@ For an illustration of how this can occur in four dimensions, take an instance w
 
 ![spiky ball explanation]({{https://blbadger.github.io}}/neural_networks/spiky_ball_explanation.png)
 
-Why would a representation visualization method using gradient descent tend to find a point like $a_g$ that exists farther from $a$ than $a'$?  We can think of the gradient descent procedure as finding an unbiased point $E(a_g)$ as close to $a$ as possible under certain constraints. The larger the difference in basis vector contraction that exists in $E$, the more likely that the point found $E^{-1}(a_g) = a_g$ will be far from $a$.
+Why would a representation visualization method using gradient descent tend to find a point like $a_g$ that exists farther from $a$ than $a'$?  We can think of the gradient descent procedure as finding an point $E(a_g)$ as close to $a$ as possible under certain constraints. The larger the difference in basis vector contraction that exists in $E$, the more likely that the point found $E^{-1}(a_g) = a_g$ will be far from $a$.  
 
 As the transformation $E$ is composed of more and more layers, the contraction difference (sometimes called the condition number) between different basis vectors is expected to become larger for most deep learning initialization schemes.  This is important because the input representation method is very similar to the gradient descent procedure of training model parameters, meaning that if poor conditioning leads to a poor input representation then it likely also leads to poor parameter updates for the early layers as well.  
+
+In some respects, $a'$ provides a kind of lower bound to how accurate a point at distance $E(a') - E(a)$ could be.  Observe in the figure above how small a subset of the space around $E(a)$ that $E(a')$ exists inside. Therefore if one were to choose a point at random in the neighborhood of $E(x)$, a point like $E(a')$ satisfying the specific conditions that it does is highly unlikely to be chosen.  
+
+This an be investigated experimentally. Ceasing to ignore biases, we can design a model such that each layer is invertible by making the number of neurons per layer equal to the number of elements in the input.  We design a four-layer network of linear layers only, without any nonlinearities for simplicity.  For each layer, any output $o$ will have a unique corresponding input $x$ that may be calculated by multiplying the output minus the bias vector by the inverse of the weight matrix.
+
+$$
+o = Wx + b \implies
+x = W^{-1}(o-b)
+$$
+
+Inverting large matricies requires a number of operations, and it appears that the 32-bit `torch.float` type is insufficient for accurate inversion for the matricies used above.  Instead it is necessary to use `torch.double` type elements, which are 64-bit floating point numbers.  Once this is done, it can be easily checked that the inverse of $O(a, \theta)$ can be found.
+
+With this ability in hand, we can investigate how likely one is to find a point within a certain distance from a target $O(a, \theta)$, denoted $O(a'', \theta)$ such that the input is within some distance of $a$.  We can do this by finding random points near $O(a, \theta)$ by 
+
+$$
+O(a'', \theta) = O(a, \theta) + \mathcal{N}0, 1/1000)
+$$
+
+and we can compare the distances between $a''$ and $a$ to the distance between $a'$ and $a$.  The latter is denoted in the upper portion of the following figure, and the distribution of the former in the lower portion.  Observe how nearly all points $a''$ are much farther from $a$ (note the scale: the median distance if more than 40,000) than $a'$ (which is under 3).  This suggests that indeed $a'$ is unusually good at approximating $a$ for points in the neighborhood of $O(a, \theta)$, which is not particularly surprising given that $a'$ was chosen to be a small distance from $a$.
+
+What is more surprising is that we also find that the gradient descent method for visualizing the representation of the output is also far more accurate to the orginal input $a$ than almost all other points in the neighborhood.  In the below example, a short (220 iterations) run of the gradient descent method yields an input $a_g$ such that $m(a, a_g)=2.84$ but $m(O(a, \theta), O(a_g, \theta)) = 0.52$, which is far larger in output space than the neighborhood explored above but far smaller in input space. Why this occurs is currently unclear.
+
+![inverted distances]({{https://blbadger.github.io}}/neural_networks/inverted_distances.png)
 
 How many neurons per layer are required for perfect representation of the input? Most classification models make use of Rectified Linear Units (ReLU), defined as
 
