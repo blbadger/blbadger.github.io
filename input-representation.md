@@ -317,7 +317,7 @@ $$
 y = ABCDx \\
 $$
 
-This theory is borne out in experimentation, where it appears impossible to make a unique trivial representation of an input of size $a$ with a layer of size $b < a$. 
+This theory is borne out in experimentation, where it appears impossible to make a unique trivial representation of an input of size $a$ with a layer of size $b < a$. In the following figures, the representation visualization method has been modified to have a minimum learning rate of 0.0001 and Gaussian normalization has been removed.  Inputs have been down-scaled to 29x29 for fully connected model feasibility.
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/under_versus_overcomplete.png)
 
