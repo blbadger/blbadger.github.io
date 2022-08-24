@@ -321,7 +321,7 @@ This theory is borne out in experimentation, where it appears impossible to make
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/under_versus_overcomplete.png)
 
-From the above figure, it may be argued that perhaps the representation generation algorithm is simply not strong enough to capture an accurate representation of the input for smaller layers.  This can be shown to be not the case: plotting the representation accuracies achieved using various iterations of our representation generator, we find that only models with a minimum layer size greater than the input dimension are capable of making arbitrarily accurate representtions.  For the below figure, note that if we continue to trade the 3000-width model, very low (0.1) distance is achieved after 200,000 iterations.
+From the above figure, it may be argued that perhaps the representation generation algorithm is simply not strong enough to capture an accurate representation of the input for smaller layers.  This can be shown to be not the case: plotting the representation accuracies achieved using various iterations of our representation generator, we find that only models with a minimum layer size greater than the input dimension are capable of making arbitrarily accurate representtions.  For the below figure, note that if we continue to trade the 3000-width model, an exponential decay is still observed such that very low (0.1) distance is achieved after 200,000 iterations. On the other hand, the 2000-width model has no decrease in distance from 1,000 to more than 40k iterations even as the embedding distance follows an exponential decay.
 
 ![iterations and width]({{https://blbadger.github.io}}/neural_networks/width_increased_iterations.png)
 
