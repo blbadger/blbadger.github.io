@@ -282,9 +282,20 @@ and an untrained ResNet152
 
 show that early and late layer representations both make good approximations (relative to a slightly shifted $a'$) of the input they attempt to approximate, even though the late layer representations are visually clearly inaccurate.  Furthermore, observe how the representation becomes progressively poorer at Layer Conv5 as the model exhibits more layers.  These results suggest that in general layer layers of deep learning models are incapable of accurate (trivial) untrained representation of an input not because the gradient backpropegation is necessarily inaccurate but because forward propegation results in a non-unique approximations to the input.
 
-It may be wondered if a better representation method could yield a more exact input.
+It may be wondered if a better representation method could yield a more exact input. In a later section, we will see that the $a'$ reference is atypically close to $a$ compared to other points in the neighborhood of $O(a', \theta) - O(a, \theta)$ of $O(a, \theta)$ and thus may not be an ideal reference point.  To avoid the issue of what reference in output space to use, we can instead observe the output metric $m_g$ anc compare this to the corresponding metric on the input,
 
-![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/resnet50_conv2_limitations.png)
+$$
+m_i = || a_g - a ||
+$$
+
+The $m_g$ metric corresponds to the representation accuracy in the output space and $m_i$ corresponds to the representation accuracy with respect to the input.  Therefore we can think of $m_g$ as being a measure of the ability of the gradient descent procedure to approximate $O(a, \theta)$ while $m_i$ is a measure of the accuracy of the representation to the target input.
+
+For even relatively shallow layers there is an apparent asymptote in $m_i$ far from 0, whereas $m_g$ does tend towards 0.  
+
+![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/resnet152_conv2_limitations.png)
+
+For deeper layers this effect is more pronounced: it is common for $m_i$ to increase while $m_g$ tends towards the origin.
+
 
 ### Why depth leads to nonunique trivial representations
 
