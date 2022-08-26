@@ -294,8 +294,9 @@ For even relatively shallow layers there is an apparent asymptote in $m_i$ far f
 
 ![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/resnet152_conv2_limitations.png)
 
-For deeper layers this effect is more pronounced: it is common for $m_i$ to increase while $m_g$ tends towards the origin.
+For deeper layers this effect is more pronounced: it is common for $m_i$ to increase while $m_g$ tends towards the origin for layer conv5 of resnet50.
 
+![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/resnet50_conv5_limitations.png)
 
 ### Why depth leads to nonunique trivial representations
 
