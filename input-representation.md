@@ -290,9 +290,13 @@ $$
 
 The $m_g$ metric corresponds to the representation accuracy in the output space and $m_i$ corresponds to the representation accuracy with respect to the input.  Therefore we can think of $m_g$ as being a measure of the ability of the gradient descent procedure to approximate $O(a, \theta)$ while $m_i$ is a measure of the accuracy of the representation to the target input.
 
-For even relatively shallow layers there is an apparent asymptote in $m_i$ far from 0, whereas $m_g$ does tend towards 0.  
+For even relatively shallow layers there may exist an increase in $m_i$ while $m_g$ tends towards 0. For ResNet layer Conv2, we see the latter behavior for a fixed $\epsilon$
 
-![Resnet layer distances]({{https://blbadger.github.io}}/neural_networks/resnet152_conv2_limitations.png)
+![Resnet50 layer distances]({{https://blbadger.github.io}}/neural_networks/resnet50_conv2_limitations.png)
+
+while for ResNet152 layer Conv2, we find an asymptote of $m_i$ far from 0 while $m_g$ heads towards the origin for a variable (linearly decreasing) $\epsilon$.
+
+![Resnet152 layer distances]({{https://blbadger.github.io}}/neural_networks/resnet152_conv2_limitations.png)
 
 For deeper layers this effect is more pronounced: it is common for $m_i$ to increase while $m_g$ tends towards the origin for layer conv5 of resnet50.
 
