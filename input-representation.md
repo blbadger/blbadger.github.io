@@ -499,18 +499,18 @@ Instead, it appears that during training the possible inputs that make some repr
 
 ### Implications of imperfect input representation
 
-The theory and experimental observations put forward here provide a satisfactory explanation of how even extremely large deep learning models avoid overfitting.  A combination of the inability to determine a unique input with an inability to feasibly match a hidden layer using gradient descent leads to 
+The theory and experimental observations put forward here provide a satisfactory explanation of how even extremely large deep learning models avoid overfitting.  A combination of the inability to determine a unique input with an inability to feasibly match a hidden layer using gradient descent leads to a loss of information on the input, such that deep layers are incapable of exactly copying an input even when they have sufficient capacity to do so.  These layers resemble those with far fewer nodes with respect to input representation, and therefore would be expected to behave as much smaller layers with regards to overfitting.  But because such deep models typically do have a huger number of parameters, they are capable of approximating a very wide variety of functions and thus are more expressive than smaller models.
+
+The theory of representation accuracy goes a long way towards explaining the types of architectures that have been found to be successful in a variety of tasks in recent times as well.  Transformers use stacks of self-attention and feed-forward fully connected units to create representations of inputs, both of which are typically non-invertible (for example see that a single self-attention output vector value can be any linear combination of softmax outputs of $q*k$ values at each input).  Alternatives to transformers that have also proven effective in recent years combine fully connected subcomponents in non-invertible methods (the mlp-mixer architecture's output can be a linear combination of any given weight vector).
+
+
+### Why learning occurs when memorization is possible
 
 Can deep learning models learn trivial representations regardless of depth?  There is evidence that indeed they can, as observed by [Zhang and colleagues](https://arxiv.org/pdf/1611.03530.pdf): common vision architectures (including GoogleNet) have enough effective capacity to memorize the entire CIFAR10 dataset in which labels were randomly assigned.  But this bears the question: if these models are capable of learning trivial representations, why do they not when they can learn non-trivial ones?  Clearly a non-trivial representation for a model of sufficient depth is in some way more likely to be learned than a trivial one, and indeed Zhang and colleagues observed that models learn non-trivial representations more quickly than trivial ones.
 
 Learning a trivial representation is conceptually similar to the later layers in the model above learning to de-noise the earlier layers.  De-noising autoencoders with parameter higher than a input dimension number are termed overcomplete, and are capable of approximately copying the input upon training.  Being that ResNet and similar models contain far more parameters (>1 million) than inputs (299x299 = 89,401), it is of little surprise that deep learning models are capable of learning to de-noise an input from early layers.
 
 This theory also provides an explanation as to why deep models may prefer to learn non-trivial representations. As the number of possible functions describing the input is smaller in non-trivial versus trivial representation, on average fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  This is likely why non-trivial representations are learned before trivial ones.
-
-The theory of representation accuracy goes a long way towards explaining the types of architectures that have been found to be successful in a variety of tasks in recent times as well.  Transformers use stacks of self-attention and feed-forward fully connected units to create representations of inputs, both of which are typically non-invertible (for example see that a single self-attention output vector value can be any linear combination of softmax outputs of $q*k$ values at each input).  Alternatives to transformers that have also proven effective in recent years combine fully connected subcomponents in non-invertible methods (the mlp-mixer architecture's output can be a linear combination of any given weight vector).
-
-
-
 
 
 
