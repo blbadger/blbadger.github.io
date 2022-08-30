@@ -481,7 +481,7 @@ It is interesting that increasing the number of deep layer neurons is capable of
 
 Thus we come to the conclusion that the ideal model architecture for trivial representation and thus memorization is the inverse of the architectures commonly used, such that the number of trainable parameters increases at each layer rather than decreases.
 
-### Training does not lead to more accurate approximations in deep layers
+### The effect of training on layer approximation accuracy
 
 What happens to the poor representations in deeper layers upon model training?  We have already seen that training leads to the formation of what was termed a non-trivial representation, ie something that is not simply an approximate copy of the input.  As successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased, it may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$, or more precisely for an $L^2$ distance, the measure decreases toward 0 as the model configuration at the start of training $\theta_0$ is updated during training
 
@@ -494,7 +494,9 @@ Intuitively this hypothesis seems reasonable: if a model is trained to recognize
 
 It is somewhat surprising then that this is not the case: the representations for generated versus example dalmatians do not decrease in $L^2$ distance upon a full training run.  Nor does the distance between the original input $a$ and the shifted input $a'$ for trained models in the general case. 
 
-![figure insert]()
+As it is extremly unlikely that training would lead to the transformation of $O(a, \theta)$ from the spiky ball geometry to a non-spiky ball (ie lower the condition number), and it is not possible for training to remove the non-uniqueness of a representation for any given output, one would expect for the same disconnect between embedding and input distances upon increased iterations of gradient descent.  Indeed this is observed, as for example for layer Conv5 of a trained ResNet50.
+
+![trained approximations]({{https://blbadger.github.io}}/neural_networks/ResNet50_trained_conv5_distance.png)
 
 The generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
 
@@ -508,7 +510,7 @@ Learning a trivial representation is conceptually similar to the later layers in
 
 This theory also provides an explanation as to why deep models may prefer to learn non-trivial representations. As the number of possible functions describing the input is smaller in non-trivial versus trivial representation, on average fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  This is likely why non-trivial representations are learned before trivial ones.
 
-The hypothesis that depth prevents overfitting via deeper layers being unable to make trivial representations (without some sort of training) of the input is thus supported.  The observation that even untrained models are capable of copying an input in their early layers but not late layers suggests that the phenonemon is universal to that architecture, and not a result of some specific form of training.
+
 
 
 
