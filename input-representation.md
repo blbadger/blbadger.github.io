@@ -306,9 +306,9 @@ For deeper layers this effect is more pronounced: it is common for $m_i$ to incr
 
 From the previous few sections, it was seen first that deeper layers are less able to accurately represent an input image than earlier layers for untrained models, and secondly that this poor representation is not due to a failure in the input gradient descent procedure used to visualize the representation but instead results from the layer's inability to distinguish between very different inputs $(a, a_g)$.  It remains to be explored why depth would relate to a reduction in discernment between different inputs.  In this section we explore some contributing factors to this decrease in accuracy from a theoretical point of view before considering their implications to model architectures.
 
-Deep learning vision models are today based on convolutional operations.  To recap exactly what this means...
+The deep learning vision models used on this page are based on convolutional operations.  For background on what a convolution is (in the context of image processing) and why it is useful for deep learning, see [this page](https://blbadger.github.io/neural-networks.html#convolutions-explained). 
 
-In the context of image processing, the convolutional operation is non-invertible: given some input tensor $f(x, y)$, the convolution
+What is important for this page is that these models make use of mathematical operations that are in general non-invertible.  For convolutions themselves, given some input tensor $f(x, y)$, the convolution $\omega$ may be applied such that
 
 $$
 \omega f(x, y) = f'(x, y)
@@ -322,7 +322,41 @@ $$
 
 Specifically, a convolutional operation across an image is non-invertible with respect to the elements that are observed at any given time.  Thus, generally speaking, pixels within the kernal's dimensions may be swapped without changing the ouptut.
 
-Because of this lack of invertibility, there may be many possible inputs for any given output. As the number of convolutional operations increases, the number of possible inputs that generate some output vector also increases exponentially.  Therefore it is little wonder why there are different input $a_g, a, a'$ that all yield a similar output given that many input can be shown to give one single output even with perfect computational accuracy. 
+To see why this is, consider a simple example: a simple case of a one-dimensional convolution of shape with a uniform kernal. This kernal is 
+
+$$
+\omega = 
+\frac{1}{2}
+\begin{bmatrix}
+1 \\
+1 \\
+\end{bmatrix}
+$$
+
+such that the convolutional operation is 
+
+$$
+\omega * f(x_1, y_1) =
+\frac{1}{2}
+\begin{bmatrix}
+1 \\
+1 \\
+\end{bmatrix} 
+*
+\begin{bmatrix}
+2 & 3 \\
+\end{bmatrix}
+$$
+
+$$
+\omega * f(x_2, y_2) = 1/2 (1 \cdot 2 + 1 \cdot 3) = 5 \\
+$$
+
+Now observe that if we know the output of the convolutional operation and the kernal weights we cannot solve for the input: an infinite number of linear combinations of 2 and 3 exist that satisfy a sum of $5$. Invertibility may be recovered by introducing padding to the input and scanning over these known values, but in general only if the stride length is $1$.
+
+In the more applicable case, any convolutional operation that yields a tensor of smaller total dimension ($m \mathtx{x} n$) than the input is non-invertible, as is the case for any linear operation.  Operations that are commonly used in conjunction with convolutions (max or average pooling, projections, residual connections etc.) are also non-invertible. 
+
+Because of this lack of invertibility, there may be many possible inputs for any given output.  As the number of non-invertible operations increases, the number of possible inputs that generate some output vector also increases exponentially.  Therefore it is little wonder why there are different input $a_g, a, a'$ that all yield a similar output given that many input can be shown to give one single output even with perfect computational accuracy. 
 
 One can experimentally test whether or not non-uniqueness leads to poor representations using simple fully connected architectures.  It should be noted that nearly all fully connected architectures used for classification are composed of non-invertible operations that necessarily lead to non-uniqueness in representation. Specifically, a forward pass from any fully connected layer $x$ to another that is smaller than the previous, $y$, is represented by a non-square matrix multiplication operation. Such matricies are non-invertible, an in particular the case above is expressed with a matrix $A_{m\mathrm{x}n}, m < n$ such that there are an infinite number of linear combinations of elements of $x$.
 
