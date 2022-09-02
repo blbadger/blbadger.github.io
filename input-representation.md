@@ -513,7 +513,9 @@ But curiously enough there is a way to reduce the number of steps necessary: add
 
 It is interesting that increasing the number of deep layer neurons is capable of leading to a better input representation for a deep layer even for overcomplete architectures with more layer neurons than input elements. It is probable that increased deep layer neurons prevent scaling problems of gradients within each layer.
 
-Thus we come to the conclusion that the ideal model architecture for trivial representation and thus memorization is the inverse of the architectures commonly used, such that the number of trainable parameters increases at each layer rather than decreases.
+In conclusion, poor representation of an input may be due to non-uniqueness caused by non-invertible functions commonly used in models in addition to poor conditioning resulting in difficulties of sufficiently approximating $O(a, \theta)$.  For ResNet, it appears that the non-uniqueness phenomenon is the root of most of the inaccuracy in deep layers' representations due to the observation that input distance tends to increase while embedding distance decreases upon better and better embedding approximation.  
+
+There one final piece of evidence for non-uniqueness being the primary cause of poor representation.  Observe that the representation for ResNet50 layer Conv1 before batchnorm and max pooling (trained or untrained) is near-perfect, whereas the representation after applying batchnorm and more importantly pooling is not (especially for the untrained model).  This is precisely what is predicted by the non-uniqueness theory, as the first convolutional layer input contains $299x299x3 = 268,203$ elements and the output has over one million and thus is invertible, but the addition of max pooling leads to non-invertibility.
 
 ### The effect of training on layer approximation accuracy
 
