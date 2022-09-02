@@ -349,10 +349,10 @@ $$
 $$
 
 $$
-\omega * f(x_2, y_2) = 1/2 (1 \cdot 2 + 1 \cdot 3) = 5 \\
+\omega * f(x_2, y_2) = 1/2 (1 \cdot 2 + 1 \cdot 3) = 5/2 \\
 $$
 
-Now observe that if we know the output of the convolutional operation and the kernal weights we cannot solve for the input: an infinite number of linear combinations of 2 and 3 exist that satisfy a sum of $5$. Invertibility may be recovered by introducing padding to the input and scanning over these known values, but in general only if the stride length is $1$.
+Now observe that if we know the output of the convolutional operation and the kernal weights we cannot solve for the input: an infinite number of linear combinations of 2 and 3 exist that satisfy a sum of $5/2$. Invertibility may be recovered by introducing padding to the input and scanning over these known values, but in general only if the stride length is $1$.
 
 In the more applicable case, any convolutional operation that yields a tensor of smaller total dimension ($m \mathtx{x} n$) than the input is non-invertible, as is the case for any linear operation.  Operations that are commonly used in conjunction with convolutions (max or average pooling, projections, residual connections etc.) are also non-invertible. 
 
@@ -544,9 +544,8 @@ The theory of representation accuracy goes a long way towards explaining the typ
 
 Can deep learning models learn trivial representations regardless of depth?  There is evidence that indeed they can, as observed by [Zhang and colleagues](https://arxiv.org/pdf/1611.03530.pdf): common vision architectures (including GoogleNet) have enough effective capacity to memorize the entire CIFAR10 dataset in which labels were randomly assigned.  But this bears the question: if these models are capable of learning trivial representations, why do they not when they can learn non-trivial ones?  Clearly a non-trivial representation for a model of sufficient depth is in some way more likely to be learned than a trivial one, and indeed Zhang and colleagues observed that models learn non-trivial representations more quickly than trivial ones.
 
-Learning a trivial representation is conceptually similar to the later layers in the model above learning to de-noise the earlier layers.  De-noising autoencoders with parameter higher than a input dimension number are termed overcomplete, and are capable of approximately copying the input upon training.  Being that ResNet and similar models contain far more parameters (>1 million) than inputs (299x299 = 89,401), it is of little surprise that deep learning models are capable of learning to de-noise an input from early layers.
+It may be unlikely that any of the possible inputs that equals some deep learning model output (at the start of training) are actually found in the dataset.  But if we seek approximate equality, it is very likely that one of the equivalent inputs for some output is very similar to an equivalent input for some other real input.  Therefore the job of training is to re-arrange these equivalent inputs such that the real examples that approximate the equivalent inputs for some example of a class are themselves also members of that class.  
 
-This theory also provides an explanation as to why deep models may prefer to learn non-trivial representations. As the number of possible functions describing the input is smaller in non-trivial versus trivial representation, on average fewer parameters must be adjusted to make an accurate training output.  If a model is of sufficient depth such that either a trivial or non-trivial representation must be learned to lower the objective function, we can expect for a non-trivial one to result if that exists in the training data.  This is likely why non-trivial representations are learned before trivial ones.
 
 
 
