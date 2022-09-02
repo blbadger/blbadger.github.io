@@ -64,7 +64,7 @@ The two-dimensional convolution operation is computed in an analagous way to the
 The calculation for the convolution is as follows:
 
 $$
-\omega * f(x_2, y_2) = 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + \\
+\omega * f(x_1, y_1) = 1/9 (1 \cdot 1 + 1 \cdot 2 + 1 \cdot 3 + \\
 1 \cdot 0 + 1 \cdot 10 + 1 \cdot 2 + 1 \cdot 1 + 1 \cdot3 + 1 \cdot 0) \\
 = 22/9 \\
 \approx 2.44 < 10
