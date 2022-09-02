@@ -354,7 +354,7 @@ $$
 
 Now observe that if we know the output of the convolutional operation and the kernal weights we cannot solve for the input: an infinite number of linear combinations of 2 and 3 exist that satisfy a sum of $5/2$. Invertibility may be recovered by introducing padding to the input and scanning over these known values, but in general only if the stride length is $1$.
 
-In the more applicable case, any convolutional operation that yields a tensor of smaller total dimension ($m \mathtx{x} n$) than the input is non-invertible, as is the case for any linear operation.  Operations that are commonly used in conjunction with convolutions (max or average pooling, projections, residual connections etc.) are also non-invertible. 
+In the more applicable case, any convolutional operation that yields a tensor of smaller total dimension ($m \mathtt{x} n$) than the input is non-invertible, as is the case for any linear operation.  Operations that are commonly used in conjunction with convolutions (max or average pooling, projections, residual connections etc.) are also non-invertible. 
 
 Because of this lack of invertibility, there may be many possible inputs for any given output.  As the number of non-invertible operations increases, the number of possible inputs that generate some output vector also increases exponentially.  Therefore it is little wonder why there are different input $a_g, a, a'$ that all yield a similar output given that many input can be shown to give one single output even with perfect computational accuracy. 
 
