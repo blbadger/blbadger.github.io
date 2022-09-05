@@ -161,10 +161,7 @@ Perfect representation requires that a model be able to pass all the input infor
 
 Being that overfitting results from perfect representation and that greater model depth (for cNN-based vision models) prevents overfitting, it may be hypothesized that an increase in model depth prevents perfect representation of the input. 
 
-Are deep learning classification models capable of perfect representation?  This question is somewhat difficult to answer theoretically as it depends on the possible inputs given to a model and the model's configuration, but happily we now have a good way to experimentally test a relationship between model depth and representation capacity. 
-
-
-The method we will use is the capability of each layer to perform an autoencoding on the input using gradient descent on a random vector as our decoder.  First we pass some target image $a_t$ into a feedforward classification network of choice $\theta$ and find the activations of some given output layer $O_l$
+Are hidden layers of common deep learning classification models capable of perfect representation?  The method we will use is the capability of each layer to perform an autoencoding on the input using gradient descent on a random vector as our decoder.  First we pass some target image $a_t$ into a feedforward classification network of choice $\theta$ and find the activations of some given output layer $O_l$
 
 $$
 \widehat y = O_l(a_t, \theta)
@@ -328,8 +325,7 @@ $$
 \omega = 
 \frac{1}{2}
 \begin{bmatrix}
-1 \\
-1 \\
+1 & 1
 \end{bmatrix}
 $$
 
@@ -339,12 +335,12 @@ $$
 \omega * f(x_1, y_1) =
 \frac{1}{2}
 \begin{bmatrix}
-1 \\
-1 \\
+1 & 1
 \end{bmatrix} 
 *
 \begin{bmatrix}
-2 & 3 \\
+2 \\
+3 \\
 \end{bmatrix}
 $$
 
@@ -451,7 +447,7 @@ $$
 For the choice of an $L^1$ metric, clearly
 
 $$
-||E(x - a)|| = 1 \approx ||E(x - \epsilon)|| = 1.001
+||E(x - a)|| = 1 < ||E(x - \epsilon)|| = 1.001
 $$ 
 
 even though 
@@ -468,7 +464,7 @@ For an illustration of how this can occur in four dimensions, take an instance w
 
 Why would a representation visualization method using gradient descent tend to find a point like $a_g$ that exists farther from $a$ than $a'$?  We can think of the gradient descent procedure as finding an point $E(a_g)$ as close to $a$ as possible under certain constraints. The larger the difference in basis vector contraction that exists in $E$, the more likely that the point found $E^{-1}(a_g) = a_g$ will be far from $a$.  
 
-As the transformation $E$ is composed of more and more layers, the contraction difference (sometimes called the condition number) between different basis vectors is expected to become larger for most deep learning initialization schemes.  This is important because the input representation method is very similar to the gradient descent procedure of training model parameters, meaning that if poor conditioning leads to a poor input representation then it likely also leads to poor parameter updates for the early layers as well.  
+As the transformation $E$ is composed of more and more layers, the contraction or expansion difference (sometimes called the condition number) between different basis vectors is expected to become larger for most deep learning initialization schemes.  As input representation method is very similar to the gradient descent procedure of training model parameters, poor conditioning leading to a poor input representation then it likely also leads to poor parameter updates for the early layers as well.  Conditioning can be understood as signifying approximate invertibility: the poorer the conditioning of a transformation, the more difficult it is to invert accurately.
 
 In some respects, $a'$ provides a kind of lower bound to how accurate a point at distance $E(a') - E(a)$ could be.  Observe in the figure above how small a subset of the space around $E(a)$ that $E(a')$ exists inside. Therefore if one were to choose a point at random in the neighborhood of $E(x)$, a point like $E(a')$ satisfying the specific conditions that it does is highly unlikely to be chosen.  
 
@@ -513,7 +509,7 @@ But curiously enough there is a way to reduce the number of steps necessary: add
 
 It is interesting that increasing the number of deep layer neurons is capable of leading to a better input representation for a deep layer even for overcomplete architectures with more layer neurons than input elements. It is probable that increased deep layer neurons prevent scaling problems of gradients within each layer.
 
-In conclusion, poor representation of an input may be due to non-uniqueness caused by non-invertible functions commonly used in models in addition to poor conditioning resulting in difficulties of sufficiently approximating $O(a, \theta)$.  For ResNet, it appears that the non-uniqueness phenomenon is the root of most of the inaccuracy in deep layers' representations due to the observation that input distance tends to increase while embedding distance decreases upon better and better embedding approximation.  
+In conclusion, poor representation of an input may be due to non-uniqueness caused by non-invertible functions commonly used in models in addition to poor conditioning (which can be thought of as approximate non-invertibility) resulting in difficulties of sufficiently approximating $O(a, \theta)$.  For ResNet, it appears that the non-uniqueness phenomenon is the root of most of the inaccuracy in deep layers' representations due to the observation that input distance tends to increase while embedding distance decreases upon better and better embedding approximation.  
 
 There one final piece of evidence for non-uniqueness being the primary cause of poor representation.  Observe that the representation for ResNet50 layer Conv1 before batchnorm and max pooling (trained or untrained) is near-perfect, whereas the representation after applying batchnorm and more importantly pooling is not (especially for the untrained model).  This is precisely what is predicted by the non-uniqueness theory, as the first convolutional layer input contains $299x299x3 = 268,203$ elements and the output has over one million and thus is invertible, but the addition of max pooling leads to non-invertibility.
 
