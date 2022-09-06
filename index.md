@@ -214,6 +214,11 @@ The study of life, observations of which display many of the features of nonline
 ![generated badger](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
+### [Input Generation IV: Depth and Generality](/depth-generality.md)
+
+![generated badger](/neural_networks/resnet_autoencoding_perlayer2.png)
+
+
 ### [Feature Visualization I](/feature-visualization.md)
 
 ![features](/neural_networks/featuremap_cover2.png)
