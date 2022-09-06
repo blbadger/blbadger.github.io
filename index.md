@@ -206,12 +206,12 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Input Generation II: Vectorization and Latent Space Embedding](/latent_output.md)
 
-![generated badger](/neural_networks/nearest_neighbors_animal_embedding.png)
+![wordnet recovered from imagenet](/neural_networks/nearest_neighbors_animal_embedding.png)
 
 
 ### [Input Generation III: Representations](/input-representation.md)
 
-![generated badger](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
+![resnet googlenet transformation](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
 ### [Input Generation IV: Depth and Generality](/depth-generality.md)
