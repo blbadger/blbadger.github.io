@@ -358,7 +358,13 @@ x, & \text{if $x$ > 0}
 \end{cases}
 $$
 
-In this case, the number of neurons per layer required for non-uniqueness is usually much greater than the number of input elements, usually by a factor of around 2.  The exact amount depends on the number of neurons that fulfill the first if condition in the equation above, and if we make the reasonable assumption that $1/2$ of all neurons in a layer do get zeroed out then we would need twice the number of total neurons in that layer compared to input features in order to make an accurate representation.
+In this case, the number of neurons per layer required for non-uniqueness is usually much greater than the number of input elements, usually by a factor of around 2.  The exact amount depends on the number of neurons that fulfill the first if condition in the equation above, and if we make the reasonable assumption that $1/2$ of all neurons in a layer do get zeroed out then we would need twice the number of total neurons in that layer compared to input features in order to make an arbitrarily accurate representation.
+
+This increase in the number of neurons per layer is true not just for the first but also for all subsequent layers if ReLU activation is used.  This is because inverting any given layer requires at least as many unique inputs as there are previous neurons. 
+
+![necessary widths for completeness]({{https://blbadger.github.io}}/neural_networks/overcomplete_architectures.png)
+
+It should be noted that this phenomenon is extremely general: it applies to convolutional layers as well, and also approximately to other nonlinear activations such as tanh or sigmoid neurons.
 
 Input representations require a substantial amount of information from the gradient of the representation with respect to the input in order to make an accurate representation visualization.  This means that one would ideally want to observe $a_g$ after a huge number of gradient descent steps, but for practicality iterations are usually limited to somewhere in the hundreds. 
 
