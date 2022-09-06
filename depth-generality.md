@@ -238,9 +238,9 @@ On the other hand, the 2000-width model has no decrease in distance from 1,000 t
 
 ![iterations and width]({{https://blbadger.github.io}}/neural_networks/middle_width_accuracy.png)
 
-But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy.
+But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy for any given number of iterations of our representation visualization method.  Note that increasing the number of iterations in the representation visualization method is capable of compensating for increased depth.
 
-![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/overcomplete_depth.png)
+![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/overcomplete_depth_different_layers.png)
 
 How could this be?  Each layer is uniquely defined by the last, so non-uniqueness is no longer an issue.  And indeed, if we increase the number of iterations of our gradient descent method for visualization the representation does indeed appear to approximate an input to an arbitrary degree. To be precise, therefore, it is observed for deep models that there are two seemingly contradictory observations: 
 
