@@ -135,6 +135,10 @@ The ability of the right point in output space to mimick the representation by a
 
 ![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
+Likewise, ResNet's depiction of a transverse flute contains flute players in addition to the instrument itself, whereas GoogleNet's depiction does not.  When we vectorize ResNet's output to match that of GoogleNet, we see that ResNet's depiction of a transverse flute no longer contains the players.
+
+![resnet vectorized to be googlenet flute]({{https://blbadger.github.io}}/neural_networks/resnet_vectorized_to_be_googlenet_flute.png)
+
 It may be wondered whether we can apply our gradient descent method to form representations of natural images, rather than generated ones representing some ImageNet category.  All that is required is to change $a_{\theta_2}$ to be some given target image $a_{t}$ before performing the same octave-based gradient descent procedure.  When we choose two images of Dalmatians as our targets, we see that the representations are indeed accurate and that the features they portray are significant: observe how the top image's representation focuses on the body and legs (which are present in the input) whereas the bottom focuses on the face (body and legs not being present in the input).
 
 ![resnet vectorized to be googlenet goldfinch]({{https://blbadger.github.io}}/neural_networks/resnet_output_embedding_comparison.png)
