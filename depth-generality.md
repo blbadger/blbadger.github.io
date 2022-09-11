@@ -1,3 +1,7 @@
+## Depth and Generality from Representations
+
+This page is part IV in a series on input generation, follow [this link](https://blbadger.github.io/input-representation.html) for part III.
+
 ### Trivial Autoencoding ability decreases with model depth
 
 It is worth examining again what we have done in the last section: an input $a$ is fed to a model $\theta_1$ to make a target output
@@ -396,7 +400,7 @@ Instead, it appears that during training the possible inputs that make some repr
 
 ### Implications of imperfect input representation
 
-The theory and experimental observations put forward here provide a satisfactory explanation of how even extremely large deep learning models avoid overfitting.  Due to the inability of deep layers to determine a unique input (and perhaps combined with an inability to feasibly match a hidden layer using gradient descent for very poorly conditioned models) leads to a loss of information on the input, such that deep layers are incapable of exactly copying an input even when they have sufficient capacity to do so.  These layers resemble those with far fewer nodes with respect to input representation, and therefore would be expected to behave as much smaller layers with regards to overfitting.  But because such deep models typically do have a huger number of parameters, they are capable of approximating a very wide variety of functions and thus are more expressive than smaller models.  
+The theory and experimental observations put forward here provide a satisfactory explanation of how even extremely large deep learning models avoid overfitting.  Due to the inability of deep layers to determine a unique input (and perhaps combined with an inability to feasibly match a hidden layer using gradient descent for very poorly conditioned models) leads to a loss of information on the input, such that deep layers are incapable of exactly copying an input even when they have sufficient capacity to do so.  These layers resemble those with far fewer nodes with respect to input representation, and therefore would be expected to behave as much smaller layers with regards to overfitting.  But because such deep models typically do have a huge number of parameters, they are capable of approximating a very wide variety of functions and thus are more expressive than smaller models.  
 
 Deep models as they are currently designed thus have the generalizability of a model with few parameters along with the expressivity of a model with many.
 
@@ -404,5 +408,4 @@ One could design a model that is relatively shallow but exhibits the same inabil
 
 The theory of representation accuracy goes a long way towards explaining the types of architectures that have been found to be successful in a variety of tasks in recent times as well.  Transformers use stacks of self-attention and feed-forward fully connected units to create representations of inputs, both of which are typically non-invertible (for example see that a single self-attention output vector value can be any linear combination of softmax outputs of $q*k$ values at each input).  Alternatives to transformers that have also proven effective in recent years combine fully connected subcomponents in non-invertible methods (the mlp-mixer architecture's output can be a linear combination of any given weight vector).
 
-A central insight of this work is that it is often not useful to judge the capacity of a deep learning model by the number of parameters it contains or even the number of parameters per layer except as a very general and indistinct measure.  What is more important are the operations that exist between successive layers.
 
