@@ -261,6 +261,8 @@ both lead to a substantial increase in resolution without high-frequency noise b
 
 It is interesting that optimizing the activations of a hidden layer of our feed-forward network is capable of increasing the resolution of an input image.  Performing gradient descent using only the output as a target nearly inevitably leads to the presence of high-frequency, incoherent structures unless some form of smoothness or local correlation is applied to the input or else the gradient.
 
+Upon closer investigation of the representations that layer outputs are capable of forming of the input, there appears to be an explanation for why maximizing these early and middle-layer outputs would lead to an increase in resolution.  For ResNet in particular, it was found that training leads to early layer kernals adopting similar weight configurations as those used to sharpen images such that the these layers learn to 'see' the input in more resolution than at the start of training.  If these layers are activated most strongly by sharp edges, it is natural that maximizing their activations would lead to a higher-resolution image. See [here](https://blbadger.github.io/depth-generality.html) for research on layer representations.
+
 ### Directed Dream
 
 As we observed in the last section, the dream procedure tends to be somewhat arbitrary with the modifications it makes to a given input: for some it introduces many new objects (usually animal faces) and for others it does not.  Can the dream procedure be directed in order to introduce features that we want?
