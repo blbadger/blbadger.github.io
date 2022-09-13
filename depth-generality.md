@@ -1,10 +1,10 @@
-## Depth and Generality from Representations
+## Input Representations and Depth
 
 This page is part IV in a series on input generation, follow [this link](https://blbadger.github.io/input-representation.html) for part III.
 
-### Trivial Autoencoding ability decreases with model depth
+### Trivial autoencoding ability decreases with model depth
 
-It is worth examining again what we have done in the last section: an input $a$ is fed to a model $\theta_1$ to make a target output
+It is worth examining again what we have done in the [last page](https://blbadger.github.io/input-representation.html): an input $a$ is fed to a model $\theta_1$ to make a target output
 
 $$
 \widehat{y} = O(a, \theta_1) 
@@ -14,17 +14,7 @@ This target output may be understood as the coordinates in a latent space ($\Bbb
 
 Autoencoders have long been studied as generative models.  The ability of an autoencoder to capture important features of an input without gaining the ability to exactly copy the input makes these models useful for dimensional reduction as well. And it is this feature that we will explore with our classification model-based autoencoder.
 
-In the mid-2010s, [Goodfellow and colleages](https://arxiv.org/abs/1312.6082) observed empirically that an increase in model depth led to greater generalization, at least for the convolutional neural networks the group was focusing on.  It remains unclear, however, why greater model depth would lead to better generalization.  All else equal, greater model depth requires a larger number of parameters but the same group found that increasing parameter number beyond a certain amount actually decreased generalization, likely due to the propensity for larger models to overfit. 
-
-It has been hypothesized that deep models generalize better because they can be viewed as expressing a program with more steps than shallow models.  But it is unclear why a program with more intructions would generalize better than a program with fewer, indeed the assumption would be that a more specific program would lead to lower generalization via overfitting because the program would be expected to become more specific to the training data set.  If we think about functions instead of programs, a more complicated function is more likely to be able to overfit a general training data set, making it unclear what benefit depth would bring to generalization.
-
-For a typical classification task using deep learning, we seek a model that has approximated some function $p(y \lvert x)$ or else some family of functions out of all possible functions in existence. In the context of feedforward neural networks overfitting may be understood as the result of perfect representation of a model on its input, such that the model has simply approximated a (discontinuous) identity function rather than the function or family of functions desired.  In the feedforward classification setting, an identity function would be the mapping of some input image to a given output such that an arbitrarily small change in the input yields a different output.  In contrast the desired function one wishes to approximate is usually approximately continuous, existing on some manifold.
-
-Perfect representation requires that a model be able to pass all the input information to the model's final layer, or else an identity function would not be approximated as many inputs could give one output.  Common regularizers like weight decay or early stopping act to prevent perfect representation by diminishing a model's capacity to represent the input exactly.
-
-Being that overfitting results from perfect representation and that greater model depth (for cNN-based vision models) prevents overfitting, it may be hypothesized that an increase in model depth prevents perfect representation of the input. 
-
-Are hidden layers of common deep learning classification models capable of perfect representation?  The method we will use is the capability of each layer to perform an autoencoding on the input using gradient descent on a random vector as our decoder.  First we pass some target image $a_t$ into a feedforward classification network of choice $\theta$ and find the activations of some given output layer $O_l$
+Perfect representation requires that a model be able to pass all the input information to the model's final layer, or else an identity function would not be approximated as many inputs could give one output.  Are hidden layers of common deep learning classification models capable of perfect representation?  The method we will use is the capability of each layer to perform an autoencoding on the input using gradient descent on a random vector as our decoder.  First we pass some target image $a_t$ into a feedforward classification network of choice $\theta$ and find the activations of some given output layer $O_l$
 
 $$
 \widehat y = O_l(a_t, \theta)
@@ -400,12 +390,10 @@ Instead, it appears that during training the possible inputs that make some repr
 
 ### Implications of imperfect input representation
 
-The theory and experimental observations put forward here provide an explanation of how even extremely large deep learning models avoid overfitting.  Due to the inability of deep layers to determine a unique input (and perhaps combined with an inability to feasibly match a hidden layer using gradient descent for very poorly conditioned models) leads to a loss of information on the input, such that deep layers are incapable of exactly copying an input even when they have sufficient capacity to do so.  These layers resemble those with far fewer nodes with respect to input representation, and therefore would be expected to behave as much smaller layers with regards to overfitting.  But because such deep models typically do have a huge number of parameters, they are capable of approximating a very wide variety of functions and thus are more expressive than smaller models.  Deep models as they are currently designed thus have the generalizability of a model with few parameters along with the expressivity of a model with many.
-
 For models applied to the task of classification, particularly where there are fewer classification categories than input elements, then necessarily all the information from the input does not reach the output such that backpropegation cannot instruct the network to exactly copy an input (in the general case, barring certain weight and bias configurations).  But for hidden state models or for classification in which there are many more output elements than inputs, exact representation becomes important.
 
 The theory developed on this page also gives an explanation for the common architecture for autoencoders. Typically these seek to avoid copying the input to the output and thus have fewer elements in the latent space than inputs.  On the other hand, they also typically do not want to lose information between the latent space and output, which may be why an increasing-size architecture has been found to be so successful.
 
-The theory of representation accuracy goes a long way towards explaining the types of architectures that have been found to be successful in a variety of tasks in recent times as well.  Transformers use stacks of self-attention and feed-forward fully connected units to create representations of inputs, both of which are typically non-invertible (for example see that a single self-attention output vector value can be any linear combination of softmax outputs of $q*k$ values at each input).  Alternatives to transformers that have also proven effective in recent years combine fully connected subcomponents in non-invertible methods (the mlp-mixer architecture's output can be a linear combination of any given weight vector).
+The theory of representation accuracy goes some way towards explaining the types of architectures that have been found to be successful in a variety of tasks in recent times as well.  Transformers use stacks of self-attention and feed-forward fully connected units to create representations of inputs, both of which are typically non-invertible (for example see that a single self-attention output vector value can be any linear combination of softmax outputs of $q*k$ values at each input).  Alternatives to transformers that have also proven effective in recent years combine fully connected subcomponents in non-invertible methods (the mlp-mixer architecture's output can be a linear combination of any given weight vector).
 
 
