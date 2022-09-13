@@ -209,14 +209,14 @@ The study of life, observations of which display many of the features of nonline
 ![wordnet recovered from imagenet](/neural_networks/nearest_neighbors_animal_embedding.png)
 
 
-### [Input Generation III: Representations](/input-representation.md)
+### [Input Generation III: Input Representations](/input-representation.md)
 
 ![resnet googlenet transformation](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
-### [Input Generation IV: Depth and Generality](/depth-generality.md)
+### [Input Generation IV: Depth and Representation Accuracy](/depth-generality.md)
 
-![generated badger](/neural_networks/resnet_autoencoding_perlayer2.png)
+![layer autoencoding](/neural_networks/resnet_autoencoding_perlayer2.png)
 
 
 ### [Feature Visualization I](/feature-visualization.md)
