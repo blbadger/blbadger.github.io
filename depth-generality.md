@@ -4,7 +4,7 @@ This page is part IV in a series on input generation, follow [this link](https:/
 
 ### Trivial autoencoding ability decreases with model depth
 
-It is worth examining again what we have done in the [last page](https://blbadger.github.io/input-representation.html): an input $a$ is fed to a model $\theta_1$ to make a target output
+It is worth examining again what was explored in the [part III](https://blbadger.github.io/input-representation.html): an input $a$ is fed to a model $\theta_1$ to make a target output
 
 $$
 \widehat{y} = O(a, \theta_1) 
@@ -338,9 +338,13 @@ $$
 
 and we can compare the distances between $a''$ and $a$ to the distance between $a'$ and $a$.  The latter is denoted in the upper portion of the following figure, and the distribution of the former in the lower portion.  Observe how nearly all points $a''$ are much farther from $a$ (note the scale: the median distance if more than 40,000) than $a'$ (which is under 3).  This suggests that indeed $a'$ is unusually good at approximating $a$ for points in the neighborhood of $O(a, \theta)$, which is not particularly surprising given that $a'$ was chosen to be a small distance from $a$.
 
-What is more surprising is that we also find that the gradient descent method for visualizing the representation of the output is also far more accurate to the orginal input $a$ than almost all other points in the neighborhood.  In the below example, a short (220 iterations) run of the gradient descent method yields an input $a_g$ such that $m(a, a_g)=2.84$ for an $L^2$ metric but $m(O(a, \theta), O(a_g, \theta)) = 0.52$ with the same metric, which is far larger in output space than the neighborhood explored above but far smaller in input space. Why gradient descent should give such an unusually good approximation of the input for some output neighborhood is currently not clear.
+What is more surprising is that we also find that the gradient descent method for visualizing the representation of the output is also far more accurate to the orginal input $a$ than almost all other points in the neighborhood.  In the below example, a short (220 iterations) run of the gradient descent method yields an input $a_g$ such that $m(a, a_g)=2.84$ for an $L^2$ metric but $m(O(a, \theta), O(a_g, \theta)) = 0.52$ with the same metric, which is far larger in output space than the neighborhood explored above but far smaller in input space. 
 
 ![inverted distances]({{https://blbadger.github.io}}/neural_networks/inverted_distances.png)
+
+It is worth exploring why gradient descent would yield an input $a_g$ that is much closer to $a$ than nearly all other input $\{ a'' \}$ within a certain radius.  Upon some close inspection, there is a clear explanation for this phenomenon: nearly all elements of $\{ a'' \}$ contian pixels that are very far from the desired range $[0, 1]$ and therefore cannot be accurate input representations.  Note that our gradient descent procedure was initialized with all pixels $a_0 \in \mathcal(0.7, 1/20)$ which is near the center of $[0, 1]$. Therefore it is no surprise that gradient descent starting with $a_0$ leads to an input representation $a_g$ that is much closer to the target input $a$, given that each element of the target input $a_{nm}$ also exhibits $a_{nm} \in [0, 1]$.
+
+### Theoretical lower bounds for perfect input representation
 
 How many neurons per layer are required for perfect representation of the input? Most classification models make use of Rectified Linear Units (ReLU), defined as
 
