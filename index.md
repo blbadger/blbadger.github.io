@@ -216,7 +216,7 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Input Generation IV: Depth and Representation Accuracy](/depth-generality.md)
 
-![layer autoencoding](/neural_networks/resnet_autoencoding_perlayer2.png)
+![layer autoencoding](/neural_networks/representation_cover.png)
 
 
 ### [Feature Visualization I](/feature-visualization.md)
