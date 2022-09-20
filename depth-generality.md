@@ -388,6 +388,10 @@ Therefore training does not change the underyling inability in forming an accura
 
 ![trained approximations]({{https://blbadger.github.io}}/neural_networks/resnet50_untrained_vs_trained.png)
 
+Upon close examination of the trained versus untrained early and middle layers of ResNet50, however, training leads to a representation of the input that is noticeably sharper than for the untrained case.  It may be wondered if representations of images that would not be recognized by a model trained on Imagenet would also be sharpened or not.  This may be explored by observing the clarity of representations $a_g$ for an image of a [Tesla Coil](https://blbadger.github.io/tesla-coils.html) at different layers. We find that indeed input representations early and middle layers of ResNet50 are sharpened upon training.
+
+![tesla representation]({{https://blbadger.github.io}}/neural_networks/tesla_representation.png)
+
 In conclusion, the generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
 
 Instead, it appears that during training the possible inputs that make some representation close to the target tensor are re-arranged such that the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even as non-uniqueness remains.  And indeed this would be expected to be helpful for the task of input classification, as if the classification output for some hidden layer's activation vector $h = O(a, \theta)$ is correct then all inputs that map to this value $h$ would also be correct.
