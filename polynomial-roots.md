@@ -7,7 +7,7 @@ This page is the first of a two-part series on methods to find polynomial roots.
 Algebraic polynomials are equations of the type 
 
 $$
-ax^n + bx^{n-1} + cx^{n-2} ... + z
+ax^n + bx^{n-1} + cx^{n-2} + \cdots + z
 \tag{1}
 $$
 
@@ -48,7 +48,7 @@ such that when we square root both sides of (2),
 
 $$
 x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}} \\
-= \frac{-b \pm \sqrt{b^2-4ac}}{2a}
+x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}
 $$
 
 At this point, there is no clear indication that we cannot find a similar expression for any arbitrary polynomial, but there is some slight indication that finding the expression may be very difficult because completing the square is not a method that is necessarily applicable to higher powers. 
@@ -68,7 +68,7 @@ The finding that there is no closed expression for any general finite polynomial
 
 ### Newton's method for estimating roots of polynomial equations
 
-What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal it to approximate a root, rather than express it with arbitrarily accuracy, we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iteratively such that the x-intercept found previously becomes the x-value of the new point.  This can be expressed dynamically as follows:
+What should one do to find the roots to a polynomial, if most do not have closed form root equations?  If the goal it to approximate a root, rather than express it as a combination arithmetic operations we can borrow the Newton-Raphson method from analysis. The procedure, described [here](https://en.wikipedia.org/wiki/Newton%27s_method), involves first guessing a point near a root, and then finding the x-intercept of the line tangent to the curve at this point.  These steps are then repeated iteratively such that the x-intercept found previously becomes the x-value of the new point.  This can be expressed dynamically as follows:
 
 $$
 x_{n + 1} = x_n - \frac{f(x_n)}{f'(x_n)}
