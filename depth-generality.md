@@ -232,7 +232,7 @@ On the other hand, the 2000-width model has no decrease in distance from 1,000 t
 
 ![iterations and width]({{https://blbadger.github.io}}/neural_networks/middle_width_accuracy.png)
 
-But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy for any given number of iterations of our representation visualization method.  Note that increasing the number of iterations in the representation visualization method is capable of compensating for increased depth.
+But something unexpected is observed for fully connected architectures in which all layers are the same size and identical (or larger than) the input: increased depth still leads to worse representational accuracy for any given number of iterations of our representation visualization method.  Note that increasing the number of iterations in the representation visualization method (from 500 to 10,000 in this case) is capable of compensating for increased depth.
 
 ![covercomplete depth and representation]({{https://blbadger.github.io}}/neural_networks/overcomplete_depth_different_layers.png)
 
@@ -391,6 +391,8 @@ Therefore training does not change the underyling inability in forming an accura
 Upon close examination of the trained versus untrained early and middle layers of ResNet50, however, training leads to a representation of the input that is noticeably sharper than for the untrained case.  It may be wondered if representations of images that would not be recognized by a model trained on Imagenet would also be sharpened or not.  This may be explored by observing the clarity of representations $a_g$ for an image of a [Tesla Coil](https://blbadger.github.io/tesla-coils.html) at different layers. We find that indeed input representations early and middle layers of ResNet50 are sharpened upon training.
 
 ![tesla representation]({{https://blbadger.github.io}}/neural_networks/tesla_representation.png)
+
+This observation gives a hypothesis as to why the feature maps for early layers are repeating pattern, as observed [here](https://blbadger.github.io/feature-visualization.html#mapping-resnet-features).  The parameters of these layers are capable of learning to restrict the possible representations of the input to be sharp images that retain most of the detail in the input.  
 
 In conclusion, the generated input representation $a_g$ does indeed change noticeably during training, but it is clear that this change does not affect the tendancy for deep layers to lack uniqueness in their representations.  Indeed this is clear from the theory expoused in the last section, as the convolutional operation remains non-invertible after training and the spiky ball geometry would not necessarily be expected to disappear as well.
 
