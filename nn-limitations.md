@@ -1,6 +1,6 @@
 ### Inherent limitations in neural nets
 
-### Neural nets can approximate only a subset of all functions
+### Neural networks can approximate only a subset of all functions
 
 An oft-quoted feature of neural networks is that they are universal, meaning that they can compute any function (see [here](https://www.sciencedirect.com/science/article/abs/pii/0893608090900056) for a proof of this).  A good geometrical explanation of this is found in [Nielsen](http://neuralnetworksanddeeplearning.com/).  Being that many everyday tasks can be thought of as some kind of function, and  as neural networks are very good at a wide range of tasks (playing chess, recognizing images, language processing etc.) it can be tempting to see them as universal panacea for any problem.  This view is mistaken, however, and to see why it is best to understand what exactly universality entails before exploring the limits of neural nets or any other similar approach.
 
@@ -126,7 +126,7 @@ All in all, a number of things that many people would want to predict or underst
 
 A final note: the last section equated 'arbitrary approximation' with 'equivalence', in the sense that an arbitrary approximation of a function is the same as the function itself.  But this is not true when the function is [sensitive to initial conditions](https://blbadger.github.io/chaotic-sensitivity.html), because any error increases exponentially over time.  In concrete terms, suppose one were to have a function that was in the rare computable category, and a neural net computed a close approximation of it.  If that function described a non-linear change over time and the goal is long-term prediction, the network is not useful.
 
-### Neural networks are systems of dimension reduction: implications for adversarial examples
+### Neural networks as systems of dimension reduction: implications for adversarial examples
 
 This section will explore an interesting consequence of precision in neural networks: adversarial examples, which are inputs that are nearly indistinguisheable from other inputs, the latter of which are accurately classified but the former are just as confidently mis-classified.
 
@@ -195,15 +195,17 @@ The implications of this are as follows: given any input and any neural net mapp
 
 If adversarial examples follow from the fact that any mapping from $\Bbb R^n \to \Bbb R$ is everywhere discontinuous, why are adversarial examples not found everywhere?  It is easy to see that adversarial examples must be rather rare, for otherwise training any network would be impossible.  How can we reconcile the result that adversarial examples should occur wherever there is a discontinuity in mapping from $\Bbb R^n \to \Bbb R$ with the finding that in practice such examples are not common?
 
-Machine learning methods relying on dimensional reduction (like deep learning via stochastic gradient descent) generally assume the truth of the manifold hypothesis, which states that the probability distribution of relevant inputs (sound from speech, images of the natural world etc) are concentrated around low-dimensional manifolds.  For example, the following data points in two dimensional space are concentrated around a one-dimensional manifold denoted in blue:
+Machine learning methods relying on dimensional reduction (like deep learning via stochastic gradient descent) generally assume the the manifold hypothesis, which states that the probability distribution of relevant inputs (sound from speech, images of the natural world etc) are concentrated around low-dimensional manifolds in higher-dimensional space.  For example, the following data points in two dimensional space are concentrated around a one-dimensional manifold denoted in blue:
 
 ![manifold](/neural_networks/manifold.png)
 
 The manifold hypothesis requires two things to be true: first that inputs occupy very little (negligably small) of all possible input space, and second that all points sufficiently close together map to the same area on the lower dimensional manifold, not vastly separate regions.
 
-It is clear that representations of relevant inputs are indeed only a small subset of all possible inputs: for example, most possible 20x20 images resemble noise rather than everyday objects.  But while there is some experimental evidence for the second idea, the presence of adversarial negatives provides clear evidence against this idea as well leaving the overall accuracy of this statement ambiguous.  Indeed, the presence of adversarial negatives that exist in nature (rare though they are in comparison to engineered examples) provides a fairly clear refutation of the manifold hypothesis.
+It is clear that representations of relevant inputs are indeed only a small subset of all possible inputs: for example, most possible 20x20 images resemble noise rather than everyday objects.  But while there is some experimental evidence for the second idea, the presence of adversarial negatives provides evidence against this idea as well leaving the overall accuracy of this statement ambiguous.  
 
-But then how are neural nets able to classify many inputs so effectively if we cannot assume the manifold hypothesis and furthermore if any one-to-one mapping from many dimensions to one is not continuous?  The answer is that in practice, one uses representations of multidimensional inputs and these representations are mappable bijectively with a one-dimensional encoded string (or integer, if one wants to think in those terms).  In effect, no one has ever trained a network on a true multidimensional input because all current computational devices represent all inputs as one dimensional sequences of bytes.  For example, the following 2-dimensional array could represent the information `abc` using one-hot vectors:
+But then how are neural nets able to classify many inputs so effectively if we cannot assume the manifold hypothesis and furthermore if any one-to-one mapping from many dimensions to one is not continuous?  Adversarial examples are generally of extremely low probability: if one simply adds noise with the same norm to an input before feeding that transformed input to a neural networks, a well-trained model typically does not exhibit large changes in output class estimation in nearly all cases.  In other words, adversarial examples may be considered as exhibiting very low probability.
+
+Another answer is that in practice one uses representations of multidimensional inputs and these representations are mappable bijectively with a one-dimensional encoded string (or integer, if one wants to think in those terms).  In effect, no one has ever trained a network on a true multidimensional input because all current computational devices represent all inputs as one dimensional sequences of bytes.  For example, the following 2-dimensional array could represent the information `abc` using one-hot vectors:
 
 ```python
 [[1, 0, 0, 0, ... 0],
