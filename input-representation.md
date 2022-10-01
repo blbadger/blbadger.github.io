@@ -17,11 +17,30 @@ def layer_gradient(model, input_tensor, desired_output):
     ...
 ```
 
+where `output` is the (logit) output of ResNet and `output2` is the output from GoogleNet.  
+
 ![googlenet and resnet input]({{https://blbadger.github.io}}/neural_networks/combined_mousetrap.png)
 
 Images of all 1000 ImageNet classes generated using the combined gradient of GoogleNet and ResNet are available [here](https://drive.google.com/drive/folders/1mhj8vBm02Fd6QkQwEQ4jhI9yq34ZOtR0?usp=sharing). From these images it is clear that the combined gradient is as good as or superior to the gradients from only ResNet or GoogleNet with respect to producing a coherent input image, which suggests that the gradients from these models are not substantially dissimilar.
 
-The above observation motivates the following question: can we attempt to understand the differences between models by generating an image representing the difference between the output activations for any image $a$? 
+The above observation motivates the following question: can we attempt to understand the differences between models by generating an image representing the difference between the output activations for any image $a$? We can construct a gradient similar to what was employed above, 
+
+$$
+g'' = \nabla_a \left( d(C - O_i(a, \theta_1)) - e(C - O_i(a, \theta_2)) \right)
+$$
+
+again with `output` and `output2` signifying the logit output from ResNet and GoogleNet, respectively.
+
+```python
+def layer_gradient(model, input_tensor, desired_output):
+    ...
+    loss = 2*((200 - output[0][int(desired_output)]) - (400 - output2[0][int(desired_output)]))
+    ...
+```
+
+Which yields
+
+![googlenet and resnet input]({{https://blbadger.github.io}}/neural_networks/resnet_minus_googlenet.png)
 
 It is also apparent that the similarities and differences in model output may be compared by viewing the output as a vector space.  Say two models were to give very similar outputs for a representation of one ImageNet class but different outputs for another class. The identities of the classes may help inform an understanding of the the difference between models.
 
