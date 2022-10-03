@@ -42,6 +42,8 @@ Which yields
 
 ![googlenet and resnet input]({{https://blbadger.github.io}}/neural_networks/resnet_minus_googlenet.png)
 
+Note that the roll-over bars present in the depiction of go-karts by ResNet50 are absent for GoogleNet's representation of the same class, and that consequently the representation using $g''$ exaggerates this feature.  The same exaggeration of features not found in GoogleNet's but that are found in ResNet's representation of a french horn (mostly the figures playing the instruments) is also observed.
+
 It is also apparent that the similarities and differences in model output may be compared by viewing the output as a vector space.  Say two models were to give very similar outputs for a representation of one ImageNet class but different outputs for another class. The identities of the classes may help inform an understanding of the the difference between models.
 
 ### Model Merging
