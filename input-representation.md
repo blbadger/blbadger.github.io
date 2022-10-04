@@ -44,6 +44,8 @@ Which yields
 
 Note that the roll-over bars present in the depiction of go-karts by ResNet50 are absent for GoogleNet's representation of the same class, and that consequently the representation using $g''$ exaggerates this feature.  The same exaggeration of features not found in GoogleNet's but that are found in ResNet's representation of a french horn (mostly the figures playing the instruments) is also observed.
 
+For other ImageNet classes, however, there does not tend to be a substantial difference between inputs generated for each class via applying the gradient $g$ of ResNet50 compared to $g''$.  It is likely that this is because minimizing the activation for some particular class does not yield enough information to generate an input in certain cases.  For an in-depth investigation into generating the inputs corresponding to the subtracted term of $g''$, see [this page](https://blbadger.github.io/latent_output.html#introduction-with-opposites).
+
 It is also apparent that the similarities and differences in model output may be compared by viewing the output as a vector space.  Say two models were to give very similar outputs for a representation of one ImageNet class but different outputs for another class. The identities of the classes may help inform an understanding of the the difference between models.
 
 ### Model Merging
