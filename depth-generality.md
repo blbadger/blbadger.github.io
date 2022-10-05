@@ -402,6 +402,15 @@ In conclusion, the generated input representation $a_g$ does indeed change notic
 
 Instead, it appears that during training the possible inputs that make some representation close to the target tensor are re-arranged such that the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even as non-uniqueness remains.  And indeed this would be expected to be helpful for the task of input classification, as if the classification output for some hidden layer's activation vector $h = O(a, \theta)$ is correct then all inputs that map to this value $h$ would also be correct.
 
+
+### Late layer representation are mostly inference
+
+In various cases it is clear that early convolutional layers learn to more precisely represent the input, whereas later layers introduce new information as to what the input should be (rather than is).  This is apparent for the image of the Dalmatian in which the spot pattern changes noticeably in middle layers and in later layers that exaggerate the snout.
+
+It may be wondered if any classification task would lead to early layers learning to more precisely represent (in terms of image clarity rather than normed difference) the input.  This question may be addressed by training ResNet50 to recognize images of random noise. In this experiment, 10,000 images of random scaled Gaussian noise $\mathcal{N}(1/2, 1/4)$ each labelled with one of 100 categories.
+
+![tesla random representation]({{https://blbadger.github.io}}/neural_networks/random_representations_nogaussian.png)
+
 ### Implications of imperfect input representation
 
 For models applied to the task of classification, particularly where there are fewer classification categories than input elements, then necessarily all the information from the input does not reach the output such that backpropegation cannot instruct the network to exactly copy an input (in the general case, barring certain weight and bias configurations).  But for hidden state models or for classification in which there are many more output elements than inputs, exact representation becomes important.
