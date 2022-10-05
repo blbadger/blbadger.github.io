@@ -384,7 +384,7 @@ As it is extremly unlikely that training would lead to the transformation of $O(
 
 ![trained approximations]({{https://blbadger.github.io}}/neural_networks/ResNet50_trained_conv5_distance.png)
 
-Therefore training does not change the underyling inability in forming an accurate representation of an input for deeper layers.  But it may change the ease of approximating those representations. Successful training leads to a decrease in some objective function $J(O(a, \theta)$ such that some desired metric on the output is decreased. It may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$ for some fixed number of iterations of our representation method.  For representations without Gaussian convolutions applied at each step, this does appear to be the case.
+Therefore training does not change the underyling inability in forming an accurate representation of an input for deeper layers.  But it may change the ease of approximating those representations. Successful training leads to a decrease in some objective function $J(O(a, \theta))$ such that some desired metric on the output is decreased. It may be hypothesized that training also leads to a decrease in the distance between the representation of the generated input $a_g$ and the representation of the actual input $a$ for some fixed number of iterations of our representation method.  For representations without Gaussian convolutions applied at each step, this does appear to be the case.
 
 ![trained approximations]({{https://blbadger.github.io}}/neural_networks/resnet50_untrained_vs_trained.png)
 
@@ -402,12 +402,15 @@ In conclusion, the generated input representation $a_g$ does indeed change notic
 
 Instead, it appears that during training the possible inputs that make some representation close to the target tensor are re-arranged such that the important pieces of information (in the above case the snout and nose of a dog) are found in the representation, even as non-uniqueness remains.  And indeed this would be expected to be helpful for the task of input classification, as if the classification output for some hidden layer's activation vector $h = O(a, \theta)$ is correct then all inputs that map to this value $h$ would also be correct.
 
-
-### Late layer representation are mostly inference
+### Late layer representations are mostly inference
 
 In various cases it is clear that early convolutional layers learn to more precisely represent the input, whereas later layers introduce new information as to what the input should be (rather than is).  This is apparent for the image of the Dalmatian in which the spot pattern changes noticeably in middle layers and in later layers that exaggerate the snout.
 
-It may be wondered if any classification task would lead to early layers learning to more precisely represent (in terms of image clarity rather than normed difference) the input.  This question may be addressed by training ResNet50 to recognize images of random noise. In this experiment, 10,000 images of random scaled Gaussian noise $\mathcal{N}(1/2, 1/4)$ each labelled with one of 100 categories.
+It may be wondered if any classification task would lead to early layers learning to more precisely represent (in terms of image clarity rather than normed difference) the input.  This question may be addressed by training ResNet50 to recognize images of random noise. In this experiment, 10,000 images of random scaled Gaussian noise $\mathcal{N}(1/2, 1/4)$, each sample labelled as one of 100 categories.  As seen in other work, deep learning vision models are somewhat surprisingly capable of accurately classifying these images of noise.  An example input isas follows:
+
+![tesla random representation]({{https://blbadger.github.io}}/neural_networks/random_representations_nogaussian.png)
+
+It is clear that attempting to classify thousands of such images requires memorizing each one, which is extremely difficult to do for the human visual system, although it is abundantly easy for deep learning vision models such as ResNet. 
 
 ![tesla random representation]({{https://blbadger.github.io}}/neural_networks/random_representations_nogaussian.png)
 
