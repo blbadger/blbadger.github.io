@@ -412,9 +412,21 @@ This question may be addressed by training ResNet50 to recognize images of rando
 
 It is clear that attempting to classify thousands of such images requires memorizing each one, which is extremely difficult to do for the human visual system, although it is abundantly easy for deep learning vision models such as ResNet. This suggests that the process of image recognition is fundamentally different for natural images compared to random ones, and we might expect that difference to manifest itself in the representations that a random-trained model forms of a natural image.
 
-Applying gradient descent to form input representations of the embeddings at various layers for a random-trained ResNet50, we see that indeed the information is much different than for ResNet50 trained on ImageNet.  The process of generating an input is noticably changed: applying a Gaussian convolution to smooth the representation results in inputs $a_g$ that do not approximate the input's embedding as well as $O(a', \theta)$. To be specific, $||O(a, \theta) - O(a_g, \theta)|| > ||O(a, \theta) - O(a', \theta)||$ for $\theta$ trained on noise and $a_g$ generated using Gaussian convolutions at each gradient update step, with $a'$ being the shifted version of $a$ noted in previous sections.
+Applying gradient descent to form input representations of the embeddings at various layers for a random-trained ResNet50, we see that indeed the information is much different than for ResNet50 trained on ImageNet.  The process of generating an input is noticably changed: applying a Gaussian convolution to smooth the representation results in inputs $a_g$ that do not approximate the input's embedding as well as $O(a', \theta)$. To be specific, 
 
-This contrasts with input representations for ResNet50 trained on ImageNet in which it is straightforward to find an $a_g$ such that $||O(a, \theta) - O(a_g, \theta)|| < ||O(a, \theta) - O(a', \theta)||$ even for a limited number of gradient descent steps.  But when one considers the dataset that $\theta$ was trained on, this finding is not surprising: the training input are not smooth and unlike natural images would be poorly approximated by Gaussian-convolved versions. 
+$$
+||O(a, \theta) - O(a_g, \theta)|| > ||O(a, \theta) - O(a', \theta)||
+$$ 
+
+for $\theta$ trained on noise and $a_g$ generated using Gaussian convolutions at each gradient update step, with $a'$ being the shifted version of $a$ noted in previous sections.
+
+This contrasts with input representations for ResNet50 trained on ImageNet in which it is straightforward to find an $a_g$ such that 
+
+$$
+||O(a, \theta) - O(a_g, \theta)|| < ||O(a, \theta) - O(a', \theta)||
+$$ 
+
+even for a limited number of gradient descent steps.  But when one considers the dataset that $\theta$ was trained on, this finding is not surprising: the training input are not smooth and unlike natural images would be poorly approximated by Gaussian-convolved versions. 
 
 Commensurately, if apply the gradient descent procedure without Gaussian convolution we find that obtaining a $a_g$ that yields an output that approximates $O(a, \theta)$ better than $O(a', \theta)$ is not difficult.  But the results look nothing like the case for models trained on imagenet: layers Conv3 through Conv5 contain almost no information on the input but rather infer that it must resemble the random training data seen by this model.
 
