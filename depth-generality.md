@@ -271,7 +271,7 @@ $$
 || E(\epsilon) ||
 $$ 
 
-the difference of between transformed points $x$ and $x + \epsilon$.  We would end up with a value very near $epsilon_2$.  For example, we could have 
+the difference of between transformed points $x$ and $x + \epsilon$.  We would end up with a value very near $\epsilon_2$.  For example, we could have 
 
 $$ 
 \epsilon = 
