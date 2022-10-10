@@ -358,7 +358,7 @@ $$
 
 In this case, the number of neurons per layer required for non-uniqueness is usually much greater than the number of input elements, usually by a factor of around 2.  The exact amount depends on the number of neurons that fulfill the first if condition in the equation above, and if we make the reasonable assumption that $1/2$ of all neurons in a layer do get zeroed out then we would need twice the number of total neurons in that layer compared to input features in order to make an arbitrarily accurate representation.
 
-This increase in the number of neurons per layer is true not just for the first but also for all subsequent layers if ReLU activation is used.  This is because inverting any given layer requires at least as many unique inputs as there are previous neurons. For a probability $p$ that for any layer we will find a neuron that has been zeroed out, we have
+This increase in the number of neurons per layer is true not just for the first but also for all subsequent layers if ReLU activation is used.  This is because inverting any given layer requires at least as many unique inputs as there are previous neurons. For a probability $p$ that some chosen neuron will satisfy $y > 0$, assuming that this probability is constant for all layers we have:
 
 ![necessary widths for completeness]({{https://blbadger.github.io}}/neural_networks/overcomplete_architectures.png)
 
