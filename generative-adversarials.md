@@ -37,9 +37,9 @@ $$
 
 then so too is $-v$ minimized, which was what we wanted.
 
-The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images. We are not guaranteed convergence using
+The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images. 
 
-Formulating the generative adversarial network in the form of the zero-sum minimax game above is the theoretical basis for GAN implementation.  Unfortunately, this is a rather unstable arrangement as if we use $v$ and $-v$ as the payoff values, the generator's gradient tends to vanish when the discriminator confidently rejects all generated inputs.  During typical training runs this tends to happen, meaning that training tends to This does not mean that one could not train a GAN using a zero-sum minimax, but that choosing a value function might be difficult.
+Formulating the generative adversarial network in the form of the zero-sum minimax game above is the theoretical basis for GAN implementation.  Unfortunately, this is a rather unstable arrangement as if we use $v$ and $-v$ as the payoff values, the generator's gradient tends to vanish when the discriminator confidently rejects all generated inputs.  During typical training runs this tends to happen, meaning that the desired state in which the discriminator neither rejects nor accepts all generated inputs is unstable.  This does not mean that one could not train a GAN using a zero-sum minimax, but that choosing a value function is apparently rather difficult
 
 Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
 
@@ -288,9 +288,9 @@ We can perform the same procedure for the Fashion MNIST dataset by training a GA
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold2.png)
 
-Do generative adversarial networks tend to prefer a stereotypical generator configuration $\theta_s$ on the latent space over other possible configurations? To be concrete, do GANs of one particular architecture when trained repeatedly on the same dataset tend to generate the same images for a given coordinate $a_1, a_2, ...a_n$ in the latent space?
+Do generative adversarial networks tend to prefer a stereotypical generator configuration $\theta_s$ on the latent space over other possible configurations? To be concrete, do GANs of one particular architecture when trained repeatedly on the same dataset tend to generate the same images for a given coordinate $a_1, a_2, ..., a_n$ in the latent space?
 
-Visualization (and indeed any form of exploration is difficult for a high-dimensional latent space, but is perfectly approachable in two dimensions. 
+Visualization (and indeed any form of exploration) is difficult for a high-dimensional latent space, but is perfectly approachable in two dimensions. We can therefore design a GAN with a two-dimensional latent space as has been done above and observe whether or not the same generated images are found at any given coordinate for multiple training runs.  The answer is no, for any coordinate $a_n$ in latent space we do not find a similar generated image from one training run to the next. 
 
 ### Continuity and GAN stability
 
