@@ -294,7 +294,7 @@ Visualization (and indeed any form of exploration) is difficult for a high-dimen
 
 ### Continuity and GAN stability
 
-tbc
+It is interesting to observe how relatively difficult it is to train a GAN, especially compared to the process of training an image classification model alone.
 
 ### Unstable Convolutional GANs
 
