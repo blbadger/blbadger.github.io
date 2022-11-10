@@ -24,7 +24,42 @@ One way to understand how a model yields its outputs is to observe the inputs th
 
 Another way to understand a model's output is to observe the extent to which various hidden layers in that model are able to autoencode an input: the better the autoencoding, the more complete the information in that layer.
 
+First, let's examine an image that is representative of one of the 1000 categories in the ImageNet 1k dataset: a dalmatian.  We can obtain various layer representations by modifying the 
+
+```python
+class NewVit(nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    
+    def forward(self, x: torch.Tensor, layer: int):
+        # Reshape and permute the input tensor
+        x = self.model._process_input(x)
+        n = x.shape[0]
+
+        # Expand the class token to the full batch
+        batch_class_token = self.model.class_token.expand(n, -1, -1)
+        x = torch.cat([batch_class_token, x], dim=1)
+        for i in range(layer):
+            x = self.model.encoder.layers[i](x)
+
+        return x
+       
+```
+
+which can be instantiated as 
+
+```python
+vision_transformer = torchvision.models.vit_b_32(weights='IMAGENET1K_V1')
+new_vision = NewVit(vision_transformer).to(device)
+new_vision.eval()
+```
+
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
+
+
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
