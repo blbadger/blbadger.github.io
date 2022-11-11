@@ -16,6 +16,30 @@ We focus on the ViT B 32 model introduced by [Dosovitsky and colleagues](https:/
 
 The transformer architecture was found to be effective for natural language processing tasks and was subsequently employed in vision tasks after convolutional layers.  But the work introducing the ViT went further and applied the transformer architecture directly to patches of images without any explicit preceding convolutional layers.  It is an open question of how similar these models are to convolutional neural networks.
 
+The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to pay most attention to sequence elements that directly preceed the current element and forget elements that came before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
+
+In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
+
+$$
+\pmb{s_1} = (q_1*k_1, q_1*k_2, q_1*k_3,...)
+$$
+
+before a linear function is applied to each element followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $V_1, V_2, V_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ that is the same dimension as $V_1$
+
+$$
+\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
+\pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
+\pmb{z_1} = V_1 s_{11}' + V_2 s_{12}' + V_3 s_{13}'+ \cdots
+$$
+
+The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards it' it is clear that the word 'poorly' should be closely associated with the word 'animosity', and the attention module's goal is to model such associations.
+
+But this clean theoretical justification breaks down when one considers that models with such attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are further more many layers deep, and it is unclear what the attention value of an attention value... of a token actually means.
+
+Nevertheless, to gain familiarity with thi model one we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are seriealized by simply stacking multiple encoder modules sequentially.
+
+See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
+
 ### Input Generation with Vision Transformers
 
 One way to understand how a model yields its outputs is to observe the inputs that one can generate using the information present in the model itself.
@@ -24,7 +48,7 @@ One way to understand how a model yields its outputs is to observe the inputs th
 
 Another way to understand a model's output is to observe the extent to which various hidden layers in that model are able to autoencode an input: the better the autoencoding, the more complete the information in that layer.
 
-First, let's examine an image that is representative of one of the 1000 categories in the ImageNet 1k dataset: a dalmatian.  We can obtain various layer representations by modifying the 
+First, let's examine an image that is representative of one of the 1000 categories in the ImageNet 1k dataset: a dalmatian.  We can obtain various layer outputs by subclassing the pytorch `nn.Module` class and accessing the original vision transformer model as `self.model`.  For ViT models, the desired transformer encoder layer outputs may be accessed as follows:
 
 ```python
 class NewVit(nn.Module):
@@ -32,7 +56,6 @@ class NewVit(nn.Module):
     def __init__(self, model):
         super().__init__()
         self.model = model
-
     
     def forward(self, x: torch.Tensor, layer: int):
         # Reshape and permute the input tensor
@@ -46,10 +69,8 @@ class NewVit(nn.Module):
             x = self.model.encoder.layers[i](x)
 
         return x
-       
 ```
-
-which can be instantiated as 
+where `layer` indicates the layer of the output desired (`self.model.encoder.layers` are 0-indexed so the numbering is accurate). The `NewVit` class can then be instantiated as
 
 ```python
 vision_transformer = torchvision.models.vit_b_32(weights='IMAGENET1K_V1')
@@ -57,13 +78,21 @@ new_vision = NewVit(vision_transformer).to(device)
 new_vision.eval()
 ```
 
+First let's observe the effect of layer depth (specifically transformer encoder layer depth) on the representation accuracy of an untrained ViT_B_32.
+
+
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
 
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
+
+### Vision Transformer Deep Dream
+
 ### Patch-based models without attention
+
+
 
 
 
