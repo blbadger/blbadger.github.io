@@ -66,7 +66,11 @@ $$
 
 Positional jitter is applied between updates such that the subset of the input $a_n$ that is fed to the model undergoes gradient descent and Gaussian convolution, while the rest of the input is unchanged.  
 
-One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of ViT_b_32 to pool outputs before the classification step such that all model inputs must be of dimension $3x224x224$, whereas most convolutional models allow for inputs to extend to $3x299x299$ or even beyond $3x500x500$ due to max pooling layers following convolutions.
+$$
+a_{n+1[:,m:n,o:p]} = \mathcal{N_c}(a_{n[:,m:n,o:p]} - \epsilon * \nabla_{a_{n[:,m:n,o:p]}} |C - O(a_{n[:,m:n,o:p]}, \theta)_i|)
+$$
+
+One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of ViT_b_32 to pool outputs before the classification step such that all model inputs must be of dimension $\mathtt{3x224x224}$, whereas most convolutional models allow for inputs to extend to $\mathtt{3x299x299}$ or even beyond $\mathtt{3x500x500}$ due to max pooling layers following convolutions.
 
 When we observe representative images of a subset of ImageNet animal classes,
 
@@ -76,7 +80,7 @@ as well as landscapes and inanimate objects,
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_landscapes.png)
 
-
+it is clear that recognizable images may be formed using only the information present in the vision transformer architecture just as was accomplished for convolutional models.
 
 ### Vision Transformer hidden layer representations
 
