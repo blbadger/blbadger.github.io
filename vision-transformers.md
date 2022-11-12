@@ -74,11 +74,11 @@ One of the first differences of note compared to the inputs generated from convo
 
 When we observe representative images of a subset of ImageNet animal classes,
 
-![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_animals.png)
+![vision transformer input generation]({{https://blbadger.github.io}}/neural_networks/vit_animals.png)
 
 as well as landscapes and inanimate objects,
 
-![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_landscapes.png)
+![vision transformer input generation]({{https://blbadger.github.io}}/neural_networks/vit_landscapes.png)
 
 it is clear that recognizable images may be formed using only the information present in the vision transformer architecture just as was accomplished for convolutional models.
 
@@ -116,11 +116,14 @@ new_vision = NewVit(vision_transformer).to(device)
 new_vision.eval()
 ```
 
-First let's observe the effect of layer depth (specifically transformer encoder layer depth) on the representation accuracy of an untrained ViT_B_32.
+First let's observe the effect of layer depth (specifically transformer encoder layer depth) on the representation accuracy of an untrained ViT_B_32 and compare this to what was observed for ResNet50 (which appears to be a fairly good stand-in for other convolutional models).
 
+
+![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_vs_resnet_untrained_representations.png)
+
+The first notable aspect of input representation is that it appears to be much more difficult to approximate a natural image using Gaussian-convolved representations for ViT than for ResNet50.  
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
-
 
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
