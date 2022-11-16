@@ -80,7 +80,7 @@ as well as landscapes and inanimate objects,
 
 ![vision transformer input generation]({{https://blbadger.github.io}}/neural_networks/vit_landscapes.png)
 
-it is clear that recognizable images may be formed using only the information present in the vision transformer architecture just as was accomplished for convolutional models.
+it is clear that recognizable images may be formed using only the information present in the vision transformer architecture just as was accomplished for convolutional models.  
 
 ### Vision Transformer hidden layer representations
 
@@ -121,7 +121,12 @@ First let's observe the effect of layer depth (specifically transformer encoder 
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_vs_resnet_untrained_representations.png)
 
-The first notable aspect of input representation is that it appears to be much more difficult to approximate a natural image using Gaussian-convolved representations for ViT than for ResNet50.  
+The first notable aspect of input representation is that it appears to be much more difficult to approximate a natural image using Gaussian-convolved representations for ViT than for ResNet50, or more precisely it is difficult to find a learning rate $\epsilon$ such that the norm of the difference between the target output $O(a, \theta)$ and the output of the generated input $O(a_g, \theta)$ is smaller than the norm of the difference between the target output and the output of a slightly shifted input $O(a', \theta)$ where $a' = a + \mathcal{N}(a; \mu=0, \sigma=1/18)$, meaning that it is difficult to obtain the following inequality:
+
+$$
+||O(a, \theta) - O(a', \theta)||_2 < ||O(a, \theta) - O(a_g, \theta)||_2
+$$
+
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
