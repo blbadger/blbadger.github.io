@@ -127,9 +127,11 @@ $$
 ||O(a, \theta) - O(a', \theta)||_2 < ||O(a, \theta) - O(a_g, \theta)||_2
 $$
 
+![tesla vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vit_entry_representations.png)
+
+![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/vit_b_32_conv_representations.png)
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
-
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
