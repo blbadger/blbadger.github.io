@@ -12,9 +12,9 @@ Therefore it is reasonable to hypothesize that the convolutional architecture, a
 
 ### Transformer architecture
 
-We focus on the ViT B 32 model introduced by [Dosovitsky and colleagues](https://arxiv.org/abs/2010.11929#).  This model is based on the original transformer from [Vaswani and colleages](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html), in which self-attention modules previously applied with recurrent neural networks were instead applied to patched and positionally-encoded sequences in series with simple fully connected architectures.  
+We focus on the ViT B 32 model introduced by [Dosovitsky and colleagues](https://arxiv.org/abs/2010.11929#).  This model is based on the original transformer from [Vaswani and colleages](https://proceedings.neurips.cc/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html), in which self-attention modules previously applied with recurrent neural networks were instead applied to patched and positionally-encoded sequences in series with simple fully connected architectures. 
 
-The transformer architecture was found to be effective for natural language processing tasks and was subsequently employed in vision tasks after convolutional layers.  But the work introducing the ViT went further and applied the transformer architecture directly to patches of images without any explicit preceding convolutional layers.  It is an open question of how similar these models are to convolutional neural networks.
+The transformer architecture was found to be effective for natural language processing tasks and was subsequently employed in vision tasks after convolutional layers.  But the work introducing the ViT went further and applied the transformer architecture directly to patches of images, which has been claimed to occur without explicit convolutions (but does in fact used strided convolution to form patch embeddings as we will later see).  It is an open question of how similar these models are to convolutional neural networks.
 
 The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to pay most attention to sequence elements that directly preceed the current element and forget elements that came before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
 
@@ -34,7 +34,7 @@ $$
 
 The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards it' it is clear that the word 'poorly' should be closely associated with the word 'animosity', and the attention module's goal is to model such associations.
 
-But this clean theoretical justification breaks down when one considers that models with such attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are further more many layers deep, and it is unclear what the attention value of an attention value... of a token actually means.
+But this clean theoretical justification breaks down when one considers that models with such attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are further more many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
 Nevertheless, to gain familiarity with thi model one we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are seriealized by simply stacking multiple encoder modules sequentially.
 
@@ -82,7 +82,7 @@ as well as landscapes and inanimate objects,
 
 it is clear that recognizable images may be formed using only the information present in the vision transformer architecture just as was accomplished for convolutional models.  
 
-### Vision Transformer hidden layer representations
+### Vision Transformer hidden layer representation overview
 
 Another way to understand a model's output is to observe the extent to which various hidden layers in that model are able to autoencode an input: the better the autoencoding, the more complete the information in that layer.
 
@@ -127,14 +127,26 @@ $$
 ||O(a, \theta) - O(a', \theta)||_2 < ||O(a, \theta) - O(a_g, \theta)||_2
 $$
 
+Compare the decreasing representation clarity with increased depth to the nearly constant degree of clarity in the ViT: even at the twelth and final encoder, the representation quality is approximately the same as that in the first layer.  The reason as to why this is the case is explored in the next section.
+
+When we consider the representation of the first layer of the vision transformer compared to the first layer in ResNet50, it is apparent that the former has a less accurate representation.  Before this first layer, ViT has an input processing step in which the input is encoded as a sequence of tokens, which occurs by forming 768 convolutional filters each 3x32x32 (hence the name ViT B **32**) large, with 32-size strides. In effect, this means that the model takes 32x32 patches (3 colors each) of the original input and encodes 768 different 3x7x7 arrays which act analagously to the word embeddings used in the original transformer.
+
+It may be wondered then if it is the input processing step via strided 32x32 convolutions or the first encoder layer that is responsible for the decrease in representation accuracy.  Generating representation of the outputs of first the input processing convolution and then the input processing followed by the first encoder layer of an initial image of a tesla coil, it is clear that the input processing itself is responsible for the decreased representation clarity, and furthermore that training greatly enhances the processing convolutional layer's representation resolution (although still not to the degree seen in the first convolution of ResNet)
+
 ![tesla vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vit_entry_representations.png)
 
+TFor ResNet50, an increase in representation resolution for the first convolutional layer upon training is observed to coincide with the appearance of Gabor function wavelets in the weights of that layer (see the last supplementary figure of [this paper](https://arxiv.org/abs/2211.06496)).  It may be wondered if the same effect of training is observed for these strided convolutions, and so we plot the normalized (minimum set to 0, maximum set to 1, and all other weights assigned accordingly) weights before and after training to find out.
+
 ![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/vit_b_32_conv_representations.png)
+
+In some convolutions we do indeed see wavelets (of various frequencies too) but in other we see something curious: no discernable pattern at all is visible in the weights of around half of the input convolutional filters.  As seen in the paper ref'd in the last paragraph, this is not at all what is seen for ResNet50's first convolutional layer, where every convolutional filter plotted has a markedly non-random weight distribution (most are wavelets).
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
+
+### Why ViT does not have a decrease in representation accuracy with increasing depth
 
 ### Vision Transformer Deep Dream
 
