@@ -70,13 +70,13 @@ $$
 a_{n+1[:, \;m:n, \;o:p]} = \mathcal{N_c}(a_{n[:, \; m:n, \; o:p]} - \epsilon * \nabla_{a_{n[:, \; m:n, \;o:p]}} |C - O(a_{n[:, \; m:n, \; o:p]}, \theta)_i|)
 $$
 
-One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of ViT_b_32 to pool outputs before the classification step such that all model inputs must be of dimension $\mathtt{3x224x224}$, whereas most convolutional models allow for inputs to extend to $\mathtt{3x299x299}$ or even beyond $\mathtt{3x500x500}$ due to max pooling layers following convolutions.
+One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of vision transformer base 32 (ViT B 32) to pool outputs before the classification step such that all model inputs must be of dimension $\mathtt{3x224x224}$, whereas most convolutional models allow for inputs to extend to $\mathtt{3x299x299}$ or even beyond $\mathtt{3x500x500}$ due to max pooling layers following convolutions.
 
-When we observe representative images of a subset of ImageNet animal classes,
+When we observe representative images of a subset of ImageNet animal classes with Vit B 32,
 
 ![vision transformer input generation]({{https://blbadger.github.io}}/neural_networks/vit_animals.png)
 
-as well as landscapes and inanimate objects,
+as well as landscapes and inanimate objects with the same model,
 
 ![vision transformer input generation]({{https://blbadger.github.io}}/neural_networks/vit_landscapes.png)
 
@@ -157,6 +157,9 @@ In the following figure, we can clearly see that contrary to what was observed p
 
 ![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/resnet_conv1_vit.png)
 
+The same may be observed when a trained input processing convolutional layer is followed by transformer encoders from an untrained vision transformer.  When various layer representations are generated for ViT B 32, it is clear that although there is a decrease in representation accuracy as depth increases in the encoder stack with fixed ($n=500$) iterations, this is mostly due to approximate rather than true non-invertibility as increasing the number of iterations of the generation process to $n=5000$ yields a representation from the last encoder layer that is more accurate than that obtained with fewer iterations from the first.
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vit_trainedinput_untrained.png)
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
