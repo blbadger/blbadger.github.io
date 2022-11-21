@@ -218,7 +218,11 @@ The study of life, observations of which display many of the features of nonline
 
 ![layer autoencoding](/neural_networks/representation_cover.png)
 
+
 ### [Input Generation V: Vision Transformers](/vision-transformers.md)
+
+![vision transformer layer representations](/neural_networks/vit_cover.png)
+
 
 ### [Feature Visualization I](/feature-visualization.md)
 
