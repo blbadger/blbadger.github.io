@@ -67,7 +67,7 @@ $$
 Positional jitter is applied between updates such that the subset of the input $a_n$ that is fed to the model undergoes gradient descent and Gaussian convolution, while the rest of the input is unchanged.  
 
 $$
-a_{n+1[:, \;m:n, \;o:p]} = \mathcal{N_c}(a_{n[:, \; m:n, \; o:p]} - \epsilon * \nabla_{a_{n[:, \; m:n, \;o:p]}} |C - O(a_{n[:, \; m:n, \; o:p]}, \theta)_i|)
+a_{n+1[:, \;m:n, \;o:p]} = \mathcal{N_c}(a_{n[:, \; m:n, \; o:p]} - \epsilon * \nabla_{a_{n}[:, \; m:n, \;o:p]} |C - O(a_{n[:, \; m:n, \; o:p]}, \theta)_i|)
 $$
 
 One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of vision transformer base 32 (ViT B 32) to pool outputs before the classification step such that all model inputs must be of dimension $\mathtt{3x224x224}$, whereas most convolutional models allow for inputs to extend to $\mathtt{3x299x299}$ or even beyond $\mathtt{3x500x500}$ due to max pooling layers following convolutions.
@@ -141,31 +141,38 @@ TFor ResNet50, an increase in representation resolution for the first convolutio
 
 In some convolutions we do indeed see wavelets (of various frequencies too) but in other we see something curious: no discernable pattern at all is visible in the weights of around half of the input convolutional filters.  As seen in the paper ref'd in the last paragraph, this is not at all what is seen for ResNet50's first convolutional layer, where every convolutional filter plotted has a markedly non-random weight distribution (most are wavelets).
 
-
-
-
-
-### Why ViT does not have a decrease in representation accuracy with increasing depth
-
-One may wondder why the first colutional layer of ResNet50 provides a representation that is far more accurate than the input processing convolution of ViT B 32 (). Certainly ViT B 32's first layer convolutions are not as efficient as they could be in encoding the input (as many are approximately randomly weighted), but it is also worth remembering that this layer's output is only 768x7x7 =37632, which when compared with the 64x112x112=802816 element output of the first convolution of ResNet50 is very small indeed and would not be expected to be capable of copying an arbitrary input of size 3x224x224=150528.
-
-We can investigate the equivalently sized input convolution using the ResNet filters 7x7) by simply choosing the outputs from the first three filters, which yields an output of dim=112x112x3=37632, which was what we wanted (although notably the input is no longer encoded as patches). For trained and untrained ResNet models, this yields an input representation of approximately the same resolution that is found using the first convolutional layer of ViT.
-
-Now we can investigate whether the lack of representation accuracy decline in the vision transformer's encoder layers (for the untrained model), specifically we can ask whether or not this depends on the patch-encoding of the input or whether the encoder layers are capable of an arbitrarily accurate representation regardless of patch fidelity (as the ResNet Conv1 layer outputs are scrambled relative to the input patches expected by ViT encoders).
-
-In the following figure, we can clearly see that contrary to what was observed previously, the input representation declines in informational quality (albeit not as much as ResNet).
-
-![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/resnet_conv1_vit.png)
-
-The same may be observed when a trained input processing convolutional layer is followed by transformer encoders from an untrained vision transformer.  When various layer representations are generated for ViT B 32, it is clear that although there is a decrease in representation accuracy as depth increases in the encoder stack with fixed ($n=500$) iterations, this is mostly due to approximate rather than true non-invertibility as increasing the number of iterations of the generation process to $n=5000$ yields a representation from the last encoder layer that is more accurate than that obtained with fewer iterations from the first.
-
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vit_trainedinput_untrained.png)
+All together, we have
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
 
+### Why ViT does not have a decrease in representation accuracy with increasing depth
+
+One may wonder why the first colutional layer of ResNet50 provides a representation that is far more accurate than the input processing convolution of ViT Base 32. Certainly ViT B 32's first layer convolutions are not as efficient as they could be in encoding the input (as many are approximately randomly weighted), but it is also worth remembering that this layer's output is only $\mathtt{768x7x7=37632}$, which when compared with the $\mathtt{64x112x112=802816}$ element output of the first convolution of ResNet50 is very small indeed and would not be expected to be capable of copying an arbitrary input of size $\mathtt{3x224x224=150528}$.
+
+We can investigate the equivalently sized input convolution using the ResNet filters $\mathtt{7x7}$) by simply choosing the outputs from the first three filters, which yields an output of dim $\mathtt{112x112x3=37632}$, which was what we wanted (although notably the input is no longer encoded as patches). For trained and untrained ResNet models, this yields an input representation of approximately the same resolution that is found using the first convolutional layer of ViT.
+
+Now we can investigate whether the lack of representation accuracy decline in the vision transformer's encoder layers (for the untrained model), specifically we can ask whether or not this depends on the patch-encoding of the input or whether the encoder layers are capable of an arbitrarily accurate representation regardless of patch fidelity (as the ResNet Conv1 layer outputs are scrambled relative to the input patches expected by ViT encoders).
+
+In the following figure, we can clearly see that contrary to what was observed previously, the input representation declines in informational content with increased layer depth.
+
+![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/resnet_conv1_vit.png)
+
+The same may be observed when a trained input processing convolutional layer is followed by transformer encoders from an untrained vision transformer.  When various layer representations are generated for ViT Base 32, it is clear that although there is a decrease in representation accuracy as depth increases in the encoder stack with fixed ($n=500$) iterations, this is mostly due to approximate rather than true non-invertibility as increasing the number of iterations of the generation process to $n=5000$ yields a representation from the last encoder layer that is more accurate than that obtained with fewer iterations from the first.
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vit_trainedinput_untrained.png)
+
+It is not altogether surprising that all untrained encoder layer representations are noticeably less accurate than the input convolution, even though these layers have outputs of dimension $\mathtt{50* 768}$ which is slightly larger than the input convolutional output of $\mathtt{49* 768}$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). A clue as to the relatively poor representation of the untrained encoders lies comes when we compare the first encoder's representation in untrained (above) to trained (see the last section) Vit B 32 models.  The trained encoder has no significant decrease in representation accuracy compared to the input processing convolutional representation, whereas the untrained encoder does (relative to a trained input convolution representation).
+
+Vision transformer models apply positional encodings to the tokens after the input convolution, and notably this positional encoding is itself trained: initialized as a normal distribution `nn.Parameter(torch.empty(1, seq_length, hidden_dim).normal_(std=0.02))`, this positional encoding tensor (`torch.nn.Parameter` objects are `torch.Tensor` subclasses) is back-propegated through such that the tensor elements are modified during training.  
+
+
+
+
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
 
 ### Vision Transformer Deep Dream
 
