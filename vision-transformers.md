@@ -166,11 +166,16 @@ The same may be observed when a trained input processing convolutional layer is 
 
 It is not altogether surprising that all untrained encoder layer representations are noticeably less accurate than the input convolution, even though these layers have outputs of dimension $\mathtt{50* 768}$ which is slightly larger than the input convolutional output of $\mathtt{49* 768}$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). A clue as to the relatively poor representation of the untrained encoders lies comes when we compare the first encoder's representation in untrained (above) to trained (see the last section) Vit B 32 models.  The trained encoder has no significant decrease in representation accuracy compared to the input processing convolutional representation, whereas the untrained encoder does (relative to a trained input convolution representation).
 
-Vision transformer models apply positional encodings to the tokens after the input convolution, and notably this positional encoding is itself trained: initialized as a normal distribution `nn.Parameter(torch.empty(1, seq_length, hidden_dim).normal_(std=0.02))`, this positional encoding tensor (`torch.nn.Parameter` objects are `torch.Tensor` subclasses) is back-propegated through such that the tensor elements are modified during training.  
+Vision transformer models apply positional encodings to the tokens after the input convolution, and notably this positional encoding is itself trained: initialized as a normal distribution `nn.Parameter(torch.empty(1, seq_length, hidden_dim).normal_(std=0.02))`, this positional encoding tensor (`torch.nn.Parameter` objects are `torch.Tensor` subclasses) is back-propegated through such that the tensor elements are modified during training. It may be wondered if a change in positional encoding parameters is responsible for the change in first encoder layer representational accuracy.  This can be easily tested: re-assigning an untrained vision transformer's positional embedding parameters to that of a trained model's positional embedding parameters may be accomplished as follows:
 
+```python
+vision_transformer = torchvision.models.vit_b_32(weights='DEFAULT').to(device) # 'IMAGENET1K_V1'
+vision_transformer.eval()
+untrained_vision = torchvision.models.vit_b_32().to(device)
+untrained_vision.encoder.pos_embedding = vision_transformer.encoder.pos_embedding
+```
 
-
-
+When this is done, there is no noticeable difference in 
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
 
