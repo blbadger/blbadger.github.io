@@ -206,13 +206,31 @@ When this is done, however, there is no noticeable difference in the representat
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitb32_encoder1_ln.png)
 
+To understand why this would occur, we consider the transformation that occurs upon layer normalization.  Given layer input $x$, the output $y$ is defined as
+
+$$
+y = \frac{x - \mathtx{E}(x)}{\sqrt{\mathtx{Var}(x) + \epsilon}} * \gamma + \beta
+$$
+
 It may also be wondered how larger models represent their inputs.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
 
 ### Vision Transformer Deep Dream
 
-### Patch-based models without attention
+### Attentionless Patch Model Representations
+
+After the successes of vision transformers, [Tolstikhin and colleagues](https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html) and independently [Melas-Kyriazi](https://arxiv.org/abs/2105.02723) investigated whether or not self-attention is necessary for the efficacy of vision transformers. Somewhat surprisingly, the answer from both groups is no: replacing the attention layer with a fully connected layer leads to a minimal decline in model performance, but requires significantly less compute than the tranditional transformer model.  When compute is constant, Tolstikhin and colleagues find that there is little difference or even a slight advantage to the attentionless models, and Melas-Kyriazi finds that conversely using only attention results in very poor performance.
+
+The models investigated have the same encoder stacks present in the Vision transformers, but each encoder stack contains two fully connected layers.  The first fully connected layer is applied to the feature, which means that if a model has a feature of size 512 then the input is that large too.  The second layer is applied over all the patches.
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_representations.png)
+
+
+
+
+
+
 
 
 
