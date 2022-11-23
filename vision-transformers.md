@@ -147,7 +147,6 @@ All together, we have
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
 
-
 ### Why representation accuracy is constant with increased depth in Vision Transformers
 
 One may wonder why the first colutional layer of ResNet50 provides a representation that is far more accurate than the input processing convolution of ViT Base 32. Certainly ViT B 32's first layer convolutions are not as efficient as they could be in encoding the input (as many are approximately randomly weighted), but it is also worth remembering that this layer's output is only $\mathtt{768x7x7=37632}$, which when compared with the $\mathtt{64x112x112=802816}$ element output of the first convolution of ResNet50 is very small indeed and would not be expected to be capable of copying an arbitrary input of size $\mathtt{3x224x224=150528}$.
@@ -212,9 +211,9 @@ $$
 y = \frac{x - \mathrm{E}(x)}{\sqrt{\mathrm{Var}(x) + \epsilon}} * \gamma + \beta
 $$
 
-where $\gamma$ and $\beta$ are trainable parameters.
+where $\gamma$ and $\beta$ are trainable parameters.  
 
-It may also be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and  makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025*1024=1049600$ elements, which is larger than the $512*512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
+It may also be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and  makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
 This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of 
 
@@ -240,7 +239,13 @@ Somewhat surprisingly, this is not found to be the case: the first encoder layer
 
 It may be wondered why the representation of each encoder layer for the 16-sized patch model is poor, being that each transformer encoder in the model is overcomplete with respect to the input.  
 
-This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the output distance we are attempting to minimize, $||O(a, \theta) - O(a_b, \theta)||$, is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $||O(a, \theta) - O(a_b, \theta)||$ via gradient descent on the input, and visually provides a large increase in representation clarity.
+This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the output distance we are attempting to minimize, ie 
+
+$$
+m = ||O(a, \theta) - O(a_b, \theta)||
+$$
+
+is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.
 
 ![tesla coil mlp mixer representations]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_representations.png)
 
