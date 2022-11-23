@@ -34,9 +34,9 @@ $$
 
 The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards it' it is clear that the word 'poorly' should be closely associated with the word 'animosity', and the attention module's goal is to model such associations.
 
-But this clean theoretical justification breaks down when one considers that models with such attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are further more many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
+But this clean theoretical justification breaks down when one considers that models with attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
-Nevertheless, to gain familiarity with thi model one we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are seriealized by simply stacking multiple encoder modules sequentially.
+Nevertheless, to gain familiarity with this model we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are serialized by simply stacking multiple encoder modules sequentially.
 
 See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
 
@@ -209,10 +209,18 @@ When this is done, however, there is no noticeable difference in the representat
 To understand why this would occur, we consider the transformation that occurs upon layer normalization.  Given layer input $x$, the output $y$ is defined as
 
 $$
-y = \frac{x - \mathtx{E}(x)}{\sqrt{\mathtx{Var}(x) + \epsilon}} * \gamma + \beta
+y = \frac{x - \mathrm{E}(x)}{\sqrt{\mathrm{Var}(x) + \epsilon}} * \gamma + \beta
 $$
 
-It may also be wondered how larger models represent their inputs.
+where $\gamma$ and $\beta$ are trainable parameters.
+
+It may also be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and  makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025*1024=1049600$ elements, which is larger than the $512*512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
+
+This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of 
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_encoder_representations.png)
+
+Earlier it was observed that for Vit B 32 the process of training led to the appearance of wavelet patterns in the input convolution layer and a concomitant increase in representational accuracy.  For that model the convolutional operation is not overcomplete, but for the ViT Large 16 model it is.  It can therefore be hypothesized that training is not necessary for accurate input representation for the procesing convolution of ViT L 16, and indeed this is found to be the case.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
 
@@ -222,11 +230,23 @@ It may also be wondered how larger models represent their inputs.
 
 After the successes of vision transformers, [Tolstikhin and colleagues](https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html) and independently [Melas-Kyriazi](https://arxiv.org/abs/2105.02723) investigated whether or not self-attention is necessary for the efficacy of vision transformers. Somewhat surprisingly, the answer from both groups is no: replacing the attention layer with a fully connected layer leads to a minimal decline in model performance, but requires significantly less compute than the tranditional transformer model.  When compute is constant, Tolstikhin and colleagues find that there is little difference or even a slight advantage to the attentionless models, and Melas-Kyriazi finds that conversely using only attention results in very poor performance.
 
-The models investigated have the same encoder stacks present in the Vision transformers, but each encoder stack contains two fully connected layers.  The first fully connected layer is applied to the feature, which means that if a model has a feature of size 512 then the input is that large too.  The second layer is applied over all the patches.
+The models investigated have the same encoder stacks present in the Vision transformers, but each encoder stack contains two fully connected layers.  The first fully connected layer is applied to the features of each patch, and for example if the hidden dimension of each patch were 512 then that is the dimension of each parallel layer's input.  The second layer is applied over the patch tokens (such that the dimension of each MLP in that layer's input is the number of tokens the model has).  These models were referred to as 'MLP-Mixers' by the Tolstikhin group, which included this helpful graphical sumary of the archiecture: 
 
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_representations.png)
+![mlp mixer architecture]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_architecture.jpeg)
 
+We investigate the ability of various layers of an untrained MLP mixer to represent an input image.  We employ an architecture with a patch size of 16x16 to a 224x224x3 input image (such that there are $14*14=196$ patch tokens in all) with a hidden dimension per patch of 1024.  Each layer therefore has a little over 200k elements, which should be capable of autoencoding an input of ~150k elements.
 
+Somewhat surprisingly, this is not found to be the case: the first encoder layer for the above model is not particularly accurate at autoencoding its input, and the autencoding's accuracy declines the deeper the layer in question.  Specifying a smaller patch size of 8 (such that each layer contains >800k elements) does reduce the representation error.
+
+It may be wondered why the representation of each encoder layer for the 16-sized patch model is poor, being that each transformer encoder in the model is overcomplete with respect to the input.  
+
+This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the output distance we are attempting to minimize, $||O(a, \theta) - O(a_b, \theta)||$, is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $||O(a, \theta) - O(a_b, \theta)||$ via gradient descent on the input, and visually provides a large increase in representation clarity.
+
+![tesla coil mlp mixer representations]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_representations.png)
+
+It is also worth noting that these attentionless models do not employ positional encoding in any form.  Positional encoding is a broad name for various methods of adding sequence-position identifier information to an input, and is commonly done via trainable or nontrainable (usually trigonometric function) parameter application to an input sequence.  Vision transformers like other transformers use trainable positional encodings, but it is not clear if these models are benefitted by this procedure.
+
+Positional encoding was added to the original transformer model as it was claimed that these architectures did not convey any positional information from the input to output without this addition.  For transformer encoders, however, this has been shown to be false: transformer encoders do actually transmit positional information, and at a small scale transformer efficacy has been found to be identical regardless of inclusion or exclusion of positional encoding ([reference](https://arxiv.org/abs/2211.02941)).  
 
 
 
