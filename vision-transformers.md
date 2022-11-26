@@ -239,10 +239,10 @@ Somewhat surprisingly, this is not found to be the case: the first encoder layer
 
 It may be wondered why the representation of each encoder layer for the 16-sized patch model is poor, being that each transformer encoder in the model is overcomplete with respect to the input.  
 
-This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the output distance we are attempting to minimize, ie 
+This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the distance of the model output with generated input $O(a_g, \theta)$ to the output of the target input $O(a, ]heta)$ which we are attempting to minimize, ie 
 
 $$
-m = ||O(a, \theta) - O(a_b, \theta)||
+m = ||O(a, \theta) - O(a_g, \theta)||
 $$
 
 is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.
@@ -252,16 +252,6 @@ is empirically difficult to reduce beyond a certain amount. By tinkering with th
 It is also worth noting that these attentionless models do not employ positional encoding in any form.  Positional encoding is a broad name for various methods of adding sequence-position identifier information to an input, and is commonly done via trainable or nontrainable (usually trigonometric function) parameter application to an input sequence.  Vision transformers like other transformers use trainable positional encodings, but it is not clear if these models are benefitted by this procedure.
 
 Positional encoding was added to the original transformer model as it was claimed that these architectures did not convey any positional information from the input to output without this addition.  For transformer encoders, however, this has been shown to be false: transformer encoders do actually transmit positional information, and at a small scale transformer efficacy has been found to be identical regardless of inclusion or exclusion of positional encoding ([reference](https://arxiv.org/abs/2211.02941)).  
-
-
-
-
-
-
-
-
-
-
 
 
 
