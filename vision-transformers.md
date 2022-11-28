@@ -153,7 +153,36 @@ One may wonder why the first colutional layer of ResNet50 provides a representat
 
 We can investigate the equivalently sized input convolution using the ResNet filters $\mathtt{7x7}$) by simply choosing the outputs from the first three filters, which yields an output of dim $\mathtt{112x112x3=37632}$, which was what we wanted (although notably the input is no longer encoded as patches). For trained and untrained ResNet models, this yields an input representation of approximately the same resolution that is found using the first convolutional layer of ViT.
 
-Now we can investigate whether the lack of representation accuracy decline in the vision transformer's encoder layers (for the untrained model), specifically we can ask whether or not this depends on the patch-encoding of the input or whether the encoder layers are capable of an arbitrarily accurate representation regardless of patch fidelity (as the ResNet Conv1 layer outputs are scrambled relative to the input patches expected by ViT encoders).
+Now we can investigate whether the lack of representation accuracy decline in the vision transformer's encoder layers (for the untrained model), specifically we can ask whether or not this depends on the patch-encoding of the input or whether the encoder layers are capable of an arbitrarily accurate representation regardless of patch fidelity (as the ResNet Conv1 layer outputs are scrambled relative to the input patches expected by ViT encoders). This may be done as follows:
+
+```python
+class NewVit(nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, x: torch.Tensor):
+        # Reshape and permute the input tensor
+        x = resnet.conv1(x)
+        x = x.flatten(start_dim=1)[:,:37632]
+        # (n, hidden_dim, n_h, n_w) -> (n, hidden_dim, (n_h * n_w))
+        x = x.reshape(1, 768, 7 * 7)
+
+        # (n, hidden_dim, (n_h * n_w)) -> (n, (n_h * n_w), hidden_dim)
+        # The self attention layer expects inputs in the format (N, S, E)
+        # where S is the source sequence length, N is the batch size, E is the
+        # embedding dimension
+        x = x.permute(0, 2, 1)
+        n = x.shape[0]
+
+        # Expand the class token to the full batch
+        batch_class_token = self.model.class_token.expand(n, -1, -1)
+        x = torch.cat([batch_class_token, x], dim=1)
+        for i in range(1):
+            x = self.model.encoder.layers[i](x)
+
+```
 
 In the following figure, we can see the results of chaining the Conv1 layer of a trained ResNet50 to the transformer encoder layers of ViT Base 32.  As the input convolution is not strided to transform the input into patches, there are no longer clear grid-like regions in the representation.
 
@@ -239,10 +268,10 @@ Somewhat surprisingly, this is not found to be the case: the first encoder layer
 
 It may be wondered why the representation of each encoder layer for the 16-sized patch model is poor, being that each transformer encoder in the model is overcomplete with respect to the input.  
 
-This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the distance of the model output with generated input $O(a_g, \theta)$ to the output of the target input $O(a, ]heta)$ which we are attempting to minimize, ie 
+This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the distance of the model output with generated input $O(a_g, \theta)$ to the output of the target input $O(a, \theta)$ which we are attempting to minimize, ie 
 
 $$
-m = ||O(a, \theta) - O(a_g, \theta)||
+m = || O(a, \theta) - O(a_g, \theta) ||
 $$
 
 is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.
