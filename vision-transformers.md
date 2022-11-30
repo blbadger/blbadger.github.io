@@ -271,10 +271,102 @@ Recall the architecture of the vision transformer encoder module:
 
 ![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
 
+We are now going to be focusing on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets and images are 512x512.  This model behaves similarly to ViT Base 32 with respect to the input convolution: applying a trained input convolution without switching to a trained first layernorm leads to patches of high-frequency signal in the input generation, which can be ameliorated by swapping to a trained layernorm.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_layernorm_trained.png)
 
+The approach we will follow is an ablation: each component will be removed one after the other in order to observe which ones are required for input representation from the module output.  Pytorch contains a handy module `torch.nn.Identity()` that simply yields whatever is passed as an input.  This can be used to remove layernorm operations in each one of the ViT Large 16 encoder modules as follows:
+
+```python
+# untrained vision transformer
+vision_transformer = torchvision.models.vit_l_16().to(device)
+vision_transformer.eval()
+
+# swap components for all encoder modules
+for i in range(24): 
+    vision_transformer.encoder.layers[i].ln_1 = torch.nn.Identity()
+    vision_transformer.encoder.layers[i].ln_2 = torch.nn.Identity()
+```
+
+Removing the fully connected layers from each module may similarly be accomplished as follows:
+
+```python
+...
+for i in range(24): 
+    vision_transformer.encoder.layers[i].mlp = torch.nn.Identity()
+```
+
+but a slight modification is required to remove self-attention layers as these contain keyword arguments `key, query, value`.  Instead of replacing the self-attention module object with our handy identity function, we instead have to replace the forward call to that object with `torch.nn.Identity()` as follows:
+
+```python
+...
+for i in range(24): 
+    vision_transformer.encoder.layers[i].self_attention.forward = torch.nn.Identity()
+```
+
+The effects of these changes may be checked by sub-classing the `EncoderBlock` module of ViT and then simply removing the relevant portions.  For the first eight encoder modules of an untrained ViT L 16 (with a trained ViT L 16 input convolutional stem to allow for 512x512 inputs), we have the following input representations:
+
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
+
+It is apparent from these results firstly that layernorm results in less accuracy in the untrained model's layer representations for featureless space: observe how the dark background is now faithfully represented if layernorm is removed from all encoder modules.  This is to be expected given that all affine transformations on the input distribution (here small squares of the input) yield the same output when passed through layer normalization.
+
+On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
+
+Now we will examine the effects of residual connections on input representation. 
+
+
+Removing residuals is more difficult, as they were not created with a class and cannot simply be replaced with the `Identity()` module.  Instead we can modify the `EncoderBlock` class of the ViT, which is originally
+
+```python
+class EncoderBlock(nn.Module):
+    """Transformer encoder block."""
+    ...
+    def forward(self, input: torch.Tensor):
+        torch._assert(input.dim() == 3, f"Expected (batch_size, seq_length, hidden_dim) got {input.shape}")
+        x = self.ln_1(input)
+        x, _ = self.self_attention(x, x, x, need_weights=False)
+        x = self.dropout(x)
+        x = x + input
+
+        y = self.ln_2(x)
+        y = self.mlp(y)
+        return x + y
+```
+to
+```python
+class EncoderBlock(nn.Module):
+    """Transformer encoder block."""
+    ...
+    def forward(self, input: torch.Tensor):
+        torch._assert(input.dim() == 3, f"Expected (batch_size, seq_length, hidden_dim) got {input.shape}")
+        x = self.ln_1(input)
+        x, _ = self.self_attention(query=x, key=x, value=x, need_weights=False)
+        x = self.dropout(x)
+
+        y = self.ln_2(x)
+        y = self.mlp(input)
+        return y
+```
+
+Then we can replace the `EncoderBlock` modules in the vision transformer with our new class containing no residual connections as follows:
+
+```python
+for i in range(24): 
+    vision_transformer.encoder.layers[i] = EncoderBlock(16, 1024, 4096, 0., 0.)
+```
+
+One problem remains, and that is how to load trained model weights into our modified transformer encoders.  As we have re-built the encoders to match the architecture of the original, however, and as the residual connections contain no trainable parameters we can simply load the original trained model and replace each layer with the trained version of that layer.  For example, modifying the ViT L 16 to discard residual connections before adding weighted MLP layers we have
+
+```python
+for i in range(24): 
+    vision_transformer.encoder.layers[i] = EncoderBlock(16, 1024, 4096, 0., 0.)
+    
+original_vision_transformer = torchvision.models.vit_l_16(weights='IMAGENET1K_SWAG_E2E_V1').to(device)
+original_vision_transformer.eval()
+
+for i in range(24):
+    vision_transformer.encoder.layers[i].mlp = original_vision_transformer.encoder.layers[i].mlp
+```
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
 
