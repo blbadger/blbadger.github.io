@@ -36,7 +36,11 @@ The theoretical basis behind the attention module is that certain tokens (origin
 
 But this clean theoretical justification breaks down when one considers that models with attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
-Nevertheless, to gain familiarity with this model we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple $W^K, W^Q, W^V$ vectors are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are serialized by simply stacking multiple encoder modules sequentially.
+Nevertheless, to gain familiarity with this model we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple key, value, and query weight matricies $W^K, W^Q, W^V$ are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are serialized by simply stacking multiple encoder modules sequentially.
+
+A single transformer encoder may be depicted as follows:
+
+![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
 
 See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
 
@@ -129,6 +133,15 @@ $$
 
 Compare the decreasing representation clarity with increased depth to the nearly constant degree of clarity in the ViT: even at the twelth and final encoder, the representation quality is approximately the same as that in the first layer.  The reason as to why this is the case is explored in the next section.
 
+All together, we have
+
+![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
+
+![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
+
+
+### ViT input processing convolutions are nonoptimal
+
 When we consider the representation of the first layer of the vision transformer compared to the first layer in ResNet50, it is apparent that the former has a less accurate representation.  Before this first layer, ViT has an input processing step in which the input is encoded as a sequence of tokens, which occurs by forming 768 convolutional filters each 3x32x32 (hence the name ViT B **32**) large, with 32-size strides. In effect, this means that the model takes 32x32 patches (3 colors each) of the original input and encodes 768 different 3x7x7 arrays which act analagously to the word embeddings used in the original transformer.
 
 It may be wondered then if it is the input processing step via strided 32x32 convolutions or the first encoder layer that is responsible for the decrease in representation accuracy.  Generating representation of the outputs of first the input processing convolution and then the input processing followed by the first encoder layer of an initial image of a tesla coil, it is clear that the input processing itself is responsible for the decreased representation clarity, and furthermore that training greatly enhances the processing convolutional layer's representation resolution (although still not to the degree seen in the first convolution of ResNet)
@@ -141,11 +154,11 @@ For ResNet50, an increase in representation resolution for the first convolution
 
 In some convolutions we do indeed see wavelets (of various frequencies too) but in other we see something curious: no discernable pattern at all is visible in the weights of around half of the input convolutional filters.  As seen in the paper referenced in the last paragraph, this is not at all what is seen for ResNet50's first convolutional layer, where every convolutional filter plotted has a markedly non-random weight distribution (most are wavelets).
 
-All together, we have
+Earlier it was observed that for Vit B 32 the process of training led to the appearance of wavelet patterns in the input convolution layer and a concomitant increase in representational accuracy.  For that model the convolutional operation is not overcomplete, but for the ViT Large 16 model it is.  It can therefore be hypothesized that training is not necessary for accurate input representation for the procesing convolution of ViT L 16, and indeed this is found to be the case.
 
-![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
 
-![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
+Note the lack of consistent wavelet weight patterns in the input convolution, even after training (and even after extensive pretraining on weakly [supervised](https://arxiv.org/abs/2201.08371)). This observation may explain why [Xaio and colleagues](https://arxiv.org/pdf/2106.14881.pdf) found that replacing the strided input processing convolutions above with 4 layers of 3x3 convolutions (followed by one 1x1 layer) improves vision transformer training stability and convergence as well as ImageNet test accuracy. 
 
 ### Why representation accuracy is constant with increased depth in Vision Transformers
 
@@ -248,6 +261,16 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_encoder_representations.png)
 
+It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
+
+### Attention is an informationless regularizer
+
+Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
+
+Recall the architecture of the vision transformer encoder module:
+
+![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
+
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_layernorm_trained.png)
 
@@ -257,13 +280,13 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
 
-### ViT input processing convolutions are nonoptimal
+It may be wondered whether these results are specific to an image of an object (Tesla coil) that is out-of-bounds of the ImageNet1K dataset, meaning that the models may not have learned to distinguish the features of these inputs during the training process.  This can be checked by observing the ability of MLP-less or Attention-less models to represent an input that is in-scope, which is the case for our image of the Dalmatian.  As shown below, it is clear that there is no change when the input is in-scope: attention-less ViT L 16 yields a near-identical input representation as the normal model, whereas an mlp-less version is only capable of copying the input (through residual connections).
 
-Earlier it was observed that for Vit B 32 the process of training led to the appearance of wavelet patterns in the input convolution layer and a concomitant increase in representational accuracy.  For that model the convolutional operation is not overcomplete, but for the ViT Large 16 model it is.  It can therefore be hypothesized that training is not necessary for accurate input representation for the procesing convolution of ViT L 16, and indeed this is found to be the case.
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dalmatian_dissection.png)
 
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
+All together, these results provide strong evidence for the idea that self-attention layers in the vision transformer encoder modules are not capable of representing the input to practically any degree. Equivalently, we can say that for either untrained or trained ViT encoders the self-attention layers contain little to no useful information about the input.  
 
-Note the lack of consistent wavelet weight patterns in the input convolution, even after training (and even after extensive pretraining on weakly [supervised](https://arxiv.org/abs/2201.08371)). This observation may explain why [Xaio and colleagues](https://arxiv.org/pdf/2106.14881.pdf) found that replacing the strided input processing convolutions above with 4 layers of 3x3 convolutions (followed by one 1x1 layer) improves vision transformer training stability and convergence as well as ImageNet test accuracy. 
+This is particularly surprising in light of the large number of trainable parameters in the self-attention $W^K, W^Q, W^V$ matricies that make up the self-attention mechanism. 
 
 ### Vision Transformer Deep Dream
 
@@ -284,7 +307,7 @@ It may be wondered why the representation of each encoder layer for the 16-sized
 This poor representation is must therefore be (mostly) due to approximate non-invertibility (due to poor conditioning), and this is bourne out in practice as the distance of the model output with generated input $O(a_g, \theta)$ to the output of the target input $O(a, \theta)$ which we are attempting to minimize, ie 
 
 $$
-m = || O(a, \theta) - O(a_g, \theta) ||
+m = || O(a, \theta) - O(a_g, \theta) ||_2
 $$
 
 is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.
