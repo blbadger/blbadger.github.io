@@ -248,9 +248,13 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_encoder_representations.png)
 
+### ViT input processing convolutions are non-optimal
+
 Earlier it was observed that for Vit B 32 the process of training led to the appearance of wavelet patterns in the input convolution layer and a concomitant increase in representational accuracy.  For that model the convolutional operation is not overcomplete, but for the ViT Large 16 model it is.  It can therefore be hypothesized that training is not necessary for accurate input representation for the procesing convolution of ViT L 16, and indeed this is found to be the case.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_input_conv.png)
+
+Note the lack of consistent wavelet weight patterns in the input convolution, even after training (and even after extensive pretraining on weakly [supervised](https://arxiv.org/abs/2201.08371)). This observation may explain why [Xaio and colleagues](https://arxiv.org/pdf/2106.14881.pdf) found that replacing the strided input processing convolutions above with 4 layers of 3x3 convolutions (followed by one 1x1 layer) improves vision transformer training stability and convergence as well as ImageNet test accuracy. 
 
 ### Vision Transformer Deep Dream
 
