@@ -244,11 +244,20 @@ where $\gamma$ and $\beta$ are trainable parameters.
 
 It may also be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and  makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
-This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of 
+This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of fairly accurate input representation.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_encoder_representations.png)
 
-### ViT input processing convolutions are non-optimal
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_layernorm_trained.png)
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
+
+### ViT input processing convolutions are nonoptimal
 
 Earlier it was observed that for Vit B 32 the process of training led to the appearance of wavelet patterns in the input convolution layer and a concomitant increase in representational accuracy.  For that model the convolutional operation is not overcomplete, but for the ViT Large 16 model it is.  It can therefore be hypothesized that training is not necessary for accurate input representation for the procesing convolution of ViT L 16, and indeed this is found to be the case.
 
