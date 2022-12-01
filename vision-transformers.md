@@ -263,7 +263,7 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
 
-### Attention is an informationless regularizer
+### Attention is a nearly informationless regularizer
 
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
@@ -369,6 +369,8 @@ for i in range(24):
 ```
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
+
+It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models.  
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
 
