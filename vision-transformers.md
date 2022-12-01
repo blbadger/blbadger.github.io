@@ -263,7 +263,7 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
 
-### Attention is a nearly informationless regularizer
+### Attention layers contain little information
 
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
@@ -370,17 +370,49 @@ for i in range(24):
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
 
-It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models.  
+It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models once residual connections are removed.  It may be observed that even a single self-attention layer requires an enormous number of gradient descent iterations to achieve a reasonably accurate representation for a trained model, and that even this is insufficient for an untrained one.
+
+![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_or_mlp.png)
+
+If our gradient descent procedure on the input is effective, the following is expected to be true:
+
+$$
+a_{n+1} = a_n - g * \epsilon, \; n \to \infty \implies ||O(a, \theta) - O(a_g, \theta) ||_2 \to 0
+$$
+
+If this is the case, we can easily find evidence that points to non-invertibility as a cause for the poor input representation for attention layers.  For an invertible transformation $O$ such that each input $a$ yields a unique output, or for a non-invertible $O$ such that only one input $a_s$ such that $O(a_s, \theta) = O(a, \theta)$ subject to the restriction that $a_s$ is sufficiently near $a$, or
+
+$$
+||O(a, \theta) - O(a_g, \theta)||_2 \to 0 \implies ||a - a_g||_2 \to 0
+$$
+
+On the other hand, if we find that the embedding distance heads towards the origin
+
+$$
+||O(a, \theta) - O(a_g, \theta)||_2 \to 0
+$$
+
+but at the input distance does not head towards the origin
+
+$$
+||a - a_g||_2 \not \to 0
+$$
+
+then our representation procedure cannot distinguish between the multiple inputs that may yield one output.  And indeed, this is found to be the case for the representation of the tesla coil above.
+
+![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/noninvertible_encoder_1.png)
+
+Thus it is apparent that self-attention layers are generally incapable of accurately representing an input due to non-invertibility as well as poor conditioning if residual connections are removed. It may be wondered how much attention layers contribute to a trained model's input representation ability
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
 
-It may be wondered whether these results are specific to an image of an object (Tesla coil) that is out-of-bounds of the ImageNet1K dataset, meaning that the models may not have learned to distinguish the features of these inputs during the training process.  This can be checked by observing the ability of MLP-less or Attention-less models to represent an input that is in-scope, which is the case for our image of the Dalmatian.  As shown below, it is clear that there is no change when the input is in-scope: attention-less ViT L 16 yields a near-identical input representation as the normal model, whereas an mlp-less version is only capable of copying the input (through residual connections).
+It may also be wondered whether these results are specific to an image of an object (Tesla coil) that is out-of-bounds of the ImageNet1K dataset, meaning that the models may not have learned to distinguish the features of these inputs during the training process.  This can be checked by observing the ability of MLP-less or Attention-less models to represent an input that is in-scope, which is the case for our image of the Dalmatian.  As shown below, it is clear that there is no change when the input is in-scope: attention-less ViT L 16 yields a near-identical input representation as the normal model, whereas an mlp-less version is only capable of copying the input (through residual connections).
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dalmatian_dissection.png)
 
-All together, these results provide strong evidence for the idea that self-attention layers in the vision transformer encoder modules are not capable of representing the input to practically any degree. Equivalently, we can say that for either untrained or trained ViT encoders the self-attention layers contain little to no useful information about the input.  
+All together, these results provide strong evidence for the idea that self-attention layers in the vision transformer encoder modules together are not capable of representing the input to practically any degree. Equivalently, we can say that for either untrained or trained ViT encoders the self-attention layers contain little to no useful information about the input.  
 
-This is particularly surprising in light of the large number of trainable parameters in the self-attention $W^K, W^Q, W^V$ matricies that make up the self-attention mechanism. 
+This is particularly surprising in light of the large number of trainable parameters in the self-attention $W^K, W^Q, W^V$ matricies that make up the attention architecture.  It is apparent that the attention layer from the first encoder module of ViT L 16 is capable of learning to represent an input more accurately than at the start of training (which is also observed for undercomplete convolutional transformations) but that this ability appears to be more or less irrelevant to the representation of the input made due to residual connections accross the self-attention module.
 
 ### Vision Transformer Deep Dream
 
