@@ -16,7 +16,7 @@ We focus on the ViT B 32 model introduced by [Dosovitsky and colleagues](https:/
 
 The transformer architecture was found to be effective for natural language processing tasks and was subsequently employed in vision tasks after convolutional layers.  But the work introducing the ViT went further and applied the transformer architecture directly to patches of images, which has been claimed to occur without explicit convolutions (but does in fact used strided convolution to form patch embeddings as we will later see).  It is an open question of how similar these models are to convolutional neural networks.
 
-The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to pay most attention to sequence elements that directly preceed the current element and forget elements that came before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
+The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to be overly influenced by input elements that directly preceed the current element and 'forget' those that came long before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
 
 In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
 
@@ -32,9 +32,9 @@ $$
 \pmb{z_1} = V_1 s_{11}' + V_2 s_{12}' + V_3 s_{13}'+ \cdots
 $$
 
-The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards it' it is clear that the word 'poorly' should be closely associated with the word 'animosity', and the attention module's goal is to model such associations.
+The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards *it*' it is clear that the word 'it' should be closely associated with the word 'cat', and the attention module's goal is to model such associations.
 
-But this clean theoretical justification breaks down when one considers that models with attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
+But this clean theoretical justification breaks down when one considers that models with single attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
 Nevertheless, to gain familiarity with this model we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple key, value, and query weight matricies $W^K, W^Q, W^V$ are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are serialized by simply stacking multiple encoder modules sequentially.
 
@@ -46,9 +46,9 @@ See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-l
 
 ### Input Generation with Vision Transformers
 
-One way to understand how a model yields its outputs is to observe the inputs that one can generate using the information present in the model itself.  This may be accomplished by picking an output class of interest (here the models have been trained on ImageNet so we can choose any of the 1000 classes present there), assigning a large constant to the output of that class and then performing gradient descent on the input minimizing the difference of the model's output given initial random noise and that large constant, for the specified output index.  
+One way to understand how a model yields its outputs is to observe the inputs that one can generate using the information present in the model itself.  This may be accomplished by picking an output class of interest (here the models have been trained on ImageNet so we can choose any of the 1000 classes present there), assigning a large constant to the output of that class and then performing gradient descent on the input, minimizing the difference of the model's output given initial random noise and that large constant for the specified output index.  
 
-We add two modifications to the technique denoted in the last paragraph: a 3x3 Gaussian convolution is performed on the input after each iteration and after around 200 iterations the input is positionally jittered using cropped regions.  For more information see [this page](https://blbadger.github.io/input-generation.html).  
+We add two modifications to the technique denoted in the last paragraph: a 3x3 Gaussian convolution (starting with $\sigma=2.4 and ending with $sigma=0.$) is performed on the input after each iteration and after around 200 iterations the input is positionally jittered using cropped regions.  For more information see [this page](https://blbadger.github.io/input-generation.html).  
 
 More precisely, the image generation process is as follows: given a trained model $\theta$ we construct an appropriately sized random input $a_0$
 
@@ -74,7 +74,7 @@ $$
 a_{n+1[:, \;m:n, \;o:p]} = \mathcal{N_c}(a_{n[:, \; m:n, \; o:p]} - \epsilon * \nabla_{a_{n}[:, \; m:n, \;o:p]} |C - O(a_{n[:, \; m:n, \; o:p]}, \theta)_i|)
 $$
 
-One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution: of the generated images: this is partly due to the inability of vision transformer base 32 (ViT B 32) to pool outputs before the classification step such that all model inputs must be of dimension $\mathtt{3x224x224}$, whereas most convolutional models allow for inputs to extend to $\mathtt{3x299x299}$ or even beyond $\mathtt{3x500x500}$ due to max pooling layers following convolutions.
+One of the first differences of note compared to the inputs generated from convolutional models is the lower resolution of the generated images: this is partly due to the inability of vision transformer base 32 (ViT B 32) to pool outputs before the classification step such that all model inputs must be of dimension $3x224x224$, whereas most convolutional models allow for inputs to extend to $3x299x299$ or even beyond $3x500x500$ due to max pooling layers following convolutions.
 
 When we observe representative images of a subset of ImageNet animal classes with Vit B 32,
 
@@ -88,7 +88,7 @@ it is clear that recognizable images may be formed using only the information pr
 
 ### Vision Transformer hidden layer representation overview
 
-Another way to understand a model's output is to observe the extent to which various hidden layers in that model are able to autoencode an input: the better the autoencoding, the more complete the information in that layer.
+Another way to understand a model is to observe the extent to which various hidden layers in that model are able to autoencode an input: the better the autoencoding, the more complete the information in that layer.
 
 First, let's examine an image that is representative of one of the 1000 categories in the ImageNet 1k dataset: a dalmatian.  We can obtain various layer outputs by subclassing the pytorch `nn.Module` class and accessing the original vision transformer model as `self.model`.  For ViT models, the desired transformer encoder layer outputs may be accessed as follows:
 
@@ -109,7 +109,6 @@ class NewVit(nn.Module):
         x = torch.cat([batch_class_token, x], dim=1)
         for i in range(layer):
             x = self.model.encoder.layers[i](x)
-
         return x
 ```
 where `layer` indicates the layer of the output desired (`self.model.encoder.layers` are 0-indexed so the numbering is accurate). The `NewVit` class can then be instantiated as
@@ -122,7 +121,6 @@ new_vision.eval()
 
 First let's observe the effect of layer depth (specifically transformer encoder layer depth) on the representation accuracy of an untrained ViT_B_32 and compare this to what was observed for ResNet50 (which appears to be a fairly good stand-in for other convolutional models).
 
-
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_vs_resnet_untrained_representations.png)
 
 The first notable aspect of input representation is that it appears to be much more difficult to approximate a natural image using Gaussian-convolved representations for ViT than for ResNet50, or more precisely it is difficult to find a learning rate $\epsilon$ such that the norm of the difference between the target output $O(a, \theta)$ and the output of the generated input $O(a_g, \theta)$ is smaller than the norm of the difference between the target output and the output of a slightly shifted input $O(a', \theta)$ where $a' = a + \mathcal{N}(a; \mu=0, \sigma=1/18)$, meaning that it is difficult to obtain the following inequality:
@@ -133,12 +131,11 @@ $$
 
 Compare the decreasing representation clarity with increased depth to the nearly constant degree of clarity in the ViT: even at the twelth and final encoder, the representation quality is approximately the same as that in the first layer.  The reason as to why this is the case is explored in the next section.
 
-All together, we have
+As each encoder is the same size, we can also observe the representation of only that encoder (rather than the given encoder and all those preceeding it).
 
 ![dalmatian vit]({{https://blbadger.github.io}}/neural_networks/vit_dalmatian_representations.png)
 
 ![tesla coil vit]({{https://blbadger.github.io}}/neural_networks/vit_representations.png)
-
 
 ### ViT input processing convolutions are nonoptimal
 
@@ -160,11 +157,9 @@ Earlier it was observed that for Vit B 32 the process of training led to the app
 
 Note the lack of consistent wavelet weight patterns in the input convolution, even after training (and even after extensive pretraining on weakly [supervised](https://arxiv.org/abs/2201.08371)). This observation may explain why [Xaio and colleagues](https://arxiv.org/pdf/2106.14881.pdf) found that replacing the strided input processing convolutions above with 4 layers of 3x3 convolutions (followed by one 1x1 layer) improves vision transformer training stability and convergence as well as ImageNet test accuracy. 
 
-### Why representation accuracy is constant with increased depth in Vision Transformers
+### Representation quality decreases slowly with depth
 
-One may wonder why the first colutional layer of ResNet50 provides a representation that is far more accurate than the input processing convolution of ViT Base 32. Certainly ViT B 32's first layer convolutions are not as efficient as they could be in encoding the input (as many are approximately randomly weighted), but it is also worth remembering that this layer's output is only $\mathtt{768x7x7=37632}$, which when compared with the $\mathtt{64x112x112=802816}$ element output of the first convolution of ResNet50 is very small indeed and would not be expected to be capable of copying an arbitrary input of size $\mathtt{3x224x224=150528}$.
-
-For a more interpretable experiment we can instead substitute a trained input processing convolutional layer from a trained vision transformer, and chain this layer to the rest of a model from an untrained ViT.
+Being that the input convolutional stem to the smaller ViT models is not capable of accurately representing an input, to understand later layers' representation capability we can substitute a trained input processing convolutional layer from a trained vision transformer, and chain this layer to the rest of a model from an untrained ViT.
 
 ```python
 class NewVit(nn.Module):
