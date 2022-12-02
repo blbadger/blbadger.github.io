@@ -8,7 +8,7 @@ Convolution-based neural networks have since become the predominant deep learnin
 
 It is interesting to note therefore that one of the primary motivations of the use of convolutions, that over-parametrized models must be restricted in order to avoid overfitting, has since been found to not apply to deep learning models.  Over-parametrixed fully connected models do not tend to overfit image data even if they are capable of [doing so](https://arxiv.org/abs/1412.6614), and furthermore convolutional models that are currently applied to classify (quite accurately too) large image dataasets are capable of fitting pure noise ([ref](https://dl.acm.org/doi/abs/10.1145/3446776)).
 
-Therefore it is reasonable to hypothesize that the convolutional architecture, although effective and flexible, is by no means required for accurate image classification or other vision tasks. One particularly effective approach has been translated from the field of natural language processing that has been termed the 'transformer', which makes use of self-attention mechanisms, as well as the mixer architectures that do not make use of attention.
+Therefore it is reasonable to hypothesize that the convolutional architecture, although effective and flexible, is by no means required for accurate image classification or other vision tasks. One particularly effective approach has been translated from the field of natural language processing that has been termed the 'transformer', which makes use of self-attention mechanisms. We also consider mlp-based mixer architectures that do not make use of attention.
 
 ### Transformer architecture
 
@@ -164,44 +164,7 @@ Note the lack of consistent wavelet weight patterns in the input convolution, ev
 
 One may wonder why the first colutional layer of ResNet50 provides a representation that is far more accurate than the input processing convolution of ViT Base 32. Certainly ViT B 32's first layer convolutions are not as efficient as they could be in encoding the input (as many are approximately randomly weighted), but it is also worth remembering that this layer's output is only $\mathtt{768x7x7=37632}$, which when compared with the $\mathtt{64x112x112=802816}$ element output of the first convolution of ResNet50 is very small indeed and would not be expected to be capable of copying an arbitrary input of size $\mathtt{3x224x224=150528}$.
 
-We can investigate the equivalently sized input convolution using the ResNet filters $\mathtt{7x7}$) by simply choosing the outputs from the first three filters, which yields an output of dim $\mathtt{112x112x3=37632}$, which was what we wanted (although notably the input is no longer encoded as patches). For trained and untrained ResNet models, this yields an input representation of approximately the same resolution that is found using the first convolutional layer of ViT.
-
-Now we can investigate whether the lack of representation accuracy decline in the vision transformer's encoder layers (for the untrained model), specifically we can ask whether or not this depends on the patch-encoding of the input or whether the encoder layers are capable of an arbitrarily accurate representation regardless of patch fidelity (as the ResNet Conv1 layer outputs are scrambled relative to the input patches expected by ViT encoders). This may be done as follows:
-
-```python
-class NewVit(nn.Module):
-
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
-    def forward(self, x: torch.Tensor):
-        # Reshape and permute the input tensor
-        x = resnet.conv1(x)
-        x = x.flatten(start_dim=1)[:,:37632]
-        # (n, hidden_dim, n_h, n_w) -> (n, hidden_dim, (n_h * n_w))
-        x = x.reshape(1, 768, 7 * 7)
-
-        # (n, hidden_dim, (n_h * n_w)) -> (n, (n_h * n_w), hidden_dim)
-        # The self attention layer expects inputs in the format (N, S, E)
-        # where S is the source sequence length, N is the batch size, E is the
-        # embedding dimension
-        x = x.permute(0, 2, 1)
-        n = x.shape[0]
-
-        # Expand the class token to the full batch
-        batch_class_token = self.model.class_token.expand(n, -1, -1)
-        x = torch.cat([batch_class_token, x], dim=1)
-        for i in range(1):
-            x = self.model.encoder.layers[i](x)
-
-```
-
-In the following figure, we can see the results of chaining the Conv1 layer of a trained ResNet50 to the transformer encoder layers of ViT Base 32.  As the input convolution is not strided to transform the input into patches, there are no longer clear grid-like regions in the representation.
-
-![tesla vision transformer weights]({{https://blbadger.github.io}}/neural_networks/resnet_conv1_vit.png)
-
-Drawing conclusions from the above experiment is difficult, being that the encoders are no longer appropriately applied to patches of the input.  For a more interpretable experiment we can instead substitute a trained input processing convolutional layer from a trained vision transformer, and chain this layer to the rest of a model from an untrained ViT.
+For a more interpretable experiment we can instead substitute a trained input processing convolutional layer from a trained vision transformer, and chain this layer to the rest of a model from an untrained ViT.
 
 ```python
 class NewVit(nn.Module):
@@ -263,7 +226,7 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
 
-### Attention layers contain little information
+### Attention layers versus fully connected layers
 
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
@@ -296,7 +259,7 @@ for i in range(24):
     vision_transformer.encoder.layers[i].mlp = torch.nn.Identity()
 ```
 
-but a slight modification is required to remove self-attention layers as these contain keyword arguments `key, query, value`.  Instead of replacing the self-attention module object with our handy identity function, we instead have to replace the forward call to that object with `torch.nn.Identity()` as follows:
+but a slight modification is required to remove self-attention layers as these contain the arguments `key, query, value`.  Instead of replacing the self-attention module object with our handy identity function, we instead have to replace the forward call to that object with `torch.nn.Identity()` as follows:
 
 ```python
 ...
@@ -380,7 +343,7 @@ $$
 a_{n+1} = a_n - g * \epsilon, \; n \to \infty \implies ||O(a, \theta) - O(a_g, \theta) ||_2 \to 0
 $$
 
-If this is the case, we can easily find evidence that points to non-invertibility as a cause for the poor input representation for attention layers.  For an invertible transformation $O$ such that each input $a$ yields a unique output, or for a non-invertible $O$ such that only one input $a_s$ such that $O(a_s, \theta) = O(a, \theta)$ subject to the restriction that $a_s$ is sufficiently near $a$, or
+If this is the case, we can easily find evidence that points to non-invertibility as a cause for the poor input representation for attention layers.  For an invertible transformation $O$ such that each input $a$ yields a unique output, or for a non-invertible $O$ such that only one input $a_g$ such that $O(a_g, \theta) = O(a, \theta), a_g \neq a$ subject to the restriction that $a_g$ is sufficiently near $a$, or
 
 $$
 ||O(a, \theta) - O(a_g, \theta)||_2 \to 0 \implies ||a - a_g||_2 \to 0
