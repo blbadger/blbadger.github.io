@@ -308,9 +308,9 @@ It is apparent from the results above that the self-attention layer of encoder m
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_or_mlp.png)
 
-This is not particularly surprising for a number of reasons, first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  
+This is not particularly surprising for a number of reasons, first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  Recall that the first step of attention (after forming $q, k, v$ vectors) is to compute the dot product of $q, k$ vectors.  The dot product, like any inner product operation, is in general non-invertible.  For the case of multi-head attention where the weight matricies $W^K, W^Q, W^V$ multiplied to the input $X$ to form $q, k, v$ are non-square, this projection operation is also non-invertible.  In the standard implementation of self-attention, the embedding dimension is split among the heads such that each $q, k, v$ has dimension $d=e_X/n$ where $e_X$ is the input embedding dimension and $n$ is the number of attention heads. None of these weight matricies are typically square for this reason.
 
-With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed approximately invertible without modification if residuals are allowed.
+With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed approximately invertible without modification if residuals are allowed (especially if Layer Norms are removed).
 
 If our gradient descent procedure on the input is effective, the following is expected to be true:
 
@@ -336,7 +336,7 @@ $$
 ||a - a_g||_2 \not \to 0
 $$
 
-then our representation procedure cannot distinguish between the multiple inputs that may yield one output.  And indeed, this is found to be the case for the representation of the tesla coil above.
+then our representation procedure cannot distinguish between the multiple inputs that may yield one output.  And indeed, this is found to be the case for the representation of the tesla coil above for one encoder module with layer normalization followed by multi-head attention alone.
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/noninvertible_encoder_1.png)
 
@@ -347,8 +347,6 @@ Thus it is apparent that self-attention layers are generally incapable of accura
 It may also be wondered whether these results are specific to an image of an object (Tesla coil) that is out-of-bounds of the ImageNet1K dataset, meaning that the models may not have learned to distinguish the features of these inputs during the training process.  This can be checked by observing the ability of MLP-less or Attention-less models to represent an input that is in-scope, which is the case for our image of the Dalmatian.  As shown below, it is clear that there is no change when the input is in-scope: attention-less ViT L 16 yields a near-identical input representation as the normal model, whereas an mlp-less version is only capable of copying the input (through residual connections).
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dalmatian_dissection.png)
-
-All together, these results provide strong evidence for the idea that self-attention layers in the vision transformer encoder modules together are not capable of representing the input to practically any degree. Equivalently, we can say that for either untrained or trained ViT encoders the self-attention layers contain little to no useful information about the input.  
 
 This is particularly surprising in light of the large number of trainable parameters in the self-attention $W^K, W^Q, W^V$ matricies that make up the attention architecture.  It is apparent that the attention layer from the first encoder module of ViT L 16 is capable of learning to represent an input more accurately than at the start of training (which is also observed for undercomplete convolutional transformations) but that this ability appears to be more or less irrelevant to the representation of the input made due to residual connections accross the self-attention module.
 
