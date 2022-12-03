@@ -18,37 +18,40 @@ The transformer architecture was found to be effective for natural language proc
 
 The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to be overly influenced by input elements that directly preceed the current element and 'forget' those that came long before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
 
-In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $K, Q, V$ for Key, Query, and Value that are produced from learned weight matricies $W^K, W^Q, W^V$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
+In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $k, q, v$ for Key, Query, and Value that are produced from multiplying learned weight matricies $W^K, W^Q, W^V$ to the input $X$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
 
 $$
 \pmb{s_1} = (q_1*k_1, q_1*k_2, q_1*k_3,...)
 $$
 
-before a linear function is applied to each element followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $V_1, V_2, V_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ that is the same dimension as $V_1$
+before constant scaling followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $v_1, v_2, v_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ (that is the same dimension as the input $X$ for single-headed attention).
 
 $$
 \pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
 \pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
-\pmb{z_1} = V_1 s_{11}' + V_2 s_{12}' + V_3 s_{13}'+ \cdots
+\pmb{z_1} = v_1 s_{11}' + v_2 s_{12}' + v_3 s_{13}'+ \cdots
 $$
 
-The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards *it*' it is clear that the word 'it' should be closely associated with the word 'cat', and the attention module's goal is to model such associations.
+The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards *it*' it is clear that the word 'it' should be closely associated with the word 'cat', and the attention module's goal is to model such associations.  
+
+When we reflect on the separate mathematical operations of attention, it is clear that they do indeed capture something that may be accurately described by the English word.  In the first step of attention, the production of $q, k, v$ vectors from $W^K, W^Q, W^V$ weight matricies can be thought of as projecting the input embedding $X$ into the relevant vectors such that something useful about the input $X$ is captured, being that these weight matricies are trainable parameters.
+The dot product between vectors $q_1$ and $k_2$ may be thought of as a measure of the similarity between embeddings 1 and 2 precisely because the dot product itself may be understood as a measure of vector similarity: the larger the value of $q_1 * k_2$, the more similar these entities are assuming similar norms among all vectors $q, k$.  Softmax then normalizes attention such that all values $s$ are between 0 (least attention) and 1 (most attention).  The process of multiplying these attention values $s$ by the value vectors $v$ serves to 'weight' these value vectors based on that attention amount.  If the value vectors accurately capture information in the input $X$, then the attention module yields an output that is a additive combination of $v$ but with the 'most similar' (ie largest $s$) $v$ having the largest weight.
 
 But this clean theoretical justification breaks down when one considers that models with single attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
 Nevertheless, to gain familiarity with this model we note that for multi-head attention, multiple self-attention $z_1$ vectors are obtained (and thus multiple key, value, and query weight matricies $W^K, W^Q, W^V$ are learned) for each input. The multi-head attention is usually followed by a layer normalization and fully connected layer (followed by another layer normalization) to make one transformer encoder. Attention modules are serialized by simply stacking multiple encoder modules sequentially.
 
-A single transformer encoder may be depicted as follows:
+A single transformer encoder applied to image data may be depicted as follows:
 
 ![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
 
-See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
+For a more thorough introduction to the transformer, see Alammar's [Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/).  See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
 
 ### Input Generation with Vision Transformers
 
 One way to understand how a model yields its outputs is to observe the inputs that one can generate using the information present in the model itself.  This may be accomplished by picking an output class of interest (here the models have been trained on ImageNet so we can choose any of the 1000 classes present there), assigning a large constant to the output of that class and then performing gradient descent on the input, minimizing the difference of the model's output given initial random noise and that large constant for the specified output index.  
 
-We add two modifications to the technique denoted in the last paragraph: a 3x3 Gaussian convolution (starting with $\sigma=2.4 and ending with $sigma=0.$) is performed on the input after each iteration and after around 200 iterations the input is positionally jittered using cropped regions.  For more information see [this page](https://blbadger.github.io/input-generation.html).  
+We add two modifications to the technique denoted in the last paragraph: a 3x3 Gaussian convolution (starting with $\sigma=2.4$ and ending with $sigma=0.$) is performed on the input after each iteration and after around 200 iterations the input is positionally jittered using cropped regions.  For more information see [this page](https://blbadger.github.io/input-generation.html).  
 
 More precisely, the image generation process is as follows: given a trained model $\theta$ we construct an appropriately sized random input $a_0$
 
@@ -205,15 +208,25 @@ When this is done, however, there is no noticeable difference in the representat
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitb32_encoder1_ln.png)
 
-To understand why this would occur, we consider the transformation that occurs upon layer normalization.  Given layer input $x$, the output $y$ is defined as
+### Layer Normalization considered
+
+In the last section it was observed that changing the parameters of a layer normalization operation led to an increase in representational accuracy.  Later on this page we will see that layer normalization in general decreases representational accuracy, and so we will stop to consider what exactly this transformation entails.
+
+Given layer input $x$, the output of layer normalization $y$ is defined as
 
 $$
 y = \frac{x - \mathrm{E}(x)}{\sqrt{\mathrm{Var}(x) + \epsilon}} * \gamma + \beta
 $$
 
-where $\gamma$ and $\beta$ are trainable parameters.  
+where $\gamma$ and $\beta$ are trainable parameters.  Here the expectation $\mathrm{E}(x)$ refers to the mean of certain dimensions of $x$ and variance $\mathrm{Var}(x)$ is the sum-of-squares variance on those same dimensions.
 
-It may also be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and  makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
+Short consideration of the above formula should be enough to convince one that layer normalization is in general non-invertible such that many different possible inputs $x$ may yield one identical output $y$ for any $\gamma, \beta$ values.  For example, observe that $x = [0, 2, 4]^T, t = [-1, 0, 1]^T, u = [2.1, 2.2, 2.3]^T$ are all mapped to the same $y$ despite having very different $\mathrm{Var}(x)$ and $\mathrm{E}(x)$ and elementwise values in $x$.  
+
+Thus it should come as no surprise that the vision transformer's representations of the input often form patchwork-like images when layer normalization is applied (to each patch separately).
+
+### Both attention and mlp layers are required for learned representations
+
+It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
 This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of fairly accurate input representation.
 
@@ -221,59 +234,18 @@ This means that one can expect each encoder layer from ViT Large 16 to be capabl
 
 It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
 
-### Attention layers versus fully connected layers
-
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
 Recall the architecture of the vision transformer encoder module:
 
 ![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
 
-We are now going to be focusing on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets and images are 512x512.  This model behaves similarly to ViT Base 32 with respect to the input convolution: applying a trained input convolution without switching to a trained first layernorm leads to patches of high-frequency signal in the input generation, which can be ameliorated by swapping to a trained layernorm.
+We are now going to focus on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets and images are 512x512.  This model behaves similarly to ViT Base 32 with respect to the input convolution: applying a trained input convolution without switching to a trained first layernorm leads to patches of high-frequency signal in the input generation, which can be ameliorated by swapping to a trained layernorm.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_layernorm_trained.png)
 
-The approach we will follow is an ablation: each component will be removed one after the other in order to observe which ones are required for input representation from the module output.  Pytorch contains a handy module `torch.nn.Identity()` that simply yields whatever is passed as an input.  This can be used to remove layernorm operations in each one of the ViT Large 16 encoder modules as follows:
-
-```python
-# untrained vision transformer
-vision_transformer = torchvision.models.vit_l_16().to(device)
-vision_transformer.eval()
-
-# swap components for all encoder modules
-for i in range(24): 
-    vision_transformer.encoder.layers[i].ln_1 = torch.nn.Identity()
-    vision_transformer.encoder.layers[i].ln_2 = torch.nn.Identity()
-```
-
-Removing the fully connected layers from each module may similarly be accomplished as follows:
-
-```python
-...
-for i in range(24): 
-    vision_transformer.encoder.layers[i].mlp = torch.nn.Identity()
-```
-
-but a slight modification is required to remove self-attention layers as these contain the arguments `key, query, value`.  Instead of replacing the self-attention module object with our handy identity function, we instead have to replace the forward call to that object with `torch.nn.Identity()` as follows:
-
-```python
-...
-for i in range(24): 
-    vision_transformer.encoder.layers[i].self_attention.forward = torch.nn.Identity()
-```
-
-The effects of these changes may be checked by sub-classing the `EncoderBlock` module of ViT and then simply removing the relevant portions.  For the first eight encoder modules of an untrained ViT L 16 (with a trained ViT L 16 input convolutional stem to allow for 512x512 inputs), we have the following input representations:
-
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
-
-It is apparent from these results firstly that layernorm results in less accuracy in the untrained model's layer representations for featureless space: observe how the dark background is now faithfully represented if layernorm is removed from all encoder modules.  This is to be expected given that all affine transformations on the input distribution (here small squares of the input) yield the same output when passed through layer normalization.
-
-On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
-
-Now we will examine the effects of residual connections on input representation. 
-
-
-Removing residuals is more difficult, as they were not created with a class and cannot simply be replaced with the `Identity()` module.  Instead we can modify the `EncoderBlock` class of the ViT, which is originally
+The approach we will follow is an ablation: each component will be removed one after the other in order to observe which ones are required for input representation from the module output.  Change are made sub-classing the `EncoderBlock` module of ViT and then simply removing the relevant portions.
+Instead we can modify the `EncoderBlock` class of the ViT, which is originally
 
 ```python
 class EncoderBlock(nn.Module):
@@ -326,15 +298,21 @@ for i in range(24):
     vision_transformer.encoder.layers[i].mlp = original_vision_transformer.encoder.layers[i].mlp
 ```
 
+For the first eight encoder modules of an untrained ViT L 16 (with a trained ViT L 16 input convolutional stem to allow for 512x512 inputs), we have the following input representations:
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
+
+It is apparent from these results firstly that layernorm results in less accuracy in the untrained model's layer representations for featureless space: observe how the dark background is now faithfully represented if layernorm is removed from all encoder modules.  This is to be expected given that all affine transformations on the input distribution (here small squares of the input) yield the same output when passed through layer normalization.
+
+On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
+
+Now we will examine the effects of residual connections on input representation. 
+
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
 
 It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models once residual connections are removed.  It may be observed that even a single self-attention layer requires an enormous number of gradient descent iterations to achieve a reasonably accurate representation for a trained model, and that even this is insufficient for an untrained one.
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_or_mlp.png)
-
-This is not particularly surprising for a number of reasons, first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  
-
-With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed approximately invertible without modification if residuals are allowed.
 
 If our gradient descent procedure on the input is effective, the following is expected to be true:
 
