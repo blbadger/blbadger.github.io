@@ -314,6 +314,10 @@ It is apparent from the results above that the self-attention layer of encoder m
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_or_mlp.png)
 
+This is not particularly surprising for a number of reasons, first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  
+
+With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed approximately invertible without modification if residuals are allowed.
+
 If our gradient descent procedure on the input is effective, the following is expected to be true:
 
 $$
