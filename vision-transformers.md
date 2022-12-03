@@ -228,12 +228,6 @@ Thus it should come as no surprise that the vision transformer's representations
 
 It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
-This means that one can expect each encoder layer from ViT Large 16 to be capable of representing the input very well, assuming that approximate non-invertibility due to poor conditioning is not an issue.  Indeed, we see that the first 16 encoder layers are capable of fairly accurate input representation.
-
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_encoder_representations.png)
-
-It can clearly be appreciated that a lack of a decrease in layer representation accuracy with increased depth (that is typical of convolutional vision models) results from the use of residual connections together with modules of constant width (ie each has a constant number of elements).
-
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
 Recall the architecture of the vision transformer encoder module:
