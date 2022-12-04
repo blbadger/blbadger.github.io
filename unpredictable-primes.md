@@ -84,7 +84,6 @@ One can appreciate that this is a more general theorem than the first presented 
 
 Restated, the sequence of gaps $g_{g_1}, g_{g_2}, g_{g_3}, ...$ between prime gaps such that $g_{g_1} = g_2 - g_1$ and $g_{g_2} = g_3 - g_2$ etc. is aperiodic
 
-
 **Proof:** Suppose that the sequence $g_{g_1}, \; g_{g_2}, \; g_{g_3}, \; ...$ were periodic with finite periodicity $m$.  
 
 $$
@@ -122,8 +121,6 @@ $$
 As presented [here](https://blbadger.github.io/solvable-periodicity.html), one can show that all decidable predicates may be expressed as periodic systems, or in other words decidability implies periodicity (periodicity with respect to the computation procedure itself, that is).  Taking the contrapositive of this, aperiodicity (in the computation procedure) implies undecidability.  On this page it was found that the sequence of integers of prime gaps are aperiodic, but could some computation procedure for finding prime gaps be itself periodic?
 
 Examining such a procedure, note that it would have to map a countably infinite number of inputs (any of the prime numbers) to a countably infinite number of ouputs (prime gaps, which are unbounded).  The set of all functions possible here is equivalent with the set of all subsets of the natural numbers, $2^ \Bbb N \sim \Bbb R$.  Suppose the mapping function were periodic, meaning that the procedure for finding a prime gap given the prime number's index is identical to the procedure for finding the gap for a different prime number...
-
-
 
 If indeed the question of prime gap size is undecidable, this would shed light on the findings from Presburger and Skolem that addition-only or multiplication-only arithmetics are decidable, whereas arithmetic with both addition and multiplication is not (more background [here](https://blbadger.github.io/solvable-periodicity.html)).  The reason is as follows: prime number gaps represent intersections between addition and multiplication, but if these intersections are undecidable (meaning that we cannot compute using finite arithmetic how all gaps should be placed) then arithmetic containing this prime gaps is necessarily undecidable. 
 
