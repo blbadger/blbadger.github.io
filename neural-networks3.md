@@ -485,7 +485,7 @@ $$
 before a linear function is applied to each element followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $V_1, V_2, V_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ that is the same dimension as $V_1$
 
 $$
-\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
+\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)/ \sqrt d, (q_1*k_2)/ \sqrt d, (q_1*k_3)/ \sqrt d,...) \\
 \pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
 \pmb{z_1} = V_1 s_{11}' + V_2 s_{12}' + V_3 s_{13}'+ \cdots
 $$
