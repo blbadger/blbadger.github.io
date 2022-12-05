@@ -27,7 +27,7 @@ $$
 before constant scaling followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $v_1, v_2, v_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ (that is the same dimension as the input $X$ for single-headed attention).
 
 $$
-\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)\sqrt d, (q_1*k_2)\sqrt d, (q_1*k_3)\sqrt d,...) \\
+\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)/\sqrt d, (q_1*k_2)/ \sqrt d, (q_1*k_3)/ \sqrt d,...) \\
 \pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
 \pmb{z_1} = v_1 s_{11}' + v_2 s_{12}' + v_3 s_{13}'+ \cdots
 $$
@@ -193,7 +193,7 @@ When various layer representations are generated for ViT Base 32, it is clear th
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vit_trainedinput_untrained.png)
 
-It is apparent that all encoder layers have imperfections in certain patches, making them less accurate than the input convolution layer's representation.  It may be wondered why this is, being that the encoder layers have outputs of dimension $\mathtt{50* 768}$ which is slightly larger than the input convolutional output of $\mathtt{49* 768}$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). A clue as to the relatively poor representation of the untrained encoders lies comes when we compare the first encoder's representation in untrained (above) to trained (see the last section) Vit B 32 models.  The trained encoder has no significant decrease in representation accuracy compared to the input processing convolutional representation, whereas the untrained encoder does (relative to a trained input convolution representation).  Therefore one can guess that some component or components in the trained transformer encoder is capable of increasing the representation accuracy in these patches.
+It is apparent that all encoder layers have imperfections in certain patches, making them less accurate than the input convolution layer's representation.  It may be wondered why this is, being that the encoder layers have outputs of dimension $50x768$ which is slightly larger than the input convolutional output of $49x768$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). A clue as to the relatively poor representation of the untrained encoders lies comes when we compare the first encoder's representation in untrained (above) to trained (see the last section) Vit B 32 models.  The trained encoder has no significant decrease in representation accuracy compared to the input processing convolutional representation, whereas the untrained encoder does (relative to a trained input convolution representation).  Therefore one can guess that some component or components in the trained transformer encoder is capable of increasing the representation accuracy in these patches.
 
 Vision transformer models apply positional encodings to the tokens after the input convolution in the first transformer encoder block, and notably this positional encoding is itself trained: initialized as a normal distribution `nn.Parameter(torch.empty(1, seq_length, hidden_dim).normal_(std=0.02))`, this positional encoding tensor (`torch.nn.Parameter` objects are `torch.Tensor` subclasses) is back-propegated through such that the tensor elements are modified during training. It may be wondered if a change in positional encoding parameters is responsible for the change in first encoder layer representational accuracy.  This can be easily tested: re-assigning an untrained vision transformer's positional embedding parameters to that of a trained model's positional embedding parameters may be accomplished as follows:
 
@@ -226,7 +226,7 @@ Thus it should come as no surprise that the vision transformer's representations
 
 ### Both attention and mlp layers are required for learned representations
 
-It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512* 512* 3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
+It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512x512x3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
 Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
@@ -292,11 +292,17 @@ for i in range(24):
     vision_transformer.encoder.layers[i].mlp = original_vision_transformer.encoder.layers[i].mlp
 ```
 
-For the first eight encoder modules of an untrained ViT L 16 (with a trained ViT L 16 input convolutional stem to allow for 512x512 inputs), we have the following input representations:
+For some choice encoder representations from an untrained ViT L 16 (with a trained input convolutional stem to allow for 512x512 inputs), we have the following input representations:
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
 
-It is apparent from these results firstly that layernorm results in less accuracy in the untrained model's layer representations for featureless space: observe how the dark background is now faithfully represented if layernorm is removed from all encoder modules.  This is to be expected given that all affine transformations on the input distribution (here small squares of the input) yield the same output when passed through layer normalization.
+It is clear that removal of either self-attention or both layer normlizations in each encoder module, but not the MLPs from each encoder module is sufficient to prevent the vast majority of the decrase in representation quality with increased depth.
+
+This is somewhat surprising given that the MLP used in the transformer encoder architecture is itself typically non-invertible: standard practice implemented in vision transformers is to have the MLP implemented as a one-hidden-layer (with input and output dimensions equal to the dimension of the self-attention hidden layer $d_{model}$) with the hidden layer three or four times as large as $d_{model}$.  This MLP is identically applied to all self-attention outputs such that each embedding of the input patch after self-attention receives the same MLP.  But being that the transformation from hidden to output layer of the MLP is non-invertible, there is in general not a single unique input for this layer.
+
+Likewise, self-attention and layer norm transformations are both non-invertible and yet removal of only one or the other appears sufficient for  
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_nolayernorm.png)
 
 On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
 
