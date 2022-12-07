@@ -222,9 +222,9 @@ where $\gamma$ and $\beta$ are trainable parameters.  Here the expectation $\mat
 
 Short consideration of the above formula should be enough to convince one that layer normalization is in general non-invertible such that many different possible inputs $x$ may yield one identical output $y$ for any $\gamma, \beta$ values.  For example, observe that $x = [0, 2, 4]^T, t = [-1, 0, 1]^T, u = [2.1, 2.2, 2.3]^T$ are all mapped to the same $y$ despite having very different $\mathrm{Var}(x)$ and $\mathrm{E}(x)$ and elementwise values in $x$.  
 
-Thus it should come as no surprise that the vision transformer's representations of the input often form patchwork-like images when layer normalization is applied (to each patch separately).
+Thus it should come as no surprise that the vision transformer's representations of the input often form noticeably patchwork-like images when layer normalization is applied (to each patch separately).  The values $\gamma, \beta$ are all initialized to $1$ and $0$, respectively, but the values $x$ per input patch may be widely different such that some patches may have only one feasible $x$ per given $y$, whereas other may have many $x_1,x_2,...,x_n$ that equivalently give some $y$.  The latter would be expected to have worse input representation due to non-uniqueness.
 
-### Attention layers contain little input information
+### Attention layers transmit very little input information
 
 It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512x512x3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
@@ -256,7 +256,9 @@ class EncoderBlock(nn.Module):
         y = self.mlp(y)
         return x + y
 ```
+
 to
+
 ```python
 class EncoderBlock(nn.Module):
     """Transformer encoder block."""
@@ -275,6 +277,7 @@ class EncoderBlock(nn.Module):
 Then we can replace the `EncoderBlock` modules in the vision transformer with our new class containing no residual connections as follows:
 
 ```python
+# 24 encoder modules per vision transformer
 for i in range(24): 
     vision_transformer.encoder.layers[i] = EncoderBlock(16, 1024, 4096, 0., 0.)
 ```
@@ -292,37 +295,47 @@ for i in range(24):
     vision_transformer.encoder.layers[i].mlp = original_vision_transformer.encoder.layers[i].mlp
 ```
 
-For some choice encoder representations from an untrained ViT L 16 (with a trained input convolutional stem to allow for 512x512 inputs), we have the following input representations given a constant $n=1000$ iterations:
+For some choice encoder representations from an untrained ViT L 16 (with a trained input convolutional stem to allow for 512x512 inputs), we have the following input representations $a_g$ given a constant $n=1000$ iterations:
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
 
-For the last layer, 
+For the last layer, the same number of iterations yields
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_24.png)
 
-It is clear that removal of either self-attention or both layer normlizations in each encoder module, but not the MLPs from each encoder module is sufficient to prevent the vast majority of the decrase in representation quality with increased depth.
+It is clear that removal of either self-attention or both layer normlizations in each encoder module, but not the MLPs from each encoder module is sufficient to prevent the vast majority of the decrease in representation quality with increased depth up to encodrer layer 12, whereas at the deepest layer (24) of this vision transformer we can see that removal of attention modules from each encoder (but not MLPs or LayerNorms alone) prevent most of the decline in input representation accuracy.
 
 This is somewhat surprising given that the MLP used in the transformer encoder architecture is itself typically non-invertible: standard practice implemented in vision transformers is to have the MLP implemented as a one-hidden-layer (with input and output dimensions equal to the dimension of the self-attention hidden layer $d_{model}$) with the hidden layer three or four times as large as $d_{model}$.  This MLP is identically applied to all self-attention outputs such that each embedding of the input patch after self-attention receives the same MLP.  But being that the transformation from hidden to output layer of the MLP is non-invertible, there is in general not a single unique input for this layer.
 
-Likewise, self-attention and layer norm transformations are both non-invertible and yet removal of only one or the other appears sufficient for  
+Likewise, self-attention and layer norm transformations are both non-invertible and yet removal of only one or the other appears sufficient for substantially improving input representation accuracy in early layers.  From the rate of minimization of the embedding distance
 
+$$
+||O(a_n, \theta) - O(a, \theta)||
+$$ 
+
+it is clear that self-attention layers are extremely poorly conditioned: including these makes satisfying
+
+$$
+||O(a_g, \theta) - O(a, \theta)|| < ||O(a', \theta) - O(a, \theta)||
+$$
+
+(where $a' = a + \mathcal{N}(a; mu=0, \sigma=1/20$ is a slightly shifted input that is visually very similar to $a$ and $a_g$ is the final generated input representation after $n$ steps) extremely difficult for a reasonable amount of steps $n$ regardless of the update size $\epsilon$. Why this is the case will be considered below.
+
+Removal of layer normalization transformations does not yield as much of an increase in input representation accuracy for the last layer (24) of the ViT large 16.  This is because without normalization, at that depth the gradient begins to explode for certain patches: observe the high-frequency signal originating from two patches near the center of the layernormless example above. A very small gradient update rate $\epsilon$ must be used in the gradient descent procedure $a_{n+1} = a_n + \epsilon * \nabla_{a_n}O(a_n, \theta)$ to avoid sending those patch values to infinity.  In turn, the finding that a vision transformer (with attention modules intact) results in exploding gradients $\nabla_{a_n}O(a_n, \theta)$ suggests that this model is poorly conditioned.
+<!-- 
 Once both Layer Normalizations are removed from earlier encoders, input representation does not  
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_nolayernorm.png)
-
+ -->
 On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
 
 Now we will examine the effects of residual connections on input representation. 
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_dissection.png)
 
-It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models once residual connections are removed.  It may be observed that even a single self-attention layer requires an enormous number of gradient descent iterations to achieve a reasonably accurate representation for a trained model, and that even this is insufficient for an untrained one.
+It is apparent from the results above that the self-attention layer of encoder module 4 contributes very little to the input representation relative to the MLP of that same module for either trained or untrained vision transformer models once residual connections are removed.  It may be observed that even a single self-attention layer requires an enormous number of gradient descent iterations to achieve a reasonably accurate representation for a trained model, and that even this is insufficient for an untrained one.  This is evidence for approximate non-invertibility or equivalently poor conditioning.
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/vitl16_no_residuals_or_mlp.png)
-
-This is not particularly surprising for a number of reasons, first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  Recall that the first step of attention (after forming $q, k, v$ vectors) is to compute the dot product of $q, k$ vectors.  The dot product, like any inner product operation, is in general non-invertible.  For the case of multi-head attention where the weight matricies $W^K, W^Q, W^V$ multiplied to the input $X$ to form $q, k, v$ are non-square, this projection operation is also non-invertible.  In the standard implementation of self-attention, the embedding dimension is split among the heads such that each $q, k, v$ has dimension $d=e_X/n$ where $e_X$ is the input embedding dimension and $n$ is the number of attention heads. None of these weight matricies are typically square for this reason.
-
-With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed approximately invertible without modification if residuals are allowed (especially if Layer Norms are removed).
 
 If our gradient descent procedure on the input is effective, the following is expected to be true:
 
@@ -352,7 +365,15 @@ then our representation procedure cannot distinguish between the multiple inputs
 
 ![vision transformer representations]({{https://blbadger.github.io}}/neural_networks/noninvertible_encoder_1.png)
 
-Thus it is apparent that self-attention layers are generally incapable of accurately representing an input due to non-invertibility as well as poor conditioning if residual connections are removed. It may be wondered how much attention layers contribute to a trained model's input representation ability
+Thus it is apparent that self-attention layers are generally incapable of accurately representing an input due to non-invertibility as well as poor conditioning if residual connections are removed. 
+
+It is not particiularly surprising that self-attention should be non-invertible first and foremost because the transformations present in the self-attention layer (more specifically the multi-head attention layer) are together non-invertible in the general case.  Recall that the first step of attention (after forming $q, k, v$ vectors) is to compute the dot product of $q, k$ vectors.  The dot product, like any inner product operation, is in general non-invertible.  For the case of multi-head attention where the weight matricies $W^K, W^Q, W^V$ multiplied to the input $X$ to form $q, k, v$ are non-square, this projection operation is also non-invertible.  In the standard implementation of self-attention, the embedding dimension is split among the heads such that each $q, k, v$ has dimension $d=e_X/n$ where $e_X$ is the input embedding dimension and $n$ is the number of attention heads. None of these weight matricies are typically square for this reason.
+
+With residual connections included and assuming constraints on the self-attention transformation's Lipschitz constants as observed by [Zha and colleages](https://arxiv.org/pdf/2106.09003.pdf).  That said, it is apparent from the experiments above that the vision transformer's attention modules are indeed invertible to at least some degree without modification if residuals are allowed (especially if Layer Norms are removed).
+
+
+
+It may be wondered how much attention layers contribute to a trained model's input representation ability
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
 
