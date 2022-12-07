@@ -224,7 +224,7 @@ Short consideration of the above formula should be enough to convince one that l
 
 Thus it should come as no surprise that the vision transformer's representations of the input often form patchwork-like images when layer normalization is applied (to each patch separately).
 
-### Both attention and mlp layers are required for learned representations
+### Attention layers contain little input information
 
 It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512x512x3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
 
@@ -292,15 +292,21 @@ for i in range(24):
     vision_transformer.encoder.layers[i].mlp = original_vision_transformer.encoder.layers[i].mlp
 ```
 
-For some choice encoder representations from an untrained ViT L 16 (with a trained input convolutional stem to allow for 512x512 inputs), we have the following input representations:
+For some choice encoder representations from an untrained ViT L 16 (with a trained input convolutional stem to allow for 512x512 inputs), we have the following input representations given a constant $n=1000$ iterations:
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection.png)
+
+For the last layer, 
+
+![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_24.png)
 
 It is clear that removal of either self-attention or both layer normlizations in each encoder module, but not the MLPs from each encoder module is sufficient to prevent the vast majority of the decrase in representation quality with increased depth.
 
 This is somewhat surprising given that the MLP used in the transformer encoder architecture is itself typically non-invertible: standard practice implemented in vision transformers is to have the MLP implemented as a one-hidden-layer (with input and output dimensions equal to the dimension of the self-attention hidden layer $d_{model}$) with the hidden layer three or four times as large as $d_{model}$.  This MLP is identically applied to all self-attention outputs such that each embedding of the input patch after self-attention receives the same MLP.  But being that the transformation from hidden to output layer of the MLP is non-invertible, there is in general not a single unique input for this layer.
 
 Likewise, self-attention and layer norm transformations are both non-invertible and yet removal of only one or the other appears sufficient for  
+
+Once both Layer Normalizations are removed from earlier encoders, input representation does not  
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_nolayernorm.png)
 
