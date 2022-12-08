@@ -322,12 +322,6 @@ $$
 (where $a' = a + \mathcal{N}(a; mu=0, \sigma=1/20$ is a slightly shifted input that is visually very similar to $a$ and $a_g$ is the final generated input representation after $n$ steps) extremely difficult for a reasonable amount of steps $n$ regardless of the update size $\epsilon$. Why this is the case will be considered below.
 
 Removal of layer normalization transformations does not yield as much of an increase in input representation accuracy for the last layer (24) of the ViT large 16.  This is because without normalization, at that depth the gradient begins to explode for certain patches: observe the high-frequency signal originating from two patches near the center of the layernormless example above. A very small gradient update rate $\epsilon$ must be used in the gradient descent procedure $a_{n+1} = a_n + \epsilon * \nabla_{a_n}O(a_n, \theta)$ to avoid sending those patch values to infinity.  In turn, the finding that a vision transformer (with attention modules intact) results in exploding gradients $\nabla_{a_n}O(a_n, \theta)$ suggests that this model is poorly conditioned.
-<!-- 
-Once both Layer Normalizations are removed from earlier encoders, input representation does not  
-
-![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/transformer_dissection_nolayernorm.png)
- -->
-On the other hand, it is also apparent that removal of the MLP layers effectively de-regularizes the output of the transformer encoder, such that without layernorm there is very little input representational accuracy.
 
 Now we will examine the effects of residual connections on input representation. 
 
