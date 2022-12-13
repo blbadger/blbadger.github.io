@@ -17,13 +17,13 @@ $$
 Following the zero-sum game, the minimax theorem posits that one player (the discriminator) wishes to maximize $v(\theta_d, \theta_g)$ and the other (in this case the generator) wishes to minimize $-v(\theta_d, \theta_g)$.  We therefore want a value functions $v$ that grows as $d(x)$ becomes more accurate given samples $x$ taken from the data generating distribution $p(\mathrm{data})$ and shrinks (ie grows negatively) as $x$ is taken from outputs of the generator, denoted $p(\mathrm{model})$.  One such option is as follows:
 
 $$
-v(\theta_d, \theta_g) = \Bbb E_{x \sim p(data)} \log d(x) + \Bbb E_{x \sim p(model)} \log(1-d(x))
+v(\theta_d, \theta_g) = \Bbb E_{x \sim p_{data}} \log d(x) + \Bbb E_{x \sim p_{model}} \log(1-d(x))
 $$
 
-It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set $x$ of only real examples $x \sim p(data)$, $\Bbb E_{x \sim p(model)} \log(1-d(x))$ can be disregarded as this is now an expectation over an empty set. A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making 
+It is worth verifying that this value function does indeed satisfy our requirements.  If we are given a set $x$ of only real examples $x \sim p_{data}$, $\Bbb E_{x \sim p_{model}} \log(1-d(x))$ can be disregarded as this is now an expectation over an empty set. A perfect discriminator would give classify all examples correctly, or $d(x) = 1$ making 
 
 $$
-\Bbb E_{x \sim p(data)} \log d(x) = 0
+\Bbb E_{x \sim p_{data}} \log d(x) = 0
 $$
 
 As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \to 1$ and therefore $v$ increases to 0 from some negative starting point as the accuracy of $d(x)$ increases, meaning that the discriminator has maximized $v$.
@@ -31,15 +31,15 @@ As $d(x) \in [0, 1]$, it is clear that $v(\theta_d, \theta_g) \to 0$ as $d(x) \t
 Because of the log inverse function $\log(1-d(x))$ for the second term of $v(\theta_d, \theta_g)$, the opposite is true for the generator: if we assemble a dataset $x$ of examples only from the generator's output, and if the generator was optimized at the expense of the discriminator, then the discriminator would predict the same output for the generated samples as for the real ones, or $d(x) = 1$. Therefore if the generator is optimized $d(g(x)) = 1$, 
 
 $$
-\Bbb E_{x \sim p(model)} \log(1-d(x)) = \log(1 - 1) \\
+\Bbb E_{x \sim p_{model}} \log(1-d(x)) = \log(1 - 1) \\
 = -\infty
 $$ 
 
 then so too is $-v$ minimized, which was what we wanted.
 
-The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for every input $x$, which occurs when the generator emits inputs that are indistinguishable (for the model) from the true dataset's images. 
+The goal is for $g$ to converge to $g'$ such that $d(x) = 1/2$ for each input $x$ regardless of whether it was generated or not, which occurs when the generator emits inputs that are indistinguishable (for the discriminator) from the true dataset's images. 
 
-Formulating the generative adversarial network in the form of the zero-sum minimax game above is the theoretical basis for GAN implementation.  Unfortunately, this is a rather unstable arrangement as if we use $v$ and $-v$ as the payoff values, the generator's gradient tends to vanish when the discriminator confidently rejects all generated inputs.  During typical training runs this tends to happen, meaning that the desired state in which the discriminator neither rejects nor accepts all generated inputs is unstable.  This does not mean that one could not train a GAN using a zero-sum minimax, but that choosing a value function is apparently rather difficult
+Formulating the generative adversarial network in the form of the zero-sum minimax game above is the theoretical basis for GAN implementation.  Unfortunately, this is a rather unstable arrangement because if we use $v$ and $-v$ as the payoff values, the generator's gradient tends to vanish when the discriminator confidently rejects all generated inputs.  During typical training runs this tends to happen, meaning that the desired state in which the discriminator neither rejects nor accepts all generated inputs is unstable.  This does not mean that one could not train a GAN using a zero-sum minimax, but that choosing a value function that avoids instability is apparently rather difficult.
 
 Goodfellow and colleages found that it is instead better to make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake when attempting to classify images emitted from the generator, with a value (loss) function of binary cross-entropy for both discriminator and generator. The training process is no longer a zero-sum minimax game or even any other kind of minimax game, but instead is performed by alternating between minimization of cross-entropy loss of $d(x)$ for the discriminator and maximization of the cross-entropy loss of $d(g(z))$ for the generator, where $z$ signifies a random variable vector in the generator's latent space.
 
@@ -66,9 +66,9 @@ where $P(x)$ is equal to the distribution of $x$ over a mix of real and generate
 
 In contrast, the generator's ojective is to fool the discriminator and so the target distribution $q'$ becomes $q' = 1 - q \in {\widehat y, 1 - \widehat y}$, or in other words the generator uses the same binary cross-entropy applied to the discriminator but now with the labels reversed.
 
-<!---
-It is worth considering what this reformulation entails. For a single binary random variable, the Shannon entropy is as follows:
+It is worth considering what this reformulation entails. For a single binary random variable, the Shannon self-entropy is as follows:
 
+<!--- 
 $$
 H(x) = p \log (p) - (1-p) \log(1-p)
 $$
@@ -76,12 +76,12 @@ $$
 Plotting this equation with $p$ on the x-axis and $H(x)$ on the y-axis, we have
 ![entropy]({{https://blbadger.github.io}}/misc_images/entropy.png)
 
-Shannon entropy is largest where $p = 1-p = 1/2$.  
+Shannon entropy is largest where $p = 1-p = 1/2$, which is precisely what we are attempting 
 --->
 
 ### Implementing a GAN
 
-The process of training a generative adversarial network may be thought of as consisting of many iterations of the two steps of our minimax program above: first the discriminator is taught how to differentiate between real and generated images by applying the binary cross-entropy loss to a discriminator's predictions for a set of generated samples and their labels followed by real samples and their labels,
+The process of training a generative adversarial network may be thought of as consisting of many iterations of the two steps of our approximate minimax program above: first the discriminator is taught how to differentiate between real and generated images by applying the binary cross-entropy loss to a discriminator's predictions for a set of generated samples and their labels followed by real samples and their labels,
 
 ```python
 def train_generative_adversaries(dataloader, discriminator, discriminator_optimizer, generator, generator_optimizer, loss_fn, epochs):
@@ -186,7 +186,7 @@ Using a latent space input of 100 random variables assigned in a normal distribu
 
 ### Latent Space Exploration
 
-Generative adversarial networks can go beyond simply producing images that look like they came from some real dataset: they can also be used to observe similarities in the inputs in a (usually) lower-dimensional tensor, the latent space.  For the above video, each image is produced from 100 random numbers drawn from a normal distribution.  If we change those numbers slightly, we might find changes in the output that lead to one image being transformed into another. In particular, the hope is that some low-dimensional transformation in the latent space yields a high-dimensional transformation in th egenerator's output.
+Generative adversarial networks can go beyond simply producing images that look like they came from some real dataset: assuming that the relevant features of the input dataset's distribution $p_{data}(x)$ have been captured by the generator, they can also be used to observe similarities in the inputs in a (usually) lower-dimensional tensor, the latent space.  For the above video, each image is produced from 100 random numbers drawn from a normal distribution.  If we change those numbers slightly, we might find changes in the output that lead to one image being transformed into another. In particular, the hope is that some low-dimensional transformation in the latent space yields a high-dimensional transformation in th egenerator's output.
 
 Somewhat surprisingly, this is indeed what we find: if move about in the latent space, the generated output changes fairly continuously from one clothing type to another. As an example, we can move through the 100-dimensional latent space in a 2-dimensional plane defined by simply adding or subtracting certain values from some random normal input.  We can move in different ways, and one is as follows:
 
@@ -288,9 +288,7 @@ We can perform the same procedure for the Fashion MNIST dataset by training a GA
 
 ![manifold]({{https://blbadger.github.io}}/neural_networks/fmnist_manifold2.png)
 
-Do generative adversarial networks tend to prefer a stereotypical generator configuration $\theta_s$ on the latent space over other possible configurations? To be concrete, do GANs of one particular architecture when trained repeatedly on the same dataset tend to generate the same images for a given coordinate $a_1, a_2, ..., a_n$ in the latent space?
-
-Visualization (and indeed any form of exploration) is difficult for a high-dimensional latent space, but is perfectly approachable in two dimensions. We can therefore design a GAN with a two-dimensional latent space as has been done above and observe whether or not the same generated images are found at any given coordinate for multiple training runs.  The answer is no, for any coordinate $a_n$ in latent space we do not find a similar generated image from one training run to the next. 
+Do generative adversarial networks tend to prefer a stereotypical generator configuration $\theta_s$ on the latent space over other possible configurations? To be concrete, do GANs of one particular architecture when trained repeatedly on the same dataset tend to generate the same images for a given coordinate $a_1, a_2, ..., a_n$ in the latent space?  Visualization is often difficult for a high-dimensional latent space, but is perfectly approachable in two dimensions. We can therefore design a GAN with a two-dimensional latent space as has been done above and observe whether or not the same generated images are found at any given coordinate for multiple training runs.  The answer is no, for any coordinate $a_n$ in latent space we do not find a similar generated image from one training run to the next. 
 
 ### Continuity and GAN stability
 
@@ -298,7 +296,7 @@ It is interesting to observe how relatively difficult it is to train a GAN, espe
 
 ### Unstable Convolutional GANs
 
-For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in the model.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
+For large images, fully connected network GANs become less practical due to the exponential number of trainable parameters in both generator and discriminator.  Convolutional neural networks generally perform very well at object recognition tasks, and so it is natural to wonder whether they would also make effective generative networks too.
 
 Convolutional neural networks have been historically viewed as difficult to use as discriminator/generator pairs in the GAN model.  Empirically this has been attributed to their tendancy to lead to instabilities while training: either the discriminator may become much more effective than the generator such that all generated inputs are confidently rejected, or else the generator may be able to fool the discriminator early in the training program, which reduces the objective gradient for the discriminator and thus prevents effective learning.
 
@@ -521,7 +519,21 @@ Spikes, ie sudden increases, are found uppon observing the generator's loss func
 
 {% include youtube.html id='RXykSUv0GZ4' %}
 
-In the literature this is termed catastrophic forgetting, and is an area of current research in deep learning. Note that this phenomenon is also observed when an exact replica of the DCGAN architecture is used (with 64x64 input and generated image sizes, one less convolutional layer, no bias parameter in the fractional convolutional layers, and slightly different stride and padding parameters) and so is not the result of modifications made: instead it is likely that the forgetting is due to the very small sample size.
+In the literature this is termed catastrophic forgetting, and is an area of current research in deep learning. Note that this phenomenon is also observed when an exact replica of the DCGAN architecture is used (with 64x64 input and generated image sizes, one less convolutional layer, no bias parameter in the fractional convolutional layers, and slightly different stride and padding parameters) and so is not the result of modifications made: instead it may be wondered if that the 'forgetting' is due to the very small sample size.
+
+To test this idea, we can observe the stability of this architecture (modified slightly for 64x64 inputs) on a much larger dataset, say the 126,000 LSUN Churches dataset.  Changing the resolution requires some small modifications to both generator and discriminator architectures if we use the DCGan approach, in this case making the resulting model more similar to the original one proposed by Radford and colleagues.  This models is capable of rather quickly producing realistic-looking images of churches (albeit at low resolution) but it too suffers from instability during training: observe that at the end of the video below there is a lattice artefact introduced into each image and training progress ceases.  This is because the discriminator's loss for all images has zeroed out such that the generator no longer recieves a coherent error function.
+
+{% include youtube.html id='DAC7PqRTFx4' %}
+
+Somewhat worryingly, the disappearance of the discriminator's loss gradient is a regular occurrence for GANs of all types.  The author has found this disappearance to be a common problem for everything from small, fully connected GANs applied to un-normalized MNIST monocolor datasets to larger cNN-based GANs applied to large datasets such as LSUN.  This observation motivates the following question: why is the GAN objective function so unstable?
+
+The first thing to note is that the reformulation of a zero-sum game introduced by Goodfellow and colleagues that has made GANs so effective and widespread was originally motivated by the observation that it prevented the disappearance of the generator's loss gradient early in training, an outcome is typical of a zero-sum game implementation of a GAN.  One may consider the derivation to be providing a Bayesian prior on the model specifying that input generation is more difficult than discrimination, which is why we make the loss function of the generator equivalent to the log-probability that the discriminator has made mistake rather than the loss function of the discriminator equivalent to the log-probability that the generator has not produced convincing samples.
+
+However, once the generator begins to produce realistic samples then we may view the process of discrimination just as if not more difficult than generation.  This motivates the use of both the Goodfellow reformulation as well as the alternative above...
+
+Beyond this, however, we find other challenges to the GAN
+
+### More challenges of GANs
 
 A fully connected architecture seemed to be effective for small (28x28) monocolor image generation using the MNIST datasets.  Can a similar architecture applied to our small flower dataset yield realistic images? We can try a very large gut fairly shallow model: here the discriminator has the following architecture:
 
@@ -546,4 +558,8 @@ This network and a half-sized version (half the first layer's neurons) both make
 
 ![large fcgan]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
 
-These images look quite realistic, but the truth is that they are far from what we want from a GAN: the are both overfit and underfit at the same time.
+These images look quite realistic, but the truth is that they are far from what we want from a GAN: the are both overfit and underfit at the same time.  Certain images in the dataset have been approximately copied, but the distribution over all flowers has clearly not been captured.  This failure is known as 'mode collapse' which references the generator's distribution over the inputs, $p_{model} (x)$, that assignes very high probability to only a few inputs $x$ (ie may modes $x_1, x_2, x_3,... x_n$ have collapsed into two $x_1, x_2$ in the case above).  
+
+
+
+
