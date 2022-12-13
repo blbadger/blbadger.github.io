@@ -554,11 +554,81 @@ A fully connected architecture seemed to be effective for small (28x28) monocolo
 
 and the generator mirrors this but with a latent space of 100, meaning that the entire network is over 230 million parameters which nears the GPU memory limit on colab for 32-digit float parameters.
 
-This network and a half-sized version (half the first layer's neurons) both make realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses are made.
+This network and a half-sized version (half the first layer's neurons) both make realistic images of flowers, but curiously explore a very small space: the following generator was trained using the same tulip and rose flower dataset as above, but only roses are represented among the outputs and even then only a small subset of possible roses (three to be specific) are generated.
 
 ![large fcgan]({{https://blbadger.github.io}}/neural_networks/bagan_generated_flowers.png)
 
-These images look quite realistic, but the truth is that they are far from what we want from a GAN: the are both overfit and underfit at the same time.  Certain images in the dataset have been approximately copied, but the distribution over all flowers has clearly not been captured.  This failure is known as 'mode collapse' which references the generator's distribution over the inputs, $p_{model} (x)$, that assignes very high probability to only a few inputs $x$ (ie may modes $x_1, x_2, x_3,... x_n$ have collapsed into two $x_1, x_2$ in the case above).  
+These images look quite realistic, but the truth is that they are far from what we want from a GAN: the are both overfit and underfit at the same time.  Certain images in the dataset have been approximately copied, but the distribution over all flowers has clearly not been captured.  This failure is known as 'mode collapse' which references the generator's distribution over the inputs, $p_{model} (x)$, that assignes very high probability to only a few inputs $x$ (ie may modes $x_1, x_2, x_3,... x_n$ have collapsed into a few modes $x_1, x_2, x_3$ in the case above).  
+
+It is more common for GANs to exhibit a weaker version of mode collapse, in which more than a few but not all the distribution of inputs of the dataset, $x\sim p_{data}$, are represented.  GANs typically develop sharp images that are visually realistic-looking (and can achieve low Frechet Inception Distance (FID) scores) but often 'overlook' certain inputs in doing so.  This is not penalized by the typical measure of a generator network (best visual samples or FID score etc) but becomes a more serious issue for conditional image generation.  Before exploring conditional generation, however, it is worth looking into how GANs may make higher-resolution images.
+
+### Increasing generator resolution
+
+We have so far focused on the generation of low-resolution images, specifically those not exceeding 3x128x128.  It is natural to wonder whether GANs may be used to generate higher-resolution inputs as well.  Given that deep learning models applied to tasks of image classification often are effective accross a range of input resolutions, it may be assumed that the same is true of the DCGan architecture used in the last section.
+
+Using the architectural choices of the DCGan for a higher-resolution image generation, we have the following generator (the discriminator mirrors this architecture) which takes a 1000-dimensional latent space vector and generates a color 512x512 output.
+
+```python
+class StableGenerator(nn.Module):
+
+	def __init__(self, minibatch_size):
+		super(StableGenerator, self).__init__()
+		self.input_transform = nn.ConvTranspose2d(1000, 2048, 4, 1, padding=0) # expects an input of shape 1x1000
+		self.fc_transform = nn.Linear(100, 1024*4*4) # alternative as described in paper
+		self.conv1 = nn.ConvTranspose2d(2048, 1024, 4, stride=2, padding=1) 
+		self.conv2 = nn.ConvTranspose2d(1024, 512, 4, stride=2, padding=1)
+		self.conv3 = nn.ConvTranspose2d(512, 256, 4, stride=2, padding=1)
+		self.conv4 = nn.ConvTranspose2d(256, 128, 4, stride=2, padding=1)
+		self.conv5 = nn.ConvTranspose2d(128, 64, 4, stride=2, padding=1)
+		self.conv6 = nn.ConvTranspose2d(64, 32, 4, stride=2, padding=1)
+		# switch second index to 3 for color images
+		self.conv7 = nn.ConvTranspose2d(32, 3, 4, stride=2, padding=1) # end with shape minibatch_sizex3x512x512
+
+		self.relu = nn.ReLU()
+		self.tanh = nn.Tanh()
+		self.minibatch_size = minibatch_size
+		self.batchnorm1 = nn.BatchNorm2d(1024)
+		self.batchnorm2 = nn.BatchNorm2d(512)
+		self.batchnorm3 = nn.BatchNorm2d(256)
+		self.batchnorm4 = nn.BatchNorm2d(128)
+		self.batchnorm5 = nn.BatchNorm2d(64)
+
+	def forward(self, input):
+		input = input.reshape(minibatch_size, 1000, 1, 1)
+		transformed_input = self.input_transform(input)
+		# transformed_input = self.fc_transform(input).reshape(minibatch_size, 1024, 4, 4)
+		out = self.conv1(transformed_input)
+		out = self.relu(out)
+		out = self.batchnorm1(out)
+
+		out = self.conv2(out)
+		out = self.relu(out)
+		out = self.batchnorm2(out)
+
+		out = self.conv3(out)
+		out = self.relu(out)
+		out = self.batchnorm3(out)
+
+		out = self.conv4(out)
+		out = self.relu(out)
+		out = self.batchnorm4(out)
+
+		out = self.conv5(out)
+		out = self.relu(out)
+		out = self.batchnorm5(out)
+
+		out = self.conv6(out)
+		out = self.relu(out)
+
+		out = self.conv7(out)
+		out = self.tanh(out)
+		return out
+
+```
+
+But when we apply this model to a dataset of 4k high-resolution images of landscapes, we find that the generator makes high-resolution but nonsensical images where a specific pattern or texture is repeated over and over.
+
+![large fcgan]({{https://blbadger.github.io}}/neural_networks/neural_networks/dcgan_512_landscapes.png)
 
 
 
