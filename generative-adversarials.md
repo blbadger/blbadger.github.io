@@ -583,46 +583,7 @@ class StableGenerator(nn.Module):
 		self.conv6 = nn.ConvTranspose2d(64, 32, 4, stride=2, padding=1)
 		# switch second index to 3 for color images
 		self.conv7 = nn.ConvTranspose2d(32, 3, 4, stride=2, padding=1) # end with shape minibatch_sizex3x512x512
-
-		self.relu = nn.ReLU()
-		self.tanh = nn.Tanh()
-		self.minibatch_size = minibatch_size
-		self.batchnorm1 = nn.BatchNorm2d(1024)
-		self.batchnorm2 = nn.BatchNorm2d(512)
-		self.batchnorm3 = nn.BatchNorm2d(256)
-		self.batchnorm4 = nn.BatchNorm2d(128)
-		self.batchnorm5 = nn.BatchNorm2d(64)
-
-	def forward(self, input):
-		input = input.reshape(minibatch_size, 1000, 1, 1)
-		transformed_input = self.input_transform(input)
-		# transformed_input = self.fc_transform(input).reshape(minibatch_size, 1024, 4, 4)
-		out = self.conv1(transformed_input)
-		out = self.relu(out)
-		out = self.batchnorm1(out)
-
-		out = self.conv2(out)
-		out = self.relu(out)
-		out = self.batchnorm2(out)
-
-		out = self.conv3(out)
-		out = self.relu(out)
-		out = self.batchnorm3(out)
-
-		out = self.conv4(out)
-		out = self.relu(out)
-		out = self.batchnorm4(out)
-
-		out = self.conv5(out)
-		out = self.relu(out)
-		out = self.batchnorm5(out)
-
-		out = self.conv6(out)
-		out = self.relu(out)
-
-		out = self.conv7(out)
-		out = self.tanh(out)
-		return out
+		...
 
 ```
 
