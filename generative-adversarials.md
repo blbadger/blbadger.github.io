@@ -628,7 +628,7 @@ class StableGenerator(nn.Module):
 
 But when we apply this model to a dataset of 4k high-resolution images of landscapes, we find that the generator makes high-resolution but nonsensical images where a specific pattern or texture is repeated over and over.
 
-![large fcgan]({{https://blbadger.github.io}}/neural_networks/neural_networks/dcgan_512_landscapes.png)
+![large fcgan]({{https://blbadger.github.io}}/neural_networks/dcgan_512_landscapes.png)
 
 
 
