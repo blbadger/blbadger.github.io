@@ -160,7 +160,7 @@ Earlier it was observed that for Vit B 32 the process of training led to the app
 
 Note the lack of consistent wavelet weight patterns in the input convolution, even after training (and even after extensive pretraining on weakly [supervised](https://arxiv.org/abs/2201.08371)). This observation may explain why [Xaio and colleagues](https://arxiv.org/pdf/2106.14881.pdf) found that replacing the strided input processing convolutions above with 4 layers of 3x3 convolutions (followed by one 1x1 layer) improves vision transformer training stability and convergence as well as ImageNet test accuracy. 
 
-### Representation quality decreases slowly with depth
+### Poor Input representation from untrained layer normalization
 
 Being that the input convolutional stem to the smaller ViT models is not capable of accurately representing an input, to understand later layers' representation capability we can substitute a trained input processing convolutional layer from a trained vision transformer, and chain this layer to the rest of a model from an untrained ViT.
 
@@ -193,7 +193,7 @@ When various layer representations are generated for ViT Base 32, it is clear th
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vit_trainedinput_untrained.png)
 
-It is apparent that all encoder layers have imperfections in certain patches, making them less accurate than the input convolution layer's representation.  It may be wondered why this is, being that the encoder layers have outputs of dimension $50x768$ which is slightly larger than the input convolutional output of $49x768$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). A clue as to the relatively poor representation of the untrained encoders lies comes when we compare the first encoder's representation in untrained (above) to trained (see the last section) Vit B 32 models.  The trained encoder has no significant decrease in representation accuracy compared to the input processing convolutional representation, whereas the untrained encoder does (relative to a trained input convolution representation).  Therefore one can guess that some component or components in the trained transformer encoder is capable of increasing the representation accuracy in these patches.
+It is apparent that all encoder layers have imperfections in certain patches, making them less accurate than the input convolution layer's representation.  It may be wondered why this is, being that the encoder layers have outputs of dimension $50x768$ which is slightly larger than the input convolutional output of $49x768$ due to the inclusion of a 'class token' (which is a broadcasted token that is used for the classification output). 
 
 Vision transformer models apply positional encodings to the tokens after the input convolution in the first transformer encoder block, and notably this positional encoding is itself trained: initialized as a normal distribution `nn.Parameter(torch.empty(1, seq_length, hidden_dim).normal_(std=0.02))`, this positional encoding tensor (`torch.nn.Parameter` objects are `torch.Tensor` subclasses) is back-propegated through such that the tensor elements are modified during training. It may be wondered if a change in positional encoding parameters is responsible for the change in first encoder layer representational accuracy.  This can be easily tested: re-assigning an untrained vision transformer's positional embedding parameters to that of a trained model's positional embedding parameters may be accomplished as follows:
 
@@ -210,7 +210,7 @@ When this is done, however, there is no noticeable difference in the representat
 
 ### Layer Normalization considered
 
-In the last section it was observed that changing the parameters of a layer normalization operation led to an increase in representational accuracy.  Later on this page we will see that layer normalization in general decreases representational accuracy, and so we will stop to consider what exactly this transformation entails.
+In the last section it was observed that changing the parameters (specifically swapping untrained parameters for trained ones) of a layer normalization operation led to an increase in representational accuracy.  Later on this page we will see that layer normalization tends to decrease representational accuracy, and so we will stop to consider what exactly this transformation entails.
 
 Given layer input $x$, the output of layer normalization $y$ is defined as
 
@@ -226,20 +226,21 @@ Thus it should come as no surprise that the vision transformer's representations
 
 ### Attention layers transmit very little input information
 
-It may be wondered how larger models represent their inputs.  For this we use a different image of a Tesla coil, and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512x512x3 = 786432$ elements in the input such that this model would does not experience actual non-invertibility.
+We will now switch to larger vision transformers, mostly because these are the ones that performed well on ImageNet and other similar benchmarks.  We can use a different image of a Tesla coil and apply this input to a ViT Large 16 model.  This model accepts inputs of size 512x512 rather than the 224x224 used above and makes patches of that input of size 16x16 such that there are $32^2 + 1 = 1024 + 1$ features per input, and the model stipulates an embedding dimension of 1024.  All together, this means that all layers from the input procesing convolution on contain $1025* 1024=1049600$ elements, which is larger than the $512x512x3 = 786432$ elements in the input.
 
-Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
+Transformer encoders contain a number of operations: layer normalization, self-attention, feedforward fully connected neural networks, and residual addition connections.  With the observation that removing layer normalization yields more accurate input representations from encoders before training in small vision transformers, it may be wondered what exactly in the transformer encoder module is necessary for representing an input, or equivalently what exactly in this module is capable of storing useful information about the input.
 
 Recall the architecture of the vision transformer encoder module:
 
 ![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
 
-We are now going to focus on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets and images are 512x512.  This model behaves similarly to ViT Base 32 with respect to the input convolution: applying a trained input convolution without switching to a trained first layernorm leads to patches of high-frequency signal in the input generation, which can be ameliorated by swapping to a trained layernorm.
+We are now going to focus on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets before ImageNet 1K, and images are all 3x512x512.  This model behaves similarly to ViT Base 32 with respect to the input convolution: applying a trained input convolution without switching to a trained first layernorm leads to patches of high-frequency signal in the input generation, which can be ameliorated by swapping to a trained layernorm.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_layernorm_trained.png)
 
-The approach we will follow is an ablation: each component will be removed one after the other in order to observe which ones are required for input representation from the module output.  Change are made sub-classing the `EncoderBlock` module of ViT and then simply removing the relevant portions.
-Instead we can modify the `EncoderBlock` class of the ViT, which is originally
+The approach we will follow is an ablation survey: each component will be removed one after the other in order to observe which ones are required for input representation from the module output.  Change are made sub-classing the `EncoderBlock` module of ViT and then simply removing the relevant portions.
+
+This class is originally as follows:
 
 ```python
 class EncoderBlock(nn.Module):
@@ -257,7 +258,7 @@ class EncoderBlock(nn.Module):
         return x + y
 ```
 
-to
+to remove residual connections, we remove the tensor addition steps as follows:
 
 ```python
 class EncoderBlock(nn.Module):
@@ -282,7 +283,7 @@ for i in range(24):
     vision_transformer.encoder.layers[i] = EncoderBlock(16, 1024, 4096, 0., 0.)
 ```
 
-One problem remains, and that is how to load trained model weights into our modified transformer encoders.  As we have re-built the encoders to match the architecture of the original, however, and as the residual connections contain no trainable parameters we can simply load the original trained model and replace each layer with the trained version of that layer.  For example, modifying the ViT L 16 to discard residual connections before adding weighted MLP layers we have
+Similar changes can be made to remove layer normalizations, MLPs, or self-attention modules. One problem remains, and that is how to load trained model weights into our modified transformer encoders.  As we have re-built the encoders to match the architecture of the original, however, and as the residual connections contain no trainable parameters we can simply load the original trained model and replace each layer with the trained version of that layer.  For example, modifying the ViT L 16 to discard residual connections before adding weighted MLP layers we have
 
 ```python
 for i in range(24): 
