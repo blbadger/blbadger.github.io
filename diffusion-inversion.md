@@ -20,4 +20,11 @@ To make this very difficult task approachable, we can break it into smaller sub-
 
 Let's try to generate images of handwritten digits using diffusion inversion.  
 
+![fully connected unet architecture]({{https://blbadger.github.io}}/neural_networks/fc_unet.png)
+
+This yields decent results after 1,000 epochs of training
+
+![mnist diffusion]({{https://blbadger.github.io}}/neural_networks/mnist_diffusion.png)
+
+
 ### Attention augmented unet diffision
