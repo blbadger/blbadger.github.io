@@ -199,7 +199,7 @@ The study of life, observations of which display many of the features of nonline
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_cropped.gif)
 
 
-### [Input Generation I](/input-generation.md)
+### [Input Generation from Classifier Models I](/input-generation.md)
 
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
@@ -214,12 +214,12 @@ The study of life, observations of which display many of the features of nonline
 ![resnet googlenet transformation](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
-### [Input Generation IV: Depth and Representation Accuracy](/depth-generality.md)
+### [Input Representations I: Depth and Representation Accuracy](/depth-generality.md)
 
 ![layer autoencoding](/neural_networks/representation_cover.png)
 
 
-### [Input Generation V: Vision Transformers](/vision-transformers.md)
+### [Input Representations II: Vision Transformers](/vision-transformers.md)
 
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
@@ -232,6 +232,11 @@ The study of life, observations of which display many of the features of nonline
 ### [Feature Visualization II: Deep Dream](/deep-dream.md)
 
 ![features](/neural_networks/deep_dream_cover.png)
+
+
+### [Diffusion Inversion](/diffusion-inversion.md)
+
+![features](/neural_networks/diffusion_cover.png)
 
 
 ### [Generative Adversarial Networks](/generative-adversarials.md)
@@ -255,14 +260,6 @@ The study of life, observations of which display many of the features of nonline
 
 
 ### [Training Memory](/neural-networks2.md)
-
-$$
-v_0 + i_0 \to o_0 \to v_1 \\
-v_1 + i_1 \to o_1 \to v_2 \\
-\vdots \\
-v_{n-1} + i_n \to o_n \to v_n
-$$
-
 
 ### [Limitations of Neural Networks](/nn-limitations.md)
 
