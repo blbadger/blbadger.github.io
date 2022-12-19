@@ -1,12 +1,14 @@
-## Autoencoder theory and representation
+## Autoencoders: learning by copying
 
-### Introduction: theory of autoencoders
+### Introduction
 
-### Recap of representation and generalization in classifiers
+Autoencoders (self-encoders) are machine learning models that attempt to replicate the input in their output. This endeavor may not seem to be very useful for tasks such as generating images or learning how inputs are related to one another, but it can be 
 
-### Autoencoders are capable of denoising an input without training to do so
 
 ### Overcomplete autoencoders do not typically memorize when trained via gradient descent
+
+### Autoencoders are capable of denoising an input without being training to do so
+
 
 ### Representations in Unet generative models with attention
 
