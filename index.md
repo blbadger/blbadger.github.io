@@ -226,12 +226,17 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Feature Visualization I](/feature-visualization.md)
 
-![features](/neural_networks/featuremap_cover2.png)
+![features 2](/neural_networks/featuremap_cover2.png)
 
 
 ### [Feature Visualization II: Deep Dream](/deep-dream.md)
 
 ![features](/neural_networks/deep_dream_cover.png)
+
+
+### [Autoencoders](/autoencoder-representation.md)
+
+![autoencoding of landscapes](/deep-learning/autoencoder_cover.png)
 
 
 ### [Diffusion Inversion](/diffusion-inversion.md)
