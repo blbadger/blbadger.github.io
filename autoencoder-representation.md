@@ -1,14 +1,34 @@
-## Autoencoders: learning by copying
+## Autoencoders: Learning by Copying
 
 ### Introduction
 
-Autoencoders (self-encoders) are machine learning models that attempt to replicate the input in their output. This endeavor may not seem to be very useful for tasks such as generating images or learning how inputs are related to one another, but it can be 
+Autoencoders (self-encoders) are machine learning models that attempt to replicate the input in their output. This endeavor may not seem to be very useful for tasks such as generating images or learning how inputs are related to one another, particularly when the models used are very large and fully capable of learning the identity function on the input.
+
+
 
 
 ### Overcomplete autoencoders do not typically memorize when trained via gradient descent
 
+In light of this finding, it may be wondered whether overcomplete autoencoders would actually learn an identity function as it has been assumed they would.  This can easily be tested by first training an overcomplete autoencoder to replicate inputs, and then observing the tendancy of that autoencoder to copy its inputs after small changes are made. One such change could be the addition of noise.  As shown in the figure below, we find that indeed an overcomplete autoencoder does not memorize its inputs.
+
+![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/overcomplete-cifar10-autoencoder.png)
+
+
 ### Autoencoders are capable of denoising an input without being training to do so
 
+To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it has been found that deep learning models lose information about the input in deep layers and tend to learn to infer that lost information upon training.  This process may be thought of as analagous to learning how to de-noise an input: for example, take the representations learned by a Unet model (wihtout residual layers).
+
+![landscape representations]({{https://blbadger.github.io}}/deep-learning/unet_landscape_representations.png)
+
+The trained Unet has clearly learned to reduce the noise in the last layer's representation relative to the untrained model. It may thus be wondered whether autoencoders are capable of learning to de-noise inputs.
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_512_denoising.png)
+
+The same is observed for Unet applied as an autoencoder for lower-resolution images, here 64x64 LSUN church images.
+
+![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches.png)
+
+![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
 
 ### Representations in Unet generative models with attention
 
