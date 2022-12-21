@@ -11,7 +11,7 @@ Autoencoders (self-encoders) are machine learning models that attempt to replica
 
 In light of this finding, it may be wondered whether overcomplete autoencoders would actually learn an identity function as it has been assumed they would.  This can easily be tested by first training an overcomplete autoencoder to replicate inputs, and then observing the tendancy of that autoencoder to copy its inputs after small changes are made. One such change could be the addition of noise.  As shown in the figure below, we find that indeed an overcomplete autoencoder does not memorize its inputs.
 
-![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/overcomplete-cifar10-autoencoder.png)
+![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/overcomplete_cifar10_autoencoder.png)
 
 
 ### Autoencoders are capable of denoising an input without being training to do so
