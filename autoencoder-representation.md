@@ -16,10 +16,10 @@ In light of these findings, it is worth asking whether overcomplete deep learnin
 
 ### Overcomplete autoencoders do not typically memorize when trained via gradient descent
 
-THe question of whether overcomplete autoencoders memorize their inputs can easily be tested by first training an autoencoder to replicate inputs, and then observing the tendancy of that autoencoder to copy its inputs after small changes are made.  Autoencoders may be trained in various ways, and we choose to employ the minimization of Mean-Squared Error between the input $a$ and reconstructed input $D(E(a))$ where $D$ signifies the decoder of hidden code $h$, $E$ the encoder which maps $a \to h$ and $O(a, \theta)$ the output of the encoder and decoder given model parameters $\theta$.
+The question of whether overcomplete autoencoders memorize their inputs can easily be tested by first training an autoencoder to replicate inputs, and then observing the tendancy of that autoencoder to copy its inputs after small changes are made.  Autoencoders may be trained in various ways, and we choose to employ the minimization of Mean-Squared Error between the input $a$ and reconstructed input $D(E(a))$ where $D$ signifies the decoder of hidden code $h$, $E$ the encoder which maps $a \to h$ and $O(a, \theta)$ the output of the encoder and decoder given model parameters $\theta$.
 
 $$
-L(O(a, \theta), a) = {|| D(E(a)) - a ||**2}_2
+L(O(a, \theta), a) = || D(E(a)) - a ||^2_2
 $$
 
 Mean-squared error loss in this case is equivalent to the cross entropy between the model's outputs and a Gaussian mixture model of those outputs.  More precisely assuming that the distribution of targets $y$ given inputs $a$ is Gaussian, the likelihood of $y$ given input $a$ is
@@ -37,17 +37,29 @@ $$
 g(a; w, \mu, \sigma) = \sum_i w_i \mathcal{N}(a; \mu_i, \sigma_i)
 $$
 
-Therefore we can be theoretically guaranteed that a sufficiently large autoencoder trained using MSE loss on the output alone will be capable of arbitrarily good approximations on a given input $a$ (and will not yield blurry samples).  
+Therefore it can be theoretically guaranteed that a sufficiently large autoencoder trained using MSE loss on the output alone will be capable of arbitrarily good approximations on a given input $a$ (and will not yield blurry samples).  
 
 This being the case, we can now test whether an overcomplete autoencoder trained using gradient descent to minimize MSE loss will memorize their inputs.  Memorization in this case is equivalent to learning the identity function, so we can test memorization by simply changing an input some small amount before observing the output.  If the identity function has been learned then the model will simply yield the same input back again.
 
-One such change to an input is the addition of noise.  In the following experiment we train a 5-hidden layer feedforward model, each layer having more elements that the input. As shown in the figure below, we find that indeed the overcomplete autoencoder does not memorize its inputs and in particular the model tends to remove some noise from the input.
+One such change to an input is the addition of noise.  In the following experiment we train a 5-hidden layer feedforward model, each layer having more elements that the input. As shown in the figure below, we find that indeed the overcomplete autoencoder does not memorize its inputs: upon the addition of Gaussian noise $\mathcal N(a \in [0, 1]; \mu=7/10, \sigma=2/10)$
 
 ![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/overcomplete_cifar10_autoencoder.png)
 
-### Autoencoders are capable of denoising an input without being training to do so
+This experiment provides evidence for two ideas: first that overcomplete autoencoders do not tend to learn the identity function as evidenced by the difference in the autoencoder's output given a noise-corrupted input, $O(\widehat a, \theta)$ compared to the original input $a$, and second that the output actually de-noises the input such that 
 
-To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it has been found that deep learning models lose information about the input in deep layers and tend to learn to infer that lost information upon training.  This process may be thought of as analagous to learning how to de-noise an input: for example, take the representations learned by a Unet model (wihtout residual layers).
+$$
+||O(\widehat a, \theta) - a|| < || \widehat a - a ||
+$$
+
+The latter observation is far from trivial: there is no guarantee that a function learned by an autoencoder, even if this function is not the identity, would be capable of de-noising an input. We next investigate why this would occur.
+
+### Autoencoders are capable of denoising an input without being explicitly training to do so
+
+To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input in deep layers and tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold in the layers preceeding.
+
+This process may be thought of as analagous to learning how to de-noise an input,
+
+For example, take the representations learned by a Unet model (wihtout residual layers).
 
 ![landscape representations]({{https://blbadger.github.io}}/deep-learning/unet_landscape_representations.png)
 
@@ -72,13 +84,13 @@ To see why perfect input representation in the output may be detrimental to gene
 Next consider the case of a denoising autoencoder.  This model is tasked with recoving the input $x$ drawn from the distribution $p(x)$ followed by a corruption process $C(x) = \tilde{x}$, minimizing the likelihood that the model output $ O(\tilde{x}, \theta) $ was not drawn from $p(x)$.  Under some assumptions this is equivalent to minimizing the mean squared error 
 
 $$
-L = {|| O(\tilde{x}, \theta) - x ||_2}^2
+L = || O(\tilde{x}, \theta) - x ||_2^2
 $$
 
 Now consider the effect of a perfect representation of the input $\tilde{x}$ in the output with respect to minimizing $L$.  Then we have
 
 $$
-L = {|| \tilde{x} - x ||_2}^2
+L = || \tilde{x} - x ||_2^2
 $$
 
 which is the MSE distance taken by the corruption process. Therefore the model is capable of inferring the corruption process without training.
