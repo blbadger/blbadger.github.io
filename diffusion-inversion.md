@@ -8,25 +8,40 @@ Suppose one were to wonder how to de-noise an image that was corrupted some smal
 
 As is often the case for poorly defined problems (in this case finding a general de-noiser), another way to address the problem of noise removal is to have a machine learning program learn how to accomplish noise removal in a probabalistic manner.  A trained program would ideally be able to remove each element of noise with high likelihood.
 
-One of the most effective ways of removing noise probabalistically is to use a deep learning model as the denoiser.  Doing so allows us to refrain from specifying what the noise should look like, even in very general terms, which allows for a greater number of possible noise functions to be approximated by the model.  The loss function for a denoising autoencoder is as follows:
+One of the most effective ways of removing noise probabalistically is to use a deep learning model as the denoiser.  Doing so allows us to refrain from specifying what the noise should look like, even in very general terms, which allows for a greater number of possible noise functions to be approximated by the model.  Various loss functions may be used for the denoising autoencoder, one of which is Mean Squared Error (MSE),
 
 $$
-L = || x - g(f(\widehat{x})) ||_2  \\
-= || x - g(h) ||_2
+L = || x - g(f(\widehat{x})) ||^2_2  \\
+L = || x - g(h) ||^2_2
 $$
 
 where $f(x)$ signifies the encoder which maps corrupted input $\widehat{x}$ to the hidden state $h$, also known as the 'code', and $g(h)$ maps this hidden state to the output.
 
+In order to be able to successfully remove noise from an input, it is necessary for a model to learn something about the distribution of all uncorrupted inputs $p(x_i)$.  Intuitively, the more a model is capable of recovering $p(x_i)$ the more it is capable of removing an arbitrary amount of noise.
+
 ### Introduction to Diffusion Inversion
 
-Now suppose that instead of recovering an input that has been corrupted slightly, we want instead to recover an input that was severely corrupted and is nearly indistinguisheable from noise.  We could attempt to train our denoising autoencoder used above on samples with larger and larger amounts of noise, but doing so in most cases does not yield even a rough approximation of the desired input.  This is because we are asking the autoencoder to perform a very difficult task because most images that one would want to reconstruct are really nothing like a typical noise sample at all. 
+Now suppose that instead of recovering an input that has been corrupted slightly, we want instead to recover an input that was severely corrupted and is nearly indistinguisheable from noise.  We could attempt to train our denoising autoencoder  on samples with larger and larger amounts of noise, but doing so in most cases does not yield even a rough approximation of the desired input.  This is because we are asking the autoencoder to perform a very difficult task because most images that one would want to reconstruct are really nothing like a typical noise sample at all. 
 
-To make this very difficult task approachable, we can break it into smaller sub-tasks that are more manageable.  This is the same approach taken to optimiziation of any deep learning algorithm: finding a minimal value via a direct method is intractable, so instead we use gradient descent and take many small steps towards a minimal point in the loss function space.  
+The property that natural images are very different from noise is the motivation behind denoising diffusion models, also called denoising diffusion probabalistic modeling or simply diffusion models for short, originally introduced by [Sohl-Dickinson and colleagues](https://arxiv.org/pdf/1503.03585.pdf).  
 
-In this context, we will employ an autoencoder to learn how to take very small steps to de-noise an input (assuming Gaussian noise), and then generate images by reversing this process with the starting point of pure noise.  Doing so is equivalent to diffusion inversion, also called denoising diffusion probabalistic modeling or simply diffusion models for short.
-
+To make the very difficult task of removing a large amount of noise from a distribution approachable, we can break it into smaller sub-tasks that are more manageable.  This is the same approach taken to optimiziation of any deep learning algorithm: finding a minimal value via a direct method is intractable, so instead we use gradient descent and the model will learn how many small steps towards a minimal point in the loss function space.  Here we will teach a denoising autoencoder to remove a small amount of noise but over many steps in order the reconstruct an input from pure noise.  In this context, we will employ an autoencoder to learn how to take very small steps to de-noise an input (assuming Gaussian noise), and then generate images by reversing this process with the starting point of pure noise. 
 
 ### Using Diffusion to generate handwritten digits
+
+Diffusion inversion is defined on a forward diffusion process, $q(x_t | x_{t-1})$ where $x_t$ signifies the input at time step $t$ in the diffusion process from 0 to the final time step $T$, ie $t \in {O, 1, ... T}$.  Therefore $x_0, x_1, ..., x_T$ are latent variables of the same size as the input.  This forward diffusion process is fixed and adds Gaussian noise at each step, such that for a fixed variance 'schedule' $\beta_t$ we can find the next forward diffusion step as follows:
+
+$$
+q(x_t | x_{t-1}) = \mathcal {N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf(I))
+$$
+
+
+
+$$
+p_{\theta} (x_0) = \int p(x_{0:T}) dx_{1:T}
+$$
+
+To generate samples, we want to learn the reverse diffusion process, $p_{\theta}(x_{t-1}, x_t)$.  For diffusion inversion, this is the Markov chain where transitions are Gaussian distributions learned during the training process (which adds Gaussian distributions). 
 
 Let's try to generate images of handwritten digits using diffusion inversion.  First we need an autoencoder, and for that we can turn to a miniaturized and fully connected version of the well-known [U-net](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28) architecture introduced by Ronnenberger and colleagues.  The U-net architecture will be considered in more detail later, as for now we will make do with the fully connected version shown below:
 
