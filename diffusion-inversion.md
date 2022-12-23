@@ -44,14 +44,29 @@ $$
 The variance schedule is typically linear, with later work finding that a cosine schedule is sometimes more effective. Rather than compute $q(x_t \vert x_{t-1})$ by iterating the above equation the necessary number of times, there is happily a closed form 
 
 $$
-q(x_t | x_0) = \mathcal{N}(x_t; \sqt{\bar \alpha_t}x_0, (1-\bar \alpha_t)\mathbf{I})
+q(x_t | x_0) = \mathcal{N}(x_t; \sqrt{\bar \alpha_t}x_0, (1-\bar \alpha_t)\mathbf{I})
 $$
 
-where $\alpha_t = 1 - \beta_t$ and $ \bar \alpha_t = \prod _ {s=1}^T \alpha_s$ is the cumulative variance.
+where $\alpha_t = 1 - \beta_t$ and $ \bar \alpha_t = \prod _ {s=1}^T \alpha_s$ is the cumulative variance by the end point $T$.
+
+Inverting the diffusion process is equivalent to starting with pure noise $x_T$ and ending with a sample $x_0$.  
 
 $$
 p_{\theta} (x_0) = \int p(x_{0:T}) dx_{1:T}
 $$
+
+With the (pure noise) starting point $x_T = \mathcal{N} (x_T; 0, I)$, a single step in the inverse diffusion process is as follows:
+
+$$
+p_{\theta}(x_{t-1} | x_t) = \mathcal{N} \left ( x_{t-1}; \mu_{\theta} (x_t, t), \Sigma_{\theta}(x_t, t) \right )
+$$
+
+Training the model $\theta$ involves estimating one (or more) of three quantities: the mean $\mu_{\theta} (x_t, t)$, variance $\mu_{\theta} (x_t, t)$, or else the noise distribution $\epsilon \sim \mathcal{N}(0, I)$ which was introduced by [Ho and colleagues](https://proceedings.neurips.cc/paper/2020/file/4c5bcfec8584af0d967f1ab10179ca4b-Paper.pdf).  Ho and colleagues innovated by showing that superior empricial results could be obtained by training on a variant of the variational lower bound 
+
+$$
+L(O(x, \theta)) = || \epsilon  - \epsilon_{\theta}(\sqrt{\bar \alpha_t}\epsilon, t)) ||_2^2
+$$
+
 
 To generate samples, we want to learn the reverse diffusion process, $p_{\theta}(x_{t-1}, x_t)$.  For diffusion inversion, this is the Markov chain where transitions are Gaussian distributions learned during the training process (which adds Gaussian distributions). 
 
