@@ -29,13 +29,25 @@ To make the very difficult task of removing a large amount of noise from a distr
 
 ### Using Diffusion to generate handwritten digits
 
-Diffusion inversion is defined on a forward diffusion process, $q(x_t | x_{t-1})$ where $x_t$ signifies the input at time step $t$ in the diffusion process from 0 to the final time step $T$, ie $t \in {O, 1, ... T}$.  Therefore $x_0, x_1, ..., x_T$ are latent variables of the same size as the input.  This forward diffusion process is fixed and adds Gaussian noise at each step, such that for a fixed variance 'schedule' $\beta_t$ we can find the next forward diffusion step as follows:
+Diffusion inversion is defined on a forward diffusion process, 
+
+$$
+q(x_t | x_{t-1})
+$$ 
+
+where $x_t$ signifies the input at time step $t$ in the diffusion process from 0 to the final time step $T$, ie $t \in {O, 1, ... T}$.  Therefore $x_0, x_1, ..., x_T$ are latent variables of the same size as the input.  This forward diffusion process is fixed and adds Gaussian noise at each step, such that for a fixed variance amount (known as a variance 'schedule') $\beta_t$ we can find the next forward diffusion step as follows:
 
 $$
 q(x_t | x_{t-1}) = \mathcal {N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \mathbf(I))
 $$
 
+The variance schedule is typically linear, with later work finding that a cosine schedule is sometimes more effective. Rather than compute $q(x_t \vert x_{t-1})$ by iterating the above equation the necessary number of times, there is happily a closed form 
 
+$$
+q(x_t | x_0) = \mathcal{N}(x_t; \sqt{\bar \alpha_t}x_0, (1-\bar \alpha_t)\mathbf{I})
+$$
+
+where $\alpha_t = 1 - \beta_t$ and $ \bar \alpha_t = \prod _ {s=1}^T \alpha_s$ is the cumulative variance.
 
 $$
 p_{\theta} (x_0) = \int p(x_{0:T}) dx_{1:T}
