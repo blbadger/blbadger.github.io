@@ -80,8 +80,10 @@ To summarize, training a diffusion inversion model as presented by Ho and collea
 To generate samples, we want to learn the reverse diffusion process, $p_{\theta}(x_{t-1}, x_t)$.  For diffusion inversion, this is the Markov chain where transitions are Gaussian distributions learned during the training process (which adds Gaussian distributions). Specifically, the input sampling process consists of first sampling the pure noise input $x_T \sim \mathcal{N}(0, \mathbf I) $ and then iterating for $t=T, T-1, ..., 2$, first choosing noise $z \sim \mathcal{N}(0, \mathbf I) $ and then sampling
 
 $$
-x_{t-1} = \frac{1}{\sqrt{\alpha_t} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar \alpha_t}\epsilon_\theta(x_t, t)  \right) + \sigma_t z
+x_{t-1} = \frac{1}{\sqrt{\alpha_t}} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar \alpha_t}}\epsilon_\theta(x_t, t)  \right) + \sigma_t z
 $$
+
+
 
 ### Using Diffusion to generate handwritten digits
 
