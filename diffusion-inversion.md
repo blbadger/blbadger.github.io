@@ -25,9 +25,9 @@ Now suppose that instead of recovering an input that has been corrupted slightly
 
 The property that natural images are very different from noise is the motivation behind denoising diffusion models, also called denoising diffusion probabalistic modeling or simply diffusion models for short, originally introduced by [Sohl-Dickinson and colleagues](https://arxiv.org/pdf/1503.03585.pdf).  
 
-To make the very difficult task of removing a large amount of noise from a distribution approachable, we can break it into smaller sub-tasks that are more manageable.  This is the same approach taken to optimiziation of any deep learning algorithm: finding a minimal value via a direct method is intractable, so instead we use gradient descent and the model will learn how many small steps towards a minimal point in the loss function space.  Here we will teach a denoising autoencoder to remove a small amount of noise but over many steps in order the reconstruct an input from pure noise.  In this context, we will employ an autoencoder to learn how to take very small steps to de-noise an input (assuming Gaussian noise), and then generate images by reversing this process with the starting point of pure noise. 
+To make the very difficult task of removing a large amount of noise from a distribution approachable, we can break it into smaller sub-tasks that are more manageable.  This is the same approach taken to optimiziation of any deep learning algorithm: finding a minimal value via a direct method is intractable, so instead we use gradient descent and the model will learn how many small steps towards a minimal point in the loss function space.  Here we will teach a denoising autoencoder to remove both small and larger amount of noise from a corrupted input so that samples may be generated over many steps in order the reconstruct an input from pure noise.  
 
-### Using Diffusion to generate handwritten digits
+### Diffusion Theory
 
 Diffusion inversion is defined on a forward diffusion process, 
 
@@ -61,14 +61,29 @@ $$
 p_{\theta}(x_{t-1} | x_t) = \mathcal{N} \left ( x_{t-1}; \mu_{\theta} (x_t, t), \Sigma_{\theta}(x_t, t) \right )
 $$
 
-Training the model $\theta$ involves estimating one (or more) of three quantities: the mean $\mu_{\theta} (x_t, t)$, variance $\mu_{\theta} (x_t, t)$, or else the noise distribution $\epsilon \sim \mathcal{N}(0, I)$ which was introduced by [Ho and colleagues](https://proceedings.neurips.cc/paper/2020/file/4c5bcfec8584af0d967f1ab10179ca4b-Paper.pdf).  Ho and colleagues innovated by showing that superior empricial results could be obtained by training on a variant of the variational lower bound 
+Training the model $\theta$ involves estimating one (or more) of three quantities: the mean $\mu_{\theta} (x_t, t)$, variance $\mu_{\theta} (x_t, t)$, or else the Gaussian noise distribution $\epsilon \sim \mathcal{N}(0, I)$ which was introduced by [Ho and colleagues](https://proceedings.neurips.cc/paper/2020/file/4c5bcfec8584af0d967f1ab10179ca4b-Paper.pdf).  Ho and colleagues innovated by showing that superior empricial results could be obtained by training on a variant of the variational lower bound in which the model $\epsilon _ \theta$ attempts to learn the noise distribution $\epsilon$ via MSE loss,
 
 $$
-L(O(x, \theta)) = || \epsilon  - \epsilon_{\theta}(\sqrt{\bar \alpha_t}\epsilon, t)) ||_2^2
+L = || \epsilon  - \epsilon_{\theta}(\sqrt{\bar \alpha_t}x_0 + \sqrt{1 - \bar \alpha_t}\epsilon, t)) ||_2^2
 $$
 
+where $t$ is chosen to be uniform in $[1, T]$ and $T$ typically is on the order of 1000.  The training process then consists of repeatedly sampling an input $x_0 \sim q(x_0)$ before choosing a time step $t$ and a Gausian distribution $\mathcal{N}(0, \mathbf{I})$ and then performing gradient descent on
 
-To generate samples, we want to learn the reverse diffusion process, $p_{\theta}(x_{t-1}, x_t)$.  For diffusion inversion, this is the Markov chain where transitions are Gaussian distributions learned during the training process (which adds Gaussian distributions). 
+$$
+\nabla_\theta || \epsilon  - \epsilon_{\theta}(\sqrt{\bar \alpha_t}x_0 + \sqrt{1 - \bar \alpha_t}\epsilon, t)) ||_2^2
+$$
+
+Here input images are expected to be scaled to have a minimum of -1 and maximum of 1  $x \in 0, 1, 2, ..., 255 \to x \in [-1, 1]$.  Ho and colleagues then re-weight $L$ to place more importance on larger corruptions (corresponding to larger $t$ values) reasoning that these would be more difficult for the model $\epsilon_\theta$ to learn than smaller corruptions.
+
+To summarize, training a diffusion inversion model as presented by Ho and colleagues consists of teaching the model to predict the noise in a corrupted image, with the reasoning that after this occurs the model will be able to remove noise from a Gaussian distribution to generate new samples. Later work finds that switching between predicting $\epsilon$ and predicting $x_0$ leads to more effective training.  THe model parameters $\theta$ are the same for all $t$ steps.
+
+To generate samples, we want to learn the reverse diffusion process, $p_{\theta}(x_{t-1}, x_t)$.  For diffusion inversion, this is the Markov chain where transitions are Gaussian distributions learned during the training process (which adds Gaussian distributions). Specifically, the input sampling process consists of first sampling the pure noise input $x_T \sim \mathcal{N}(0, \mathbf I) $ and then iterating for $t=T, T-1, ..., 2$, first choosing noise $z \sim \mathcal{N}(0, \mathbf I) $ and then sampling
+
+$$
+x_{t-1} = \frac{1}{\sqrt{\alpha_t} \left( x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar \alpha_t}\epsilon_\theta(x_t, t)  \right) + \sigma_t z
+$$
+
+### Using Diffusion to generate handwritten digits
 
 Let's try to generate images of handwritten digits using diffusion inversion.  First we need an autoencoder, and for that we can turn to a miniaturized and fully connected version of the well-known [U-net](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28) architecture introduced by Ronnenberger and colleagues.  The U-net architecture will be considered in more detail later, as for now we will make do with the fully connected version shown below:
 
