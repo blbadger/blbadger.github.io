@@ -591,6 +591,12 @@ But when we apply this model to a dataset of 4k high-resolution images of landsc
 
 ![large fcgan]({{https://blbadger.github.io}}/neural_networks/dcgan_512_landscapes.png)
 
+This problem has been observed in previous work, and is not too surprising when we consider all the ways that a generator could try to fool a discriminator.  Instead of applying a large discriminator and generator pair to high-resolution images, we can instead use a stack of two models: first a low-resolution image is synthesizes by one generative adversarial network pair, and then this low-resolution map is converted to a high-resolution one with another GAN.
+
+### Directing GANs with latent space conditioning
+
+Thus far we have been considering what is termred 'unconditional' image synthesis: given some dataset, the probability of a synthesized example $x_g$ of that dataset being similar to any one example $x_i$ is equal assuming that the GAN has not experienced mode collapse (which is unfortunately a rare scenario).  It may be wondered how one can direct the synthesis system such that one type of input may be more likely to be generated
+
 
 
 
