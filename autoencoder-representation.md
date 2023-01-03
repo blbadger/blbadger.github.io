@@ -91,7 +91,9 @@ $$
 f_n = w_1 a_1 + w_2 a_2 + \cdots + w_n a_n
 $$
 
-Now consider what it means for the output of $f$ to be non-unique with respect to the input: this means that many different vectors $a$ yields some value of $f(a)$.  Being that $f$ is composed of $m$ independent sub-functions, one typically would expect for 
+Now consider what it means for the output of $f$ to be non-unique with respect to the input: this means that many different vectors $a$ yields some value of $f(a)$.  Without prior knowledge, we can therefore form $m$ probability distributions on $a$ describing the likelihood of each $f_m^{-1}$ yielding $a$.  Ignoring approximate non-invertibility, these are uniform distributions over all possible valid $a$, and including approximate non-invertiblity these distributions are more complicated.
+
+Regardless of the individual distributions, however, the general version of the central limit theorem states that the combined distribution $f$ tends towards the Gausian distribution as $m \to \infty$.
 
 {% include youtube.html id='SzzIJD05aVI' %}
 
