@@ -79,21 +79,37 @@ So far we have seen that autoencoders are capable of removing noise from an inpu
 
 Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models.  
 
-To see why non-invertibility for a transformation consisting of a large number of independent elements results in Gaussian noise, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs, denoted as follows:
+To see why non-invertibility for a transformation consisting of a large number of independent elements results in the introduction of Gaussian noise in the output's representation of the input, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs as follows:
 
 $$
 f = \{ f_1(a_1, a_2, ..., a_n), f_2(a_1, a_2, ... a_n), ... ,f_m(a_1, a_2, ..., a_n)\}
 $$
 
-where each $f_n$ is typically a degree one polynomial on the input,
+where each $f_m$ is typically a degree one polynomial of the input,
 
 $$
-f_n = w_1 a_1 + w_2 a_2 + \cdots + w_n a_n
+f_m(a_1, a_2, ..., a_n) = w_{1, m} a_1 + w_{2, m} a_2 + \cdots + w_{n, m} a_n
 $$
 
-Now consider what it means for the output of $f$ to be non-unique with respect to the input: this means that many different vectors $a$ yields some value of $f(a)$.  Without prior knowledge, we can therefore form $m$ probability distributions on $a$ describing the likelihood of each $f_m^{-1}$ yielding $a$.  Ignoring approximate non-invertibility, these are uniform distributions over all possible valid $a$, and including approximate non-invertiblity these distributions are more complicated.
+Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different vectors $a$ yields some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible $a$ values by computing $f_m^{-1}(f(a))$.  Ignoring approximate non-invertibility, each distribution $p_{f_m(a))}$ is uniform over all valid inputs $\{ v_i \}$ given 
 
-Regardless of the individual distributions, however, the general version of the central limit theorem states that the combined distribution $f$ tends towards the Gausian distribution as $m \to \infty$.
+$$
+p(a | f(a)) = \mathcal{U} (v_i)
+$$
+
+Focusing on the first element of the input $a_1$ we have
+
+$$
+f(a_1) = f_0(a_1) + 
+$$
+
+Including approximate non-invertiblity these distributions are typically not uniform and are difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to the sum 
+
+$$
+
+$$
+
+This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
 {% include youtube.html id='SzzIJD05aVI' %}
 
