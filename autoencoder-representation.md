@@ -96,7 +96,7 @@ Now consider the significance of the output of $f$ being non-unique with respect
 Recalling that the output $f_m$ is a polynomial of all elements of $a_n$, we can express $f_m$ as follows
 
 $$
-f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a))_2 + \cdots + w_{n, m} * p(a_n | f(a))
+f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a)) + \cdots + w_{n, m} * p(a_n | f(a))
 $$
 
 where $p(a_n \vert f(a))$ signifies the probability of input element $a_n$ given the output $f(a)$. We can draw samples from these distributions such that random variable $A_1 \in p(a_1 \vert f(a))$, making
@@ -111,7 +111,7 @@ $$
 p(a_n | f(a)) = \mathcal{U} (a_{n, i})
 $$
 
-Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a)) are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.
+Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
