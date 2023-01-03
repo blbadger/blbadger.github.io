@@ -59,19 +59,42 @@ To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it 
 
 This process may be thought of as analagous to learning how to de-noise an input,
 
-For example, take the representations learned by a Unet model (wihtout residual layers).
+For example, take the last layer's representations of the input in trained versus untrained Unet model (wihtout residual layers) shown in the following figure.
 
 ![landscape representations]({{https://blbadger.github.io}}/deep-learning/unet_landscape_representations.png)
 
-The trained Unet has clearly learned to reduce the noise in the last layer's representation relative to the untrained model. It may thus be wondered whether autoencoders are capable of learning to de-noise inputs.
+The trained model has clearly learned to reduce the noise in the last layer's representation relative to the untrained model. It may thus be wondered whether autoencoders are capable of learning to de-noise inputs.
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_512_denoising.png)
 
-The same is observed for Unet applied as an autoencoder for lower-resolution images, here 64x64 LSUN church images.
+The same ability of autoencoders to de-noise is observed for Unet applied as an autoencoder for lower-resolution images, here 64x64 LSUN church images.
 
 ![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches.png)
 
 ![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
+
+### Image Generation with an Autoencoder Manifold Walk
+
+So far we have seen that autoencoders are capable of removing noise from an input even when they are not trianed to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input.
+
+Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models.  
+
+To see why non-invertibility for a transformation consisting of a large number of independent elements results in Gaussian noise, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs, denoted as follows:
+
+$$
+f = \{ f_1(a_1, a_2, ..., a_n), f_2(a_1, a_2, ... a_n), ... ,f_m(a_1, a_2, ..., a_n)\}
+$$
+
+where each $f_n$ is typically a degree one polynomial on the input,
+
+$$
+f_n = w_1 a_1 + w_2 a_2 + \cdots + w_n a_n
+$$
+
+Now consider what it means for the output of $f$ to be non-unique with respect to the input: this means that many different vectors $a$ yields some value of $f(a)$.  Being that $f$ is composed of $m$ independent sub-functions, one typically would expect for 
+
+{% include youtube.html id='SzzIJD05aVI' %}
+
 
 ### Representations in Unet generative models with attention
 
