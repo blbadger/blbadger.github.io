@@ -91,28 +91,31 @@ $$
 f_m(a_1, a_2, ..., a_n) = w_{1, m} a_1 + w_{2, m} a_2 + \cdots + w_{n, m} a_n
 $$
 
-Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different vectors $a$ yields some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible $a$ values by computing $f_m^{-1}(f(a))$.  Ignoring approximate non-invertibility, each distribution $p_{f_m(a))}$ is uniform over all valid inputs $\{ v_i \}$ given 
+Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different vectors $a$ yields some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible vectors of $a$ that satisfy $f_m^{-1}(f(a))$.  
+
+Recalling that the output $f_m$ is a polynomial of all elements of $a_n$, we can express $f_m$ as follows
 
 $$
-p(a | f(a)) = \mathcal{U} (v_i)
+f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a))_2 + \cdots + w_{n, m} * p(a_n | f(a))
 $$
 
-Focusing on the first element of the input $a_1$ we have
+where $p(a_n \vert f(a))$ signifies the probability of input element $a_n$ given the output $f(a)$. We can draw samples from these distributions such that random variable $A_1 \in p(a_1 \vert f(a))$, making
 
 $$
-f(a_1) = f_0(a_1) + 
+f_m(a) = w_{1, m} * A_1 + w_{2, m} * A_2 + \cdots + w_{n, m} * A_n
 $$
 
-Including approximate non-invertiblity these distributions are typically not uniform and are difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to the sum 
+Ignoring for the present approximate non-invertibility, for absolute non-invertibility each distribution $p(a_n)$ is uniform over all valid inputs $\{ a_{n, i} \}$, ie
 
 $$
-
+p(a_n | f(a)) = \mathcal{U} (a_{n, i})
 $$
+
+Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a)) are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
 {% include youtube.html id='SzzIJD05aVI' %}
-
 
 ### Representations in Unet generative models with attention
 
