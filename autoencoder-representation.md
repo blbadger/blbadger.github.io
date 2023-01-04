@@ -120,11 +120,11 @@ $$
 Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.  The classical central limit theorem states that for independent and identically distributed random variables $X_1, X_2, X_3, ...$
 
 $$
-lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
+\lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
 = \int_{-\infty}^{x} \frac{1}{2 \pi}e^{-y/2} dy
 $$
 
-where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}$ are identical or near-identical (as is usually the case upon model initialization where $w_{i, j} - 0 < \epsilon$).
+where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}$ are identical or near-identical as is usually the case upon model initialization where the weights are sufficiently close to the origin, $\vert w_{i, j} - 0 < \epsilon \vert \; \forall i, j$.
 
 For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
 
