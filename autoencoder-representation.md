@@ -73,9 +73,9 @@ The same ability of autoencoders to de-noise is observed for Unet applied as an 
 
 ![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
 
-### Image Generation with an Autoencoder Manifold Walk
+### Why Noninvertibility introduced Gaussian Noise before Training
 
-So far we have seen that autoencoders are capable of removing noise from an input even when they are not trianed to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input.
+So far we have seen that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input.
 
 Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models. 
 
@@ -105,10 +105,10 @@ $$
 f_m(a) = w_{1, m} * A_1 + w_{2, m} * A_2 + \cdots + w_{n, m} * A_n
 $$
 
-Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all valid inputs that satisfy 
+Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all indicies $i$ of valid values of element $n$ in the input, $a_{n, i}$ that satisfy 
 
 $$
-\{ a_{n, i} : f_m^{-1}(f(a_n)) = a_n \}
+\{ a_{n, i} : f_m^{-1}(f(a_n))_i \approx a_{n, i} \}
 $$
 
 so that the corresponding probability distributions are as follows:
@@ -135,6 +135,8 @@ It should be remembered, however, that this is only true if the weights $w_{1, m
 One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, ..., a_n$.  But this does not mean that random variables $A_1, A_2, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint conditional distribution $p(a_1, a_2, ..., a_n \vert f(a))$ is extremely difficult to explicitly describe.
 
 It may also seem strange to assume that we assume finite variance for $A_1, ..., A_n$ being that for an undercomplete linear transformation an infinite number of inputs $a_i$ may identically yield one output $f(a)$.  This may be done because the input generation process is effectively bounded (only generated inputs $a_g$ near the starting input $a_0$ will be found via gradient descent), and the same is true of gradient updates during the training process.
+
+### Image Generation with an Autoencoder Manifold Walk
 
 {% include youtube.html id='SzzIJD05aVI' %}
 
