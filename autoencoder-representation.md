@@ -91,9 +91,9 @@ $$
 f_m(a_1, a_2, ..., a_n) = w_{1, m} a_1 + w_{2, m} a_2 + \cdots + w_{n, m} a_n
 $$
 
-Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different vectors $a$ yields some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible vectors of $a$ that satisfy $f_m^{-1}(f(a))$.  
+Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different inputs $a$ yield some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $y = f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible inputs $x_i$ that satisfy $f(x_i) = y$.  
 
-Recalling that the output $f_m$ is a polynomial of all elements of $a_n$, we can express $f_m$ as follows
+Recalling that the output $f_m$ is a polynomial of all elements of $a$, we can express $f_m$ as follows
 
 $$
 f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a)) + \cdots + w_{n, m} * p(a_n | f(a))
@@ -105,17 +105,34 @@ $$
 f_m(a) = w_{1, m} * A_1 + w_{2, m} * A_2 + \cdots + w_{n, m} * A_n
 $$
 
-Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all valid inputs that satisfy $\{ a_{n, i} : $f_m^{-1}(f(a_n)) = a_n \}$ so that the probability distributions are as follows:
+Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all valid inputs that satisfy 
+
+$$
+\{ a_{n, i} : f_m^{-1}(f(a_n)) = a_n \}
+$$
+
+so that the corresponding probability distributions are as follows:
 
 $$
 p(a_n | f(a)) = \mathcal{U} (a_{n, i})
 $$
 
-Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.
+Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.  The classical central limit theorem states that for independent and identically distributed random variables $X_1, X_2, X_3, ...$
+
+$$
+lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
+= \int_{-\infty}^{x} \frac{1}{2 \pi}e^{-y/2} dy
+$$
+
+where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}}$ are too.
+
+For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
-One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, A_3, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, a_3, ..., a_n$.  But this does not mean that random variables $A_1, A_2, A_3, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint distribution $p(A_1, A_2, ..., A_n)$ is extremely difficult to explicitly describe.   
+One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, ..., a_n$.  But this does not mean that random variables $A_1, A_2, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint conditional distribution $p(a_1, a_2, ..., a_n \vert f(a))$ is extremely difficult to explicitly describe.
+
+It may also seem strange to assume that we assume finite variance for $A_1, ..., A_n$ being that for an undercomplete linear transformation an infinite number of inputs $a_i$ may identically yield one output $f(a)$.  This may be done because the input generation process is effectively bounded (only generated inputs $a_g$ near the starting input $a_0$ will be found via gradient descent), and the same is true of gradient updates during the training process.
 
 {% include youtube.html id='SzzIJD05aVI' %}
 
