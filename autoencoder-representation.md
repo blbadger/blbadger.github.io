@@ -77,7 +77,7 @@ The same ability of autoencoders to de-noise is observed for Unet applied as an 
 
 So far we have seen that autoencoders are capable of removing noise from an input even when they are not trianed to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input.
 
-Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models.  
+Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models. 
 
 To see why non-invertibility for a transformation consisting of a large number of independent elements results in the introduction of Gaussian noise in the output's representation of the input, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs as follows:
 
@@ -99,13 +99,13 @@ $$
 f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a)) + \cdots + w_{n, m} * p(a_n | f(a))
 $$
 
-where $p(a_n \vert f(a))$ signifies the probability of input element $a_n$ given the output $f(a)$. We can draw samples from these distributions such that random variable $A_1 \in p(a_1 \vert f(a))$, making
+where $p(a_n \vert f(a))$ signifies the probability of input element $a_n$ given the output $f(a)$. We can draw random variable samples from these probability distributions, $A_i \sim p(a_i \vert f(a))$ such that $f_m(a)$ can be expressed as
 
 $$
 f_m(a) = w_{1, m} * A_1 + w_{2, m} * A_2 + \cdots + w_{n, m} * A_n
 $$
 
-Ignoring for the present approximate non-invertibility, for absolute non-invertibility each distribution $p(a_n)$ is uniform over all valid inputs $\{ a_{n, i} \}$, ie
+Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all valid inputs that satisfy $\{ a_{n, i} : $f_m^{-1}(f(a_n)) = a_n \}$ so that the probability distributions are as follows:
 
 $$
 p(a_n | f(a)) = \mathcal{U} (a_{n, i})
@@ -114,6 +114,8 @@ $$
 Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
+
+One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, A_3, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, a_3, ..., a_n$.  But this does not mean that random variables $A_1, A_2, A_3, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint distribution $p(A_1, A_2, ..., A_n)$ is extremely difficult to explicitly describe.   
 
 {% include youtube.html id='SzzIJD05aVI' %}
 
