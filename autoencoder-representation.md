@@ -124,11 +124,13 @@ lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
 = \int_{-\infty}^{x} \frac{1}{2 \pi}e^{-y/2} dy
 $$
 
-where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}}$ are too.
+where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}$ are identical or near-identical (as is usually the case upon model initialization where $w_{i, j} - 0 < \epsilon$).
 
 For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
+
+It should be remembered, however, that this is only true if the weights $w_{1, m}, ..., w_{n, m}$ on the distributions are approximately identical, and if this is not true then we are by no means guaranteed that the noise will be Gaussian distributed after training. This is because training typically leads to changes in weights such that weights are no longer approximately identical.
 
 One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, ..., a_n$.  But this does not mean that random variables $A_1, A_2, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint conditional distribution $p(a_1, a_2, ..., a_n \vert f(a))$ is extremely difficult to explicitly describe.
 
