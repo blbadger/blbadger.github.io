@@ -174,7 +174,7 @@ Now $g_1$ is likely to be extremely similar or identical to $a$ as long as the l
 
 $$
 h_{n+1}' = \mathcal E(g_n) \\
-h_{n+1} = h_{n+1}' + \mathcal N(h_n'; 0, \epsilon)
+h_{n+1} = h_{n+1}' + \mathcal N(h_n'; 0, \epsilon) \\
 g_{n+1} = \mathcal D(h_{n+1})
 $$
 
