@@ -138,6 +138,48 @@ It may also seem strange to assume that we assume finite variance for $A_1, ...,
 
 ### Image Generation with an Autoencoder Manifold Walk
 
+Earlier on this page we have seen that even very large and overcomplete autoencoders do not learn the identity function but instead capture useful features of the distribution of inputs $p(a)$.  This being the case, it should be possible to generate inputs from the learned distribution $A \sim \widehat{p}(a)$ assuming that the learned distribution approximates the 'true' data distribution, ie $\widehat{p}(a) \approx p(a)$.
+
+Being that even very large autoencoders are effective de-noisers, 
+
+For overcomplete autoencoders, however, we are presented with a challenge: how do we navigate the latent space to synthesize a sample, given that for a high-dimensional latent space may be large such that only a small subregion of this space is actually explored by the model's samples?  For example, say the dimensionality of the smallest hidden layer of the autoencoder (which we take to be the latent space) is larger than the dimensionality of the input.  Simply assigning the values of this latent space as a random normal distribution before forward propegating this information to the output is not likely to yield an image representative of $p(a)$ unless samples of $p(a)$ yielded a similar distribution in that latent space.  
+
+This is extremely unlikely unless some constraints are placed on the model, and indeed a very similar model to the one we have considered here has been investigated.  These models are called variational autoencoders, and although effective in many aspects of probability distribution modeling they suffer from an inability to synthesize sharp images $A$, which can be attributed to the restrictive nature of mandating that the latent space be normally distributed.
+
+Instead of enforcing restrictions on our model, we can instead map inputs to the learned manifold and perform a walk on this manifold, effectively creating a Markov process to generate images.  Suppose we split the Unet autoencoder into two parts, an encoder $\mathcal E$ that takes inputs $a$ and yields a hidden space vector $h$ along with a decoder $\mathcal D$ that takes as an argument the hidden space vector $h$ and yields the synthesized image $g$
+
+$$
+g = \mathcal D(\mathcal E(a)) = \mathcal D(h)
+$$
+
+Being that $h$ is not low-dimensional but $\mathcal D(\mathcal E(a))$ has learned $p(a)$, we can first find the hidden space vector $h$ corresponding to some set of $A \sim p(a)$
+
+$$
+h_1' = \mathcal E(a)
+$$
+
+Adding a small amount of normally distributed noise to this latent space gives a new latent space point
+
+$$
+h_1 = h_1' + \mathcal N(h_1'; 0, \epsilon)
+$$
+
+Then using this latent space vector the corresponding synthesized images are
+
+$$
+g_1 = \mathcal D(h_1)
+$$
+
+Now $g_1$ is likely to be extremely similar or identical to $a$ as long as the learned manifold is not too unstable.  But if we then repeat this procedure many times such that the Markov chain may be expressed as
+
+$$
+h_{n+1}' = \mathcal E(g_n) \\
+h_{n+1} = h_{n+1}' + \mathcal N(h_n'; 0, \epsilon)
+g_{n+1} = \mathcal D(h_{n+1})
+$$
+
+we find that the latent space is effectively explored.  For a Unet trained on a small number of images of landscapes, we have
+
 {% include youtube.html id='SzzIJD05aVI' %}
 
 ### Representations in Unet generative models with attention
