@@ -138,9 +138,15 @@ It may also seem strange to assume that we assume finite variance for $A_1, ...,
 
 ### Image Generation with an Autoencoder Manifold Walk
 
-Earlier on this page we have seen that even very large and overcomplete autoencoders do not learn the identity function but instead capture useful features of the distribution of inputs $p(a)$.  This being the case, it should be possible to generate inputs from the learned distribution $A \sim \widehat{p}(a)$ assuming that the learned distribution approximates the 'true' data distribution, ie $\widehat{p}(a) \approx p(a)$.
+Earlier on this page we have seen that even very large and overcomplete autoencoders do not learn the identity function but instead capture useful features of the distribution of inputs $p(a)$.  We were motivated to investigate this question by the earlier findings that deep learning classification models tend to generalize even when they are capable of memorization, and that deep layers are typically incapable of exactly representing the input due to approximate and exact non-invertibility.
 
-Being that even very large autoencoders are effective de-noisers, 
+We can postulate that the theory behind generalization of classifiers also applies to autoencoders as long as they are trained using gradient descent, as there is no stipulation in the [original work](https://arxiv.org/abs/2211.09639) that the dimensionality of the output is less than the input, or that the models must be trained as classifiers (ie with one-element $\widehat y$ target values).  
+
+Likewise, it seems fairly obvious that an inability of a deep layer (which could be an autoencoder output) to represent the input at the start of training would also prevent memorization to some extent, being that it would be highly unlikely for a model to learn the identity function if deeper layers cannot 'know' exactly what the input looks like.
+
+We next saw how autoencoders are effective de-noisers, and that at the start of training typical deep learning archictures induce Gaussian noise in subsequent layers such that the model must learn to reduce such internal noise during training.  Being that there is no intrinsic difference between internal and input-supplied Gaussian noise, it is not particularly surprising that sufficiently deep autoencoders are capable of powerful noise reduction.
+
+This being the case, it should be possible to generate inputs from the learned distribution $A \sim \widehat{p}(a)$ assuming that the learned distribution approximates the 'true' data distribution, ie $\widehat{p}(a) \approx p(a)$.
 
 For overcomplete autoencoders, however, we are presented with a challenge: how do we navigate the latent space to synthesize a sample, given that for a high-dimensional latent space may be large such that only a small subregion of this space is actually explored by the model's samples?  For example, say the dimensionality of the smallest hidden layer of the autoencoder (which we take to be the latent space) is larger than the dimensionality of the input.  Simply assigning the values of this latent space as a random normal distribution before forward propegating this information to the output is not likely to yield an image representative of $p(a)$ unless samples of $p(a)$ yielded a similar distribution in that latent space.  
 
