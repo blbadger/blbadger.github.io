@@ -184,9 +184,26 @@ h_{n+1} = h_{n+1}' + \mathcal N(h_n'; 0, \epsilon) \\
 g_{n+1} = \mathcal D(h_{n+1})
 $$
 
-we find that the latent space is effectively explored.  For a Unet trained on a small number of images of landscapes, we have
+we find that the latent space is effectively explored.  For a Unet trained on 256 $512^2$ resolution images of landscapes, we have the following over 300 steps on a manifold walk:
 
 {% include youtube.html id='SzzIJD05aVI' %}
+
+Training a generative model on such a small number of images is not likely to yield very realistic inputs, and it appears that the images generated during the manifold walk are locally realistic but globally somewhat incoherent (observe how portions of sky and land tend to pop up over the entire image).
+
+Increasing the dataset size from 256 to 2048 (and decreasing the resolution to $256^2$) we have much more coherent generated images.  It is also interesting to note that we see movement between images learned from the training dataset, which is not surprising given that these are expected to exit on the learned manifold.
+
+{% include youtube.html id='Ui05wJ1ueso' %}
+
+It is more curious that we see a qualitatively similar manifold even without the addition of noise at each step of the Markov process.  More precisely, if we perform the manifold walk as follows
+
+$$
+h_{n+1} = \mathcal E(g_n) \\
+g_{n+1} = \mathcal D(h_{n+1})
+$$
+
+we find
+
+{% include youtube.html id='qVitpElMCCM' %}
 
 ### Representations in Unet generative models with attention
 
