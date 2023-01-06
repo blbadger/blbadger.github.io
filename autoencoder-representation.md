@@ -69,9 +69,15 @@ The trained model has clearly learned to reduce the noise in the last layer's re
 
 The same ability of autoencoders to de-noise is observed for Unet applied as an autoencoder for lower-resolution images, here 64x64 LSUN church images.
 
-![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches.png)
+![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches.png)
 
-![overcomplete autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
+With more training, we see that images may be generated even with a large addition of noise
+
+![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
+
+and for pure noise, we have
+
+![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_3.png)
 
 ### Why Noninvertibility introduced Gaussian Noise before Training
 
@@ -204,6 +210,11 @@ $$
 we find
 
 {% include youtube.html id='qVitpElMCCM' %}
+
+
+### Diffusion with no Diffusion
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
 ### Representations in Unet generative models with attention
 
