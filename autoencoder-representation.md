@@ -211,8 +211,25 @@ we find
 
 {% include youtube.html id='qVitpElMCCM' %}
 
+This shows us that much of the tendancy of repeated mapping to a manifold to lead to movement along that manifold occurs in party due to that manifold's instability.  We can pfind further evidence that most of the manifold walking ability is due to the manifold's instability by performing the same noise-less Markov procedure on autoencoders after varying amounts of training.  With increased training, the proportion of inputs that walk when repeatedly mapped to a manifold decreases substantially: with 200 further epochs, we find that this proportion lowers from 7/8 to around 1/8.
 
 ### Diffusion with no Diffusion
+
+Given that autoencodes are effective de-noisers, we can try to generate inputs using a procedure somewhat similar to that recently applied for [diffusion inversion](https://blbadger.github.io/diffusion-inversion.html).  The theory here is as follows: an autoencoder can remove most noise from an input, but cannot generate a realistic input from pure noise.  But if we repeatedly de-noise an input that is also repeatedly corrupted, an autoencoder may be capable of approximating a realistic image.
+
+To begin, we use a random Gassian distribution in the shape of our desired input $a_g$
+
+$$
+a_0 = \mathcal N(a; 7/10, 1/10)
+$$
+
+Now we repeatedly de-noise using our autoencoder but on a schedule: as the number of iterations increases to the final iteration $N$, the constant $c$ increases whereas the constant $d$ decreases commensurately.
+
+$$
+a_{n+1} = c * \mathcal D( \mathcal E(a)) + d * \mathcal N(a; 7/10, 1/10)
+$$
+
+The simples schedule is a linear one in which $c = n / N$ and $d = 1 - (n/N)$.  This works fairly well, and for 30 steps we have the following for a Unet trained on LSUN churches:
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
