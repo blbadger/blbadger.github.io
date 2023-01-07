@@ -229,7 +229,7 @@ $$
 a_{n+1} = c * \mathcal D( \mathcal E(a)) + d * \mathcal N(a; 7/10, 1/10)
 $$
 
-The simples schedule is a linear one in which $c = n / N$ and $d = 1 - (n/N)$.  This works fairly well, and for 30 steps we have the following for a Unet trained on LSUN churches:
+Arguably the simplest schedule is a linear one in which $c = n / N$ and $d = 1 - (n/N)$.  This works fairly well, and for 30 steps we have the following for a Unet trained on LSUN churches (note that each time point $t=n$ corresponds to $a_n - + d * \mathcal N(a; 7/10, 1/10)$ or in other words these images are the model's denoised output rather than $a_n$ which denotes a denoised output plus a new noise).
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
