@@ -121,8 +121,10 @@ and the fully connected autoencoder combined with this one-element time informat
 
 These results are somewhat more impressive when we consider that generative models typically struggle somewhat with un-normalized MNIST data, as most elements in the input are identically zero.  Experimenting with different learning rates and input modifications convinces us that diffusion inversion is happily rather insensitive to exact configurations, which is a marked difference from GAN training. 
 
-### Attention augmented unet diffision
+### Attention Augmented Unet Diffision
 
-For higher-resolution images the use of unmodified fully connected architectures is typically infeasible due to the very large number of parameters resulting.
+For higher-resolution images, the use of unmodified fully connected architectures is typically infeasible due to the very large number of parameters resulting.  Certain restrictions can be placed on the transformations between one layer and the next, and here we use both convolutions and attention in our denoising model to produce realistic images of churches.
+
+We employ a modification on the original Unet architecture such that attention has been added at each layer, modified from Phil Wang's [implementation](https://github.com/lucidrains/denoising-diffusion-pytorch) of the model used by [Ho and colleagues](https://arxiv.org/abs/2006.11239).  
 
 ![lsun churches 64 diffusion]({{https://blbadger.github.io}}/neural_networks/diffusion_cover.png)
