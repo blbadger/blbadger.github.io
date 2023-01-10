@@ -31,6 +31,7 @@ $$
 where $\mu (O(a, \theta))$ signifies the mean of the output and $y=a$ for an autoencoder.
 
 As for the case observed with variational autoencoders, it has been assumed that training autoencoders via MSE loss results in blurry output images because it implies that the input can be modelled by a Gaussian mixture model.  And for a sufficiently small model this is true, being that only a small number of Gaussian distributions may compose the mixture model.  
+
 But for a very large model it is not the case that MSE loss (or any maximum likelihood estimation approach) will necessarily yield blurry outputs because the Gaussian mixture model is a universal approximator of computable functions if given enough individual Gaussian distributions independent from each other given weights $w_1, w_2, ... w_n$
 
 $$
@@ -55,11 +56,9 @@ The latter observation is far from trivial: there is no guarantee that a functio
 
 ### Autoencoders are capable of denoising an input without being explicitly training to do so
 
-To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input in deep layers and tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold in the layers preceeding.
+To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input by the time the forward pass reaches deeper layers, and furthermore that moels tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold, which for datasets of natural images should not be noisy
 
-This process may be thought of as analagous to learning how to de-noise an input,
-
-For example, take the last layer's representations of the input in trained versus untrained Unet model (wihtout residual layers) shown in the following figure.
+The learning process for natural image classifiers is therefore observed empirically to be as analagous to learning how to de-noise an input. One may safely assume that the same de-noising would occur upon training an autoencoderTo see an illustration of this, take the last layer's representations of the input in trained versus untrained Unet model (without residual layers) shown in the following figure.
 
 ![landscape representations]({{https://blbadger.github.io}}/deep-learning/unet_landscape_representations.png)
 
@@ -75,13 +74,13 @@ With more training, we see that images may be generated even with a large additi
 
 ![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_2.png)
 
-and for pure noise, we have
+and for pure noise, we have the following:
 
 ![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_3.png)
 
 ### Why Noninvertibility introduced Gaussian Noise before Training
 
-So far we have seen that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input.
+So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input, but to accurately autoencoder the input this noise must be removed during the learning process.
 
 Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models. 
 
