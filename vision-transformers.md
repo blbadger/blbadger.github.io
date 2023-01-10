@@ -382,6 +382,32 @@ The same observations are made for an input image of a Dalmatian, which is one o
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dalmatian_dissection.png)
 
+### Attention transformations present challenges for Gradient Descent Optimization
+
+The process of layer representation visualization relies on gradient descent to modify an initially random input such that the layer in question cannot 'distinguish' between the modified input $a_g$ and some target input $a$.  We have seen already that self-attention layers and layer normalization transformations result in non-uniqueness in the forward pass such that many values of $a_g$ yield one identical $O(a_g, \theta)$.
+
+This is not necessarily a problem for the problem of classification: far from it, we typically want many inputs $a_1, a_2, ..., a_n$ to map to one class output $O(a_n, \theta) = y$ for a successful classification.  If the layer in question has separated the classes such that the layer's output $O_l(a_n, \theta)$ provides a simple mapping for subsequent layers, classification is likely to be successful.
+
+On the other hand, poor convergence of the gradient descent procedure is likely to indicate difficulty training.  Suppose that it takes a very large number of iterations $n$ for the input representation gradient descent
+
+$$
+a_{n+1} = a_n + \epsilon * \nabla_{a_n}J(O_l(a_n, \theta))
+$$
+
+(where $J(O(a_n, \theta))$ is typically a norm of the difference between the target output and the current output, $\vert \vert O_l(a_n, \theta) - O_l(a, \theta) \vert \vert$) such that for some sufficiently small $\delta$ we have
+
+$$
+|| O_l(a, \theta) - O_l(a_n, \theta) || < \delta
+$$
+
+Now consider the learning procedure of stochastic gradient descent in which the model's parameters $\theta$ are modified to minimize some objective function on the output $J(O(a, \theta))$.
+
+$$
+\theta_{n+1} = \theta_n - \epsilon * \nabla_{\theta}J(O(a, \theta))
+$$
+
+It can be recognized that these are closely related optimization problems. 
+
 ### Vision Transformer Deep Dream
 
 ### Attentionless Patch Model Representations
