@@ -225,12 +225,16 @@ $$
 where $\sigma$ and $\mu$ are chosen somewhat arbitrarily to be $7/10, 2/10$ respectively.  Now we repeatedly de-noise using our autoencoder but on a schedule: as the number of iterations increases to the final iteration $N$, the constant $c$ increases whereas the constant $d$ decreases commensurately.
 
 $$
-a_{n+1} = c * \mathcal D( \mathcal E(a)) + d * \mathcal N(a; \mu=7/10, \sigma=2/10)
+a_{n+1} = c * \mathcal D( \mathcal E(a)) + d * \mathcal N(a; \mu, \sigma)
 $$
 
 Arguably the simplest schedule is a linear one in which $c = n / N$ and $d = 1 - (n/N)$.  This works fairly well, and for 30 steps we have the following for a Unet trained on LSUN churches (note that each time point $t=n$ corresponds to the model's denoised output rather than $a_n$ which denotes a denoised output plus a new noise).
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
+
+
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_hidden_128_landscapes_denoising.png)
 
 ### Representations in Unet generative models with attention
 
