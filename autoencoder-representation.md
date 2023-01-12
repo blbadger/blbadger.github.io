@@ -56,9 +56,17 @@ The latter observation is far from trivial: there is no guarantee that a functio
 
 ### Autoencoders are capable of denoising an input without being explicitly training to do so
 
-To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input by the time the forward pass reaches deeper layers, and furthermore that moels tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold, which for datasets of natural images should not be noisy
+To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input by the time the forward pass reaches deeper layers, and furthermore that moels tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold, which for datasets of natural images should not normally be approximated by Gaussian noise.  The learning process for natural image classifiers is therefore observed empirically to be as analagous to learning how to de-noise an input. One may safely assume that the same de-noising would occur upon training an autoencoder.  
 
-The learning process for natural image classifiers is therefore observed empirically to be as analagous to learning how to de-noise an input. One may safely assume that the same de-noising would occur upon training an autoencoderTo see an illustration of this, take the last layer's representations of the input in trained versus untrained Unet model (without residual layers) shown in the following figure.
+For this section and much of the rest of this page, we will employ a more sophistocated autoencoder than the one used above.  We use U-net, a model introduced by [Ronneburger and colleagues](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28) for medical image segmentation.  
+
+The U-net was named after it's distinctive architecture, which in the figure supplied by Ronneburger and colleagues is as follows:
+
+![Unet architcture]({{https://blbadger.github.io}}/deep-learning/unet_architecture.png)
+
+For now, we make a few small adjustments to the Unet model: first we remove residual connections (which if not removed do lead to a model learning the identity function because it is effectively low-dimensional) and then we modify the stride of the upsampling convolutions to allow for increased resolution (code is available [here](https://github.com/blbadger/generative-models)).  Notably we perform both training and sampling without switching to evaluation mode, such that the batch normalization transformations do not switch the batch's statistics with averages accumulated during training.
+
+Returning to the question of the tendancy of training to reduce noise in an autoencoder, take the last layer's representations of the input in trained versus untrained Unet model (without residual layers) shown in the following figure.
 
 ![landscape representations]({{https://blbadger.github.io}}/deep-learning/unet_landscape_representations.png)
 
@@ -232,9 +240,15 @@ Arguably the simplest schedule is a linear one in which $c = n / N$ and $d = 1 -
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
+
+And for the same model applied to generate images over 200 steps, we have
+
+{% include youtube.html id='JLxOUVdNblI' %}
+
+
 This method of continually de-noising an image is conceptually similar to the method by which a random walk is taken around a learned manifold, detailed in the last section on this page.  Close observation of the images made above reveal very similar statistical characteristics to those generated using the random manifold self-map walk in the video below
 
-
+{% include youtube.html id='HbdgA3i6JOA' %}
 
 It is interesting to note that these statistical characteristics (for example, the dark maze-like lines and red surfaces on buildings that make a somewhat Banksy-style of generated image) are specific to the manifold learned. Observe that a similar model (Unet with a hidden MLP) is capable of remarkable de-noising ability but tends to make oil painting-style characteristic changes during the denoising process.
 
@@ -244,6 +258,9 @@ This suggests that the manifold learned when autoencoding images of landscapes (
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/nodiffusion_landscapes_hidden.png)
 
+Increasing the number of iterations of the markov sampling process to 200, we have
+
+{% include youtube.html id='f7tX2kOkn_8' %}
 
 ### Representations in Unet generative models with attention
 
