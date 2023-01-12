@@ -232,9 +232,18 @@ Arguably the simplest schedule is a linear one in which $c = n / N$ and $d = 1 -
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
+This method of continually de-noising an image is conceptually similar to the method by which a random walk is taken around a learned manifold, detailed in the last section on this page.  Close observation of the images made above reveal very similar statistical characteristics to those generated using the random manifold self-map walk in the video below
 
+
+
+It is interesting to note that these statistical characteristics (for example, the dark maze-like lines and red surfaces on buildings that make a somewhat Banksy-style of generated image) are specific to the manifold learned. Observe that a similar model (Unet with a hidden MLP) is capable of remarkable de-noising ability but tends to make oil painting-style characteristic changes during the denoising process.
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_hidden_128_landscapes_denoising.png)
+
+This suggests that the manifold learned when autoencoding images of landscapes (by this particular model) will also have oil painting-like characteristics. Indeed this appears to be the case, as when we use the diffusion-like markov sampling process to generate input images, we find that most have these same characteristics as well.
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/nodiffusion_landscapes_hidden.png)
+
 
 ### Representations in Unet generative models with attention
 
