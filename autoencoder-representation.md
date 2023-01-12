@@ -141,6 +141,20 @@ where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\
 
 For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
 
+Do these random variables in question satisfy Lindenberg's condition?  
+
+$$
+\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{k=1}^n \Bbb E[ (X_k - \mu_k)^2 \dot \mathtt{1}_{|X_k - \mu_k|< \epsilon s_n}] = 0
+$$
+
+for all $\epsilon > 0$ where 
+
+$$
+s_n^2 = \sum_{k=1}^n \sigma^2_k
+$$
+
+
+
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
 It should be remembered, however, that this is only true if the weights $w_{1, m}, ..., w_{n, m}$ on the distributions are approximately identical, and if this is not true then we are by no means guaranteed that the noise will be Gaussian distributed after training. This is because training typically leads to changes in weights such that weights are no longer approximately identical.
