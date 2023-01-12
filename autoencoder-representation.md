@@ -144,7 +144,7 @@ For the problem at hand, we are guaranteed independence when choosing $A_1, ...,
 Do these random variables in question satisfy Lindenberg's condition?  
 
 $$
-\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{k=1}^n \Bbb E[ (X_k - \mu_k)^2 \dot \mathtt{1}_{|X_k - \mu_k|< \epsilon s_n}] = 0
+\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{k=1}^n \Bbb E [ (X_k - \mu_k)^2 \cdot 1_{|X_k - \mu_k|< \epsilon s_n}] = 0
 $$
 
 for all $\epsilon > 0$ where 
