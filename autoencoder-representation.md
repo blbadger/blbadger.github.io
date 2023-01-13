@@ -276,6 +276,13 @@ Increasing the number of iterations of the markov sampling process to 200, we ha
 
 {% include youtube.html id='f7tX2kOkn_8' %}
 
+### The role of Batch Normalization in Denoising
+
+![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unethidden_nobatchnorm_denoising.png)
+
+![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_nobn_representations.png)
+
+
 ### Representations in Unet generative models with attention
 
 It may be wondered why representation clarity (or lack thereof) would be significant.  So far we have seen that the more accurate (ie Vit Large 16) vision transforms contain representations in their hidden layers that mirror those of convolutional models such as ResNet50, in which a near-perfect autoencoding of the input may be made without prior knowledge in early layers but a substantial amount of information is lost during the forward pass, leading to poor input representation accuracy in later layers.
