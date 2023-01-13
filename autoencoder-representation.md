@@ -60,7 +60,7 @@ To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it 
 
 For this section and much of the rest of this page, we will employ a more sophistocated autoencoder than the one used above.  We use U-net, a model introduced by [Ronneburger and colleagues](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28) for medical image segmentation.  
 
-The U-net was named after it's distinctive architecture, which in the figure supplied by Ronneburger and colleagues is as follows:
+The U-net was named after it's distinctive architecture, 
 
 ![Unet architcture]({{https://blbadger.github.io}}/deep-learning/unet_architecture.png)
 
