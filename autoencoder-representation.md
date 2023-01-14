@@ -62,7 +62,7 @@ For this section and much of the rest of this page, we will employ a more sophis
 
 The U-net was named after it's distinctive architecture, 
 
-![Unet architcture]({{https://blbadger.github.io}}/deep-learning/unet_architecture.png)
+![Unet architcture]({{https://blbadger.github.io}}/deep-learning/modified_unet_architecture.png)
 
 For now, we make a few small adjustments to the Unet model: first we remove residual connections (which if not removed do lead to a model learning the identity function because it is effectively low-dimensional) and then we modify the stride of the upsampling convolutions to allow for increased resolution (code is available [here](https://github.com/blbadger/generative-models)).  Notably we perform both training and sampling without switching to evaluation mode, such that the batch normalization transformations do not switch the batch's statistics with averages accumulated during training.
 
