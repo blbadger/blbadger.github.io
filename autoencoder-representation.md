@@ -264,7 +264,11 @@ This method of continually de-noising an image is conceptually similar to the me
 
 {% include youtube.html id='HbdgA3i6JOA' %}
 
-It is interesting to note that these statistical characteristics (for example, the dark maze-like lines and red surfaces on buildings that make a somewhat Banksy-style of generated image) are specific to the manifold learned. Observe that a similar model (Unet with a hidden MLP) is capable of remarkable de-noising ability but tends to make oil painting-style characteristic changes during the denoising process.
+It is interesting to note that these statistical characteristics (for example, the dark maze-like lines and red surfaces on buildings that make a somewhat Banksy-style of generated image) are specific to the manifold learned. Observe that a similar model, Unet with a hidden MLP, as follows:
+
+![unet modified architecture]({{https://blbadger.github.io}}/deep-learning/hidden_unet_architecture.png)
+
+is capable of remarkable de-noising ability but tends to make oil painting-style characteristic changes during the denoising process.
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_hidden_128_landscapes_denoising.png)
 
