@@ -280,9 +280,21 @@ Increasing the number of iterations of the markov sampling process to 200, we ha
 
 {% include youtube.html id='f7tX2kOkn_8' %}
 
+For an increase in sampled image detail, one can increase the number of feature maps per convolutional layer in the Unet autoencoder architecture. With a model that has twice the layers per convolution as the standard Unet, we have the following:
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/wide_unet_landscapes.png)
+
+It is interesting that although this model synthesizes images of greater detail and clarity that the narrower version, but that there are signs of greater global disorganization (black borders are often not straight lines, sky sometimes is generated under land).  
+
 ### The role of Batch Normalization in Denoising
 
+Comparing the fully connected autoencoder to the Unet version, it is apparent that the latter is a much more capable denoiser than the former. It is interesting to observe that batch normalization plays a key role in this denoising ability: removing this transformation from all convolutions in Unet results in autoencoder outputs that do not have noise, but are also statistically quite different than the original image. Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as argument the mean and standard deviation statistics of the synthesized images.
+
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unethidden_nobatchnorm_denoising.png)
+
+We can think of batch normalization as enforcing general statistical principles on the synthesized images. For each layer (also called a feature map) of a convolution, batch normalization learns the appropriate mean and standard deviation accross all samples in that batch necessary for copying a batch of images.  During the image synthesis process, batch normalization is apparently capable of enforcing similar statistics on the generated images.
+
+It may be wondered whether batch normalization is necessary for accurate input representation in deep layers of the Unet autoencoder after training.  The answer to this question is no, as with or without batch normalization the Unet output has more or less equivalent representation ability of the input after training.
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_nobn_representations.png)
 
