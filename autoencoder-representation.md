@@ -8,13 +8,13 @@ Historically, therefore, autoencoders were studied in two contexts: as undercomp
 
 A number of useful models have resulted from those efforts, including the contractive autoencoder which places a penalty on the norm of the Jacobian of the encoder with respect to the input, and the variational autoencoder which simultaneously seeks to minimize the difference between autoencoder output and input together with the difference between the hidden layer code $z$ given model inputs and a Gaussian distribution $N(z; I)$.
 
-The primary challenge of these regularized autoencoders is that they tend to be incapable of modeling the distribution of inputs given to the model to a sufficient degree, which manifests experimentally as blurriness in samples drawn from these models. For variational autoencoders, there is a clear reason why samples would be blurry: transforming a typical image using a Gaussian distribution (via convolution or a similar method) results in a blurry copy of that image, so it is little surprise that enforcing the encoding of an input to approximate a Gaussian distribution would have the same effect.  As a consequence of this challenge, much research on generative models (particularly for images) has shifted away to [generative adversarial networks](https://blbadger.github.io/generative-adversarials.html) and more recently [diffusion models](https://blbadger.github.io/generative-adversarials.html).
+The primary drawback of these regularized autoencoders is that they tend to be incapable of modeling the distribution of inputs given to the model to a sufficient degree, which manifests experimentally as blurriness in samples drawn from these models. For variational autoencoders, there is a clear reason why samples would be blurry: transforming a typical image using a Gaussian distribution (via convolution or a similar method) results in a blurry copy of that image, so it is little surprise that enforcing the encoding of an input to approximate a Gaussian distribution would have the same effect.  As a consequence of this challenge, much research on generative models (particularly for images) has shifted away to [generative adversarial networks](https://blbadger.github.io/generative-adversarials.html) and more recently [diffusion models](https://blbadger.github.io/generative-adversarials.html).
 
 Recently, however, two findings have brought the original assumption that overcomplete autoencoders would memorize their inputs into question. First, it has been observed that deep learning models for image classification tend to lose a substantial amount of input information by the time the input has been passed to deep layers, and that trained models learn to infer this lost information ([reference](https://arxiv.org/abs/2211.06496)).  Second it has been found that image classification models are more or less guaranteed to generalize to some extent when trained using gradient descent ([reference](https://arxiv.org/abs/2211.09639)).
 
 In light of these findings, it is worth asking whether overcomplete deep learning autoencoders will necessarily memorize their inputs.  The answer to this question is straightforward, as we will see in the next section.
 
-### Overcomplete autoencoders do not typically memorize when trained via gradient descent
+### Overcomplete autoencoders do not learn the identity function
 
 The question of whether overcomplete autoencoders memorize their inputs can easily be tested by first training an autoencoder to replicate inputs, and then observing the tendancy of that autoencoder to copy its inputs after small changes are made.  Autoencoders may be trained in various ways, and we choose to employ the minimization of Mean-Squared Error between the input $a$ and reconstructed input $D(E(a))$ where $D$ signifies the decoder of hidden code $h$, $E$ the encoder which maps $a \to h$ and $O(a, \theta)$ the output of the encoder and decoder given model parameters $\theta$.
 
@@ -54,7 +54,7 @@ $$
 
 The latter observation is far from trivial: there is no guarantee that a function learned by an autoencoder, even if this function is not the identity, would be capable of de-noising an input. We next investigate why this would occur.
 
-### Autoencoders are capable of denoising an input without being explicitly training to do so
+### Autoencoders are capable of denoising without being trained to do so
 
 To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it was found that deep learning models lose a substantial amount of information about the input by the time the forward pass reaches deeper layers, and furthermore that moels tend to learn to infer that lost information upon training.  The learning process results in arbitrary inputs being mapped to the learned manifold, which for datasets of natural images should not normally be approximated by Gaussian noise.  The learning process for natural image classifiers is therefore observed empirically to be as analagous to learning how to de-noise an input. One may safely assume that the same de-noising would occur upon training an autoencoder.  
 
@@ -86,7 +86,7 @@ and for pure noise, we have the following:
 
 ![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_3.png)
 
-### Why Noninvertibility introduced Gaussian Noise before Training
+### Why Noninvertibility introduces Gaussian noise to Deep Learning Model Representations
 
 So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input, but to accurately autoencoder the input this noise must be removed during the learning process.
 
@@ -95,7 +95,7 @@ Noise is introduced between subsequenty non-invertible (or approximately non-inv
 To see why non-invertibility for a transformation consisting of a large number of independent elements results in the introduction of Gaussian noise in the output's representation of the input, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs as follows:
 
 $$
-f = \{ f_1(a_1, a_2, ..., a_n), f_2(a_1, a_2, ... a_n), ... ,f_m(a_1, a_2, ..., a_n)\}
+f = \{ f_1(a_1, a_2, ..., a_n), f_2(a_1, a_2, ... a_n), ... , f_m(a_1, a_2, ..., a_n)\}
 $$
 
 where each $f_m$ is typically a degree one polynomial of the input,
@@ -152,8 +152,6 @@ for all $\epsilon > 0$ where
 $$
 s_n^2 = \sum_{k=1}^n \sigma^2_k
 $$
-
-
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
@@ -236,7 +234,7 @@ This shows us that much of the tendancy of repeated mapping to a manifold to lea
 
 ### Diffusion with no Diffusion
 
-Given that autoencodes are effective de-noisers, we can try to generate inputs using a procedure somewhat similar to that recently applied for [diffusion inversion](https://blbadger.github.io/diffusion-inversion.html).  The theory here is as follows: an autoencoder can remove most noise from an input, but cannot generate a realistic input from pure noise.  But if we repeatedly de-noise an input that is also repeatedly corrupted, an autoencoder may be capable of approximating a realistic image.
+Given that autoencoders are effective de-noisers, we can try to generate inputs using a procedure somewhat similar to that recently applied for [diffusion inversion](https://blbadger.github.io/diffusion-inversion.html).  The theory here is as follows: an autoencoder can remove most noise from an input, but cannot generate a realistic input from pure noise.  But if we repeatedly de-noise an input that is also repeatedly corrupted, an autoencoder may be capable of approximating a realistic image.
 
 To begin, we use a random Gassian distribution in the shape of our desired input $a_g$
 
@@ -254,11 +252,9 @@ Arguably the simplest schedule is a linear one in which $c = n / N$ and $d = 1 -
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/churches_markov_30.png)
 
-
 And for the same model applied to generate images over 200 steps, we have
 
 {% include youtube.html id='JLxOUVdNblI' %}
-
 
 This method of continually de-noising an image is conceptually similar to the method by which a random walk is taken around a learned manifold, detailed in the last section on this page.  Close observation of the images made above reveal very similar statistical characteristics to those generated using the random manifold self-map walk in the video below
 
@@ -284,9 +280,23 @@ For an increase in sampled image detail, one can increase the number of feature 
 
 ![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/wide_unet_landscapes.png)
 
-It is interesting that although this model synthesizes images of greater detail and clarity that the narrower version, but that there are signs of greater global disorganization (black borders are often not straight lines, sky sometimes is generated under land).  
+Although this model synthesizes images of greater detail and clarity that the narrower Unet, there are signs of greater global disorganization (black borders are often not straight lines, sky sometimes is generated under land).  
 
-### The role of Batch Normalization in Denoising
+One way to prevent this disorganization is to increase the number of convolutional layers present in the model (assuming fixed kernal dimension), and another is to employ at least one spatially unrestricted layer such as the fully connected layers above, or self-attention layers. We will investigate self-attention in later sections on this page, and for now will focus on increasing the number of convolutional layers.
+
+To gain intuition for why this is, consider the following example: suppose one were to first take a single convolutional layer as the encoder and single up-convolution as the decoder.  There would typically be no model parameters influencing both the pixels in the upper right and lower left of an input assuming that the convolutional kernal is significantly smaller that the input image dimension (as is usually the case).  But then there is no guarantee that the model should be able to generate an image observing the 'correct' relationship between these two pixels as determined by the training dataset.
+
+On the other hand, consider the extreme case in which many convolutions compose the input such that each image is mapped to a single latent space element, and subsequently many up-convolutions are performed to generate an output. There are necessarily model parameters that control the relationship of every pixel to every other pixel in this case.
+
+Some experimentation justifies this intuition: when we add an extra layer to both encoder and decoder of the wide Unet, we obtain much more coherent images.
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/wide_deep_unet_landscapes_128.png)
+
+It is interesting to note that the extra width (more precisely doubling the number of feature maps per convolutional layer) reduces the number of painting-like artefacts present in the synthesized images after the diffusion-like generation process.
+
+![denoising autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_deep_synthesis.png)
+
+### The Role of Batch Normalization in Denoising
 
 Comparing the fully connected autoencoder to the Unet version, it is apparent that the latter is a much more capable denoiser than the former. It is interesting to observe that batch normalization plays a key role in this denoising ability: removing this transformation from all convolutions in Unet results in autoencoder outputs that do not have noise, but are also statistically quite different than the original image. Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as argument the mean and standard deviation statistics of the synthesized images.
 
@@ -298,7 +308,7 @@ It may be wondered whether batch normalization is necessary for accurate input r
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_nobn_representations.png)
 
-### Representations in Unet generative models with attention
+### Representations in Unet generative models with Attention
 
 It may be wondered why representation clarity (or lack thereof) would be significant.  So far we have seen that the more accurate (ie Vit Large 16) vision transforms contain representations in their hidden layers that mirror those of convolutional models such as ResNet50, in which a near-perfect autoencoding of the input may be made without prior knowledge in early layers but a substantial amount of information is lost during the forward pass, leading to poor input representation accuracy in later layers.
 
@@ -319,6 +329,3 @@ L = || \tilde{x} - x ||_2^2
 $$
 
 which is the MSE distance taken by the corruption process. Therefore the model is capable of inferring the corruption process without training.
-
-
-### Autoencoder latent space
