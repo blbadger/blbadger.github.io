@@ -378,9 +378,11 @@ It may be wondered how much attention layers contribute to a trained model's inp
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dissection.png)
 
-The same observations are made for an input image of a Dalmatian, which is one of the 1000 classes that the vision transformer is trained upon.  Observe how the eyes of the layer representations of the ViT -attention resemble the full ViT moreso than the ViT -MLP.
+The same observations are made for an input image of a Dalmatian, which is one of the 1000 classes that the vision transformer is trained upon.
 
 ![tesla coil vit representations]({{https://blbadger.github.io}}/neural_networks/vitl16_trained_dalmatian_dissection.png)
+
+It may be appreciated that training results in a substantial increase in the ability of attention modules (in the context of ViT Large 16 without MLP layers) to represent an input, but at the same time it is apparent that each attention layer severely limits the information that passes through to the output.  
 
 ### Attention transformations present challenges for Gradient Descent Optimization
 
@@ -391,7 +393,7 @@ This is not necessarily a problem for the problem of classification: far from it
 On the other hand, poor convergence of the gradient descent procedure is likely to indicate difficulty training.  Suppose that it takes a very large number of iterations $n$ for the input representation gradient descent
 
 $$
-a_{n+1} = a_n + \epsilon * \nabla_{a_n}J(O_l(a_n, \theta))
+a_{n+1} = a_n - \epsilon * \nabla_{a_n}J(O_l(a_n, \theta))
 $$
 
 (where $J(O(a_n, \theta))$ is typically a norm of the difference between the target output and the current output, $\vert \vert O_l(a_n, \theta) - O_l(a, \theta) \vert \vert$) such that for some sufficiently small $\delta$ we have
@@ -406,7 +408,7 @@ $$
 \theta_{n+1} = \theta_n - \epsilon * \nabla_{\theta}J(O(a, \theta))
 $$
 
-It can be recognized that these are closely related optimization problems. 
+It can be recognized that these are closely related optimization problems.  In particular, observe how the ability to minimize $\vert \vert O_l(a_n, \theta) - O_l(a, \theta) \vert \vert$ via changes in $a_n$ as $n$ increases is related to the problem of minimizing $J(O(a, \theta)$ via changes in the parameters of the first layer of our model $\theta_1$.  To make things simpler, we can assume that the first layer is not fully connected by is composed of $m$ linear functions acting on $m$ input variables. 
 
 ### Vision Transformer Deep Dream
 
