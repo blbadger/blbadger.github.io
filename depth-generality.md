@@ -71,16 +71,20 @@ $$
 This tensor $y$ may be thought of as containing the representation of input $a$ in the layer in question.  To observe this representation, we then perform gradient descent on an initially randomized input $a_0$ 
 
 $$
-a_{n+1} = a_n + \epsilon \nabla_{a_n} O(a_n, \theta)
+a_{n+1} = a_n - \epsilon \nabla_{a_n} m\left( O(a_n, \theta) - O(a, \theta) \right
 $$
 
-in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  For an $L^2$ metric, the measure is denoted as
+in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  We employ the $L^1$ metric for gradient descent minimization, in which case the measure is
 
 $$
-m = ||O(a_g, \theta) - O(a, \theta)||_2
+m = \sum_i \vert O(a_g, \theta)_i - O(a, \theta)_i \vert
 $$
 
-which is the $L^2$ norm of the vector difference between representations $O(a_g, \theta)$ and $O(a, \theta)$.
+and typically employ the $L^2$ norm of the vector difference between representations $O(a_g, \theta)$ and $O(a, \theta)$ (with a reference value) as a way of observing how effective our miminization procedure was.  THe $L^2$ norm between output and target output is denoted as $\vert \vert O(a_g, \theta) - O(a, \theta) \vert \vert_2$ and is defined as follows:
+
+$$
+L^2 = \sqrt{\sum_i \left(O(a_g, \theta)_i - O(a, \theta)_i \right)^2}
+$$
 
 One can think of each step of the representation visualization process as being composed of two parts: first a forward pass and then a gradient backpropegation step.  An inability to represent an input is likely to be due to one of these two parts, and the gradient backpropegation will be considered first.
 
@@ -93,7 +97,6 @@ y' = \gamma y + \beta
 $$
 
 Then the gradient scale problem is averted.  But the initialization process of ResNet50 does indeed set the $\gamma, \beta$ parameters to $1, 0$ respectively, meaning that there is no reason why we would expect to experience problems finding an appropriate $\epsilon$.  Futhermore, general statistical measures of the gradient $\nabla_a O(a, \theta)$ are little changed when comparing deep to shallow layers, suggesting that the gradient used to update $a_n$ is not why the representation is poor.  
-
 Thuse we consider whether the forward pass is somehow the culprit of our poor representation.  We can test this by observing whether the output of our generated image does indeed approximate the tensor $y$ that we attempted to approximate: if so, then the gradient descent process was successful but the forward propegation loses too much information for an accurate representation.
 
 We can test whether the layer output $O(a, \theta)$ approximates $y$ using the $L^2$ metric above, thereby findin the measure of the 'distance' between these two points in the space defined by the number of parameters of the layer in question.  Without knowing the specifics of the values of $\theta$ in all layers leading up to the output layer, however, it is unclear what eactly this metric means, or in other words exactly how small it should be in order to determine if an output really approximates the desired $y$.  
