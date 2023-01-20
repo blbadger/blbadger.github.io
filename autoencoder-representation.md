@@ -141,7 +141,7 @@ where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\
 
 For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
 
-Do these random variables in question satisfy Lindenberg's condition?  
+Do these random variables in question satisfy Lindenberg's condition?  The condition is
 
 $$
 \lim_{n \to \infty} \frac{1}{s_n^2} \sum_{k=1}^n \Bbb E \lbrack (X_k - \mu_k)^2 \cdot 1_{|X_k - \mu_k|< \epsilon s_n} \rbrack = 0
@@ -152,6 +152,22 @@ for all $\epsilon > 0$ where
 $$
 s_n^2 = \sum_{k=1}^n \sigma^2_k
 $$
+
+which for our dataset is not entirely easy to show. But happily a strict subset of sequences of distriutions $X_1, X_2, ..., X_n$ that fulfill Lindenberg's condition also satisfy Lyapunov's condition, where defining
+
+$$
+s^2_n = \sum_{i=1}^n \sigma^2_i
+$$
+
+for some $\delta > 0$ there is
+
+$$
+\lim_{n \to \infty} \frac{1}{s^{2 + \delta}_n} \sum_{i=1}^n \Bbb E \left[ |X_i - \mu_i|^{2+\delta} \right] = 0
+$$
+
+The Lyapunov condition requires the sum of the expectations of the difference between random variable $X_i$ and the mean of that random variable $\mu_i$ to grow smaller and smaller than the sum of variances of those distributions as the number of random variables increases.  It is straightforward to see that this condition is upheld if all $X_i$ are approximately normal themselves, as many more samples are drawn within one unit of variance of the mean than otherwise for each random variable.
+
+For $\delta = 1$ we can check this condition empirically for a simplified MLP.
 
 This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
 
