@@ -326,7 +326,7 @@ $$
 
 Removal of layer normalization transformations does not yield as much of an increase in input representation accuracy for the last layer (24) of the ViT large 16.  This is because without normalization, at that depth the gradient begins to explode for certain patches: observe the high-frequency signal originating from two patches near the center of the layernormless example above. A very small gradient update rate $\epsilon$ must be used in the gradient descent procedure $a_{n+1} = a_n + \epsilon * \nabla_{a_n}O(a_n, \theta)$ to avoid sending those patch values to infinity.  In turn, the finding that a vision transformer (with attention modules intact) results in exploding gradients $\nabla_{a_n}O(a_n, \theta)$ suggests that this model is poorly conditioned.
 
-### Self attention transformations transmit very little input information 
+### Attention cannot transmit most input information
 
 Now we will examine the effects of residual connections on input representation in the context of vision transformers.  After removing all residual connections from each transformer encoder layer, we have
 
@@ -410,7 +410,13 @@ $$
 
 It can be recognized that these are closely related optimization problems.  In particular, observe how the ability to minimize $\vert \vert O_l(a_n, \theta) - O_l(a, \theta) \vert \vert$ via changes in $a_n$ as $n$ increases is related to the problem of minimizing $J(O(a, \theta)$ via changes in the parameters of the first layer of our model $\theta_1$.  To make things simpler, we can assume that the first layer is not fully connected by is composed of $m$ linear functions acting on $m$ input variables. 
 
-### Vision Transformer Deep Dream
+### Vision Transformer Feature Visualization and Deep Dream
+
+Convolutional models consist of layer of convolutional 'filters', also known as feature maps, that tend to learn to recognize specific patterns in the input (for a detailed look at this phenomenon, see [this page](https://blbadger.github.io/feature-visualization.html)).  These filters are linearly independent from one another at each layer, which makes it perhaps unsurprising that they would select for different possible input characteristics.
+
+Transformers do not contain such easily separated components: although each input is separated into a number of patches that are encoded in a linearly separable manner, the attention transformations act to mix this information, moving relevant information from one patch to another.  For an interesting look at this in the context of attention-only transformers applied to natural language, see [this work](https://transformer-circuits.pub/2021/framework/index.html).  Therefore we cannot expect for separate patches to encode linearly separable information.
+
+On the other hand, we may attempt to learn what each layer wants to 'see' by performing a procedure analagous to deep dream in convolutional models.
 
 ### Attentionless Patch Model Representations
 
