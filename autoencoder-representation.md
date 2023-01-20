@@ -86,11 +86,13 @@ and for pure noise, we have the following:
 
 ![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_3.png)
 
-### Why Noninvertibility introduces Gaussian noise to Deep Learning Model Representations
+### Why Noninvertibility introduces Gaussian Noise in Input Representations
 
-So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  There is a clear theoretical basis for why this would occur: approximate and absolute non-invertibility between subsequent layers of (even very large and overcomplete) autoencoders necessarily introduces noise into the deep layer's representations of the input, but to accurately autoencoder the input this noise must be removed during the learning process.
+So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  This may be understood to be equivalent to the finding that autoencoders learn manifolds that are not noisy, and map arbitrary inputs (even noisy ones) to that manifold.
 
-Noise is introduced between subsequenty non-invertible (or approximately non-invertible) layers for the simple reason that many possible inputs to that layer may yield one identical output.  These many possible inputs resemble Gaussian noise if if the layer in question contains a large number of independent elements, which is indeed the case for the distributed representations that compose deep learning models. 
+There is another related phenomenon that may also play a role in the ability of autoencoders to denoise: the non-invertibility of transformations in autoencoders introduces noise into the representations of the input, but much of this noise is removed from the representation during the training process.
+
+Noise is introduced between non-invertible (or approximately non-invertible) transformation representations for the simple reason that many possible inputs may yield one identical output.  These many possible inputs resemble Gaussian noise if the transformation in question contains a large number of independent elements, which is indeed the case for typical deep learning models. 
 
 To see why non-invertibility for a transformation consisting of a large number of independent elements results in the introduction of Gaussian noise in the output's representation of the input, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs as follows:
 
