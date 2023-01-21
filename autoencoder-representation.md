@@ -90,7 +90,9 @@ Early in this section we have seen that autoencoder training leads to the de-noi
 
 ![unet representations]({{https://blbadger.github.io}}/deep-learning/unet_representation_denoising.png)
 
-It may be wondered then if there is necessarily an equivalence relation between the ability of an autoencoder to accurately represent its input (and hence to de-noise the original representation as we will see in the next section) and the ability to accurately
+It may be wondered then if there is necessarily an equivalence relation between the ability of an autoencoder to accurately represent its input (and hence to de-noise the original representation as we will see in the next section) and the ability to accurately autoencode.  The answer here is no, not necessarily: given a powerful enough decoder, most information from the input can be lost and an accurate encoding can be made. For example, if a restrictive three-hidden-layer module is inserted into the Unet (see later sections for more details) then the model is capable of accurate autoencoding (and substantial de-noising) but does not accurately represent its input as shown in the following figure.
+
+![unet hidden module representation]({{https://blbadger.github.io}}/deep-learning/unet_hidden_representation.png)
 
 ### Why Noninvertibility introduces Gaussian Noise in Input Representations
 
@@ -353,3 +355,26 @@ L = || \tilde{x} - x ||_2^2
 $$
 
 which is the MSE distance taken by the corruption process. Therefore the model is capable of inferring the corruption process without training.
+
+These ideas have practical influence on the design of autoencoders when one attempts to add self-attention modules to the Unet backbone. Attention-augmented Unet architectures are typically used for Diffusion models in order to increase the expressivity of the model in question, and consist of Linear attention between high-dimensional (introduced by [Katharopoulos and colleagues](https://arxiv.org/abs/2006.16236)) and standard dot-product attention between lower-dimensional convolutional maps in parallel to residual connections. 
+
+The architecture we will use employs only linear attention, and may be visualized as follows:
+
+![attention unet architecture]({{https://blbadger.github.io}}/deep-learning/attention_unet_architecture.png)
+
+But after training, it is apparent that this model is not very effective at de-noising
+
+![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/Unet_attention_representation.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
