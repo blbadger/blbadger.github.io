@@ -86,6 +86,12 @@ and for pure noise, we have the following:
 
 ![unet autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_autoencoding_churches_3.png)
 
+Early in this section we have seen that autoencoder training leads to the de-noising of Unet's representation (in the output layer) of its input.  After we have seen how Unet is capable of an extraordinary amount of denoising even without being trained to do so.  It may be wondered if these two phenomena are connected, that is, if denoising occurs because the learned representation has less noise than the input. If this were the case then we would expect a noise-corrupted input to lose some of this noise not only in the autoencoder output but also in the autoencoder's output layer representation of its input.  Our expectation is correct, as we can see in the following figure:
+
+![unet representations]({{https://blbadger.github.io}}/deep-learning/unet_representation_denoising.png)
+
+It may be wondered then if there is necessarily an equivalence relation between the ability of an autoencoder to accurately represent its input (and hence to de-noise the original representation as we will see in the next section) and the ability to accurately
+
 ### Why Noninvertibility introduces Gaussian Noise in Input Representations
 
 So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not trained to do so, and rather are tasked with copying the input to the output.  This may be understood to be equivalent to the finding that autoencoders learn manifolds that are not noisy, and map arbitrary inputs (even noisy ones) to that manifold.
