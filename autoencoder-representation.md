@@ -366,8 +366,9 @@ But after training, it is apparent that this model is not very effective at de-n
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/Unet_attention_representation.png)
 
+It may be wondered how much information is capable of passing though each linear attention transformation.  If we restrict our model to just one transformation, we find 
 
-
+![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/linear_attention_copying.png)
 
 
 
