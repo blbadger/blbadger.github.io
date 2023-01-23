@@ -120,7 +120,7 @@ def layer_gradient(model, input_tensor, desired_output):
   ...
 	input_tensor.requires_grad = True
 	output = model(input_tensor).to(device)
-	focus = output[0][200][:][:] # the target to maximize the output
+	focus = output[0, 200, :, :] # the target to maximize the output
 	target = torch.ones(focus.shape).to(device)*200 # make a large target of the correct dims
 	loss = torch.sum(target - focus)
 	loss.backward()
