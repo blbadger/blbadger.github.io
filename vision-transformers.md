@@ -436,7 +436,7 @@ So far we have seen that Transformers tend to learn in a somewhat analagous fash
 
 Transformers we first designed to model language, rather than images of the natural world.
 
-c
+![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz.png)
 
 ![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz_2.png)
 
