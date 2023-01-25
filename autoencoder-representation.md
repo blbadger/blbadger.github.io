@@ -366,11 +366,15 @@ But after training, it is apparent that this model is not very effective at de-n
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/Unet_attention_representation.png)
 
-It may be wondered how much information is capable of passing though each linear attention transformation.  If we restrict our model to just one transformation, we find 
+It may be wondered how much information is capable of passing though each linear attention transformation.  If we restrict our model to just one linear attention transformation and input and output convolutions (each with 64 feature maps), we find that the model tends to learn to copy the input such that the model denoises the input poorly and is capable of near-perfect representation of its input, shown as follows:
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/linear_attention_copying.png)
 
+Linear attention was introduced primarily to reduce the quadratic time and memory complexity inherent in the dot product operation in the normal attention module with linear-time complexity operations (aggregation and matrix multiplication).  If we replace the linear attention module used above with the standard dot-product attention but limiting the input resolution to $32^2$ to prevent memory blow-up (while maintaining the input and output convolutions), we find that after training the autoencoder is capable of a less-accurate representation of the input than that which was obtained via linear attention.
 
+![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_copying.png)
+
+In some respects, the input representation (of the output layer) of the dot-product attention autoencoder in the last figure is surprisingly good given that this module.  This is perhaps less surprising when it is observed that the dot-product attention module does not actually have to be very efficient to transmit most of the information on the input because the number of elements of the input (3*32*32=3072) is much less than the number of elements in the output of the first convolution (16*16*32=16384).
 
 
 
