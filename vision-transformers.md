@@ -414,9 +414,33 @@ It can be recognized that these are closely related optimization problems.  In p
 
 Convolutional models consist of layer of convolutional 'filters', also known as feature maps, that tend to learn to recognize specific patterns in the input (for a detailed look at this phenomenon, see [this page](https://blbadger.github.io/feature-visualization.html)).  These filters are linearly independent from one another at each layer, which makes it perhaps unsurprising that they would select for different possible input characteristics.
 
-Transformers do not contain such easily separated components: although each input is separated into a number of patches that are encoded in a linearly separable manner, the attention transformations act to mix this information, moving relevant information from one patch to another.  For an interesting look at this in the context of attention-only transformers applied to natural language, see [this work](https://transformer-circuits.pub/2021/framework/index.html).  Therefore we cannot expect for separate patches to encode linearly separable information.
+At first glance, it would appear that transformers do not contain such easily separated components because although each input is separated into a number of patches that are encoded in a linearly separable manner, the attention transformations act to mix this information, moving relevant information from one token (in this case a patch) to another.  For an interesting look at this in the context of attention-only transformers applied to natural language, see [this work](https://transformer-circuits.pub/2021/framework/index.html) by Elhage and colleagues.  
 
-On the other hand, we may attempt to learn what each layer wants to 'see' by performing a procedure analagous to deep dream in convolutional models.
+![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vit_b_32_single_feature.png)
+
+For individual MLP output activations, we have
+
+![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vit_b_32_single_feature.png)
+
+Similar trends are observed for ViT Large 16, which underwent weakly supervised pretraining before ImageNet training
+
+![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vitl16_4_1_16_feature_maps.png)
+
+We can even perform deep dream, as for example using ViT Base 32 we have
+
+![vit dream]({{https://blbadger.github.io}}/neural_networks/vit_b_32_dream.png)
+
+### Spatial Learning in Language Models
+
+So far we have seen that Transformers tend to learn in a somewhat analagous fashion to convolutional models: each neuron in the attention module's MLP output acts similarly to a convolutional kernal, in that the activation of this neuron yields similar feature maps to the activation of all elements in one convolutional filter.
+
+Transformers we first designed to model language, rather than images of the natural world.
+
+c
+
+![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz_2.png)
+
+![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz_3.png)
 
 ### Attentionless Patch Model Representations
 
