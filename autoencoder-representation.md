@@ -374,10 +374,9 @@ Linear attention was introduced primarily to reduce the quadratic time and memor
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_copying.png)
 
-In some respects, the input representation (of the output layer) of the dot-product attention autoencoder in the last figure is surprisingly good given that this module.  This is perhaps less surprising when it is observed that the dot-product attention module does not actually have to be very efficient to transmit most of the information on the input because the number of elements of the input (3*32*32=3072) is much less than the number of elements in the output of the first convolution (16*16*32=16384).
+In some respects, the input representation (of the output layer) of the dot-product attention autoencoder in the last figure is surprisingly good given that this module. Indeed, if we remove input and output convoltutions such that only dot-product attention transforms the input to the output, an effective autoencoder may be trained that is capable of good input representation (but does not denoise)
 
-
-
+![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_only_copying.png)
 
 
 
