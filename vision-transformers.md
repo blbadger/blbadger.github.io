@@ -416,19 +416,19 @@ Convolutional models consist of layer of convolutional 'filters', also known as 
 
 At first glance, it would appear that transformers do not contain such easily separated components because although each input is separated into a number of patches that are encoded in a linearly separable manner, the attention transformations act to mix this information, moving relevant information from one token (in this case a patch) to another.  For an interesting look at this in the context of attention-only transformers applied to natural language, see [this work](https://transformer-circuits.pub/2021/framework/index.html) by Elhage and colleagues.  
 
-![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vit_b_32_single_feature.png)
+![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
 
 For individual MLP output activations, we have
 
-![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vit_b_32_single_feature.png)
+![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
 
 Similar trends are observed for ViT Large 16, which underwent weakly supervised pretraining before ImageNet training
 
-![vit feature maps]({{https://blbadger.github.io}}/neural_networks/vitl16_4_1_16_feature_maps.png)
+![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vitl16_4_1_16_feature_maps.png)
 
 We can even perform deep dream, as for example using ViT Base 32 we have
 
-![vit dream]({{https://blbadger.github.io}}/neural_networks/vit_b_32_dream.png)
+![vit dream]({{https://blbadger.github.io}}/deep-learning/vit_b_32_dream.png)
 
 ### Spatial Learning in Language Models
 
@@ -436,11 +436,11 @@ So far we have seen that Transformers tend to learn in a somewhat analagous fash
 
 Transformers we first designed to model language, rather than images of the natural world.
 
-![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz.png)
+![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz.png)
 
-![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz_2.png)
+![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_2.png)
 
-![gpt2 feature visualization]({{https://blbadger.github.io}}/neural_networks/gpt2_features_viz_3.png)
+![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_3.png)
 
 ### Attentionless Patch Model Representations
 
