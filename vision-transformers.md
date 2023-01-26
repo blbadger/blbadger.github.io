@@ -416,9 +416,13 @@ Convolutional models consist of layer of convolutional 'filters', also known as 
 
 At first glance, it would appear that transformers do not contain such easily separated components because although each input is separated into a number of patches that are encoded in a linearly separable manner, the attention transformations act to mix this information, moving relevant information from one token (in this case a patch) to another.  For an interesting look at this in the context of attention-only transformers applied to natural language, see [this work](https://transformer-circuits.pub/2021/framework/index.html) by Elhage and colleagues.  
 
-![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
+![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_feature_map.png)
 
-For individual MLP output activations, we have
+Maximizing the activation of many neurons in all patches yields
+
+![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_features_combined.png)
+
+For individual neurons in indivisual patches we have
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
 
