@@ -71,7 +71,7 @@ $$
 This tensor $y$ may be thought of as containing the representation of input $a$ in the layer in question.  To observe this representation, we then perform gradient descent on an initially randomized input $a_0$ 
 
 $$
-a_{n+1} = a_n - \epsilon \nabla_{a_n} m\left( O(a_n, \theta) - O(a, \theta) \right
+a_{n+1} = a_n - \epsilon \nabla_{a_n} m \left( O(a_n, \theta), O(a, \theta) \right)
 $$
 
 in order to find a generated input $a_g$ such that some metric $m$ between the output of our original image and this generated image is small.  We employ the $L^1$ metric for gradient descent minimization, in which case the measure is
@@ -80,7 +80,7 @@ $$
 m = \sum_i \vert O(a_g, \theta)_i - O(a, \theta)_i \vert
 $$
 
-and typically employ the $L^2$ norm of the vector difference between representations $O(a_g, \theta)$ and $O(a, \theta)$ (with a reference value) as a way of observing how effective our miminization procedure was.  THe $L^2$ norm between output and target output is denoted as $\vert \vert O(a_g, \theta) - O(a, \theta) \vert \vert_2$ and is defined as follows:
+and typically employ the $L^2$ norm of the vector difference between representations $O(a_g, \theta)$ and $O(a, \theta)$ (with a reference value) as a way of observing how effective our miminization procedure was.  The $L^2$ norm between output and target output is denoted as $\vert \vert O(a_g, \theta) - O(a, \theta) \vert \vert_2$ and is defined as follows:
 
 $$
 L^2 = \sqrt{\sum_i \left(O(a_g, \theta)_i - O(a, \theta)_i \right)^2}
