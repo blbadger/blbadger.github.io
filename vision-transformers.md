@@ -424,7 +424,7 @@ $$
 a' = \underset{a}{\mathrm{arg \; max}} \; z^l(a, \theta)
 $$
 
-Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs, so instead we perform gradient descent on an initially randoim input $a_0$ such that after many steps we have an input $a_g$ that approximates $a'$ in that the activation(s) of component $z_l$ is maximized subject to certain constraints. The gradient here is the tensor of partial derivatives of the $L_1$ metric between a tensor with all values equal to some large constant $C$ and the tensor activation of the element $z^l$
+Finding the exact value of $a'$ can be very difficult for non-convex functions like hidden layer outputs, so instead we perform gradient descent on an initially random input $a_0$ such that after many steps we have an input $a_g$ that approximates $a'$ in that the activation(s) of component $z_l$ is maximized subject to certain constraints. The gradient here is the tensor of partial derivatives of the $L_1$ metric between a tensor with all values equal to some large constant $C$ and the tensor activation of the element $z^l$
 
 $$
 g = \nabla_a (C - z^l_f(a, \theta))
@@ -433,20 +433,20 @@ $$
 At each step of the gradient descent procedure, the input $a_k$ is updated to $a_{k+1}$ as follows
 
 $$
-a_{k+1} = \mathcal N*(a_k - \epsilon * g_k)
+a_{k+1} = \mathscr J \left( \mathcal N_x(a_k - \epsilon * g_k) \right)
 $$
 
-where $\mathcal N*$ signifies a combination of Gaussian blurring (to reduce high-frequency input features) and random positional jitter, which is explained in more detail [here](https://blbadger.github.io/input-generation.html#jitter-using-cropped-octaves).  
+where $\mathcal N$ signifies Gaussian blurring  (to reduce high-frequency input features) and $\mathscr J$ is random positional jitter, which is explained in more detail [here](https://blbadger.github.io/input-generation.html#jitter-using-cropped-octaves).  
 
 For clarity, the following figure shows the shape of the tensors we will reference for this page.  We will focus on the generated inputs that result from maximizing the activation of one or more neurons from the output layer of the MLP layers in various components.  
 
 ![vit feature activations]({{https://blbadger.github.io}}/deep-learning/transformer_activation_explained.png)
 
-It is important to note that the MLP is identically applied across all patches of the input, meaning that it has the same weights and biases no matter where in the image it is applied to.  This is very similar to a convolutional operation in which one kernal is scanned across an entire image, except instead of yielding many sets of 2-dimensional tensors (one set per kernal) we instead have many sets of 1-dimensional tensors (one per patch).
+It is important to note that the transformer's MLP is identically applied across all patches of the input, meaning that it has the same weights and biases no matter where in the image it is applied to.  This is similar to a convolutional operation in which one kernal is scanned across an entire image, except that for the vision transformer the output may be thought of as a stack
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_feature_map.png)
 
-Maximizing the activation of many neurons in all patches yields
+Maximizing the activation of many neurons  in all patches yields
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_features_combined.png)
 
