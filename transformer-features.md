@@ -1,6 +1,6 @@
 ## Transformer and Mixer Features
 
-### Vision Transformer Feature Visualization and Deep Dream
+### Vision Transformer Feature Visualization
 
 Convolutional models consist of layer of convolutional 'filters', also known as feature maps, that tend to learn to recognize specific patterns in the input (for a detailed look at this phenomenon, see [this page](https://blbadger.github.io/feature-visualization.html)).  These filters are linearly independent from one another at each layer, which makes it perhaps unsurprising that they would select for different possible input characteristics.
 
@@ -48,7 +48,33 @@ Similar trends are observed for ViT Large 16, which underwent weakly supervised 
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vitl16_4_1_16_feature_maps.png)
 
-We can even perform deep dream, as for example using ViT Base 32 we have
+### MLP Mixer Feature Map
+
+Thus far we have seen that we may recover feature maps from individual neurons of vision transformer encoder block outputs. It may be wondered if the same is true for attentionless transformers, introduced independently by [Melas-Kyriazi](https://arxiv.org/abs/2105.02723) and [Tolstikhin](https://arxiv.org/abs/2105.01601).  The model used on this page is that of Melas-Kyriazi, and may be found [here](https://github.com/lukemelas/do-you-even-need-attention).  
+
+These models do not use the attention operation to mix information between image patches but instead simply transpose the input and ad a feed-forward layer (also called MLPs) applied to a specified subset of neurons from each patch, followed by a second feed-forward layer on the patches themselves. 
+
+As for vision transformers, we find that these models form features in which each neuron of the second MLP layer (applied to each patch independently) is activated by a stereotypical pattern in early layers, and that this pattern becomes more abstract and complex the deeper the module in question.
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_feature_map.png)
+
+But there begin to be notable differences between vision transformers with attention layers and MLP mixers if we start to consider what a single neuron from a single patch focuses upon: as seen in the last section for ViTs, a neuron from a given patch will generally focus on the input region fed to that patch.  For mlp mixers, however, we find that even in relatively shallow layers a neuron from a given patch typically focuses on the entirety of the input image, or else on a section of the image that does not correspond to the position of the patch in question.
+
+This phenomenon can be most clearly seen in the following figure: observe how even at block 4 we find neurons in which it is impossible to know which patch they belong to without prior knowledge.
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_individual_features.png)
+
+This suggests that the 'Mixer' is also an apt name for this architecture, being that the MLP-Mixer is apparently better at mixing information from different patches than the vision transformer is.  We can assess this further by observing the ability of all neurons of certain patches to re-form an input image in mixers compared to ViTs.  
+
+When the ability of the first 28 patches (approximately the first two rows for a 224x224 image) to re-create an input is tested, it is clearly seen that this subsection in mixers but not vision transformers are capable of representing an input to any degree of accuracy
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_vs_vit.png)
+
+### Vision Transformer Deep Dream
+
+Given some image, it may be wondered how a computer vision model would modify that image in order to increase the activation of some component of that model.  This is similar to the feature visualization procedure used above but starts with a natural image rather than random noise.
+
+For a trained ViT Base 32 we have the following:
 
 ![vit dream]({{https://blbadger.github.io}}/deep-learning/vit_b_32_dream.png)
 
