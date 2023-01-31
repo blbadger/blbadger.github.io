@@ -216,12 +216,12 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ![resnet googlenet transformation](/neural_networks/resnet_vectorized_to_be_googlenet_goldfinch.png)
 
 
-### [Input Representations I: Depth and Representation Accuracy](/depth-generality.md)
+### [Input Representation I: Depth and Representation Accuracy](/depth-generality.md)
 
 ![layer autoencoding](/neural_networks/representation_cover.png)
 
 
-### [Input Representations II: Vision Transformers](/vision-transformers.md)
+### [Input Representation II: Vision Transformers](/vision-transformers.md)
 
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
@@ -234,6 +234,9 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ### [Feature Visualization II: Deep Dream](/deep-dream.md)
 
 ![features](/neural_networks/deep_dream_cover.png)
+
+
+### [Feature Visualization III: Transformers and Mixers](/transformer-features.md)
 
 
 ### [Autoencoders](/autoencoder-representation.md)
