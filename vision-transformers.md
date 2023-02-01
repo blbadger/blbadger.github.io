@@ -414,9 +414,11 @@ It can be recognized that these are closely related optimization problems.  In p
 
 After the successes of vision transformers, [Tolstikhin and colleagues](https://proceedings.neurips.cc/paper/2021/hash/cba0a4ee5ccd02fda0fe3f9a3e7b89fe-Abstract.html) and independently [Melas-Kyriazi](https://arxiv.org/abs/2105.02723) investigated whether or not self-attention is necessary for the efficacy of vision transformers. Somewhat surprisingly, the answer from both groups is no: replacing the attention layer with a fully connected layer leads to a minimal decline in model performance, but requires significantly less compute than the tranditional transformer model.  When compute is constant, Tolstikhin and colleagues find that there is little difference or even a slight advantage to the attentionless models, and Melas-Kyriazi finds that conversely using only attention results in very poor performance.
 
-The models investigated have the same encoder stacks present in the Vision transformers, but each encoder stack contains two fully connected layers.  The first fully connected layer is applied to the features of each patch, and for example if the hidden dimension of each patch were 512 then that is the dimension of each parallel layer's input.  The second layer is applied over the patch tokens (such that the dimension of each MLP in that layer's input is the number of tokens the model has).  These models were referred to as 'MLP-Mixers' by the Tolstikhin group, which included this helpful graphical sumary of the architecture: 
+The models investigated have the same encoder stacks present in the Vision transformers, but each encoder stack contains two fully connected layers.  The first fully connected layer is applied to the features of each patch, and for example if the hidden dimension of each patch were 512 then that is the dimension of each parallel layer's input.  The second layer is applied over the patch tokens (such that the dimension of each MLP in that layer's input is the number of tokens the model has).These models were referred to as 'MLP-Mixers' by the Tolstikhin group, which included this helpful graphical sumary of the architecture: 
 
 ![mlp mixer architecture]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_architecture.jpeg)
+
+There is a notable difference between the mixer architecture and the Vision Transformer: each encoder block in the ViT places the attention layer first and follows this by the MLP layer, whereas each block in the attentionless mixer architecture has the feature MLP first and mixer second.
 
 We investigate the ability of various layers of an untrained MLP mixer to represent an input image.  We employ an architecture with a patch size of 16x16 to a 224x224x3 input image (such that there are $14*14=196$ patch tokens in all) with a hidden dimension per patch of 1024.  Each layer therefore has a little over 200k elements, which should be capable of autoencoding an input of ~150k elements.
 
@@ -438,5 +440,6 @@ After training on ImageNet, we find that the input representations are broadly s
 
 ![mlp mixer representations]({{https://blbadger.github.io}}/deep-learning/mixer_input_representation.png)
 
+For further investigation into the features of MLP-mixers and vision transformers, see [this page](https://blbadger.github.io/transformer-features.html).
  
 
