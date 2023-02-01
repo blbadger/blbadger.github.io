@@ -238,6 +238,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ### [Feature Visualization III: Transformers and Mixers](/transformer-features.md)
 
+![features](/deep-learning/transformer_feature_cover.png)
 
 ### [Autoencoders](/autoencoder-representation.md)
 
