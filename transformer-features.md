@@ -64,13 +64,27 @@ This phenomenon can be most clearly seen in the following figure: observe how ev
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_individual_features.png)
 
-This suggests that the 'Mixer' is also an apt name for this architecture, being that the MLP-Mixer is apparently better at mixing information from different patches than the vision transformer is.  We can assess this further by observing the ability of all neurons of certain patches to re-form an input image in mixers compared to ViTs.  
+This suggests that the 'Mixer' is also an apt name for this architecture, being that the MLP-Mixer is apparently better at mixing information from different patches than the vision transformer is.  We can assess this further by observing the ability of all neurons of certain patches to re-form an input image in mixers compared to ViTs. 
 
-When the ability of the first 28 patches (approximately the first two rows for a 224x224 image) to re-create an input is tested, it is clearly seen that this subsection in mixers but not vision transformers are capable of representing an input to any degree of accuracy
+Upon further investigation, it may be appreciated that this mixing occurs fairly thoroughly even in the first block: 
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/embedding_vs_patch_mixer.png)
+
+and this is reflected in the change from a uniform pattern in the features of the first block's embedding MLP to the composition of patterns present in the first block's patch-mixing MLP.
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_sublayer.png)
+
+When the ability of the first 28 patches (approximately the first two rows for a 224x224 image) to re-create an input is tested, it is clearly seen that this subsection in mixers but not vision transformers are capable of representing an input to any degree of accuracy.
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_vs_vit.png)
 
-### Vision Transformer Deep Dream
+The superior mixing in the MLP mixer architecture compared to the vision transformer may also be observed by finding the feature maps of individual patches early in the model, maximizing activations of all elements of patch after an across-patch mixing layer (which occurs second for mixers and first for ViTs) or after the embedding dimension layer (first for mixers and second for ViTs).
+
+![mixer versus vit mixing]({{https://blbadger.github.io}}/deep-learning/vit_vs_mixer_dissected.png)
+
+There are two notable observations when we observe the features in the 5th block: first, there is very little difference between the attention and MLP feature maps compared to what is found for mixers, and second that the ViT primarily focuses on the input region corresponding the patch identity (note the bright yellow squares) whereas the mixer attends more broadly to the entire input, regardless of whether we observe mixer or embedding MLP layer activation.
+
+### Deep Dream
 
 Given some image, it may be wondered how a computer vision model would modify that image in order to increase the activation of some component of that model.  This is similar to the feature visualization procedure used above but starts with a natural image rather than random noise.
 
