@@ -384,6 +384,11 @@ The same observations are made for an input image of a Dalmatian, which is one o
 
 It may be appreciated that training results in a substantial increase in the ability of attention modules (in the context of ViT Large 16 without MLP layers) to represent an input, but at the same time it is apparent that each attention layer severely limits the information that passes through to the output.  
 
+As vision transformers are effective regardless of this severely limited information pass, it may be wondered whether this matters to the general goal of image classification.  For the training process, there certainly is a significant effect of such information restriction: if one removes the residual connections from ViTs, the resulting model is very difficult to train and fails to learn even modest datasets such as CIFAR-10.
+
+On the other hand, if remove residual connections from MLP-mixers (which are more or less identical to transformers except that the self-attention layer has been swapped for a transposed feed-forward one) the resulting model is not difficult to optimize, and indeed has only a limited decrease in accuracy.
+
+
 ### Attention transformations present challenges for Gradient Descent Optimization
 
 The process of layer representation visualization relies on gradient descent to modify an initially random input such that the layer in question cannot 'distinguish' between the modified input $a_g$ and some target input $a$.  We have seen already that self-attention layers and layer normalization transformations result in non-uniqueness in the forward pass such that many values of $a_g$ yield one identical $O(a_g, \theta)$.
