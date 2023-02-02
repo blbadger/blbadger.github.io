@@ -432,11 +432,15 @@ $$
 m = || O(a, \theta) - O(a_g, \theta) ||_2
 $$
 
-is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.
+is empirically difficult to reduce beyond a certain amount. By tinkering with the mlp encoder modules, we find that this is mostly due to the presence of layer normalization: removing this transformation (from every MLP) removes the empirical difficulty of minimizing $m$ via gradient descent on the input, and visually provides a large increase in representation clarity.  For the Tolstikhin implementation, the effect of removing layer normalization is somewhat more dramatic
 
 ![mlp mixer representations]({{https://blbadger.github.io}}/neural_networks/mlp_mixer_representations.png)
 
-After training on ImageNet, we find that the input representations are broadly similar to those found for ViT base models, with perhaps some modest increase in clarity (ie accuracy compared to the original).
+than for the Melas-Kryiazi implementation, which is shown in the following figure.
+
+![mlp mixer representations]({{https://blbadger.github.io}}/deep-learning/transformer_mlp_untrained_representation.png)
+
+After training on ImageNet, we find that the input representations are broadly similar to those found for ViT base models, with perhaps some modest increase in clarity (ie accuracy compared to the original) in the deeper layers.
 
 ![mlp mixer representations]({{https://blbadger.github.io}}/deep-learning/mixer_input_representation.png)
 
