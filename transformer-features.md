@@ -52,9 +52,11 @@ Similar trends are observed for ViT Large 16, which underwent weakly supervised 
 
 Thus far we have seen that we may recover feature maps from individual neurons of vision transformer encoder block outputs. It may be wondered if the same is true for attentionless transformers, introduced independently by [Melas-Kyriazi](https://arxiv.org/abs/2105.02723) and [Tolstikhin](https://arxiv.org/abs/2105.01601).  The model used on this page is that of Melas-Kyriazi, and may be found [here](https://github.com/lukemelas/do-you-even-need-attention).  
 
-These models do not use the attention operation to mix information between image patches but instead simply transpose the input and ad a feed-forward layer (also called MLPs) applied to a specified subset of neurons from each patch, followed by a second feed-forward layer on the patches themselves. 
+These models do not use the attention operation to mix information between image patches but instead simply transpose the input and add a feed-forward layer (also called MLPs) applied to the embedding of each, followed by a second feed-forward layer across the patches. The order (mixing patches versus non-mixing layers) is therefore swapped compared to the ViT, and may be visualized as follows:
 
-As for vision transformers, we find that these models form features in which each neuron of the second MLP layer (applied to each patch independently) is activated by a stereotypical pattern in early layers, and that this pattern becomes more abstract and complex the deeper the module in question.
+![mixer features]({{https://blbadger.github.io}}/deep-learning/ffonly_activation_explained.png)
+
+As for vision transformers, we find that these models form features in which each neuron of the block output is activated by a stereotypical pattern in early layers, and that this pattern becomes more abstract and complex the deeper the module in question.  It is interesting to note that these neurons correspond to the output of the mixer layer whereas the block output features for the ViT correspond to the output of the non-mixing MLP in that model.
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_feature_map.png)
 
