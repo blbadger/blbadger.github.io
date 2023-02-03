@@ -84,7 +84,14 @@ The superior mixing in the MLP mixer architecture compared to the vision transfo
 
 ![mixer versus vit mixing]({{https://blbadger.github.io}}/deep-learning/vit_vs_mixer_dissected.png)
 
-There are two notable observations when we observe the features in the 5th block: first, there is very little difference between the attention and MLP feature maps compared to what is found for mixers, and second that the ViT primarily focuses on the input region corresponding the patch identity (note the bright yellow squares) whereas the mixer attends more broadly to the entire input, regardless of whether we observe mixer or embedding MLP layer activation.
+There are two notable observations when we observe the features corresponding to a single input patch at one particular layer: first, there is very little difference between the patch and feature maps of the vision transformer compared to what is found for mixers, and second that the ViT primarily focuses on the input region corresponding the patch identity (note the bright yellow squares) whereas the mixer attends more broadly to the entire input, regardless of whether we observe mixer or embedding MLP layer activation.
+
+On the other hand, when we observe the feature maps for neurons across all patches, there is less difference between then ViT and MLP-Mixer.  
+
+![mixer versus vit mixing]({{https://blbadger.github.io}}/deep-learning/mlp_mixer_more_sublayers.png)
+
+![mixer features]({{https://blbadger.github.io}}/deep-learning/vit_more_sublayers.png)
+
 
 ### Deep Dream
 
