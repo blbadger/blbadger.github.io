@@ -43,9 +43,10 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 ![roots]({{https://blbadger.github.io}}misc_images/newton_cover.png)
 
+
 ### [Polynomial roots II](/polynomial-roots2.md)
 
-![convergence]({{https://blbadger.github.io}}misc_images/newton_boundary_coverpng)
+![convergence]({{https://blbadger.github.io}}misc_images/newton_boundary_cover.png)
 
 
 ### [Julia sets](/julia-sets.md)
