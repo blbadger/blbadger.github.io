@@ -30,28 +30,28 @@ The mathematical approach to change over time. Most dynamical systems are nonlin
 
 ### [Grid map](/grid-map.md)
 
-![Grid map image]({{https://blbadger.github.io}}grid_map/grid_vid.gif)
+![Grid map image]({{https://blbadger.github.io}}misc_images/grid_map_cover.gif)
 
 
 ### [Pendulum phase space](/pendulum-map.md)
 
-![pendulum]({{https://blbadger.github.io}}pendulum_map/pendulum_cover2.jpg)
+![pendulum]({{https://blbadger.github.io}}misc-images/pendulum_cover.jpg)
 
 ## Boundaries 
 Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders between bounded and unbounded trajectories can take on spectacular fractal geometries.  
 
 ### [Polynomial roots I](/polynomial-roots.md)
 
-![roots]({{https://blbadger.github.io}}newton-method/Newton046.png)
+![roots]({{https://blbadger.github.io}}misc_images/newton_cover.png)
 
 ### [Polynomial roots II](/polynomial-roots2.md)
 
-![convergence]({{https://blbadger.github.io}}/newton-method/Newton_boundaryx5-x-1.png)
+![convergence]({{https://blbadger.github.io}}misc_images/newton_boundary_coverpng)
 
 
 ### [Julia sets](/julia-sets.md)
 
-![julia set1]({{https://blbadger.github.io}}fractals/Julia_set_inverted.png)
+![julia set1]({{https://blbadger.github.io}}misc_images/julia_cover.png)
 
 ### [Mandelbrot set](/mandelbrot-set.md)
 
@@ -60,17 +60,17 @@ Trajectories of any dynamical equation may stay bounded or else diverge towards 
 
 ### [Henon map](/henon-map.md)
 
-![map]({{https://blbadger.github.io}}/henon_map/henon_cover2.png)
+![map]({{https://blbadger.github.io}}misc_images/henon_cover.png)
 
 
 ### [Clifford map](/clifford-boundary.md)
 
-![clifford]({{https://blbadger.github.io}}clifford_attractor/clifford_cover0.png)
+![clifford]({{https://blbadger.github.io}}misc_images/clifford_cover.png)
 
 
 ### [Logistic map](/logistic-boundary.md)
 
-![logistic map image]({{https://blbadger.github.io}}/logistic_map/logistic_bound_cover.png)
+![logistic map image]({{https://blbadger.github.io}}misc_images/logistic_bound_cover.png)
 
 
 ## Foundations
@@ -165,7 +165,7 @@ As for any natural science, an attempt to explain observations and predict futur
 
 ### [Entropy](/entropy.md)
 
-![malachite]({{https://blbadger.github.io}}/assets/images/malachite.png)
+![malachite]({{https://blbadger.github.io}}misc_images/malachite.png)
 
 ### [Quantum mechanics](/quantum-mechanics.md)
 
@@ -179,12 +179,12 @@ The study of life, observations of which display many of the features of nonline
 
 ### [Genetic information problem](/genetic-info-problem.md)
 
-![coral image]({{https://blbadger.github.io}}/bio_images/acropora.png)
+![coral image]({{https://blbadger.github.io}}misc_images/acropora.png)
 
 
 ### [Homeostasis](/homeostasis.md)
 
-![lake image]({{https://blbadger.github.io}}/bio_images/lake.png)
+![lake image]({{https://blbadger.github.io}}misc_images/lake.png)
 
 
 ## Deep Learning
@@ -240,6 +240,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ![features](/deep-learning/transformer_feature_cover.png)
 
+
 ### [Autoencoders](/autoencoder-representation.md)
 
 ![autoencoding of landscapes](/deep-learning/autoencoder_cover.png)
@@ -257,7 +258,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ### [Normalization and Gradient Stability](/gradient-landscapes.md)
 
-![network architecture](/neural_networks/gradient_quivercover.png)
+![network architecture](misc_images/gradient_quivercover.png)
 
 
 ### [Small Language Models for Abstract Sequences](/neural-networks3.md)
