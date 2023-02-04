@@ -317,7 +317,7 @@ High voltage engineering projects: follow the links for more on arcs and plasma.
 ![fusor image]({{https://blbadger.github.io}}fusor_images/fusor-1-1.png)
 
 
-### [About Me](/about-me.md)
+### [About The Author](/about-me.md)
 
 
 
