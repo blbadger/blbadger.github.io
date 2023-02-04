@@ -34,7 +34,7 @@ The mathematical approach to change over time. Most dynamical systems are nonlin
 
 ### [Pendulum phase space](/pendulum-map.md)
 
-![pendulum]({{https://blbadger.github.io}}misc-images/pendulum_cover.png)
+![pendulum]({{https://blbadger.github.io}}misc_images/pendulum_cover.png)
 
 ## Boundaries 
 Trajectories of any dynamical equation may stay bounded or else diverge towards infinity.  The borders between bounded and unbounded trajectories can take on spectacular fractal geometries.  
