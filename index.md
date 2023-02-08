@@ -226,7 +226,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
 
-### [Input Representation III: Langauge Models](/language-representation.md)
+### [Input Representation III: Langauge Models](/language-representations.md)
 
 $$
 \mathtt{This is a prompt sentence} \\
