@@ -36,7 +36,7 @@ It is important to note that the transformer's MLP is identically applied across
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_feature_map.png)
 
-Maximizing the activation of many neurons  in all patches yields
+Maximizing the activation of a number of neurons in all patches yields
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_features_combined.png)
 
@@ -92,7 +92,6 @@ On the other hand, when we observe the feature maps for neurons across all patch
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/vit_more_sublayers.png)
 
-
 ### Deep Dream
 
 Given some image, it may be wondered how a computer vision model would modify that image in order to increase the activation of some component of that model.  This is similar to the feature visualization procedure used above but starts with a natural image rather than random noise.
@@ -101,14 +100,4 @@ For a trained ViT Base 32 we have the following:
 
 ![vit dream]({{https://blbadger.github.io}}/deep-learning/vit_b_32_dream.png)
 
-### Spatial Learning in Language Models
 
-So far we have seen that Transformers tend to learn in a somewhat analagous fashion to convolutional models: each neuron in the attention module's MLP output acts similarly to a convolutional kernal, in that the activation of this neuron yields similar feature maps to the activation of all elements in one convolutional filter.
-
-Transformers we first designed to model language, rather than images of the natural world.
-
-![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz.png)
-
-![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_2.png)
-
-![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_3.png)
