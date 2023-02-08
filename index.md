@@ -226,6 +226,15 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
 
+### [Input Representation III: Langauge Models](/language-representation.md)
+
+$$
+\mathtt{This is a prompt sentence} \\
+\mathtt{channelAvailability is a prompt sentence} \\
+\mathtt{channelAvailability millenn a prompt sentence} \\
+\mathtt{redessenal millenn-+-+DragonMagazine}
+$$
+
 ### [Feature Visualization I](/feature-visualization.md)
 
 ![features 2](/neural_networks/featuremap_cover2.png)
