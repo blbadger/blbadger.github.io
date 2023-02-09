@@ -277,7 +277,7 @@ $$
 
 ### [Interpreting Sequence Models](/nn_interpretations.md)
 
-![deep learning attributions](/neural_networks/attributions_cover.png)
+![deep learning attributions](/misc_images/attributions_cover.png)
 
 
 ### [Training Memory](/neural-networks2.md)
