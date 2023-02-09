@@ -24,7 +24,7 @@ To orient ourselves to this model, the following figure is supplied to show how 
 
 ![architecture explained]({{https://blbadger.github.io}}/deep-learning/transformer_activation_explained.png)
 
-Here we are starting with pure noise and seek to maximize the activation of a set of neurons in some transformer module using gradient descent between the neurons' value and some large constant tensor.  To be consistent with the procedure used for vision transformers, we also apply Gaussian convolution (blurring) and positional jitter to the input at each gradient descent step (see [this link](https://blbadger.github.io/transformer-features.html) for more details).  First we observe the input resulting from maximizing the activation of an individual neuron (one for each panel, indexed 1 through 16) accross all patches.  
+Here we are starting with pure noise and seek to maximize the activation of a set of neurons in some transformer module using gradient descent between the neurons' value and some large constant tensor.  To be consistent with the procedure used for vision transformers, we also apply Gaussian convolution (blurring) and positional jitter to the input at each gradient descent step (see [this link](https://blbadger.github.io/transformer-features.html) for more details).  First we observe the input resulting from maximizing the activation of an individual neuron (one for each panel, indexed 1 through 16) across all patches. In the context of vision transformers, the activation of each neuron in all patches forms a consistent pattern across the input (especially in the early layers).  
 
 The results of this are as follows:
 
@@ -40,10 +40,13 @@ Performing the same optimization but without positional jitter or Gaussian convo
 
 When we instead activate all elements (neurons) from a single patch, we see that in contrast to what is found for vision transformers, early and late layers both focus not only on that patch but also preceding ones too.  Only preceding patches are modified because GPT-2 is trained using attention masks to prevent a token peering ahead in the sequence of words.  Note too that once again the deeper layer elements focus more broadly than shallower layer elements as observed above.
 
+It is interesting to note that the other patches most often focused upon (besides the input patch corresponding to the patch being maximinized) are the first few in the image. This higher weight on early tokens is also observed when one performs gradientxinput on langauge models, and may perhaps be attributed to the relatively high importance of the beginning words in a sentence for the completion of that sentence.
+
 ![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_3.png)
 
-
 ### Image Reconstruction with Language Models
+
+
 
 
 ### Language models translate gibberish into words
