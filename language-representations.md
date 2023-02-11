@@ -60,13 +60,26 @@ It is interesting to note that the other patches most often focused upon (beside
 
 ### Image Reconstruction with Language Models
 
+It is
 
+![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation.png)
 
+![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation_2.png)
 
-### Language models translate gibberish into words
+### Indistinguisheable inputs from language models
 
+### Language models translate nonsense into sense
 
+One of the primary challenges of large language models today is their ability to generate text that is gramatically and stylistically accurate to the prompt but is inaccurate in some other way, either introducing incorrect information about a topic or else veering off in an unintended direction.  
 
+It can be shown, however, that these models are capable of a much more extreme translation from input nonsense into some real language output by making use the the input representations we have generated in the previous section. Suppose one were given the following prompt: 
 
+$$
+\mathtt{The \; sky \; has \; a \; color \; of \; }
+$$
+
+Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
+
+But it can also be shown that one can find many completely nonsensical inputs that also yield the same output.
 
 
