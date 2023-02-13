@@ -100,12 +100,23 @@ $$
 
 As $e$ is continuous, we can perform gradient descent on this vector such that $e_g$ may be generated from an initially random input $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20).
 
-But we then need a way to convert $e_g$ to an input $x_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(t) = 50,000$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $x_g = W^{-1}(e_g)$. 
+But we then need a way to convert $e_g$ to an input $x_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(t) = 50257$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $x_g = W^{-1}(e_g)$ because there are fewer output elements than input elements such that there are an infinite number of possible vectors $x_g$ that could yield $e_g$. 
 
-Instead we can use a generalized inversion, also known as the Moore-Pensore pseudo-inversion and denoted $W^+$.  
+Instead we can use a generalized inversion, also known as the Moore-Pensore pseudo-inversion.  The psuedo-inverse of $W$ is denoted $W^+$, and is defined as
+
+$$
+W^+ = \lim_{\alpha \to 0^+} (W^T W + \alpha I)^-1 W^T
+$$
+
+which is the limit from above as $alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wx$, ie $x = W^+y$, such that the $L^2$ norm $\vert \vert x \vert \vert_2$ is minimized.  The pseudo-inverse may be conviniently calculated from the singular value decomposition $W = UDV^T$
+
+$$
+W^+ = VD^+U^T
+$$
+
+where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries converted to the reciporical of the original.
 
 ### Langauge models become untrainable as they are trained
-
 
 
 ### Language models translate nonsense into sense
