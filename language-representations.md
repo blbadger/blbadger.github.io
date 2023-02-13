@@ -98,17 +98,17 @@ $$
 e = Wx
 $$
 
-As $e$ is continuous, we can perform gradient descent on this vector such that $e_g$ may be generated from an initially random input $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20).
+As $e$ is continuous, we can perform gradient descent on this vector such that $e_g$ may be generated from an initially random input $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20)$.
 
 But we then need a way to convert $e_g$ to an input $x_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(t) = 50257$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $x_g = W^{-1}(e_g)$ because there are fewer output elements than input elements such that there are an infinite number of possible vectors $x_g$ that could yield $e_g$. 
 
 Instead we can use a generalized inversion, also known as the Moore-Pensore pseudo-inversion.  The psuedo-inverse of $W$ is denoted $W^+$, and is defined as
 
 $$
-W^+ = \lim_{\alpha \to 0^+} (W^T W + \alpha I)^-1 W^T
+W^+ = \lim_{\alpha \to 0^+} (W^T W + \alpha I)^{-1} W^T
 $$
 
-which is the limit from above as $alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wx$, ie $x = W^+y$, such that the $L^2$ norm $\vert \vert x \vert \vert_2$ is minimized.  The pseudo-inverse may be conviniently calculated from the singular value decomposition $W = UDV^T$
+which is the limit from above as $\alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wx$, ie $x = W^+y$, such that the $L^2$ norm $\vert \vert x \vert \vert_2$ is minimized.  The pseudo-inverse may be conviniently calculated from the singular value decomposition $W = UDV^T$
 
 $$
 W^+ = VD^+U^T
@@ -116,8 +116,51 @@ $$
 
 where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries converted to the reciporical of the original.
 
-### Langauge models become untrainable as they are trained
+Therefore we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an implementation of GPT-2 from the Huggingface library, the model and tokenizer may be obtained as follows:
 
+```python
+model = torch.hub.load('huggingface/transformers', 'modelForCausalLM', 'gpt2')  
+tokenizer = torch.hub.load('huggingface/pytorch-transformers', 'tokenizer', 'gpt2')
+```
+
+Suppose we were given a prompt and a tokenizer to transform this prompt into a tensor corresponding to the tokens of each word. 
+
+```python
+prompt = 'The sky is blue.'
+tokens = tokenizer.encode(
+	  prompt,
+	  add_special_tokens=False,
+	  return_tensors='pt',
+	  max_length = 512,
+	  truncation=False,
+	  padding=False
+	  ).to(device)
+```
+
+Then the input embedding (composed of the input embedding added to a positional encoding)
+
+```python
+model = model.to(device)
+embedding = model.transformer.wte(tokens) 
+
+position_ids = torch.tensor([i for i in range(len(tokens))]).to(device)
+positional_embedding = model.transformer.wpe(position_ids)
+embedding += positional_embedding
+```
+
+The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens 
+
+$$
+x = W^+(e - e_p)
+$$
+
+which may be implemented as
+
+```python
+embedding_weight = model.transformer.wte.weight
+inverse_embedding = torch.linalg.pinv(embedding_weight)
+logits = torch.matmul(embedding - positional_embedding, inverse_embedding)
+```
 
 ### Language models translate nonsense into sense
 
@@ -133,4 +176,5 @@ Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the
 
 But it can also be shown that one can find many completely nonsensical inputs that also yield the same output.
 
+### Langauge models become untrainable as they are trained
 
