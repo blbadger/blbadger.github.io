@@ -52,21 +52,61 @@ We therefore have motivation to see if the same tendancy to modify the start of 
 
 ![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_2.png)
 
-When we instead activate all elements (neurons) from a single patch, we see that in contrast to what is found for vision transformers, early and late layers both focus not only on that patch but also preceding ones too.  Only preceding patches are modified because GPT-2 is trained using attention masks to prevent a token peering ahead in the sequence of words.  Note too that once again the deeper layer elements focus more broadly than shallower layer elements as observed above.
-
-It is interesting to note that the other patches most often focused upon (besides the input patch corresponding to the patch being maximinized) are the first few in the image. This higher weight on early tokens is also observed when one performs gradientxinput on langauge models, and may perhaps be attributed to the relatively high importance of the beginning words in a sentence for the completion of that sentence.
+When we instead activate all elements (neurons) from a single patch, we see that in contrast to what is found for vision transformers, early and late layers both focus not only on the self-patch but also preceding ones too.  Only preceding patches are modified because GPT-2 is trained using attention masks to prevent a token peering ahead in the sequence of words.  Note too that once again the deeper layer elements focus more broadly than shallower layer elements as observed above.
 
 ![gpt2 feature visualization]({{https://blbadger.github.io}}/deep-learning/gpt2_features_viz_3.png)
 
+The incorperation of more global information in deeper layers is also observed for vision models, although it is interesting to note that transformer-based vision model patches typically do not incorperate as much global information in their deeper layers as MLP-based mixers or convolutional models. 
+
 ### Image Reconstruction with Language Models
 
-It is
+How much information is contained in each layer of a language model?  One way to get an answer to this question is to attempt to re-create an input, using only the vector corresponding to the layer in question.  Given some input $a$, the output of a model $\theta$ at layer $l$ is denoted $y = O_l(a, \theta)$.  Does $O_l(a, \theta)$ contain the information necessary to re-create $a$? If we were able to invert the forward transformation $O_l$, then it would be simple to recover $a$ by
+
+$$
+a = O_l^{-1}(y, \theta)
+$$
+
+But typically this is not possible, as for example if multiple inputs $a_1, a_2, ..., a_n$ exist such that
+
+$$
+O_l(a_1, \theta) = O_l(a_2, \theta) = \cdots = O_l(a_n, \theta)
+$$
+
+which is the case for transformations present in many models used for language and vision modeling. Besides true non-invertibility, linear transformations with eigenvectors of very different magnitudes are often difficult to invert practically even if they are actually invertible.  This is termed approximate non-invertibility, and has been seen to exist for vision models [here](https://blbadger.github.io/depth-generality.html).
+
+The ability of the information present in $O_l$ to generate $a$ from noise can be thought of as a measure of representational accuracy.  How does representational accuracy for transformers trained for language modeling compare to those trained for image classification?  
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation.png)
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation_2.png)
 
-### Indistinguisheable inputs from language models
+### Sentence Reconstruction with Language Models
+
+In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to reconstruct language inputs, rather than images.
+
+Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^2$) distance between the target output $O_l(a, \theta)$ and the current output as follows:
+
+$$
+a_{n+1} = a_n + \epsilon * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2
+$$
+
+This method is impossible to use for language models without modification given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  
+
+Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
+
+$$
+e = Wx
+$$
+
+As $e$ is continuous, we can perform gradient descent on this vector such that $e_g$ may be generated from an initially random input $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20).
+
+But we then need a way to convert $e_g$ to an input $x_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(t) = 50,000$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $x_g = W^{-1}(e_g)$. 
+
+Instead we can use a generalized inversion, also known as the Moore-Pensore pseudo-inversion and denoted $W^+$.  
+
+### Langauge models become untrainable as they are trained
+
+
 
 ### Language models translate nonsense into sense
 
@@ -75,7 +115,7 @@ One of the primary challenges of large language models today is their ability to
 It can be shown, however, that these models are capable of a much more extreme translation from input nonsense into some real language output by making use the the input representations we have generated in the previous section. Suppose one were given the following prompt: 
 
 $$
-\mathtt{The \; sky \; has \; a \; color \; of \; }
+\mathtt{The \; color \; of \; the \; sky \; is \; blue.}
 $$
 
 Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
