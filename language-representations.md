@@ -228,9 +228,26 @@ $$
 \mathtt{The \; shades \; is \; blue.}
 $$
 
+With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, may iterations of \eqref{eq1} a model with blocks 1 and 2 we have a generated prompt of
+
+$$
+\mathtt{The \; sky \; is \; tragedies.}
+$$
+
+which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same) 
+
+Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yeild the same output character as our original prompt but are completely different.  For example both
+
+$$
+coastline \; DVDs \; isIGHTweak
+biologist \; Elephant \; Elephant \; Elephant \; Elephant
+$$
+
+effectively minimize the $L^2$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
+
 ### Langauge models become untrainable as they are trained
 
-So far we have 
+So far we have only considered untrained models
 
 
 
