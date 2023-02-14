@@ -84,15 +84,14 @@ The ability of the information present in $O_l$ to generate $a$ from noise can b
 
 In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to reconstruct language inputs, rather than images.
 
-Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^2$) distance between the target output $O_l(a, \theta)$ and the current output as follows:
+Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^2$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
 
 $$
-a_{n+1} = a_n + \epsilon * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2
+a_{n+1} = a_n + \epsilon * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2 \\
+\tag{1}\label{eq1}
 $$
 
-This method is impossible to use for language models without modification given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  
-
-Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
+This method is not useful for language models without modification given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
 
 $$
 e = Wx
@@ -116,10 +115,14 @@ $$
 
 where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries converted to the reciporical of the original.
 
-Therefore we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an implementation of GPT-2 from the Huggingface library, the model and tokenizer may be obtained as follows:
+Therefore we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an untrained implementation of GPT-2, the model and tokenizer may be obtained as follows:
 
 ```python
-model = torch.hub.load('huggingface/transformers', 'modelForCausalLM', 'gpt2')  
+import torch
+from transformers import GPT2Config, GPT2LMHeadModel
+
+configuration = GPT2Config()
+model = GPT2LMHeadModel(configuration)
 tokenizer = torch.hub.load('huggingface/pytorch-transformers', 'tokenizer', 'gpt2')
 ```
 
@@ -137,7 +140,7 @@ tokens = tokenizer.encode(
 	  ).to(device)
 ```
 
-Then the input embedding (composed of the input embedding added to a positional encoding)
+For GPT-2 and other transformer-based langauge models, the total input embedding fed to the model $e_t$ is the addition of the word input embedding $e$ added to a positional encoding $e_p$
 
 ```python
 model = model.to(device)
@@ -151,7 +154,8 @@ embedding += positional_embedding
 The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens 
 
 $$
-x = W^+(e - e_p)
+x = W^+(e_t - e_p) \\
+\tag{2}\label{eq2}
 $$
 
 which may be implemented as
@@ -162,6 +166,10 @@ inverse_embedding = torch.linalg.pinv(embedding_weight)
 logits = torch.matmul(embedding - positional_embedding, inverse_embedding)
 ```
 
+It may be verified that \eqref{eq2} is indeed capable of recovering the input token given an embedding.  
+
+
+
 ### Language models translate nonsense into sense
 
 One of the primary challenges of large language models today is their ability to generate text that is gramatically and stylistically accurate to the prompt but is inaccurate in some other way, either introducing incorrect information about a topic or else veering off in an unintended direction.  
@@ -169,12 +177,71 @@ One of the primary challenges of large language models today is their ability to
 It can be shown, however, that these models are capable of a much more extreme translation from input nonsense into some real language output by making use the the input representations we have generated in the previous section. Suppose one were given the following prompt: 
 
 $$
-\mathtt{The \; color \; of \; the \; sky \; is \; blue.}
+\mathtt{The \; sky \; is \; blue.}
 $$
 
 Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
 
-But it can also be shown that one can find many completely nonsensical inputs that also yield the same output.
+But it can also be shown that one can find many completely nonsensical inputs that also yield the same output.  To 
+
+```python
+class AbbreviatedGPT(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+	
+	def forward(self, x: torch.Tensor):
+		# choose the block depth
+		for i in range(1):
+			x = self.model.transformer.h[i](x)[0]
+
+		x = self.model.lm_head(x)
+		return x
+```
+
+When we generate an input after a few hundred iterations of \eqref{eq1}, passing in the resulting embeddings to be inverted by \eqref{eq2} we get generated prompts
+
+$$
+ \; Lime \; Lime  \;is \; blueactly
+ \; enessidateidate \; postp.
+$$
+
+If a language modeling head is attached to this first transformer block, we find that these two prompts really are viewed nearly equally, in the sense that the next predicted token for both is '%' (for one particular random initialization for GPT-2). 
+
+If we increase the number of maximum interations $N$ of our gradient descent procedure \eqref{eq1} we have 
+
+$$
+ \; Terr \;sky \;is \; blue.
+ \; cyclists \; sky  \; is \; blue.
+$$
+
+And increasing the total iterations $N$ further ($N \geq 1000$) for \eqref{eq1} yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt
+
+$$
+\mathtt{The \; sky \; is \; blue.}
+$$
+
+although most generated prompts are close but not quite equal to the original. This is unsurprising given that the transformer model is not invertible, such that 
+
+$$
+\mathtt{The \; shades \; is \; blue.}
+$$
 
 ### Langauge models become untrainable as they are trained
+
+So far we have 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
