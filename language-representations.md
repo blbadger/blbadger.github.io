@@ -181,7 +181,7 @@ $$
 
 Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
 
-But it can also be shown that one can find many completely nonsensical inputs that also yield the same output.  To 
+But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.
 
 ```python
 class AbbreviatedGPT(nn.Module):
@@ -206,12 +206,12 @@ $$
  \mathtt{\; enessidateidate \; postp.}
 $$
 
-If a language modeling head is attached to this first transformer block, we find that these two prompts really are viewed nearly equally, in the sense that the next predicted token for both is '%' (for one particular random initialization for GPT-2). 
+If a language modeling head is attached to this first transformer block, we find that these two prompts really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{%}$ (for one particular random initialization for GPT-2). 
 
 If we increase the number of maximum interations $N$ of our gradient descent procedure in Equation \eqref{eq1} we have 
 
 $$
- \mathtt{\; Terr \;sky \;is \; blue.}
+ \mathtt{\; Terr \;sky \;is \; blue.} \\
  \mathtt{\; cyclists \; sky  \; is \; blue.}
 $$
 
