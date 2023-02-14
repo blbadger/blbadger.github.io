@@ -87,7 +87,7 @@ In the previous section we have seen that a trained language model is less capab
 Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^2$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
 
 $$
-a_{n+1} = a_n + \epsilon * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2 \\
+a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2 \\
 \tag{1}\label{eq1}
 $$
 
@@ -166,8 +166,7 @@ inverse_embedding = torch.linalg.pinv(embedding_weight)
 logits = torch.matmul(embedding - positional_embedding, inverse_embedding)
 ```
 
-It may be verified that \eqref{eq2} is indeed capable of recovering the input token given an embedding.  
-
+It may be verified that Equation \eqref{eq2} is indeed capable of recovering the input token given an embedding.  
 
 
 ### Language models translate nonsense into sense
@@ -200,20 +199,20 @@ class AbbreviatedGPT(nn.Module):
 		return x
 ```
 
-When we generate an input after a few hundred iterations of \eqref{eq1}, passing in the resulting embeddings to be inverted by \eqref{eq2} we get generated prompts
+When we generate an input after a few hundred iterations of Equation \eqref{eq1}, passing in the resulting embeddings to be inverted by Equation \eqref{eq2} we get generated prompts
 
 $$
- \; Lime \; Lime  \;is \; blueactly
- \; enessidateidate \; postp.
+ \mathtt{\; Lime \; Lime  \;is \; blueactly} \\
+ \mathtt{\; enessidateidate \; postp.}
 $$
 
 If a language modeling head is attached to this first transformer block, we find that these two prompts really are viewed nearly equally, in the sense that the next predicted token for both is '%' (for one particular random initialization for GPT-2). 
 
-If we increase the number of maximum interations $N$ of our gradient descent procedure \eqref{eq1} we have 
+If we increase the number of maximum interations $N$ of our gradient descent procedure in Equation \eqref{eq1} we have 
 
 $$
- \; Terr \;sky \;is \; blue.
- \; cyclists \; sky  \; is \; blue.
+ \mathtt{\; Terr \;sky \;is \; blue.}
+ \mathtt{\; cyclists \; sky  \; is \; blue.}
 $$
 
 And increasing the total iterations $N$ further ($N \geq 1000$) for \eqref{eq1} yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt
@@ -228,7 +227,7 @@ $$
 \mathtt{The \; shades \; is \; blue.}
 $$
 
-With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, may iterations of \eqref{eq1} a model with blocks 1 and 2 we have a generated prompt of
+With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, may iterations of Equation \eqref{eq1} a model with blocks 1 and 2 we have a generated prompt of
 
 $$
 \mathtt{The \; sky \; is \; tragedies.}
@@ -239,8 +238,8 @@ which is semantically similar (tragedies are sad and the color 'blue' is often c
 Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yeild the same output character as our original prompt but are completely different.  For example both
 
 $$
-coastline \; DVDs \; isIGHTweak
-biologist \; Elephant \; Elephant \; Elephant \; Elephant
+\mathtt{coastline \; DVDs \; isIGHTweak} \\
+\mathtt{biologist \; Elephant \; Elephant \; Elephant \; Elephant}
 $$
 
 effectively minimize the $L^2$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
