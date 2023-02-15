@@ -4,24 +4,24 @@ A Julia (named after G. Julia) set is the boundary of the sets of unbounded and 
 
 $$
 f_a(x) = x^2 + a 
-\tag{1}
+\tag{1} \label{eq1}
 $$
 
 where $a$ is fixed and $x_0$ varies about the complex plane $x + yi$.  Different values of $a$ lead to different Julia sets, and together this family of functions $f_a(x) \forall a \in \Bbb C$ are the Julia sets.
 
-This means that any number in the complex plane is in a Julia set if it borders another number $u$ such that iterations of (1) are unbounded
+This means that any number in the complex plane is in a Julia set if it borders another number $u$ such that iterations of \eqref{eq1} are unbounded
 
 $f^k_a(u) \to \infty \; \mathbf {as} \; k \to \infty$ 
 
-as well as a number $b$ where iterations of (1) are bounded
+as well as a number $b$ where iterations of \eqref{eq1} are bounded
 
 $f^k_a(c) \not\to \infty \; \mathbf {as} \; k \to \infty$
 
-If we restrict ourselves to the real line, such that $a$ and $x$ are elements of $\Bbb R$, iterations of (1) have a number of interesting features.  Some values of $a$ form Cantor sets (fractal dusts), which may be expected as (1) is a nonlinear equation similar in form to the logistic and Henon maps (see [here](https://blbadger.github.io/logistic-map.html)).   
+If we restrict ourselves to the real line, such that $a$ and $x$ are elements of $\Bbb R$, iterations of \eqref{eq1} have a number of interesting features.  Some values of $a$ form Cantor sets (fractal dusts), which may be expected as \eqref{eq1} is a nonlinear equation similar in form to the logistic and Henon maps (see [here](https://blbadger.github.io/logistic-map.html)).   
 
 ### Plotting Julia sets with Python
 
-What happens when we allow $a$ and iterates of (1) to range over the complex plane?  Let's find out! To start with, import the indespensable libraries numpy and matplotlib
+What happens when we allow $a$ and iterates of \eqref{eq1} to range over the complex plane?  Let's find out! To start with, import the indespensable libraries numpy and matplotlib
 
 ```python
 #! python3
@@ -29,9 +29,9 @@ import numpy as np
 import matplotlib.pyplot as plt 
 ```
 
-and then define a function to find the values of a Julia set for a certain value of $a$, with a docstring specifying the inputs and outputs of the function.  To view a Julia set, we want an array corresponding to the complex plane with values that border diverging and non-diverging values specially denoted.  One way to do this is to count the number of iterations of (1) any given point in the complex plane takes to start heading towards infinity, and if after a sufficiently large number of iterations the point is still bounded then we can assume that the value will not diverge in the future. 
+and then define a function to find the values of a Julia set for a certain value of $a$, with a docstring specifying the inputs and outputs of the function.  To view a Julia set, we want an array corresponding to the complex plane with values that border diverging and non-diverging values specially denoted.  One way to do this is to count the number of iterations of \eqref{eq1} any given point in the complex plane takes to start heading towards infinity, and if after a sufficiently large number of iterations the point is still bounded then we can assume that the value will not diverge in the future. 
 
-To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using `ogrid` (special thanks to the numpy tutorial [here](https://numpy.org/devdocs/user/quickstart.html) for this idea), remembering that imaginary values are specified with `j` in python.  The array corresponding to the complex plane section is stored as `z_array`, and the value of $a$ is specified (the programs presented here are designed with a value of $ \lvert a \rvert < 2 $ in mind, but can be modified for larger $a$s).  This will allow us to keep track of the values of subsequent iterations of (1) for each point $z$ in the complex plane.  
+To make an array of complex numbers, the  class in numpy is especially helpful. We can specify the range of the x (real) and y (imaginary) planes using `ogrid` (special thanks to the numpy tutorial [here](https://numpy.org/devdocs/user/quickstart.html) for this idea), remembering that imaginary values are specified with `j` in python.  The array corresponding to the complex plane section is stored as `z_array`, and the value of $a$ is specified (the programs presented here are designed with a value of $ \lvert a \rvert < 2 $ in mind, but can be modified for larger $a$s).  This will allow us to keep track of the values of subsequent iterations of \eqref{eq1} for each point $z$ in the complex plane.  
 
 Also essential is initialization of the array corresponding to the number of iterations until divergence, which will eventually form our picture of the Julia set.
 
@@ -58,9 +58,9 @@ To find the number of iterations until divergence of each point in our array of 
 
 ```
 
-It can be shown that values where $\lvert a \rvert > 2$ and $\lvert z \rvert > \lvert a \rvert$, future iterations of (1) inevitably head towards positive or negative infinity. 
+It can be shown that values where $\lvert a \rvert > 2$ and $\lvert z \rvert > \lvert a \rvert$, future iterations of \eqref{eq1} inevitably head towards positive or negative infinity. 
 
-This makes it simple to find the number of iterations `i` until divergence: all we have to do is to keep iterating (1) until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index. 
+This makes it simple to find the number of iterations `i` until divergence: all we have to do is to keep iterating \eqref{eq1} until either the resulting value has a magnitude greater than 2 (as $z$ is complex, we can calculate its magnitude by multiplying $z$ by its conjugate $z^* $ and seeing if this number is greater than $2^2 = 4$.  If so, then we know the number of iterations taken until divergence and we assign this number to the 'iterations_till_divergence' array a the correct index. 
 
 ```python
 			z = z_array[h][w]
@@ -73,9 +73,9 @@ This makes it simple to find the number of iterations `i` until divergence: all 
 	return iterations_till_divergence
 ```
 
-This will give us an iteration number for each point in `z_array`.  What if (1) does not diverge for any given value? The final array `iterations_till_divergence` is initialized with the maximum number of iterations everywhere, such that if this value is not replaced then it remains after the loops, which signifies that the maximum number of iterations performed was not enough to cause the value to diverge.  Outside all these loops, we return the array of iterations taken.
+This will give us an iteration number for each point in `z_array`.  What if \eqref{eq1} does not diverge for any given value? The final array `iterations_till_divergence` is initialized with the maximum number of iterations everywhere, such that if this value is not replaced then it remains after the loops, which signifies that the maximum number of iterations performed was not enough to cause the value to diverge.  Outside all these loops, we return the array of iterations taken.
 
-Now we can plot the `iterations_till_divergence` array!  It is a list of lists of numbers between 0 and 'max_iterations', so we can assign it to a color map (see [here](https://matplotlib.org/3.2.1/tutorials/colors/colormaps.html) for an explanation of matplotlib color maps).  Remembering that the Julia set is the border between bounded and unbounded iterates of (1), a cyclical colormap emphasizing intermediate values (ie points that do not diverge quickly but do eventually diverge) is useful. 
+Now we can plot the `iterations_till_divergence` array!  It is a list of lists of numbers between 0 and 'max_iterations', so we can assign it to a color map (see [here](https://matplotlib.org/3.2.1/tutorials/colors/colormaps.html) for an explanation of matplotlib color maps).  Remembering that the Julia set is the border between bounded and unbounded iterates of \eqref{eq1}, a cyclical colormap emphasizing intermediate values (ie points that do not diverge quickly but do eventually diverge) is useful. 
 
 ```python
 plt.imshow(julia_set(500, 500, 70), cmap='twilight_shifted')
@@ -90,7 +90,7 @@ Now we can plot the image!
 
 The resolution settings (determined by h_range and w_range) are not very high in the image above because this program is very slow: it sequentially calculates each individual point in the complex array.  The image above took nearly 10 minutes to make!  
 
-Luckily we can speed things up substantially by calculating many points simultaneously (well not really truly simultaneously, but using an optimized c array we can pretend that the calculations are happening a the same time) with numpy.  The idea is to apply (1) to every value of `z_array`, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere as well as `diverged_in_past`, which is all `False` to begin with. 
+Luckily we can speed things up substantially by calculating many points simultaneously (well not really truly simultaneously, but using an optimized c array we can pretend that the calculations are happening a the same time) with numpy.  The idea is to apply \eqref{eq1} to every value of `z_array`, and make a boolean array corresponding to the elements of `z_array` that have diverged at each iteration.  The complex number array setup is the same as above, but we initialize another array `not_already_diverged` that is the same size as the `iterations_till_divergence` array but is boolean, with `True` everywhere as well as `diverged_in_past`, which is all `False` to begin with. 
 
 ```python
 import numpy as np 
@@ -115,7 +115,7 @@ def julia_set(h_range, w_range, max_iterations):
 	diverged_in_past = iterations_until_divergence > 10000
 ```
 
-Instead of examining each element of `z_array` individually, we can use a single loop to iterate (1) as follows:
+Instead of examining each element of `z_array` individually, we can use a single loop to iterate \eqref{eq1} as follows:
  
  ```python
 	for i in range(max_iterations):
