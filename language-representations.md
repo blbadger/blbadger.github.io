@@ -74,9 +74,11 @@ $$
 
 which is the case for transformations present in many models used for language and vision modeling. Besides true non-invertibility, linear transformations with eigenvectors of very different magnitudes are often difficult to invert practically even if they are actually invertible.  This is termed approximate non-invertibility, and has been seen to exist for vision models [here](https://blbadger.github.io/depth-generality.html).
 
-The ability of the information present in $O_l$ to generate $a$ from noise can be thought of as a measure of representational accuracy.  How does representational accuracy for transformers trained for language modeling compare to those trained for image classification?  
+The ability of the information present in $O_l$ to generate $a$ from noise can be thought of as a measure of representational accuracy.  How does representational accuracy for transformers trained for language modeling compare to those trained for image classification?  In the following figure, we can see that the trained GPT-2 has less accurate input representations in the early layers than ViT Large does.
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation.png)
+
+This is also the case for out-of-distribution images such as this Tesla coil.  In particular, the first few dozen tokens (top few rows in the grid of the input image, that is) of the input for both images are poorly represented, and display high-frequency inputs that is common for representations of poorly conditioned models. 
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation_2.png)
 
@@ -91,31 +93,44 @@ a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2 \\
 \tag{1}\label{eq1}
 $$
 
-This method is not useful for language models without modification given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
+This method is not useful for language models without modification, given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
 
 $$
-e = Wx
+e = Wa
 $$
 
 As $e$ is continuous, we can perform gradient descent on this vector such that $e_g$ may be generated from an initially random input $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20)$.
 
-But we then need a way to convert $e_g$ to an input $x_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(t) = 50257$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $x_g = W^{-1}(e_g)$ because there are fewer output elements than input elements such that there are an infinite number of possible vectors $x_g$ that could yield $e_g$. 
+But we then need a way to convert $e_g$ to an input $a_g$. $W$ is usually a non-square matrix given that word encodings often convert inputs with the number of tokens as $n(a) = 50257$ to embeddings of size $n(e) = 768$.  We cannot therefore simply perform a matrix inversion on $W$ to recover $a_g = W^{-1}(e_g)$ because there are fewer output elements than input elements such that there are an infinite number of possible vectors $a_g$ that could yield $e_g$. 
 
-Instead we can use a generalized inversion, also known as the Moore-Pensore pseudo-inversion.  The psuedo-inverse of $W$ is denoted $W^+$, and is defined as
+Instead we can use a generalized inverse, also known as the Moore-Pensore pseudo-inverse.  The psuedo-inverse of $W$ is denoted $W^+$, and is defined as
 
 $$
 W^+ = \lim_{\alpha \to 0^+} (W^T W + \alpha I)^{-1} W^T
 $$
 
-which is the limit from above as $\alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wx$, ie $x = W^+y$, such that the $L^2$ norm $\vert \vert x \vert \vert_2$ is minimized.  The pseudo-inverse may be conviniently calculated from the singular value decomposition $W = UDV^T$
+which is the limit from above as $\alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wa$, ie $a = W^+y$, such that the $L^2$ norm $\vert \vert a \vert \vert_2$ is minimized.  The pseudo-inverse may be conveniently calculated from the singular value decomposition $W = UDV^T$
 
 $$
 W^+ = VD^+U^T
 $$
 
-where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries converted to the reciporical of the original.
+where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries being the reciprocal of the corresponding element in $D$.
 
-Therefore we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an untrained implementation of GPT-2, the model and tokenizer may be obtained as follows:
+Therefore we can instead perform gradient descent on an initially random embedding $e_0 = \mathcal{e, \mu=1/2, \sigma=1/20}$ using
+
+$$
+e_{n+1} = e_n + \eta * \nabla_{e_n} ||O_l(e_n, \theta) - O_l(e, \theta)||_2 \\
+\tag{2}\label{eq2}
+$$
+
+and then recover the generated input $a_g$ from the final embedding $e_N$ by multiplying this embedding by the pseudo-inverse of the embedding weight matrix $W$,
+
+$$
+a_g = W^+e_N
+$$
+
+Thus we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an untrained implementation of GPT-2, the model and tokenizer may be obtained as follows:
 
 ```python
 import torch
@@ -151,14 +166,14 @@ positional_embedding = model.transformer.wpe(position_ids)
 embedding += positional_embedding
 ```
 
-The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens 
+The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens by first subtracting the positional embedding $e_p$ from the generated embedding $e_N$ and multiplying the resulting vector by the pseudo-inverse of $W$ as follows:
 
 $$
-x = W^+(e_t - e_p) \\
-\tag{2}\label{eq2}
+a_g = W^+(e_N - e_p) \\
+\tag{3}\label{eq3}
 $$
 
-which may be implemented as
+and this may be implemented as
 
 ```python
 embedding_weight = model.transformer.wte.weight
@@ -166,8 +181,45 @@ inverse_embedding = torch.linalg.pinv(embedding_weight)
 logits = torch.matmul(embedding - positional_embedding, inverse_embedding)
 ```
 
-It may be verified that Equation \eqref{eq2} is indeed capable of recovering the input token given an embedding.  
+It may be verified that Equation \eqref{eq3} is indeed capable of recovering the input token given an embedding by simply encoding any given sentence, converting this encoding to an embedding and then inverting the embedding to recover the input encoding.
 
+Before investigating the representations present in a large and non-invertible model such as GPT-2, we can first observe whether a small and invertible model is capable of accurate input representation (from its output layer). If the gradient descent procedure is sufficiently powerful, we would expect for any input sentence to be able to be generated exactly from pure noise.
+
+The following model takes as input an embedding tensor with `hidden_dim` dimension with the number of tokens being `input_length` and is invertible.  This MLP is similar to the transformer MLP, except without a residual connection and normalization and with equal to or more output elements as there are input elements for each layer (which means that the model is invertible assuming that the GeLU transformation does not zero out many inputs).
+
+```python
+class FCNet(nn.Module):
+
+	def __init__(self, input_length=5, hidden_dim=768):
+		super().__init__()
+		self.input = nn.Linear(input_length * hidden_dim, 4 * input_length * hidden_dim)
+		self.h2h = nn.Linear(4 * input_length * hidden_dim, 4 * input_length * hidden_dim)
+		self.input_length = input_length
+		self.gelu = nn.GELU()
+	
+	def forward(self, x):
+		x = x.flatten()
+		x = self.input(x)
+		x = self.gelu(x)
+
+		x = self.h2h(x)
+		x = model.lm_head(x.reshape(self.input_length, 768))
+		return x
+```
+
+Given a sufficiently large $N$ we can indeed recover the target input.  For example, given the input
+
+$$
+\mathtt{This \; is \; a \; prompt\; sentence.}
+$$
+
+This input can be generated from noise after 200 iterations of gradient descent on the output of the model above.  To get an idea of how effective our gradient procedure is in terms of metric distances, we can construct a shifted input $e'$
+
+$$
+e' = e + \mathcal{N}(e, \mu=0, \sigma=1/20).
+$$
+
+Feeding $e'$ into a trained GPT-2 typically results in no change to the decoded GPT-2 output $O(e', \theta)$ which is an indication that this is an effectively small change on the input. 
 
 ### Language models translate nonsense into sense
 
@@ -199,35 +251,35 @@ class AbbreviatedGPT(nn.Module):
 		return x
 ```
 
-When we generate an input after a few hundred iterations of Equation \eqref{eq1}, passing in the resulting embeddings to be inverted by Equation \eqref{eq2} we get generated prompts
+When we generate an input after a few hundred iterations of Equation \eqref{eq2}, passing in the resulting embeddings to be inverted by Equation \eqref{eq3} we get generated inputs
 
 $$
  \mathtt{\; Lime \; Lime  \;is \; blueactly} \\
  \mathtt{\; enessidateidate \; postp.}
 $$
 
-If a language modeling head is attached to this first transformer block, we find that these two prompts really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{%}$ (for one particular random initialization for GPT-2). 
+If a language modeling head is attached to this first transformer block, we find that these two inputs really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{ % }$ (for one particular random initialization for GPT-2). 
 
-If we increase the number of maximum interations $N$ of our gradient descent procedure in Equation \eqref{eq1} we have 
+If we increase the number of maximum interations $N$ of our gradient descent procedure in \eqref{eq2} we have 
 
 $$
- \mathtt{\; Terr \;sky \;is \; blue.} \\
+ \mathtt{\; Terr \; sky \; is \; blue.} \\
  \mathtt{\; cyclists \; sky  \; is \; blue.}
 $$
 
-And increasing the total iterations $N$ further ($N \geq 1000$) for \eqref{eq1} yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt
+And increasing the total iterations $N$ further (to $N \geq 1000$) yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt
 
 $$
 \mathtt{The \; sky \; is \; blue.}
 $$
 
-although most generated prompts are close but not quite equal to the original. This is unsurprising given that the transformer model is not invertible, such that 
+although most generated prompts are close but not quite equal to the original. This is unsurprising given that the transformer model is not invertible, such that many inputs may yield an identical output.  
 
 $$
 \mathtt{The \; shades \; is \; blue.}
 $$
 
-With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, may iterations of Equation \eqref{eq1} a model with blocks 1 and 2 we have a generated prompt of
+With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, many iterations of Equation \eqref{eq2} a model with blocks 1 and 2 we have a generated prompt of
 
 $$
 \mathtt{The \; sky \; is \; tragedies.}
@@ -246,7 +298,7 @@ effectively minimize the $L^2$ distance for different initializations of GPT-2, 
 
 ### Langauge models become untrainable as they are trained
 
-So far we have only considered untrained models
+So far we have only considered untrained GPT-2 models.
 
 
 
