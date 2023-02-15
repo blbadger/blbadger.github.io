@@ -86,10 +86,10 @@ This is also the case for out-of-distribution images such as this Tesla coil.  I
 
 In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to reconstruct language inputs, rather than images.
 
-Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^2$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
+Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^1$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
 
 $$
-a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_2 \\
+a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
 \tag{1}\label{eq1}
 $$
 
@@ -117,14 +117,14 @@ $$
 
 where $D^+$ is simply the transpose of the singular value decomposition diagonal matrix $D$ with all nonzero (diagonal) entries being the reciprocal of the corresponding element in $D$.
 
-Therefore we can instead perform gradient descent on an initially random embedding $e_0 = \mathcal{e, \mu=1/2, \sigma=1/20}$ using
+Therefore we can instead perform gradient descent on an initially random embedding $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20)$ using
 
 $$
-e_{n+1} = e_n + \eta * \nabla_{e_n} ||O_l(e_n, \theta) - O_l(e, \theta)||_2 \\
+e_{n+1} = e_n + \eta * \nabla_{e_n} ||O_l(e_n, \theta) - O_l(e, \theta)||_1 \\
 \tag{2}\label{eq2}
 $$
 
-and then recover the generated input $a_g$ from the final embedding $e_N$ by multiplying this embedding by the pseudo-inverse of the embedding weight matrix $W$,
+and then recover the generated input $a_g$ from the final embedding $e_g = e_N$ by multiplying this embedding by the pseudo-inverse of the embedding weight matrix $W$,
 
 $$
 a_g = W^+e_N
@@ -218,11 +218,11 @@ $$
 
 meaning that our small fully connected model has been successfully inverted.
 
-It may be wondered if a non-invertible model (containing one or more layer transformations that are non-invertible) would be capable of exactly representing the input.  After all, the transformer MLP is non-invertible as it is four times smaller than the middle layer. If we change the last layer of our small MLP to have `input_length * hidden_dim` elements, we find that the generated inputs are no longer typically exact copies of the target.
+It may be wondered if a non-invertible model (containing one or more layer transformations that are non-invertible) would be capable of exactly representing the input.  After all, the transformer MLP is non-invertible as it is four times smaller than the middle layer. If we change the last layer of our small MLP to have `input_length * hidden_dim` elements, we find that the generated inputs $a_g$ are no longer typically exact copies of the target.
 
 $$
-a_g = \mathtt{\; this \; millenn \; charismゼウス \; sentence.} \\
-a_g = \mathtt{\; this \; adolesc \; a \; prompt \; sentence.}
+\mathtt{\; this \; millenn \; charismゼウス \; sentence.} \\
+\mathtt{\; this \; adolesc \; a \; prompt \; sentence.}
 $$
 
 These representations yeild the same next character output for a trained GPT-2, indicating that they are considered to be nearly the same as the target input with respect to that model as well.
@@ -301,7 +301,7 @@ $$
 
 which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same) 
 
-Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yeild the same output character as our original prompt but are completely different.  For example both
+Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yeild the same output character as our original prompt but are completely different.  For example both $a_g$ of
 
 $$
 \mathtt{coastline \; DVDs \; isIGHTweak} \\
@@ -312,8 +312,19 @@ effectively minimize the $L^2$ distance for different initializations of GPT-2, 
 
 ### Langauge models become untrainable as they are trained
 
-So far we have only considered untrained GPT-2 models.
+So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability.
 
+When performing the input representation procedure detailed in the last section on a trained GPT-2, the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that
+
+ $$
+ \vert O_l(e_g, \theta) - O_l(e, \theta) \vert < \vert O_l(e', \theta) - O_l(e, \theta) \vert
+ $$
+
+on the order to one hundred times as many as for the untrained model to be precise. 
+
+This very slow minimization of the output loss also occurs when the gradient is calculated on is a different metric, perhaps $L^2$ instead of $L^1$.  A quick check shows that there is no change in the general lack of invertibility of even a single GPT-2 transformer module using this metric. 
+
+It may also be wondered whether this inability to minimize the output distance is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  When this is done 
 
 
 
