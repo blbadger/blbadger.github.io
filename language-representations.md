@@ -233,7 +233,25 @@ $$
 e' = e + \mathcal{N}(e, \mu=0, \sigma=1/20).
 $$
 
-Feeding $e'$ into a trained GPT-2 typically results in no change to the decoded GPT-2 output $O(e', \theta)$ which is an indication that this is an effectively small change on the input. 
+Feeding $e'$ into a trained GPT-2 typically results in no change to the decoded GPT-2 output which is an indication that this is an effectively small change on the input. Therefore we can use 
+
+$$
+m = || O_l(e', \theta) - O_l(e, \theta)||_1
+$$
+
+as an estimate for 'close' to $O_l(e, \theta)$ we should try to make $O_l(e_g, \theta)$. For the first transformer block (followed by the langauge modeling head) of GPT, we can see that after 100 iterations of \eqref{eq2} we have a representation
+
+$$
+\mathtt{Engine \; casino \; ozlf \; Territ}
+$$
+
+with the distance of output of this representation for the one-block GPT-2 $O_l(e_g, \theta)$ to the target output
+
+$$
+m_g = || O_l(e_g, \theta) - O_l(e, \theta)||_1
+$$
+
+such that $m_g < m$.
 
 ### Language models translate nonsense into sense
 
@@ -308,16 +326,16 @@ $$
 \mathtt{biologist \; Elephant \; Elephant \; Elephant \; Elephant}
 $$
 
-effectively minimize the $L^2$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
+effectively minimize the $L^1$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
 
 ### Langauge models become untrainable as they are trained
 
 So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability.
 
-When performing the input representation procedure detailed in the last section on a trained GPT-2, the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that
+When performing the input representation procedure detailed in the last section on a trained GPT-2, the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
 
  $$
- \vert O_l(e_g, \theta) - O_l(e, \theta) \vert < \vert O_l(e', \theta) - O_l(e, \theta) \vert
+ || O_l(e_g, \theta) - O_l(e, \theta) ||_1 < || O_l(e', \theta) - O_l(e, \theta) ||_1
  $$
 
 on the order to one hundred times as many as for the untrained model to be precise. 
