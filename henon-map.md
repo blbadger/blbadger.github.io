@@ -2,8 +2,11 @@
 
 Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space, achieved with the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
 
-$$x_{n+1} = 1-ax_n^2 + y_n \\
-y_{n+1} = bx_n \tag{1}$$
+$$
+x_{n+1} = 1-ax_n^2 + y_n \\
+y_{n+1} = bx_n 
+\tag{1} \label{eq1}
+$$
 
 When
 
@@ -54,7 +57,7 @@ After many iterations, the following map is produced:
 
 ![map]({{https://blbadger.github.io}}/logistic_map/henon_map.png)
 
-How does the equation produce the map above?  We can plot each point one by one to find out.  To do this, the program above can be modified as follows to make many images of the map of successive iterations of (1), which can then be compiled into a movie (see [here](/julia-sets.md) for an explanation on how to compile images using ffmpeg).
+How does the equation produce the map above?  We can plot each point one by one to find out.  To do this, the program above can be modified as follows to make many images of the map of successive iterations of \eqref{eq1}, which can then be compiled into a movie (see [here](/julia-sets.md) for an explanation on how to compile images using ffmpeg).
 
 ```python
 ...
@@ -80,9 +83,9 @@ Successive iterations jump around unpredictably but are attracted to a distincti
 
 ### The Henon map is a strange (fractal) attractor
 
-For certain starting values $x_0, y_0$, (1) with a=1.4 and b=0.3 does not head towards infinity but is instead attracted to the region shown above.  This shape is called an attractor because regardless of where $x_0, y_0$ is placed, if subsequent iterations do not diverge then they are drawn to the shape above.  
+For certain starting values $x_0, y_0$, \eqref{eq1} with a=1.4 and b=0.3 does not head towards infinity but is instead attracted to the region shown above.  This shape is called an attractor because regardless of where $x_0, y_0$ is placed, if subsequent iterations do not diverge then they are drawn to the shape above.  
 
-Let's examine this attractor.  If we increase magnification on the top line in the center, we find that it is not a line at all!  With successive increases in magnification (and more iterations of (1)), we can see that each top line is actually many lines close together, in a self-similar pattern.  This is indicative of a fractal shape called the Cantor set.
+Let's examine this attractor.  If we increase magnification on the top line in the center, we find that it is not a line at all!  With successive increases in magnification (and more iterations of \eqref{eq1}), we can see that each top line is actually many lines close together, in a self-similar pattern.  This is indicative of a fractal shape called the Cantor set.
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_zoom1.png)
 
@@ -98,7 +101,7 @@ In general terms, the Henon map is a fractal because it looks similar at widely 
 
 ### The boundary of the basin of attraction for the Henon map 
 
-Some experimentation can convince us that not all starting points head towards the attractor upon successive iterations of (1) with $a=1.4$ and $b=0.3$: instead, some head towards positive or negative infinity!  The collection of points that do not diverge (head towards infinity) for a given dynamical system is called the basin of attraction.  Basins of attraction may be fractal or else smooth as shown by [Yorke](https://projecteuclid.org/download/pdf_1/euclid.cmp/1104248191).  Does the Henon map (with $a=1.4, b=0.3$) have a smooth or fractal basin?
+Some experimentation can convince us that not all starting points head towards the attractor upon successive iterations of \eqref{eq1} with $a=1.4$ and $b=0.3$: instead, some head towards positive or negative infinity!  The collection of points that do not diverge (head towards infinity) for a given dynamical system is called the basin of attraction.  Basins of attraction may be fractal or else smooth as shown by [Yorke](https://projecteuclid.org/download/pdf_1/euclid.cmp/1104248191).  Does the Henon map (with $a=1.4, b=0.3$) have a smooth or fractal basin?
 
 To find out, let's import the necessary libraires and define a function `henon_boundary` as follows
 
@@ -117,7 +120,7 @@ def henon_boundary(max_iterations, a, b):
 	returns an array of the number of iterations until divergence
 	'''
 ```
-Now we can initialize the size of the image (in pixels) we want to make by specifying values for variables `x_range` and `y_range`. A list of points for each variable is made over this range, and x- and y- arrays (`array[0]` and `array[1]`) are formed using the `np.meshgrid` class.  This array will store the values of each point as (1) is iterated.  Next we need an array to store the number of iterations until divergence, which can be accomplished (not particularly efficiently) by making an array of 0s in the same shape as the `array` and then adding the maximum iteration number to each array element.
+Now we can initialize the size of the image (in pixels) we want to make by specifying values for variables `x_range` and `y_range`. A list of points for each variable is made over this range, and x- and y- arrays (`array[0]` and `array[1]`) are formed using the `np.meshgrid` class.  This array will store the values of each point as \eqref{eq1} is iterated.  Next we need an array to store the number of iterations until divergence, which can be accomplished (not particularly efficiently) by making an array of 0s in the same shape as the `array` and then adding the maximum iteration number to each array element.
 
 ```python
 	x_range = 2000
@@ -142,7 +145,7 @@ In an effort to prevent explosion of values to infinity, we will run into the po
 	not_already_diverged = array[0] < 1000
 ```
 
-Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of (1) is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  By using bitwise and, we make a new array `diverging_now` that checks whether divergence has already happened or not, and assigns `True` only to the diverging values that have not. The indicies of `iterations_until_divergence` that are currently diverging are assigned to the iteration number `k`, and the `not_already_diverged` array is updated. Finally, diverging elements of x or y arrays are then assigned as 0 to prevent them from exploding to infinity (as long as the origin does not head towards infinity, that is).
+Now we iterate over the `array` to find when each position diverges towards infinity (if it does).  Because iteration of \eqref{eq1} is a two-step process, the x-array is copied such that it is not modified before being used to make the new y-array.  A boolean array `diverging` is made, signifying whether or not the distance of any point has become farther than 10 units from the origin, which I use as a proxy for divergence.  By using bitwise and, we make a new array `diverging_now` that checks whether divergence has already happened or not, and assigns `True` only to the diverging values that have not. The indicies of `iterations_until_divergence` that are currently diverging are assigned to the iteration number `k`, and the `not_already_diverged` array is updated. Finally, diverging elements of x or y arrays are then assigned as 0 to prevent them from exploding to infinity (as long as the origin does not head towards infinity, that is).
 
 ```python
 	for k in range(max_iterations):
@@ -188,7 +191,7 @@ This abrupt change between smooth and fractal attractor basin shape is called ba
 
 ### A semicontinuous iteration of the Henon map reveals period doubling 
 
-This map (1) is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
+This map \eqref{eq1} is discrete, but may be iterated using Euler's method as if we wanted to approximate a continuous equation:
 
 $$
 \cfrac{dx}{dt} = 1-ax^2 + y \\
@@ -321,13 +324,13 @@ results in $f(h(x)) = h(g(x))$, which can be checked by substituting the values 
 
 ### Pendulum map from the Henon attractor
 
-This is not the only similarity the Henon map has to another dynamical system: (1) can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
+This is not the only similarity the Henon map has to another dynamical system: \eqref{eq1} can also result in a map that displays the waves of the [semicontinuous pendulum map](/pendulum-map.md).  The $a, b$ values yielding the spiral patterns were found [here](https://mathworld.wolfram.com/HenonMap.html).
 
 Setting $a=0.2, b=-0.99994$ and $x_0, y_0 = -1.5, 1.5$ we have
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_spiral.png)
 
-The semicontinuous pendulum waves form as a spiral trajectory unwinds with increasing $\Delta t$.  Does this Henon map form the same way?  Let's find out by plotting (1) going from $b \approx -0.9 \to b \approx -1.05$, including the attractor basin.
+The semicontinuous pendulum waves form as a spiral trajectory unwinds with increasing $\Delta t$.  Does this Henon map form the same way?  Let's find out by plotting \eqref{eq1} going from $b \approx -0.9 \to b \approx -1.05$, including the attractor basin.
 
 ![map]({{https://blbadger.github.io}}/henon_map/henon_b0.9_to_1.1.gif)
 
@@ -370,7 +373,7 @@ x = \frac{(-2.1) \pm \sqrt{(-2.1)^2 + 0.8}}{0.4} \\
 y = -1.1x
 $$
 
-will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. This is important because there are no perfect finite representations of irrational numbers, meaning that any form of the radical above that can be stored in finite memory will eventually diverge to infinity given enough iterations of (1).  
+will remain in place for an arbitrary number of iterations.  Approximations, no matter how accurate, will diverge over time. This is important because there are no perfect finite representations of irrational numbers, meaning that any form of the radical above that can be stored in finite memory will eventually diverge to infinity given enough iterations of \eqref{eq1}.  
 
 The former coordinate lies at the center of the pinwheel, meaning that regions nearby converge more slowly than regions elsewhere and is therefore semistable.  The latter point is unstable, such that iterations arbitrarily close rapidly diverge.  To get an idea of just how unstable this point is, for $(x, y) \approx (-10.956, 12.052)$ at 64 bit precision (meaning that x is defined as -10.956356105256663), divergence occurs after a mere ~28 iterations.  In contrast, it takes over five hundred iterations for $(x, y) \approx (0.456, -0.502)$ at 64 bit precision to diverge.
 
