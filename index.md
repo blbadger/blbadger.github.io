@@ -229,9 +229,10 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ### [Input Representation III: Langauge Models](/language-representations.md)
 
 $$
-\mathtt{This \; is \; a \; prompt \; sentence} \\
-\mathtt{channelAvailability \; is \; a \; prompt \; sentence} \\
+\mathtt{This \; is \; a \; prompt \; sentence} \\ 
+\mathtt{channelAvailability \; is \; a \; prompt \; sentence} \\ 
 \mathtt{channelAvailability \; millenn \; a \; prompt \; sentence} \\
+\dots \\
 \mathtt{redessenal \; millenn-+-+DragonMagazine}
 $$
 
