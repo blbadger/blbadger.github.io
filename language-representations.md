@@ -203,17 +203,31 @@ class FCNet(nn.Module):
 		x = self.gelu(x)
 
 		x = self.h2h(x)
-		x = model.lm_head(x.reshape(self.input_length, 768))
 		return x
 ```
 
-Given a sufficiently large $N$ we can indeed recover the target input.  For example, given the input
+Given the target input 'The sky is blue.' it may generated from noise after a few dozen iterations of gradient descent on the output of the model above.  At various $n$ we have the following:
 
 $$
-\mathtt{This \; is \; a \; prompt\; sentence.}
+a_{20} = \mathtt{guiActiveUn \; millenniosynウス \; CosponsorsDownloadha} \\
+a_{40} = \mathtt{\; this \; millennaウス \;  Cosponsors.} \\
+a_{45} = \mathtt{\; this \; millenn \; a \; prompt \; Cosponsors.} \\
+a_{50} = \mathtt{ \; this \; is \; a \; prompt  \; sentence.} \\
+a_{60} = \mathtt{This \; is \; a \; prompt\; sentence.}
 $$
 
-This input can be generated from noise after 200 iterations of gradient descent on the output of the model above.  To get an idea of how effective our gradient procedure is in terms of metric distances, we can construct a shifted input $e'$
+meaning that our small fully connected model has been successfully inverted.
+
+It may be wondered if a non-invertible model (containing one or more layer transformations that are non-invertible) would be capable of exactly representing the input.  After all, the transformer MLP is non-invertible as it is four times smaller than the middle layer. If we change the last layer of our small MLP to have `input_length * hidden_dim` elements, we find that the generated inputs are no longer typically exact copies of the target.
+
+$$
+a_g = \mathtt{\; this \; millenn \; charismゼウス \; sentence.} \\
+a_g = \mathtt{\; this \; adolesc \; a \; prompt \; sentence.}
+$$
+
+These representations yeild the same next character output for a trained GPT-2, indicating that they are considered to be nearly the same as the target input with respect to that model as well.
+
+To get an idea of how effective our gradient procedure is in terms of metric distances, we can construct a shifted input $e'$ as follows
 
 $$
 e' = e + \mathcal{N}(e, \mu=0, \sigma=1/20).
