@@ -4,11 +4,14 @@
 
 The logistic map was derived from a differential equation describing population growth, popularized by Robert May. The dynamical equation is as follows:
 
-$$x_{n+1} = rx_n (1 - x_n) \tag{1}$$
+$$
+x_{n+1} = rx_n (1 - x_n) 
+\tag{1}
+\label{eq1}$$
 
 where r can be considered akin to a growth rate, $x_{n+1}$ is the population next year, and $x_n$ is the current population.  Population ranges between 0 and 1, and signifies the proportion of the maximum population.
 
-Let's see what happens to population over time at a fixed r value.  To model (1), we will employ numpy and matplotlib, two indispensable python libraries 
+Let's see what happens to population over time at a fixed r value.  To model \eqref{eq1}, we will employ numpy and matplotlib, two indispensable python libraries.
 
 ```python
 #! python3
@@ -67,7 +70,7 @@ $$
 
 and therefore $x=0$ is unstable.  On the other hand, $f'(3/5) = 3.5-4.2 = -0.7$ which means that $x=3/5$ is a stable point of period 1.  As we shall see below, stable points of finite period act as attractors, such that points in $(0, 1)$ eventually end up on the point $x=3/5$ given sufficient iterations.
 
-Returning to models of (1), at $r = 3.1$ the population fluctuates, returning to the starting point every other year instead of every year.  This is called 'period 2':
+Returning to models of \eqref{eq1{, at $r = 3.1$ the population fluctuates, returning to the starting point every other year instead of every year.  This is called 'period 2':
 
 ![period 2 logistic]({{https://blbadger.github.io}}/logistic_map/logistic_time_r3.1.png)
 
@@ -149,7 +152,7 @@ even a large change in starting value at $r=3.55$ (period 8), from $x_0=0.3$ to 
 
 ### Patterns in the aperiodic orbit map
 
-Information from iterating (1) at different values of $r$ may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
+Information from iterating \eqref{eq1} at different values of $r$ may be compiled in what is called an orbit map, which displays the stable points at each value of $r$.  These may also be though of as the roots of the equation with specific $r$ values. 
 
 To do this, let's have the output of the logistic equation on the y-axis and the possible values of $r$ on the x-axis, incremented in small units.  
 ```python
@@ -198,7 +201,7 @@ Let's take a closer look at the fuzzy region of the right. This corresponds to t
 
 ![aperiodic logistic orbit map]({{https://blbadger.github.io}}/logistic_map/logistic_period_zoom2.png)
 
-What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of (1) with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
+What do these shapes mean? It is worth remembering what this orbit diagram represents: a collection of single iterations of \eqref{eq1} with very slightly different $r$ values, the previous iteration population size being the input for the current iteration. This is why the chaotic regions appear to be filled with static: points that are the result of one iteration of the logistic equation are plotted, but the next point is mostly unpredictable and thus may land anywhwere within a given region.  The shapes, ie regions of higher point density, are values that are more common to iterations of changing $r$ values.
 
 Are these same values more common if $r$ is fixed and many iterations are performed at various starting population size values? Let's take $ r \approx 3.68$, where the orbit diagram exhibits higher point density at population size $p \approx 0.74$.  THe proportion of iterations near each value may be plotted in R,
 
@@ -219,7 +222,7 @@ Here the x-axis denotes the population size, and the y-axis denotes the proporti
 
 and thus there are are indeed more iterations near $0.74$ than elsewhere, holding $r$ constant and iterating from a few different starting points. 
 
-Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating (1) at $r=3.68, x_0=0.3$ as shown above provides a possible explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
+Why are certain points more common than others, given that these systems are inherently unpredictable?  Iterating \eqref{eq1} at $r=3.68, x_0=0.3$ as shown above provides a possible explanation: the population only slowly changes if it reaches $x \approx 0.728$ such that many consecutive years (iterations) contain similar population values.
 
 ![r=3.68 iterations]({{https://blbadger.github.io}}/logistic_map/logistic_time_3.68.png)
 
@@ -253,7 +256,7 @@ $$
 
 But as there are infinitely many periodic points, this approach is flawed because we will never be done comparing stabilities at different points.  Instead, the following technique presented by Strogatz uses a geometric analytic argument: where does $x_{n+1}$ change the least for any given change in $x_n$?  This occurs near $x_n = 0.5$, as the absolute value of derivative of the logistic map $f'(x) = r(1-2x)$ is minimized when $x=1/2$. Therefore the most stable $x_n$ values exist for iterations following this value.  
 
-This is best seen using a cobweb plot, which plots the equation of interest (here $rx(1-x)$) and the line $y=x$ in order to follow iterations geometrically.  The principle is that $y=x$ is used to reflect y-values onto the x-axis, thereby allowing iterations to be plotted clearly.  The procedure is as follows: given any point on the x-axis, find the y-value that corresponds to $rx(1-x)$.  This is the value of the next iteration of (1), and this value is reflected back onto the x-axis by travelling horixontally until the $y=x$ line is reached.  The x-value of this point is the same as the y-value we just found, and therefore we can repeat the process of finding a subsequent iteration value by again finding the y-value of the curve $rx(1-x)$ and travelling horizontally to meet $y=x$.
+This is best seen using a cobweb plot, which plots the equation of interest (here $rx(1-x)$) and the line $y=x$ in order to follow iterations geometrically.  The principle is that $y=x$ is used to reflect y-values onto the x-axis, thereby allowing iterations to be plotted clearly.  The procedure is as follows: given any point on the x-axis, find the y-value that corresponds to $rx(1-x)$.  This is the value of the next iteration of \eqref{eq1}, and this value is reflected back onto the x-axis by travelling horixontally until the $y=x$ line is reached.  The x-value of this point is the same as the y-value we just found, and therefore we can repeat the process of finding a subsequent iteration value by again finding the y-value of the curve $rx(1-x)$ and travelling horizontally to meet $y=x$.
 
 For example, if $r=3.6$, $x_n = 0.5$ gives $x_{n+1} \approx 0.91$.  
 
@@ -290,9 +293,9 @@ $r=3.6$
 $r=4$
 ![logistic iterations shifted]({{https://blbadger.github.io}}/logistic_map/logistic_time_4_small.png)
 
-Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of (1) at both values of $r$ are chaotic, but they are not equally unpredictable.
+Observe that the divergence in values occurs later for $r=3.6$ than for $r=4$, implying that longer-range prediction is possible here.  Iterations of \eqref{eq1} at both values of $r$ are chaotic, but they are not equally unpredictable.
 
-To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of (1) at varying $r$ values, with $p_{01} = 3, p_{02} = 3.0003$.
+To illustrate this more clearly, here is a plot of the first iteration of divergence (100 iterations mazimum) of \eqref{eq1} at varying $r$ values, with $p_{01} = 3, p_{02} = 3.0003$.
 
 To do this, the first step is to initialize an array to record $r$ values from 3.5 to 4, taking 500 steps.  The next step is to count the number of iterations it takes to diverge (with a maximum interation number of 100 in this case).  Arbitrarily setting divergence to be a difference in value greater than 0.15, 
 ```python
@@ -323,13 +326,13 @@ which when plotted yields
 
 Prediction ability (in length until divergence) tends to decrease with increasing $r$ values, but the exact relationship is unpredictable: some small increases in $r$ lead to increased prediction ability.
 
-Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for (1).  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
+Increasing the accuracy of the initial measurement would be expected to increase prediction ability for all values of $r$ for \eqref{eq1}.  Is this the case? Let's go from $\Delta x_0 = 1 \to \Delta x_0 \approx 3.5 \times 10^{-11}$.  
 
 {% include youtube.html id='7MGpoV2x2Hc' %} 
 
 Thus prediction power does increase with better initial measurements, but not always: the benefit is unpredictable.  Notice that for certain values of $r$ the number of iterations until divergence actually increases with a decrease in $\Delta x_0$: this means that paradoxically increased accuracy can lead to decreased prediction accuracy!  
 
-Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of (1) with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
+Ranging $r=3.5 \to r=4$, small changes in $r$ lead to little change to iterations of \eqref{eq1} with $x_0 = 0.3$ if the trajectory is periodic.  But when aperiodic, small changes in $r$ lead to large changes in the population trajectory.
 
 {% include youtube.html id='WlbN2ZD34HU' %}
 
@@ -478,34 +481,9 @@ This is not all: from Sharkovskii's as well as Li and Yorke's work, it is shown 
 
 ### Exact solution for r=4
 
-At r=4, the logistic map exhibits a fascinating conjuction of properties: aperiodicity with solvability.  By this is meant that we can express the location of any future point $x_{n+a}$ in a closed form, non-recursive expression: we no longer need to iterate (1) in order to find out where a future iteration will be.  And yet this map is also aperiodic, and furthermore it is sensitive to initial conditions such that any arbitrarily close $x_0, x_{0'}$ will eventually diverge given enough iterations.  
+At r=4, the logistic map exhibits a fascinating conjuction of properties: aperiodicity with solvability.  By this is meant that we can express the location of any future point $x_{n+a}$ in a closed form, non-recursive expression: we no longer need to iterate \eqref{eq1} in order to find out where a future iteration will be.  And yet this map is also aperiodic, and furthermore it is sensitive to initial conditions such that any arbitrarily close $x_0, x_{0'}$ will eventually diverge given enough iterations.  
 
 The relationship between solvability and aperiodicity, which are intuitively opposing ideas, is [explored elsewhere](/uncomputable-aperiodics.html).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
