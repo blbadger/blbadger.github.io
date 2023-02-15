@@ -4,21 +4,21 @@ The differential system
 
 $$ 
 \cfrac{dx}{dt} = a \cdot cos(y) \\
-\cfrac{dy}{dt} = b \cdot sin(x) \tag{1}
+\cfrac{dy}{dt} = b \cdot sin(x) \tag{1}\label{eq1}
 $$
 
 may be viewed using its vector map as follows:
 
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/cossin_vectors.png)
 
-Trajectories of particles obeying (1) may be observed with Euler's method,
+Trajectories of particles obeying \eqref{eq1} may be observed with Euler's method,
 
 $$
 x_{n+1} = x_n + \cfrac{dx}{dt} \Delta t \\
-y_{n+1} = y_n + \cfrac{dy}{dt} \Delta t  \tag{2}
+y_{n+1} = y_n + \cfrac{dy}{dt} \Delta t  \tag{2} \label{eq2}
 $$
 
-(1) is an unbounded nonlinear two dimensional system.  It is extremely sensitive to initial conditions for certain values of $\Delta t$.  For example, take $\Delta t = 0.8$ and the starting $(x, y)$ coordinates to be $(1, 0)$. The following map is produced:
+\eqref{eq1} is an unbounded nonlinear two dimensional system.  It is extremely sensitive to initial conditions for certain values of $\Delta t$.  For example, take $\Delta t = 0.8$ and the starting $(x, y)$ coordinates to be $(1, 0)$. The following map is produced:
 
 ![t=0.8 map]({{https://blbadger.github.io}}/grid_map/cossin_0.8t.png)
 
@@ -43,7 +43,7 @@ Systems of ordinary differential equations have one independent variable: time. 
 
 ![t=0.05 map]({{https://blbadger.github.io}}/grid_map/grid_map_intersection.png)
 
-(1) is an example of a chaotic mathematical system as it is deterministic but deeply unpredictable: small changes to the starting value of a chaotic system will lead to large changes in the output.  These are also called aperiodic systems, because they never revisit previously visited points.
+\eqref{eq1} is an example of a chaotic mathematical system as it is deterministic but deeply unpredictable: small changes to the starting value of a chaotic system will lead to large changes in the output.  These are also called aperiodic systems, because they never revisit previously visited points.
 
 ### An aperiodic, unbounded map
 
@@ -79,7 +79,7 @@ and still remains extremely sensitive to inital values ($x_0 = 1$ in red, $x_0 =
 
 With increases in $\Delta t$, the map's fractal dimension increases. It is impossible for 2-dimensional continuous differential equations to produce a strange (fractal) attractor, but it is possible for a 2D discrete system to do so.  For more on this topic, see [here](https://blbadger.github.io/continuity-poincare.html). 
 
-At $\Delta t = 18$, the trajectory is indistinguisheable from random walk, which is often modelled mathematically by a system called a ([Wiener process](https://en.wikipedia.org/wiki/Wiener_process)).  This is not peculiar to the equation system (1) but is a feature of many nonlinear systems (see the logistic attractor or Clifford attractor pages) that are iterated discontinuously.  
+At $\Delta t = 18$, the trajectory is indistinguisheable from random walk, which is often modelled mathematically by a system called a ([Wiener process](https://en.wikipedia.org/wiki/Wiener_process)).  This is not peculiar to the equation system \eqref{eq1} but is a feature of many nonlinear systems (see the logistic attractor or Clifford attractor pages) that are iterated discontinuously.  
 
 Why is this important?  It means that real observations that are normally ascribed to a stochastic (usually linear) model are equally ascribable to deterministic nonlinear models.  And this is important because once we have perfomed an inversion with respect to what can be ascribed to stochastic versus deterministic events, we can invert the reasoning on what is insignificant data ('noise') versus what is significant ('signal').  What one normally thinks of as signal may actually be far less important to understanding an underlying physical process than what is considered noise.
 
