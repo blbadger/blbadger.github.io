@@ -10,12 +10,12 @@ The logistic equation, which has been explored [here](https://blbadger.github.io
 
 $$
 x_{n+1} = rx_n(1-x_n)
-\tag{1}
+\tag{1} \label{eq1}
 $$
 
 The logistic equation is a one-dimensional discrete dynamical map of very interesting behavior: periodicity for some values of $r$, aperiodicity for others, and for $0 < r < 4$, the interval $(0, 1)$ is mapped into itself. 
 
-What does (1) look like in reverse, or in other words given any value $x_{n+1}$ which are the values of $x_n$ which when evaluated with (1) yield $x_{n+1}$?  Upon substituting $x_n$ for $x_{n+1}$, 
+What does \eqref{eq1} look like in reverse, or in other words given any value $x_{n+1}$ which are the values of $x_n$ which when evaluated with \eqref{eq1} yield $x_{n+1}$?  Upon substituting $x_n$ for $x_{n+1}$, 
 
 $$
 x_n = rx_{n+1}(1-x_{n+1}) \\
@@ -26,18 +26,18 @@ The term $x_n$ can be treated as a constant (as it is constant for any given inp
 
 $$
 x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
-\tag{2}
+\tag{2} \label{eq2}
 $$
 
 Now the first thing to note is that this dynamical equation is not strictly a function: it maps a single input $x_n$ to two outputs $x_{n+1}$ (one value for $+$ or $-$ taken in the numerator) for many values of $x_n \in (0, 1)$ whereas a function by definition has one output for any input that exists in the pre-image set.  In other words the logistic map is non-invertible.  
 
 ### The aperiodic logistic map in reverse is unstable
 
-What does it mean for a dynamical equation to be non-invertible?  It means that, given a point in a trajectory, we cannot determine what its previous point was with certainty.  In the case of the reverse logistic equation (2), one point $x_n$ could have two possible previous points $x_{n-1}, x_{n-1}'$ and each of these could have two possible previous points $x_{n-2}, x_{n-2}', x_{n-2}'', x_{n-2}'''$ and so on (note that some points have only one previous point, because either $x_{n-1}, x_{n-1}' \not \in (0, 1)$).  
+What does it mean for a dynamical equation to be non-invertible?  It means that, given a point in a trajectory, we cannot determine what its previous point was with certainty.  In the case of the reverse logistic equation \eqref{eq2}, one point $x_n$ could have two possible previous points $x_{n-1}, x_{n-1}'$ and each of these could have two possible previous points $x_{n-2}, x_{n-2}', x_{n-2}'', x_{n-2}'''$ and so on (note that some points have only one previous point, because either $x_{n-1}, x_{n-1}' \not \in (0, 1)$).  
 
 ![reverse tree]({{https://blbadger.github.io}}misc_images/logistic_inverted.png)
 
-Suppose one wanted to calculate the all the possible values that could have preceded $x_n$ after a certain number of steps.  The set `s` of points a point could have come from after a given number of `steps` may be found using recursion on (2) as shown below:
+Suppose one wanted to calculate the all the possible values that could have preceded $x_n$ after a certain number of steps.  The set `s` of points a point could have come from after a given number of `steps` may be found using recursion on \eqref{eq2} as shown below:
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
@@ -209,9 +209,9 @@ largest error: [0.07201364157312073]
 [Finished in 0.7s]
 ```
 
-The largest error is $10^{14}$ times larger than the smallest error, meaning that some values of $x_{n-30}$ computed with (2) to 64 bit precision are able to yield near-arbitrary accuracy when reversed with (1) to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
+The largest error is $10^{14}$ times larger than the smallest error, meaning that some values of $x_{n-30}$ computed with \eqref{eq2} to 64 bit precision are able to yield near-arbitrary accuracy when reversed with \eqref{eq1} to give $x_n$, whereas others are quite inaccurate.  And this is for a mere 30 iterations!
 
-How is it possible that there is such a large difference in estimation accuracy using values given by (2) after so small a number of computations?  First one can limit the number of values added to the array at each step, in order to calculate (2) for many more steps without experiencing a memory overflow from the exponentially increasing number of array values. The following gives at most 100 values per step:
+How is it possible that there is such a large difference in estimation accuracy using values given by \eqref{eq2} after so small a number of computations?  First one can limit the number of values added to the array at each step, in order to calculate \eqref{eq2} for many more steps without experiencing a memory overflow from the exponentially increasing number of array values. The following gives at most 100 values per step:
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
@@ -222,7 +222,7 @@ def reverse_logistic_map(r, array, steps, s):
 	reverse_logistic_map(r, array_2[:100], steps-1, s)
 ```
 
-Now we can iterate (2) for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of (1) settles on period 1?  Setting $x_n = x_{n+1}$, 
+Now we can iterate \eqref{eq2} for many more iterations than before without taking up more memory than a computer generally has available. But first, what happens when we look at a simpler case, when r=2 and the trajectory of \eqref{eq1} settles on period 1?  Setting $x_n = x_{n+1}$, 
 
 $$
 x_n = rx_n(1-x_n) \\
@@ -230,7 +230,7 @@ x_n = rx_n(1-x_n) \\
 x_n = 1-\frac{1}{r}
 $$
 
-given $r=2$, there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In (1), the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  For starting values greater than 1/2, (2) finds only complex values because $r^2 - 4rx_n$ becomes negative.  Which complex values can be found by modifying `reverse_logistic_map` as follows
+given $r=2$, there is a root at $x_n = 0$ and another at $x_n = 1/2$, meaning that if $x_n$ is equal to either value then it will stay at that value for all future iterations.  In \eqref{eq1}, the value $x_n = 1/2$ is an attractor for all values $x_n \in (0, 1)$.  For starting values greater than 1/2, \eqref{eq2} finds only complex values because $r^2 - 4rx_n$ becomes negative.  Which complex values can be found by modifying `reverse_logistic_map` as follows
 
 ```python
 def reverse_logistic_map(r, array, steps, s):
@@ -246,14 +246,14 @@ def reverse_logistic_map(r, array, steps, s):
 
 ```
 
-Why does (2) fail to find real previous values for an initial value $1/2 < x_n < 1$ if the initial value is attracted to $1/2$?  Iterating (1) with any starting point $1/2 < x_n < 1$ gives an indication as to why this is:
+Why does \eqref{eq2} fail to find real previous values for an initial value $1/2 < x_n < 1$ if the initial value is attracted to $1/2$?  Iterating \eqref{eq1} with any starting point $1/2 < x_n < 1$ gives an indication as to why this is:
 
 ```python
 [0.85, 0.255, 0.37995, 0.471175995, 0.4983383534715199, 0.49999447786162876, 0.49999999993901195, 0.5, 0.5, 0.5, 0.5]
 ```
-$1/2 < x_n < 1$ can only be the first iteration of any trajectory of (1) limited to real numbers because $r^2 - 4rx_n$ is negative, and therefore there is no previous value $x_{n-1}$ in (1) if $1/2 < x_n < 1$. 
+$1/2 < x_n < 1$ can only be the first iteration of any trajectory of \eqref{eq1} limited to real numbers because $r^2 - 4rx_n$ is negative, and therefore there is no previous value $x_{n-1}$ in \eqref{eq1} if $1/2 < x_n < 1$. 
 
-Thus not every $x_n \in (0, 1)$ has a next iteration of (2) (restricted to the reals), and therefore does not have an $x_{n-1}$ in (1).  To avoid this problem, we can start iterating (2) with a value that exists along a trajectory of (1), which can be implemented as
+Thus not every $x_n \in (0, 1)$ has a next iteration of \eqref{eq2} (restricted to the reals), and therefore does not have an $x_{n-1}$ in \eqref{eq1}.  To avoid this problem, we can start iterating \eqref{eq2} with a value that exists along a trajectory of \eqref{eq1}, which can be implemented as
 
 ```python
 r = 2
@@ -264,7 +264,7 @@ for i in range(50):
 # trajectory[-1] is our desired value
 ```
 
-With `trajectory[-1]` as the starting value and a maximum of 100 values per iteration of (2), we can calculate more iterations to try to understand why substantial error in calculating $x_n$ with (1) occurs after calculating $x_{n-p}$ with (2).  With 100 steps of (2) then (1) at r = 2.95 (period 1) to recalculate $x_n \approx 0.661$ there is a large difference in the approximation error depending on which $x_{n-100}$ was used.  
+With `trajectory[-1]` as the starting value and a maximum of 100 values per iteration of \eqref{eq2}, we can calculate more iterations to try to understand why substantial error in calculating $x_n$ with \eqref{eq1} occurs after calculating $x_{n-p}$ with \eqref{eq2}.  With 100 steps of \eqref{eq2} then \eqref{eq1} at r = 2.95 (period 1) to recalculate $x_n \approx 0.661$ there is a large difference in the approximation error depending on which $x_{n-100}$ was used.  
 
 ```python
 smallest_error: [0.0]
@@ -294,21 +294,21 @@ which gives
 ```python
 Result list [7.526935760170552e-17, 1.5053871520341105e-16, 4.516161456102331e-16, 1.2043097216272884e-15, 3.2365823768733374e-15, 1.0537710064238773e-14, 2.7849662312631042e-14, 9.205442434688585e-14, 2.410877523982628e-13, 8.05909011841461e-13, 2.0833805490576073e-12, 7.0663625610057165e-12, 1.799073131524445e-11, 6.20285743672743e-11, 1.5520278094720074e-10, 5.45169935560545e-10, 1.3372589664608297e-09, 4.798801055209755e-09, 1.1504929814858098e-08, 4.232121192100105e-08, 9.879781173962447e-08, 3.7414690848327905e-07, 8.464077734738537e-07, 3.318475220716627e-06, 7.228333600448949e-06, 2.956762489958464e-05, 6.145528865947984e-05, 0.00026525167524554897, 0.0005188860973583614, 0.0024055057511865553, 0.004323711646638956, 0.022166149207306658, 0.03467009226705414, 0.21625977507447144, 0.21625991839052272, 0.7837400816094773, 0.7837402249255285, 0.9653299077329459, 0.9778338507926934, 0.9956762883533611, 0.9975944942488134, 0.9994811139026417, 0.9997347483247544, 0.9999385447113406, 0.9999704323751004, 0.9999927716663994, 0.9999966815247793, 0.9999991535922266, 0.9999996258530914, 0.9999999012021882, 0.9999999576787881, 0.9999999884950702, 0.999999995201199, 0.9999999986627411, 0.9999999994548301, 0.9999999998447973, 0.9999999999379714, 0.9999999999820093, 0.9999999999929338, 0.9999999999979166, 0.999999999999194, 0.9999999999997589, 0.9999999999999079, 0.9999999999999721, 0.9999999999999895, 0.9999999999999967, 0.9999999999999988, 0.9999999999999996, 0.9999999999999999]
 ```
-We can see that there are values very close to 0, and values very close to 1.  Now all $x \in (0, 1)$ converge on the period one attractor with (1), meaning that with enough iterations in the forward direction all these values will end up arbitrarily close to $0.661...$.  But we can expect for values closer to 0 or 1 to require more iterations to do so compared to values farther from 0 or 1 simply by observing trajectories of (1) starting at very small initial points (note that initial points near 1 become very small after one iteration of (1)).
+We can see that there are values very close to 0, and values very close to 1.  Now all $x \in (0, 1)$ converge on the period one attractor with \eqref{eq1}, meaning that with enough iterations in the forward direction all these values will end up arbitrarily close to $0.661...$.  But we can expect for values closer to 0 or 1 to require more iterations to do so compared to values farther from 0 or 1 simply by observing trajectories of \eqref{eq1} starting at very small initial points (note that initial points near 1 become very small after one iteration of \eqref{eq1}).
 
 ```python
 [7.656710514656253e-17, 2.2204460492503128e-16, 6.439293542825906e-16, 1.8673951274195114e-15, 5.415445869516573e-15, 1.5704793021597974e-14, 4.554389976263341e-14, 1.3207730931163088e-13, 3.8302419700367896e-13, 1.1107701713102434e-12, 3.2212334967961275e-12, 9.341577140678679e-12, 2.70905737077151e-11, 7.856266375024548e-11, 2.278317248578128e-10, 6.60712001937126e-10, 1.916064804351698e-09...]
 ```
 
-A guess, therefore, as to why certain $x_{n-100}$ yield bad estimates of $x_n$ after iterating (1) is that some very small (or close to 1) $x_{n-100}$ converge too slowly.  Removing small and large values of $x_{n-100}$ with`result_ls = result_ls[20:50]` gives
+A guess, therefore, as to why certain $x_{n-100}$ yield bad estimates of $x_n$ after iterating \eqref{eq1} is that some very small (or close to 1) $x_{n-100}$ converge too slowly.  Removing small and large values of $x_{n-100}$ with`result_ls = result_ls[20:50]` gives
 
 ```python
 smallest_error: [0.0]
 largest error: [2.5417445925768334e-12]
 ```
-The largest error is now reasonably small.  In general for r values giving period 1 attractors in (1), back-calculating $x_n$ using only moderate values of $x_{n-p}$ gives accurate approximations by avoiding slow convergence.
+The largest error is now reasonably small.  In general for r values giving period 1 attractors in \eqref{eq1}, back-calculating $x_n$ using only moderate values of $x_{n-p}$ gives accurate approximations by avoiding slow convergence.
 
-Is removing small and large values capable of preventing larger error for r values giving period 2 attractors in (1)?  It is not: at r=3.3, both minimum and maximum errors are far larger even using the same restriction as above.
+Is removing small and large values capable of preventing larger error for r values giving period 2 attractors in \eqref{eq1}?  It is not: at r=3.3, both minimum and maximum errors are far larger even using the same restriction as above.
 
 ```python
 smallest_error: [6.032329413763193e-09]
@@ -329,7 +329,7 @@ This is seen for any r giving a periodic attractor greater than 1: for r=3.5 (pe
 ```
 where the four periodic values $0.38..., 0.50..., 0.82..., 0.87...$ are all obtained. This means that error in recalculating $x_n$ for periodic attractors can be attributed to 'iteration error', defined as follows: error in the specific iteration of a periodic trajectory, rather than error finding the trajectory. 
 
-Do $r$ values yielding aperiodic iterations of (1) give worse estimates than $r$ values for periodic iterations of (1)? To get an idea of how this could be, let's look at what happens to the average error as $r=2.5 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
+Do $r$ values yielding aperiodic iterations of \eqref{eq1} give worse estimates than $r$ values for periodic iterations of \eqref{eq1}? To get an idea of how this could be, let's look at what happens to the average error as $r=2.5 \to r = 4$.  The average error to any of the last four iterations may be found as follows:
 
 ```python
 Y = [] # list of average error per R value
@@ -376,21 +376,21 @@ If this is extended to the minimum error of any of the four last values of the `
 
 ![error]({{https://blbadger.github.io}}misc_images/logistic_reverse_4.png)
 
-There is an increase in average error as the map becomes aperiodic, at around r = 3.58.  This is to be expected for any value of r that yields a periodicity larger than 4, because iterations of either (1) or (2) are attracted to periodic orbits and the above program only takes into account accuracy up to four previous values (near four periodic values).  As aperiodic trajectories have infinite period, the accuracy necessarily suffers.
+There is an increase in average error as the map becomes aperiodic, at around r = 3.58.  This is to be expected for any value of r that yields a periodicity larger than 4, because iterations of either \eqref{eq1} or \eqref{eq2} are attracted to periodic orbits and the above program only takes into account accuracy up to four previous values (near four periodic values).  As aperiodic trajectories have infinite period, the accuracy necessarily suffers.
 
 To summarize, if the reverse logistic map is used to calculate values that result in accurate recapitulations of the intial value using the forward logistic map, error due to finding the right periodic trajectory but being on the 'wrong' iteration occurs because all periodic points are attractors.  For r values giving an aperiodic trajectory of the forward logistic map, this error cannot be prevented because periodicity is infinite.
 
-### Some approximations of $x_{n-p}$ with (2) are necessarily better than others
+### Some approximations of $x_{n-p}$ with \eqref{eq2} are necessarily better than others
 
-The previous section saw some extimates of a previous value in the trajectory of the logistic map to yield more accurate vales of $x_n$ after p iterations of (1). Is this necessarily the case, or in other words is there some way to compute the reverse logistic map such that all previous estimates are equivalently good?
+The previous section saw some extimates of a previous value in the trajectory of the logistic map to yield more accurate vales of $x_n$ after p iterations of \eqref{eq1}. Is this necessarily the case, or in other words is there some way to compute the reverse logistic map such that all previous estimates are equivalently good?
 
-Here is (2) restated for clarity:
+Here is \eqref{eq2} restated for clarity:
 
 $$
 x_{n+1} = \frac{r \pm \sqrt{r^2-4rx_n}}{2r}
 $$
 
-Now consider what many iterations of (2) entail, specifically that many square roots of $r^2-4rx_n$ are taken.  For example, 
+Now consider what many iterations of \eqref{eq2} entail, specifically that many square roots of $r^2-4rx_n$ are taken.  For example, 
 
 $$
 x_{n+2} = \frac{r \pm \sqrt{r^2-4r(\frac{r \pm \sqrt{r^2-4rx_n}}{2r})}}{2r}
@@ -404,9 +404,9 @@ $$
 
 Now consider what makes a poorly approximated number: if the denominator contains a large first integer before addition, then everything that follows is less important than if it were smaller.  For example,  see that $5 + \cfrac{1}{5 + \cfrac{1}{5}} \approx 5.19$ is better approximated by $5 + \cfrac{1}{5} = 5.2$ than $2 + \cfrac{1}{2 + \cfrac{1}{2}} = 2.4$ is by  $2 + \cfrac{1}{2} = 2.5$ .  With $1$ being the smallest non-zero natural number (and dividing by zero is unhelpful here) means that this number is most poorly approximated by ending this continued fraction at any finite stage.  Approximation of the golden ratio is discussed in this excellent [video](https://www.youtube.com/watch?v=sj8Sg8qnjOg) from Numberphile.
 
-Thus certain square root values are better approximated by rational numbers than others. Therefore, iterating (2) will yield numbers approximated better or worse depending on the value inside each radical, which in turn depends on whether addition or subtraction occurs at each iteration.
+Thus certain square root values are better approximated by rational numbers than others. Therefore, iterating \eqref{eq2} will yield numbers approximated better or worse depending on the value inside each radical, which in turn depends on whether addition or subtraction occurs at each iteration.
 
-Now if the r value for (1) yields a periodic trajectory, (2) will be attracted to the same periodic trajectory and thus it does not matter whether addition or subtraction is chosen because either reaches the same value.  But for aperiodic trajectories values never repeat, meaning that each choice for addition or subtraction in (2) yields unique values.  Because  different radicals are approximated by rational with differing success, and as computable procedures must use rational (finite) approximations, (2) must yield numbers that, when iterated with (1) to recover the original $x_0$, are of varying accuracy.
+Now if the r value for \eqref{eq1} yields a periodic trajectory, \eqref{eq2} will be attracted to the same periodic trajectory and thus it does not matter whether addition or subtraction is chosen because either reaches the same value.  But for aperiodic trajectories values never repeat, meaning that each choice for addition or subtraction in \eqref{eq2} yields unique values.  Because  different radicals are approximated by rational with differing success, and as computable procedures must use rational (finite) approximations, \eqref{eq2} must yield numbers that, when iterated with \eqref{eq1} to recover the original $x_0$, are of varying accuracy.
 
 ###  Aperiodic logistic maps are not practically reversible
 
@@ -414,13 +414,13 @@ The logistic map is not because it is 2-to-1 for many values of $x_n \in (0, 1)$
 
 But what about reversibility with respect to future values $(x_{n+1}, x_{n+2} ...)$?  In other words, given that $x_{n-1}, x_{n-1}'$ both map to the same trajectory $(x_{n+1}, x_{n+2} ...)$, can we find any previous values of $x_n$ that yield the same fucutre trajectory?  This criteria for reversibility is similar to the criteria for one-way functions, which stipulates that either $x_{n-1}, x_{n-1}'$ may be chosen as a suitable previous value and that there is no difference between the two with respect to where they end up.  Is the logistic map reversible under this definition, or equivalently is the logistic map a one way function?
 
-Symbolically, it is not: (2) may be applied any number of times to find the set of all possible values for any previous iteration.  But if this is so, why was it so difficult to use this procedure to find accurate sets of previous values, as attempted in the last section? 
+Symbolically, it is not: \eqref{eq2} may be applied any number of times to find the set of all possible values for any previous iteration.  But if this is so, why was it so difficult to use this procedure to find accurate sets of previous values, as attempted in the last section? 
 
-Consider what happens when one attempts to compute successive iterations of (2): first one square root is taken, then another and another etc.  Now for nearly every initial value $x_n$, these square roots are not of perfect squares and therefore yield irrational numbers.  Irrational numbers cannot be represented with complete accuracy in any computation procedure with finite memory, which certainly applies to any computation procedure known.  The definition for 'practical' computation is precisely this: computations that can be accomplished with finite memory in a finite number of steps.  The former stipulation is not found in the classic notion of a Turing machine, but is most accurate to what a non-analogue computer is capable of.
+Consider what happens when one attempts to compute successive iterations of \eqref{eq2}: first one square root is taken, then another and another etc.  Now for nearly every initial value $x_n$, these square roots are not of perfect squares and therefore yield irrational numbers.  Irrational numbers cannot be represented with complete accuracy in any computation procedure with finite memory, which certainly applies to any computation procedure known.  The definition for 'practical' computation is precisely this: computations that can be accomplished with finite memory in a finite number of steps.  The former stipulation is not found in the classic notion of a Turing machine, but is most accurate to what a non-analogue computer is capable of.
 
-This would not matter much if approximations stayed accurate after many iterations of (2), but one can show this to be untrue for values of r and $x_0$ such that (1) is aperiodic.  First note that (2) forms a tree, with one $x_n$ leading to one or two $x_{n_1}$.  If (1) is aperiodic for all starting $x_n$, then all paths through (2) are aperiodic because previous values are never revisited in the forward direction (with (1)), and therefore are never revisited in the reverse.  Therefore all paths through (2) are sensitive to initial values (becase they are aperiodic) and it follows that any approximation of $x_n$ yields is arbitrarily inaccurate (within limites) for $x_{n+p}$ given a large enough $p$.  
+This would not matter much if approximations stayed accurate after many iterations of \eqref{eq2}, but one can show this to be untrue for values of r and $x_0$ such that \eqref{eq1} is aperiodic.  First note that \eqref{eq2} forms a tree, with one $x_n$ leading to one or two $x_{n_1}$.  If \eqref{eq1} is aperiodic for all starting $x_n$, then all paths through \eqref{eq2} are aperiodic because previous values are never revisited in the forward direction (with \eqref{eq1}), and therefore are never revisited in the reverse.  Therefore all paths through \eqref{eq2} are sensitive to initial values (becase they are aperiodic) and it follows that any approximation of $x_n$ yields is arbitrarily inaccurate (within limites) for $x_{n+p}$ given a large enough $p$.  
 
-As iterations of (2) are (almost all) irrational, it follows that the reverse logistic map is impossible to compute practically (assuming aperiodicity) because finite representations of irrational numbers yield inaccurate estimates of future iterations.  
+As iterations of \eqref{eq2} are (almost all) irrational, it follows that the reverse logistic map is impossible to compute practically (assuming aperiodicity) because finite representations of irrational numbers yield inaccurate estimates of future iterations.  
 
 ### The Henon map is invertible 
 
@@ -429,10 +429,10 @@ The [Henon map](https://blbadger.github.io/henon-map.html) is a two dimensional 
 $$
 x_{n+1} = 1 - ax_n^2 + y_n \\
 y_{n+1} = bx_n \\
-\tag{3}
+\tag{3} \label{eq3}
 $$
 
-Let's try the same method used above to reverse $x_{n+1}$ of (2) with respect to time, 
+Let's try the same method used above to reverse $x_{n+1}$ of \eqref{eq2} with respect to time, 
 
 $$
 y_{n} = bx_{n+1} \\
@@ -451,10 +451,10 @@ Therefore the inverse of the Henon map is:
 $$
 x_{n+1} = \frac{y_n}{b} \\
 y_{n+1} = a \left( \frac{y_n}{b} \right)^2 + x_n - 1
-\tag{4}
+\tag{4} \label{eq4}
 $$
 
-This is a one-to-one map, meaning that (3) is invertible.  
+This is a one-to-one map, meaning that \eqref{eq3} is invertible.  
 
 Does this mean that, given some point $(x, y)$ in the plane we can determine the path it took to get there?  Let's try this with the inverse function above for $a = 1.4, b=0.3$
 
@@ -480,7 +480,7 @@ Starting at the origin, future iterations diverge extremely quickly:
 
 ### The reverse Henon map is unstable
 
-We know that a starting value on the Henon attractor itself should stay bounded if (1) is iterated in reverse, at least for the number of iterations it has been located near the attractor.  For example, the following yields a point that has existed near the attractor for 1000 iterations
+We know that a starting value on the Henon attractor itself should stay bounded if \eqref{eq1} is iterated in reverse, at least for the number of iterations it has been located near the attractor.  For example, the following yields a point that has existed near the attractor for 1000 iterations
 
 ```python
 def henon_map(x, y, a, b):
@@ -550,7 +550,7 @@ def reversed_henon_map(x, y, a, b):
 
 # the forward Henon map for accuracy checking
 def henon_map(x, y, a, b):
-	x_next = Decimal(1) - a*x**Decimal(2) + y
+	x_next = Decimal(1) - a*x**Decimal(2)+ y
 	y_next = b*x
 	return x_next, y_next
 	
@@ -632,7 +632,7 @@ which results (lighter color indicates more iterations occur before divergence)
 
 The baker's dough topology found by Smale is evident in this image, meaning that each iteration of the forward Henon map can be decomposed into a series of three stretching or folding events as shown [here](https://en.wikipedia.org/wiki/H%C3%A9non_map).  This topology is common for attractors that map a 2D surface to an attractor of 1 < D < 2: the Henon map for a=1.4, b=0.3 is around 1.25 dimensional. 
 
-The attractor for (3) can be mapped on top of the divergence map for (4) as follows:
+The attractor for \eqref{eq3} can be mapped on top of the divergence map for \eqref{4} as follows:
 
 ```python
 steps = 100000
@@ -662,53 +662,53 @@ From a = 1 to a = 1.5, holding b=0.3 constant,
 
 {% include youtube.html id='gb18hw3ndpU' %}
 
-It is interesting to note that the divergence map for the forward Henon map (3) is not simply the inverse of the divergence map for the reverse Henon map (4), which is presented [here](https://blbadger.github.io/henon-map.html), given that they are inverse functions of each other.  In particular, regions outside the attractor basin for (3) diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for (4), which is somewhat counter-intuitive given that (4) yields the iterations of (3) in reverse.
+It is interesting to note that the divergence map for the forward Henon map \eqref{eq3} is not simply the inverse of the divergence map for the reverse Henon map \eqref{4}, which is presented [here](https://blbadger.github.io/henon-map.html), given that they are inverse functions of each other.  In particular, regions outside the attractor basin for \eqref{eq3} diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for \eqref{4}, which is somewhat counter-intuitive given that \eqref{4} yields the iterations of \eqref{eq3} in reverse.
 
-For a=0.2, -1 < b < 0, (3) experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
+For a=0.2, -1 < b < 0, \eqref{eq3} experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
 
 $$
 x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = bx_n
 $$
 
-outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for (4) with b = -0.99, 
+outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for \eqref{4} with b = -0.99, 
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
 
-The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 2 maximum iterations to 1010, iterating (4) for a=0.2, b=-0.99 we have
+The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 2 maximum iterations to 1010, iterating \eqref{4} for a=0.2, b=-0.99 we have
 
 {% include youtube.html id='zbcgAlZtRGo' %}
 
-As is the case for a=1.4, b=0.3 so also for (3) with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
+As is the case for a=1.4, b=0.3 so also for \eqref{eq3} with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
 
-The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for (3) but diverges everywhere except unstable points for (4), whereas a=0.2, b=1.05 diverges everywhere except unstable points for (3) but converges on points for (4).  In the video below, $a$ is held constant while $b$ changes as follows:
+The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for \eqref{eq3} but diverges everywhere except unstable points for \eqref{4}, whereas a=0.2, b=1.05 diverges everywhere except unstable points for \eqref{eq3} but converges on points for \eqref{4}.  In the video below, $a$ is held constant while $b$ changes as follows:
 
 $$
 a = 0.2 \\
 b = 0.95 \to b = 1.01 
 $$
 
-Iterating (4), note how the change in basin behavior is the opposite to that found for the same transition with (3).
+Iterating \eqref{4}, note how the change in basin behavior is the opposite to that found for the same transition with \eqref{eq3}.
 
 {% include youtube.html id='IEbtIjFz6Bo' %}
 
 ### Aperiodic Henon maps are reversible from some starting points
 
-Is the Henon map reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing (3) for however many reverse iterations are required. 
+Is the Henon map reversible?  In the sense that we can define a composition of functions to determine where a previous point in a trajectory was located, the Henon map is reversible as it is 1-to-1 and an inverse function exists.  Reversing the Henon map entails computing \eqref{eq3} for however many reverse iterations are required. 
 
-But earlier our attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for (3).  Moreover, divergence occurred in fewer iterations that were taken in the original forward trajectory.  This begs the question: is the Henon map, like the logistic map, practically irreversible?
+But earlier our attempts to reverse the Henon map were met with very limited success: values eventually diverged to infinity even if they were located very near the attractor for \eqref{eq3}.  Moreover, divergence occurred in fewer iterations that were taken in the original forward trajectory.  This begs the question: is the Henon map, like the logistic map, practically irreversible?
 
 If it is aperiodic (as is the case for a=1.4, b=0.3) then yes, for the special case where the point of interest is an element of the set of points in the Henon attractor $\mathscr H$, in symbols $x_n \in \mathscr H$, or more generally where $x_n \not \in \Bbb Q$.  The Henon map, iterated discontinuously, cannot be defined on the rationals (for more information, see [here](https://blbadger.github.io/most-discontinuous.html)).  As real numbers are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  
 
-Now irrational numbers are of infinite length, and cannot be stored to perfect accuracy in finite memory.  How do we know that rational approximations of irrational numbers eventually diverge after many iterations of (4)?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that (4) is sensitive to initial conditions is as follows: (4) is the one-to-one inverse of (3).  Being aperiodic, the trajectory of (3) never revisits a previous point.  Therefore we know that (4) is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as (3).  As aperiodicity implies arbitrary sensitivity to initial values, (4) is arbitrarily sensitive to initial values. 
+Now irrational numbers are of infinite length, and cannot be stored to perfect accuracy in finite memory.  How do we know that rational approximations of irrational numbers eventually diverge after many iterations of \eqref{4}?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that \eqref{4} is sensitive to initial conditions is as follows: \eqref{4} is the one-to-one inverse of \eqref{eq3}.  Being aperiodic, the trajectory of \eqref{eq3} never revisits a previous point.  Therefore we know that \eqref{4} is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as \eqref{eq3}.  As aperiodicity implies arbitrary sensitivity to initial values, \eqref{4} is arbitrarily sensitive to initial values. 
 
-Any two starting points $p_1$ and $p_2$, arbitrarily close together but not exactly in the same place, can be considered approximations of each other.  If they are close enough then they are accurate approximations.  Sensitivity to initial conditions stipulates that, given enough iterations of (4), $p_1$ and $p_2$ will separate.  If we take $p_1$ to be an irrational number and $p_2$ to be its rational approximation (or vice versa), an arbitrarily accurate rational approximation will, given enough iterations of (4), become inaccurate.  Therefore all but a negligable portion of values on an aperiodic Henon map itself are practically non-invertible.
+Any two starting points $p_1$ and $p_2$, arbitrarily close together but not exactly in the same place, can be considered approximations of each other.  If they are close enough then they are accurate approximations.  Sensitivity to initial conditions stipulates that, given enough iterations of \eqref{4}, $p_1$ and $p_2$ will separate.  If we take $p_1$ to be an irrational number and $p_2$ to be its rational approximation (or vice versa), an arbitrarily accurate rational approximation will, given enough iterations of \eqref{4}, become inaccurate.  Therefore all but a negligable portion of values on an aperiodic Henon map itself are practically non-invertible.
 
-One might expect for the errors introduced in approximating irrationals in one direction with respect to time to cancel out if the reverse function is used to back-compute in the other direction.  If this were true, then even though iterations of (4) do not give accurate previous values beyond a certain number of iterations, the function would still be reversible in the sense of a one-way function definition (see the discussion for the logistic map for more on this topic) because either the true value or its inaccurate approximation (which is computed) would yield the same point.  But even though tempting, the idea that perhaps errors should cancel each other out can easily be disproven for aperiodic 1-to-1 dynamical systems as follows: if a true value and an inaccurate approximation cannot both yield the same point in reverse because otherwise the system would be 2-to-1, a contradiction.
+One might expect for the errors introduced in approximating irrationals in one direction with respect to time to cancel out if the reverse function is used to back-compute in the other direction.  If this were true, then even though iterations of \eqref{4} do not give accurate previous values beyond a certain number of iterations, the function would still be reversible in the sense of a one-way function definition (see the discussion for the logistic map for more on this topic) because either the true value or its inaccurate approximation (which is computed) would yield the same point.  But even though tempting, the idea that perhaps errors should cancel each other out can easily be disproven for aperiodic 1-to-1 dynamical systems as follows: if a true value and an inaccurate approximation cannot both yield the same point in reverse because otherwise the system would be 2-to-1, a contradiction.
 
-The last statement does not necessarily mean that (3) is not practically invertible for periodic trajectories, because any finite number of iterations of (3) could still be reversed with the same number of iterations of (4). 
+The last statement does not necessarily mean that \eqref{eq3} is not practically invertible for periodic trajectories, because any finite number of iterations of \eqref{eq3} could still be reversed with the same number of iterations of \eqref{4}. 
 
-What about if we start with a rational number not on the Henon attractor itself, given such an $x_n$ can we find $x_{n-p}$?  Given sufficient memory the Henon map is reversible for such points, as (4) is closed for rationals.  This means that in contrast to what we saw for the logistic map, the Henon map starting on a rational $x_n$ is reversible.  But memory demands are exponential as iterations increase.
+What about if we start with a rational number not on the Henon attractor itself, given such an $x_n$ can we find $x_{n-p}$?  Given sufficient memory the Henon map is reversible for such points, as \eqref{4} is closed for rationals.  This means that in contrast to what we saw for the logistic map, the Henon map starting on a rational $x_n$ is reversible.  But memory demands are exponential as iterations increase.
 
 ### Aperiodicity and reversibility
 
@@ -716,29 +716,9 @@ In conclusion, aperiodic Henon but not logistic maps are practically reversible 
 
 If future values for the logistic map are difficult to predict, as is the case for aperiodic systems in general, does it come as any surprise that past values are hard to determine as well?  It is indeed surprising, but why this is requires explanation.
 
-First consider what it means for an aperiodic dynamical system to be hard to predict.  More precisely, it is often stated that the approximate present does not determine the approximate future, which is a consequence of sensitivity to initial values.  But it should be understood that the exact present does indeed determine the exact future: every time (1) is iterated 30 times with idential (rational) starting values for a fixed r, the result is the same (assuming identical floating point arithmetic).  Real observations are necessarily imperfect, but if a rational value is used as a starting point to iterate the logistic equation then all future iterations are computable, given enough memory.  
+First consider what it means for an aperiodic dynamical system to be hard to predict.  More precisely, it is often stated that the approximate present does not determine the approximate future, which is a consequence of sensitivity to initial values.  But it should be understood that the exact present does indeed determine the exact future: every time \eqref{eq1} is iterated 30 times with idential (rational) starting values for a fixed r, the result is the same (assuming identical floating point arithmetic).  Real observations are necessarily imperfect, but if a rational value is used as a starting point to iterate the logistic equation then all future iterations are computable, given enough memory.  
 
 On the other hand, this page demonstrates a separate difficulty in attempting to calculate previous values from the logistic map.  Choosing a rational value of $x_n$ is no guarantee that any previous value will be rational, and sensitivity to initial values necessitates that small approximation errors become large over time.  This means that no computation procedure with finite memory will be able to accurately determine past values for an arbitrary number of iterations, regardless of starting value.  The logistic map, therefore, is deterministic and computable in the forward time direction (given the right starting values and enough memory) but not in the reverse time direction.  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
