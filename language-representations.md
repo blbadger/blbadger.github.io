@@ -258,7 +258,7 @@ $$
  \mathtt{\; enessidateidate \; postp.}
 $$
 
-If a language modeling head is attached to this first transformer block, we find that these two inputs really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{ % }$ (for one particular random initialization for GPT-2). 
+If a language modeling head is attached to this first transformer block, we find that these two inputs really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{"}$ (for one particular random initialization for GPT-2). 
 
 If we increase the number of maximum interations $N$ of our gradient descent procedure in \eqref{eq2} we have 
 
