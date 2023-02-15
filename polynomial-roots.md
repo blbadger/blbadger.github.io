@@ -8,10 +8,10 @@ Algebraic polynomials are equations of the type
 
 $$
 ax^n + bx^{n-1} + cx^{n-2} + \cdots + z
-\tag{1}
+\tag{1} \label{eq1}
 $$
 
-Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots. By the fundamental theorem of algebra, every polynomial has at least one root and therefore (1) contains exactly $n$ (not necessarily distinct) roots in $\Bbb C$.
+Given any polynomial, the value or values of $x$ such that the polynomial evaluates to zero are called the roots of that equation.  Such value(s) of $x$ are also called the solutions of that equation because once known the polynomial may be split into parts called factors.  Or alternatively if one knows how to factor a polynomial, one can then recover its roots. By the fundamental theorem of algebra, every polynomial has at least one root and therefore \eqref{eq1} contains exactly $n$ (not necessarily distinct) roots in $\Bbb C$.
 
 At first glance, rooting polynomials in terms of their constants seems to be an easy task.  For a degree 1 polynomial (meaning that $n=1$), $y = ax + b$, setting $y$ to $0$ and solving for x yields 
 
@@ -35,7 +35,7 @@ Completing the square by adding $b^2/4a^2$ to both sides,
 
 $$
 ax^2 + \frac{b}{a}x + \frac{b^2}{4a^2} = \frac{b^2}{4a^2} - \frac{c}{a} \\
-\tag{2}
+\tag{2} \label{eq2}
 $$
 
 the left-hand term is now equal to
@@ -44,7 +44,7 @@ $$
 \left( x + \frac{b}{2a} \right) ^2
 $$
 
-such that when we square root both sides of (2), 
+such that when we square root both sides of \eqref{eq2}, 
 
 $$
 x + \frac{b}{2a} = \pm \sqrt{\frac{b^2}{4a^2} - \frac{c}{a}} \\
