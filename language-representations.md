@@ -93,6 +93,8 @@ a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
 \tag{1}\label{eq1}
 $$
 
+with $\eta$ decreasing linearly from $\eta$ to $\eta / 10$ as $n \to N$ which empirically results in the fastest optimization.
+
 This method is not useful for language models without modification, given that $\nabla_{a_n}$ is undefined for discrete inputs, which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
 
 $$
@@ -129,6 +131,8 @@ and then recover the generated input $a_g$ from the final embedding $e_g = e_N$ 
 $$
 a_g = W^+e_N
 $$
+
+where each token of $a_g$ correspond to the index of maximum activation of this $50257$-dimensional vector.
 
 Thus we can make use of the pseudo-inverse to convert an embedding back into an input token. To see how this can be done with an untrained implementation of GPT-2, the model and tokenizer may be obtained as follows:
 
@@ -169,7 +173,7 @@ embedding += positional_embedding
 The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens by first subtracting the positional embedding $e_p$ from the generated embedding $e_N$ and multiplying the resulting vector by the pseudo-inverse of $W$ as follows:
 
 $$
-a_g = W^+(e_N - e_p) \\
+a_g = \argmax W^+(e_N - e_p) \\
 \tag{3}\label{eq3}
 $$
 
@@ -179,6 +183,7 @@ and this may be implemented as
 embedding_weight = model.transformer.wte.weight
 inverse_embedding = torch.linalg.pinv(embedding_weight)
 logits = torch.matmul(embedding - positional_embedding, inverse_embedding)
+tokens = torch.argmax(logits, dim=2)[0]
 ```
 
 It may be verified that Equation \eqref{eq3} is indeed capable of recovering the input token given an embedding by simply encoding any given sentence, converting this encoding to an embedding and then inverting the embedding to recover the input encoding.
@@ -265,7 +270,7 @@ $$
 
 Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
 
-But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.
+But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.  The language modeling head allows us to obtain the next predicted word for an input into this model, which provides one measure of 'closeness' if our generated sentence has the same next predicted word as the target input.
 
 ```python
 class AbbreviatedGPT(nn.Module):
@@ -330,7 +335,7 @@ effectively minimize the $L^1$ distance for different initializations of GPT-2, 
 
 ### Langauge models become untrainable as they are trained
 
-So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability.
+So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding, ending in the language modeling head output).
 
 When performing the input representation procedure detailed in the last section on a trained GPT-2, the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
 
@@ -340,8 +345,6 @@ When performing the input representation procedure detailed in the last section 
  $$
 
 on the order to one hundred times as many as for the untrained model to be precise. This very slow minimization of the output loss also occurs when the gradient is calculated on is a different metric, perhaps $L^2$ instead of $L^1$.  A quick check shows that there is no change in the general lack of invertibility of even a single GPT-2 transformer module using this metric.  Thus it is practically infeasible to make the equality in \eqref{eq4} hold if $e'$ is near $e$ (for example, if $e' = e + \mathcal{N}(e, \mu=0, \sigma=1/25$). 
-
-
 
 There is a trivial way to satisfy \eqref{eq4} for any $e'$, and this is to simply make the (formerly random) initial embedding $e_0$ to be equal to the target embedding $e$.  Although this is not particularly helpful in understanding the ability of various layers of GPT-2 to represent an input, we can instead make an initial embedding that is a linear combination of random Gaussian noise with the target input.
 
@@ -361,9 +364,64 @@ $$
 \mathtt{opioosponsorsnesotauratedcffff \; conduc}
 $$
 
-The inability to effectively modify an input embedding using gradient descent suggests that the gradients obtained from modules of the trained GPT-2 model are inaccurate.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for more strict $e'$.
+The inability to effectively modify an input embedding using gradient descent suggests that the gradients obtained from modules of the trained GPT-2 model are inaccurate.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
 
 The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers close in computational proximity (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that is is likely only a few output layers are capable of effective updates at this point.
+
+It turns out that removing the langauge modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
+
+$$
+\mathtt{srfAttachPsyNetMessage \; Marketable \; srfAttach \; srfAttachPsyNetMessage}
+$$
+
+### Approximate Token Mapping
+
+So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\argmax$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+
+We can select the indicies of the top 5 most activated input token positions as follows:
+
+```python
+tokens = torch.topk(logits, 5)[1][0] # indicies of topk of tensor
+```
+
+For the invertible fully connected network used above, we can see that successive outputs are semantically similar, which is what one would expect given that this model acts on a trained embedding,
+
+```python
+'''
+This is a prompt sentence.
+ this was an Prompt sentences.(
+this are the promptssent,
+ This has another speedy paragraph.[
+ THIS isna prompted Sent."
+'''
+```
+
+but for a non-invertible fully connected model (with layer dims of $[768, 4*768, 768]$) we find that only the top-1 most activate input is very recognizable.  
+
+```python
+ this is a prompt sentence.
+thisModLoader an Prompt sentences.–
+This corridikumanngthlems.<
+ THIS are another guiActiveUnDownloadha Mechdragon
+ Thisuberty theetsk recomm.(
+```
+
+The non-invertible model results above are not wholly surprising given that the model was untrained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well.
+ 
+ ```python
+ '''
+PsyNetMessage▬▬ MarketablePsyNetMessagePsyNetMessagePsyNetMessage
+ srfAttachPsyNetMessagePsyNetMessagequerquequerqueartifacts
+ocamp��極artifacts��極 unfocusedRange Marketable
+irtualquerqueanwhileizontartifactsquerque
+Accessorystaking-+-+ザigslistawaru
+'''
+```
+
+
+### Implications
+
+
 
 
 
