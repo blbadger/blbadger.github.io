@@ -333,7 +333,7 @@ $$
 
 effectively minimize the $L^1$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
 
-### Langauge models become untrainable as they are trained
+### Langauge models become less trainable as they are trained
 
 So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding, ending in the language modeling head output).
 
