@@ -275,15 +275,30 @@
       {% endif %}
       
       {% if page.url == "/vision-transformers.html" %}
-        <a href="https://github.com/blbadger/nnetworks" class="btn">Source Code</a>
+        <a href="https://github.com/blbadger/nnetworks/tree/transformer-explorer" class="btn">Source Code</a>
         <a href="https://blbadger.github.io/vision-transformers.html#introduction" class="btn">Introduction</a>
         <a href="https://blbadger.github.io/vision-transformers.html#transformer-architecture" class="btn">Transformer Architecture</a>
         <a href="https://blbadger.github.io/vision-transformers.html#input-generation-with-vision-transformers" class="btn">ViT Input Generation</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#vision-transformer-hidden-layer-representation-overview" class="btn">Layer Representations</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#why-representation-accuracy-is-constant-with-increased-depth-in-vision-transformers" class="btn">Depth and Representation</a>
-        <a href="https://blbadger.github.io/vision-transformers.html#vision-transformer-deep-dream" class="btn">Vision transformer deep dream</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#attentionless-patch-model-representations" class="btn">Attentionless Model Representations</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#vision-transformer-hidden-layer-representation-overview" class="btn">Layer Representations</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#vit-input-processing-convolutions-are-nonoptimal" class="btn">Non-optimal Stems</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#poor-input-representation-from-untrained-layer-normalization" class="btn">Layer Norms</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#decreased-representational-accuracy-with-increased-vision-transformer-depth" class="btn">Depth and Representation</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#attention-cannot-transmit-most-input-information" class="btn">Attention and Information Transfer</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#attention-transformations-present-challenges-for-gradient-descent-optimization" class="btn">Attention Optimization</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#attentionless-patch-model-representations" class="btn">Attentionless Model Representations</a>
       {% endif %}
+      
+      {% if page.url == "/language-representations.html" %}
+        <a href="https://github.com/blbadger/nnetworks/tree/transformer-explorer" class="btn">Source Code</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#introduction-to-language" class="btn">Introduction</a>
+      <a href="https://blbadger.github.io/vision-transformers.html#spatial-learning-in-language-model-features" class="btn">Spatial Learning</a>
+      <a href="https://blbadger.github.io/vision-transformers.html#image-reconstruction-with-language-models" class="btn">Image Representation</a>
+      <a href="https://blbadger.github.io/vision-transformers.html#sentence-reconstruction-with-language-models" class="btn">Language Representation</a>
+      <a href="https://blbadger.github.io/vision-transformers.html#language-models-translate-nonsense-into-sense" class="btn">Sense and Nonsense/a>
+      <a href="https://blbadger.github.io/vision-transformers.html#language-models-become-less-trainable-as-they-are-trained" class="btn">Training Troubles</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#approximate-token-mapping" class="btn">Approximate Tokens</a>
+        <a href="https://blbadger.github.io/vision-transformers.html#implications" class="btn">Implications</a>
+        {% endif %}
       
       {% if page.url == "/depth-generality.html" %}
         <a href="https://arxiv.org/abs/2211.06496" class="btn">Paper</a>
