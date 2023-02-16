@@ -38,7 +38,6 @@
     <meta name="theme-color" content="#157878">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-    
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?">
   </head>
@@ -290,14 +289,14 @@
       
       {% if page.url == "/language-representations.html" %}
         <a href="https://github.com/blbadger/nnetworks/tree/transformer-explorer" class="btn">Source Code</a>
-        <a href="https://blbadger.github.io/vision-transformers.html#introduction-to-language" class="btn">Introduction</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#spatial-learning-in-language-model-features" class="btn">Spatial Learning</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#image-reconstruction-with-language-models" class="btn">Image Representation</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#sentence-reconstruction-with-language-models" class="btn">Language Representation</a>
-      <a href="https://blbadger.github.io/vision-transformers.html#language-models-translate-nonsense-into-sense" class="btn">Sense and Nonsense/a>
-      <a href="https://blbadger.github.io/vision-transformers.html#language-models-become-less-trainable-as-they-are-trained" class="btn">Training Troubles</a>
-        <a href="https://blbadger.github.io/vision-transformers.html#approximate-token-mapping" class="btn">Approximate Tokens</a>
-        <a href="https://blbadger.github.io/vision-transformers.html#implications" class="btn">Implications</a>
+        <a href="https://blbadger.github.io/language-representation.html#introduction-to-language" class="btn">Introduction</a>
+        <a href="https://blbadger.github.io/language-representation.html#spatial-learning-in-language-model-features" class="btn">Spatial Learning</a>
+        <a href="https://blbadger.github.io/language-representation.html#image-reconstruction-with-language-models" class="btn">Image Representation</a>
+        <a href="https://blbadger.github.io/language-representation.html#sentence-reconstruction-with-language-models" class="btn">Language Representation</a>
+        <a href="https://blbadger.github.io/language-representation.html#language-models-translate-nonsense-into-sense" class="btn">Sense and Nonsense/a>
+        <a href="https://blbadger.github.io/language-representation.html#language-models-become-less-trainable-as-they-are-trained" class="btn">Training Troubles</a>
+        <a href="https://blbadger.github.io/language-representation.html#approximate-token-mapping" class="btn">Approximate Tokens</a>
+        <a href="https://blbadger.github.io/language-representation.html#implications" class="btn">Implications</a>
         {% endif %}
       
       {% if page.url == "/depth-generality.html" %}
@@ -320,6 +319,19 @@
         <a href="https://blbadger.github.io/deep-dream.html#enhancements-with-dreams" class="btn">Dream Enhancements</a>
         <a href="https://blbadger.github.io/deep-dream.html#directed-dreams" class="btn">Directed Dreams</a>
       {% endif %}
+        
+      {% if page.url == "/autoencoder-representation.html" %}
+        <a href="https://github.com/blbadger/generative-models" class="btn">Source Code</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#introduction" class="btn">Introduction</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#overcomplete-autoencoders-do-not-learn-the-identity-function" class="btn">Overcomplete Autoencoders</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#autoencoders-are-capable-of-denoising-without-being-trained-to-do-so" class="btn">Implicit Denoising</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#why-noninvertibility-introduces-gaussian-noise-in-input-representations" class="btn">Gaussian Noise in Representations</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#image-generation-with-an-autoencoder-manifold-walk" class="btn">Image Generation</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#diffusion-with-no-diffusion" class="btn">Diffusionless Diffusion</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#the-role-of-batch-normalization-in-denoising" class="btn">Batch Norm and Denoising</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#why-noninvertibility-introduces-gaussian-noise-in-input-representations" class="btn">Gaussian Noise in Representations</a>
+        <a href="https://blbadger.github.io/autoencoder-representation.html#representations-in-unet-generative-models-with-attention" class="btn">Attention Representations</a>
+       {% endif %}
       
       {% if page.url == "/neural-networks3.html" %}
         <a href="https://arxiv.org/abs/2211.02941" class="btn">Paper</a>
