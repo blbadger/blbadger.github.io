@@ -336,13 +336,37 @@ When performing the input representation procedure detailed in the last section 
 
  $$
  || O_l(e_g, \theta) - O_l(e, \theta) ||_1 < || O_l(e', \theta) - O_l(e, \theta) ||_1
+ \tag{4} \label{eq4}
  $$
 
-on the order to one hundred times as many as for the untrained model to be precise. 
+on the order to one hundred times as many as for the untrained model to be precise. This very slow minimization of the output loss also occurs when the gradient is calculated on is a different metric, perhaps $L^2$ instead of $L^1$.  A quick check shows that there is no change in the general lack of invertibility of even a single GPT-2 transformer module using this metric.  Thus it is practically infeasible to make the equality in \eqref{eq4} hold if $e'$ is near $e$ (for example, if $e' = e + \mathcal{N}(e, \mu=0, \sigma=1/25$). 
 
-This very slow minimization of the output loss also occurs when the gradient is calculated on is a different metric, perhaps $L^2$ instead of $L^1$.  A quick check shows that there is no change in the general lack of invertibility of even a single GPT-2 transformer module using this metric. 
 
-It may also be wondered whether this inability to minimize the output distance is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  When this is done 
+
+There is a trivial way to satisfy \eqref{eq4} for any $e'$, and this is to simply make the (formerly random) initial embedding $e_0$ to be equal to the target embedding $e$.  Although this is not particularly helpful in understanding the ability of various layers of GPT-2 to represent an input, we can instead make an initial embedding that is a linear combination of random Gaussian noise with the target input.
+
+$$
+e_0 = s * \mathcal{N}(e, \mu, \sigma) + t * e
+$$
+
+With $(s, t) = (0.001, 0.999)$ we have at $N=1000$ an $a_g$ such that \eqref{eq4} holds even for $e'$ very close to $e$.
+
+$$
+\mathtt{interstitial \; Skydragon \; a \; behaviゼウス.}
+$$
+
+Note, however, that even values $(s, t) = (1, 1)$ give an $e_0$ that is capable of being optimized nearly as well as that above, only that more gradient descent iterations are required.  For example, the following generated input achieves similar output distance to the input above.
+
+$$
+\mathtt{opioosponsorsnesotauratedcffff \; conduc}
+$$
+
+The inability to effectively modify an input embedding using gradient descent suggests that the gradients obtained from modules of the trained GPT-2 model are inaccurate.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for more strict $e'$.
+
+The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers close in computational proximity (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that is is likely only a few output layers are capable of effective updates at this point.
+
+
+
 
 
 
