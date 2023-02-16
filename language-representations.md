@@ -173,7 +173,7 @@ embedding += positional_embedding
 The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens by first subtracting the positional embedding $e_p$ from the generated embedding $e_N$ and multiplying the resulting vector by the pseudo-inverse of $W$ as follows:
 
 $$
-a_g = \mathrm{arg \; max} W^+(e_N - e_p) \\
+a_g = \mathrm{arg \; max \;} W^+(e_N - e_p) \\
 \tag{3}\label{eq3}
 $$
 
@@ -230,7 +230,7 @@ $$
 \mathtt{\; this \; adolesc \; a \; prompt \; sentence.}
 $$
 
-These representations yeild the same next character output for a trained GPT-2, indicating that they are considered to be nearly the same as the target input with respect to that model as well.
+These representations yield the same next character output for a trained GPT-2, indicating that they are considered to be nearly the same as the target input with respect to that model as well.
 
 To get an idea of how effective our gradient procedure is in terms of metric distances, we can construct a shifted input $e'$ as follows
 
@@ -324,7 +324,7 @@ $$
 
 which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same) 
 
-Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yeild the same output character as our original prompt but are completely different.  For example both $a_g$ of
+Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output character as our original prompt but are completely different.  For example both $a_g$ of
 
 $$
 \mathtt{coastline \; DVDs \; isIGHTweak} \\
@@ -424,21 +424,15 @@ irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
 ```
 
-
 ### Implications
 
+On this page we have seen that transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish because their their representations of the input are non-unique.  
 
+There exists a notable difference between language and vision transformer models: the latter contain modules that are at least partially capable of discerning what the input was composed of, whereas the latter does not.  But when we consider the training process for language models, it is perhaps unsurprising that input representations are relatively poor.  Note that each of the gibberish input generations were almost certainly not found in the training dataset precisely because they are very far from any real language.  This means that the language model has no *a priori* reason to differentiate between these inputs and real text, and thus it is not altogether unsurprising that the model's internal representations would be unable to distinguish between the two.
 
+In a sense, it is somewhat more unexpected that language models are so poorly capable of approximate rather than exact input representation.  Consider the case of one untrained transformer encoder detailed in a previous section: this module was unable to exactly represent the input (for the majority of random initializations) but the representations generated are semantically similar to the original prompt.  This is what we saw for [vision models](https://blbadger.github.io/vision-transformers.html), as input representations strongly resembled the target input even if they were not exact copies. 
 
-
-
-
-
-
-
-
-
-
+It is also apparent that it is much more difficult to optimize an input via gradient descent on the loss of the model output after training versus before.  This appears to be a consistent phenomenon for transformer models as it was also seen in ViTs, but language models experience a greater magnitude of this problem especially when they contain language modeling heads. This observations suggests that efficient training of transformer-based models is quite difficult, and could contribute to the notoriously long training time required for large language models.
 
 
 
