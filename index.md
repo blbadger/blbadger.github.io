@@ -151,7 +151,7 @@ $$
 ![random fractal]({{https://blbadger.github.io}}/misc_images/additivity_cover.png)
 
 
-### [Fractal geometry](/fractal-geometry.md)
+### [Fractal Geometry](/fractal-geometry.md)
 
 ![snowflake]({{https://blbadger.github.io}}/misc_images/fractal_cover.png)
 
@@ -159,7 +159,7 @@ $$
 ## Physics
 As for any natural science, an attempt to explain observations and predict future ones using hypothetical statements called theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
 
-### [3 body problem](/3-body-problem.md)
+### [Three Body Problem](/3-body-problem.md)
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
@@ -167,7 +167,7 @@ As for any natural science, an attempt to explain observations and predict futur
 
 ![malachite]({{https://blbadger.github.io}}misc_images/malachite.png)
 
-### [Quantum mechanics](/quantum-mechanics.md)
+### [Quantum Mechanics](/quantum-mechanics.md)
 
 $$
 P_{12} \neq P_1 + P_2 \\
@@ -177,7 +177,7 @@ $$
 ## Biology
 The study of life, observations of which display many of the features of nonlinear mathematical systems: an attractive state resistant to perturbation, lack of exact repeats, and simple instructions giving rise to intricate shapes and movements.  
 
-### [Genetic information problem](/genetic-info-problem.md)
+### [Genetic Information Problem](/genetic-info-problem.md)
 
 ![coral image]({{https://blbadger.github.io}}misc_images/acropora.png)
 
@@ -201,7 +201,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ![neural network architecture]({{https://blbadger.github.io}}/neural_networks/attributions_highres_cropped.gif)
 
 
-### [Input Generation from Classifier Models I](/input-generation.md)
+### [Input Generation I: Classifiers](/input-generation.md)
 
 ![generated badger](/neural_networks/two_generated_badgers.png)
 
@@ -226,7 +226,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
 
-### [Input Representation III: Langauge Models](/language-representations.md)
+### [Input Representation III: Language Models](/language-representations.md)
 
 $$
 \mathtt{This \; is \; a \; prompt \; sentence} \\ 
