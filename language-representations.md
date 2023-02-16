@@ -173,7 +173,7 @@ embedding += positional_embedding
 The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens by first subtracting the positional embedding $e_p$ from the generated embedding $e_N$ and multiplying the resulting vector by the pseudo-inverse of $W$ as follows:
 
 $$
-a_g = \argmax W^+(e_N - e_p) \\
+a_g = \mathrm{arg max} W^+(e_N - e_p) \\
 \tag{3}\label{eq3}
 $$
 
@@ -376,7 +376,7 @@ $$
 
 ### Approximate Token Mapping
 
-So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\argmax$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
 
 We can select the indicies of the top 5 most activated input token positions as follows:
 
