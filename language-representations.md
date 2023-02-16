@@ -173,7 +173,7 @@ embedding += positional_embedding
 The positional weight matrix is invariant for any given input length and thus may be added and subtracted from the input embedding so we do not have to solve for this quantity.  Therefore given the `embedding` variable, we can generate the input tokens by first subtracting the positional embedding $e_p$ from the generated embedding $e_N$ and multiplying the resulting vector by the pseudo-inverse of $W$ as follows:
 
 $$
-a_g = \mathrm{arg max} W^+(e_N - e_p) \\
+a_g = \mathrm{arg \; max} W^+(e_N - e_p) \\
 \tag{3}\label{eq3}
 $$
 
@@ -352,7 +352,13 @@ $$
 e_0 = s * \mathcal{N}(e, \mu, \sigma) + t * e
 $$
 
-With $(s, t) = (0.001, 0.999)$ we have at $N=1000$ an $a_g$ such that \eqref{eq4} holds even for $e'$ very close to $e$.
+Given an input 
+
+$$
+a = \mathtt{This \; is \; a \; prompt \; sentence.}
+$$
+
+and with $(s, t) = (0.001, 0.999)$ we have at $N=1000$ an $a_g$ such that \eqref{eq4} holds even for $e'$ very close to $e$.
 
 $$
 \mathtt{interstitial \; Skydragon \; a \; behaviゼウス.}
@@ -376,7 +382,7 @@ $$
 
 ### Approximate Token Mapping
 
-So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
 
 We can select the indicies of the top 5 most activated input token positions as follows:
 
@@ -384,21 +390,23 @@ We can select the indicies of the top 5 most activated input token positions as 
 tokens = torch.topk(logits, 5)[1][0] # indicies of topk of tensor
 ```
 
-For the invertible fully connected network used above, we can see that successive outputs are semantically similar, which is what one would expect given that this model acts on a trained embedding,
+$$
+\mathtt{This \; is \; a \; prompt \; sentence.}
+$$
 
-```python
-'''
+For the invertible fully connected network used above we can see that successive outputs are semantically similar, which is what one would expect given that this model acts on a trained embedding, the top five input token strings are
+
+```
 This is a prompt sentence.
  this was an Prompt sentences.(
 this are the promptssent,
  This has another speedy paragraph.[
  THIS isna prompted Sent."
-'''
 ```
 
 but for a non-invertible fully connected model (with layer dims of $[768, 4*768, 768]$) we find that only the top-1 most activate input is very recognizable.  
 
-```python
+```
  this is a prompt sentence.
 thisModLoader an Prompt sentences.–
 This corridikumanngthlems.<
@@ -408,14 +416,12 @@ This corridikumanngthlems.<
 
 The non-invertible model results above are not wholly surprising given that the model was untrained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well.
  
- ```python
- '''
+ ```
 PsyNetMessage▬▬ MarketablePsyNetMessagePsyNetMessagePsyNetMessage
  srfAttachPsyNetMessagePsyNetMessagequerquequerqueartifacts
 ocamp��極artifacts��極 unfocusedRange Marketable
 irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
-'''
 ```
 
 
