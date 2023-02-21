@@ -268,9 +268,9 @@ $$
 \mathtt{The \; sky \; is \; blue.}
 $$
 
-Feeding this input into GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
+Feeding this input into a trained GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
 
-But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.  The language modeling head allows us to obtain the next predicted word for an input into this model, which provides one measure of 'closeness' if our generated sentence has the same next predicted word as the target input.
+But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with an untrained version of GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.  The language modeling head allows us to obtain the next predicted word for an input into this model, which provides one measure of 'closeness' if our generated sentence has the same next predicted word as the target input.
 
 ```python
 class AbbreviatedGPT(nn.Module):
@@ -316,7 +316,7 @@ $$
 \mathtt{The \; shades \; is \; blue.}
 $$
 
-With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, many iterations of Equation \eqref{eq2} a model with blocks 1 and 2 we have a generated prompt of
+With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, many iterations of Equation \eqref{eq2} a model with untrained GPT-2 blocks 1 and 2 we have a generated prompt of
 
 $$
 \mathtt{The \; sky \; is \; tragedies.}
@@ -324,7 +324,7 @@ $$
 
 which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same) 
 
-Using the full 12 transformer blocks of GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output character as our original prompt but are completely different.  For example both $a_g$ of
+Using the full 12 transformer blocks of an untrained GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output character as our original prompt but are completely different.  For example both $a_g$ of
 
 $$
 \mathtt{coastline \; DVDs \; isIGHTweak} \\
@@ -337,7 +337,7 @@ effectively minimize the $L^1$ distance for different initializations of GPT-2, 
 
 So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding, ending in the language modeling head output).
 
-When performing the input representation procedure detailed in the last section on a trained GPT-2, the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
+When performing the input representation procedure detailed in the last section on a trained GPT-2 (with a language modeling head), the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
 
  $$
  || O_l(e_g, \theta) - O_l(e, \theta) ||_1 < || O_l(e', \theta) - O_l(e, \theta) ||_1
@@ -372,13 +372,15 @@ $$
 
 The inability to effectively modify an input embedding using gradient descent suggests that the gradients obtained from modules of the trained GPT-2 model are inaccurate.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
 
-The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers close in computational proximity (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that is is likely only a few output layers are capable of effective updates at this point.
+The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers that are adjacent in the backpropegation computational graph (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that is is likely only a few output layers are capable of effective updates at this point.
 
-It turns out that removing the langauge modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
+Is there any way to use gradient descent to more effectively minimize some metric distance between a trained model's output of $a$ versus $a_g$? It turns out that there is: removing the langauge modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
 
 $$
 \mathtt{srfAttachPsyNetMessage \; Marketable \; srfAttach \; srfAttachPsyNetMessage}
 $$
+
+This result indicates that even when capable of minimizing an $L^1$ metric between $O_l(a, \theta)$ and $O_l(a_g, \theta)$, trained language models still cannot differentiate between gibberish and language.
 
 ### Approximate Token Mapping
 
@@ -394,7 +396,7 @@ $$
 \mathtt{This \; is \; a \; prompt \; sentence.}
 $$
 
-For the invertible fully connected network used above we can see that successive outputs are semantically similar, which is what one would expect given that this model acts on a trained embedding, the top five input token strings are
+For the invertible fully connected network used above one can see that successive outputs are semantically similar, which is perhaps what one would expect given that this model acts on a trained embedding. The top five input token strings are
 
 ```
 This is a prompt sentence.
@@ -404,7 +406,7 @@ this are the promptssent,
  THIS isna prompted Sent."
 ```
 
-but for a non-invertible fully connected model (with layer dims of $[768, 4*768, 768]$) we find that only the top-1 most activate input is very recognizable.  
+but for a non-invertible fully connected model (with layer dims of $[768, 4*768, 768]$) we find that only the top one or two most activated input tokens are recognizable.  
 
 ```
  this is a prompt sentence.
@@ -414,7 +416,7 @@ This corridikumanngthlems.<
  Thisuberty theetsk recomm.(
 ```
 
-The non-invertible model results above are not wholly surprising given that the model was untrained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well.
+The non-invertible model results above are not wholly surprising given that the model used was not trained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well, meaning that training does not confer the desired discriminatory ability on transformer modules.
  
  ```
 PsyNetMessage▬▬ MarketablePsyNetMessagePsyNetMessagePsyNetMessage
@@ -426,13 +428,17 @@ Accessorystaking-+-+ザigslistawaru
 
 ### Implications
 
-On this page we have seen that transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish because their their representations of the input are non-unique.  
+In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.
 
-There exists a notable difference between language and vision transformer models: the latter contain modules that are at least partially capable of discerning what the input was composed of, whereas the latter does not.  But when we consider the training process for language models, it is perhaps unsurprising that input representations are relatively poor.  Note that each of the gibberish input generations were almost certainly not found in the training dataset precisely because they are very far from any real language.  This means that the language model has no *a priori* reason to differentiate between these inputs and real text, and thus it is not altogether unsurprising that the model's internal representations would be unable to distinguish between the two.
+There exists a notable difference between trained language and vision transformer models: the latter contain modules that are at least partially capable of discerning what the input was composed of, whereas the latter does not.  But when we consider the training process for language models, it is perhaps unsurprising that input representations are relatively poor.  Note that each of the gibberish input generations were almost certainly not found in the training dataset precisely because they are very far from any real language.  This means that the language model has no *a priori* reason to differentiate between these inputs and real text, and thus it is not altogether unsurprising that the model's internal representations would be unable to distinguish between the two.
 
-In a sense, it is somewhat more unexpected that language models are so poorly capable of approximate rather than exact input representation.  Consider the case of one untrained transformer encoder detailed in a previous section: this module was unable to exactly represent the input (for the majority of random initializations) but the representations generated are semantically similar to the original prompt.  This is what we saw for [vision models](https://blbadger.github.io/vision-transformers.html), as input representations strongly resembled the target input even if they were not exact copies. 
+In a sense, it is somewhat more unexpected that language models are so poorly capable of approximate rather than exact input representation.  Consider the case of one untrained transformer encoder detailed in a previous section: this module was unable to exactly represent the input (for the majority of random initializations) but the representations generated are semantically similar to the original prompt.  This is what we saw for [vision models](https://blbadger.github.io/vision-transformers.html), as input representations strongly resembled the target input even if they were not exact copies.  The training process therefore results in the loss of representational accuracy from the transformer encoders.
 
-It is also apparent that it is much more difficult to optimize an input via gradient descent on the loss of the model output after training versus before.  This appears to be a consistent phenomenon for transformer models as it was also seen in ViTs, but language models experience a greater magnitude of this problem especially when they contain language modeling heads. This observations suggests that efficient training of transformer-based models is quite difficult, and could contribute to the notoriously long training time required for large language models.
+In this page's introduction, we considered the implications of the 'no free lunch' theorems that state (roughly) that no on particular moel is better than any others at all possible machine learning tasks.  Which tasks a given model performs well or poorly on depends on the model architecture and training protocol, and on this page we saw that trained language models perform quite poorly at the task of input generation because even early layers are unable to differentiate between English sentences and gibberish. Non-invertibility alone does not explain why these trained models are poor discriminators, but the training protocol (simply predicting the next word in a sentence) may do so.
+
+When one compares the difference in vision versus language transformer model input representational ability, it is clear that language models contain much less information on their inputs.  But when we consider the nature of language, this may not be altogether surprising: language places high probability on an extraordinarily small subset of possible inputs relative to natural images.  For example, an image input's identity is invariant to changes in position, orientation (rotation), order, smoothness (ie a grainy image of a toaster is still a toaster), and brightness.  But a language input is not invariant to any of these transformations.  A much smaller subset of all possible inputs (all possible word or bytecode tokens in a sequence) are therefore equivalent to language models, and the invariants to be learned may be more difficult to identify than for vision models.
+
+Finally, it is also apparent that it is much more difficult to optimize an input via gradient descent on the loss of the model output after training versus before.  This appears to be a consistent phenomenon for transformer models as it was also seen in ViTs, but language models experience a greater magnitude of this problem especially when they contain language modeling heads. This observations suggests that efficient training of transformer-based models is quite difficult, and could contribute to the notoriously long training time required for large language models.
 
 
 
