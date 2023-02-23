@@ -265,7 +265,7 @@ One of the primary challenges of large language models today is their ability to
 It can be shown, however, that these models are capable of a much more extreme translation from input nonsense into some real language output by making use the the input representations we have generated in the previous section. Suppose one were given the following prompt: 
 
 $$
-\mathtt{The \; sky \; is \; blue.}
+\mathtt{The \; sky \; is}
 $$
 
 Feeding this input into a trained GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
@@ -288,7 +288,7 @@ class AbbreviatedGPT(nn.Module):
 		return x
 ```
 
-When we generate an input after a few hundred iterations of Equation \eqref{eq2}, passing in the resulting embeddings to be inverted by Equation \eqref{eq3} we get generated inputs
+When we generate an input after a few hundred iterations of Equation \eqref{eq2}, passing in the resulting embeddings to be inverted by Equation \eqref{eq3} for the target input $\mathtt{The \; sky \; is \; blue.}$, we have
 
 $$
  \mathtt{\; Lime \; Lime  \;is \; blueactly} \\
@@ -442,7 +442,7 @@ $$
 \nabla_a O_l(a, \theta)
 $$
 
-expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, theta)$ for an infinitesmal change.  What we want is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.
+expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, \theta)$ for an infinitesmal change.  What we want is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.
 
 We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
 
@@ -460,9 +460,9 @@ $$
 M = U \Sigma V^H
 $$
 
-and may be thought of as an extension of the process of eigendecomposition of a matrix into orthonormal bases to matricies that are non-square.  Here the columns of the matrix $U$ is known as the left-singular values of $M$, and the columns of matrix $V$ corresponds to the right-singular values, and $\Sigma$ denotes the singular value matrix that is rectangular diagonal and is analagous to the eigenvalues of an eigendecomposition of a square matrix.  $V^H$ denotes the conjugate transpose of $V$, which is equivalent to the transpose of $V$ for real-valued $V$.
+and may be thought of as an extension of the process of eigendecomposition of a matrix into orthonormal bases to matricies that are non-square.  Here the columns of the matrix $U$ is known as the left-singular values of $M$, and the columns of matrix $V$ corresponds to the right-singular values, and $\Sigma$ denotes the singular value matrix that is rectangular diagonal and is analagous to the eigenvalues of an eigendecomposition of a square matrix.  $V^H$ denotes the conjugate transpose of $V$, which for real-valued $V$ is $V^H = V^T$.
 
-The singular value decomposition has a number of applications in linear algebra, but for this page we only need to know that if $M$ is real-valued then $U$ and $V$ are real and orthogonal.  This is useful because for an $M$ that is non-square, we can find the right-singular values $V$ such that $V^H$$ is square.  This in turn is useful because some columns (vectors) of $V^H$ are decidedly not orthogonal to $M$ by definition, but as there are more columns in $V^H$ than $M$ we have at least one column that is orthogonal to all columns of $M$. 
+The singular value decomposition has a number of applications in linear algebra, but for this page we only need to know that if $M$ is real-valued then $U$ and $V$ are real and orthogonal.  This is useful because for an $M$ that is non-square, we can find the right-singular values $V$ such that $V^H$ is square.  This in turn is useful because some columns (vectors) of $V^H$ are decidedly not orthogonal to $M$ by definition, but as there are more columns in $V^H$ than $M$ we have at least one column that is orthogonal to all columns of $M$. 
 
 To be specific, let's consider the input
 
