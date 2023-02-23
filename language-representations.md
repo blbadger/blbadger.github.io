@@ -426,6 +426,10 @@ irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
 ```
 
+### Manifold Walks
+
+Instead of attempting to use the gradient of the output of a language model with respect to changes in the input, we can instead try to start with a real input and modify it in some way.
+
 ### Implications
 
 In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.
