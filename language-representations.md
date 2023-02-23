@@ -426,9 +426,51 @@ irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
 ```
 
-### Manifold Walks
+### Manifold Walk Representations
 
-Instead of attempting to use the gradient of the output of a language model with respect to changes in the input, we can instead try to start with a real input and modify it in some way.
+For the investigation on this page, the main purpose of forming inputs based on the values of the output of some hidden layer is that the input generated gives us an understanding of what kind of information that hidden layer contains.  Given a tensor corresponding to output activations of a layer, the information provided by that tensor is typically invariant to some changes in the input such that one can transform one possible input representation into another without changing the output values significantly. The collection of all such invariants may be thought of as defining the information contained in a layer.
+
+Therefore one can investigate the information contained in some given layer by observing what can be changed in the input without resulting in a significant change in the output, starting with an input given in the data distribution.  The process of moving along in low-dimensional manifold in higher-dimensional space is commonly referred to a 'manifold walk', and we will explore methods that allow one to perform such a walk in the input space, where the lower-dimensional manifold is defined by the (lower-dimensional) hidden layer.
+
+There are a number of approaches to finding which changes in the input are invariant for some model layer output, and of those using the gradient of the output as the source of information there are what we can call direct and indirect methods.  Direct methods use the gradient of some transformation on the output applied to the input directly, whereas indirect methods transform the gradient appropriately and apply the transformed values to the input.
+
+We will consider an indirect method first before proceeding to a direct one.  
+
+Given the gradient of the output with respect to the input, how would one change the input so as to avoid changing the output?  Recall that the gradient of the layer output with respect to the input,
+
+$$
+\nabla_a O_l(a, \theta)
+$$
+
+expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, theta)$ for an infinitesmal change.  What we want is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.
+
+We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
+
+How can we find an orthogonal vector to the gradient?  In particular, how may we find an orthogonal vector to the gradient, which is typically a non-square tensor?  For a single vector $x$, we can find an orthogonal vector $y$ by solving for a solution to the equation of the dot product of $x$ and $y$ where the product is equal to the zero vector.
+
+$$
+x \cdot y = 0
+$$
+
+We can find that trivially setting $y$ to be the zero vector itself satisfies the equation, and has minimum norm such that simply finding any solution to the above equation is insufficient for our goals. Moreover, language model input are typically matricies composed of many input tokens embedded such that we want to find vectors that are orthogonal to all input token embedding gradients rather than just one.  
+
+To do so, we can make use of the singular value decomposition of the input gradient matrix.  Given a matrix $M$ the singular value decomposition is defined as 
+
+$$
+M = U \Sigma V^H
+$$
+
+and may be thought of as an extension of the process of eigendecomposition of a matrix into orthonormal bases to matricies that are non-square.  Here the columns of the matrix $U$ is known as the left-singular values of $M$, and the columns of matrix $V$ corresponds to the right-singular values, and $\Sigma$ denotes the singular value matrix that is rectangular diagonal and is analagous to the eigenvalues of an eigendecomposition of a square matrix.  $V^H$ denotes the conjugate transpose of $V$, which is equivalent to the transpose of $V$ for real-valued $V$.
+
+The singular value decomposition has a number of applications in linear algebra, but for this page we only need to know that if $M$ is real-valued then $U$ and $V$ are real and orthogonal.  This is useful because for an $M$ that is non-square, we can find the right-singular values $V$ such that $V^H$$ is square.  This in turn is useful because some columns (vectors) of $V^H$ are decidedly not orthogonal to $M$ by definition, but as there are more columns in $V^H$ than $M$ we have at least one column that is orthogonal to all columns of $M$. 
+
+To be specific, let's consider the input
+
+$$
+\mathtt{The \; sky \; is \; blue.}
+$$
+
+This is a 5-token input for GPT-2, where the embedding corresponding to this input is of dimension $[1, 5, 768]$.  Ignoring the first index (minibatch), we have a $5$ by $768$ matrix.  If we perform unrestricted singular value decomposition on this matrix and recover $V^H$, we have a $[768, 768]$ -dimension orthogonal matrix.  As none of the first $5$ columns of $V^H$ are orthogonal to the columns of $M$ we are therefore guaranteed that the next $763$ columns are orthogonal by definition.
 
 ### Implications
 
