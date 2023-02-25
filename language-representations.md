@@ -511,6 +511,39 @@ Unfortunately this method experiences a few challenges and is not capable of fin
 
 Even when we use an architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. 
 
+Another approach to changing the input while fixing the output is to clamp portions of the input, add some random amount to those clamped portions, and perform gradient descent on the rest of the input in order to minimize a metric distance between the modified and original output.  The gradient we want may be found via
+
+```python
+def target_gradient(model, input_tensor, target_output):
+	...
+	input_tensor.requires_grad = True
+	output = a_model(input_tensor)
+	loss = torch.sum(torch.abs(output - target_output))
+	print (loss.item())
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient
+```
+
+and the clamping procedure may be implemented by choosing a random index on the embedding dimension and clamping the embedding values of all tokens up to that index, shifting those values by adding these to random normally distributed ones $\mathcal{N}(e; 0, \eta)$.  
+
+```python
+def clamped_walk(embedding, steps, rand_eta, lr):
+	with torch.no_grad():
+		target_output = a_model(embedding)
+	embedding = embedding.detach()
+
+	for i in range(steps):
+		clamped = torch.randint(768, (1,))
+		shape = embedding[:, :, clamped:].shape
+		embedding[:, :, clamped:] += rand_eta*torch.randn(shape).to(device)
+		gradient = target_gradient(a_model, embedding, target_output)
+		embedding = embedding.detach()
+		embedding[:, :, :clamped] = embedding[:, :, :clamped] - lr*gradient[:, :, :clamped]
+		
+	return embedding
+```
+
 ### Implications
 
 In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.
