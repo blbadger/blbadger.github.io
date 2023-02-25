@@ -442,9 +442,28 @@ $$
 \nabla_a O_l(a, \theta)
 $$
 
-expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, \theta)$ for an infinitesmal change.  What we want is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.
+expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, \theta)$ for an infinitesmal change.  We can obtain the gradient of any layer's output with respect to the input by modifying a model to end with that layer before using the following method:
 
-We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
+```python
+def layer_gradient(model, input_tensor):
+	...
+	input_tensor.requires_grad = True
+	output = a_model(input_tensor)
+	loss = torch.sum(output)
+	loss.backward()
+	gradient = input_tensor.grad
+	return gradient, loss.item()
+```
+
+Note that only scalars may propegate gradients in the Pytorch autograd engine, meaning that we are actually taking the gradient
+
+$$
+\nabla_a \sum_i O_l(a, \theta)_i
+$$
+
+but for the purposes on this page, these are effectively equivalent being that no change in the output $O_l(a, \theta)$ also gives us no change in $\sum_i O_l(a, \theta)_i$.
+
+If our purpose is to instead avoid changing the layer's output we want what is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.  We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
 
 How can we find an orthogonal vector to the gradient?  In particular, how may we find an orthogonal vector to the gradient, which is typically a non-square tensor?  For a single vector $x$, we can find an orthogonal vector $y$ by solving for a solution to the equation of the dot product of $x$ and $y$ where the product is equal to the zero vector.
 
@@ -471,6 +490,26 @@ $$
 $$
 
 This is a 5-token input for GPT-2, where the embedding corresponding to this input is of dimension $[1, 5, 768]$.  Ignoring the first index (minibatch), we have a $5$ by $768$ matrix.  If we perform unrestricted singular value decomposition on this matrix and recover $V^H$, we have a $[768, 768]$ -dimension orthogonal matrix.  As none of the first $5$ columns of $V^H$ are orthogonal to the columns of $M$ we are therefore guaranteed that the next $763$ columns are orthogonal by definition.
+
+The orthogonal vector approach may therefore be implemented as follows:
+
+```python
+def tangent_walk(embedding, steps):
+	for i in range(steps):
+		embedding = embedding.detach()
+		gradient, _ = layer_gradient(a_model, embedding) # defined above
+		gradient = torch.squeeze(gradient, dim=0)
+		perp_vector = torch.linalg.svd(gradient).Vh[-1] # any index greater than input_length
+		embedding = embedding + 0.01*perp_vector # learning rate update
+	
+	return embedding
+```
+
+where we can check that the SVD gives us sufficiently orthogonal vectors by multiplying the `perp_vector` by `gradient` via ```python print (gradient @ perp_vector) # check for orthogonality via mat mult```.  If the value returned from that matrix multiplication is sufficiently near zero, the `perp_vector` is sufficiently orthogonal to the `gradient` vector and should not change the value of $\sum O_l(a, \theta)$ given an infinitesmal change in $a$ along this direction.
+
+Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that ```python print (gradient @ perp_vector) # check for orthogonality via mat mult``` returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
+
+Even when we use an architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. 
 
 ### Implications
 
