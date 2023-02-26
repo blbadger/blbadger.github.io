@@ -505,9 +505,15 @@ def tangent_walk(embedding, steps):
 	return embedding
 ```
 
-where we can check that the SVD gives us sufficiently orthogonal vectors by multiplying the `perp_vector` by `gradient` via ```python print (gradient @ perp_vector) # check for orthogonality via mat mult```.  If the value returned from that matrix multiplication is sufficiently near zero, the `perp_vector` is sufficiently orthogonal to the `gradient` vector and should not change the value of $\sum O_l(a, \theta)$ given an infinitesmal change in $a$ along this direction.
+where we can check that the SVD gives us sufficiently orthogonal vectors by multiplying the `perp_vector` by `gradient` via 
 
-Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that ```python print (gradient @ perp_vector) # check for orthogonality via mat mult``` returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
+```python 
+print (gradient @ perp_vector) # check for orthogonality via mat mult
+```
+
+If the value returned from this multiplication is sufficiently near zero, the `perp_vector` is sufficiently orthogonal to the `gradient` vector and should not change the value of $\sum O_l(a, \theta)$ given an infinitesmal change in $a$ along this direction.
+
+Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
 
 Even when we use an architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. 
 
@@ -525,7 +531,14 @@ def target_gradient(model, input_tensor, target_output):
 	return gradient
 ```
 
-and the clamping procedure may be implemented by choosing a random index on the embedding dimension and clamping the embedding values of all tokens up to that index, shifting those values by adding these to random normally distributed ones $\mathcal{N}(e; 0, \eta)$.  
+and the clamping procedure may be implemented by choosing a random index on the embedding dimension and clamping the embedding values of all tokens up to that index, shifting those values by adding these to random normally distributed ones $\mathcal{N}(e; 0, \eta)$.  For a random index $i$ chosen between 0 and the number of elements in the embedding $e$ the update rule $f(e) = e_{n+1}$ may be described by the following equation,
+
+$$
+f(e_{[:, :i]}) = e_{[:, :i]} + \eta * \mathcal{N}(e_{[:, i:]}; 0, \eta) \\
+f(e_{[:, i:]}) = e_{[:, i:]} + \epsilon * \nabla_e || O_l(e, \theta) - O_l(e^*, \theta)  ||_1
+$$
+
+where $e^*$ denotes the original embedding for a given input $a$ and $\eta$ and $\epsilon$ are tunable parameters.
 
 ```python
 def clamped_walk(embedding, steps, rand_eta, lr):
