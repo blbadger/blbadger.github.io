@@ -535,7 +535,7 @@ and the clamping procedure may be implemented by choosing a random index on the 
 
 $$
 f(e_{[:, :i]}) = e_{[:, :i]} + \eta * \mathcal{N}(e_{[:, i:]}; 0, \eta) \\
-f(e_{[:, i:]}) = e_{[:, i:]} + \epsilon * \nabla_e || O_l(e, \theta) - O_l(e^*, \theta)  ||_1
+f(e_{[:, i:]}) = e_{[:, i:]} + \epsilon * \nabla_e || O_l(e_{[:, i:]}, \theta) - O_l(e^*_{[:, i:]}, \theta)  ||_1
 $$
 
 where $e^*$ denotes the original embedding for a given input $a$ and $\eta$ and $\epsilon$ are tunable parameters.
