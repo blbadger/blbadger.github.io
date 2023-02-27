@@ -534,8 +534,8 @@ def target_gradient(model, input_tensor, target_output):
 and the clamping procedure may be implemented by choosing a random index on the embedding dimension and clamping the embedding values of all tokens up to that index, shifting those values by adding these to random normally distributed ones $\mathcal{N}(e; 0, \eta)$.  For a random index $i$ chosen between 0 and the number of elements in the embedding $e$ the update rule $f(e) = e_{n+1}$ may be described by the following equation,
 
 $$
-f(e_{[:, :i]}) = e_{[:, :i]} + \eta * \mathcal{N}(e_{[:, i:]}; 0, \eta) \\
-f(e_{[:, i:]}) = e_{[:, i:]} + \epsilon * \nabla_e || O_l(e_{[:, i:]}, \theta) - O_l(e^*_{[:, i:]}, \theta)  ||_1
+f(e_{[: \; :i]}) = e_{[:, \; :i]} + \eta * \mathcal{N}(e_{[:, \; i:]}; 0, \eta) \\
+f(e_{[:, \; i:]}) = e_{[:, \; i:]} + \epsilon * \nabla_{e_{[:, \; i:]}} || O_l(e, \theta) - O_l(e^*, \theta)  ||_1
 $$
 
 where $e^*$ denotes the original embedding for a given input $a$ and $\eta$ and $\epsilon$ are tunable parameters.
@@ -556,6 +556,8 @@ def clamped_walk(embedding, steps, rand_eta, lr):
 		
 	return embedding
 ```
+
+This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged. 
 
 ### Implications
 
