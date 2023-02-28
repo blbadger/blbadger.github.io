@@ -523,7 +523,7 @@ If the value returned from this multiplication is sufficiently near zero, the `p
 
 Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
 
-Even when we use a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  But when we compare the L^1 distance metric on the input $\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_N$ we find that the input distance is usually slightly larger than the output distance.  This means that even for a relatively easily-inverted MLP model, the tangent walk approach is insufficient to yield values of $e_N$ that are far from $e$ without changing the output value.
+Even when we use a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  But when we compare the $L^1$ distance metric on the input $\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the input distance is usually slightly larger than the output distance.  This means that even for a relatively easily-inverted MLP model, the tangent walk approach is insufficient to yield values of $e_N$ that are far from $e$ without changing the output value.
 
 Another approach to changing the input while fixing the output is to clamp portions of the input, add some random amount to those clamped portions, and perform gradient descent on the rest of the input in order to minimize a metric distance between the modified and original output.  The gradient we want may be found via
 
@@ -565,7 +565,15 @@ def clamped_walk(embedding, steps, rand_eta, lr):
 	return embedding
 ```
 
-This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged. 
+This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged.  For a 12-block transformer model without a language modeling head such that the output shape is identical to the input shape, tuning the values of $\eta, \epsilon, N$ yields an $L^1$ metric on the distance between $m(e, e_N)$ that is $10$ times larger than $m(O_l(e, \theta), O_l{e_n, \theta))$.  The ratio $r$ defined as
+
+$$
+r = || e - e_n ||_1 / || O_l(e, \theta) - O_l(e_N, \theta) ||_1
+$$
+
+may be further increased to nearly $100$ or more by increasing the number of gradient descent iterations per clamp shift step from one to fifty.
+
+It is interesting to note that the transformer architecture is much more amenable to this gradient clamping optimization than the fully connected model, which generally does not yield an $r<1$.
 
 ### Implications
 
