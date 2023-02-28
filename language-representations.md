@@ -483,7 +483,15 @@ and may be thought of as an extension of the process of eigendecomposition of a 
 
 The singular value decomposition has a number of applications in linear algebra, but for this page we only need to know that if $M$ is real-valued then $U$ and $V$ are real and orthogonal.  This is useful because for an $M$ that is non-square, we can find the right-singular values $V$ such that $V^H$ is square.  This in turn is useful because some columns (vectors) of $V^H$ are decidedly not orthogonal to $M$ by definition, but as there are more columns in $V^H$ than $M$ we have at least one column that is orthogonal to all columns of $M$. 
 
-To be specific, let's consider the input
+Now that a number of orthogonal vectors have been obtained, we can update $e$ to minimize a difference in $O_l(e, \theta)$ by 
+
+$$
+e_{n+1} = e_n + \eta * b(V^H_{[j+1]})
+$$
+
+where $\eta$ is a sufficiently small update parameter and $j$ indicates the number of tokens in $e$ and $b(V^H)$ indicates a broadcasting of $V^H$ such that the resulting tensor has the same shape as $e_n$, and we repeat for a maximum of $n=N$ iterations.  Alternatively, one can assemble a matrix of multiple column vectors of $V^H$ with the same shape as $e$. Empirically there does not appear to be a difference between these two methods.
+
+For example, let's consider the input
 
 $$
 \mathtt{The \; sky \; is \; blue.}
@@ -500,7 +508,7 @@ def tangent_walk(embedding, steps):
 		gradient, _ = layer_gradient(a_model, embedding) # defined above
 		gradient = torch.squeeze(gradient, dim=0)
 		perp_vector = torch.linalg.svd(gradient).Vh[-1] # any index greater than input_length
-		embedding = embedding + 0.01*perp_vector # learning rate update
+		embedding = embedding + 0.01*perp_vector # learning rate update via automatically broadcasted vector
 	
 	return embedding
 ```
@@ -515,7 +523,7 @@ If the value returned from this multiplication is sufficiently near zero, the `p
 
 Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
 
-Even when we use an architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. 
+Even when we use a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  But when we compare the L^1 distance metric on the input $\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_N$ we find that the input distance is usually slightly larger than the output distance.  This means that even for a relatively easily-inverted MLP model, the tangent walk approach is insufficient to yield values of $e_N$ that are far from $e$ without changing the output value.
 
 Another approach to changing the input while fixing the output is to clamp portions of the input, add some random amount to those clamped portions, and perform gradient descent on the rest of the input in order to minimize a metric distance between the modified and original output.  The gradient we want may be found via
 
@@ -534,7 +542,7 @@ def target_gradient(model, input_tensor, target_output):
 and the clamping procedure may be implemented by choosing a random index on the embedding dimension and clamping the embedding values of all tokens up to that index, shifting those values by adding these to random normally distributed ones $\mathcal{N}(e; 0, \eta)$.  For a random index $i$ chosen between 0 and the number of elements in the embedding $e$ the update rule $f(e) = e_{n+1}$ may be described by the following equation,
 
 $$
-f(e_{[: \; :i]}) = e_{[:, \; :i]} + \eta * \mathcal{N}(e_{[:, \; i:]}; 0, \eta) \\
+f(e_{[:, \; :i]}) = e_{[:, \; :i]} + \eta * \mathcal{N}(e_{[:, \; :i]}; 0, \eta) \\
 f(e_{[:, \; i:]}) = e_{[:, \; i:]} + \epsilon * \nabla_{e_{[:, \; i:]}} || O_l(e, \theta) - O_l(e^*, \theta)  ||_1
 $$
 
