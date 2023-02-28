@@ -571,9 +571,9 @@ $$
 r = || e - e_n ||_1 / || O_l(e, \theta) - O_l(e_N, \theta) ||_1
 $$
 
-may be further increased to nearly $100$ or more by increasing the number of gradient descent iterations per clamp shift step from one to fifty.
+may be further increased to nearly $100$ or more by increasing the number of gradient descent iterations per clamp shift step from one to fifty.  
 
-It is interesting to note that the transformer architecture is much more amenable to this gradient clamping optimization than the fully connected model, which generally does not yield an $r<1$.
+It is interesting to note that the transformer architecture is much more amenable to this gradient clamping optimization than the fully connected model, which generally does not yield an $r>3$ without substantial tuning.
 
 ### Implications
 
