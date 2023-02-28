@@ -565,10 +565,10 @@ def clamped_walk(embedding, steps, rand_eta, lr):
 	return embedding
 ```
 
-This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged.  For a 12-block transformer model without a language modeling head such that the output shape is identical to the input shape, tuning the values of $\eta, \epsilon, N$ yields an $L^1$ metric on the distance between $m(e, e_N)$ that is $10$ times larger than $m(O_l(e, \theta), O_l{e_n, \theta))$.  The ratio $r$ defined as
+This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged.  For a 12-block transformer model without a language modeling head such that the output shape is identical to the input shape, tuning the values of $\eta, \epsilon, N$ yields an $L^1$ metric on the distance between $m(e, e_N)$ that is $10$ times larger than $m(O_l(e, \theta), O_l(e_n, \theta))$.  The ratio $r$ defined as
 
 $$
-r = || e - e_n ||_1 / || O_l(e, \theta) - O_l(e_N, \theta) ||_1
+r = \frac{|| e - e_n ||_1} {|| O_l(e, \theta) - O_l(e_N, \theta) ||_1}
 $$
 
 may be further increased to nearly $100$ or more by increasing the number of gradient descent iterations per clamp shift step from one to fifty.  
