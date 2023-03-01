@@ -86,6 +86,10 @@ This is also the case for out-of-distribution images such as this Tesla coil.  I
 
 In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to reconstruct language inputs, rather than images.
 
+To orient ourselves, first consider the architecture of a typical transformer-based language model.
+
+![gpt2 representation]({{https://blbadger.github.io}}/deep-learning/llm_representation_explained.png)
+
 Language input generation presents a unique challenge to gradient-based methods because language inputs are fundamentally discrete: a word either exists in a certain part of a sentence or it does not.  The standard approach to input generation is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^1$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
 
 $$
