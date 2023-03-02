@@ -582,9 +582,9 @@ It is interesting to note that the transformer architecture is much more amenabl
 Now that a method of changing the input such that a change in the output is minimized has been found, we can choose appropriate values of $N, \eta, \epsilon$ such that the $e_N$ corresponds to different input tokens.  For successively larger $N$, we have for a trained GPT-2 model (without a language modeling head)
 
 $$
-\mathtt{elsius sky is blue.} \\
-\mathtt{elsius skyelsius blue.} \\
-\mathtt{elsius skyelsiuselsius.}
+\mathtt{elsius \; sky \; is \; blue.} \\
+\mathtt{elsius \; skyelsius \; blue.} \\
+\mathtt{elsius \; skyelsiuselsius.}
 $$
 
 Once again, we find that the trained GPT-2 approximates an English sentence with gibberish. This is true even if we take the top-k nearest tokens to $e_N$ rather than the top-1 as follows:
