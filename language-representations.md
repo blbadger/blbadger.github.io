@@ -587,7 +587,15 @@ $$
 \mathtt{elsius skyelsiuselsius.}
 $$
 
-Once again, we find that the trained GPT-2 approximates an English sentence with gibberish.
+Once again, we find that the trained GPT-2 approximates an English sentence with gibberish. This is true even if we take the top-k nearest tokens to $e_N$ rather than the top-1 as follows:
+
+```python
+elsius skyelsiuselsius.
+advertisementelsiusadvertisementascriptadvertisement
+eaturesascripteaturesadvertisementelsius
+ destroadvertisementhalla blue.]
+thelessbiltascript":[{"bilt
+```
 
 ### Implications
 
