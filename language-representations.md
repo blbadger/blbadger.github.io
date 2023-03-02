@@ -16,7 +16,7 @@ We may wonder whether this is also the case for language models: to these also t
 
 The most prominent deep learning model architecture used to model language is the Transformer, which combines dot product self-attention with feedforward layers applied identically to all elements in an input to yield an output.  Self-attention layers originally were applied to recurrent neural networks in order to prevent the loss of information in earlier words in a sentence, a problem quite different to the ones typically faced by vision models. 
 
-Thus convolutional vision and language models diverged until it was observed that the transformer architecture (with some small modifications) was also effective in the task of image recognition.  Somewhat surprisingly, [esewhere](https://blbadger.github.io/transformer-features.html) we have seen that transformers designed for vision tasks tend to learn in a somewhat analagous fashion to convolutional models: each neuron in the attention module's MLP output acts similarly to a convolutional kernal, in that the activation of this neuron yields similar feature maps to the activation of all elements in one convolutional filter.
+Thus convolutional vision and language models diverged until it was observed that the transformer architecture (with some small modifications) was also effective in the task of image recognition.  Somewhat surprisingly, [elsewhere](https://blbadger.github.io/transformer-features.html) we have seen that transformers designed for vision tasks tend to learn in a somewhat analagous fashion to convolutional models: each neuron in the attention module's MLP output acts similarly to a convolutional kernal, in that the activation of this neuron yields similar feature maps to the activation of all elements in one convolutional filter.
 
 It may be wondered whether transformers designed for language tasks behave similarly.  A first step to answering this question is to observe which elements of an input most activate a given set of neurons in some layer of our language model. One way to test this is by swapping the transformer stack in the [vision transformer](https://arxiv.org/abs/2010.11929) with the stack of a trained language model of identical dimension, and then generating an input (starting from noise) using gradient descent on that input to maximize the output of some element.  For more detail on this procedure, see [this page](https://blbadger.github.io/transformer-features.html).  
 
@@ -578,6 +578,16 @@ $$
 may be further increased to nearly $100$ or more by increasing the number of gradient descent iterations per clamp shift step from one to fifty.  
 
 It is interesting to note that the transformer architecture is much more amenable to this gradient clamping optimization than the fully connected model, which generally does not yield an $r>3$ without substantial tuning.
+
+Now that a method of changing the input such that a change in the output is minimized has been found, we can choose appropriate values of $N, \eta, \epsilon$ such that the $e_N$ corresponds to different input tokens.  For successively larger $N$, we have for a trained GPT-2 model (without a language modeling head)
+
+$$
+\mathtt{elsius sky is blue.} \\
+\mathtt{elsius skyelsius blue.} \\
+\mathtt{elsius skyelsiuselsius.}
+$$
+
+Once again, we find that the trained GPT-2 approximates an English sentence with gibberish.
 
 ### Implications
 
