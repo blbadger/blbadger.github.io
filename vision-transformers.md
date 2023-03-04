@@ -43,7 +43,7 @@ Nevertheless, to gain familiarity with this model we note that for multi-head at
 
 A single transformer encoder applied to image data may be depicted as follows:
 
-![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
+![vision transformer architecture]({{https://blbadger.github.io}}/deep-learning/transformer_encoder_illustration.png)
 
 For a more thorough introduction to the transformer, see Alammar's [Illustrated Transformer](https://jalammar.github.io/illustrated-transformer/).  See [here](https://blbadger.github.io/neural-networks3.html#generalization-and-language-model-application) for an example of a transformer encoder architecture applied to a character sequence classification task.
 
@@ -232,7 +232,7 @@ Transformer encoders contain a number of operations: layer normalization, self-a
 
 Recall the architecture of the vision transformer encoder module:
 
-![vision transformer architecture]({{https://blbadger.github.io}}/neural_networks/transformer_encoder_illustration.png)
+![vision transformer architecture]({{https://blbadger.github.io}}/deep-learning/transformer_encoder_illustration.png)
 
 We are now going to focus on ViT Large 16, where the 'trained' modules are pretrained on weakly supervised datasets before being trained on ImageNet 1K, and images are all 3x512x512.  
 
