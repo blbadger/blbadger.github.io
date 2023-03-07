@@ -430,7 +430,7 @@ irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
 ```
 
-### Manifold Walk Representations
+### Orthogonal Walk Representations
 
 For the investigation on this page, the main purpose of forming inputs based on the values of the output of some hidden layer is that the input generated gives us an understanding of what kind of information that hidden layer contains.  Given a tensor corresponding to output activations of a layer, the information provided by that tensor is typically invariant to some changes in the input such that one can transform one possible input representation into another without changing the output values significantly. The collection of all such invariants may be thought of as defining the information contained in a layer.
 
@@ -446,7 +446,7 @@ $$
 \nabla_a O_l(a, \theta)
 $$
 
-expresses the information of the direction (in $a$ space) of greatest increase in $O_l(a, \theta)$ for an infinitesmal change.  We can obtain the gradient of any layer's output with respect to the input by modifying a model to end with that layer before using the following method:
+expresses the information of the direction (in $a$ space) of greatest increase in (all values of) $O_l(a, \theta)$ for an infinitesmal change.  We can obtain the gradient of any layer's output with respect to the input by modifying a model to end with that layer before using the following method:
 
 ```python
 def layer_gradient(model, input_tensor):
@@ -459,14 +459,6 @@ def layer_gradient(model, input_tensor):
 	return gradient, loss.item()
 ```
 
-Note that only scalars may propegate gradients in the Pytorch autograd engine, meaning that we are actually taking the gradient
-
-$$
-\nabla_a \sum_i O_l(a, \theta)_i
-$$
-
-but for the purposes on this page, these are effectively equivalent being that no change in the output $O_l(a, \theta)$ also gives us no change in $\sum_i O_l(a, \theta)_i$.
-
 If our purpose is to instead avoid changing the layer's output we want what is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.  We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
 
 How can we find an orthogonal vector to the gradient?  In particular, how may we find an orthogonal vector to the gradient, which is typically a non-square tensor?  For a single vector $\mathbf{x}$, we can find an orthogonal vector $\mathbf{y}$ by solving for a solution to the equation of the dot product of these vectors, where the desired product is equal to the zero vector.
@@ -475,7 +467,7 @@ $$
 \mathbf{x} \cdot \mathbf{y} = 0
 $$
 
-We can find that trivially setting $y$ to be the zero vector itself satisfies the equation, and has minimum norm such that simply finding any solution to the above equation is insufficient for our goals. Moreover, language model input are typically matricies composed of many input tokens embedded such that we want to find vectors that are orthogonal to all input token embedding gradients rather than just one.  
+We can find that trivially setting $\mathbf{y}$ to be the zero vector itself satisfies the equation, and has minimum norm such that simply finding any solution to the above equation is insufficient for our goals. Moreover, language model input are typically matricies composed of many input tokens embedded such that we want to find vectors that are orthogonal to all input token embedding gradients rather than just one.  
 
 To do so, we can make use of the singular value decomposition of the input gradient matrix.  Given a matrix $M$ the singular value decomposition is defined as 
 
@@ -523,11 +515,36 @@ where we can check that the SVD gives us sufficiently orthogonal vectors by mult
 print (gradient @ perp_vector) # check for orthogonality via mat mult
 ```
 
-If the value returned from this multiplication is sufficiently near zero, the `perp_vector` is sufficiently orthogonal to the `gradient` vector and should not change the value of $\sum O_l(a, \theta)$ given an infinitesmal change in $a$ along this direction.
+If the value returned from this multiplication is sufficiently near zero, the `perp_vector` is sufficiently orthogonal to the `gradient` vector and should not change the value of $O_l(a, \theta)$ given an infinitesmal change in $a$ along this direction.
 
-Unfortunately this method experiences a few challenges and is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the first being that the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of `1e-2` for full transformer architectures.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of `1e-3` whereas a three-layer feedforward model simulating the FF present in the transformer module yields values on the order of `1e-8`.
+Note that gradients are functions from scalars to vectors (or tensors etc.) rather than functions from vectors to other vectors, meaning that we must actually taking the gradient
 
-Even when we use a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  But when we compare the $L^1$ distance metric on the input $\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the input distance is usually slightly larger than the output distance.  This means that even for a relatively easily-inverted MLP model, the tangent walk approach is insufficient to yield values of $e_N$ that are far from $e$ without changing the output value.
+$$
+\sum_i \nabla_a O_l(a, \theta)_i
+$$
+
+At first glance it may seem that we can instead calculate the (more efficient) gradient
+
+$$
+\nabla_a \sum_i O_l(a, \theta)_i
+$$
+
+becuase for any functions $f, g: \Bbb R^n \to \Bbb R$ the linearity of gradients stipulates that $\nabla[f + g] (x) = \nabla f(x) + \nabla g(x)$. But on closer inspection the linearity property of the gradient does not apply to a typical vector output $O_l(a, \theta)_i$ because in the general case $O_l(a, \theta)_j \neq O_l(a, \theta)_k$ such that we instead calculate $\nabla f(x) + \nabla f(y) + \cdots : x \neq y \cdots$.  
+
+This completes the relevant details of the orthogonal walk method.  Unfortunately this method is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the most prominent being that for transformer-based models the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of $1 \times 10^{-2}$.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of $1 \times 10^{-3}$ whereas a three-layer feedforward model simulating the feedforward layers present in the transformer module yields values on the order of $1 \times 10^{-8}$.
+
+Therefore instead of applying the orthogonal walk approach to the GPT-2 model, we can instead apply it to a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  
+
+As a final check, when we compare the $L^1$ distance metric on the input $d_i =\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $d_o =\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the ratio of output to input distance $d_o / d_i$ is $~100$ when the model used is the three-layer fully connected version.  For the (untrained) fully connected model, we can therefore find inputs that yield a nearly identical output vector $O_l(a, \theta)$ using the orthogonal walk method and for iterations $n=50$ to $n=150$ we have:
+
+$$
+\mathtx{\; The \; sky \; is \; blue.} \\
+\mathtx{\; and \; sky \; is \; blue.} \\
+\mathtx{\; and \; sky \; isadvertisement.} \\
+\mathtx{advertisement \; skyadvertisementadvertisement.}
+$$
+
+### Clamped Gradient Walk Representations
 
 Another approach to changing the input while fixing the output is to clamp portions of the input, add some random amount to those clamped portions, and perform gradient descent on the rest of the input in order to minimize a metric distance between the modified and original output.  The gradient we want may be found via
 
