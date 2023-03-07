@@ -497,7 +497,7 @@ This is a 5-token input for GPT-2, where the embedding corresponding to this inp
 
 The orthogonal vector approach may therefore be implemented as follows:
 
-```python
+```python3
 def tangent_walk(embedding, steps):
 	for i in range(steps):
 		embedding = embedding.detach()
@@ -511,7 +511,7 @@ def tangent_walk(embedding, steps):
 
 where we can check that the SVD gives us sufficiently orthogonal vectors by multiplying the `perp_vector` by `gradient` via 
 
-```python 
+```python3
 print (gradient @ perp_vector) # check for orthogonality via mat mult
 ```
 
@@ -531,7 +531,7 @@ $$
 
 becuase for any functions $f, g: \Bbb R^n \to \Bbb R$ the linearity of gradients stipulates that $\nabla[f + g] (x) = \nabla f(x) + \nabla g(x)$. But on closer inspection the linearity property of the gradient does not apply to a typical vector output $O_l(a, \theta)_i$ because in the general case $O_l(a, \theta)_j \neq O_l(a, \theta)_k$ such that we instead calculate $\nabla f(x) + \nabla f(y) + \cdots : x \neq y \cdots$.  
 
-This completes the relevant details of the orthogonal walk method.  Unfortunately this method is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the most prominent being that for transformer-based models the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of $1 \times 10^{-2}$.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of $1 \times 10^{-3}$ whereas a three-layer feedforward model simulating the feedforward layers present in the transformer module yields values on the order of $1 \times 10^{-8}$.
+This completes the relevant details of the orthogonal walk.  Unfortunately this method is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the most prominent being that for transformer-based models the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of $1 \times 10^{-2}$.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of $1 \times 10^{-3}$ whereas a three-layer feedforward model simulating the feedforward layers present in the transformer module yields values on the order of $1 \times 10^{-8}$.
 
 Therefore instead of applying the orthogonal walk approach to the GPT-2 model, we can instead apply it to a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  
 
