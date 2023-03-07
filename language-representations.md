@@ -469,10 +469,10 @@ but for the purposes on this page, these are effectively equivalent being that n
 
 If our purpose is to instead avoid changing the layer's output we want what is essentially the opposite of the gradient, which may be thought of as some direction in $a$-space that we can move such that $O_l(a, \theta)$ is *least* changed.  We can unfortunately not use the opposite of the gradient, as this simply tells us the direction of greatest decrease in $O_l(a, \theta)$.  Instead we want a vector that is orthogonal to the gradient, as by definition an infinitesmal change in a direction (there may be many) that is perpendicular to the gradient does not change the output value.
 
-How can we find an orthogonal vector to the gradient?  In particular, how may we find an orthogonal vector to the gradient, which is typically a non-square tensor?  For a single vector $x$, we can find an orthogonal vector $y$ by solving for a solution to the equation of the dot product of $x$ and $y$ where the product is equal to the zero vector.
+How can we find an orthogonal vector to the gradient?  In particular, how may we find an orthogonal vector to the gradient, which is typically a non-square tensor?  For a single vector $\mathbf{x}$, we can find an orthogonal vector $\mathbf{y}$ by solving for a solution to the equation of the dot product of these vectors, where the desired product is equal to the zero vector.
 
 $$
-x \cdot y = 0
+\mathbf{x} \cdot \mathbf{y} = 0
 $$
 
 We can find that trivially setting $y$ to be the zero vector itself satisfies the equation, and has minimum norm such that simply finding any solution to the above equation is insufficient for our goals. Moreover, language model input are typically matricies composed of many input tokens embedded such that we want to find vectors that are orthogonal to all input token embedding gradients rather than just one.  
