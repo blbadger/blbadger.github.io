@@ -544,6 +544,14 @@ $$
 \mathtt{advertisement \; skyadvertisementadvertisement.}
 $$
 
+Although the orthogonal walk method is not particularly successful when applied to GPT-2, we can nevertheless observe a sequence of generated inputs $a_N$ as $n$ increases.  One again, however, we do not find inputs of semantic similarity to the desired input.
+
+$$
+\mathtt{The \; sky \; is \; blue.} \\
+\mathtt{confir \; sky \; is \; blue.} \\
+\mathtt{\; confir \; behavi \; confir \; confir.}
+$$
+
 In conclusion, one can walk along a manifold in $a$-space that maps to a unique vector value $O_l(a, \theta)$ by repeated application of a small shift in a direction orthogonal to $\nabla O_l(a, \theta)$, but poor conditioning in this gradient vector means that this method is not capable of an accurate walk (where $O_l(a_n, \theta)$ is nearly identical to the target $O_l(a, \theta)$ for transformer models. 
 
 ### Clamped Gradient Walk Representations
