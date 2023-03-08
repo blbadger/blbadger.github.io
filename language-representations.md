@@ -529,7 +529,7 @@ $$
 \nabla_a \sum_i O_l(a, \theta)_i
 $$
 
-becuase for any functions $f, g: \Bbb R^n \to \Bbb R$ the linearity of gradients stipulates that $\nabla[f + g] (x) = \nabla f(x) + \nabla g(x)$. But on closer inspection the linearity property of the gradient does not apply to a typical vector output $O_l(a, \theta)_i$ because in the general case $O_l(a, \theta)_j \neq O_l(a, \theta)_k$ such that we instead calculate $\nabla f(x) + \nabla f(y) + \cdots : x \neq y \cdots$.  
+becuase for any functions $f, g: \Bbb R^n \to \Bbb R$ the linearity of gradients stipulates that $\nabla[f + g] (x) = \nabla f(x) + \nabla g(x)$. But on closer inspection the linearity property of the gradient does not apply to a typical vector output $O_l(a, \theta)_i$ because in the general case $O_l(a, \theta)_j \neq O_l(a, \theta)_k$ such that we instead calculate $\nabla f(x) + \nabla f(y) +\nabla f(z) + \cdots$ where $x \neq y \neq z \neq \cdots$.  
 
 This completes the relevant details of the orthogonal walk.  Unfortunately this method is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the most prominent being that for transformer-based models the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of $1 \times 10^{-2}$.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of $1 \times 10^{-3}$ whereas a three-layer feedforward model simulating the feedforward layers present in the transformer module yields values on the order of $1 \times 10^{-8}$.
 
@@ -543,6 +543,8 @@ $$
 \mathtt{\; and \; sky \; isadvertisement.} \\
 \mathtt{advertisement \; skyadvertisementadvertisement.}
 $$
+
+In conclusion, one can walk along a manifold in $a$-space that maps to a unique vector value $O_l(a, \theta)$ by repeated application of a small shift in a direction orthogonal to $\nabla O_l(a, \theta)$, but poor conditioning in this gradient vector means that this method is not capable of an accurate walk (where $O_l(a_n, \theta)$ is nearly identical to the target $O_l(a, \theta)$ for transformer models. 
 
 ### Clamped Gradient Walk Representations
 
