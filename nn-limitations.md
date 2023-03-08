@@ -136,18 +136,17 @@ Neural networks, like any statistical learning procedure, are in the business of
 
 As seen for the nonlinear attractors [such as the one here](\clifford_attractor.md), changes in dimension are not: small changes in inputs lead to large changes in attractor shape. Is a change in dimension always discontinuous?  We are most interested here in a change from many dimensions to one, so start by considering the change in dimension from two to one.
 
-The new question is as follows: can a mapping from a two dimensional surface to a one dimensional line be continuous?  It turns out no: any mapping from two to one dimensions (with the mapping being one-to-one and onto) is discontinuous, to be specific it is everywhere discontinuous.  Here 'continuous' as a property of functions is defined topologically as follows: in some metrix space $(X, d)$ where $f$ maps to another metric space $(Y, d')$, the function $f$ is continuous if and only if for any $\epsilon > 0$,
+The new question is as follows: can a mapping from a two dimensional surface to a one dimensional line be continuous?  It turns out no: any mapping from two to one dimensions (with the mapping being one-to-one and onto) is discontinuous, to be specific it is everywhere discontinuous.  Here 'continuous' as a property of functions is defined topologically as follows: in some metric space $(X, d)$ where $f$ maps to another metric space $(Y, d')$, the function $f$ is continuous if and only if for any $\epsilon > 0$,
 
 $$
 \lvert b - a \rvert < \delta \implies \lvert f(b) - f(a) \rvert < \epsilon
 $$
 
-Where $\delta > 0$ is a distance in metrix space $(X, d)$ and $\epsilon$ is a distance in metric space $(Y, d')$.  A discontinuous function is one where the above expression is not true for some pair $(a, b) \in X$ and an everywhere discontinous function is one in which the above expression is not true for every pair $(a, b) \in X$.  
+Where $\delta > 0$ is a distance in metric space $(X, d)$ and $\epsilon$ is a distance in metric space $(Y, d')$.  A discontinuous function is one where the above expression is not true for some pair $(a, b) \in X$ and an everywhere discontinous function is one in which the above expression is not true for every pair $(a, b) \in X$.
 
 The statement is that any one-to-one and onto mapping from two dimensions to one is everywhere discontinuous. To show this we will make use of an elegant proof found in Pierce's Introduction to Information Theory (p16-17).  
 
 Suppose we have arbitrary two points on a two dimensional surface, called $a$ and $b$.  We can connect these points with an arbitrary curve, and now we choose two other points $c$ and $d$ on the surface and connect them with a curve that travels through the curve $ab$ as follows. All four points are mapped to a line, and in particular $a \to a'$, $b\to b'$ etc.
-
 
 ![discontinous proof]({{https://blbadger.github.io}}/neural_networks/discontinous_proof.png)
 
