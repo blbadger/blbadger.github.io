@@ -538,10 +538,10 @@ Therefore instead of applying the orthogonal walk approach to the GPT-2 model, w
 As a final check, when we compare the $L^1$ distance metric on the input $d_i =\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $d_o =\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the ratio of output to input distance $d_o / d_i$ is $~100$ when the model used is the three-layer fully connected version.  For the (untrained) fully connected model, we can therefore find inputs that yield a nearly identical output vector $O_l(a, \theta)$ using the orthogonal walk method and for iterations $n=50$ to $n=150$ we have:
 
 $$
-\mathtx{\; The \; sky \; is \; blue.} \\
-\mathtx{\; and \; sky \; is \; blue.} \\
-\mathtx{\; and \; sky \; isadvertisement.} \\
-\mathtx{advertisement \; skyadvertisementadvertisement.}
+\mathtt{\; The \; sky \; is \; blue.} \\
+\mathtt{\; and \; sky \; is \; blue.} \\
+\mathtt{\; and \; sky \; isadvertisement.} \\
+\mathtt{advertisement \; skyadvertisementadvertisement.}
 $$
 
 ### Clamped Gradient Walk Representations
