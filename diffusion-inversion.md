@@ -119,12 +119,24 @@ and the fully connected autoencoder combined with this one-element time informat
 
 ![mnist diffusion]({{https://blbadger.github.io}}/neural_networks/mnist_diffusion.png)
 
-These results are somewhat more impressive when we consider that generative models typically struggle somewhat with un-normalized MNIST data, as most elements in the input are identically zero.  Experimenting with different learning rates and input modifications convinces us that diffusion inversion is happily rather insensitive to exact configurations, which is a marked difference from GAN training. 
+These results are somewhat more impressive when we consider that generative models typically struggle somewhat with un-normalized MNIST data, as most elements in the input are identically zero.  Experimenting with different learning rates and input modifications convinces us that diffusion inversion is happily rather insensitive to exact parameter configurations, which is a marked difference from GAN training. 
 
 ### Attention Augmented Unet Diffision
 
-For higher-resolution images, the use of unmodified fully connected architectures is typically infeasible due to the very large number of parameters resulting.  Certain restrictions can be placed on the transformations between one layer and the next, and here we use both convolutions and attention in our denoising model to produce realistic images of churches.
+For higher-resolution images, the use of unmodified fully connected architectures is typically infeasible due to the very large number of parameters.  Certain restrictions can be placed on the transformations between one layer and the next, and here we use both convolutions and attention in our denoising model to produce realistic images of churches.
 
-We employ a modification on the original Unet architecture such that attention has been added at each layer, modified from Phil Wang's [implementation](https://github.com/lucidrains/denoising-diffusion-pytorch) of the model used by [Ho and colleagues](https://arxiv.org/abs/2006.11239).  
+We employ a modification on the original Unet architecture such that attention has been added at each layer, modified from Phil Wang's [implementation](https://github.com/lucidrains/denoising-diffusion-pytorch) of the model used by [Ho and colleagues](https://arxiv.org/abs/2006.11239).  Here we use a four-deep Unet model with linear attention applied to residual connections and dot-product attention applied to the middle block. 
+
+Activations are Sigmoid Linear Units (SiLU)
+
+$$
+f(x) = x * \sigma(x) = \frac{x}{1 + e^{-x}}
+$$
+
+which is a very similar function to GeLU, and group norms are applied to each block.  Time information is encoded into each blockvia a trainable MLP applied to fixed cosine-sine positional embeddings in the input.  It is somewhat curious that this encoding of time into each block is beneficial, as positional encodings are usually applied only on th einput.
+
+After a couple hundred epochs of training on LSUN churches at $64^2$ resolution we have the following sampled images:
 
 ![lsun churches 64 diffusion]({{https://blbadger.github.io}}/neural_networks/diffusion_cover.png)
+
+
