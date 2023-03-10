@@ -125,15 +125,17 @@ These results are somewhat more impressive when we consider that generative mode
 
 For higher-resolution images, the use of unmodified fully connected architectures is typically infeasible due to the very large number of parameters.  Certain restrictions can be placed on the transformations between one layer and the next, and here we use both convolutions and attention in our denoising model to produce realistic images of churches.
 
-We employ a modification on the original Unet architecture such that attention has been added at each layer, modified from Phil Wang's [implementation](https://github.com/lucidrains/denoising-diffusion-pytorch) of the model used by [Ho and colleagues](https://arxiv.org/abs/2006.11239).  Here we use a four-deep Unet model with linear attention applied to residual connections and dot-product attention applied to the middle block. 
+We employ a modification on the original Unet architecture such that attention has been added at each layer, modified from Phil Wang's [implementation](https://github.com/lucidrains/denoising-diffusion-pytorch) of the model introduced by [Ho and colleagues](https://arxiv.org/abs/2006.11239).  Here we use a four-deep Unet model with linear attention applied to residual connections and dot-product attention applied to the middle block. The general architecture is as follows:
 
-Activations are Sigmoid Linear Units (SiLU)
+![churches diffusion model]({{https://blbadger.github.io}}/deep-learning/churches_diffusion_architecture.png)
+
+MLP activations for this model are Sigmoid Linear Units (SiLU)
 
 $$
 f(x) = x * \sigma(x) = \frac{x}{1 + e^{-x}}
 $$
 
-which is a very similar function to GeLU, and group norms are applied to each block.  Time information is encoded into each blockvia a trainable MLP applied to fixed cosine-sine positional embeddings in the input.  It is somewhat curious that this encoding of time into each block is beneficial, as positional encodings are usually applied only on th einput.
+which is a very similar function to GeLU, and group norms are applied to each block and attention block (before the self-attention transformation).  Time information is encoded into each blockvia a trainable MLP applied to fixed cosine-sine positional embeddings in the input.  It is somewhat curious that this encoding of time into each block is beneficial, as positional encodings are usually applied only on the input.
 
 After a couple hundred epochs of training on LSUN churches at $64^2$ resolution we have the following sampled images:
 
