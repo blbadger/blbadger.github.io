@@ -523,13 +523,51 @@ $$
 \sum_i \nabla_a O_l(a, \theta)_i
 $$
 
-At first glance it may seem that we can instead calculate the (more efficient) gradient
+which may be implemented as follows:
+
+```python
+def individual_gradient(model, input_tensor):
+	input_tensor.requires_grad = True
+	gradient = torch.zeros(input_tensor.shape).double().to(device)
+	output = a_model(input_tensor)
+	for i in range(len(output)):
+		output = a_model(input_tensor) 
+		loss = output[i]
+		loss.backward()
+		gradient += input_tensor.grad
+		input_tensor.grad = None
+
+	return gradient
+```
+
+But it is much more efficient to calculate the gradient
 
 $$
 \nabla_a \sum_i O_l(a, \theta)_i
 $$
 
-becuase for any functions $f, g: \Bbb R^n \to \Bbb R$ the linearity of gradients stipulates that $\nabla[f + g] (x) = \nabla f(x) + \nabla g(x)$. But on closer inspection the linearity property of the gradient does not apply to a typical vector output $O_l(a, \theta)_i$ because in the general case $O_l(a, \theta)_j \neq O_l(a, \theta)_k$ such that we instead calculate $\nabla f(x) + \nabla f(y) +\nabla f(z) + \cdots$ where $x \neq y \neq z \neq \cdots$.  
+iplemented as
+
+```python
+def summed_gradient(model, input_tensor):
+	input_tensor.requires_grad = True
+	output = a_model(input_tensor)
+	sout = torch.sum(output)
+	sout.backward()
+	gradient = input_tensor.grad.detach().clone()
+	return gradient
+```
+
+which for Pytorch is computationally identical to
+
+```python
+def layer_gradient(model, input_tensor):
+	input_tensor.requires_grad = True
+	output = a_model(input_tensor)
+	output.backward(gradient=torch.ones_like(output).to(device))
+	gradient = input_tensor.grad.detach().clone()
+	return gradient
+```
 
 This completes the relevant details of the orthogonal walk.  Unfortunately this method is not capable of finding new locations in $a$-space that do not change $O(a, \theta)$ significantly.  This is due to a number of reasons, the most prominent being that for transformer-based models the `perp_vector` is usually not very accurately perpendicular to the `gradient` vector such that multiplication of the orthogonal vector and the gradient returns values on the order of $1 \times 10^{-2}$.  This is an issue of poor conditioning inherent in the transformer's self-attention module, which can be seen by observing that a model with a single transformer encoder yields values on the order of $1 \times 10^{-3}$ whereas a three-layer feedforward model simulating the feedforward layers present in the transformer module yields values on the order of $1 \times 10^{-8}$.
 
