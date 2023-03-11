@@ -497,7 +497,7 @@ This is a 5-token input for GPT-2, where the embedding corresponding to this inp
 
 The orthogonal vector approach may therefore be implemented as follows:
 
-```python3
+```python
 def tangent_walk(embedding, steps):
 	for i in range(steps):
 		embedding = embedding.detach()
@@ -511,7 +511,7 @@ def tangent_walk(embedding, steps):
 
 where we can check that the SVD gives us sufficiently orthogonal vectors by multiplying the `perp_vector` by `gradient` via 
 
-```python3
+```python
 print (gradient @ perp_vector) # check for orthogonality via mat mult
 ```
 
@@ -546,7 +546,7 @@ $$
 \nabla_a \sum_i O_l(a, \theta)_i
 $$
 
-iplemented as
+which may be implemented as
 
 ```python
 def summed_gradient(model, input_tensor):
@@ -557,6 +557,8 @@ def summed_gradient(model, input_tensor):
 	gradient = input_tensor.grad.detach().clone()
 	return gradient
 ```
+
+It may be empirically verified that Pytorch evaluates these gradients nearly equally, as the difference between the two is on the order of $1 \times 10^-7$ for most elements of the 
 
 which for Pytorch is computationally identical to
 
@@ -573,7 +575,9 @@ This completes the relevant details of the orthogonal walk.  Unfortunately this 
 
 Therefore instead of applying the orthogonal walk approach to the GPT-2 model, we can instead apply it to a model architecture that allows the SVD to make accurate orthogonal vectors, the instability of the input gradient landscape makes finite learning rates give significant changes in the output, which we do not want. To gain an understanding for what the problem is, suppose one uses the model architecture mimicking the transformer MLP (with three layers, input and output being the embedding dimension of 768 and the hidden layer 4*768).  Obtaining an orthogonal vector from $V^H$ to each token in $e$, we can multiply this vector by $e$ to verify that it is indeed perpendicular.  A typical output for this process is `[ 3.7253e-09, -2.3283e-09,  1.9558e-08, -7.4506e-09,  3.3528e-08]`, indicating that we have indeed found an approximately orthogonal vector.  
 
-As a final check, when we compare the $L^1$ distance metric on the input $d_i =\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $d_o =\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the ratio of output to input distance $d_o / d_i$ is $~100$ when the model used is the three-layer fully connected version.  For the (untrained) fully connected model, we can therefore find inputs that yield a nearly identical output vector $O_l(a, \theta)$ using the orthogonal walk method and for iterations $n=50$ to $n=150$ we have:
+But when we compare the $L^1$ distance metric on the input $d_i =\vert \vert e - e_N \vert \vert_1$ to the same metric on the outputs $d_o =\vert \vert O_l(e, \theta) - O_l(e_N, \theta) \vert \vert_1$ we find that the ratio of output to input distance $d_o / d_i = 2 when the model used is the three-layer fully connected version.  Even using `torch.float64` precision, there is typically a larger change in the output than the input although the orthogonal vectors multiplied by the columns of $e$ are then typically on the order of $1 \times 10^{-17}.  After some experimentation, it can be shown that the inefficacy of the orthogonal vector approach is due to the number of elements in the model: for a random initialization of the three-layer MLP for 10 or 50 neurons in the embedding the ratio $d_o / d_i$ is typically $1/2$ or less, but increasing the embedding dimension to $200$ or more leads to the probability of $d_o / d_i < 1$ decreasing substantially.
+
+These results indicate that the orthogonal walk method is not capable of changing the input whilst leaving the output vector unchanged for all except the smallest of models.  Nevertheless, for the untrained 3-layer MLP after a few dozen iterations we have
 
 $$
 \mathtt{\; The \; sky \; is \; blue.} \\
