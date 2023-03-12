@@ -632,7 +632,7 @@ which results (lighter color indicates more iterations occur before divergence)
 
 The baker's dough topology found by Smale is evident in this image, meaning that each iteration of the forward Henon map can be decomposed into a series of three stretching or folding events as shown [here](https://en.wikipedia.org/wiki/H%C3%A9non_map).  This topology is common for attractors that map a 2D surface to an attractor of 1 < D < 2: the Henon map for a=1.4, b=0.3 is around 1.25 dimensional. 
 
-The attractor for \eqref{eq3} can be mapped on top of the divergence map for \eqref{4} as follows:
+The attractor for \eqref{eq3} can be mapped on top of the divergence map for \eqref{eq4} as follows:
 
 ```python
 steps = 100000
@@ -662,7 +662,7 @@ From a = 1 to a = 1.5, holding b=0.3 constant,
 
 {% include youtube.html id='gb18hw3ndpU' %}
 
-It is interesting to note that the divergence map for the forward Henon map \eqref{eq3} is not simply the inverse of the divergence map for the reverse Henon map \eqref{4}, which is presented [here](https://blbadger.github.io/henon-map.html), given that they are inverse functions of each other.  In particular, regions outside the attractor basin for \eqref{eq3} diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for \eqref{4}, which is somewhat counter-intuitive given that \eqref{4} yields the iterations of \eqref{eq3} in reverse.
+It is interesting to note that the divergence map for the forward Henon map \eqref{eq3} is not simply the inverse of the divergence map for the reverse Henon map \eqref{eq4}, which is presented [here](https://blbadger.github.io/henon-map.html), given that they are inverse functions of each other.  In particular, regions outside the attractor basin for \eqref{eq3} diverge, meaning that a trajectory starting at say (10, 10) heads to infinity.  But this region also diverges for \eqref{eq4}, which is somewhat counter-intuitive given that \eqref{eq4} yields the iterations of \eqref{eq3} in reverse.
 
 For a=0.2, -1 < b < 0, \eqref{eq3} experiences a point attractor for initial values in the attractor basin: successive iterations spiral in towards the point
 
@@ -671,24 +671,24 @@ x_n = \frac{(b-1) + \sqrt{(b-1)^2 + 4a}}{2a} \\
 y_n = bx_n
 $$
 
-outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for \eqref{4} with b = -0.99, 
+outside of which values diverge. For b <= -1, the attractor basin collapses, and nearly all starting points lead to trajectories that spiral out to infinity. Now looking at stable versus unstable values for \eqref{eq4} with b = -0.99, 
 
 ![divergence]({{https://blbadger.github.io}}misc_images/henon_reversed030.png)
 
-The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 2 maximum iterations to 1010, iterating \eqref{4} for a=0.2, b=-0.99 we have
+The area in the center does not diverge after 40 iterations.  Do initial points in this area ever diverge?  This question can be addressed by increasing the maximum iterations number.  Doing so from 2 maximum iterations to 1010, iterating \eqref{eq4} for a=0.2, b=-0.99 we have
 
 {% include youtube.html id='zbcgAlZtRGo' %}
 
 As is the case for a=1.4, b=0.3 so also for \eqref{eq3} with a=0.2, b=-0.99, there are unstable points and regions elsewhere diverge.  
 
-The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for \eqref{eq3} but diverges everywhere except unstable points for \eqref{4}, whereas a=0.2, b=1.05 diverges everywhere except unstable points for \eqref{eq3} but converges on points for \eqref{4}.  In the video below, $a$ is held constant while $b$ changes as follows:
+The transition from point attractors to divergence everywere except a point (or two) for the reverse Henon map occurs in reverse to that observed for the forward Henon.  For example, a=0.2 and b=0.95 exhibits two point attractors for \eqref{eq3} but diverges everywhere except unstable points for \eqref{eq4}, whereas a=0.2, b=1.05 diverges everywhere except unstable points for \eqref{eq3} but converges on points for \eqref{eq4}.  In the video below, $a$ is held constant while $b$ changes as follows:
 
 $$
 a = 0.2 \\
 b = 0.95 \to b = 1.01 
 $$
 
-Iterating \eqref{4}, note how the change in basin behavior is the opposite to that found for the same transition with \eqref{eq3}.
+Iterating \eqref{eq4}, note how the change in basin behavior is the opposite to that found for the same transition with \eqref{eq3}.
 
 {% include youtube.html id='IEbtIjFz6Bo' %}
 
@@ -700,15 +700,15 @@ But earlier our attempts to reverse the Henon map were met with very limited suc
 
 If it is aperiodic (as is the case for a=1.4, b=0.3) then yes, for the special case where the point of interest is an element of the set of points in the Henon attractor $\mathscr H$, in symbols $x_n \in \mathscr H$, or more generally where $x_n \not \in \Bbb Q$.  The Henon map, iterated discontinuously, cannot be defined on the rationals (for more information, see [here](https://blbadger.github.io/most-discontinuous.html)).  As real numbers are uncountably infinite but rationals are countable, all but a negligable portion of values of the Henon attractor $\mathscr H$ are irrational.  
 
-Now irrational numbers are of infinite length, and cannot be stored to perfect accuracy in finite memory.  How do we know that rational approximations of irrational numbers eventually diverge after many iterations of \eqref{4}?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that \eqref{4} is sensitive to initial conditions is as follows: \eqref{4} is the one-to-one inverse of \eqref{eq3}.  Being aperiodic, the trajectory of \eqref{eq3} never revisits a previous point.  Therefore we know that \eqref{4} is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as \eqref{eq3}.  As aperiodicity implies arbitrary sensitivity to initial values, \eqref{4} is arbitrarily sensitive to initial values. 
+Now irrational numbers are of infinite length, and cannot be stored to perfect accuracy in finite memory.  How do we know that rational approximations of irrational numbers eventually diverge after many iterations of \eqref{eq4}?  This is because of sensitivity to initial conditions, which implies and is implied by aperiodicity (see [here](https://blbadger.github.io/chaotic-sensitivity.html)).  The proof that \eqref{eq4} is sensitive to initial conditions is as follows: \eqref{eq4} is the one-to-one inverse of \eqref{eq3}.  Being aperiodic, the trajectory of \eqref{eq3} never revisits a previous point.  Therefore we know that \eqref{eq4} is aperiodic as well, as it never revisits a previous point being that it defines the same trajectory as \eqref{eq3}.  As aperiodicity implies arbitrary sensitivity to initial values, \eqref{eq4} is arbitrarily sensitive to initial values. 
 
-Any two starting points $p_1$ and $p_2$, arbitrarily close together but not exactly in the same place, can be considered approximations of each other.  If they are close enough then they are accurate approximations.  Sensitivity to initial conditions stipulates that, given enough iterations of \eqref{4}, $p_1$ and $p_2$ will separate.  If we take $p_1$ to be an irrational number and $p_2$ to be its rational approximation (or vice versa), an arbitrarily accurate rational approximation will, given enough iterations of \eqref{4}, become inaccurate.  Therefore all but a negligable portion of values on an aperiodic Henon map itself are practically non-invertible.
+Any two starting points $p_1$ and $p_2$, arbitrarily close together but not exactly in the same place, can be considered approximations of each other.  If they are close enough then they are accurate approximations.  Sensitivity to initial conditions stipulates that, given enough iterations of the inverse Henon map \eqref{eq4}, $p_1$ and $p_2$ will separate.  If we take $p_1$ to be an irrational number and $p_2$ to be its rational approximation (or vice versa), an arbitrarily accurate rational approximation will, given enough iterations of \eqref{eq4}, become inaccurate.  Therefore all but a negligable portion of values on an aperiodic Henon map itself are practically non-invertible.
 
-One might expect for the errors introduced in approximating irrationals in one direction with respect to time to cancel out if the reverse function is used to back-compute in the other direction.  If this were true, then even though iterations of \eqref{4} do not give accurate previous values beyond a certain number of iterations, the function would still be reversible in the sense of a one-way function definition (see the discussion for the logistic map for more on this topic) because either the true value or its inaccurate approximation (which is computed) would yield the same point.  But even though tempting, the idea that perhaps errors should cancel each other out can easily be disproven for aperiodic 1-to-1 dynamical systems as follows: if a true value and an inaccurate approximation cannot both yield the same point in reverse because otherwise the system would be 2-to-1, a contradiction.
+One might expect for the errors introduced in approximating irrationals in one direction with respect to time to cancel out if the reverse function is used to back-compute in the other direction.  If this were true, then even though iterations of \eqref{eq4} do not give accurate previous values beyond a certain number of iterations, the function would still be reversible in the sense of a one-way function definition (see the discussion for the logistic map for more on this topic) because either the true value or its inaccurate approximation (which is computed) would yield the same point.  But even though tempting, the idea that perhaps errors should cancel each other out can easily be disproven for aperiodic 1-to-1 dynamical systems as follows: if a true value and an inaccurate approximation cannot both yield the same point in reverse because otherwise the system would be 2-to-1, a contradiction.
 
-The last statement does not necessarily mean that \eqref{eq3} is not practically invertible for periodic trajectories, because any finite number of iterations of \eqref{eq3} could still be reversed with the same number of iterations of \eqref{4}. 
+The last statement does not necessarily mean that \eqref{eq3} is not practically invertible for periodic trajectories, because any finite number of iterations of \eqref{eq3} could still be reversed with the same number of iterations of \eqref{eq4}. 
 
-What about if we start with a rational number not on the Henon attractor itself, given such an $x_n$ can we find $x_{n-p}$?  Given sufficient memory the Henon map is reversible for such points, as \eqref{4} is closed for rationals.  This means that in contrast to what we saw for the logistic map, the Henon map starting on a rational $x_n$ is reversible.  But memory demands are exponential as iterations increase.
+What about if we start with a rational number not on the Henon attractor itself, given such an $x_n$ can we find $x_{n-p}$?  Given sufficient memory the Henon map is reversible for such points, as \eqref{eq4} is closed for rationals.  This means that in contrast to what we saw for the logistic map, the Henon map starting on a rational $x_n$ is reversible.  But memory demands are exponential as iterations increase.
 
 ### Aperiodicity and reversibility
 
