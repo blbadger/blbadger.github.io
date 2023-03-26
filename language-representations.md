@@ -339,9 +339,9 @@ effectively minimize the $L^1$ distance for different initializations of GPT-2, 
 
 ### Langauge models become less trainable as they are trained
 
-So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding, ending in the language modeling head output).
+So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding and ending in the language modeling head output).
 
-When performing the input representation procedure detailed in the last section on a trained GPT-2 (with a language modeling head), the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
+When performing the input representation procedure detailed in the last section on a trained GPT-2 (importantly with a language modeling head attached), the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
 
  $$
  || O_l(e_g, \theta) - O_l(e, \theta) ||_1 < || O_l(e', \theta) - O_l(e, \theta) ||_1
@@ -374,9 +374,9 @@ $$
 \mathtt{opioosponsorsnesotauratedcffff \; conduc}
 $$
 
-The inability to effectively modify an input embedding using gradient descent suggests that the gradients obtained from modules of the trained GPT-2 model are inaccurate.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
+Returning to the general case, it takes an extremely large number of iterations of \eqref{eq2} to approach the inequality \eqref{eq4}, and often it cannot be satisfied in a feasible number of iterations at all.  This observation suggests that this model is not accurate in passing gradients from the output to the input.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
 
-The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers that are adjacent in the backpropegation computational graph (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that is is likely only a few output layers are capable of effective updates at this point.
+The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers that are adjacent in the backpropegation computational graph (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that only a few output layers are capable of effective updates at this point.
 
 Is there any way to use gradient descent to more effectively minimize some metric distance between a trained model's output of $a$ versus $a_g$? It turns out that there is: removing the langauge modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
 
@@ -384,11 +384,11 @@ $$
 \mathtt{srfAttachPsyNetMessage \; Marketable \; srfAttach \; srfAttachPsyNetMessage}
 $$
 
-This result indicates that even when capable of minimizing an $L^1$ metric between $O_l(a, \theta)$ and $O_l(a_g, \theta)$, trained language models still cannot differentiate between gibberish and language.
+This result indicates that even when capable of minimizing an $L^1$ metric between $O_l(a, \theta)$ and $O_l(a_g, \theta)$, trained language models still cannot differentiate between gibberish and language.  The ability to satisfy \eqref{eq4} once the language modeling head is removed suggests that this head is a kind of gradient bottleneck such that gradient-based optimization becomes much more difficult across the LM head.
 
 ### Approximate Token Mapping
 
-So far we have seen that language model transformer blocks are not invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+So far we have seen that language model transformer blocks are non-invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
 
 We can select the indicies of the top 5 most activated input token positions as follows:
 
