@@ -668,9 +668,19 @@ eaturesascripteaturesadvertisementelsius
 thelessbiltascript":[{"bilt
 ```
 
+### Representation Repetitions
+
+It is interesting to note that practically every example of a poorly-formed input representation we have seen on this page suffers from some degree or other of repetition.  Take the top-1 token input found above with spaces added for clarity:
+
+$$
+\mathtt{elsius sky elsius elsius}.
+$$
+
+here $\mathtt{sky}$ is the only target word found.
+
 ### Implications
 
-In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.
+In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.  Given a point in a transformer block hidden layer space corresponding to an input of a real sentence, we have found that most nearby points correspond to inputs that are not even approximately sentences but are instead completely unintelligible.  
 
 There exists a notable difference between trained language and vision transformer models: the latter contain modules that are at least partially capable of discerning what the input was composed of, whereas the latter does not.  But when we consider the training process for language models, it is perhaps unsurprising that input representations are relatively poor.  Note that each of the gibberish input generations were almost certainly not found in the training dataset precisely because they are very far from any real language.  This means that the language model has no *a priori* reason to differentiate between these inputs and real text, and thus it is not altogether unsurprising that the model's internal representations would be unable to distinguish between the two.
 
