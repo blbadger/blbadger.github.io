@@ -673,14 +673,14 @@ thelessbiltascript":[{"bilt
 It is interesting to note that practically every example of a poorly-formed input representation we have seen on this page suffers from some degree or other of repetition.  Take the top-1 token input found above with spaces added for clarity:
 
 $$
-\mathtt{elsius sky elsius elsius}.
+\mathtt{elsius \; sky \; elsius \; elsius}.
 $$
 
 where $\mathtt{sky}$ is the only target word found and all else are repetitions.  
 
 This is interesting in light of the observation that language models (particularly smaller ones) often generate repeated phrases when instructed to give an output of substantial length.  This problem is such that efforts have been made to change the output decoding method: for example [Su and colleages](https://arxiv.org/abs/2202.06417) introduced contrastive search for decoding as opposed to simply decoding the model output as the token with the largest activation (which has been termed a 'greedy' decoding approach) during autoregression.
 
-The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function (adding 'maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called 'beam search'.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all tokens $t_n \in T$, minimization of the log-likelihood of the next 
+The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function ('maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called a beam search.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all tokens $t_n \in T$, minimization of the log-likelihood of the next 
 
 $$
 t_i = \argmin_{t_i} - \sum_a \sum_{|T|} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \theta))
