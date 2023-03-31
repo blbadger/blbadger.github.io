@@ -676,7 +676,27 @@ $$
 \mathtt{elsius sky elsius elsius}.
 $$
 
-here $\mathtt{sky}$ is the only target word found.
+where $\mathtt{sky}$ is the only target word found and all else are repetitions.  
+
+This is interesting in light of the observation that language models (particularly smaller ones) often generate repeated phrases when instructed to give an output of substantial length.  This problem is such that efforts have been made to change the output decoding method: for example [Su and colleages](https://arxiv.org/abs/2202.06417) introduced contrastive search for decoding as opposed to simply decoding the model output as the token with the largest activation (which has been termed a 'greedy' decoding approach) during autoregression.
+
+The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function (adding 'maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called 'beam search'.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all tokens $t_n \in T$, minimization of the log-likelihood of the next 
+
+$$
+t_i = \argmin_{t_i} - \sum_a \sum_{|T|} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \theta))
+$$
+
+Beam search instead attempts to maximize the total likelihood over a sequence of tokens rather than just one.  For two tokens, this is
+
+$$
+t_i, t_{i-1} = \argmin_{t_i, t_{i-1}} - \sum_a \sum_{|T|} \log p(t_i, t_{i-1} | O(t_{i-2}, t_{i-3}, ..., t_1; \theta))
+$$
+
+where $t_{i-1}$ may be any of the number of beams specified.  A good explanation of beam search relative to topk or other methods may be found [here](https://huggingface.co/blog/how-to-generate). 
+
+Returning to our model representation findings, it is clear that GPT-2 indeed tends to be unable to distinguish between repetitive sequences and true sentences.  But viewed through the lense of representation theory, there is a clear reason why this would be: training has presumably never exposed the model to a sequence like $\mathtt{elsius sky elsius elsius}.$ as the training inputs are generally gramatically correct sentences.  Therefore there is no 'hard' penalty on viewing these nonsensical phrases as being identical to real ones, in the sense that the loss function would not necessarily have placed a large penalty on a model that generates this phrase.
+
+On the other hand, it is also clear that there is indeed *some* kind of penalty placed on this phrase because it should never appear during training.  This is analagous to the idea of opportunity cost in economics, in which simply not choosing a profitable activity may be viewed as incurring some cost (the lost profit).  Here a model that generates a nonsensical phrase is penalized in the sense that this output could not possibly give the model any benefit with regards to maximum likelihood training on the next token, whereas even a very unlikely but gramatically correct phrase could appear in some text and therefore could be rewarded.
 
 ### Implications
 
