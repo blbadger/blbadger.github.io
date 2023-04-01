@@ -680,16 +680,16 @@ where $\mathtt{sky}$ is the only target word found and all else are repetitions.
 
 This is interesting in light of the observation that language models (particularly smaller ones) often generate repeated phrases when instructed to give an output of substantial length.  This problem is such that efforts have been made to change the output decoding method: for example [Su and colleages](https://arxiv.org/abs/2202.06417) introduced contrastive search for decoding as opposed to simply decoding the model output as the token with the largest activation (which has been termed a 'greedy' decoding approach) during autoregression.
 
-The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function ('maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called a beam search.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all tokens $t_n \in T$, minimization of the log-likelihood of the next 
+The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function ('maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called a beam search.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all possible tokens $T$ such that $t_n \in T$, minimization of the log-likelihood of the next token $t_i$ may be expressed as
 
 $$
-t_i = \argmin_{t_i} - \sum_a \sum_{|T|} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \theta))
+t_i = \argmin_{t_i} - \sum_a \sum_{T} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \theta))
 $$
 
 Beam search instead attempts to maximize the total likelihood over a sequence of tokens rather than just one.  For two tokens, this is
 
 $$
-t_i, t_{i-1} = \argmin_{t_i, t_{i-1}} - \sum_a \sum_{|T|} \log p(t_i, t_{i-1} | O(t_{i-2}, t_{i-3}, ..., t_1; \theta))
+t_i, t_{i-1} = \underset{t_i, t_{i-1}}{\mathrm{arg \; min}} - \sum_a \sum_{T} \log p(t_i, t_{i-1} | O(t_{i-2}, t_{i-3}, ..., t_1; \theta))
 $$
 
 where $t_{i-1}$ may be any of the number of beams specified.  A good explanation of beam search relative to topk or other methods may be found [here](https://huggingface.co/blog/how-to-generate). 
@@ -697,6 +697,17 @@ where $t_{i-1}$ may be any of the number of beams specified.  A good explanation
 Returning to our model representation findings, it is clear that GPT-2 indeed tends to be unable to distinguish between repetitive sequences and true sentences.  But viewed through the lense of representation theory, there is a clear reason why this would be: training has presumably never exposed the model to a sequence like $\mathtt{elsius sky elsius elsius}.$ as the training inputs are generally gramatically correct sentences.  Therefore there is no 'hard' penalty on viewing these nonsensical phrases as being identical to real ones, in the sense that the loss function would not necessarily have placed a large penalty on a model that generates this phrase.
 
 On the other hand, it is also clear that there is indeed *some* kind of penalty placed on this phrase because it should never appear during training.  This is analagous to the idea of opportunity cost in economics, in which simply not choosing a profitable activity may be viewed as incurring some cost (the lost profit).  Here a model that generates a nonsensical phrase is penalized in the sense that this output could not possibly give the model any benefit with regards to maximum likelihood training on the next token, whereas even a very unlikely but gramatically correct phrase could appear in some text and therefore could be rewarded.
+
+Equivalently, observe that a model that has effectively minimized its log-likelihood objective function should not repeat words or phrases unless such repititions were found in the training data, as errors such as these (on a per-token basis) would necessarily increase the negative log-likelihood.  Therefore all language models of sufficiently high capacity, when trained on enough data are expected to avoid repitition.
+
+These observations suggest that if one were to train a language model of sufficiently large capacity on a sufficiently large dataset, repitition would cease to be found as this model would more effectively minimize negative log-likelihood.  From the performance of more recent and larger models than GPT-2 we can see that this may indeed be correct.  Does this mean that the representation in such models will also be less prone to repitition?
+
+### Reasoning Task Performance
+
+In the past, it was often stated that language models as they exist on this page are incapable of any kind of fact- or reason-based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
+
+From this definition alone we find that language models must also be capable of all the implicit tasks present in the training dataset.  For example, suppose the training data contained the phrase 'two plus two equals four'.  Given the input 'two plus two equals' the function must return 'four' if it has minimized the negative log-likelihood of that token. Now suppose the training data also contains the phrase 'four plus one equals five' and that now we give the unseen phrase 'two plus two plus one equals' and our function returns a token.  If our function is sufficiently generalizable, we are almost guaranteed to return 'five' because the internal representation of 'two plus two' is nearly equivalent to 'four' and the model has already learned that 'four plus one equals five'.
+
 
 ### Implications
 
