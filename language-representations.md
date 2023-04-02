@@ -680,16 +680,16 @@ where $\mathtt{sky}$ is the only target word found and all else are repetitions.
 
 This is interesting in light of the observation that language models (particularly smaller ones) often generate repeated phrases when instructed to give an output of substantial length.  This problem is such that efforts have been made to change the output decoding method: for example [Su and colleages](https://arxiv.org/abs/2202.06417) introduced contrastive search for decoding as opposed to simply decoding the model output as the token with the largest activation (which has been termed a 'greedy' decoding approach) during autoregression.
 
-The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function ('maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called a beam search.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = <t_0, t_1, t_2, ..., t_n>$ where the set of all possible tokens $T$ such that $t_n \in T$, minimization of the log-likelihood of the next token $t_i$ may be expressed as
+The tendancy language models tend to generate repetitive text during autoregression has been attributed by [Welleck and colleages](https://arxiv.org/pdf/1908.04319.pdf) to the method by which language models are usually trained, ie maximum likelihood on the next token in a string.  The authors found that two measures ameliorate this repetition: modifying the objective function ('maximum unlikelihood estimation') and modifying the decoding method to instead perform what is called a beam search.  For all inputs $a$ of some dataset where each input sequence is composed of tokens $a = (t_0, t_1, t_2, ..., t_n)$ where the set of all possible tokens $T$ such that $t_n \in T$, minimization of the log-likelihood of the next token $t_i$ may be expressed as
 
 $$
-t_i = \argmin_{t_i} - \sum_a \sum_{T} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \theta))
+t_i = \underset{t_i}{\mathrm{arg \; min}} \; - \sum_a \sum_{T} \log p(t_i | O(t_{i-1}, t_{i-2}, ..., t_1; \; \theta))
 $$
 
 Beam search instead attempts to maximize the total likelihood over a sequence of tokens rather than just one.  For two tokens, this is
 
 $$
-t_i, t_{i-1} = \underset{t_i, t_{i-1}}{\mathrm{arg \; min}} - \sum_a \sum_{T} \log p(t_i, t_{i-1} | O(t_{i-2}, t_{i-3}, ..., t_1; \theta))
+t_i, \; t_{i-1} = \underset{t_i, \; t_{i-1}}{\mathrm{arg \; min}} \; - \sum_a \sum_{T} \log p(t_i, t_{i-1} | O(t_{i-2}, t_{i-3}, ..., t_1; \; \theta))
 $$
 
 where $t_{i-1}$ may be any of the number of beams specified.  A good explanation of beam search relative to topk or other methods may be found [here](https://huggingface.co/blog/how-to-generate). 
