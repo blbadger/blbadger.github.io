@@ -225,8 +225,11 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
+### [Language Representation I: Spatial Information](/language-representations.md)
 
-### [Input Representation III: Language Models](/language-representations.md)
+![vision transformer layer representations](/deep-learning/gpt2_features_viz.png)
+
+### [Language Representation II: ](/language-representations_inputs.md))
 
 $$
 \mathtt{This \; is \; a \; prompt \; sentence} \\ 
