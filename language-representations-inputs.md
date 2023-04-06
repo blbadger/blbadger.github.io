@@ -208,7 +208,13 @@ class AbbreviatedGPT(nn.Module):
 		return x
 ```
 
-When we generate an input after a few hundred iterations of Equation \eqref{eq2}, passing in the resulting embeddings to be inverted by Equation \eqref{eq3} for the target input $\mathtt{The \; sky \; is \; blue.}$, we have
+When we generate an input after a few hundred iterations of Equation \eqref{eq2}, passing in the resulting embeddings to be inverted by Equation \eqref{eq3} for the target input
+
+$$
+\mathtt{The \; sky \; is \; blue.}
+$$
+
+we have
 
 $$
  \mathtt{\; Lime \; Lime  \;is \; blueactly} \\
