@@ -229,7 +229,7 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ![vision transformer layer representations](/deep-learning/gpt2_features_viz.png)
 
-### [Language Representation II: Sense and Nonsense](/language-representations_inputs.md))
+### [Language Representation II: Sense and Nonsense](/language-representations-inputs.md)
 
 $$
 \mathtt{This \; is \; a \; prompt \; sentence} \\ 
