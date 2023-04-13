@@ -190,7 +190,7 @@ $$
 
 Feeding this input into a trained GPT-2, we get the very reasonable $\mathtt{blue}$ as the predicted next word. This is clearly one of many possible English texts that may yield that same next word to an accurate language model. 
 
-But it can also be shown that one can find many completely nonsensical inputs that also yield the same identical output.  We will see this first with an untrained version of GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.  The language modeling head allows us to obtain the next predicted word for an input into this model, which provides one measure of 'closeness' if our generated sentence has the same next predicted word as the target input.
+But it can also be shown that one can find many completely nonsensical inputs that also yield an identical output.  We will see this first with an untrained version of GPT-2 that has been tructated to include a certain number (below only one) of transformer blocks followed by the language modeling head.  The language modeling head allows us to obtain the next predicted word for an input into this model, which provides one measure of 'closeness' if our generated sentence has the same next predicted word as the target input.
 
 ```python
 class AbbreviatedGPT(nn.Module):
@@ -221,7 +221,7 @@ $$
  \mathtt{\; enessidateidate \; postp.}
 $$
 
-If a language modeling head is attached to this first transformer block, we find that these two inputs really are viewed nearly equally, in the sense that the next predicted token for both is $\mathtt{"}$ (for one particular random initialization for GPT-2). 
+If an (untrained) language modeling head is attached to this first transformer block, we find that these two inputs really are viewed essentially equivalently for the purposes of causal language modeling, in the sense that the next predicted token for both is $\mathtt{"}$ (for one particular random initialization for GPT-2). 
 
 If we increase the number of maximum interations $N$ of our gradient descent procedure in \eqref{eq2} we have 
 
@@ -248,7 +248,10 @@ $$
 \mathtt{The \; sky \; is \; tragedies.}
 $$
 
-which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same) 
+which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same).
+
+It is interesting to note here that neither embedding nor transformer block has been trained, and yet we have generated two prompts that contain words that are similar in meaning to the target prompt ('shades' and 'sky' both relate to the sun, and 'tragedies' and 'blue' are both sad.
+
 
 Using the full 12 transformer blocks of an untrained GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output character as our original prompt but are completely different.  For example both $a_g$ of
 
@@ -310,7 +313,7 @@ This result indicates that even when capable of minimizing an $L^1$ metric betwe
 
 ### Approximate Token Mapping
 
-So far we have seen that language model transformer blocks are non-invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input and language modeling head embeddings: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+So far we have seen that language model transformer blocks are non-invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
 
 We can select the indicies of the top 5 most activated input token positions as follows:
 
@@ -318,11 +321,13 @@ We can select the indicies of the top 5 most activated input token positions as 
 tokens = torch.topk(logits, 5)[1][0] # indicies of topk of tensor
 ```
 
+Given
+
 $$
 \mathtt{This \; is \; a \; prompt \; sentence.}
 $$
 
-For the invertible fully connected network used above one can see that successive outputs are semantically similar, which is perhaps what one would expect given that this model acts on a trained embedding. The top five input token strings are
+For the invertible fully connected network following a token-to-embedding transformation from a trained GPT-2 (as used above) one can see that successive outputs are semantically similar, which is perhaps what one would expect given that a trained embedding would be expected to recover words that mean approximately the same thing (ie 'speedy' is an approximate synonym for 'prompt'). The top five input token strings are
 
 ```
 This is a prompt sentence.
@@ -562,7 +567,7 @@ def clamped_walk(embedding, steps, rand_eta, lr):
 	return embedding
 ```
 
-This technique is far more capable of accomlishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged.  For a 12-block transformer model without a language modeling head such that the output shape is identical to the input shape, tuning the values of $\eta, \epsilon, N$ yields an $L^1$ metric on the distance between $m(e, e_N)$ that is $10$ times larger than $m(O_l(e, \theta), O_l(e_n, \theta))$.  The ratio $r$ defined as
+This technique is far more capable of accomplishing our goal of changing $a$ while leaving $O_l(a, \theta)$ unchanged.  For a 12-block transformer model without a language modeling head such that the output shape is identical to the input shape, tuning the values of $\eta, \epsilon, N$ yields an $L^1$ metric on the distance between $m(e, e_N)$ that is $10$ times larger than $m(O_l(e, \theta), O_l(e_n, \theta))$.  The ratio $r$ defined as
 
 $$
 r = \frac{|| e - e_n ||_1} {|| O_l(e, \theta) - O_l(e_N, \theta) ||_1}
@@ -625,6 +630,8 @@ Equivalently, observe that a model that has effectively minimized its log-likeli
 These observations suggest that if one were to train a language model of sufficiently large capacity on a sufficiently large dataset, repetition would cease to be found as this model would more effectively minimize negative log-likelihood.  From the performance of more recent and larger models than GPT-2 we can see that this may indeed be correct.  Does this mean that the representation in larger models trained on more data will also be less prone to repetition?  
 
 The first part of this question answered by performing the same input representation procedure on larger versions of GPT-2, where the models have been trained on the same dataset (40 GB of text from Reddit links mostly). On this page we have thus far considered the base GPT-2 model with $117 \times 10^6 (177M)$ parameters, and now we can observe the input representation repetition for the `gpt2-large` model with $774M$ parameters and `gpt2-xl` with $1.6B$ parameters. To get an idea if larger models trained on more data yield less repetitive representations, we will examine `gpt-j` which is a 6 billion parameter model trained on an 825 GB dataset, and the `BLOOM-7b1` model with 7.1 billion parameters trained on a 1.4 TB dataset.
+
+
 
 ### Reasoning Task Performance
 
