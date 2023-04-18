@@ -32,19 +32,19 @@ For clarity, the following figure shows the shape of the tensors we will referen
 
 ![vit feature activations]({{https://blbadger.github.io}}/deep-learning/transformer_activation_explained.png)
 
-It is important to note that the transformer's MLP is identically applied across all patches of the input, meaning that it has the same weights and biases no matter where in the image it is applied to.  This is similar to a convolutional operation in which one kernal is scanned across an entire image, except that for the vision transformer the output may be thought of as a stack
+It is important to note that the transformer's MLP is identically applied across all patches of the input, meaning that it has the same weights and biases no matter where in the image it is applied to.  This is similar to a convolutional operation in which one kernal is scanned across an entire image, except that for the vision transformer the feature information is stored in individual MLP neurons, whereas for convolutional models typically there are multiple neurons (3x3 and 5x5 are common convolutional filter sizes) required per feature.
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_feature_map.png)
 
-Maximizing the activation of a number of neurons in all patches yields
+Maximizing the activation of a subset of neurons in all patches yields the following feature maps:
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_features_combined.png)
 
-For individual neurons in indivisual patches we have
+For single neurons in individual patches we have
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
 
-Similar trends are observed for ViT Large 16, which underwent weakly supervised pretraining before ImageNet training
+Similarly when we observe features of ViT Large 16, which underwent weakly supervised pretraining before ImageNet training, we have
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vitl16_4_1_16_feature_maps.png)
 
