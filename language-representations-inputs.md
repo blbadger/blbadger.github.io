@@ -670,6 +670,21 @@ iczisphere Canyonpiresaer
 eloowntgur Pastebinnatureconservancy
 ```
 
+for 40 blocks we have
+
+```iczisphere Dragonboundheit\<
+umerableaddonszoneNT>.
+auerohnramidohlSTEM
+ozisonssoleolin.<
+uskyankaFSibandrawl
+```
+
+My GPU (RTX 3060) runs out of memory trying to perform backpropegation on the full 48-block `gpt2-xl`.  In this case we are faced with a few options: either we can use larger GPUs or else we can compress the model's parameters in some way.  Model parameters are usually set to a 32-bit floating point datatype by default, but for this input representation visualization process we do not actually need full precision. Instead, we can load and convert the model to 8-bit precision using Tim Dettmer's very useful [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) library, which is integrated into the `AutoModelForCausalLM` module in the Huggingface Transformers library.
+
+```python
+model = AutoModelForCausalLM.from_pretrained("gpt2-xl", load_in_8bit=True, device_map='auto')
+```
+
 ### Reasoning Task Performance
 
 In the past, it was often stated that language models as they exist on this page are incapable of any kind of fact- or reason-based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
