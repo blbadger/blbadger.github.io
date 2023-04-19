@@ -631,6 +631,44 @@ These observations suggest that if one were to train a language model of suffici
 
 The first part of this question answered by performing the same input representation procedure on larger versions of GPT-2, where the models have been trained on the same dataset (40 GB of text from Reddit links mostly). On this page we have thus far considered the base GPT-2 model with 117M parameters, and now we can observe the input representation repetition for the `gpt2-xl` with 1.6B parameters. To get an idea if larger models trained on more data yield less repetitive representations, we will examine `gpt-j` which is a 6B parameter model trained on an 825 GB dataset, and the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset.
 
+Once we have downloaded the appropriate trained models from the HuggingFace transformers store, which for `gpt2-xl` may be done as follows:
+
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("gpt2")
+model = AutoModelForCausalLM.from_pretrained("gpt2-xl")
+```
+
+we find that optimizing an input to match the output of the first transformer block is perhaps easier than it was for the `gpt2-base` model with a tenth of the parameters, where a mere 20 iterations of gradient descent is more than enough to satisfy the desired inequality in which the measure of distance between the generated input's output is smaller than the shifted input's output as described in \eqref{eq4}. This sounds promising, but the tokens corresponding to the input representation even after 1000 gradient descent iterations (corresponding to a generated distance <1/6 the magnitude of the shifted distance) is no more intelligible than it was before.
+
+```
+".[.>>.–.–.–
+ADA.–annabin.>>.>>
+kus".[ADAwanaiannopoulos
+iott Gleaming.>>".[olor
+ Gleamingoloriottiannopouloswana
+```
+
+Interestingly, however, we can see that there is now much less repetition for each topk decoding.  The same is true if we use the first 12 transformer decoders, which yield a top5 input representation as follows:
+
+```
+iets largeDownloadnatureconservancy".[twitter
+udeauhexDonnellramids".[
+ largeDownload2200ledgePsyNetMessage>[
+retteimanclipsTPPStreamerBot王
+ Citizenudeau2200brycekson
+```
+
+and for a 24-block hidden architecture the top5 decodings of the input representation are
+
+```
+ Marketable (" Dragonboundju.>>
+ossessionoptimisoliband().
+minecraftsocketramid,...!.
+iczisphere Canyonpiresaer
+eloowntgur Pastebinnatureconservancy
+```
 
 ### Reasoning Task Performance
 
