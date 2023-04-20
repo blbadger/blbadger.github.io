@@ -629,9 +629,7 @@ Equivalently, observe that a model that has effectively minimized its log-likeli
 
 These observations suggest that if one were to train a language model of sufficiently large capacity on a sufficiently large dataset, repetition would cease to be found as this model would more effectively minimize negative log-likelihood.  From the performance of more recent and larger models than GPT-2 we can see that this may indeed be correct.  Does this mean that the representation in larger models trained on more data will also be less prone to repetition?  
 
-The first part of this question answered by performing the same input representation procedure on larger versions of GPT-2, where the models have been trained on the same dataset (40 GB of text from Reddit links mostly). On this page we have thus far considered the base GPT-2 model with 117M parameters, and now we can observe the input representation repetition for the `gpt2-xl` with 1.6B parameters. To get an idea if larger models trained on more data yield less repetitive representations, we will examine `gpt-j` which is a 6B parameter model trained on an 825 GB dataset, and the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset.
-
-Once we have downloaded the appropriate trained models from the HuggingFace transformers store, which for `gpt2-xl` may be done as follows:
+The first part of this question answered by performing the same input representation procedure on larger versions of GPT-2, where the models have been trained on the same dataset (40 GB of text from Reddit links mostly). On this page we have thus far considered the base GPT-2 model with 117M parameters, and now we can observe the input representation repetition for the `gpt2-xl` with 1.6B parameters. Once we have downloaded the appropriate trained models from the HuggingFace transformers store, which for `gpt2-xl` may be done as follows:
 
 ```python
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -640,7 +638,7 @@ tokenizer = AutoTokenizer.from_pretrained("gpt2")
 model = AutoModelForCausalLM.from_pretrained("gpt2-xl")
 ```
 
-we find that optimizing an input to match the output of the first transformer block is perhaps easier than it was for the `gpt2-base` model with a tenth of the parameters, where a mere 20 iterations of gradient descent is more than enough to satisfy the desired inequality in which the measure of distance between the generated input's output is smaller than the shifted input's output as described in \eqref{eq4}. This sounds promising, but the tokens corresponding to the input representation even after 1000 gradient descent iterations (corresponding to a generated distance <1/6 the magnitude of the shifted distance) is no more intelligible than it was before.
+we find that optimizing an input to match the output of the first transformer block is perhaps easier than it was for the `gpt2-base` model with a tenth of the parameters, where a mere 20 iterations of gradient descent is more than enough to satisfy the desired inequality in which the measure of distance between the generated input's output is smaller than the shifted input's output as described in \eqref{eq4}. 
 
 ```
 ".[.>>.–.–.–
@@ -670,7 +668,7 @@ iczisphere Canyonpiresaer
 eloowntgur Pastebinnatureconservancy
 ```
 
-for 40 blocks we have
+and even for 40 blocks,
 
 ```
 iczisphere Dragonboundheit\
@@ -686,7 +684,8 @@ My GPU (RTX 3060) runs out of memory trying to perform backpropegation on the fu
 model = AutoModelForCausalLM.from_pretrained("gpt2-xl", load_in_8bit=True, device_map='auto')
 ```
 
-### Reasoning Task Performance
+
+### Implicit Language Tasks
 
 In the past, it was often stated that language models as they exist on this page are incapable of any kind of fact- or reason-based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
 
@@ -695,6 +694,21 @@ From this definition alone we find that language models must also be capable of 
 It has been empirically observed that models with more parameters are generally better at these implicit natural language tasks, which typically lie under the umbrella definition of 'reasoning' problems.  There are a few explanations for why this could be: firstly, larger models entail higher-dimensional space, such that gradient descent is more [biased towards generalization](https://arxiv.org/abs/2211.09639), secondly because more parameters imply greater 'memory' such that the model can learn more complicated representations of an input (ie 'three' being both a word and an implicit number) and thirdly because it is apparent that biological neural networks require a very large number of neurons to deal with language relative to other tasks, such as object recognition.
 
 We can test how language models are capable of implicit reasoning tasks by observing the representations of various words in such models.
+
+In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
+
+It may be wondered if even larger models (and those which are trained on far larger datasets) also suffer from the same tendency to for nonsensical representations of standard phrases. Given a sufficiently powerful representation method this would imply that even very large and powerful models are unable to tell much difference between meaningful sentences and gibberish.  We will examine `gpt-j` (which is a 6B parameter model trained on an 825 GB dataset), the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset, and the `llama-7b` model to find out.
+
+...
+
+If simply making a transformer-based language model larger and training it on more text is not able to lead to models becoming better able to represent their inputs, then what is? Language models today often follow general training in which the sole metric is predicting the next word in a sentence with supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
+
+Does it matter for the purposes of language generation that even otherwise effective models are incapable of differentiating between nonsensical gibberish and meaningful sentences?  At first glance it may seem as though it may not matter: if a language model were to be given these nonsenical phrases then it may confuse them with actual text, but what are the chances that the exact nonsensical phrase would appear as a prompt to a language model in a real application?  
+
+There is, however, reason to wonder whether it is not important that language models form such poor representations of their inputs.  Language models as they currently exist suffer from a significant and currently difficult-to-manage problem sometimes referred to as 'hallucinations', in which the model will return syntactically and semantically correct text that is woefully incorrect in the implicit language task at hand.  Furthermore, at present there appears to be no method that is capable of preventing this hallucination barring directly training against specific examples (either using supervised or reinforcement methods).  
+
+Hallucinations are fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
+
 
 ### Implications
 
