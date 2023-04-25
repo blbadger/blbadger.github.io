@@ -678,12 +678,23 @@ ozisonssoleolin.<
 uskyankaFSibandrawl
 ```
 
-My GPU (RTX 3060) runs out of memory trying to perform backpropegation on the full 48-block `gpt2-xl`.  In this case we are faced with a few options: either we can use larger GPUs or else we can compress the model's parameters in some way.  Model parameters are usually set to a 32-bit floating point datatype by default, but for this input representation visualization process we do not actually need full precision. Instead, we can load and convert the model to 8-bit precision using Tim Dettmer's very useful [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) library, which is integrated into the `AutoModelForCausalLM` module in the Huggingface Transformers library.
+My GPU (RTX 3060 with 12 GB memory) runs out of memory trying to perform backpropegation on the full 48-block `gpt2-xl`.  In this case we are faced with a few options: either we can use larger GPUs or else we can compress the model's parameters in some way.  Model parameters are usually set to a 32-bit floating point datatype by default, but for this input representation visualization process we do not actually need full precision. Instead, we can load and convert the model to (mostly) 8-bit precision using Tim Dettmer's very useful [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) library (or the ported [bitsandbytes-windows](https://github.com/fa0311/bitsandbytes-windows) version if you are using Windows), which is integrated into the `AutoModelForCausalLM` module in the Huggingface Transformers library such that a model may be loaded to a GPU in 8 bit precision using the following:
 
 ```python
 model = AutoModelForCausalLM.from_pretrained("gpt2-xl", load_in_8bit=True, device_map='auto')
 ```
 
+`bitsandbytes` does not actually convert all model parameters to 8-bit precision due to the ubiquitous presence of outlier features in large language models, as shown by [Dettmers and colleages](https://arxiv.org/abs/2208.07339).  Note that most CPUs do not support linear algebraic operations with any datatype less than 32 bits, so a GPU must be used here. Once the model has been loaded, for the full 48-block stack of GPT-2 we have a top-5 representation of the input 'The sky is blue.' represented as
+
+```
+ COURisphere Dragonboundheit\<
+=>addonsGWolin>.
+umerableankaOrgNTrawl
+CVE '[soleiband.<
+fter ('ramidohl$.
+```
+
+And therefore simply increasing the model's size does seem to reduce the amount of repetition, but is not by itself sufficient for generating meaningful representations of the input.
 
 ### Implicit Language Tasks
 
