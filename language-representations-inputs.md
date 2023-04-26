@@ -15,7 +15,7 @@ a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
 \tag{1}\label{eq1}
 $$
 
-with $\eta$ decreasing linearly from $\eta$ to $\eta / 10$ as $n \to N$ which empirically results in the fastest optimization.  The more information of the input that is retained at that layer, the smaller the value of $\vert \ver a_N - a \vert \vert$.
+with $\eta$ decreasing linearly from $\eta$ to $\eta / 10$ as $n \to N$ which empirically results in the fastest optimization.  The more information of the input that is retained at that layer, the smaller the value of $\vert \vert a_N - a \vert \vert$.
 
 This gradient descent method is not useful for language models without some modification, given that $\nabla_{a_n}$ is undefined for discrete inputs which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
 
