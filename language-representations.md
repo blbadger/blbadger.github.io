@@ -42,9 +42,9 @@ f'(t_1, t_2) = [2, 1, 0] \\
 f'(t_1, t_2, t_3) = [3, 2, 1] \\
 $$
 
-In the images above we are observing the inputs corresponding to $f'(t_1, t_2, ..., t_n)$.  From the figure above it apears that there is a nonlinear decrease in the input token weight as the token index increases, indicating that there is not in general an equal importance placed on different tokens.  
+In the images above we are observing the inputs corresponding to $f'(t_1, t_2, ..., t_n)$.  From the figure above it appears that there is a nonlinear decrease in the input token weight as the token index increases, indicating that there is not in general an equal importance placed on different tokens.  
 
-There also exists a \change in relative importance per starting versus ending token in deeper layers, such that early layer neurons tend to focus on early elements in the input (which could be the first few words in a sentence) whereas the deeper layer neurons focus more broadly.
+There also exists a change in relative importance per starting versus ending token in deeper layers, such that early layer neurons tend to focus on early elements in the input (which could be the first few words in a sentence) whereas the deeper layer neurons focus more broadly.
 
 Positional jitter and Gaussian blurring convolutions are performed on vision models to enforce statistical properties of natural images on the input being generated, namely translation invariance and smoothness.  There is no reason to think that language would have the same properties, and indeed we know that in general language is not translation invariant.
 
@@ -74,16 +74,20 @@ $$
 
 which is the case for transformations present in many models used for language and vision modeling. Besides true non-invertibility, linear transformations with eigenvectors of very different magnitudes are often difficult to invert practically even if they are actually invertible.  This is termed approximate non-invertibility, and has been seen to exist for vision models [here](https://blbadger.github.io/depth-generality.html).
 
-The ability of the information present in $O_l$ to generate $a$ from noise can be thought of as a measure of representational accuracy.  How does representational accuracy for transformers trained for language modeling compare to those trained for image classification?  In the following figure, we can see that the trained GPT-2 has less accurate input representations in the early layers than ViT Large does.
+The ability of the information present in $O_l$ to generate $a$ from noise can be thought of as a measure of representational accuracy.  How does representational accuracy for transformers trained for language modeling compare to those trained for image classification?  In the following figure, we can see that the trained GPT-2 has less accurate input representations in the early layers than ViT Large does, although these layers are still capable of retaining enough information to generate recognizable images.
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation.png)
 
-This is also the case for out-of-distribution images such as this Tesla coil.  In particular, the first few dozen tokens (top few rows in the grid of the input image, that is) of the input for both images are poorly represented, and display high-frequency inputs that is common for representations of poorly conditioned models. 
+This is also the case for out-of-distribution images such as this Tesla coil.  In particular, the first few dozen tokens (top few rows in the grid of the input image, that is) of the input for both images are comparatively poorly represented, and display high-frequency inputs that is common for representations of poorly conditioned models. 
 
 ![gpt2 vs vit representation]({{https://blbadger.github.io}}/deep-learning/vit_vs_gpt2_representation_2.png)
 
 
+### Conclusion
 
+On this page we have seen that deeper modules focus more broadly on input tokens whereas shallower layers tend to focus on specific portions (here early parts) of the input.  Compared with vision transformers, it is apparent that language transformers are less self-attentive such that each patch (token) tends to focus on more than itself.
+
+In some respects, it is surprising that models designed for language processing would be capable of retaining most input information even across a single transformer block.  
 
 
 
