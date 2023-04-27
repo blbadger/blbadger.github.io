@@ -710,6 +710,27 @@ It is interesting to note that gradient-based optimization of the input is much 
 
 To summarize this last section, simply increasing the model's size does seem to reduce the amount of repetition, but is not by itself sufficient for generating meaningful representations of the input.
 
+### Restricted Vocabulary Input Representation
+
+Why are trained GPT-2 models incapable of accurate input representation?  Observing the spatial pattern of feature and input representations (see [here](https://blbadger.github.io/language-representations.html) for work on this topic) gives us a hypothesis: in that work it is apparent that trained GPT-2 transformer blocks introduce high-frequency noise into the input representation of two images such that the argument maximum value of all pixels is no longer meaningful.  On this page we deal with the argmax of logits which are transformed via a Moore-Penrose pseudoinverse, but it stands to reason that a similar phenomenon is occuring here such that the argmax of the logits becomes unpredictable due to the introduction of high-frequency noise in $a_g$.
+
+One way to test this idea is to note that the vast majority of the $50257$ tokens present in the GPT-2 vocabulary signify words or word parts that are extremely unlikely to be observed in real text.  Indeed it appears that these very tokens are the ones that tend to result when the $\mathtx{arg \; max}$ function is called on the logits of those token indicies for trained GPT-2. 
+
+To prevent high-valued but rare tokens from being selected during the decoding process, we can simply mask all the tokens that are not selected (not in the `allowed_tokens` tensor) with 0 and proceed with argmax as before.
+
+```python
+def masked_decode(logits: torch.tensor, allowed_tokens: torch.tensor) -> str:
+	mask_tensor = torch.zeros(logits.shape).to(device)
+	mask_tensor[:, :, allowed_tokens] = 1.
+	masked_logits = logits * mask_tensor
+	allowed_output = torch.argmax(masked_logits, dim=2)[0]
+	output = tokenizer.decode(allowed_output)
+
+	return output
+```
+
+
+
 ### Implicit Language Tasks
 
 In the past, it was often stated that language models as they exist on this page are incapable of any kind of fact- or reason-based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
