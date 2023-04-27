@@ -133,7 +133,13 @@ class FCNet(nn.Module):
 		return x
 ```
 
-Given the target input 'The sky is blue.' it may generated from noise after a few dozen iterations of gradient descent on the output of the model above.  At various $n$ we have the following:
+Given the target input 
+
+$$
+\mathtt{This \; is \; a \; prompt \; sentence.}
+$$
+
+and starting with Gaussian noise as $a_0$, after a few dozen iterations of gradient descent on the output of the model on the target versus the noise we have we have the following:
 
 $$
 a_{20} = \mathtt{guiActiveUn \; millenniosynウス \; CosponsorsDownloadha} \\
@@ -232,17 +238,13 @@ $$
  \mathtt{\; cyclists \; sky  \; is \; blue.}
 $$
 
-And increasing the total iterations $N$ further (to $N \geq 1000$) yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt
+And increasing the total iterations $N$ further (to $N \geq 1000$) yields a smaller $L^2$ distance between $a$ and $a_g$ and a greater probability of recovering the original prompt,
 
 $$
 \mathtt{The \; sky \; is \; blue.}
 $$
 
-although most generated prompts are close but not quite equal to the original. This is unsurprising given that the transformer model is not invertible, such that many inputs may yield an identical output.  
-
-$$
-\mathtt{The \; shades \; is \; blue.}
-$$
+although most generated prompts are close but not quite equal to the original for $N = 1000$.  Further increasing $N$ leads to more $a_N$ being equivalent to the target $a$.  As gradient descent is capable of recovering a target input $a$ across one GPT-2 transformer block this block retains most information on the input, and this recovery is somewhat surprising given that the transformer model is not invertible, such that many inputs may yield an identical output.  
 
 With an increase in the number of transformer blocks before the output modeling head, it becomes more difficult to recover the target inptut $a$.  For example, many iterations of Equation \eqref{eq2} a model with untrained GPT-2 blocks 1 and 2 we have a generated prompt of
 
@@ -250,12 +252,7 @@ $$
 \mathtt{The \; sky \; is \; tragedies.}
 $$
 
-which is semantically similar (tragedies are sad and the color 'blue' is often colloqially used to mean the same).
-
-It is interesting to note here that neither embedding nor transformer block has been trained, and yet we have generated two prompts that contain words that are similar in meaning to the target prompt ('shades' and 'sky' both relate to the sun, and 'tragedies' and 'blue' are both sad.
-
-
-Using the full 12 transformer blocks of an untrained GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output character as our original prompt but are completely different.  For example both $a_g$ of
+Using the full 12 transformer blocks of an untrained (base) GPT-2, followed by the language modeling head (parameters $N=2000, \eta=0.001$), we can recover inputs that yield the same output token as our original prompt but are completely different.  For example both $a_g$ of
 
 $$
 \mathtt{coastline \; DVDs \; isIGHTweak} \\
@@ -268,7 +265,7 @@ effectively minimize the $L^1$ distance for different initializations of GPT-2, 
 
 So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding and ending in the language modeling head output).
 
-When performing the input representation procedure detailed in the last section on a trained GPT-2 (importantly with a language modeling head attached), the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
+When performing the input representation procedure detailed above on a trained GPT-2 (importantly with a language modeling head attached), the first thing to note is that the model appears to be very poorly conditioned such that using gradient descent to modify an input to match some output requires careful tuning of $\eta$ and many iterations.  Indeed it takes a truly enormous number of iterations of \eqref{eq2} to generate $e_g$ such that the model's output given $e_g$ is closer to the model's output of $e$ than the slightly shifted input $e'$
 
  $$
  || O_l(e_g, \theta) - O_l(e, \theta) ||_1 < || O_l(e', \theta) - O_l(e, \theta) ||_1
@@ -301,7 +298,7 @@ $$
 \mathtt{opioosponsorsnesotauratedcffff \; conduc}
 $$
 
-Returning to the general case, it takes an extremely large number of iterations of \eqref{eq2} to approach the inequality \eqref{eq4}, and often it cannot be satisfied in a feasible number of iterations at all.  This observation suggests that this model is not accurate in passing gradients from the output to the input.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
+Returning to the general case, it takes an extremely large number of iterations of \eqref{eq2} to approach the inequality \eqref{eq4}, and often it cannot be satisfied in a feasible number of iterations at all.  This observation suggests that the trained GPT-2 model cannot accurately pass gradients from the output to the input.  Why would the gradients arriving at the early layers of a model be inaccurate? It may be wondered if this is due to rounding errors in the backpropegation of gradients. One way to check this is to convert both the model and inputs in question to `torch.double()` type, ie 64-bit rather than the default 32-bit floating point values.  Unfortunately there is no significant change in the number of iterations required to make an input that satisfies \eqref{eq4}, and it remains infeasible to satisfy that inequality for $e'$ very close to $e$.
 
 The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers that are adjacent in the backpropegation computational graph (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that only a few output layers are capable of effective updates at this point.
 
@@ -315,7 +312,7 @@ This result indicates that even when capable of minimizing an $L^1$ metric betwe
 
 ### Approximate Token Mapping
 
-So far we have seen that language model transformer blocks are non-invertible and that these models cannot distinguish between gibberish and English language.  It may be wondered if this is due to the discrete nature of the input: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
+So far we have seen something somwhat unexpected: given some small input token array $a$ we can recover these tokens from untrained but not trained language model transformer blocks.  This indicates that the trained model's decoder blocks (or the entire model) cannot distinguish between gibberish and a normal sentence.  It may be wondered if this is due to the discrete nature of the input: perhaps the $\mathrm{arg \; max}$ of the pseudoinverse of $e_g$ does not find accurate tokens but maybe the second or third highest-activated index could. 
 
 We can select the indicies of the top 5 most activated input token positions as follows:
 
@@ -349,7 +346,7 @@ This corridikumanngthlems.<
  Thisuberty theetsk recomm.(
 ```
 
-The non-invertible model results above are not wholly surprising given that the model used was not trained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well, meaning that training does not confer the desired discriminatory ability on transformer modules.
+The non-invertible model results above are not wholly surprising given that the model used was not trained such that equivalent inputs would not be expected to be very semantically similar.  But a model composed of a single trained GPT-2 transformer block (no language modeling head) yields only gibberish as well.
  
  ```
 PsyNetMessage▬▬ MarketablePsyNetMessagePsyNetMessagePsyNetMessage
@@ -358,6 +355,19 @@ ocamp��極artifacts��極 unfocusedRange Marketable
 irtualquerqueanwhileizontartifactsquerque
 Accessorystaking-+-+ザigslistawaru
 ```
+
+But when we compare the input representation of one transformer block of a trained model (above) to input representations for one transformer block for a randomly initialized and untrained model (below) we see something interesting: not only does training remove the ability of the first GPT-2 transformer decoder to accurately recover the input sentence from information in the output of that block, but the words corresponding to the input representation of a trained model are much less likely to exist in a real sentence  than the decoded input representation by an untrained model.  Specifically, observe that `Marketable` is the only word that would be likely to be ever found in real text above, whereas nearly every word below would likely be found given text of sufficient length.
+
+```
+This together a prompt sentence.
+stock PER alotebra benevolentNBC
+ estab hydraulic declaration Dyn highlighted Caucas
+しFormatorean DAM addressedball
+ogeneity shows machine freed erasedcream
+```
+
+This observation suggests that training does indeed confer some ability to distinguish between real sentences: all nearly-sentence representations exhibited by the untrained model are no longer found near the target representation of the trained model, and only inputs that have almost zero probability of appearing in text are observed. 
+
 
 ### Orthogonal Walk Representations
 
