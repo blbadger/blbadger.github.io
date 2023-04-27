@@ -589,7 +589,7 @@ may be further increased to nearly $100$ or more by increasing the number of gra
 
 It is interesting to note that the transformer architecture is much more amenable to this gradient clamping optimization than the fully connected model, which generally does not yield an $r>3$ without substantial tuning.
 
-Now that a method of changing the input such that a change in the output is minimized has been found, we can choose appropriate values of $N, \eta, \epsilon$ such that the $e_N$ corresponds to different input tokens.  For successively larger $N$, we have for a trained GPT-2 model (without a language modeling head)
+Now that a method of changing the input such that the corresponding change to the output is minimized has been found, we can choose appropriate values of $N, \eta, \epsilon$ such that the $e_N$ corresponds to different input tokens.  For successively larger $N$, we have for a trained GPT-2 model (without a language modeling head)
 
 $$
 \mathtt{elsius \; sky \; is \; blue.} \\
@@ -714,7 +714,7 @@ To summarize this last section, simply increasing the model's size does seem to 
 
 Why are trained GPT-2 models incapable of accurate input representation?  Observing the spatial pattern of feature and input representations (see [here](https://blbadger.github.io/language-representations.html) for work on this topic) gives us a hypothesis: in that work it is apparent that trained GPT-2 transformer blocks introduce high-frequency noise into the input representation of two images such that the argument maximum value of all pixels is no longer meaningful.  On this page we deal with the argmax of logits which are transformed via a Moore-Penrose pseudoinverse, but it stands to reason that a similar phenomenon is occuring here such that the argmax of the logits becomes unpredictable due to the introduction of high-frequency noise in $a_g$.
 
-One way to test this idea is to note that the vast majority of the $50257$ tokens present in the GPT-2 vocabulary signify words or word parts that are extremely unlikely to be observed in real text.  Indeed it appears that these very tokens are the ones that tend to result when the $\mathtx{arg \; max}$ function is called on the logits of those token indicies for trained GPT-2. 
+One way to test this idea is to note that the vast majority of the $50257$ tokens present in the GPT-2 vocabulary signify words or word parts that are extremely unlikely to be observed in real text.  Indeed it appears that these very tokens are the ones that tend to result when the $\mathrm{arg \; max}$ function is called on the logits of those token indicies for trained GPT-2. 
 
 To prevent high-valued but rare tokens from being selected during the decoding process, we can simply mask all the tokens that are not selected (not in the `allowed_tokens` tensor) with 0 and proceed with argmax as before.
 
@@ -729,7 +729,7 @@ def masked_decode(logits: torch.tensor, allowed_tokens: torch.tensor) -> str:
 	return output
 ```
 
-
+If we are very selective with our `allowed_tokens` and only allow words in the target input to be selected, we find that the input may be exactly recovered by a trained GPT-2 transformer block, such that the input representation is for $N=2000$ is $\mathrm{The \; sky \; is \; blue.}$.  With some learning rate tuning and a sufficiently large $N$, we can recover the target input even for 4 or all 12 transfomer decode blocks.  
 
 ### Implicit Language Tasks
 
