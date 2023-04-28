@@ -17,7 +17,11 @@ $$
 
 with $\eta$ decreasing linearly from $\eta$ to $\eta / 10$ as $n \to N$ which empirically results in the fastest optimization.  The more information of the input that is retained at that layer, the smaller the value of $\vert \vert a_N - a \vert \vert$.
 
-This gradient descent method is not useful for language models without some modification, given that $\nabla_{a_n}$ is undefined for discrete inputs which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  For large language models such as GPT-2, this conversion process occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
+This gradient descent method is not useful for language models without some modifications, given that $\nabla_{a_n}$ is undefined for discrete inputs which for language models are typically integer tokens.  Instead we must perform gradient descent on some continuous quantity and then convert to and from tokens.  
+
+There are two ways that we can perform gradient descent on tokenized inputs: the first is to first convert the tokens to a lower-dimensional (and continuous) embedding and then perform gradient descent on that embedding, and the other is to convert to the tokens into a $d$-dimensional vector space and modify the model to perform gradient descent such that this vector space is the input (thus the leaf node of the gradient backpropegation computational graph).  We will take the first strategy for this section and only later revisit the second.
+
+For large language models such as GPT-2, the process of conversion between a discrete token and a continuous embedding occurs using a word-token embedding, which is programmed as a fully connected layer without biases but is equivalent to a (usually full-rank) matrix multiplication of the input token vector $x$ and the embedding weight matrix $W$ to obtain the embedding vector $e$.
 
 $$
 e = Wa
@@ -738,6 +742,54 @@ a_g = \mathtx{\;  day \; or \; day \; blue \; or}
 $$
 
 In contrast, the same model before training is capable of recovering the target input after $N=200$ steps. Note that neither trained nor untrained GPT-2 model with all 12 blocks is capable of recovering the input for even that slightly expanded vocabulary.
+
+### Direct Input Representation
+
+Early on this page, two methods to deal with the discrete nature of language inputs were noted: the first was to simply ignore them during the gradient descent process and convert the outputs back to tokens via the Moore-Penrose pseudoinverse, and this is arguably the most natural choice as it involves the fewest changes to the model itself.  Another option is to transform the input tokens (an array of integers) into a vector space and perform gradient descent directly with that space being the terminal node of the backpropegation computational graph.
+
+To be precise, what we want is to convert an array of input tokens $a_t$, which for example could be
+
+$$
+a_t = [1, 0, 2]
+$$
+
+to continuous values in a vector space, which for the above example could be
+
+$$
+a = \begin{matrix}
+0 & 1. & 0 \\
+1. & 0 & 0 \\
+0 & 0 & 1. \\
+\end{matrix}
+$$
+
+but note that there is no specific rule for converting a token to a vector value, for instance we could instead assign any small value as a baseline with a larger value as the corresponding indicies.
+
+We then perform gradient descent on the model's output as follows:
+
+$$
+a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
+\tag{5}\label{eq5}
+$$
+
+The GPT-2 model's word-to-embedding transformation is designed to take in integer 'words' and yield an output embedding.  We must modify this in order to allow for a vector space input, which we can do by replacing this transformation with a multiplication of the input by the word-to-embedding transformation weights as follows.
+
+```python
+class InputGPT(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x):
+		# replaces wte transformation
+		x = torch.matmul(x, self.model.transformer.wte.weight)
+  
+		for i in range(12):
+			x = self.model.transformer.h[i](x)[0]
+
+		return x
+```
 
 ### Implicit Language Tasks
 
