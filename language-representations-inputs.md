@@ -729,7 +729,15 @@ def masked_decode(logits: torch.tensor, allowed_tokens: torch.tensor) -> str:
 	return output
 ```
 
-If we are very selective with our `allowed_tokens` and only allow words in the target input to be selected, we find that the input may be exactly recovered by a trained GPT-2 transformer block, such that the input representation is for $N=2000$ is $\mathrm{The \; sky \; is \; blue.}$.  With some learning rate tuning and a sufficiently large $N$, we can recover the target input even for 4 or all 12 transfomer decode blocks.  
+If we are very selective with our `allowed_tokens` and only allow words in the target input to be selected, we find that the input may be exactly recovered by a trained GPT-2 transformer block, such that the input representation is for $N=2000$ is $a_g = \mathrm{The \; sky \; is \; blue.}$  With some learning rate tuning and a sufficiently large $N$, we can recover the target input even for 4 transformer blocks, but for all 12 blocks it is rare that $a_g = a$ even after tuning such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$.
+
+This is remarkable in that even a very small expansion of the allowed vocabulary results in a trained GPT-2 block being unable to accurately recognize the input.  For example, given the words of the sentence 'The sky is blue or red depending on the time of day.' as our allowed tokens, after $N=20k$ steps we have 
+
+$$
+a_g = \mathtx{\;  day \; or \; day \; blue \; or}
+$$
+
+In contrast, the same model before training is capable of recovering the target input after $N=200$ steps. Note that neither trained nor untrained GPT-2 model with all 12 blocks is capable of recovering the input for even that slightly expanded vocabulary.
 
 ### Implicit Language Tasks
 
