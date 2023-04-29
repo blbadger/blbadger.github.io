@@ -738,7 +738,7 @@ If we are very selective with our `allowed_tokens` and only allow words in the t
 This is remarkable in that even a very small expansion of the allowed vocabulary results in a trained GPT-2 block being unable to accurately recognize the input.  For example, given the words of the sentence 'The sky is blue or red depending on the time of day.' as our allowed tokens, after $N=20k$ steps we have 
 
 $$
-a_g = \mathtx{\;  day \; or \; day \; blue \; or}
+a_g = \mathtt{\;  day \; or \; day \; blue \; or}
 $$
 
 In contrast, the same model before training is capable of recovering the target input after $N=200$ steps. Note that neither trained nor untrained GPT-2 model with all 12 blocks is capable of recovering the input for even that slightly expanded vocabulary.
@@ -756,23 +756,55 @@ $$
 to continuous values in a vector space, which for the above example could be
 
 $$
-a = \begin{matrix}
+a = \begin{bmatrix}
 0 & 1. & 0 \\
 1. & 0 & 0 \\
 0 & 0 & 1. \\
-\end{matrix}
+\end{bmatrix}
 $$
 
-but note that there is no specific rule for converting a token to a vector value, for instance we could instead assign any small value as a baseline with a larger value as the corresponding indicies.
+but note that there is no specific rule for converting a token to a vector value, for instance we could instead assign any small value as a baseline with a larger value as the corresponding indicies.  For GPT-2, we can find what the trained embedding assigns for each input element by finding the Moore-Pensore pseudoinverse of the weight matrix of the embedding, denoted $W^+$, as follows:
 
-We then perform gradient descent on the model's output as follows:
+$$
+a = W^+E(a_t)
+$$
+
+where $a_t$ corresponds to an array of integers and $E$ signifies the embedding transformation that maps these integers to an embedding vector space. 
+
+which can be implemented as 
+
+```python
+embedding = model.transformer.wte(tokens) 
+embedding_weight = model.transformer.wte.weight.float() # convert to float in case model is in 16-bit precision
+inverse_embedding = torch.linalg.pinv(embedding_weight)
+logits = torch.matmul(embedding, inverse_embedding) # invert embedding transformations
+```
+
+Verifying that this procedure is accurate is not too hard, and may be done by first converting the vector space back to integer tokens via the $\mathrm{arg \; max}$ of each logit, and then decoding this array of integers as shown below.  
+
+```python
+tokens = torch.argmax(target_logits, dim=2)[0]
+output = tokenizer.decode(tokens)
+print (output)
+```
+
+With this procedure, we find that the trained GPT-2 word-token embedding maps the value at the index of the integer token to a value on the order of $1 \times 10^-2$ whereas the values of other indices are typically $\leq 1 \times 10^-3$. We can also simply mandate that the vector values at indicies corresponding to the appropriate tokens have some large positive value and that all others are zero as follows:
+
+```python
+target_logits = torch.zeros(logits.shape).to(device)
+target_logits[:, :, tokens] = 10
+```
+
+There does not appear to be any significant difference between these two approaches to mapping $a_t \to a$.
+
+Now that we have a continuous $a$ input, we can perform gradient descent on the model's output as follows:
 
 $$
 a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
 \tag{5}\label{eq5}
 $$
 
-The GPT-2 model's word-to-embedding transformation is designed to take in integer 'words' and yield an output embedding.  We must modify this in order to allow for a vector space input, which we can do by replacing this transformation with a multiplication of the input by the word-to-embedding transformation weights as follows.
+where $a_0 = \mathcal N(a, \mu=1/2, \sigma=1/20)$.  The GPT-2 model also needs to be modified as the word-to-embedding transformation is designed to take in integer 'words' rather than vectors, and this can be ameliorated by replacing this transformation with a multiplication of the input by the word-to-embedding transformation weights as follows.
 
 ```python
 class InputGPT(nn.Module):
@@ -789,6 +821,16 @@ class InputGPT(nn.Module):
 			x = self.model.transformer.h[i](x)[0]
 
 		return x
+```
+
+With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert a_g - a \vert \vert << \vert \vert a' - a \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
+
+```
+ precarious NeighNASA Someonetre
+lisherusersExp qualifying windshield
+ ple propose18 joyful Genie
+SHIP Geh lesbians inquiries Mat
+1968 Carroll delibericycle consumers
 ```
 
 ### Implicit Language Tasks
