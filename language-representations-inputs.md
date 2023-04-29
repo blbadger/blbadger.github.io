@@ -823,7 +823,7 @@ class InputGPT(nn.Module):
 		return x
 ```
 
-With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert a_g - a \vert \vert << \vert \vert a' - a \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
+With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
 
 ```
  precarious NeighNASA Someonetre
