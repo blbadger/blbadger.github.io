@@ -785,14 +785,14 @@ Verifying that this procedure is accurate is not too hard, and may be done by fi
 ```python
 tokens = torch.argmax(target_logits, dim=2)[0]
 output = tokenizer.decode(tokens)
-print (output)
 ```
 
 With this procedure, we find that the trained GPT-2 word-token embedding maps the value at the index of the integer token to a value on the order of $1 \times 10^-2$ whereas the values of other indices are typically $\leq 1 \times 10^-3$. We can also simply mandate that the vector values at indicies corresponding to the appropriate tokens have some large positive value and that all others are zero as follows:
 
 ```python
 target_logits = torch.zeros(logits.shape).to(device)
-target_logits[:, :, tokens] = 10
+for i in range(len(tokens[0])):
+	target_logits[:, i, tokens[0, i]] = 10
 ```
 
 There does not appear to be any significant difference between these two approaches to mapping $a_t \to a$.
@@ -813,7 +813,7 @@ class InputGPT(nn.Module):
 		super().__init__()
 		self.model = model
 
-	def forward(self, x):
+	def forward(self, x: torch.tensor) -> torch.tensor:
 		# replaces wte transformation
 		x = torch.matmul(x, self.model.transformer.wte.weight)
   
@@ -839,7 +839,11 @@ $$
 a_g =  \mathtt{This \; some \; by \; small \; is}
 $$
 
-indicating that a single trained GPT-2 transformer block is incapable of accurate input representation even for a restricted input vocabulary, even when the input is used to perform the gradient descent. 
+indicating that a single trained GPT-2 transformer block is incapable of accurate input representation even for a restricted input vocabulary, even when the input is used to perform the gradient descent. This is also true when the gradient of \eqref{eq5} is calculated using the $L_2$ norm, indicating that it is not the choice of $L_1$ norm that prevents accurate input representation here.  
+
+The same results are observed for one transformer embedding transformation and first block of the 1.5B parameter `gpt2-xl` model, such that neither the trained nor untrained model subsets are capable of accurate input representation even when the vocabulare is extremely limited.
+
+There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input
 
 ### Implicit Language Tasks
 
