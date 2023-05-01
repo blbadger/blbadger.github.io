@@ -823,7 +823,7 @@ class InputGPT(nn.Module):
 		return x
 ```
 
-With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
+With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert O_l(a_g, \theta) - O_l(a, \theta) \vert \vert < \vert \vert O_l(a', \theta) - O_l(a, \theta) \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
 
 ```
  precarious NeighNASA Someonetre
@@ -832,6 +832,14 @@ lisherusersExp qualifying windshield
 SHIP Geh lesbians inquiries Mat
 1968 Carroll delibericycle consumers
 ```
+
+Even when we limit the possible tokens to a very restricted set, specifically the tokens 'This is a prompt sentence with some extra words attached to increase the allowed vocabulary by a small margin' and optimizing \eqref{eq5} such that the inequality denoted above is observed, we have
+
+$$
+a_g =  \mathtt{This \; some \; by \; small \; is}
+$$
+
+indicating that a single trained GPT-2 transformer block is incapable of accurate input representation even for a restricted input vocabulary, even when the input is used to perform the gradient descent. 
 
 ### Implicit Language Tasks
 
