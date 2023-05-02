@@ -833,15 +833,32 @@ SHIP Geh lesbians inquiries Mat
 1968 Carroll delibericycle consumers
 ```
 
-Even when we limit the possible tokens to a very restricted set, specifically the tokens 'This is a prompt sentence with some extra words attached to increase the allowed vocabulary by a small margin' and optimizing \eqref{eq5} such that the inequality denoted above is observed, we have
+Even when we limit the possible tokens to a very restricted set, specifically the tokens 
+
+```
+This is a prompt sentence with some extra words attached to increase the allowed vocabulary by a small margin
+```
+
+and optimizing \eqref{eq5} such that the inequality denoted above is observed, we have
 
 $$
 a_g =  \mathtt{This \; some \; by \; small \; is}
 $$
 
+
 indicating that a single trained GPT-2 transformer block is incapable of accurate input representation even for a restricted input vocabulary, even when the input is used to perform the gradient descent. This is also true when the gradient of \eqref{eq5} is calculated using the $L_2$ norm, indicating that it is not the choice of $L_1$ norm that prevents accurate input representation here.  
 
 The same results are observed for one transformer embedding transformation and first block of the 1.5B parameter `gpt2-xl` model, such that neither the trained nor untrained model subsets are capable of accurate input representation even when the vocabulare is extremely limited.
+
+For example, the top-5 decoding for the input 'This is a prompt sentence' for the word-to-embedding transformation followed by the first transformer block is
+
+```
+ ple NeighNASA inquiries windshield
+ duplusers 131 qualifyingtre
+rypted Sharif deliber camping Genie
+1968 Carroll maleicycle Humanity
+ precariouscandExp semen consumers
+ ```
 
 There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input
 
