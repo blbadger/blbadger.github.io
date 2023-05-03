@@ -694,7 +694,7 @@ ozisonssoleolin.<
 uskyankaFSibandrawl
 ```
 
-My GPU (RTX 3060 with 12 GB memory) runs out of memory trying to perform backpropegation on the full 48-block `gpt2-xl`.  In this case we are faced with a few options: either we can use larger GPUs or else we can compress the model or model's parameters in some way.  Model parameters are usually set to a 32-bit floating point datatype by default, but for this input representation visualization process we do not actually need full precision. Instead, we can load and convert the model to (mostly) 8-bit precision using Tim Dettmer's very useful [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) library (or the ported [bitsandbytes-windows](https://github.com/fa0311/bitsandbytes-windows) version if you are using Windows), which is integrated into the `AutoModelForCausalLM` module in the Huggingface Transformers library such that a model may be loaded to a GPU in 8 bit precision using the following:
+The author's local GPU (an RTX 3060 with 12GB memory) runs out of memory trying to perform backpropegation on the full 48-block `gpt2-xl`.  In this case we are faced with a few options: either we can use larger GPUs or else we can compress the model or model's parameters in some way.  Model parameters are usually set to a 32-bit floating point datatype by default, but for this input representation visualization process we do not actually need full precision. Instead, we can load and convert the model to (mostly) 8-bit precision using Tim Dettmer's very useful [bitsandbytes](https://github.com/TimDettmers/bitsandbytes) library (or the ported [bitsandbytes-windows](https://github.com/fa0311/bitsandbytes-windows) version if you are using Windows), which is integrated into the `AutoModelForCausalLM` module in the Huggingface Transformers library such that a model may be loaded to a GPU in 8 bit precision using the following:
 
 ```python
 model = AutoModelForCausalLM.from_pretrained("gpt2-xl", load_in_8bit=True, device_map='auto')
@@ -787,7 +787,7 @@ tokens = torch.argmax(target_logits, dim=2)[0]
 output = tokenizer.decode(tokens)
 ```
 
-With this procedure, we find that the trained GPT-2 word-token embedding maps the value at the index of the integer token to a value on the order of $1 \times 10^-2$ whereas the values of other indices are typically $\leq 1 \times 10^-3$. We can also simply mandate that the vector values at indicies corresponding to the appropriate tokens have some large positive value and that all others are zero as follows:
+With this procedure, we find that the trained GPT-2 word-token embedding maps the value at the index of the integer token to a value on the order of $1 \times 10^{-2}$ whereas the values of other indices are typically $\leq 1 \times 10^{-3}$. We can also simply mandate that the vector values at indicies corresponding to the appropriate tokens have some large positive value and that all others are zero as follows:
 
 ```python
 target_logits = torch.zeros(logits.shape).to(device)
@@ -850,7 +850,7 @@ indicating that a single trained GPT-2 transformer block is incapable of accurat
 
 The same results are observed for one transformer embedding transformation and first block of the 1.5B parameter `gpt2-xl` model, such that neither the trained nor untrained model subsets are capable of accurate input representation even when the vocabulare is extremely limited.
 
-For example, the top-5 decoding for the input 'This is a prompt sentence' for the word-to-embedding transformation followed by the first transformer block is
+For example, the top-5 decoding for the input 'This is a prompt sentence' for the word-to-embedding transformation followed by the first transformer block of an untrained `gpt2-xl` model is
 
 ```
  ple NeighNASA inquiries windshield
@@ -859,8 +859,24 @@ rypted Sharif deliber camping Genie
 1968 Carroll maleicycle Humanity
  precariouscandExp semen consumers
  ```
+ 
+ and for the trained model's embedding followed by the first transformer block, the top-5 input representations for the same prompt are
+ 
+ ```
+  silenced oppression Fav positioned�
+ Shows debugprint interference Deploy
+ softened949313 absent transports
+ Ambrose mono unanswered chantingAM
+ogacessive dungeonJR785
+ ```
 
-There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input
+There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input.
+
+
+
+### Inputs representations via embeddings
+
+
 
 ### Implicit Language Tasks
 
@@ -873,6 +889,28 @@ It has been empirically observed that models with more parameters are generally 
 We can test how language models are capable of implicit reasoning tasks by observing the representations of various words in such models.
 
 In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
+
+It may also be wondered whether or not input representation would be improved if we used the output of multiple layers rather than only one. For the first three layers of a model in which we perform gradient descent on the input directly, this could be implemented as follows:
+
+```python
+class InputGPT(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x: torch.tensor) -> torch.tensor:
+		# replaces wte transformation
+		x = torch.matmul(x, self.model.transformer.wte.weight)
+
+		o1 = self.model.transformer.h[0](x)[0]
+		o2 = self.model.transformer.h[0](o1)[0]
+		o3 = self.model.transformer.h[0](o2)[0]
+		output = torch.cat((o1, o2, o3))
+		return output
+```
+
+But the input representations resulting from this are no better than before, and even perhaps somewhat worse in that now even the first few layers of an untrained model is incapable of accurately representing its input.
 
 It may be wondered if even larger models (and those which are trained on far larger datasets) also suffer from the same tendency to for nonsensical representations of standard phrases. Given a sufficiently powerful representation method this would imply that even very large and powerful models are unable to tell much difference between meaningful sentences and gibberish.  We will examine `gpt-j` (which is a 6B parameter model trained on an 825 GB dataset), the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset to find out.
 
