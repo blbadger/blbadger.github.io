@@ -910,7 +910,7 @@ class InputGPT(nn.Module):
 		return output
 ```
 
-But the input representations resulting from this are no better than before, and even perhaps somewhat worse in that now even the first few layers of an untrained model is incapable of accurately representing its input (using indirect representation in which gradient descent is performed on the embedding), whereas the output of any of these layers (with the appropriate preceding modules, ie the output of block 3 following block 2 and block 1) can recover the exact input. 
+But the input representations resulting from this are no better than before, and appears to confer the same ability to accurately represent an input as simply taking the output of the last (in this case the third) block.
 
 It may be wondered if even larger models (and those which are trained on far larger datasets) also suffer from the same tendency to for nonsensical representations of standard phrases. Given a sufficiently powerful representation method this would imply that even very large and powerful models are unable to tell much difference between meaningful sentences and gibberish.  We will examine `gpt-j` (which is a 6B parameter model trained on an 825 GB dataset), the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset to find out.
 
