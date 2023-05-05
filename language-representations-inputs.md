@@ -873,22 +873,13 @@ ogacessive dungeonJR785
 There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input.
 
 
-
 ### Inputs representations via embeddings
 
 
 
-### Implicit Language Tasks
+### Other attempts to enforce accurate input representation
 
-In the past, it was often stated that language models as they exist on this page are incapable of any kind of fact- or reason-based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
-
-From this definition alone we find that language models must also be capable of all the implicit tasks present in the training dataset.  For example, suppose the training data contained the phrase 'two plus two equals four'.  Given the input 'two plus two equals' the function must return 'four' if it has minimized the negative log-likelihood of that token. Now suppose the training data also contains the phrase 'four plus one equals five' and that now we give the unseen phrase 'two plus two plus one equals' and our function returns a token.  If our function is sufficiently generalizable, we are almost guaranteed to return 'five' because the internal representation of 'two plus two' is nearly equivalent to 'four' and the model has already learned that 'four plus one equals five'.
-
-It has been empirically observed that models with more parameters are generally better at these implicit natural language tasks, which typically lie under the umbrella definition of 'reasoning' problems.  There are a few explanations for why this could be: firstly, larger models entail higher-dimensional space, such that gradient descent is more [biased towards generalization](https://arxiv.org/abs/2211.09639), secondly because more parameters imply greater 'memory' such that the model can learn more complicated representations of an input (ie 'three' being both a word and an implicit number) and thirdly because it is apparent that biological neural networks require a very large number of neurons to deal with language relative to other tasks, such as object recognition.
-
-We can test how language models are capable of implicit reasoning tasks by observing the representations of various words in such models.
-
-In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
+Why do trained language models exhibit such poor input representation?  In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
 
 It may also be wondered whether or not input representation would be improved if we used the output of multiple layers rather than only one. For the first three layers of a model in which we perform gradient descent on the input directly, this could be implemented as follows:
 
@@ -911,6 +902,53 @@ class InputGPT(nn.Module):
 ```
 
 But the input representations resulting from this are no better than before, and appears to confer the same ability to accurately represent an input as simply taking the output of the last (in this case the third) block.
+
+Another possibility is that the metric we are using to perform gradient descent is not idea for input representation.  Specifically, instead of minimizing the $L^1$ metric
+
+$$
+m = || O(a, \theta) - O(a_g, \theta) ||_1
+$$
+
+we can instead minimize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the outputs $O(a, \theta)^*$
+
+$$
+\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* || |||O(a_g, \theta)^* ||}
+$$
+
+such that gradient descent on the first embedding $e$ is
+
+$$
+e_{n+1} = e_n - \nabla_{e_n} \cos (\phi)
+$$
+
+Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: reducing $\cos (\phi)$ to $0$ via 2000 iterations yields embeddings that may be inverted to give
+
+```
+Downloadha.""��MpServeriverpool
+� httquerqueenglish Leilan
+ARDISitudinalァidia guiActiveUn
+�士)</etheless Vaugh��
+?).andoエル millennOrderable
+```
+
+Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') we cannot accurately represent the input.
+
+$$
+\mathtt{depending \; depending \; time \; depending.}
+$$
+
+
+### Implicit Language Tasks
+
+It has been claimed that language models as they exist on this page are incapable of any kind of fact- or reason- based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
+
+From this definition alone we find that language models must also be capable of all the implicit tasks present in the training dataset.  For example, suppose the training data contained the phrase 'two plus two equals four'.  Given the input 'two plus two equals' the function must return 'four' if it has minimized the negative log-likelihood of that token. Now suppose the training data also contains the phrase 'four plus one equals five' and that now we give the unseen phrase 'two plus two plus one equals' and our function returns a token.  If our function is sufficiently generalizable, we are almost guaranteed to return 'five' because the internal representation of 'two plus two' is nearly equivalent to 'four' and the model has already learned that 'four plus one equals five'.
+
+It has been empirically observed that models with more parameters are generally better at these implicit natural language tasks, which typically lie under the umbrella definition of 'reasoning' problems.  There are a few explanations for why this could be: firstly, larger models entail higher-dimensional space, such that gradient descent is more [biased towards generalization](https://arxiv.org/abs/2211.09639), secondly because more parameters imply greater 'memory' such that the model can learn more complicated representations of an input (ie 'three' being both a word and an implicit number) and thirdly because it is apparent that biological neural networks require a very large number of neurons to deal with language relative to other tasks, such as object recognition.
+
+We can test how language models are capable of implicit reasoning tasks by observing the representations of various words in such models.
+
+
 
 It may be wondered if even larger models (and those which are trained on far larger datasets) also suffer from the same tendency to for nonsensical representations of standard phrases. Given a sufficiently powerful representation method this would imply that even very large and powerful models are unable to tell much difference between meaningful sentences and gibberish.  We will examine `gpt-j` (which is a 6B parameter model trained on an 825 GB dataset), the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset to find out.
 
