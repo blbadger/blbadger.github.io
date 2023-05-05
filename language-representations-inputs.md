@@ -912,7 +912,7 @@ $$
 we can instead minimize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the outputs $O(a, \theta)^*$
 
 $$
-\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* || |||O(a_g, \theta)^* ||}
+\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* || * |||O(a_g, \theta)^* ||}
 $$
 
 such that gradient descent on the first embedding $e$ is
