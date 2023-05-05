@@ -870,12 +870,7 @@ rypted Sharif deliber camping Genie
 ogacessive dungeonJR785
  ```
 
-There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$.  Non-invertibility is expected for both embeddings being that the output dimension is so much smaller than the input.
-
-
-### Inputs representations via embeddings
-
-
+There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$ for the 1.5B parameter `gpt2-xl`.  Non-invertibility is expected for both embeddings being that the output dimension is much smaller than the input, and as the input dimension exceeds the output there are many different inputs that will yield one identical output of the word to embedding transformation.
 
 ### Other attempts to enforce accurate input representation
 
@@ -931,11 +926,21 @@ ARDISitudinalァidia guiActiveUn
 ?).andoエル millennOrderable
 ```
 
-Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') we cannot accurately represent the input.
+Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') the one transformer decoder module cannot accurately represent the input.
 
 $$
 \mathtt{depending \; depending \; time \; depending.}
 $$
+
+Therefore gradient descent is successful in minimizing the cosine distance between the output of the generated and target input (in this case embedding), but the generated input corresponds to nonsense.  The same is true even for single transformer decoders from untrained GPT-2 models, and as we earlier found that these modules can yield accurate input representations using gradient descent on the $L^1$ norm of the output difference, the cosine similarity may be viewed as a weaker measure for representation tasks.
+
+Perhaps a combination of the gradient of the cosine distance and a normed difference would be sufficient for accurate input representation from trained GPT-2 transformer modules.  
+
+$$
+e_{n+1} = e_n - \nabla_{e_n} \left( \cos (\phi) + ||O(a_g, \theta) - O(a, \theta)||_1 \right)
+$$
+
+But even for this metric the input representation after only one transformer encoder is quite inaccurate.
 
 
 ### Implicit Language Tasks
@@ -948,8 +953,6 @@ It has been empirically observed that models with more parameters are generally 
 
 We can test how language models are capable of implicit reasoning tasks by observing the representations of various words in such models.
 
-
-
 It may be wondered if even larger models (and those which are trained on far larger datasets) also suffer from the same tendency to for nonsensical representations of standard phrases. Given a sufficiently powerful representation method this would imply that even very large and powerful models are unable to tell much difference between meaningful sentences and gibberish.  We will examine `gpt-j` (which is a 6B parameter model trained on an 825 GB dataset), the `BLOOM-7b1` model with 7.1B parameters trained on a 1.4 TB dataset to find out.
 
 ...
@@ -960,7 +963,7 @@ Does it matter for the purposes of language generation that even otherwise effec
 
 There is, however, reason to wonder whether it is not important that language models form such poor representations of their inputs.  Language models as they currently exist suffer from a significant and currently difficult-to-manage problem sometimes referred to as 'hallucinations', in which the model will return syntactically and semantically correct text that is woefully incorrect in the implicit language task at hand.  Furthermore, at present there appears to be no method that is capable of preventing this hallucination barring directly training against specific examples (either using supervised or reinforcement methods).  
 
-Hallucinations are fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
+This is fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
 
 
 ### Implications
