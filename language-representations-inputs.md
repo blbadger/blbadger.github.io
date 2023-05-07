@@ -37,7 +37,7 @@ $$
 W^+ = \lim_{\alpha \to 0^+} (W^T W + \alpha I)^{-1} W^T
 $$
 
-which is the limit from above as $\alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wa$, ie $a = W^+y$, such that the $L^2$ norm $\vert \vert a \vert \vert_2$ is minimized.  The pseudo-inverse may be conveniently calculated from the singular value decomposition $W = UDV^T$
+which is the limit from above as $\alpha$ approaches zero of the inverse of $W^T W$ multiplied by $W^T$.  A more understandable definition of $W^+$ for the case where $W$ has many possible inverses (which is the case for our embedding weight matrix or any other transformation with fewer output elements than input elements) is that $W^+$ provides the solution to $y = Wa$, ie $a = W^+y$, such t hat the $L^2$ norm $\vert \vert a \vert \vert_2$ is minimized.  The pseudo-inverse may be conveniently calculated from the singular value decomposition $W = UDV^T$
 
 $$
 W^+ = VD^+U^T
@@ -934,14 +934,23 @@ $$
 
 Therefore gradient descent is successful in minimizing the cosine distance between the output of the generated and target input (in this case embedding), but the generated input corresponds to nonsense.  The same is true even for single transformer decoders from untrained GPT-2 models, and as we earlier found that these modules can yield accurate input representations using gradient descent on the $L^1$ norm of the output difference, the cosine similarity may be viewed as a weaker measure for representation tasks.
 
-Perhaps a combination of the gradient of the cosine distance and a normed difference would be sufficient for accurate input representation from trained GPT-2 transformer modules.  
+Perhaps a linear combination (parametrized by constants $\alpha, \beta$ of the gradient of the cosine distance and a normed difference would be sufficient for accurate input representation from trained GPT-2 transformer modules.  
 
 $$
-e_{n+1} = e_n - \nabla_{e_n} \left( \cos (\phi) + ||O(a_g, \theta) - O(a, \theta)||_1 \right)
+e_{n+1} = e_n - \eta * \nabla_{e_n} \left( \alpha \cos (\phi) + \beta ||O(a_g, \theta) - O(a, \theta)||_1 \right)
 $$
 
-But even for this metric the input representation after only one transformer encoder is quite inaccurate.
+where $\eta$ is the learning rate hyperparameter, which is typically scheduled such that $\eta = 1 \to \eta = 1/100$ as the input representation iterations $n = 0 \to n = N$. But even for this metric the input representation after only one transformer encoder is quite inaccurate: for the first transformer block of an untrained GPT-2, we have input representations for 'The sky is blue.'
 
+```
+ execute228 therein blue.
+ politicians jihadist18having Phill
+ Given patriarchal Lightning Hughes sem
+� discriminatelich antitrust fraternity
+ucking demos� underrated310
+```
+
+which means that the linear combination is less accurate than using the $L^1$ norm loss alone.
 
 ### Implicit Language Tasks
 
