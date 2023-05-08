@@ -239,6 +239,13 @@ $$
 \mathtt{redessenal \; millenn-+-+DragonMagazine}
 $$
 
+### [Language Representation III: Noisy Communication on a Discrete Channel](/language-discreteness.md)
+
+$$
+a = \mathtt{This \; is \; a \; prompt \; sentence}
+a_g = \mathtt{This \; some \; by \; small \; is}
+$$
+
 ### [Feature Visualization I](/feature-visualization.md)
 
 ![features 2](/neural_networks/featuremap_cover2.png)
