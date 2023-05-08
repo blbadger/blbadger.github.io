@@ -1,6 +1,6 @@
-### Sentence Reconstruction with Language Models
+### Sentence Representation with Language Models
 
-In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to reconstruct language inputs, rather than images.
+In the previous section we have seen that a trained language model is less capable of representing a visual input than a trained language model (both with similar transformer architectures).  Given the nature of the inputs each model type is trained on, this may not seem very unexpected.  It is more informative to consider the ability of language model layer outputs to represent language inputs, rather than images. More accurate representation implies more input information passing through the model to the chosen layer's output.
 
 To orient ourselves, first consider the architecture of a typical transformer-based language model.
 
