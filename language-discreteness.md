@@ -1,6 +1,6 @@
 ### Introduction
 
-In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind poor input representation for language models and concludes with a study on how representation can be more accurate and how how this accuracy affects language tasks.
+This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II]((https://blbadger.github.io/language-representations-inputs.html)).  In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind poor input representation for language models and concludes with a study on how representation can be more accurate and how how this accuracy affects language tasks.
 
 ### Restricted Vocabulary Input Representation
 
