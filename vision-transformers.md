@@ -18,24 +18,24 @@ The transformer architecture was found to be effective for natural language proc
 
 The transformer is a feedforward neural network model that adapted a concept called 'self-attention' from recurrent neural networks that were developed previously.  Attention modules attempted to overcome the tendancy of recurrent neural networks to be overly influenced by input elements that directly preceed the current element and 'forget' those that came long before.  The original transformer innovated by applying attention to tokens (usually word embeddings) followed by an MLP, foregoing the time-inefficiencies associated with recurrent neural nets.
 
-In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $k, q, v$ for Key, Query, and Value that are produced from multiplying learned weight matricies $W^K, W^Q, W^V$ to the input $X$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $*$) of one element's query vector with all other element's key vectors 
+In the original self-attention module, each input (usually an embedding of a word) is associated with three vectors $k, q, v$ for Key, Query, and Value that are produced from multiplying learned weight matricies $W^K, W^Q, W^V$ to the input $X$.  Similarity between inputs to the first element (denoted by the vector $\pmb{s_1}$) is calculated by finding the dot product (denoted $\cdot$) of one element's query vector with all element's key vectors as follows:
 
 $$
-\pmb{s_1} = (q_1*k_1, q_1*k_2, q_1*k_3,...)
+\pmb{s_1} = (q_1 \cdot k_1, q_1 \cdot k_2, q_1 \cdot k_3,...)
 $$
 
 before constant scaling followed by a softmax transformation to the vector $\pmb{s_1}$ to make $\pmb{s_1'}$.  Finally each of the resulting scalar components of $s$ are multiplied by the corresponding value vectors for each input $v_1, v_2, v_3,...$ and the resulting vectors are summed up to make the activation vector $\pmb{z_1}$ (that is the same dimension as the input $X$ for single-headed attention).
 
 $$
-\pmb{s_1'} = \mathbf{softmax} \; ((q_1*k_1)/\sqrt d, (q_1*k_2)/ \sqrt d, (q_1*k_3)/ \sqrt d,...) \\
-\pmb{s_1'} = (s_{11}', s_{12}', s_{13}',...) \\
-\pmb{z_1} = v_1 s_{11}' + v_2 s_{12}' + v_3 s_{13}'+ \cdots
+\pmb{s_1'} = \mathbf{softmax} \; ((q_1 \cdot k_1)/\sqrt d, (q_1 \cdot k_2)/ \sqrt d, (q_1 \cdot k_3)/ \sqrt d,...) \\
+\pmb{s_1'} = (s_{1,1}', s_{1,2}', s_{1,3}',...) \\
+\pmb{z_1} = v_1 s_{1,1}' + v_2 s_{1,2}' + v_3 s_{1,3}'+ \cdots + v_n s{1,n}
 $$
 
 The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards *it*' it is clear that the word 'it' should be closely associated with the word 'cat', and the attention module's goal is to model such associations.  
 
 When we reflect on the separate mathematical operations of attention, it is clear that they do indeed capture something that may be accurately described by the English word.  In the first step of attention, the production of $q, k, v$ vectors from $W^K, W^Q, W^V$ weight matricies can be thought of as projecting the input embedding $X$ into the relevant vectors such that something useful about the input $X$ is captured, being that these weight matricies are trainable parameters.
-The dot product between vectors $q_1$ and $k_2$ may be thought of as a measure of the similarity between embeddings 1 and 2 precisely because the dot product itself may be understood as a measure of vector similarity: the larger the value of $q_1 * k_2$, the more similar these entities are assuming similar norms among all vectors $q, k$.  Softmax then normalizes attention such that all values $s$ are between 0 (least attention) and 1 (most attention).  The process of multiplying these attention values $s$ by the value vectors $v$ serves to 'weight' these value vectors based on that attention amount.  If the value vectors accurately capture information in the input $X$, then the attention module yields an output that is a additive combination of $v$ but with the 'most similar' (ie largest $s$) $v$ having the largest weight.
+The dot product between vectors $q_1$ and $k_2$ may be thought of as a measure of the similarity between embeddings 1 and 2 precisely because the dot product itself may be understood as a measure of vector similarity: the larger the value of $q_1 \cdot k_2$, the more similar these entities are assuming similar norms among all vectors $q, k$.  Softmax then normalizes attention such that all values $s$ are between 0 (least attention) and 1 (most attention).  The process of multiplying these attention values $s$ by the value vectors $v$ serves to 'weight' these value vectors based on that attention amount.  If the value vectors accurately capture information in the input $X$, then the attention module yields an output that is a additive combination of $v$ but with the 'most similar' (ie largest $s$) $v$ having the largest weight.
 
 But this clean theoretical justification breaks down when one considers that models with single attention modules generally do not perform well on their own but require many attention modules in parallel (termed multi-head attention) and in series.  Given a multi-head attention, one might consider each separate attention value to be context-specific, but it is unclear why then attention should be used at all given that an MLP alone may be thought of as providing context-specific attention.  Transformer-based models are furthermore typically many layers deep, and it is unclear what the attention value of an attention value of a token actually means.
 
