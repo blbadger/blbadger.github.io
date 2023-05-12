@@ -1,6 +1,11 @@
+
+## Language Modeling and Discrete Encodings
+
+This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II]((https://blbadger.github.io/language-representations-inputs.html)). 
+
 ### Introduction
 
-This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II]((https://blbadger.github.io/language-representations-inputs.html)).  In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind poor input representation for language models and concludes with a study on how representation can be more accurate and how how this accuracy affects language tasks.
+In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind poor input representation for language models and concludes with a study on how representation can be more accurate and how how this accuracy affects language tasks.
 
 ### Restricted Vocabulary Input Representation
 
@@ -261,3 +266,76 @@ Does it matter for the purposes of language generation that even otherwise effec
 There is, however, reason to wonder whether it is not important that language models form such poor representations of their inputs.  Language models as they currently exist suffer from a significant and currently difficult-to-manage problem sometimes referred to as 'hallucinations', in which the model will return syntactically and semantically correct text that is woefully incorrect in the implicit language task at hand.  Furthermore, at present there appears to be no method that is capable of preventing this hallucination barring directly training against specific examples (either using supervised or reinforcement methods).  
 
 This is fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
+
+### Model Interpretability
+
+Given the extreme difficulty in accurate input representation typical of large language models when using gradient descent on an initially random input, it may be wondered whether the gradient on the input is capable of offering any useful information.  This may be tested in a number of different ways, but one of the simplest is to observe what is termed input attribution.  In the context of language models, input attribution may be thought of as the importance of each prior token in predicting the next token.  
+
+```python
+	def readable_interpretation(self, decoded_input, metric='combined'):
+		...
+
+		# summed_ems is a torch.tensor object of normalized input attributions per token
+		positions = [i for i in range(len(summed_ems))]
+
+		# assemble HTML file with red (high) to blue (low) attributions per token
+		highlighted_text = []
+		for i in range(len(positions)):
+			word = decoded_input[i]
+			red, green, blue = int((summed_ems[i]*255)), 110, 110
+			color = '#{:02x}{:02x}{:02x}'.format(red, green, blue)
+			highlighted_text.append(f'<span style="background-color: {color}">{word}</span>')
+
+		with torch.no_grad():
+			embedded_inputs = torch.clone(self.model.transformer.wte(self.input_ids))
+			output = self.model(inputs_embeds=embedded_inputs)[0][:, -1, :]
+			predicted_word = self.model(self.input_ids)[0][:, -1, :] # should be equal to output
+			assert torch.equal(output, predicted_word)
+
+			predicted_word = int(torch.argmax(predicted_word, dim=1))
+			predicted_word = tokenizer.decode(predicted_word)
+
+		highlighted_text = ' '.join(highlighted_text)
+		highlighted_text += f'</br> </br> Predicted next word: {predicted_word}'
+		with open('data.html', 'wt', encoding='utf-8') as file:
+			file.write(highlighted_text)
+		webbrowser.open('data.html')
+```
+
+After loading our model of choice, we can use the GPTEval class to generate input attribution maps as follows:
+
+```python
+if __name__ == '__main__':
+	input_sequence = 'The wipers on the bus go swish swish'
+	input_sequence = input_sequence.strip()
+	gevaluate = GPTEval(model, input_sequence)
+	input_ids = gevaluate.input_ids[0]
+	decoded_input = []
+	for symbol in input_ids:
+		decoded_input.append(tokenizer.decode(symbol))
+	arr = gevaluate.readable_interpretation(decoded_input, metric='combined')
+```
+
+which when given the prompt 'The wipers on the bus go swish swish' for the base model of GPT-2 gives
+
+<html>
+<body>
+	<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span></br> </br> Predicted next word:  sw
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
