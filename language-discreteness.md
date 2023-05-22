@@ -269,7 +269,9 @@ This is fundamentally a problem of representation: if a language model were capa
 
 ### Model Interpretability
 
-Given the extreme difficulty in accurate input representation typical of large language models when using gradient descent on an initially random input, it may be wondered whether the gradient on the input is capable of offering any useful information.  This may be tested in a number of different ways, but one of the simplest is to observe what is termed input attribution.  In the context of language models, input attribution may be thought of as the importance of each prior token in predicting the next token.  
+Given the extreme difficulty in accurate input representation typical of large language models when using gradient descent on an initially random input, it may be wondered whether the gradient on the input is capable of offering any useful information.  This may be tested in a number of different ways, but one of the simplest is to observe what is termed input attribution.  In the context of autoregressive language models trained for causal language modeling (ie predicting the next token), input attribution may be thought of as the importance of each prior token in predicting that next token.
+
+How does one take a model and find which elements in the input are most responsible for the model output?  In this case the model gives the next token in a sentence, and the input is composed of all prior tokens.
 
 ```python
 	def readable_interpretation(self, decoded_input, metric='combined'):
@@ -320,7 +322,10 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 
 <html>
 <body>
-	<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span></br> </br> Predicted next word:  sw
+	<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span> 
+	<br>
+	<br> 
+	Predicted next word:  sw
 </body>
 </html>
 
