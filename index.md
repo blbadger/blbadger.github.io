@@ -243,7 +243,10 @@ $$
 
 <html>
 <body>
-<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span> Predicted next token:  sw
+<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span> 
+ <br> 
+ <br>
+ Predicted next token:  sw
 </body>
 </html>
 
