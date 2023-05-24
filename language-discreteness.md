@@ -325,9 +325,56 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 	<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span> 
 	<br>
 	<br> 
-	Predicted next word:  sw
+	Predicted token:  sw
 </body>
 </html>
+
+Observing input attribution for larger models applied to more complicated inputs, it is clear that the gradient of a model's output with respect to its input does indeed give useful information.  This being the case, we are left with the question we had at the start of this page: why are input representations so inaccurate for trained GPT-type transformers applied to natural language.
+
+### Sequential Input Representation
+
+Continuing our efforts to understand why trained language transformers give such poor input representations compared to trained vision transformers, one can observe that there are two notable differences between language and image inputs: language is fundamentally sequential and discreet whereas images are approximately continuous and of no particular orientation.  In this section we consider the importance of the sequential aspect of language as it relates to input representation, and in the next section discreeteness is examined.
+
+To rephrase the topic for this section, one may wonder whether or not the sequential aspect of language could contribute to difficulties in input representation.  Specifically, observe that GPT-type language models always predict one word at a time, and thus may be better at representing one word at a time too.
+
+We can implement this sequential input representation technique as follows:
+
+```python
+def generate_sequential_input(model: torch.nn, target: torch.tensor, lr=0.5) -> torch.tensor:
+	n_tokens = len(target[0])
+	full_input = []
+	embedding_dim = target.shape[-1]
+	starting_input = torch.randn(1, 1, embedding_dim).to(device)
+	combined_input = torch.clone(starting_input)
+	for i in range(n_tokens):
+		random_input = torch.randn(starting_input.shape).to(device)
+		focused_target = target[:, i, :]
+		single_input = octave(random_input, focused_target, 2000, [lr, lr/10], i) # generate single token's embedding
+		combined_input = torch.cat((combined_input, single_input), dim=1)
+
+	return combined_input[:, 1:, :]
+```
+
+For an untrained model given the input 'The sky is blue.' we have a top-5 input representation of
+
+```
+ Pegasus quarantine Sunshine viral Dip
+ secure Help Orion Saadesh
+ partic Carbon Officereller Rory
+ checked regained midst ERAtile
+ criticize231 SOFTWARE trunkmatically
+
+```
+
+### Noise on a Discreet Channel
+
+
+
+
+
+
+
+
 
 
 
