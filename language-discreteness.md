@@ -351,7 +351,7 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 </body>
 </html>
 
-Observing input attribution for larger models applied to more complicated inputs, it is clear that the gradient of a model's output with respect to its input does indeed give useful information.  This being the case, we are left with the question we had at the start of this page: why are input representations so inaccurate for trained GPT-type transformers applied to natural language. 
+Observing input attribution for larger models applied to more complicated inputs, it is clear that the gradient of a model's output with respect to its input does indeed give useful information.  This being the case, we are left with the question we had at the start of this page: why are input representations so inaccurate for trained GPT-type transformers applied to natural language, and indeed why are they less accurate than for untrained models of the same type. 
 
 ### Sequential Input Representation
 
@@ -385,6 +385,46 @@ For an untrained model given the input 'The sky is blue.' we have a top-5 input 
  partic Carbon Officereller Rory
  checked regained midst ERAtile
  criticize231 SOFTWARE trunkmatically
+
+```
+
+### Is the trained word to token embedding to blame
+
+For the direct input generation method introduced above, this can be implemented by simply swapping the weight matrix of the word-token embedding with an untrained model's version of the same.
+
+```python
+class InputGPT(nn.Module):
+
+	def __init__(self, model, untrained_model):
+		super().__init__()
+		self.model = model
+		self.untrained_model = untrained_model
+
+	def forward(self, x: torch.tensor) -> torch.tensor:
+		# replaces wte transformation
+		x = torch.matmul(x, self.untrained_model.transformer.wte.weight)
+
+		for i in range(1):
+			x = self.model.transformer.h[i](x)[0]
+		return x
+```
+However, we are not met with any success in making even one transformer block yield accurate input representations.
+```
+ veiledusers lesbians inquiries windshield
+ dupl NeighNASAicycletre
+rypted IntExp qualifying Genie
+ melts funded deliber camping Mat
+SHIP rejoice malepc consumers
+```
+
+Similarly poor input representations are exhibited when we use the [Roy-Moore pseudo-inverse indirect input generation method](https://blbadger.github.io/language-representations-inputs.html#sentence-representation-with-language-models)  
+
+```
+PsyNetMessagePsyNetMessagePsyNetMessage MarketablePsyNetMessage
+ srfAttach srfAttach MarketablePsyNetMessage srfAttach
+irtual unfocusedRange unfocusedRange unfocusedRange partName
+ partName Marketable srfAttachawaru Marketable
+ascus partName partName srfAttach unfocusedRange
 
 ```
 
