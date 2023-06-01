@@ -271,7 +271,15 @@ This is fundamentally a problem of representation: if a language model were capa
 
 Given the extreme difficulty in accurate input representation typical of large language models when using gradient descent on an initially random input, it may be wondered whether the gradient on the input is capable of offering any useful information.  This may be tested in a number of different ways, but one of the simplest is to observe what is termed input attribution.  In the context of autoregressive language models trained for causal language modeling (ie predicting the next token), input attribution may be thought of as the importance of each prior token in predicting that next token.
 
-How does one take a model and find which elements in the input are most responsible for the model output?  In this case the model gives the next token in a sentence, and the input is composed of all prior tokens.
+How does one take a model and find which elements in the input are most responsible for the model output?  In this case the model gives the next token in a sentence, and the input is composed of all prior tokens.  
+
+One method is to find the gradient of the output with respect to each input element, which is usually called 'saliency'.
+
+$$
+w = a \nabla_a O(a, \theta)
+$$
+
+To visualize a linear combination of saliency and occlusion, we can implement an HTML-based highlighter as follows:
 
 ```python
 	def readable_interpretation(self, decoded_input, metric='combined'):
@@ -331,7 +339,7 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 </body>
 </html>
 
-Observing input attribution for larger models applied to more complicated inputs, it is clear that the gradient of a model's output with respect to its input does indeed give useful information.  This being the case, we are left with the question we had at the start of this page: why are input representations so inaccurate for trained GPT-type transformers applied to natural language.
+Observing input attribution for larger models applied to more complicated inputs, it is clear that the gradient of a model's output with respect to its input does indeed give useful information.  This being the case, we are left with the question we had at the start of this page: why are input representations so inaccurate for trained GPT-type transformers applied to natural language. 
 
 ### Sequential Input Representation
 
