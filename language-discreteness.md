@@ -271,15 +271,27 @@ This is fundamentally a problem of representation: if a language model were capa
 
 Given the extreme difficulty in accurate input representation typical of large language models when using gradient descent on an initially random input, it may be wondered whether the gradient on the input is capable of offering any useful information.  This may be tested in a number of different ways, but one of the simplest is to observe what is termed input attribution.  In the context of autoregressive language models trained for causal language modeling (ie predicting the next token), input attribution may be thought of as the importance of each prior token in predicting that next token.
 
-How does one take a model and find which elements in the input are most responsible for the model output?  In this case the model gives the next token in a sentence, and the input is composed of all prior tokens.  
+How does one take a model and find which elements in the input are most responsible for the model output?  In this case the model gives the next token in a sentence, and the input is composed of all prior tokens.  We will briefly explore two options for finding the 'most important' input elements for a given output, although this is by no means a comprehensive survey of the field of input attribution.
 
-One method is to find the gradient of the output with respect to each input element, which is usually called 'saliency'.
+One method is to find the gradient of the output with respect to each input element and multiply this gradient element-wise to the input itself. This method is known as 'gradientxinput' and may be found as follows:
 
 $$
-w = a \nabla_a O(a, \theta)
+v = | \nabla_a  O(a, \theta) | * a
 $$
 
-To visualize a linear combination of saliency and occlusion, we can implement an HTML-based highlighter as follows:
+where the vector of inputs is $a$ and the vector of saliency values is $v$ and $* $ denotes Hadamard (element-wise) multiplication.  This method is intuitively similar to measuring the effect of an infinitesmal change in the input (via the gradient of the output $O(a, \theta)$ with respect to the input $a$) on the output, which a larger output change at index $i$ resulting in a larger saliency value at that index.
+
+Another approach is to simply remove each input element sequentially and observe the change in the ouput.  If $a_c$ correponds to the input where the token at position $c$ is replaced with an informationless substitute (perhaps a $<\vert PAD \vert >$ token) then we can find a metric distance between the model's output given this masked input compared to the original $a$ as follows:
+
+$$
+v = || O(a_c, \theta) - O(a, theta) ||_1
+$$
+
+Here we use the $L^1$ metric as a measurement of the difference between outputs, but we could just as easily have chosen any other metric. This method is appropriately termed 'occlusion' after the English word for 'make obscure'.  This is in some ways the discrete counterpoint to saliency, as here we are observing what happens to the output after a big change (replacement of an entire token).  
+
+For small input sequences, we can form a linear combination of occlusion and gradientxinput in order to include information from both attribution methods.  For longer sequences, occlusion becomes prohibitively expensive for LLMs and therefore it is usually best to stick with saliency.
+
+To visualize input attribution on sequences of text, we can implement an HTML-based highlighter on the decoded input tokens as follows:
 
 ```python
 	def readable_interpretation(self, decoded_input, metric='combined'):
