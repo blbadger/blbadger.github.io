@@ -116,7 +116,13 @@ class InputGPT(nn.Module):
 		return x
 ```
 
-With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 'This is a prompt sentence' the answer is no: iterating \eqref{eq5} such that $\vert \vert O_l(a_g, \theta) - O_l(a, \theta) \vert \vert < \vert \vert O_l(a', \theta) - O_l(a, \theta) \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
+With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 
+
+$$
+a = \mathtt{This \; is \; a \; prompt \; sentence
+$$
+
+the answer is no: iterating \eqref{eq5} such that $\vert \vert O_l(a_g, \theta) - O_l(a, \theta) \vert \vert < \vert \vert O_l(a', \theta) - O_l(a, \theta) \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
 
 ```
  precarious NeighNASA Someonetre
@@ -137,7 +143,6 @@ and optimizing \eqref{eq5} such that the inequality denoted above is observed, w
 $$
 a_g =  \mathtt{This \; some \; by \; small \; is}
 $$
-
 
 indicating that a single trained GPT-2 transformer block is incapable of accurate input representation even for a restricted input vocabulary, even when the input is used to perform the gradient descent. This is also true when the gradient of \eqref{eq5} is calculated using the $L_2$ norm, indicating that it is not the choice of $L_1$ norm that prevents accurate input representation here.  
 
@@ -412,9 +417,11 @@ irtual unfocusedRange unfocusedRange unfocusedRange partName
 ascus partName partName srfAttach unfocusedRange
 ```
 
+To conclude, we find that the training of the embedding transformation alone cannot account for the poor representation that exists in trained language models.
+
 ### Noise on a Discreet Channel
 
-### Implicit Language Tasks
+### Big models exhibit accurate input representations
 
 It has been claimed that language models as they exist today are incapable of any kind of fact- or reason- based task because they are merely trained to predict the next word (or more accurately token) in some text. We can show that this claim is incorrect, however, using a fairly straightforward argument.  We can define a language model as some generalizable (to examples unseen in the training data) representation function that maps input token sequences to an output token such that the negative log-likelihood of that output token is minimized relative to the training dataset.  
 
@@ -491,7 +498,7 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an A100 (available on Colab for a fee).
+This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an nVidia A100 GPU (available on Colab for a fee).
 
 After $N=1000$ we have for the first transformer block:
 
@@ -515,7 +522,7 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue.}
 $$
 
-which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and we test this using the 30 billion parameter version of Llama (which is about the largest model that will fit in the memory of a 40GB a100 using 8-bit quantization). For the first transformer block of this trained model after a mere $N=500$ we have top-5 representations of
+which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and we test this using the 30 billion parameter version of Llama (which is about the largest model that will fit in the memory of a 40GB A100 using 8-bit quantization). For the first transformer block of this trained model after a mere $N=500$ we have top-5 representations of
 
 ```python
 The sky is blue<s>
@@ -530,6 +537,8 @@ With this even larger model, we find that at least somewhat accurate input repre
 $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
 $$
+
+This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, even trained models are capable of fairly accurate input representation even in relatively deep layers.
 
 ### Implications of Representation Accuracy
 
