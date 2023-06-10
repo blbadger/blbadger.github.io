@@ -5,7 +5,7 @@ This page is a continuation of Parts [I](https://blbadger.github.io/language-rep
 
 ### Introduction
 
-In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind poor input representation for language models and concludes with a study on how representation can be more accurate and how how this accuracy affects language tasks.
+In [Part II](https://blbadger.github.io/language-representations-inputs.html) it was observed that hidden layer representations of the model input are typically hopelessly inaccurate, which is somewhat surprising being that vision transformers and convolutional models are capable of quite accurate input representation even in deeper layers.  This page begins by further testing representation accuracy before exploring the theory behind input representation accuracy for language models, and theory as to why this accuracy is important to language modeling tasks.
 
 ### Restricted Vocabulary Input Representation
 
@@ -355,7 +355,13 @@ def generate_sequential_input(model: torch.nn, target: torch.tensor, lr=0.5) -> 
 	return combined_input[:, 1:, :]
 ```
 
-For an untrained model given the input 'The sky is blue.' we have a top-5 input representation of
+For an untrained model given the input 
+
+$$
+A = \mathtt{The \; sky \; is \; blue.} 
+$$
+
+we have a top-5 input representation of
 
 ```
  Pegasus quarantine Sunshine viral Dip
@@ -363,7 +369,6 @@ For an untrained model given the input 'The sky is blue.' we have a top-5 input 
  partic Carbon Officereller Rory
  checked regained midst ERAtile
  criticize231 SOFTWARE trunkmatically
-
 ```
 
 ### Is the trained word to token embedding to blame
@@ -386,7 +391,9 @@ class InputGPT(nn.Module):
 			x = self.model.transformer.h[i](x)[0]
 		return x
 ```
+
 However, we are not met with any success in making even one transformer block yield accurate input representations.
+
 ```
  veiledusers lesbians inquiries windshield
  dupl NeighNASAicycletre
@@ -403,7 +410,6 @@ PsyNetMessagePsyNetMessagePsyNetMessage MarketablePsyNetMessage
 irtual unfocusedRange unfocusedRange unfocusedRange partName
  partName Marketable srfAttachawaru Marketable
 ascus partName partName srfAttach unfocusedRange
-
 ```
 
 ### Noise on a Discreet Channel
@@ -509,7 +515,7 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue.}
 $$
 
-which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and indeed for the 30 billion parameter version of Llama, for the first transformer block after a mere $N=500$ we have top-5 representations of
+which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and we test this using the 30 billion parameter version of Llama (which is about the largest model that will fit in the memory of a 40GB a100 using 8-bit quantization). For the first transformer block of this trained model after a mere $N=500$ we have top-5 representations of
 
 ```python
 The sky is blue<s>
@@ -519,11 +525,13 @@ smart Japan behblueATCH
 cy Answer� explating
 ```
 
-With this even larger model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 8 transformer blocks, we get a recognizable input representation of
+With this even larger model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
 
 $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
 $$
+
+### Implications of Representation Accuracy
 
 Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
 
