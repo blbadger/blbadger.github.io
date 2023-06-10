@@ -262,7 +262,7 @@ where the vector of inputs is $a$ and the vector of saliency values is $v$ and $
 Another approach is to simply remove each input element sequentially and observe the change in the ouput.  If $a_c$ correponds to the input where the token at position $c$ is replaced with an informationless substitute (perhaps a $<\vert PAD \vert >$ token) then we can find a metric distance between the model's output given this masked input compared to the original $a$ as follows:
 
 $$
-v = || O(a_c, \theta) - O(a, theta) ||_1
+v = || O(a_c, \theta) - O(a, \theta) ||_1
 $$
 
 Here we use the $L^1$ metric as a measurement of the difference between outputs, but we could just as easily have chosen any other metric. This method is appropriately termed 'occlusion' after the English word for 'make obscure'.  This is in some ways the discrete counterpoint to saliency, as here we are observing what happens to the output after a big change (replacement of an entire token).  
@@ -295,7 +295,7 @@ To visualize input attribution on sequences of text, we can implement an HTML-ba
 			predicted_word = int(torch.argmax(predicted_word, dim=1))
 			predicted_word = tokenizer.decode(predicted_word)
 
-		highlighted_text = ' '.join(highlighted_text)
+		highlighted_text = ''.join(highlighted_text)
 		highlighted_text += f'</br> </br> Predicted next word: {predicted_word}'
 		with open('data.html', 'wt', encoding='utf-8') as file:
 			file.write(highlighted_text)
@@ -321,8 +321,7 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 <html>
 <body>
 <span style="color: white">
-	<span style="background-color: #516e6e">The</span> <span style="background-color: #1a6e6e"> wip</span> <span style="background-color: #5f6e6e">ers</span> <span style="background-color: #9c6e6e"> on</span> <span style="background-color: #af6e6e"> the</span> <span style="background-color: #8f6e6e"> bus</span> <span style="background-color: #ff6e6e"> go</span> <span style="background-color: #006e6e"> sw</span> <span style="background-color: #656e6e">ish</span> <span style="background-color: #0b6e6e"> sw</span> <span style="background-color: #566e6e">ish</span> 
-</span>
+	<span style="background-color: #156e6e">The</span><span style="background-color: #746e6e"> wip</span><span style="background-color: #006e6e">ers</span><span style="background-color: #616e6e"> on</span><span style="background-color: #626e6e"> the</span><span style="background-color: #726e6e"> bus</span><span style="background-color: #ff6e6e"> go</span><span style="background-color: #9e6e6e"> sw</span><span style="background-color: #fa6e6e">ish</span><span style="background-color: #966e6e"> sw</span><span style="background-color: #e46e6e">ish</span>
 	<br>
 	<br> 
 	Predicted token:  sw
