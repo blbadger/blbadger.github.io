@@ -322,6 +322,7 @@ which when given the prompt 'The wipers on the bus go swish swish' for the base 
 <body>
 <span style="color: white">
 	<span style="background-color: #156e6e">The</span><span style="background-color: #746e6e"> wip</span><span style="background-color: #006e6e">ers</span><span style="background-color: #616e6e"> on</span><span style="background-color: #626e6e"> the</span><span style="background-color: #726e6e"> bus</span><span style="background-color: #ff6e6e"> go</span><span style="background-color: #9e6e6e"> sw</span><span style="background-color: #fa6e6e">ish</span><span style="background-color: #966e6e"> sw</span><span style="background-color: #e46e6e">ish</span>
+	</span>
 	<br>
 	<br> 
 	Predicted token:  sw
@@ -415,7 +416,48 @@ From this definition alone we find that language models must also be capable of 
 
 It has been empirically observed that models with more parameters are generally better at these implicit natural language tasks, which typically lie under the umbrella definition of 'reasoning' problems.  There are a few explanations for why this could be: firstly, larger models entail higher-dimensional space, such that gradient descent is more [biased towards generalization](https://arxiv.org/abs/2211.09639), secondly because more parameters imply greater 'memory' such that the model can learn more complicated representations of an input (ie 'three' being both a word and an implicit number) and thirdly because it is apparent that biological neural networks require a very large number of neurons to deal with language relative to other tasks, such as object recognition.
 
-But when we have observed that although larger models (>1b parameters) tend to have less repetition, they are no noticeably better at input representation than smaller models (~100M parameters). Do even larger models fail to exhibit accurate input representation?  We can investigate by observing the ability of our gradient descent procedure to autoencode an input from transformer models of a trained GPT-J model, which contains ~6B parameters.
+But when we have observed that although larger models (>1b parameters) tend to have less repetition, they are no noticeably better at input representation than smaller models (~100M parameters). Do even larger models fail to exhibit accurate input representation?  We can investigate by observing the ability of our gradient descent procedure to autoencode an input from transformer models of a trained GPT-J model, which contains ~6B parameters.  To save memory, we can load the parameters in 8-bit format using `bitsandbytes` 
+
+```python
+load_8bit = True
+tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-j-6b")
+model = AutoModelForCausalLM.from_pretrained("EleutherAI/gpt-j-6b", load_in_8bit=load_8bit, device_map='auto')
+```
+
+GPT-J, like Llama and other transformer models used today, employs Rotary Positional Encoding that is applied to each attention module (introduced by [Su and colleagues](https://arxiv.org/abs/2104.09864)).  This means that there is no `wpe` transformation to invert, but we instead have to supply the appropriate positional information as `position_ids` to each transformer block.  Using the indirect input generation method in which gradient descent is performed on the first hidden layer before the resulting tensor is inverted, the modifed version of a trained GPT-J model may be specified as follows
+
+```python
+class AbbreviatedGPT(nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, x: torch.Tensor):
+        position_ids = torch.tensor([i for i in range(x.shape[1])])
+
+        for i in range(1):
+            x = self.model.transformer.h[i](x, position_ids=position_ids)[0]
+        return x
+```
+
+For the prompt 'The sky is blue.' after $N=200$ iterations we generate an $a_g$ such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ which yields the top-5 token matching of
+
+```
+The skyeton resp cease
+hinPresidentVER compose Instruments
+uddinuko be blue_
+JJzbuse Oxy rite
+earlyerent iswn seasoning
+```
+
+which is certainly somewhat better than we saw for the smaller models but is still not an
+
+On the other hand, if we restrict the input tokens to any of 'The sky is blue or red depending on the time of day.' we come very close to recovering the input.
+
+$$
+a_g = \mathtt{The \; sky \; is \; blue \; of}
+$$
 
 If simply making a transformer-based language model larger and training it on more text is not able to lead to models becoming better able to represent their inputs, then what is? Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
 
