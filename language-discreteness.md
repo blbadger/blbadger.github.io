@@ -461,13 +461,15 @@ $$
 
 Which is a notable improvement upon the trained models seen previously.
 
-This begs the question: would an even larger model be capable of even more precise input representation? We can check this using various models but one in particular is the Llama family, which may be loaded in 8-bit parameter quantization as follows:
+This begs the question: would an even larger model be capable of even more precise input representation? We can check this using various models but one in particular is the Llama model family introduced by [Touvron and colleagues](https://arxiv.org/abs/2302.13971), which may be loaded in 8-bit parameter quantization as follows:
 
 ```python
 tokenizer = AutoTokenizer.from_pretrained("huggyllama/llama-13b")
 model = AutoModelForCausalLM.from_pretrained("huggyllama/llama-13b", load_in_8bit=load_8bit, device_map='auto')
 ```
-Llama models name their components somewhat differently than GPT-type models, and apply Rotary Positional Encoding via different dimensions, so after consulting the [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) we subclass the model as follwos:
+
+Llama models name their components somewhat differently than GPT-type models, and apply Rotary Positional Encoding via different dimensions, so after consulting the [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) we subclass the model as follows:
+
 ```python
 class AbbreviatedGPT(nn.Module):
 
@@ -483,12 +485,12 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an A100 (available on Colab for a fee) which as 40GB of VRAM (GPU memory).
+This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an A100 (available on Colab for a fee).
 
 After $N=1000$ we have for the first transformer block:
 
 $$
-\mathtt{the \; sky \; the \; blue \;  }
+a_g = \mathtt{the \; sky \; the \; blue \;  }
 $$
 
 and at $N=2000$ we have the top-5 representations of
@@ -507,9 +509,23 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue.}
 $$
 
-which means that we have found a way to get accurate input representations from a trained transfomer block! We simply have to use an extremely large model.
+which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and indeed for the 30 billion parameter version of Llama, for the first transformer block after a mere $N=500$ we have top-5 representations of
 
-If simply making a transformer-based language model larger and training it on more text is not able to lead to models becoming better able to represent their inputs, then what is? Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
+```python
+The sky is blue<s>
+� Sky: Blue “
+Helpsky�Blueww
+smart Japan behblueATCH
+cy Answer� explating
+```
+
+With this even larger model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 8 transformer blocks, we get a recognizable input representation of
+
+$$
+a_g = \mathtt{The \; sky \; Stage \; blueInd}
+$$
+
+Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
 
 Does it matter for the purposes of language generation that even otherwise effective models are incapable of differentiating between nonsensical gibberish and meaningful sentences?  At first glance it may seem as though it may not matter: if a language model were to be given these nonsenical phrases then it may confuse them with actual text, but what are the chances that the exact nonsensical phrase would appear as a prompt to a language model in a real application?  
 
