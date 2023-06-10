@@ -483,7 +483,8 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-This model requires around 19 GB when performing the gradient descent-based input representation algorithm
+This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an A100 (available on Colab for a fee) which as 40GB of VRAM (GPU memory).
+
 After $N=1000$ we have for the first transformer block:
 
 $$
@@ -515,13 +516,6 @@ Does it matter for the purposes of language generation that even otherwise effec
 There is, however, reason to wonder whether it is not important that language models form such poor representations of their inputs.  Language models as they currently exist suffer from a significant and currently difficult-to-manage problem sometimes referred to as 'hallucinations', in which the model will return syntactically and semantically correct text that is woefully incorrect in the implicit language task at hand.  Furthermore, at present there appears to be no method that is capable of preventing this hallucination barring directly training against specific examples (either using supervised or reinforcement methods).  
 
 This is fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
-
-
-
-
-
-
-
 
 
 
