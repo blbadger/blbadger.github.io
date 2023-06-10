@@ -538,6 +538,12 @@ $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
 $$
 
+and even after 21 transformer blocks, the input representation is nearly synonymous with the prompt.
+
+$$
+a_g = \mathtt{Finally \; sky \; established \; blue \; instead}
+$$
+
 This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, even trained models are capable of fairly accurate input representation even in relatively deep layers.
 
 ### Implications of Representation Accuracy
