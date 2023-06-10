@@ -441,7 +441,7 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-For the prompt 'The sky is blue.' after $N=200$ iterations we generate an $a_g$ such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ which yields the top-5 token matching of
+For the prompt 'The sky is blue.' after $N=200$ iterations with the first transformer block of GPT-J, we generate an $a_g$ such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ which yields the top-5 token matching of
 
 ```
 The skyeton resp cease
@@ -451,13 +451,62 @@ JJzbuse Oxy rite
 earlyerent iswn seasoning
 ```
 
-which is certainly somewhat better than we saw for the smaller models but is still not an
+which is certainly somewhat better than we saw for the smaller models. Note, however, that even at $N=2000$ we do not see 
 
 On the other hand, if we restrict the input tokens to any of 'The sky is blue or red depending on the time of day.' we come very close to recovering the input.
 
 $$
 a_g = \mathtt{The \; sky \; is \; blue \; of}
 $$
+
+Which is a notable improvement upon the trained models seen previously.
+
+This begs the question: would an even larger model be capable of even more precise input representation? We can check this using various models but one in particular is the Llama family, which may be loaded in 8-bit parameter quantization as follows:
+
+```python
+tokenizer = AutoTokenizer.from_pretrained("huggyllama/llama-13b")
+model = AutoModelForCausalLM.from_pretrained("huggyllama/llama-13b", load_in_8bit=load_8bit, device_map='auto')
+```
+Llama models name their components somewhat differently than GPT-type models, and apply Rotary Positional Encoding via different dimensions, so after consulting the [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) we subclass the model as follwos:
+```python
+class AbbreviatedGPT(nn.Module):
+
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def forward(self, x: torch.Tensor):
+        position_ids = torch.tensor([[i for i in range(x.shape[1])]])
+
+        for i in range(4):
+            x = self.model.model.layers[i](x, position_ids=position_ids)[0]
+        return x
+```
+
+This model requires around 19 GB when performing the gradient descent-based input representation algorithm
+After $N=1000$ we have for the first transformer block:
+
+$$
+\mathtt{the \; sky \; the \; blue \;  }
+$$
+
+and at $N=2000$ we have the top-5 representations of
+
+```
+The sky is blue’
+K Sky isn Bluerows
+’sky’Blue K
+The K Kativecards
+rowsXrows K?"
+```
+
+and even more remarkably, after two transformer blocks for $N=2000$ we have
+
+$$
+a_g = \mathtt{The \; sky \; is \; blue.}
+$$
+
+which means that we have found a way to get accurate input representations from a trained transfomer block! We simply have to use an extremely large model.
 
 If simply making a transformer-based language model larger and training it on more text is not able to lead to models becoming better able to represent their inputs, then what is? Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
 
