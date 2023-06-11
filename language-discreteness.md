@@ -464,7 +464,7 @@ JJzbuse Oxy rite
 earlyerent iswn seasoning
 ```
 
-which is certainly somewhat better than we saw for the smaller models. Note, however, that even at $N=2000$ we do not see 
+which is certainly somewhat better than we saw for the smaller models. Note, however, that even at $N=2000$ the input representation accuracy is not sufficient to unambiguously identify the input string.
 
 On the other hand, if we restrict the input tokens to any of 'The sky is blue or red depending on the time of day.' we come very close to recovering the input.
 
@@ -524,13 +524,15 @@ $$
 
 which means that we have found a way to get accurate input representations from a trained transfomer block! Apparently the we simply have to use an extremely large model.  Thus we would expect to observe accurate input representations from even larger models, and we test this using the 30 billion parameter version of Llama (which is about the largest model that will fit in the memory of a 40GB A100 using 8-bit quantization). For the first transformer block of this trained model after a mere $N=500$ we have top-5 representations of
 
-```python
+```
 The sky is blue<s>
 � Sky: Blue “
 Helpsky�Blueww
 smart Japan behblueATCH
 cy Answer� explating
 ```
+
+where `<s>` signifies a sentence break token (which is nearly identical with a period in semantic meaning).
 
 With this even larger model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
 
