@@ -119,7 +119,7 @@ class InputGPT(nn.Module):
 With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 
 
 $$
-a = \mathtt{This \; is \; a \; prompt \; sentence
+a = \mathtt{This \; is \; a \; prompt \; sentence}
 $$
 
 the answer is no: iterating \eqref{eq5} such that $\vert \vert O_l(a_g, \theta) - O_l(a, \theta) \vert \vert < \vert \vert O_l(a', \theta) - O_l(a, \theta) \vert \vert$ (where $a'$ is a slightly shifted $a$ such that the tokenization of these vector values are identical) we have
@@ -338,7 +338,7 @@ Observing input attribution for larger models applied to more complicated inputs
 
 ### Sequential Input Representation
 
-Continuing our efforts to understand why trained language transformers give such poor input representations compared to trained vision transformers, one can observe that there are two notable differences between language and image inputs: language is fundamentally sequential and discreet whereas images are approximately continuous and of no particular orientation.  In this section we consider the importance of the sequential aspect of language as it relates to input representation, and in the next section discreeteness is examined.
+Continuing our efforts to understand why trained GPT-2 models give such poor input representations compared to trained vision transformers, one can observe that there are two notable differences between language and image inputs: language is fundamentally sequential and discreet whereas images are approximately continuous and of no particular orientation.  In this section we consider the importance of the sequential aspect of language as it relates to input representation, and in the next section discreeteness is examined.
 
 To rephrase the topic for this section, one may wonder whether or not the sequential aspect of language could contribute to difficulties in input representation.  Specifically, observe that GPT-type language models always predict one word at a time, and thus may be better at representing one word at a time too.
 
@@ -363,7 +363,7 @@ def generate_sequential_input(model: torch.nn, target: torch.tensor, lr=0.5) -> 
 For an untrained model given the input 
 
 $$
-A = \mathtt{The \; sky \; is \; blue.} 
+a = \mathtt{The \; sky \; is \; blue.} 
 $$
 
 we have a top-5 input representation of
@@ -376,9 +376,11 @@ we have a top-5 input representation of
  criticize231 SOFTWARE trunkmatically
 ```
 
+and therefore we conclude that it is not the sequential characteristic of language that is the cause of poor input representation.
+
 ### Is the trained word to token embedding to blame
 
-For the direct input generation method introduced above, this can be implemented by simply swapping the weight matrix of the word-token embedding with an untrained model's version of the same.
+It might also be wondered whether the loss of input representation ability during training is due to the model learning a poorly conditioned token embedding transformation. We can test this hypothesis by replacing the trained token embedding transformation with a non-trained one, and for the direct input generation method earlier on this page this can be implemented by simply swapping the weight matrix of the word-token embedding with an untrained model's version of the same.
 
 ```python
 class InputGPT(nn.Module):
@@ -407,7 +409,7 @@ rypted IntExp qualifying Genie
 SHIP rejoice malepc consumers
 ```
 
-Similarly poor input representations are exhibited when we use the [Roy-Moore pseudo-inverse indirect input generation method](https://blbadger.github.io/language-representations-inputs.html#sentence-representation-with-language-models)  
+Similarly poor input representations are exhibited when we use the [Roy-Moore pseudo-inverse indirect input generation method](https://blbadger.github.io/language-representations-inputs.html#sentence-representation-with-language-models) following the 
 
 ```
 PsyNetMessagePsyNetMessagePsyNetMessage MarketablePsyNetMessage
@@ -418,8 +420,6 @@ ascus partName partName srfAttach unfocusedRange
 ```
 
 To conclude, we find that the training of the embedding transformation alone cannot account for the poor representation that exists in trained language models.
-
-### Noise on a Discreet Channel
 
 ### Big models exhibit accurate input representations
 
@@ -548,9 +548,15 @@ $$
 
 This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, even trained models are capable of fairly accurate input representation even in relatively deep layers.
 
+### Noise on a Discreet Channel
+
+To recap, we have found that accurate input representations of language but not images are not formed in trained transformer models unless they contain a very large number of parameters, particularly in trained models.  In the next section, we will consider what this means for a language model's ability to give useful outputs.
+
+But first it remains to be seen why training would result in worse input representations, why larger models would be capable of much more accurate representation, and above all why accurate input representation appears to be so much more difficult for language than for images.
+
 ### Implications of Representation Accuracy
 
-Language models today often follow general training in which the sole metric is predicting the next word in a sentence with what is termed 'aligmnent' which serves to make the language model return outputs that are aligned in some way to the task at hand (question answer, mathematics, etc.).  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
+Language models are usually trained by first predicting the next word in a sentence, followed by what is termed 'aligmnent' which serves to make the language model return outputs are appropriate for some given at hand, which could be helpfully answering questions or perhaps providing background information.  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
 
 Does it matter for the purposes of language generation that even otherwise effective models are incapable of differentiating between nonsensical gibberish and meaningful sentences?  At first glance it may seem as though it may not matter: if a language model were to be given these nonsenical phrases then it may confuse them with actual text, but what are the chances that the exact nonsensical phrase would appear as a prompt to a language model in a real application?  
 
