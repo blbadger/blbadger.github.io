@@ -558,6 +558,18 @@ $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
 $$
 
+(note that with the 7b parameter model, the top-5 representation of the input is
+
+```
+havior skyichtetfiterson
+burgје speakeriffsbled
+prisoners prisoners standardsunct speaker
+learn studying relationshipsspanburg
+rium Cup containingEEali
+```
+
+which is far worse)
+
 and even after 21 transformer blocks, the input representation is nearly synonymous with the prompt.
 
 $$
