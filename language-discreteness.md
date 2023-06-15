@@ -532,9 +532,27 @@ smart Japan behblueATCH
 cy Answer� explating
 ```
 
-where `<s>` signifies a sentence break token (which is nearly identical with a period in semantic meaning).
+where `<s>` signifies a sentence break token (which is nearly identical with a period in semantic meaning).  
 
-With this even larger model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
+Compare this with the top-5 representations of the first transformer block of a 7-billion parameter version of Llama, which at $N=500$ gives
+
+```
+The sky isYS2
+The ofATIONhere-
+..�althOIN
+
+,SE ${\reno
+the
+c blue,
+```
+
+although it should be noted that if the maximum number of gradient descent iterations increases to $N=1500$, the 7b parameter model yields
+
+$$
+a_g = \mathtt{The \; sky \; is \; blue2}
+$$
+
+With the 30 billion parameter model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
 
 $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
