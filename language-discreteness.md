@@ -429,7 +429,7 @@ From this definition alone we find that language models must also be capable of 
 
 It has been empirically observed that models with more parameters are generally better at these implicit natural language tasks, which typically lie under the umbrella definition of 'reasoning' problems.  There are a few explanations for why this could be: firstly, larger models entail higher-dimensional space, such that gradient descent is more [biased towards generalization](https://arxiv.org/abs/2211.09639), secondly because more parameters imply greater 'memory' such that the model can learn more complicated representations of an input (ie 'three' being both a word and an implicit number) and thirdly because it is apparent that biological neural networks require a very large number of neurons to deal with language relative to other tasks, such as object recognition.
 
-But when we have observed that although larger models (>1b parameters) tend to have less repetition, they are no noticeably better at input representation than smaller models (~100M parameters). Do even larger models fail to exhibit accurate input representation?  We can investigate by observing the ability of our gradient descent procedure to autoencode an input from transformer models of a trained GPT-J model, which contains ~6B parameters.  To save memory, we can load the parameters in 8-bit format using `bitsandbytes` 
+But when we have observed that although larger models (~1 billion as opposed to 100 million parameters) tend to have less repetition, they are no noticeably better at input representation than smaller models (~100M parameters). Do even larger models fail to exhibit accurate input representation?  We can investigate by observing the ability of our gradient descent procedure to autoencode an input from transformer models of a trained GPT-J model, which contains ~6B parameters.  To save memory, we can load the parameters in 8-bit format using `bitsandbytes` 
 
 ```python
 load_8bit = True
@@ -454,7 +454,7 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-For the prompt 'The sky is blue.' after $N=200$ iterations with the first transformer block of GPT-J, we generate an $a_g$ such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ which yields the top-5 token matching of
+Here we investigate the representations present various layers of a model using gradient descent on the embedding of a discrete language input, a technique explained [here](https://blbadger.github.io/language-representations-inputs.html#sentence-representation-with-language-models).  For the prompt 'The sky is blue.' after $N=200$ iterations with the first transformer block of GPT-J, we generate an $a_g$ such that $\vert \vert a_g - a \vert \vert < \vert \vert a' - a \vert \vert$ which yields the top-5 token matching of
 
 ```
 The skyeton resp cease
@@ -472,7 +472,7 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue \; of}
 $$
 
-Which is a notable improvement upon the trained models seen previously.
+Which is a notable improvement upon the smaller trained models seen previously.
 
 This begs the question: would an even larger model be capable of even more precise input representation? We can check this using various models but one in particular is the Llama model family introduced by [Touvron and colleagues](https://arxiv.org/abs/2302.13971), which may be loaded in 8-bit parameter quantization as follows:
 
@@ -498,7 +498,7 @@ class AbbreviatedGPT(nn.Module):
         return x
 ```
 
-This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an nVidia A100 GPU (available on Colab for a fee).
+This model requires around 20GB when performing the gradient descent input representation algorithm, so the following experiments are performed using an Nvidia A100 GPU (available on Colab for a fee).
 
 After $N=1000$ we have for the first transformer block:
 
@@ -516,7 +516,7 @@ The K Kativecards
 rowsXrows K?"
 ```
 
-and even more remarkably, after two transformer blocks for $N=2000$ we have
+and even more remarkably, at a depth of two transformer blocks for $N=2000$ the model's representation is
 
 $$
 a_g = \mathtt{The \; sky \; is \; blue.}
@@ -546,19 +546,19 @@ the
 c blue,
 ```
 
-although it should be noted that if the maximum number of gradient descent iterations increases to $N=1500$, the 7b parameter model yields
+although it should be noted that if the maximum number of gradient descent iterations $N$ increases to $N=1500$, the 7b parameter Llama yields a better
 
 $$
 a_g = \mathtt{The \; sky \; is \; blue2}
 $$
 
-With the 30 billion parameter model, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
+With the 30 billion parameter Llama, we find that at least somewhat accurate input representations are made from deeper and deeper layers: representation after 4 transformer blocks is qualitatively similar to what is found for 1 block (above) even after 12 (!) transformer blocks, we get a recognizable input representation of
 
 $$
 a_g = \mathtt{The \; sky \; Stage \; blueInd}
 $$
 
-(note that with the 7b parameter model, the top-5 representation of the input is
+Note that with the 7 billion parameter version of Llama, a typical top-5 representation of the input at a depth of 12 blocks for the same $N$ is
 
 ```
 havior skyichtetfiterson
@@ -568,9 +568,9 @@ learn studying relationshipsspanburg
 rium Cup containingEEali
 ```
 
-which is far worse)
+meaning that we find much poorer input representations in the 7b parameter Llama as opposed to the 30b model in the deeper layers, which is to be expected with the hypothesis that larger models are capable of transmitting input information more accurately than small ones.
 
-and even after 21 transformer blocks, the input representation is nearly synonymous with the prompt.
+Returning to the 30 billion parameter model, even after 21 transformer blocks the input representation is nearly synonymous with the prompt.
 
 $$
 a_g = \mathtt{Finally \; sky \; established \; blue \; instead}
@@ -587,6 +587,8 @@ But first it remains to be seen why training would result in worse input represe
 ### Implications of Representation Accuracy
 
 Language models are usually trained by first predicting the next word in a sentence, followed by what is termed 'aligmnent' which serves to make the language model return outputs are appropriate for some given at hand, which could be helpfully answering questions or perhaps providing background information.  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
+
+In spite of these innovations, it has been observed that models smaller than around 10 billion parameters (using commonly applied scaling measures for MLP and key, query and value projection parameters in transformers) are generally insufficient for anything but the simplest of language tasks.
 
 Does it matter for the purposes of language generation that even otherwise effective models are incapable of differentiating between nonsensical gibberish and meaningful sentences?  At first glance it may seem as though it may not matter: if a language model were to be given these nonsenical phrases then it may confuse them with actual text, but what are the chances that the exact nonsensical phrase would appear as a prompt to a language model in a real application?  
 
