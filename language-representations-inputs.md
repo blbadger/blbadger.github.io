@@ -712,11 +712,11 @@ fter ('ramidohl$.
 
 It is interesting to note that gradient-based optimization of the input is much more difficult for the full 48-block GPT-2 than even first 24-block subset of this model, indicating that the later transformer blocks are poorly conditioned relative to the earlier blocks.  This is true even when 8-bit quantization is performed on the smaller subsets, indicating that quantization is not in this case responsible for difficulties optimizing via gradient descent.
 
-To summarize this last section, simply increasing the model's size does seem to reduce the amount of repetition, but is not by itself sufficient for generating meaningful representations of the input.
+To summarize this last section, simply increasing the model's size does seem to reduce the amount of repetition, but even the larger models we have investigated thus far do not exhibit accurate representations of language inputs.  This investigation is continued in [Part III](https://blbadger.github.io/language-discreteness.html).
 
 ### Implications
 
-In summary, transformer-based language models such as GPT-2 are unable to distinguish between English sentences and gibberish.  Given a point in a transformer block hidden layer space corresponding to an input of a real sentence, we have found that most nearby points correspond to inputs that are not even approximately sentences but are instead completely unintelligible.  
+In summary, transformer-based language models in the GPT-2 family are unable to distinguish between real English sentences and pure gibberish.  Given a point in a transformer block hidden layer space corresponding to an input of a real sentence, we have found that most nearby points correspond to inputs that are not even approximately sentences but are instead completely unintelligible.  
 
 There exists a notable difference between trained language and vision transformer models: the latter contain modules that are at least partially capable of discerning what the input was composed of, whereas the latter does not.  But when we consider the training process for language models, it is perhaps unsurprising that input representations are relatively poor.  Note that each of the gibberish input generations were almost certainly not found in the training dataset precisely because they are very far from any real language.  This means that the language model has no *a priori* reason to differentiate between these inputs and real text, and thus it is not altogether unsurprising that the model's internal representations would be unable to distinguish between the two.
 
