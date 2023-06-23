@@ -29,7 +29,7 @@ before constant scaling followed by a softmax transformation to the vector $\pmb
 $$
 \pmb{s_1'} = \mathbf{softmax} \; ((q_1 \cdot k_1)/\sqrt d, (q_1 \cdot k_2)/ \sqrt d, (q_1 \cdot k_3)/ \sqrt d,...) \\
 \pmb{s_1'} = (s_{1,1}', s_{1,2}', s_{1,3}',...) \\
-\pmb{z_1} = v_1 s_{1,1}' + v_2 s_{1,2}' + v_3 s_{1,3}'+ \cdots + v_n s{1,n}
+\pmb{z_1} = v_1 s_{1,1}' + v_2 s_{1,2}' + v_3 s_{1,3}'+ \cdots + v_n s_{1,n}
 $$
 
 The theoretical basis behind the attention module is that certain tokens (originally word embeddings) should 'pay attention' to certain other tokens moreso than average, and that this relationship should be learned directly by the model.  For example, given the sentence 'The dog felt animosity towards the cat, so he behaved poorly towards *it*' it is clear that the word 'it' should be closely associated with the word 'cat', and the attention module's goal is to model such associations.  
