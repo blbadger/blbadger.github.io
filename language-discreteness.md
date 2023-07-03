@@ -307,7 +307,14 @@ To visualize input attribution on sequences of text, we can implement an HTML-ba
 		webbrowser.open('data.html')
 ```
 
-After loading our model of choice, we can use the GPTEval class to generate input attribution maps as follows:
+This function displays the relative attribution (importance) of each previous token by assigning the attribution value to the red highlighter color, while keeping green and blue highlighter values constant (see the snippet below).  This makes higher-attribution tokens appear red, medium-attribution orange and grey, and low-attribution tokens green-blue.
+
+```
+red, green, blue = int((summed_ems[i]*255)), 110, 110
+color = '#{:02x}{:02x}{:02x}'.format(red, green, blue)
+```
+
+After loading our model of choice, we can use this module (contained in the GPTEval class, see the [source code](https://github.com/blbadger/nnetworks/blob/transformer-explorer/language_attribution.py) for more information) to generate input attribution maps as follows:
 
 ```python
 if __name__ == '__main__':
