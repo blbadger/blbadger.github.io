@@ -241,6 +241,11 @@ $$
 
 ### [Language Representation III: Noisy Communication on a Discrete Channel](/language-discreteness.md)
 
+$$
+a = \mathtt{The \; sky \; is \; blue. \\ 
+a_g = \mathtt{The \; sky \; is \; blue<s>}
+$$
+
 <html>
 <body>
 <span style="color:white">
