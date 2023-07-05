@@ -243,7 +243,7 @@ $$
 
 $$
 a = \mathtt{The \; sky \; is \; blue.} \\ 
-a_g = \mathtt{The \; sky \; is \; blue<s>}
+a_g = \mathtt{The \; sky \; is \; blue \<s \>}
 $$
 
 <html>
