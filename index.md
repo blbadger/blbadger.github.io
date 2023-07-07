@@ -2,6 +2,8 @@
  <head>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
+  
+ <!--
  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171312398-1"></script>
  <script>
    window.dataLayer = window.dataLayer || [];
@@ -10,6 +12,7 @@
 
    gtag('config', 'UA-171312398-1');
  </script>
+ -->
 
  <meta name="Description" CONTENT="Author: Benjamin Badger, Category: Informational">
  <meta name="google-site-verification" content="UtBQXaaKqY6KYEk1SldtSO5XVEy9SmoUfqJ5as0603Y" />
@@ -243,7 +246,7 @@ $$
 
 $$
 a = \mathtt{The \; sky \; is \; blue.} \\ 
-a_g = \mathtt{The \; sky \; is \; blue \<s \>}
+a_g = \mathtt{The \; sky \; is \; blue \lt s \gt}
 $$
 
 <html>
