@@ -1,4 +1,3 @@
-
 ## Language Modeling and Discrete Encodings
 
 This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II]((https://blbadger.github.io/language-representations-inputs.html)). 
@@ -426,7 +425,7 @@ irtual unfocusedRange unfocusedRange unfocusedRange partName
 ascus partName partName srfAttach unfocusedRange
 ```
 
-To conclude, we find that the training of the embedding transformation alone cannot account for the poor representation that exists in trained language models.
+In conclusion, we find that the training of the embedding transformation alone cannot account for the poor representation that exists in trained language models.  This does not necessarily mean that the embedding transformation does not affect input representation, but only that the process of training the embedding alone does not account for the poor input representation in GPT-2 models after training.
 
 ### Big models exhibit accurate input representations
 
@@ -583,7 +582,30 @@ $$
 a_g = \mathtt{Finally \; sky \; established \; blue \; instead}
 $$
 
-This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, even trained models are capable of fairly accurate input representation even in relatively deep layers.
+This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, trained models are capable of fairly accurate input representation even in relatively deep layers.
+
+### Large models exhibit poor direct input representation
+
+In the last section we saw that very large models are capable of accurate input representation when gradient desceis performed on the input embedding, rather than the discrete input itself.  It may be wondered whether similarly accurate input representations are found from the same models if gradient descent is performed on the inputs diectly, after converting discrete token integers to a continuous vector space equivalent to those discrete tokens.
+
+```python
+class InputModel(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x: torch.Tensor):
+		# Matrix mult instead of embedding to prevent type incompatibility
+		x = torch.matmul(x, self.model.model.embed_tokens.weight)
+		position_ids = torch.tensor([[i for i in range(x.shape[1])]])
+
+		for i in range(1):
+			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
+
+		return x
+```
+
 
 ### Noise on a Discreet Channel
 
