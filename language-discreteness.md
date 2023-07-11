@@ -1,6 +1,6 @@
 ## Language Modeling and Discrete Encodings
 
-This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II]((https://blbadger.github.io/language-representations-inputs.html)). 
+This page is a continuation of Parts [I](https://blbadger.github.io/language-representations.html) and [II](https://blbadger.github.io/language-representations-inputs.html). 
 
 ### Introduction
 
@@ -115,7 +115,11 @@ class InputGPT(nn.Module):
 		return x
 ```
 
-With this direct gradient descent on the input method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 
+For clarity, the following figure provides a summary of the direct input representation method.
+
+![direct input representation]({{https://blbadger.github.io}}deep-learning/llm_direct_representation.png)
+
+With this direct gradient descent method, can a single trained transformer block in GPT-2 be inverted accurately? Given the input 
 
 $$
 a = \mathtt{This \; is \; a \; prompt \; sentence}
@@ -588,6 +592,8 @@ This is notable because smaller language models are capable of accurate input re
 
 In the last section we saw that very large models are capable of accurate input representation when gradient desceis performed on the input embedding, rather than the discrete input itself.  It may be wondered whether similarly accurate input representations are found from the same models if gradient descent is performed on the inputs diectly, after converting discrete token integers to a continuous vector space equivalent to those discrete tokens.
 
+For Llama-type models that use RoPE, after converting a tokenized input into a vector-space equivalen `x` we can sub-class our chosen model as follows:
+
 ```python
 class InputModel(nn.Module):
 
@@ -605,6 +611,17 @@ class InputModel(nn.Module):
 
 		return x
 ```
+
+Given the target input $a = \mathtt{This \; is \; a \; prompt \; sentence}$, the trained 7 billion parameter Llama model yields the following top-5 input representations at the output of the first transformer block:
+
+```
+sout spectconmicadém
+Normdatei┴więひ           
+Son画 hastaрук cb
+ccCollectennenzen Kirchen
+alusEmemed expon.<
+```
+
 
 
 ### Noise on a Discreet Channel
