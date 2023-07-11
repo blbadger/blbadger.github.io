@@ -192,7 +192,7 @@ The study of life, observations of which display many of the features of nonline
 
 ## Deep Learning
 
-Machine learning with layered representations.  Originally inspired by efforts to model the animalian nervous system, much work today is of dubious biological relevance but is extraordinarily potent for a wide range of problems.  For some of these pages and more as academic papers, see [here](https://arxiv.org/search/?searchtype=author&query=Badger%2C+B+L).
+Machine learning with layered representations.  Originally inspired by efforts to model the animalian nervous system, much work today is of somewhat dubious biological relevance but is extraordinarily potent for a wide range of applications.  For some of these pages and more as academic papers, see [here](https://arxiv.org/search/?searchtype=author&query=Badger%2C+B+L).
 
 ### [Image Classification](/neural-networks.md) 
 
