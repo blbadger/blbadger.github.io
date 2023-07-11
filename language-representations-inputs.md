@@ -192,6 +192,10 @@ such that $m_g < m$.
 
 ### Language models translate nonsense into sense
 
+To recap the last section, on this page we will observe the information present in each layer of a given language model by performing gradient descent in embedding space before converting the generated embedding back to tokens.  The following figure summarizes how this works for a typical transformer-based model.
+
+![gpt2 representation]({{https://blbadger.github.io}}/deep-learning/llm_indirect_representation.png)
+
 One of the primary challenges of large language models today is their ability to generate text that is gramatically and stylistically accurate to the prompt but is inaccurate in some other way, either introducing incorrect information about a topic or else veering off in an unintended direction.  
 
 It can be shown, however, that these models are capable of a much more extreme translation from input nonsense into some real language output by making use the the input representations we have generated in the previous section. Suppose one were given the following prompt: 
