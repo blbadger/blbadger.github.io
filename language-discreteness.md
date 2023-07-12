@@ -590,7 +590,7 @@ This is notable because smaller language models are capable of accurate input re
 
 ### Large models exhibit poor direct input representation
 
-In the last section we saw that very large models are capable of accurate input representation when gradient desceis performed on the input embedding, rather than the discrete input itself.  It may be wondered whether similarly accurate input representations are found from the same models if gradient descent is performed on the inputs diectly, after converting discrete token integers to a continuous vector space equivalent to those discrete tokens.
+In the last section we saw that very large models are capable of accurate indirect input representation when gradient descent performed on the input embedding, rather than directly on the input itself.  It may be wondered whether similarly accurate input representations are found from the same models if gradient descent is performed on the inputs diectly, after converting discrete token integers to a continuous vector space equivalent to those discrete tokens.
 
 For Llama-type models that use RoPE, after converting a tokenized input into a vector-space equivalen `x` we can sub-class our chosen model as follows:
 
@@ -622,7 +622,15 @@ ccCollectennenzen Kirchen
 alusEmemed expon.<
 ```
 
+We find further that the trained 30 billion parameter Llama model is similarly incapable of accurate direct input representation.  For $N$ such that $\vert \vert O(a, \theta) - O(a_g, \theta) \vert \vert < \vert \vert O(a, \theta) - O(a', \theta) \vert \vert$ we have
 
+```
+льной розта Schw университета ded
+nombreuses мат FemAvailable modify
+Cés projection polygonダjekt
+`" помо э dll физи
+dai vba грудняóp поль
+```
 
 ### Noise on a Discreet Channel
 
