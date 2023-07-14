@@ -205,16 +205,16 @@ $$
 m = || O(a, \theta) - O(a_g, \theta) ||_1
 $$
 
-we can instead minimize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the outputs $O(a, \theta)^*$
+we can instead maximize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the outputs $O(a, \theta)^*$
 
 $$
 \cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * |||O(a_g, \theta)^* ||_2}
 $$
 
-such that gradient descent on the first embedding $e$ is
+such that gradient descent on the embedding $e_n$ is performed as follows:
 
 $$
-e_{n+1} = e_n - \nabla_{e_n} \cos (\phi)
+e_{n+1} = e_n - \nabla_{e_n} \left( 1 - \cos (\phi) \right)
 $$
 
 Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: reducing $\cos (\phi)$ to $0$ via 2000 iterations yields embeddings that may be inverted to give
@@ -409,8 +409,7 @@ class InputGPT(nn.Module):
 		return x
 ```
 
-However, we are not met with any success in making even one transformer block yield accurate input representations.
-
+However, we are not met with any success in making even one transformer block yield accurate input representations.  
 ```
  veiledusers lesbians inquiries windshield
  dupl NeighNASAicycletre
@@ -428,7 +427,6 @@ irtual unfocusedRange unfocusedRange unfocusedRange partName
  partName Marketable srfAttachawaru Marketable
 ascus partName partName srfAttach unfocusedRange
 ```
-
 In conclusion, we find that the training of the embedding transformation alone cannot account for the poor representation that exists in trained language models.  This does not necessarily mean that the embedding transformation does not affect input representation, but only that the process of training the embedding alone does not account for the poor input representation in GPT-2 models after training.
 
 ### Big models exhibit accurate input representations
@@ -631,6 +629,34 @@ Cés projection polygonダjekt
 `" помо э dll физи
 dai vba грудняóp поль
 ```
+
+It may be wondered whether or not a different metric would give a more accurate input representation, at least for the first transformer block of Llama 7b. Maximizing the cosine similarity (ie minimizing the angle $\phi$) between generated input $a_g$ and target input $a$ yields for the $a$ given above
+
+$$
+a_g = \mathtx{This \; is \; hasta \; prompt \; sentence}
+$$
+
+where $\phi > 0.9$.
+
+For the $a$ of 'This is a somewhat longer prompt sentence.' we have at $\phi = 0.76$
+
+$$
+a_g = \mathtx{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
+$$
+
+or given an $a = \mathtx{The \; sky \; is \; a \; light \; blue \; today \; -}$ at $\phi=0.75$ we have
+
+$$
+a_g = \mathtx{primit \; sky \; is \; a \; light \; blue \; today \; –}
+$$
+
+It is interesting to note that cosine similarity loss does not yield accurate input representations for small inputs.  For example, given $a = \mathtx{The \; sky \; is}$ the first block representation is
+
+$$
+a_g = {sier \; fixeseden}
+$$
+
+
 
 ### Noise on a Discreet Channel
 
