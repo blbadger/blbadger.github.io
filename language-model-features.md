@@ -29,7 +29,59 @@ It is not clear that this is actually the case for large language models, howeve
 
 Secondly, [elsewhere](https://blbadger.github.io/language-discreteness.html) we have already seen that gradient descent on a language model embedding is capable of recovering a text input that exactly matches some given target. If $e_g$ in that case were not sufficiently near real inputs this procedure would have a vanishingly low probability of success.
 
+Block 1
+[:, :, 0-4]
+<unk><unk><unk><unk><unk>
+<s><s><s><s><s>
+</s></s></s></s></s>
+     
+     
+[:, :, 0:4]
+</s><unk><s><s><unk>
+     
+[:, :, 400-404]
+hththththt
+codecodecodecodecode
+G G G G G
+ateateateateate
+essessessessess
 
+[:, :, 400:404]
+Gateate G G
+
+[:, 0-4, :]
+areremger Alsolass
+are Iger Alsolass
+arerem mult Alsolass
+areremger sonlass
+areremger Alsolass
+
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+
+[:, :, 2000:2004]
+vec calledura calledvec
+
+[:, 0, 2000]
+called Iger Alsolass
+[:, 1, 2000]
+are calledger Alsolass
+[:, 2, 2000]
+are I called Alsolass
+[:, 3, 2000]
+are Iger calledlass
+[:, 4, 2000]
+are Iger Also called
+
+
+block 32?
+[:, :, 2000-2001]
+called called called called called
+ItemItemItemItemItem
 
 
 
