@@ -171,11 +171,13 @@ rypted Sharif deliber camping Genie
 ogacessive dungeonJR785
  ```
 
-There is a clear explanation for why the GPT-2 embedding is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$ for the 1.5B parameter `gpt2-xl`.  Non-invertibility is expected for both embeddings being that the output dimension is much smaller than the input, and as the input dimension exceeds the output there are many different inputs that will yield one identical output of the word to embedding transformation.
+There is a clear explanation for why the GPT-2 embedding transformation is non-invertible: the linear transformation corresponding to the token-to-embedding operation transforms a vector space of dimension $d(a) = 50257$ to a vector space of $d(O_e(a, \theta)) = 728$ for the base GPT-2 model, or $d(O_e(a, \theta)) = 1600$ for the 1.5B parameter `gpt2-xl`.  Non-invertibility is expected for both embeddings being that the output dimension is much smaller than the input, and as the input dimension exceeds the output there are many different inputs that will yield one identical output of the word to embedding transformation.  
 
-### Other attempts to enforce accuracy
+But [elsewhere](https://blbadger.github.io/language-representations-inputs.html#sentence-representation-with-language-models) we have seen that non-invertible transformations can be effectively inverted using gradient descent, in the sense that an accurate input representation can be made accross non-invertible transformations.  Thus it remains to be seen whether direct input representations can be accurate for other models, even if they are not accurate for GPT-2.
 
-Why do trained language models exhibit such poor input representation?  In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
+### Multiple hidden layer outputs do not improve input representation
+
+Why do trained language models exhibit such poor input representations?  In the previous section, we found that the largest version of GPT2 exhibits far less repetition in its input representations than the smallest version of the same model.  Unfortunately it is also clear that the larger model is no more capable of producing a coherent input representation (even for one transformer block) even after 1000 gradient descent iterations, corresponding to a generated distance <1/6 the magnitude of the shifted distance.
 
 It may also be wondered whether or not input representation would be improved if we used the output of multiple layers rather than only one. For the first three layers of a model in which we perform gradient descent on the input directly, this could be implemented as follows:
 
@@ -199,25 +201,27 @@ class InputGPT(nn.Module):
 
 But the input representations resulting from this are no better than before, and appears to confer the same ability to accurately represent an input as simply taking the output of the last (in this case the third) block.
 
+### Indirect input representation via cosine similarity
+
 Another possibility is that the metric we are using to perform gradient descent is not idea for input representation.  Specifically, instead of minimizing the $L^1$ metric
 
 $$
 m = || O(a, \theta) - O(a_g, \theta) ||_1
 $$
 
-we can instead maximize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the outputs $O(a, \theta)^*$
+we can instead maximize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the output of the target input's embedding $O(e, \theta)^* $ and the vectorized output of the generated input embedding at iteration $n$, $O(e_n, \theta)^*$
 
 $$
-\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * |||O(a_g, \theta)^* ||_2}
+\cos (\phi) = \frac{O(e, \theta)^* \cdot O(e_n, \theta)^* }{||O(e, \theta)^* ||_2 * |||O(e_n, \theta)^* ||_2}
 $$
 
 such that gradient descent on the embedding $e_n$ is performed as follows:
 
 $$
-e_{n+1} = e_n - \nabla_{e_n} \left( 1 - \cos (\phi) \right)
+e_{n+1} = e_n - \eta \nabla_{e_n} \left( 1 - \cos (\phi) \right)
 $$
 
-Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: reducing $\cos (\phi)$ to $0$ via 2000 iterations yields embeddings that may be inverted to give
+where $\eta$ is a tunable learning rate parameter. Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: reducing $\cos (\phi)$ to $0$ via 2000 iterations yields embeddings that may be inverted to give
 
 ```
 Downloadha.""��MpServeriverpool
@@ -227,7 +231,7 @@ ARDISitudinalァidia guiActiveUn
 ?).andoエル millennOrderable
 ```
 
-Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') the one transformer decoder module cannot accurately represent the input.
+Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') the one transformer decoder module from GPT-2 cannot accurately represent the input.
 
 $$
 \mathtt{depending \; depending \; time \; depending.}
@@ -586,11 +590,9 @@ $$
 
 This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, trained models are capable of fairly accurate input representation even in relatively deep layers.
 
-It may also be wondered whether we can recover accurate input representations by optimizing a different metric on a hidden layer output.  Earlier on this page we saw that cosine similarity used as a metric for GPT-2 models was incapable of accurate input representation, but it is worth exploring whether this is the case now that we have a larger model to work with.
+It may also be wondered whether we can recover accurate input representations by optimizing a different metric on a hidden layer output.  Earlier on this page we saw that cosine similarity used as a metric for GPT-2 models was incapable of accurate input representation, but it is worth exploring whether this is the case now that we have a larger model to work with.  As before, we perform gradient descent on the embedding $e_n$ rather than a vectorized input.
 
-To re-iterate, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$, and this will be done by maximizing the cosine similarity between $O(a, \theta)$ and $O(a_g, \theta)$.
-
-A first experiment is not promising: given the same prompt as above ('The sky is blue') after $N=500$ iterations of gradient descent such that $\phi < 0.05$ we have
+A first experiment is not promising: given the same prompt as above ('The sky is blue') after $N=500$ iterations of gradient descent on the embedding of an input such that $\phi < 0.05$ we have
 
 $$
 a_g = \mathtt{WNWNWNWN}
@@ -602,12 +604,14 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue2}
 $$
 
-'The sky is red or blue depending on the time of day'
+Longer prompts such as 'The sky is red or blue depending on the time of day'
 
 $$
 a_g = \mathtt{The \; sky \; is  \; blue  \; or \; red \; depending \; on \; the \; time \; OF \; day}
 $$
 
+or 'This is a prompt sentence.'
+ 
 $$
 a = \mathtt{This \; is \; a \; prompt \; sentence.}
 $$
@@ -667,7 +671,21 @@ Cés projection polygonダjekt
 dai vba грудняóp поль
 ```
 
-It may be wondered whether or not a different metric would give a more accurate input representation, at least for the first transformer block of Llama 7b. Maximizing the cosine similarity (ie minimizing the angle $\phi$) between generated input $a_g$ and target input $a$ yields for the $a$ given above
+It may be wondered whether or not a different metric would give a more accurate input representation, at least for the first transformer block of Llama 7b. 
+
+To be more precise, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$ by maximizing the cosine similarity between the output of the target input $a$, denoted $O(a, \theta)$ and the generated input $a_g$, $O(a_g, \theta)$ via gradient descent on an initially random input $a_0$.  The cosine distance may be calculated as
+
+$$
+\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * |||O(a_g, \theta)^* ||_2}
+$$
+
+such that gradient descent on a vectorized version of the input $a_n$ as follows:
+
+$$
+e_{n+1} = e_n - \eta \nabla_{a_n} \left( 1 - \cos (\phi) \right)
+$$
+
+Maximizing the cosine similarity (ie minimizing the angle $\phi$) between generated input $a_g$ and target input $a$ yields for the $a$ given above
 
 $$
 a_g = \mathtt{This \; is \; hasta \; prompt \; sentence}
@@ -704,6 +722,21 @@ It is interesting to note that cosine similarity loss does not yield accurate in
 $$
 a_g = mathtt{sier \; fixeseden}
 $$
+
+Nearly every one-word target input gives very inaccurate input representations, with $a_g$ as any of 'George', 'The', 'when', or 'clearly' yielding $a_g = \mathtt{que}$, and inputs with two or only a few words are often quite inaccurately representation via cosine similarity.
+
+```
+prompt = 'Boba Fett'
+Nacional**** têteстори
+
+prompt = 'Boba Fett was a bounty hunder'
+фами函WNזWN поддерpersoninasacjęлище
+
+prompt = 'Boba Fett was a legendary bounty hunter in the outer rim'
+Boba Fett wasondissement legendary bounty hunter in the outer rim
+```
+
+This is a marked contrast from performing gradient descent on the input embedding, where cosine similarity yields accurate representations even for one-word inputs (ie 'George' is 'George').
 
 ### Noise on a Discreet Channel
 
