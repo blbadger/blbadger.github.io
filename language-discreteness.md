@@ -586,7 +586,45 @@ $$
 
 This is notable because smaller language models are capable of accurate input representation before training, but only for one or at most two transformer blocks.  But with increased model size, trained models are capable of fairly accurate input representation even in relatively deep layers.
 
-### Large models exhibit poor direct input representation
+It may also be wondered whether we can recover accurate input representations by optimizing a different metric on a hidden layer output.  Earlier on this page we saw that cosine similarity used as a metric for GPT-2 models was incapable of accurate input representation, but it is worth exploring whether this is the case now that we have a larger model to work with.
+
+To re-iterate, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$, and this will be done by maximizing the cosine similarity between $O(a, \theta)$ and $O(a_g, \theta)$.
+
+A first experiment is not promising: given the same prompt as above ('The sky is blue') after $N=500$ iterations of gradient descent such that $\phi < 0.05$ we have
+
+$$
+a_g = \mathtt{WNWNWNWN}
+$$
+
+but the slight change to 'The sky is blue.' yields
+
+$$
+a_g = \mathtt{The \; sky \; is \; blue2}
+$$
+
+'The sky is red or blue depending on the time of day'
+
+$$
+a_g = \mathtt{The \; sky \; is  \; blue  \; or \; red \; depending \; on \; the \; time \; OF \; day}
+$$
+
+$$
+a = \mathtt{This \; is \; a \; prompt \; sentence.}
+$$
+
+We find the same tendancy for poorer input representations at deeper layers (observed above for an L1 metric distance loss) to be the case for cosine similarity loss too. For example, at block 4 of Llama 7b we have
+
+$$
+a_g = \mathtt{This \; is \; a \; prompt \; sentence \; SU}
+$$
+
+but at block 12 we have
+
+$$
+a_g = \mathtt{Thusieraución \; prompt \; Jersey \; Culture}
+$$
+
+### Large models exhibit poor direct input representation when minimizing hidden layer L1 distance but not cosine similarity
 
 In the last section we saw that very large models are capable of accurate indirect input representation when gradient descent performed on the input embedding, rather than directly on the input itself.  It may be wondered whether similarly accurate input representations are found from the same models if gradient descent is performed on the inputs diectly, after converting discrete token integers to a continuous vector space equivalent to those discrete tokens.
 
@@ -606,7 +644,6 @@ class InputModel(nn.Module):
 
 		for i in range(1):
 			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
-
 		return x
 ```
 
@@ -638,13 +675,25 @@ $$
 
 where $\phi > 0.9$.
 
-For $a= \mathtt{This \; is \; a \; somewhat \; longer \; prompt \; sentence.}$ we have at $\phi = 0.76$
+For 
+
+$$
+a= \mathtt{This \; is \; a \; somewhat \; longer \; prompt \; sentence.}
+$$ 
+
+we have at $\phi = 0.76$
 
 $$
 a_g = \mathtt{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
 $$
 
-or given an $a = \mathtt{The \; sky \; is \; a \; light \; blue \; today \; -}$ at $\phi=0.75$ we have
+or given 
+
+$$
+a = \mathtt{The \; sky \; is \; a \; light \; blue \; today.}
+$$ 
+
+at $\phi=0.75$ we have
 
 $$
 a_g = \mathtt{primit \; sky \; is \; a \; light \; blue \; today \; –}
@@ -655,7 +704,6 @@ It is interesting to note that cosine similarity loss does not yield accurate in
 $$
 a_g = mathtt{sier \; fixeseden}
 $$
-
 
 ### Noise on a Discreet Channel
 
