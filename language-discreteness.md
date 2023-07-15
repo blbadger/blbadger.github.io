@@ -633,29 +633,28 @@ dai vba грудняóp поль
 It may be wondered whether or not a different metric would give a more accurate input representation, at least for the first transformer block of Llama 7b. Maximizing the cosine similarity (ie minimizing the angle $\phi$) between generated input $a_g$ and target input $a$ yields for the $a$ given above
 
 $$
-a_g = \mathtx{This \; is \; hasta \; prompt \; sentence}
+a_g = \mathtt{This \; is \; hasta \; prompt \; sentence}
 $$
 
 where $\phi > 0.9$.
 
-For the $a$ of 'This is a somewhat longer prompt sentence.' we have at $\phi = 0.76$
+For $a= \mathtt{This \; is \; a \; somewhat \; longer \; prompt \; sentence.}$ we have at $\phi = 0.76$
 
 $$
-a_g = \mathtx{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
+a_g = \mathtt{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
 $$
 
-or given an $a = \mathtx{The \; sky \; is \; a \; light \; blue \; today \; -}$ at $\phi=0.75$ we have
+or given an $a = \mathtt{The \; sky \; is \; a \; light \; blue \; today \; -}$ at $\phi=0.75$ we have
 
 $$
-a_g = \mathtx{primit \; sky \; is \; a \; light \; blue \; today \; –}
+a_g = \mathtt{primit \; sky \; is \; a \; light \; blue \; today \; –}
 $$
 
-It is interesting to note that cosine similarity loss does not yield accurate input representations for small inputs.  For example, given $a = \mathtx{The \; sky \; is}$ the first block representation is
+It is interesting to note that cosine similarity loss does not yield accurate input representations for small inputs.  For example, given $a = \mathtt{The \; sky \; is}$ the first block representation is
 
 $$
-a_g = {sier \; fixeseden}
+a_g = mathtt{sier \; fixeseden}
 $$
-
 
 
 ### Noise on a Discreet Channel
