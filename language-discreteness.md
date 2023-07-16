@@ -221,20 +221,20 @@ $$
 e_{n+1} = e_n - \eta \nabla_{e_n} \left( 1 - \cos (\phi) \right)
 $$
 
-where $\eta$ is a tunable learning rate parameter. Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: reducing $\cos (\phi)$ to $0$ via 2000 iterations yields embeddings that may be inverted to give
+where $\eta$ is a tunable learning rate parameter. Performing gradient descent on the input of the first transformer block of a trained GPT-2 to minimize $\cos(\phi)$ turns out to lead to no more accurate input embeddings than before: increasing $\cos (\phi)$ to $0.96$ via 500 iterations yields embeddings that may be inverted to give
 
 ```
-Downloadha.""��MpServeriverpool
-� httquerqueenglish Leilan
-ARDISitudinalァidia guiActiveUn
-�士)</etheless Vaugh��
-?).andoエル millennOrderable
+[] become Holiday trollingMa calls
+ UnierierylCAP PearlOTA
+Hard obviousbys abiding�士73
+arcer underCoolmanship autobiography outcomes
+ slog bringsquaDirgap {:
 ```
 
-Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') the one transformer decoder module from GPT-2 cannot accurately represent the input.
+Even for a very limited vocabulary ('The sky is blue or red depending on the time of day.') the one transformer decoder module from GPT-2 cannot accurately represent the input, although a significant improvement is made.
 
 $$
-\mathtt{depending \; depending \; time \; depending.}
+\mathtt{This \; attached \; with \; prompt \; sentenceThis.}
 $$
 
 Therefore gradient descent is successful in minimizing the cosine distance between the output of the generated and target input (in this case embedding), but the generated input corresponds to nonsense.  The same is true even for single transformer decoders from untrained GPT-2 models, and as we earlier found that these modules can yield accurate input representations using gradient descent on the $L^1$ norm of the output difference, the cosine similarity may be viewed as a weaker measure for representation tasks.
@@ -625,7 +625,7 @@ $$
 but at block 12 we have
 
 $$
-a_g = \mathtt{Thusieraución \; prompt \; Jersey \; Culture}
+a_g = \mathtt{Thusieraución \; prompt \; Jersey \; Culture} 
 $$
 
 ### Large models exhibit poor direct input representation when minimizing hidden layer L1 distance but not cosine similarity
