@@ -209,16 +209,18 @@ It appears that Feature 0 corresponds to a measure of something similar to 'brig
 
 ### Graphs on ImageNet classes
 
-Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses with regards to the input images, as there are many more features in that layer and many more layers in the model. To be specific, the embedding diagram in the last section denotes that 'Jay' is the ImageNet class most similar to 'Indigo Bunting' for GoogleNet, but only for two out of over 700 features of one specific layer.
+Investigating which ImageNet categories are more or less similar than each other was explored in the previous section using two features from one layer of a chosen model (GoogleNet).  But in one sense, these embeddings are of limited use, because they represent only a very small portion of the information that the model possesses in respect to the input images, as there are many more features in that layer and many more layers in the model. To be specific, the embedding diagram in the last section denotes that 'Jay' is the ImageNet class most similar to 'Indigo Bunting' for GoogleNet, but only for two out of over 700 features of one specific layer.
 
 Each of the features and layers are important to the final classification prediction, and moreover these layers and features are formed by non-linear functions such that the features and layers are non-additive.  Therefore although the embeddings of the output categories using feature activation as the basis space is somewhat useful, it is by no means comprehensive.  Another approach may be in order in which the entire model is used, rather than a few features.
 
-There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the output vector $y = O(a', \theta)$ and observe the magnitudes of the components of this vector.  
+There does exist a straightforward way to determine which ImageNet categories are more or less similar than each other: we can simply take the model output (with ImageNet classification occuring in the last layer) vector given the generated input $a_g$ which is $y = O(a_g, \theta)$ and observe the magnitudes of the components of this vector.  Assuming that the model correctly identifies the generated input, the component of $y$ that is largest will be the target class that $a_g$ was generated to represent.  The second-largest component corresponds to a different class that the model considers to be 'most similar' to the target class.
+
+![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbor_explanation.png)
+
 There exists a problem with using the this approach as a true similarity metric, however: $y = O(a', \theta)$ is not guaranteed to be symmetric, or in other words generally $m(a, b) \neq m(b, a)$.  This means that we cannot use the findings from the generation metric to make a vector space or any other metric space as the allowable definition of a distance metric is not followed.  
 
 But because pairs of points exhibit an asymmetric measurement, we cannot portray this as a metric space.  But it is possible to portray these points as an abstract graph, with nodes corresponding to ImageNet categories (ie outputs) and verticies corresponding to relationships between them.  We will start by only plotting the 'nearest neighbor' relationship, which is defined as the output that is most activated by the generated image distinct from the target output $\widehat y$.  
 
-![googlenet embedding]({{https://blbadger.github.io}}/neural_networks/nearest_neighbor_explanation.png)
 
 ```python
 import networkx as nx
