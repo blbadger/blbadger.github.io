@@ -720,7 +720,7 @@ $$
 It is interesting to note that cosine similarity loss does not yield accurate input representations for small inputs.  For example, given $a = \mathtt{The \; sky \; is}$ the first block representation is
 
 $$
-a_g = mathtt{sier \; fixeseden}
+a_g = \mathtt{sier \; fixeseden}
 $$
 
 Nearly every one-word target input gives very inaccurate input representations, with $a_g$ as any of 'George', 'The', 'when', or 'clearly' yielding $a_g = \mathtt{que}$, and inputs with two or only a few words are often quite inaccurately representation via cosine similarity.
