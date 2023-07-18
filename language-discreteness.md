@@ -682,7 +682,7 @@ $$
 such that gradient descent on a vectorized version of the input $a_n$ as follows:
 
 $$
-e_{n+1} = e_n - \eta \nabla_{a_n} \left( 1 - \cos (\phi) \right)
+a_{n+1} = a_n - \eta \nabla_{a_n} \left( 1 - \cos (\phi) \right)
 $$
 
 Maximizing the cosine similarity (ie minimizing the angle $\phi$) between generated input $a_g$ and target input $a$ yields for the $a$ given above
@@ -705,7 +705,7 @@ $$
 a_g = \mathtt{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
 $$
 
-or given 
+For another target sentence
 
 $$
 a = \mathtt{The \; sky \; is \; a \; light \; blue \; today.}
@@ -737,6 +737,16 @@ Boba Fett wasondissement legendary bounty hunter in the outer rim
 ```
 
 This is a marked contrast from performing gradient descent on the input embedding, where cosine similarity yields accurate representations even for one-word inputs (ie 'George' is 'George').
+
+Why would the use of cosine similarity be unable to give accurate input representations when applied to input space of very small inputs but not larger ones? It is helpful to consider here what exactly is being optimized: the cosine of $\phi$ is equal to the dot product of two vectors divided by the norms of those vectors multiplied together.
+
+One of the operations in the self-attention module is a dot product transformation,
+
+$$
+
+$$
+
+The trained Llama model may therefore be thought to use the dot product to distinguish between various words.
 
 ### Noise on a Discreet Channel
 
