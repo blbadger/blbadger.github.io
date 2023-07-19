@@ -84,6 +84,84 @@ called called called called called
 ItemItemItemItemItem
 
 
+llama 13b
+
+Block 1
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+
+Block 1-4
+[:, :, 0]
+<unk><unk><unk><unk><unk>
+
+Block 1-8
+[:, :, 0]
+<unk><unk><unk><unk><unk>
+
+Block 1-4 
+[:, 0, 2000]
+called� year раreturn
+[:, 1, 2000]
+ther called year раreturn
+[:, 2, 2000]
+ther� called раreturn
+
+Block 31
+[:, :, 2000] top5
+called called called called called
+ther Consultado Webertreturn
+itoные yearION Port
+childrenvecAF Grerr
+display connectdbhing job
+
+block 1
+[:, :, 2000] top5
+called called called called called
+ther� year раreturn
+itovec Web ·ATE
+         ConsultadoAFhingја
+childrenpacedbert Port
+
+block 1 
+[:, :, 0-4]
+<unk><unk><unk><unk><unk>
+<s><s><s><s><s>
+</s></s></s></s></s>
+�����
+     
+block 1
+[:, 0-2, :]
+ther� year раreturn
+therige year раreturn
+ther� year раreturn
+
+block 1-4
+[:, 0-2, :]
+tamb would си]{da
+column tamb mar marity
+cal would tambIONils
+
+
+block 1-8
+[:, 0-2, :]
+ports mar mar user more
+endports marре user
+tamb marports Elie
+
+block 1-12
+[:, 0, :]
+ports mar tamb El mar
+[:, 1, :]
+ports mar cды
+[:, 2, :]
+tamb marportsiche mar
+
+
+
 
 
 
