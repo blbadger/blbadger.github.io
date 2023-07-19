@@ -29,8 +29,12 @@ It is not clear that this is actually the case for large language models, howeve
 
 Secondly, [elsewhere](https://blbadger.github.io/language-discreteness.html) we have already seen that gradient descent on a language model embedding is capable of recovering a text input that exactly matches some given target. If $e_g$ in that case were not sufficiently near real inputs this procedure would have a vanishingly low probability of success.
 
+With this in mind, we can go about observing
+
+###  Llama features are aligned
+
 Block 1
-[:, :, 0-4]
+[:, :, 0-3]
 <unk><unk><unk><unk><unk>
 <s><s><s><s><s>
 </s></s></s></s></s>
@@ -78,12 +82,12 @@ are Iger calledlass
 are Iger Also called
 
 
-block 32?
+block 32
 [:, :, 2000-2001]
 called called called called called
 ItemItemItemItemItem
 
-
+===========================================================================
 llama 13b
 
 Block 1
@@ -160,6 +164,78 @@ ports mar cды
 [:, 2, :]
 tamb marportsiche mar
 
+
+============================================================
+Llama 30b
+Block 1
+[:, :, 0-4]
+<unk><unk><unk><unk><unk>
+<s><s><s><s><s>
+</s></s></s></s></s>
+     
+
+[:, 0-4, :]
+********UNlearason current
+******** statlearason current
+********UNlearason current
+********UN suason OP
+********UN suason current
+
+[:, :, 0:4]
+<unk><s><s></s> 
+
+[:, :, 400-401]
+hththththt
+codecodecodecodecode
+
+
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+
+[:, 0, 2000]
+called statlearason current
+[:, 1, 2000]
+******** calledlearason current
+[:, 2, 2000]
+******** stat calledason current
+[:, 3, 2000]
+******** statlear called current
+[:, 3, 2001]
+******** statlearItem current
+
+Blocks 1-4
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+
+blocks 1-4
+[:, 0-2, :]
+osseringering How
+oss yearsering yearsoss
+estooss yearsoss
+
+blocks 1-32 (50 iterations)
+[:, :, 0-2]
+<unk> implement<unk><unk><unk>
+</s>big</s></s></s>
+
+[:, :, 2000-2003]
+called planlearason current
+******** doesn())ason current
+ura statlearason current
+vecologicalvecvecvec
+
+block 32
+[:, :, 2000-2003]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
 
 
 
