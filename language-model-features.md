@@ -8,7 +8,7 @@ One way to address this question is to observe that most deep learning models ar
 
 Feature visualization studies have shown that vision models learn to identify and generate shapes via a hierarchical sequence of shape speceficity model layer: early convolutional (or transformer) layers are most activated by simple patterns or repeated shapes whereas deeper layers are most activated by specific objects or scenes.  For much more information on this topic, see [this page](https://blbadger.github.io/feature-visualization.html).  
 
-### Llama features explored
+### Introduction
 
 The fundamental challenge of applying input gradient descent or ascent methods is that language model inputs are discrete rather than continuous.  Therefore either some transformation must be made on the input in order to transform it into a continuous and differentiable space or else some other value must be substituted. A logical choice for this other value is to use the embedding of the inputs, as each input has a unique embedding that is continuous and differentiable.  
 
@@ -21,38 +21,76 @@ $$
 This procedure was considered by previously by [Poerner and colleages](https://aclanthology.org/W18-5437/) but thought to yield generated embeddings $e_g$ that were not sufficiently similar to real word embeddings as judged by cosine distance, which is simply the cosine of the angle between angles of points in space.  For vectors $a$ and $b$
 
 $$
-a \cdot b = ||a ||_2 *||b||_2 \cos \theta \\
-\cos \theta = \frac{a \cdot b}{|a ||_2 *||b||_2}
+a \cdot b = ||a ||_2 *||b||_2 \cos \phi \\
+\cos \phi = \frac{a \cdot b}{|a ||_2 *||b||_2}
 $$
 
 It is not clear that this is actually the case for large language models, however. This is because the value of cosine distance is extraordinarily dependent on the number of parameters of $a$ and $b$, with higher-dimensional vectors yielding smaller cosine distances. When $\cos \theta$ of the embedding of a trained Llama 7b is measured between an $e_g$ that most closely matches 'calling' we find that this value is much larger than the cosine distance between embeddings of 'calling' and 'called'.
 
 Secondly, [elsewhere](https://blbadger.github.io/language-discreteness.html) we have already seen that gradient descent on a language model embedding is capable of recovering a text input that exactly matches some given target. If $e_g$ in that case did not sufficiently resemble real inputs this procedure would have a vanishingly low probability of success.
 
-With this in mind, we can go about observing what inputs activate each neuron in various layers of language models.
+With this in mind, we can go about observing what inputs activate each neuron in various layers of language models.  We will consider the outputs of transformer-based language models that are sometimes described as having a shape $[batch, \; sequence, \; feature]$.  We will generate only 1-element batches, so on this page any output of shape $[:, n, m]$ is equivalent to the ouptut $[0, n, m]$ where $[:]$ indicates all of the elements of a given tensor index.
 
-###  Llama features are aligned across layers
+The following figure provides more detail into what exactly we are considering a 'feature'.  Each 'feature' is essentially a single neuron's activation of the output of a transformer block (although it could also be assigned as the output of a transformer's self-attention module as this is the same shape).  
 
 ![llm_features](https://blbadger.github.io/deep-learning/llm_features_explained.png)
 
-Block 1
-[:, :, 0-3]
+To find an input $a_g$ that represents each 'feature' of output layer $O^l$, we want to find an input $a_g$ that maximized the activation of some subset of that output layer for the model $\theta,
+
+$$
+a_g = \argmax_a O^l_f(a, \theta)
+$$
+
+with the reasoning that the input $a_g$ gives a large output in the feature $O^l_f$ and therefore is most emblematic of the sort of input that this feature recognizes in real inputs. We can find a good approximation of $a_g$ via repeated gradient descent on the input where the objective function is a metric between a tensor of the same shape as $O^l_f$ comprised of some large constant $C$ and the output values as follows:
+
+$$
+a_{n+1} = a_n + \eta \nabla_{a_n} ( C - O^l_f(a_n, \theta))
+$$
+
+###  Llama features are aligned across layers
+
+Before examining which parts of a language model respond to what input, it is helpful to recall what we learned from the same question applied to vision models.  For both [convolutional](https://blbadger.github.io/feature-visualization.html) as well as [transformer](https://blbadger.github.io/transformer-features.html) -based vision models, the main finding was that shallow layers (near the input) learn features that detect simple patterns like repeated lines or checkers, whereas deeper layers learn to identify features that are much more complex (an animal's face, for instance, or a more complicated and irregular pattern).  
+
+The first modules of language models appear to give a similar result: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the output of the first transformer block ($O^l = 1$ if one-indexed)
+
+$$
+O_f = [:, :, 0] = \\
 <unk><unk><unk><unk><unk>
-<s><s><s><s><s>
-</s></s></s></s></s>
-     
+$$
+
+$$
+O_f = [:, :, 1] \\
+a_g = <s><s><s><s><s>
+$$
+
+$$
+O_f = [:, :, 2] \\
+a_g = </s></s></s></s></s>
+$$
+
+$$
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+$$
+
+$$
+O_f = [:, 0 - 4, 2000] \\
+\color{red}{called} Iger Alsolass \\
+are \color{red}{called}ger Alsolass \\
+are I \color{red}{called} Alsolass \\
+are Iger \color{red}{called}lass \\
+are Iger Also \color{red}{called} \\
+$$
+
+For any given transformer neuron, these features are typically very different between different layers, such that for vision transformersit is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
+
 [:, :, 0:4]
 </s><unk><s><s><unk>
-     
-[:, :, 400-404]
-hththththt
-codecodecodecodecode
-G G G G G
-ateateateateate
-essessessessess
 
-[:, :, 400:404]
-Gateate G G
 
 [:, 0-4, :]
 areremger Alsolass
@@ -61,26 +99,12 @@ arerem mult Alsolass
 areremger sonlass
 areremger Alsolass
 
-[:, :, 2000-2004]
-called called called called called
-ItemItemItemItemItem
-urauraurauraura
-vecvecvecvecvec
-emeemeemeemeeme
+
 
 [:, :, 2000:2004]
 vec calledura calledvec
 
-[:, 0, 2000]
-called Iger Alsolass
-[:, 1, 2000]
-are calledger Alsolass
-[:, 2, 2000]
-are I called Alsolass
-[:, 3, 2000]
-are Iger calledlass
-[:, 4, 2000]
-are Iger Also called
+
 
 
 block 32
