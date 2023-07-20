@@ -47,7 +47,7 @@ $$
 a_{n+1} = a_n + \eta \nabla_{a_n} ( C - O^l_f(a_n, \theta))
 $$
 
-###  Llama features are aligned across layers
+### Llama features are nearly identical between models
 
 Before examining which parts of a language model respond to what input, it is helpful to recall what we learned from the same question applied to vision models.  For both [convolutional](https://blbadger.github.io/feature-visualization.html) as well as [transformer](https://blbadger.github.io/transformer-features.html) -based vision models, the main finding was that shallow layers (near the input) learn features that detect simple patterns like repeated lines or checkers, whereas deeper layers learn to identify features that are much more complex (an animal's face, for instance, or a more complicated and irregular pattern).  
 
@@ -88,34 +88,27 @@ are \; Iger \; \color{red}{called}lass \\
 are \; Iger \; Also \; \color{red}{called} \\
 $$
 
+When we combine features, somewhat unpredictable outputs are formed.  For example, optimizing an input for the first four features (denoted `0:4`, note that this is non-inclusive) yileds
+$$
+O_f = [:, :, 0:4]
+a_g = </s><unk><s><s><unk>
+$$
+
+and four more features give
+
+$$
+O_f[:, :, 2000:2004]
+a_g = vec calledura calledvec
+$$
+
 For any given transformer neuron, these features are typically very different between different layers, such that for vision transformersit is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
-
-[:, :, 0:4]
-</s><unk><s><s><unk>
-
-
-[:, 0-4, :]
-areremger Alsolass
-are Iger Alsolass
-arerem mult Alsolass
-areremger sonlass
-areremger Alsolass
-
-
-
-[:, :, 2000:2004]
-vec calledura calledvec
-
-
-
 
 block 32
 [:, :, 2000-2001]
 called called called called called
 ItemItemItemItemItem
 
-
-### Llama features are nearly identical between models
+###  Llama features are aligned across layers
 
 llama 13b
 
