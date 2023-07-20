@@ -673,7 +673,7 @@ dai vba грудняóp поль
 
 It may be wondered whether or not a different metric would give a more accurate input representation, at least for the first transformer block of Llama 7b. 
 
-To be more precise, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$ by maximizing the cosine similarity between the output of the target input $a$, denoted $O(a, \theta)$ and the generated input $a_g$, $O(a_g, \theta)$ via gradient descent on an initially random input $a_0$.  The cosine distance may be calculated as
+To be more precise, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$ by maximizing the cosine similarity between the output of the target input $a$, denoted $O(a, \theta)$ and the generated input $a_g$, $O(a_g, \theta)$ via gradient descent on an initially random input $a_0$.  The cosine distance may be calculated on vectorized versions of these outputs, denoted $O()^*$, as follows:
 
 $$
 \cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * |||O(a_g, \theta)^* ||_2}
@@ -739,14 +739,6 @@ Boba Fett wasondissement legendary bounty hunter in the outer rim
 This is a marked contrast from performing gradient descent on the input embedding, where cosine similarity yields accurate representations even for one-word inputs (ie 'George' is 'George').
 
 Why would the use of cosine similarity be unable to give accurate input representations when applied to input space of very small inputs but not larger ones? It is helpful to consider here what exactly is being optimized: the cosine of $\phi$ is equal to the dot product of two vectors divided by the norms of those vectors multiplied together.
-
-One of the operations in the self-attention module is a dot product transformation,
-
-$$
-
-$$
-
-The trained Llama model may therefore be thought to use the dot product to distinguish between various words.
 
 ### Noise on a Discreet Channel
 
