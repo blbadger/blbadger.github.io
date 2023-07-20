@@ -264,11 +264,11 @@ $$
 
 $$
 O_f = [:, :, 2000-2004] \\
-a_g = \mathtx{called \; called \; called \; called \; called} \\
-\mathtx{ItemItemItemItemItem} \\
-\mathtx{urauraurauraura}
-\mathtx{vecvecvecvecvec}
-\mathtx{emeemeemeemeeme}
+a_g = \mathtt{called \; called \; called \; called \; called} \\
+\mathtt{ItemItemItemItemItem} \\
+\mathtt{urauraurauraura} \\
+\mathtt{vecvecvecvecvec} \\
+\mathtt{emeemeemeemeeme} \\
 $$
 
 ### [Feature Visualization I](/feature-visualization.md)
