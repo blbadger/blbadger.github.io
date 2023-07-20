@@ -68,6 +68,8 @@ O_f = [:, :, 2] \\
 a_g = </s></s></s></s></s>
 $$
 
+on this page, we will use a shorthanded notation for multiple features: $0-4$ for instance indicates features 0, 1, 2, 3, 4 (inclusive) in succession.
+
 $$
 [:, :, 2000-2004]
 called called called called called
@@ -79,11 +81,11 @@ $$
 
 $$
 O_f = [:, 0 - 4, 2000] \\
-\color{red}{called} Iger Alsolass \\
-are \color{red}{called}ger Alsolass \\
-are I \color{red}{called} Alsolass \\
-are Iger \color{red}{called}lass \\
-are Iger Also \color{red}{called} \\
+\color{red}{called}\; Iger \; Alsolass \\
+are \; \color{red}{called}ger \; Alsolass \\
+are \; I \; \color{red}{called} \; Alsolass \\
+are \; Iger \; \color{red}{called}lass \\
+are \; Iger \; Also \; \color{red}{called} \\
 $$
 
 For any given transformer neuron, these features are typically very different between different layers, such that for vision transformersit is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
