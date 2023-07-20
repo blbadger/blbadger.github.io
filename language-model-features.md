@@ -38,7 +38,7 @@ The following figure provides more detail into what exactly we are considering a
 To find an input $a_g$ that represents each 'feature' of output layer $O^l$, we want to find an input $a_g$ that maximized the activation of some subset of that output layer for the model $\theta,
 
 $$
-a_g = \argmax_a O^l_f(a, \theta)
+a_g = \underset{a}{\mathrm{arg \; max}} O^l_f(a, \theta)
 $$
 
 with the reasoning that the input $a_g$ gives a large output in the feature $O^l_f$ and therefore is most emblematic of the sort of input that this feature recognizes in real inputs. We can find a good approximation of $a_g$ via repeated gradient descent on the input where the objective function is a metric between a tensor of the same shape as $O^l_f$ comprised of some large constant $C$ and the output values as follows:
