@@ -27,18 +27,19 @@ $$
 
 It is not clear that this is actually the case for large language models, however. This is because the value of cosine distance is extraordinarily dependent on the number of parameters of $a$ and $b$, with higher-dimensional vectors yielding smaller cosine distances. When $\cos \theta$ of the embedding of a trained Llama 7b is measured between an $e_g$ that most closely matches 'calling' we find that this value is much larger than the cosine distance between embeddings of 'calling' and 'called'.
 
-Secondly, [elsewhere](https://blbadger.github.io/language-discreteness.html) we have already seen that gradient descent on a language model embedding is capable of recovering a text input that exactly matches some given target. If $e_g$ in that case were not sufficiently near real inputs this procedure would have a vanishingly low probability of success.
+Secondly, [elsewhere](https://blbadger.github.io/language-discreteness.html) we have already seen that gradient descent on a language model embedding is capable of recovering a text input that exactly matches some given target. If $e_g$ in that case did not sufficiently resemble real inputs this procedure would have a vanishingly low probability of success.
 
-With this in mind, we can go about observing
+With this in mind, we can go about observing what inputs activate each neuron in various layers of language models.
 
-###  Llama features are aligned
+###  Llama features are aligned across layers
+
+![llm_features](https://blbadger.github.io/deep-learning/llm_features_explained.png)
 
 Block 1
 [:, :, 0-3]
 <unk><unk><unk><unk><unk>
 <s><s><s><s><s>
 </s></s></s></s></s>
-     
      
 [:, :, 0:4]
 </s><unk><s><s><unk>
@@ -87,7 +88,9 @@ block 32
 called called called called called
 ItemItemItemItemItem
 
-===========================================================================
+
+### Llama features are nearly identical between models
+
 llama 13b
 
 Block 1
@@ -164,8 +167,8 @@ ports mar cды
 [:, 2, :]
 tamb marportsiche mar
 
+### Heterogeneous features in deep large Llama
 
-============================================================
 Llama 30b
 Block 1
 [:, :, 0-4]
