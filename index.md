@@ -260,6 +260,17 @@ $$
 </body>
 </html>
 
+### [Language Features](/language-model-features.md)
+
+$$
+O_f = [:, :, 2000-2004] \\
+a_g = \mathtx{called \; called \; called \; called \; called} \\
+\mathtx{ItemItemItemItemItem} \\
+\mathtx{urauraurauraura}
+\mathtx{vecvecvecvecvec}
+\mathtx{emeemeemeemeeme}
+$$
+
 ### [Feature Visualization I](/feature-visualization.md)
 
 ![features 2](/neural_networks/featuremap_cover2.png)
