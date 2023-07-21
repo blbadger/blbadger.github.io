@@ -8,7 +8,7 @@ One way to address this question is to observe that most deep learning models ar
 
 Feature visualization studies have shown that vision models learn to identify and generate shapes via a hierarchical sequence of shape speceficity model layer: early convolutional (or transformer) layers are most activated by simple patterns or repeated shapes whereas deeper layers are most activated by specific objects or scenes.  For much more information on this topic, see [this page](https://blbadger.github.io/feature-visualization.html).  
 
-### Introduction
+### Background
 
 The fundamental challenge of applying input gradient descent or ascent methods is that language model inputs are discrete rather than continuous.  Therefore either some transformation must be made on the input in order to transform it into a continuous and differentiable space or else some other value must be substituted. A logical choice for this other value is to use the embedding of the inputs, as each input has a unique embedding that is continuous and differentiable.  
 
@@ -69,7 +69,9 @@ where $a_g$ is a vector that can be converted to a series of tokens by taking th
 
 Before examining which parts of a language model respond to what input, it is helpful to recall what we learned from the same question applied to vision models.  For both [convolutional](https://blbadger.github.io/feature-visualization.html) as well as [transformer](https://blbadger.github.io/transformer-features.html) -based vision models, the main finding was that shallow layers (near the input) learn features that detect simple patterns like repeated lines or checkers, whereas deeper layers learn to identify features that are much more complex (an animal's face, for instance, or a more complicated and irregular pattern).  
 
-The first modules of language models appear to give a similar result: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the output of the first transformer block ($O^l = 1$ if one-indexed)
+We focus here on the Llama family of models introduced by [Touvron and colleages](https://arxiv.org/abs/2302.13971).
+
+The shallowest modules appear to give a similar result as what was observed for vision models: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the output of the first transformer block ($O^l = 1$ if one-indexed)
 
 $$
 O_f = [:, :, 0] = \\
@@ -120,8 +122,9 @@ O_f[:, :, 2000:2004]
 a_g = vec calledura calledvec
 $$
 
+This is all to be expected given what was learned from features in vision models. But it is completely unexpected to find that different-sized models (trained on the same dataset)
 
-
+```
 Llama 13b
 Block 1
 [:, :, 2000-2004]
@@ -138,6 +141,7 @@ ItemItemItemItemItem
 urauraurauraura
 vecvecvecvecvec
 emeemeemeemeeme
+```
 
 It is worth considering how different this is compared to transformer-based models that are designed for vision tasks. 
 
@@ -146,7 +150,6 @@ It is worth considering how different this is compared to transformer-based mode
 ###  Llama features are aligned across layers
 
 For any given transformer neuron, these features are typically very different between different layers, such that for vision transformers it is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
-
 
 
 llama 7b 
@@ -181,13 +184,6 @@ ther called year раreturn
 [:, 2, 2000]
 ther� called раreturn
 
-Block 31
-[:, :, 2000] top5
-called called called called called
-ther Consultado Webertreturn
-itoные yearION Port
-childrenvecAF Grerr
-display connectdbhing job
 
 block 1
 [:, :, 2000] top5
@@ -231,11 +227,24 @@ ports mar cды
 [:, 2, :]
 tamb marportsiche mar
 
-It is important to note that this alignment of features across many layers of a transformer is not what was observed for vision models.  In that case, subsequent layers may have similar 
+It is important to note that this alignment of features across many layers of a transformer is not what was observed for vision models.  In that case, subsequent layers may have similar features but it is far from the case that every feature in each layer is identifiable from the last layer. In the figure below, it is clear that the features of the first four transformer blocks (where forward- and back-propegation occurs through all previous blocks to the input embedding) 
 
 ![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_layers_features.png)
 
+It may also be wondered what the features of each layer (without all preceeding layers) look like.  We see the same identical input representations in most layers of Llama 13b (or Llama 7b or 30b for that matter).  For example, for the 32nd transformer block of this model we see the same features as those we saw for the 1st transformer block.
+
+```
+O_f = [:, :, 2000-2003]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+```
+
+This is also not found in vision transformers: although certain features tend to be more or less identical across many transformer blocks the majority are not.
+
 ![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_singlelayers_features.png)
+
 
 ### Heterogeneous features in deep large Llama
 
@@ -303,12 +312,7 @@ called planlearason current
 ura statlearason current
 vecologicalvecvecvec
 
-block 32
-[:, :, 2000-2003]
-called called called called called
-ItemItemItemItemItem
-urauraurauraura
-vecvecvecvecvec
+
 
 
 
