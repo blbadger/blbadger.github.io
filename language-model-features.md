@@ -106,28 +106,51 @@ O_f = [:, 0 - 4, 2000] \\
 \mathtt{are \; Iger \; Also \; \color{red}{called}} \\
 $$
 
-When we combine features, somewhat unpredictable outputs are formed.  For example, optimizing an input for the first four features (denoted `0:4`, note that this is non-inclusive) yileds
+When we combine features, somewhat unpredictable outputs are formed.  For example, optimizing an input for the first four features (denoted `0:4`, note that this is non-inclusive) yields
 
 $$
 O_f = [:, :, 0:4]
 a_g = </s><unk><s><s><unk>
 $$
 
-and four more features give
+and four different features combined give
 
 $$
 O_f[:, :, 2000:2004]
 a_g = vec calledura calledvec
 $$
 
-For any given transformer neuron, these features are typically very different between different layers, such that for vision transformersit is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
 
+
+Llama 13b
+Block 1
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+
+Llama 30b
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+
+
+###  Llama features are aligned across layers
+
+For any given transformer neuron, these features are typically very different between different layers, such that for vision transformers it is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
+
+
+
+llama 7b 
 block 32
 [:, :, 2000-2001]
 called called called called called
 ItemItemItemItemItem
-
-###  Llama features are aligned across layers
 
 llama 13b
 
