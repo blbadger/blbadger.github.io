@@ -38,14 +38,32 @@ The following figure provides more detail into what exactly we are considering a
 To find an input $a_g$ that represents each 'feature' of output layer $O^l$, we want to find an input $a_g$ that maximized the activation of some subset of that output layer for the model $\theta,
 
 $$
-a_g = \underset{a}{\mathrm{arg \; max}} O^l_f(a, \theta)
+a_g = \underset{a}{\mathrm{arg \; max}} \; O^l_f(a, \theta)
 $$
 
-with the reasoning that the input $a_g$ gives a large output in the feature $O^l_f$ and therefore is most emblematic of the sort of input that this feature recognizes in real inputs. We can find a good approximation of $a_g$ via repeated gradient descent on the input where the objective function is a metric between a tensor of the same shape as $O^l_f$ comprised of some large constant $C$ and the output values as follows:
+with the reasoning that the input $a_g$ gives a large output in the feature $O^l_f$ and therefore is most emblematic of the sort of input that this feature recognizes in real inputs. 
+
+Language inputs are fundamentally discrete, and so we cannot simply perform gradient descent on the input as was done for vision models. We can, however, perform gradient descent on the embedding of an input, which is defined as the matrix multiplication of the input $a$ and an embedding weight $e$. For language models the input is typically a series of integers which is converted into a vector space embedding via a specialized weight matrix $W$.  We will denote this mapping as follows:
 
 $$
-a_{n+1} = a_n + \eta \nabla_{a_n} ( C - O^l_f(a_n, \theta))
+e = Wa
 $$
+
+and ignore the fact that $a$ cannot be multiplied directly to a weight matrix as it is not a vector for now. 
+
+We can use gradient descent on the input's embedding where the objective function is a distance metric between a tensor of the same shape as $O^l_f$ comprised of some large constant $C$ and the output values as follows.  Here we choose an $L^1$ metric on the output.
+
+$$
+e_{n+1} = e_n + \eta \nabla_{e_n} (||C - O^l_f(e_n, \theta)||_1)
+$$
+
+After $N$ iterations we generate $e_g$, and recover the input which maps to this embedding using the Moore-Penrose pseudoinverse
+
+$$
+a_g = W^+e_g
+$$
+
+where $a_g$ is a vector that can be converted to a series of tokens by taking the maximum value of each sequence element in $a_g$.
 
 ### Llama features are nearly identical between models
 
@@ -55,40 +73,41 @@ The first modules of language models appear to give a similar result: maximizing
 
 $$
 O_f = [:, :, 0] = \\
-<unk><unk><unk><unk><unk>
+a_g = \mathtt{<unk><unk><unk><unk><unk>}
 $$
 
 $$
 O_f = [:, :, 1] \\
-a_g = <s><s><s><s><s>
+a_g = \mathtt{<s><s><s><s><s>}
 $$
 
 $$
 O_f = [:, :, 2] \\
-a_g = </s></s></s></s></s>
+a_g = \mathtt{</s></s></s></s></s>}
 $$
 
 on this page, we will use a shorthanded notation for multiple features: $0-4$ for instance indicates features 0, 1, 2, 3, 4 (inclusive) in succession.
 
 $$
-[:, :, 2000-2004]
-called called called called called
-ItemItemItemItemItem
-urauraurauraura
-vecvecvecvecvec
-emeemeemeemeeme
+O_f = [:, :, 2000-2004] \\
+\mathtt{called \; called \; called \; called \; called} \\
+\mathtt{ItemItemItemItemItem} \\
+\mathtt{urauraurauraura} \\
+\mathtt{vecvecvecvecvec} \\
+\mathtt{emeemeemeemeeme}
 $$
 
 $$
 O_f = [:, 0 - 4, 2000] \\
-\color{red}{called}\; Iger \; Alsolass \\
-are \; \color{red}{called}ger \; Alsolass \\
-are \; I \; \color{red}{called} \; Alsolass \\
-are \; Iger \; \color{red}{called}lass \\
-are \; Iger \; Also \; \color{red}{called} \\
+\mathtt{\color{red}{called}\; Iger \; Alsolass} \\
+\mathtt{are \; \color{red}{called}ger \; Alsolass} \\
+\mathtt{are \; I \; \color{red}{called} \; Alsolass} \\
+\mathtt{are \; Iger \; \color{red}{called}lass} \\
+\mathtt{are \; Iger \; Also \; \color{red}{called}} \\
 $$
 
 When we combine features, somewhat unpredictable outputs are formed.  For example, optimizing an input for the first four features (denoted `0:4`, note that this is non-inclusive) yileds
+
 $$
 O_f = [:, :, 0:4]
 a_g = </s><unk><s><s><unk>
