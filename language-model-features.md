@@ -139,6 +139,9 @@ urauraurauraura
 vecvecvecvecvec
 emeemeemeemeeme
 
+It is worth considering how different this is compared to transformer-based models that are designed for vision tasks. 
+
+![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_vs_l_features.png)
 
 ###  Llama features are aligned across layers
 
@@ -227,6 +230,12 @@ ports mar tamb El mar
 ports mar cды
 [:, 2, :]
 tamb marportsiche mar
+
+It is important to note that this alignment of features across many layers of a transformer is not what was observed for vision models.  In that case, subsequent layers may have similar 
+
+![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_layers_features.png)
+
+![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_singlelayers_features.png)
 
 ### Heterogeneous features in deep large Llama
 
