@@ -263,7 +263,7 @@ $$
 ### [Language Features](/language-model-features.md)
 
 $$
-O_f = [:, :, 2000-2004] \\
+O_f = [:, \; :, \; 2000-2004] \\
 a_g = \mathtt{called \; called \; called \; called \; called} \\
 \mathtt{ItemItemItemItemItem} \\
 \mathtt{urauraurauraura} \\
