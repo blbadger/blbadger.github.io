@@ -151,15 +151,8 @@ It is worth considering how different this is compared to transformer-based mode
 
 For any given transformer neuron, these features are typically very different between different layers, such that for vision transformers it is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
 
-
-llama 7b 
-block 32
-[:, :, 2000-2001]
-called called called called called
-ItemItemItemItemItem
-
+```
 llama 13b
-
 Block 1
 [:, :, 2000-2004]
 called called called called called
@@ -167,14 +160,6 @@ ItemItemItemItemItem
 urauraurauraura
 vecvecvecvecvec
 emeemeemeemeeme
-
-Block 1-4
-[:, :, 0]
-<unk><unk><unk><unk><unk>
-
-Block 1-8
-[:, :, 0]
-<unk><unk><unk><unk><unk>
 
 Block 1-4 
 [:, 0, 2000]
@@ -226,6 +211,17 @@ ports mar tamb El mar
 ports mar cды
 [:, 2, :]
 tamb marportsiche mar
+```
+
+```
+Block 1-4
+[:, :, 0]
+<unk><unk><unk><unk><unk>
+
+Block 1-8
+[:, :, 0]
+<unk><unk><unk><unk><unk>
+```
 
 It is important to note that this alignment of features across many layers of a transformer is not what was observed for vision models.  In that case, subsequent layers may have similar features but it is far from the case that every feature in each layer is identifiable from the last layer. In the figure below, it is clear that the features of the first four transformer blocks (where forward- and back-propegation occurs through all previous blocks to the input embedding) 
 
@@ -247,7 +243,7 @@ This is also not found in vision transformers: although certain features tend to
 
 
 ### Heterogeneous features in deep large Llama
-
+```
 Llama 30b
 Block 1
 [:, :, 0-4]
@@ -311,7 +307,7 @@ called planlearason current
 ******** doesn())ason current
 ura statlearason current
 vecologicalvecvecvec
-
+```
 
 
 
