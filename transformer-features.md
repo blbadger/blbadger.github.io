@@ -34,6 +34,8 @@ For clarity, the following figure shows the shape of the tensors we will referen
 
 It is important to note that the transformer's MLP is identically applied across all patches of the input, meaning that it has the same weights and biases no matter where in the image it is applied to.  This is similar to a convolutional operation in which one kernal is scanned across an entire image, except that for the vision transformer the feature information is stored in individual MLP neurons, whereas for convolutional models typically there are multiple neurons (3x3 and 5x5 are common convolutional filter sizes) required per feature.
 
+For Vision Transformer (ViT) base with 32x32 pixel patches (with 88M parameters total) we have
+
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_feature_map.png)
 
 Maximizing the activation of a subset of neurons in all patches yields the following feature maps:
@@ -44,7 +46,7 @@ For single neurons in individual patches we have
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vit_b_32_single_feature.png)
 
-Similarly when we observe features of ViT Large 16, which underwent weakly supervised pretraining before ImageNet training, we have
+Similarly when we observe features of ViT Large 16 (which contains ~300M parameters in this configuration) which underwent weakly supervised pretraining before ImageNet training, we have
 
 ![vit feature maps]({{https://blbadger.github.io}}/deep-learning/vitl16_4_1_16_feature_maps.png)
 
