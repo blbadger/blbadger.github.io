@@ -74,24 +74,24 @@ We focus here on the Llama family of models introduced by [Touvron and colleages
 The shallowest Llama modules yield similar results as what was observed for vision models: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the feature maps of first three neurons of the first Llama transformer (7 billion parameter version) block ($O^l = 1$ if one-indexed)
 
 $$
-O_f = [:, :, 0]  \\
+O_f = [:, \; :, \; 0]  \\
 a_g = \mathtt{<unk><unk><unk><unk><unk>}
 $$
 
 $$
-O_f = [:, :, 1] \\
+O_f = [:, \; :, \; 1] \\
 a_g = \mathtt{<s><s><s><s><s>}
 $$
 
 $$
-O_f = [:, :, 2] \\
+O_f = [:, \; :, \; 2] \\
 a_g = \mathtt{</s></s></s></s></s>}
 $$
 
 Here we will use a shorthanded notation for multiple features: $0-4$ for instance indicates features 0, 1, 2, 3, 4 (inclusive) in succession.
 
 $$
-O_f = [:, :, 2000-2004] \\
+O_f = [:, \; :, \; 2000-2004] \\
 \mathtt{called \; called \; called \; called \; called} \\
 \mathtt{ItemItemItemItemItem} \\
 \mathtt{urauraurauraura} \\
@@ -115,31 +115,30 @@ $$
 When we combine features, somewhat unpredictable outputs are formed.  For example, optimizing an input for the first four features (denoted `0:4`, note that this is non-inclusive) yields
 
 $$
-O_f = [:, :, 0:4]
+O_f = [:, \; :, \; 0:4] \\
 a_g = </s><unk><s><s><unk>
 $$
 
 and four different features combined give
 
 $$
-O_f[:, :, 2000:2004]
+O_f[:, \; :, \; 2000:2004] \\
 a_g = vec calledura calledvec
 $$
 
-This is all to be expected given what was learned from features in vision models. But it is completely unexpected to find that different-sized models (trained on the same dataset)
+This is all to be expected given what was learned from features in vision models. It comes as some surprise therefore to find that different-sized Llama models have nearly identical features for the dimensions they share in common.  For example, if we observe the features of the 13 billion or 30 billion parameter versions of Llama, we find exactly the same features that were present for the 7 billion parameter Llama.  Note that the 13 billion Llama was trained on the same text as the 7 billion Llama, but Llama 30b was trained on more text and thus was exposed to different training data.
 
 ```
-Llama 13b
 Block 1
-[:, :, 2000-2004]
+=================================
+Llama 13b [:, :, 2000-2004]
 called called called called called
 ItemItemItemItemItem
 urauraurauraura
 vecvecvecvecvec
 emeemeemeemeeme
 
-Llama 30b
-[:, :, 2000-2004]
+Llama 30b [:, :, 2000-2004]
 called called called called called
 ItemItemItemItemItem
 urauraurauraura
@@ -147,7 +146,7 @@ vecvecvecvecvec
 emeemeemeemeeme
 ```
 
-It is worth considering how different this is compared to transformer-based models that are designed for vision tasks. 
+It is worth considering how different this is compared to transformer-based models that are designed for vision tasks. For vision transformers, there is little similarity between identical features for different-sized models. The following figure shows models that were trained on an identical dataset that differ by size only, with each grid location showing the feature map of a certain feature in both models.
 
 ![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_vs_l_features.png)
 
