@@ -65,16 +65,16 @@ $$
 
 where $a_g$ is a vector that can be converted to a series of tokens by taking the maximum value of each sequence element in $a_g$.
 
-### Llama features are nearly identical between models
+### Llama features are aligned across different-sized models
 
 Before examining which parts of a language model respond to what input, it is helpful to recall what we learned from the same question applied to vision models.  For both [convolutional](https://blbadger.github.io/feature-visualization.html) as well as [transformer](https://blbadger.github.io/transformer-features.html) -based vision models, the main finding was that shallow layers (near the input) learn features that detect simple patterns like repeated lines or checkers, whereas deeper layers learn to identify features that are much more complex (an animal's face, for instance, or a more complicated and irregular pattern).  
 
-We focus here on the Llama family of models introduced by [Touvron and colleages](https://arxiv.org/abs/2302.13971).
+We focus here on the Llama family of models introduced by [Touvron and colleages](https://arxiv.org/abs/2302.13971), which are transformer decoder-based causal language models (meaning that these models are trained to predict the next token given a series of previous tokens).
 
-The shallowest modules appear to give a similar result as what was observed for vision models: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the output of the first transformer block ($O^l = 1$ if one-indexed)
+The shallowest Llama modules yield similar results as what was observed for vision models: maximizing the output of any given output neuron for all tokens (here limited to five tokens total) results in a string of identical words. For example, the feature maps of first three neurons of the first Llama transformer (7 billion parameter version) block ($O^l = 1$ if one-indexed)
 
 $$
-O_f = [:, :, 0] = \\
+O_f = [:, :, 0]  \\
 a_g = \mathtt{<unk><unk><unk><unk><unk>}
 $$
 
@@ -88,7 +88,7 @@ O_f = [:, :, 2] \\
 a_g = \mathtt{</s></s></s></s></s>}
 $$
 
-on this page, we will use a shorthanded notation for multiple features: $0-4$ for instance indicates features 0, 1, 2, 3, 4 (inclusive) in succession.
+Here we will use a shorthanded notation for multiple features: $0-4$ for instance indicates features 0, 1, 2, 3, 4 (inclusive) in succession.
 
 $$
 O_f = [:, :, 2000-2004] \\
@@ -98,6 +98,10 @@ O_f = [:, :, 2000-2004] \\
 \mathtt{vecvecvecvecvec} \\
 \mathtt{emeemeemeemeeme}
 $$
+
+This is very similar to what is observed for vision transformers: there, the feature maps of single neurons (ie with the same shape as is observed here) in shallow layers yield simple repeated patterns in which the input corresponding to each token is more or less identical ([see here](https://blbadger.github.io/transformer-features.html).
+
+If we observe feature maps from a single neuron at different tokens in the first module of Llama 7b, we find that the word.
 
 $$
 O_f = [:, 0 - 4, 2000] \\
