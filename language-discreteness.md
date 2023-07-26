@@ -784,6 +784,66 @@ Back to the question of whether untrained Llama models are capable of accurate i
 $$
 a = \mathtt{The \; sky \; is \; blue}
 a_g = \mathtt{ПерViewModeldfrac \; paths}
+$$
+
+It should be noted that untrained models appear to be worse at indirect input representation as well, as for the $a = \mathtt{The \; sky \; is \; blue.}$ an untrained 7b Llama gives 
+
+$$
+a_g = \mathtt{leaf \; leaf  \; Connect \; leaf}
+$$
+
+at $N=1500$, whereas the trained model is much more accurate (see above).
+
+### Information between tokens
+
+So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than MLP mixers at representing input regions not aligned to the output's token.
+
+For Llama 7b, it is clear that this language model also does not tend to mix information between tokens readily: given the prompt
+
+$$
+a = \mathtt{The sky is blue.}
+$$
+
+For the first transformer block we have
+
+$$
+a_g = \mathtt{The \; sky \; is \; blue \; fail}
+$$
+
+but if we restrict the output to $[:, :1, :]$ (ie only the first token's output) we have
+
+$$
+a_g = \mathtt{Thelex \; Sho \; advancedblock}
+$$
+
+and for $[:, :2, :]$ we have
+
+$$
+a_g = \mathtt{The \; sky \; Sho \; advancedblock}
+$$
+
+and $[:, :3, :]$ is
+
+$$
+a_g = \mathtt{The \; sky \; is \; advancedblock}
+$$
+
+and $[:, :4, ]$ is
+
+$$
+a_g = \mathtt{The \; sky \; is \; blueblock}
+$$
+
+Taking the output from deeper layers does not help, as
+```
+Block 4
+[:, :3, :]
+The sky is advanced courts
+
+Block 8
+[:, :3, :]
+The sky standards cardgy
+```
 
 ### Noise on a Discreet Channel
 
