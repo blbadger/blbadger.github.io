@@ -736,9 +736,54 @@ prompt = 'Boba Fett was a legendary bounty hunter in the outer rim'
 Boba Fett wasondissement legendary bounty hunter in the outer rim
 ```
 
-This is a marked contrast from performing gradient descent on the input embedding, where cosine similarity yields accurate representations even for one-word inputs (ie 'George' is 'George').
+This is a marked contrast from performing gradient descent on the input embedding, where cosine similarity yields accurate representations even for one-word inputs (ie 'George' is represented 'George').
 
 Why would the use of cosine similarity be unable to give accurate input representations when applied to input space of very small inputs but not larger ones? It is helpful to consider here what exactly is being optimized: the cosine of $\phi$ is equal to the dot product of two vectors divided by the norms of those vectors multiplied together.
+
+### Cosine loss optimization and model training
+
+Why is direct input representation so inaccurate for single token inputs, even though it is accurate for multi-token inputs?  Consider that the self-attention module in the Llama transformer blocks are based on the dot product operation: the attetion value between any query $q$ token and a key $k$ token is given as 
+
+$$
+Attention(q, k, v) = (q \cdot k) * v
+$$
+
+Recalling that the dot product is equivalent to the cosine of the angle between vectors $q, k$ divided by their norms, one can say that attention compares the direction between these vectors.
+
+But something unexpected occurs when we attempt to use cosine similarity as a metric for an untrained Llama model: for one-token inputs gradient descent is able to minimize $\cos (\phi)$ on the output of any given transformer block, but when more that one token is present in the input this is no longer possible.  
+
+We can deconstruct the transformer block by investigating the `LlamaDecoderLayer` module from the Llama [source code](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) and replicating that module in pieces as follows. 
+
+```python
+class InputGPT(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x: torch.Tensor):
+		# Matrix mult instead of embedding to prevent type incompatibility
+		x = torch.matmul(x, self.model.embed_tokens.weight)
+		position_ids = torch.tensor([[i for i in range(x.shape[1])]])
+
+		for i in range(1):
+			residual = x
+			x = self.model.layers[i].input_layernorm(x)
+			x = self.model.layers[i].self_attn(x, position_ids=position_ids)[0] + residual
+			residual = x
+			x = self.model.layers[i].post_attention_layernorm(x)
+			x = self.model.layers[i].mlp(x) + residual
+			
+		return x
+```
+
+It turns out that removing the layer normalizations allows minimization of $\cos (\phi)$ on the output via gradient descent on the input, as long as the input is not too long (>5 tokens).  This is suggestive of a numerical underflow or overflow in the gradient backpropegation process, which appears to be exascerbated by the layer normalization transformations. 
+
+Back to the question of whether untrained Llama models are capable of accurate input representation, we find that it is both more difficult to minimize $\cos(\phi)$ via gradient descent and that once minimized, the inputs are not accurate the the target $a$.  For $\cos (\phi) < 0.15$ we have
+
+$$
+a = \mathtt{The \; sky \; is \; blue}
+a_g = \mathtt{ПерViewModeldfrac \; paths}
 
 ### Noise on a Discreet Channel
 
