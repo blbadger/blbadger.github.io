@@ -156,8 +156,7 @@ For any given vision transformer neuron, these features are typically very diffe
 
 ![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_layers_features.png)
 
-This is in contrast to what is observed for language models, where the features of many outputs are identical. For example, given the 7 billion parameter version of Llama we have the following feature maps from
-
+This is in contrast to what is observed for language models, where the features of many outputs are identical. For example, given the 7 billion parameter version of Llama we have the following feature maps at the denoted layer (forward and back-propegation proceeding through all blocks prior)
 
 ```
 Block 4
@@ -176,51 +175,33 @@ vecvecvecvecvec
 emeemeemeemeeme
 ```
 
-which is identical to what was seen at block 1.
-
+which is identical to what was seen at block 1.  Deeper layer features are not, however, exactly identical to what is seen for shallower layers: observing the inputs corresponding to may features together at different tokens, we find that an increase in depth leads to substantially different maps for the 13 billion parameter version of Llama.
 
 ```
-llama 13b
-
-Block 1-4 
-[:, 0, 2000]
-called� year раreturn
-[:, 1, 2000]
-ther called year раreturn
-[:, 2, 2000]
-ther� called раreturn
-
-     
 block 1
 [:, 0-2, :]
 ther� year раreturn
 therige year раreturn
 ther� year раreturn
 
-block 1-4
+block 4
 [:, 0-2, :]
 tamb would си]{da
 column tamb mar marity
 cal would tambIONils
 
-
-block 1-8
+block 8
 [:, 0-2, :]
 ports mar mar user more
 endports marре user
 tamb marports Elie
 
-block 1-12
-[:, 0, :]
+block 12
+[:, 0-2, :]
 ports mar tamb El mar
-[:, 1, :]
 ports mar cды
-[:, 2, :]
 tamb marportsiche mar
 ```
-
-
-
 
 It may also be wondered what the features of each layer (without all preceeding layers) look like.  We see the same identical input representations in most layers of Llama 13b (or Llama 7b or 30b for that matter).  For example, for the 32nd transformer block of this model we see the same features as those we saw for the 1st transformer block.
 
@@ -242,7 +223,7 @@ This is also not found in vision transformers: although certain features tend to
 Even more surprising is that an untrained Llama 7b would have identical features to the trained model.
 
 ```
-Transformer Block 1
+Block 1
 ==================================
 O_f = [:, :, 0-2]
 <unk><unk><unk><unk><unk>
@@ -258,6 +239,7 @@ emeemeemeemeeme
 ```
 
 When a single feature is optimized at different tokens, we find that as for the trained Llama model the token corresponding to the self token
+
 ```
 [:, 0-2, 2000]
 calledremger partlass
@@ -266,7 +248,7 @@ are I calledamplelass
 are Idata calledlass
 are Idataample called
 
-Block 1-4
+Block 4
 [:, :, 2000]
 are calleddata called met
 Item larItemItem met
@@ -306,43 +288,26 @@ called planlearason current
 ura statlearason current
 ```
 
+We also find that features of multiple neurons are quite different when comparing Llama 30b to Llama 13b,
+
 ```
 block 4
+Llama 30b
 [:, 0-2, :]
 osseringering How
 oss yearsering yearsoss
 estooss yearsoss
-```
-```
-[:, 0-4, :]
-********UNlearason current
-******** statlearason current
-********UNlearason current
-********UN suason OP
-********UN suason current
 
-[:, :, 0:4]
-<unk><s><s></s>
+Llama 13b
+[:, 0-2, :]
+tamb would си]{da
+column tamb mar marity
+cal would tambIONils
 ```
 
-```
-Block 1
-[:, :, 0-4]
-<unk><unk><unk><unk><unk>
-<s><s><s><s><s>
-</s></s></s></s></s>
-[:, 0, 2000]
-called statlearason current
-[:, 1, 2000]
-******** calledlearason current
-[:, 2, 2000]
-******** stat calledason current
-[:, 3, 2000]
-******** statlear called current
-[:, 3, 2001]
-******** statlearItem current
 
-```
+
+
 
 
 
