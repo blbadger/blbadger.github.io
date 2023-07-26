@@ -123,13 +123,13 @@ and four different features combined give
 
 $$
 O_f[:, \; :, \; 2000:2004] \\
-a_g = vec calledura calledvec
+a_g = \mathtt{vec \; calledura \; calledvec}
 $$
 
 This is all to be expected given what was learned from features in vision models. It comes as some surprise therefore to find that different-sized Llama models have nearly identical features for the dimensions they share in common.  For example, if we observe the features of the 13 billion or 30 billion parameter versions of Llama, we find exactly the same features that were present for the 7 billion parameter Llama.  Note that the 13 billion Llama was trained on the same text as the 7 billion Llama, but Llama 30b was trained on more text and thus was exposed to different training data.
 
 ```
-Block 1
+Transformer Block 1
 =================================
 Llama 13b [:, :, 2000-2004]
 called called called called called
@@ -152,17 +152,35 @@ It is worth considering how different this is compared to transformer-based mode
 
 ###  Llama features are aligned across layers
 
-For any given transformer neuron, these features are typically very different between different layers, such that for vision transformers it is not usually possible to tell which feature map corresponds to which neuron given feature maps from the previous layer.
+For any given vision transformer neuron, these features are typically very different between different layers. Subsequent layers may have similar features but it is far from the case that every feature in each layer is identifiable from the last layer. In the figure below, it is clear that the features of the first four transformer blocks (where forward- and back-propegation occurs through all previous blocks to the input embedding) are generally distinct.
+
+![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_layers_features.png)
+
+This is in contrast to what is observed for language models, where the features of many outputs are identical. For example, given the 7 billion parameter version of Llama we have the following feature maps from
+
 
 ```
-llama 13b
-Block 1
+Block 4
 [:, :, 2000-2004]
 called called called called called
 ItemItemItemItemItem
 urauraurauraura
 vecvecvecvecvec
 emeemeemeemeeme
+
+Block 8
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+```
+
+which is identical to what was seen at block 1.
+
+
+```
+llama 13b
 
 Block 1-4 
 [:, 0, 2000]
@@ -172,21 +190,6 @@ ther called year раreturn
 [:, 2, 2000]
 ther� called раreturn
 
-
-block 1
-[:, :, 2000] top5
-called called called called called
-ther� year раreturn
-itovec Web ·ATE
-         ConsultadoAFhingја
-childrenpacedbert Port
-
-block 1 
-[:, :, 0-4]
-<unk><unk><unk><unk><unk>
-<s><s><s><s><s>
-</s></s></s></s></s>
-�����
      
 block 1
 [:, 0-2, :]
@@ -216,19 +219,8 @@ ports mar cды
 tamb marportsiche mar
 ```
 
-```
-Block 1-4
-[:, :, 0]
-<unk><unk><unk><unk><unk>
 
-Block 1-8
-[:, :, 0]
-<unk><unk><unk><unk><unk>
-```
 
-It is important to note that this alignment of features across many layers of a transformer is not what was observed for vision models.  In that case, subsequent layers may have similar features but it is far from the case that every feature in each layer is identifiable from the last layer. In the figure below, it is clear that the features of the first four transformer blocks (where forward- and back-propegation occurs through all previous blocks to the input embedding) 
-
-![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_layers_features.png)
 
 It may also be wondered what the features of each layer (without all preceeding layers) look like.  We see the same identical input representations in most layers of Llama 13b (or Llama 7b or 30b for that matter).  For example, for the 32nd transformer block of this model we see the same features as those we saw for the 1st transformer block.
 
@@ -245,16 +237,83 @@ This is also not found in vision transformers: although certain features tend to
 ![vit feature comparison](https://blbadger.github.io/deep-learning/vit_b_32_singlelayers_features.png)
 
 
-### Heterogeneous features in deep large Llama
+### Trained Llama features closely resemble untrained ones
+
+Even more surprising is that an untrained Llama 7b would have identical features to the trained model.
+
 ```
-Llama 30b
-Block 1
-[:, :, 0-4]
+Transformer Block 1
+==================================
+O_f = [:, :, 0-2]
 <unk><unk><unk><unk><unk>
 <s><s><s><s><s>
 </s></s></s></s></s>
-     
 
+[:, :, 2000-2004]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+vecvecvecvecvec
+emeemeemeemeeme
+```
+
+When a single feature is optimized at different tokens, we find that as for the trained Llama model the token corresponding to the self token
+```
+[:, 0-2, 2000]
+calledremger partlass
+are calleddata Alsolass
+are I calledamplelass
+are Idata calledlass
+are Idataample called
+
+Block 1-4
+[:, :, 2000]
+are calleddata called met
+Item larItemItem met
+uraFieldurauraura
+vecvecvec reallypha
+
+[:, 0-2, :]
+ypearchárodyause
+ci helriesiти
+haromenIndoz és
+
+```
+
+
+### Heterogeneous features in deep large Llama
+
+So far we have seen that features are remarkably well-aligned in Llama-based language models.  But when we investigate the larger versions of Llama more closely, we find that 
+
+```
+Llama 30b
+Block 1
+[:, :, 2000-2002]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+
+Block 4
+[:, :, 2000-2002]
+called called called called called
+ItemItemItemItemItem
+urauraurauraura
+
+Block 32 
+[:, :, 2000-2002]
+called planlearason current
+******** doesn())ason current
+ura statlearason current
+```
+
+```
+block 4
+[:, 0-2, :]
+osseringering How
+oss yearsering yearsoss
+estooss yearsoss
+```
+```
 [:, 0-4, :]
 ********UNlearason current
 ******** statlearason current
@@ -263,20 +322,15 @@ Block 1
 ********UN suason current
 
 [:, :, 0:4]
-<unk><s><s></s> 
+<unk><s><s></s>
+```
 
-[:, :, 400-401]
-hththththt
-codecodecodecodecode
-
-
-[:, :, 2000-2004]
-called called called called called
-ItemItemItemItemItem
-urauraurauraura
-vecvecvecvecvec
-emeemeemeemeeme
-
+```
+Block 1
+[:, :, 0-4]
+<unk><unk><unk><unk><unk>
+<s><s><s><s><s>
+</s></s></s></s></s>
 [:, 0, 2000]
 called statlearason current
 [:, 1, 2000]
@@ -288,35 +342,7 @@ called statlearason current
 [:, 3, 2001]
 ******** statlearItem current
 
-Blocks 1-4
-[:, :, 2000-2004]
-called called called called called
-ItemItemItemItemItem
-urauraurauraura
-
-blocks 1-4
-[:, 0-2, :]
-osseringering How
-oss yearsering yearsoss
-estooss yearsoss
-
-blocks 1-32 (50 iterations)
-[:, :, 0-2]
-<unk> implement<unk><unk><unk>
-</s>big</s></s></s>
-
-[:, :, 2000-2003]
-called planlearason current
-******** doesn())ason current
-ura statlearason current
-vecologicalvecvecvec
 ```
-
-
-
-
-
-
 
 
 
