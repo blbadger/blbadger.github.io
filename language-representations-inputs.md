@@ -704,7 +704,7 @@ The author's local GPU (an RTX 3060 with 12GB memory) runs out of memory trying 
 model = AutoModelForCausalLM.from_pretrained("gpt2-xl", load_in_8bit=True, device_map='auto')
 ```
 
-`bitsandbytes` does not actually convert all model parameters to 8-bit precision due to the ubiquitous presence of outlier features in large language models, as shown by [Dettmers and colleages](https://arxiv.org/abs/2208.07339).  Note that most CPUs do not support linear algebraic operations with any datatype less than 32 bits, so a GPU must be used here. Once the model has been loaded, for the full 48-block stack of GPT-2 we have a top-5 representation of the input 'The sky is blue.' represented as
+`bitsandbytes` does not actually convert all model parameters to 8-bit precision due to the ubiquitous presence of outlier features in large language models, as shown by [Dettmers and colleages](https://arxiv.org/abs/2208.07339).  Note that most CPUs do not support linear algebraic operations with any datatype less than 32 bits, so a GPU should be used here. Once the model has been loaded, for the full 48-block stack of GPT-2 we have a top-5 representation of the input 'The sky is blue.' represented as
 
 ```
  COURisphere Dragonboundheit\<
