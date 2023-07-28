@@ -782,17 +782,71 @@ It turns out that removing the layer normalizations allows minimization of $\cos
 Back to the question of whether untrained Llama models are capable of accurate input representation, we find that it is both more difficult to minimize $\cos(\phi)$ via gradient descent and that once minimized, the inputs are not accurate the the target $a$.  For $\cos (\phi) < 0.15$ we have
 
 $$
-a = \mathtt{The \; sky \; is \; blue}
+a = \mathtt{The \; sky \; is \; blue} \\
 a_g = \mathtt{ПерViewModeldfrac \; paths}
 $$
 
-It should be noted that untrained models appear to be worse at indirect input representation as well, as for the $a = \mathtt{The \; sky \; is \; blue.}$ an untrained 7b Llama gives 
+It should be noted that untrained models appear to be worse at indirect input representation as well, as for the prompt $a = \mathtt{The \; sky \; is \; blue}$ the first transformer block from an untrained 7b Llama gives 
 
 $$
 a_g = \mathtt{leaf \; leaf  \; Connect \; leaf}
 $$
 
 at $N=1500$, whereas the trained model is much more accurate (see above).
+
+But upon some reflection, it may not be surprising that minimizing a cosine distance between outputs of an untrained transformer block does not yield accurate input representations because the dot-product attention is followed by two fully connected layers.  If we instead observe the representation from the first ransformer block's self-attention whilst minimizing $\cos \phi$, 
+
+```
+class InputGPT(nn.Module):
+
+	def __init__(self, model):
+		super().__init__()
+		self.model = model
+
+	def forward(self, x: torch.Tensor):
+		position_ids = torch.tensor([[i for i in range(x.shape[1])]])
+
+		for i in range(1):
+			x = self.model.layers[i].self_attn(x, position_ids=position_ids)[0]
+		return x
+```
+we have a permutation of the input 'The sky is blue.'
+
+$$
+a_g = \mathtt{blue \; is \; The \; sky}
+$$
+
+with a top-5 representation 
+
+```
+blue is The sky
+The The sky is
+sky blue is The
+is sky blue blue
+FLITEite период
+```
+
+and likewise for 'This is a prompt sentence' we have
+
+$$
+a_g = \mathtt{prompt. \; This. \; is \; prompt}
+$$
+
+Although with 4 self-attention blocks, more information is lost:
+
+$$
+a_g = \mathtt{sentence. \; Thisอ \; OK \; sentence}
+$$
+
+On the other hand, minimization of $L^1$ distance on the output of the first (untrained) full transformer block gives
+
+```
+The ense The blue
+sky is blue essere
+pandas sky sky tör
+blue land proud{$
+.-- skill iseli
+```
 
 ### Information between tokens
 
