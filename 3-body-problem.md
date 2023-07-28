@@ -392,6 +392,10 @@ where lighter values indicate earlier divergence. The folded and stretched topol
 
 {% include youtube.html id='Vp4r8SfWoEA' %}
 
+If we observe this same plane but starting the planet 1' z-value at 10.9 and moving to 11.15, we have
+
+{% include youtube.html id='dco0Xg9TOCk' %}
+
 It is worth considering what this map tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
 This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps,
@@ -472,6 +476,7 @@ Is there a specific region in which initial positions that have diverged are mor
 {% include youtube.html id='Ig3e0wW4Eyo' %}
 
 Which suggests that some but not all ejected trajectories are also diverged, and on the other hand some non-diverged trajectories are also those that experience ejection.
+
 
 ### Two body versus three body problems
 How does this help us understand the difference between the two body and three body problems?  Let's examine the two body problem as a restricted case of the three body problem: the same differential equations used above can be used to describe the two body problem simply by setting on the of masses to 0.  Lets remove the first object's mass, and also change the second object's initial velocity for a trajectory that is easier to see.
