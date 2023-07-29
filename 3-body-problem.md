@@ -402,9 +402,11 @@ This topology is not special to points on the $x, y$ plane: on the $y, z$ plane 
 
 ![homoclinic tangle]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_yz.png)
 
+<!--
 which, going from $t_i = 0 \to t_i =  150,000$ we have
 
 {% include youtube.html id='aahfR5Lpqps' %}
+-->
 
 Notice something interesting in the $y, z$ divergence pattern that does not exist in the $x, y$ map: a line of mirror symmetry, running from bottom left to top right with a slope of just more than 1.  Why does this symmetry exist, and why does it not exist for the $x, y$ map?  Most importantly, why are both maps of divergence filled with such intricate detail?
 
