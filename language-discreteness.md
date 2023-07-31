@@ -838,7 +838,7 @@ $$
 a_g = \mathtt{sentence. \; Thisอ \; OK \; sentence}
 $$
 
-On the other hand, minimization of $L^1$ distance on the output of the first (untrained) full transformer block gives
+On the other hand, minimization of $L^1$ distance on the output of the first (untrained) full transformer block containing self-attention followed by an MLP gives
 
 ```
 The ense The blue
@@ -847,6 +847,9 @@ pandas sky sky tör
 blue land proud{$
 .-- skill iseli
 ```
+
+but for inputs composed of individual words (more precisely tokens) the representation is nearly perfect, for example any of the inputs 'This', 'is', 'a', 'prompt','sentence' give a representation identical to that input. As soon as the input contains multiple tokens, however, minimizing the $L^1$ distance on the output is not longer sufficient for perfectly accurate representation, for example 'the sky' is represented as 'sky sky'.
+
 
 ### Information between tokens
 
