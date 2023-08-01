@@ -259,9 +259,7 @@ vecvecvec reallypha
 ypearchárodyause
 ci helriesiти
 haromenIndoz és
-
 ```
-
 
 ### Heterogeneous features in deep large Llama
 
@@ -304,6 +302,109 @@ tamb would си]{da
 column tamb mar marity
 cal would tambIONils
 ```
+
+### Features tested
+
+It may be wondered whether or not the feature generation method employed on this page is at all accurate, or whether the gradient descent-based generated inputs are unlike any real arrangement of tokens a model would actually observe. 
+
+Because we are working with fixed-vocabulary language models, we can go about testing this question by performing a complete search on the input: simply passing each possible input to a model and observing which input yields the largest output for a particular output neuron will suffice.  We will stick with inputs of one token only, as the time necessary to compute model outputs from all possible inputs grows exponentially with input length.
+
+
+
+
+```
+Complete search
+Trained GPT-2 
+[:, :, 0-4]
+
+block 1
+Pwr
+ Claud
+ Peb
+ View
+
+block 2
+ItemTracker
+ watched
+ Peb
+ (@
+
+block 4
+ItemTracker
+ watched
+ Peb
+ (@
+
+block 8
+ watched
+ Peb
+ (@
+
+GPT-2 medium
+[:, :, 0-4]
+block 1
+ Ender
+pmwiki
+Cass
+catentry
+
+block 4
+refres
+ Flavoring
+ carbohyd
+assetsadobe
+
+block 8
+ refres
+ Flavoring
+ carbohyd
+assetsadobe
+
+block 12
+ refres
+ Flavoring
+ carbohyd
+assetsadobe
+
+
+
+Untrained GPT-2
+
+block 1
+ Yan
+ criticizing
+policy
+ Pont
+
+block 4
+inski
+ Giants
+ consuming
+ Bert
+
+block 8
+ disruptions
+erie
+ N
+ Aut
+
+block 12
+ video
+ Collection
+ wipe
+EngineDebug
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
