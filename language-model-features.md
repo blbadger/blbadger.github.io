@@ -312,15 +312,12 @@ Because we are working with fixed-vocabulary language models, we can go about te
 Specifically, we want the input index $i$ that maximizes the output of our chosen output layer's feature $O^l_f$.
 
 $$
-i = \mathrm{arg \; max} O^l_f(a, \theta)
+a_i = \underset{a}{\mathrm{arg \; max}} \; O^l_f(a, \theta)
 $$
 
-We begin with the smallest version of GPT-2, which contains 117m parameters.  By batching inputs, we can iterate through every possible input in around two seconds on a T4 GPU.  On a trained model, we have
-
+We begin with the smallest version of GPT-2, which contains 117m parameters.  By batching inputs, we can iterate through every possible input in around two seconds on a T4 GPU.  On a trained model, we have for the first four features $[:,\; :,\; 0-4]$
 
 ```
-[:, :, 0-4]
-
 block 1
 Pwr
  Claud
@@ -344,11 +341,20 @@ block 8
  Peb
  (@
 ```
-
+Complete search finds different tokens than gradient descent on the input or on the embedding, which when we optimize for $L^1$ loss is
 
 ```
-GPT-2 medium
-[:, :, 0-4]
+for, im, G,$
+```
+
+or cosine loss,
+
+```
+!, ", qu, $
+```
+But it is notable that we come to the same conclusion as with gradient-descent based feature visualization: the features of each neuron at a given index are aligned across a range of layers. GPT-2 medium (355m parameters) we find the same $[:,\; :,\; 0-4]$
+
+```
 block 1
  Ender
 pmwiki
@@ -372,11 +378,11 @@ block 12
  Flavoring
  carbohyd
 assetsadobe
+```
 
+This alignment of features across many layers is the result of training and is not present in randomly-initialized models: if we explore the features corresponding to $O_f = [:,\; :,\; 0-4]$ of an untrained 117m parameter GPT-2, we find
 
-
-Untrained GPT-2
-
+```
 block 1
  Yan
  criticizing
@@ -402,6 +408,7 @@ block 12
 EngineDebug
 ```
 
+which is what one would expect if the activation of any given neuron (at a specific layer) was random with respect to the input. 
 
 
 
