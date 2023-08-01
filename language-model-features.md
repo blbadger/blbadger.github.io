@@ -307,14 +307,18 @@ cal would tambIONils
 
 It may be wondered whether or not the feature generation method employed on this page is at all accurate, or whether the gradient descent-based generated inputs are unlike any real arrangement of tokens a model would actually observe. 
 
-Because we are working with fixed-vocabulary language models, we can go about testing this question by performing a complete search on the input: simply passing each possible input to a model and observing which input yields the largest output for a particular output neuron will suffice.  We will stick with inputs of one token only, as the time necessary to compute model outputs from all possible inputs grows exponentially with input length.
+Because we are working with fixed-vocabulary language models, we can go about testing this question by performing a complete search on the input: simply passing each possible input to a model and observing which input yields the largest output for a particular output neuron will suffice.  We will stick with inputs of one token only, as the time necessary to compute model outputs from all possible inputs grows exponentially with input length (for GPT-2 for $n$ tokens there are $50257^n$ possible inputs).
 
+Specifically, we want the input index $i$ that maximizes the output of our chosen output layer's feature $O^l_f$.
 
+$$
+i = \mathrm{arg \; max} O^l_f(a, \theta)
+$$
+
+We begin with the smallest version of GPT-2, which contains 117m parameters.  By batching inputs, we can iterate through every possible input in around two seconds on a T4 GPU.  On a trained model, we have
 
 
 ```
-Complete search
-Trained GPT-2 
 [:, :, 0-4]
 
 block 1
@@ -339,7 +343,10 @@ block 8
  watched
  Peb
  (@
+```
 
+
+```
 GPT-2 medium
 [:, :, 0-4]
 block 1
