@@ -303,7 +303,7 @@ column tamb mar marity
 cal would tambIONils
 ```
 
-### Features tested
+### Complete Search Features
 
 It may be wondered whether or not the feature generation method employed on this page is at all accurate, or whether the gradient descent-based generated inputs are unlike any real arrangement of tokens a model would actually observe. 
 
@@ -341,18 +341,20 @@ block 8
  Peb
  (@
 ```
-Complete search finds different tokens than gradient descent on the input or on the embedding, which when we optimize for $L^1$ loss is
+
+Complete search finds different tokens than gradient descent on the input or on the embedding. For example, performing gradient descent on $\nabla_e \vert \vert O(e_n, \theta) - O(e, \theta) \vert \vert_1$ on the same output yields
 
 ```
 for, im, G,$
 ```
 
-or cosine loss,
+or cosine distance of the angle $\phi$ between vectorized versions of the output $O(e_n, \theta)$ and the target output $o(e, \theta)$  (ie $\nabla_e \cos(\phi)$) we have
 
 ```
 !, ", qu, $
 ```
-But it is notable that we come to the same conclusion as with gradient-descent based feature visualization: the features of each neuron at a given index are aligned across a range of layers. GPT-2 medium (355m parameters) we find the same $[:,\; :,\; 0-4]$
+
+It is notable that we come to the same conclusion as with gradient-descent based feature visualization: the features of each neuron at a given index are aligned across a range of layers. GPT-2 medium (355m parameters) we find the same $[:,\; :,\; 0-4]$
 
 ```
 block 1
@@ -410,10 +412,19 @@ EngineDebug
 
 which is what one would expect if the activation of any given neuron (at a specific layer) was random with respect to the input. 
 
+### Gradient descent with priors
 
+As the complete search method becomes computationally infeasible for larger inputs, we instead use gradient descent. Ideally want there to be a match between gradient descent-based feature visualization and complete search for short inputs, but we have seen that this is not the case.
 
+Recalling what was learned for [vision model feature visualization](https://blbadger.github.io/feature-visualization.html), it is natural to wonder whether enforcing some Bayesian prior on the gradient descent process.  In the context of vision models applied to images of the natural world, feature visualization commonly adds priors of positional invariance (by re-scaling the input during generation) and local smoothness (by performing Gaussian convolution).
 
+What priors should be enforced on a language model input? So far on this page we have explored performing gradient descent on vector-space embeddings of discrete inputs (which naturally cannot be used for gradient descent without conversion to a continuous vector space of some kind).  It is unclear if there are any universal priors to enforce on a language model embedding, but there are certainly a distribution-based prior one could enforce on an input that was more directly generated.  This is because if we (pseudo)invert the embedding transformation $E$ (which is $E^+ = (E^TE)^{-1]E^T$ and may be thought of as the inverse which minimized the least squares 'error' on a system of linear equations $E$)
 
+$$
+a" = E^+ \left( E(a) \right)
+$$
+
+Typically we find that $a"$ is approximately a one-hot vector.
 
 
 
