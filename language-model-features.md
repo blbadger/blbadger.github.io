@@ -418,13 +418,21 @@ As the complete search method becomes computationally infeasible for larger inpu
 
 Recalling what was learned for [vision model feature visualization](https://blbadger.github.io/feature-visualization.html), it is natural to wonder whether enforcing some Bayesian prior on the gradient descent process.  In the context of vision models applied to images of the natural world, feature visualization commonly adds priors of positional invariance (by re-scaling the input during generation) and local smoothness (by performing Gaussian convolution).
 
-What priors should be enforced on a language model input? So far on this page we have explored performing gradient descent on vector-space embeddings of discrete inputs (which naturally cannot be used for gradient descent without conversion to a continuous vector space of some kind).  It is unclear if there are any universal priors to enforce on a language model embedding, but there are certainly a distribution-based prior one could enforce on an input that was more directly generated.  This is because if we (pseudo)invert the embedding transformation $E$ (which is $E^+ = (E^TE)^{-1]E^T$ and may be thought of as the inverse which minimized the least squares 'error' on a system of linear equations $E$)
+What priors should be enforced on a language model input? So far on this page we have explored performing gradient descent on vector-space embeddings of discrete inputs (which naturally cannot be used for gradient descent without conversion to a continuous vector space of some kind).  It is unclear if there are any universal priors to enforce on a language model embedding, but there is certainly a distribution-based prior one could enforce on an input that was more directly generated.  This is because if we (pseudo)invert the embedding transformation $E$ (which is $E^+ = (E^TE)^{-1}E^T$ and may be thought of as the inverse which minimized the least squares 'error' on a system of linear equations $E$)
 
 $$
 a" = E^+ \left( E(a) \right)
 $$
 
-Typically we find that $a"$ is approximately a one-hot vector.
+Typically we find that $a"$ is approximately a one-hot vector, which signifies a vector with one entry non-zero (typically one) and all others identically zero ($[0, 0, 1, 0]$ for example).  Any vector with non-identical elements may be transformed into a one-hot vector by simply assigning the value one to the maximum value of the vector and zero elsewhere. But we also want an input that may be optimized via gradient descent, and unless one were to assign a very large learning rate to the gradient this direct transformation to a one-hot vector is not useful for our purposes.
+
+Instead we can take an idea from causal language modeling: in order to prevent a function from returning a differentiable vector that differs too much from the range of a one-hot vector. To prevent the generated input $a_g$ from diverging too much from $a''$ we can apply a softmax transformation during every iteration of gradient descent to make
+
+$$
+a_{n+1} = \mathrm{softmax\;} \left(a_n - \nabla_a ||O(a_n, \theta) - O(a, \theta)|| \right)
+$$
+
+
 
 
 
