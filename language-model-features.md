@@ -384,31 +384,12 @@ assetsadobe
 
 This alignment of features across many layers is the result of training and is not present in randomly-initialized models: if we explore the features corresponding to $O_f = [:,\; :,\; 0-4]$ of an untrained 117m parameter GPT-2, we find
 
-```
-block 1
- Yan
- criticizing
-policy
- Pont
-
-block 4
-inski
- Giants
- consuming
- Bert
-
-block 8
- disruptions
-erie
- N
- Aut
-
-block 12
- video
- Collection
- wipe
-EngineDebug
-```
+|          | [:,:, 0]      | [:, :, 1]   | [:, :, 2  | [:, :,  3]  |
+|----------|---------------|-------------|-----------|-------------|
+| Block 1  | Yan           | criticizing | policy    |  Pont       |
+| Block 4  | inski         | Giants      | consuming | Bert        |
+| Block 8  |  distruptions | erie        |  N        |  Aut        |
+| Block 12 |  video        |  collection |  wipe     | EngineDebug |
 
 which is what one would expect if the activation of any given neuron (at a specific layer) was random with respect to the input. 
 
