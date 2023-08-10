@@ -317,30 +317,12 @@ $$
 
 We begin with the smallest version of GPT-2, which contains 117m parameters.  By batching inputs, we can iterate through every possible input in around two seconds on a T4 GPU.  On a trained model, we have for the first four features $[:,\; :,\; 0-4]$
 
-```
-block 1
-Pwr
- Claud
- Peb
- View
-
-block 2
-ItemTracker
- watched
- Peb
- (@
-
-block 4
-ItemTracker
- watched
- Peb
- (@
-
-block 8
- watched
- Peb
- (@
-```
+|             | [:,:, 0]    | [:, :, 1] | [:, :, 2] | [:, :,  3] |
+|-------------|-------------|-----------|-----------|------------|
+| **Block 1** | Pwr         | Claud     | Peb       | View       |
+| **Block 2** | ItemTracker | watched   | Peb       | (@         |
+| **Block 4** | ItemTracker | watched   | Peb       | (@         |
+| **Block 8** | ItemTracker | watched   | Peb       | (@         |
 
 Complete search finds different tokens than gradient descent on the input or on the embedding. For example, performing gradient descent on $\nabla_e \vert \vert O(e_n, \theta) - O(e, \theta) \vert \vert_1$ on the same output yields
 
@@ -356,40 +338,21 @@ or cosine distance of the angle $\phi$ between vectorized versions of the output
 
 It is notable that we come to the same conclusion as with gradient-descent based feature visualization: the features of each neuron at a given index are aligned across a range of layers. GPT-2 medium (355m parameters) we find the same $[:,\; :,\; 0-4]$
 
-```
-block 1
- Ender
-pmwiki
-Cass
-catentry
-
-block 4
-refres
- Flavoring
- carbohyd
-assetsadobe
-
-block 8
- refres
- Flavoring
- carbohyd
-assetsadobe
-
-block 12
- refres
- Flavoring
- carbohyd
-assetsadobe
-```
+|              | [:,:, 0] | [:, :, 1] | [:, :, 2] | [:, :,  3]  |
+|--------------|----------|-----------|-----------|-------------|
+| **Block 1**  |  Ender   | pmwiki    | Cass      | catentry    |
+| **Block 4**  | refres   | Flavoring | carbohyd  | assetsadobe |
+| **Block 8**  | refres   | Flavoring | carbohyd  | assetsadobe |
+| **Block 12** | refres   | Flavoring | carbohyd  | assetsadobe |
 
 This alignment of features across many layers is the result of training and is not present in randomly-initialized models: if we explore the features corresponding to $O_f = [:,\; :,\; 0-4]$ of an untrained 117m parameter GPT-2, we find
 
-|          | [:,:, 0]      | [:, :, 1]   | [:, :, 2  | [:, :,  3]  |
-|----------|---------------|-------------|-----------|-------------|
-| Block 1  | Yan           | criticizing | policy    |  Pont       |
-| Block 4  | inski         | Giants      | consuming | Bert        |
-| Block 8  |  distruptions | erie        |  N        |  Aut        |
-| Block 12 |  video        |  collection |  wipe     | EngineDebug |
+|              | [:,:, 0]      | [:, :, 1]   | [:, :, 2] | [:, :,  3]  |
+|--------------|---------------|-------------|-----------|-------------|
+| **Block 1**  | Yan           | criticizing | policy    |  Pont       |
+| **Block 4**  | inski         | Giants      | consuming | Bert        |
+| **Block 8**  |  distruptions | erie        |  N        |  Aut        |
+| **Block 12** |  video        |  collection |  wipe     | EngineDebug |
 
 which is what one would expect if the activation of any given neuron (at a specific layer) was random with respect to the input. 
 
