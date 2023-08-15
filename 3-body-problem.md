@@ -398,9 +398,13 @@ If we observe this same plane but starting the planet 1's z-value at 10.9 and mo
 
 It is worth considering what these maps tells us.  In a certain region of 2-dimensional space, a planet's starting point may be shifted only slightly to result in a large difference in the earliest time of divergence.  This is equivalent to saying that a planet's starting point, within a certain region of space, may yield an unpredicable (if it is a point of fast divergence) or relatively predictable (if divergence is slower) trajectory, but even knowing which one of these two possibilities will occur is extremely difficult.  
 
-Moreover, knowing which starting points diverge for one set of planets does not allow us to understand which starting points diverge for slightly different planetary masses. If we change the mass of planet 1 from 30 (kg) to 5.9 linearly we have
+Moreover, knowing which starting points diverge for one set of planets does not allow us to understand which starting points diverge for slightly different planetary masses. If we change the mass of planet 1 from 30 to 5.9 (kg) linearly we have
 
 {% include youtube.html id='Y_4NSytASmI' %}
+
+and changing the force of gravity from $g = 9.8 \to g = 28.9\; m/s^2$ we have
+
+{% include youtube.html id='QIfYKxbpB8M' %}
 
 This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps,
 
