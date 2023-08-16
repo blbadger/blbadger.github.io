@@ -377,7 +377,11 @@ a_{n+1} = \mathrm{softmax\;} \left(a_n - \nabla_a ||O(a_n, \theta) - O(a, \theta
 $$
 
 
-
+|         | [:, :, 0] | [:, :, 1] | [:, :, 2] | [:, :, 3] |
+|---------|-----------|-----------|-----------|-----------|
+| **Block 1** | cris      | Cola      | Cass      | Holt      |
+| **Block 4** | Geh       | 20439     | og        |           |
+| **Block 8** | Geh       | 20439     | expend    | assetsadobe   |
 
 
 
