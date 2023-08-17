@@ -384,9 +384,73 @@ $$
 | **Block 8** | Geh       | 20439     | expend    | assetsadobe   |
 
 
+### Greedy Search Feature
 
+In light of the difficulties are presented by gradient-based feature visualization as, we return to take a second look at the complete search method introduced above.  We can make an observation that causal language models (which only infer the next word in a sentence, and are the type of model investigated on this page) exclusively read inputs from left to right (as long as they are trained on English and romance languages, rather than Hebrew). This suggests that when building an input that maximizes a model's feature, we can build it exclusively left to right as well. 
 
+We focus on maximizing a given feature of the hidden layer's last sequence output only (rather than maximizing the feature over all sequence elements) and iteratively build the input by adding the token yielding maximal output of this feature to the end of the input, for a pre-determined number of iterations $N$ (equaling the token number).  The reason for this is that maximizing each last token only yields the maximal output if
 
+To be precise, 
+
+$$
+a_n = \underset{a_n}{\mathrm{arg \; max}} \; O^l_{(f, i)}( a_n | a_{0:n-1}, \theta)
+$$
+
+We can further improve the computational efficiency of this greedy approach by batching together many inputs and feeding them to the model simultaneously.  This can be implemented as follows:
+
+```python
+@torch.no_grad()
+def search_maximal(n_tokens, feature, batch_size=1000):
+    vocab_size = model.transformer.wte.weight.shape[0]
+    maximal_tokens = []
+    for t in range(n_tokens):
+        activations = []
+        for i in range(0, vocab_size, batch_size):
+            token_batch = torch.tensor([j for j in range(i, min(i + batch_size, vocab_size))])
+            token_batch = token_batch.reshape((min(batch_size, vocab_size - i), 1)).to(device)
+            maximal_tensor = torch.tensor(maximal_tokens).repeat(min(batch_size, vocab_size - i), 1).to(device)
+            if t > 0:
+                greedy_tokens = torch.cat((maximal_tensor, token_batch), dim=1).int()
+            else:
+                greedy_tokens = token_batch
+            output = a_model(greedy_tokens)
+            activations += output[:, -1, feature].flatten()
+
+        activations = torch.tensor(activations)
+        token_int = torch.argmax(activations)
+        maximal_tokens.append(token_int)
+
+    tokens = tokenizer.decode(maximal_tokens)
+    return tokens
+```
+
+For the 117m parameter version of GPT-2, we have the following for $N=4$
+
+```
+Block 1 [:, :, 0-3]
+ Pwr PwrItemTrackerItemTracker
+ Claud Lara Lara Lara
+ Peb Peb Peb Peb
+Viewtnctnctnc
+
+Block 4 [:, :, 0-3]
+ItemTracker interf interfItemTracker
+watched watched watched watched
+Peb Peb Peb Peb
+ (@"></ guiName"></
+
+Block 8 [:, :, 0-3]
+ItemTracker interf interf interf
+watched watched watched watched
+ Peb Peb Peb Peb
+(@ guiName"></ guiName
+
+Block 12 [:, :, 0-3]
+ItemTracker interf interf interf
+ hostages herpes herpes herpes
+ Kenn Peb Peb Peb
+(@rawdownloadcloneembedreportprintrawdownloadcloneembedreportprintrawdownloadcloneembedreportprint
+```
 
 
 
