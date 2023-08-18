@@ -388,12 +388,12 @@ $$
 
 In light of the difficulties are presented by gradient-based feature visualization as, we return to take a second look at the complete search method introduced above.  We can make an observation that causal language models (which only infer the next word in a sentence, and are the type of model investigated on this page) exclusively read inputs from left to right (as long as they are trained on English and romance languages, rather than Hebrew). This suggests that when building an input that maximizes a model's feature, we can build it exclusively left to right as well. 
 
-We focus on maximizing a given feature of the hidden layer's last sequence output only (rather than maximizing the feature over all sequence elements) and iteratively build the input by adding the token yielding maximal output of this feature to the end of the input, for a pre-determined number of iterations $N$ (equaling the token number).  The reason for this is that maximizing each last token only yields the maximal output if
+We focus on maximizing a given feature of the hidden layer's last sequence output only (rather than maximizing the feature over all sequence elements) and iteratively build the input by adding the token yielding maximal output of this feature to the end of the input, for a pre-determined number of iterations $N$ (equaling the token number).  The reason for this is that maximizing each last token only yields the maximal output if each maximal output is chosen per iteration, ie we undergo a greedy search. 
 
-To be precise, 
+To be precise, for $n \in (0, 1, ...., N)$ we find $a_n$ by 
 
 $$
-a_n = \underset{a_n}{\mathrm{arg \; max}} \; O^l_{(f, i)}( a_n | a_{0:n-1}, \theta)
+a_n = \underset{a_n}{\mathrm{arg \; max}} \; O^l_{(f, n)}( a_n | a_{0:n-1}, \theta)
 $$
 
 We can further improve the computational efficiency of this greedy approach by batching together many inputs and feeding them to the model simultaneously.  This can be implemented as follows:
@@ -452,8 +452,17 @@ ItemTracker interf interf interf
 (@rawdownloadcloneembedreportprintrawdownloadcloneembedreportprintrawdownloadcloneembedreportprint
 ```
 
+To see that the greedy approach using only the last sequence element's activation is equivalent to the greedy approach using all sequence activations, we can modify the algorithm as follows:
 
+```
+def search_maximal(n_tokens, feature, batch_size=1000):
+    ...
+        output = a_model(greedy_tokens)
+        focus = output[:, :, feature]
+        aggregated_focus = torch.sum(focus, dim=-1)
+```
 
+and repeating the experiment above, we find that the same inputs are generated.
 
 
 
