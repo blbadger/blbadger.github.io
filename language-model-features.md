@@ -454,7 +454,7 @@ ItemTracker interf interf interf
 
 To see that the greedy approach using only the last sequence element's activation is equivalent to the greedy approach using all sequence activations, we can modify the algorithm as follows:
 
-```
+```python
 def search_maximal(n_tokens, feature, batch_size=1000):
     ...
         output = a_model(greedy_tokens)
@@ -462,7 +462,7 @@ def search_maximal(n_tokens, feature, batch_size=1000):
         aggregated_focus = torch.sum(focus, dim=-1)
 ```
 
-and repeating the experiment above, we find that the same inputs are generated.
+and repeating the experiment above, we find that the same inputs are generated.  This is because language model transformer blocks only observe tokens to the left of a given sequence index (ie the third transformer block sequence element observes tokens 0, 1, 2, and 3 but not 4).  Therefore as only the last token is chosen, only the last transformer block sequence feature determines this token.
 
 
 
