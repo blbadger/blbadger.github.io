@@ -427,29 +427,56 @@ def search_maximal(n_tokens, feature, batch_size=1000):
 For the 117m parameter version of GPT-2, we have the following for $N=4$
 
 ```
-Block 1 [:, :, 0-3]
+Trained GPT-2 Base
+[:, :, 0-3]
+Block 1 
  Pwr PwrItemTrackerItemTracker
  Claud Lara Lara Lara
  Peb Peb Peb Peb
 Viewtnctnctnc
 
-Block 4 [:, :, 0-3]
+Block 4 
 ItemTracker interf interfItemTracker
 watched watched watched watched
 Peb Peb Peb Peb
  (@"></ guiName"></
 
-Block 8 [:, :, 0-3]
+Block 8 
 ItemTracker interf interf interf
 watched watched watched watched
  Peb Peb Peb Peb
 (@ guiName"></ guiName
 
-Block 12 [:, :, 0-3]
+Block 12 
 ItemTracker interf interf interf
  hostages herpes herpes herpes
  Kenn Peb Peb Peb
 (@rawdownloadcloneembedreportprintrawdownloadcloneembedreportprintrawdownloadcloneembedreportprint
+```
+
+Once again we observe that the alignment of features between layers is a learned phenomenon, as the untreained 117m parameter GPT-2 yields inputs with no correlation between layers for identical features.
+
+```
+Untrained GPT-2 Base
+[:, :, 0-3]
+
+Block 1
+Officers ii Denis variability
+onductASE Media tissue
+ Comp accusationShiftShift
+ separated activekef patented
+
+Block 4
+ Abortion contention variability variability
+ one 185 (" Ic
+ coin Foss multiplied multiplied
+ Ae archetype faded faded
+
+Block 8
+ Preferencesstrip Installation Installation
+ one logosAmy sheet
+coin tiles unique backstory
+ active MDMA incentiv thirst
 ```
 
 To see that the greedy approach using only the last sequence element's activation is equivalent to the greedy approach using all sequence activations, we can modify the algorithm as follows:
@@ -463,6 +490,7 @@ def search_maximal(n_tokens, feature, batch_size=1000):
 ```
 
 and repeating the experiment above, we find that the same inputs are generated.  This is because language model transformer blocks only observe tokens to the left of a given sequence index (ie the third transformer block sequence element observes tokens 0, 1, 2, and 3 but not 4).  Therefore as only the last token is chosen, only the last transformer block sequence feature determines this token.
+
 
 
 
