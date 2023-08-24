@@ -454,7 +454,7 @@ ItemTracker interf interf interf
 (@rawdownloadcloneembedreportprintrawdownloadcloneembedreportprintrawdownloadcloneembedreportprint
 ```
 
-Once again we observe that the alignment of features between layers is a learned phenomenon, as the untreained 117m parameter GPT-2 yields inputs with no correlation between layers for identical features.
+Once again we observe that the alignment of features between layers is a learned phenomenon, as the untrained 117m parameter GPT-2 yields inputs with no correlation between layers for identical features (see the following figure). 
 
 ```
 Untrained GPT-2 Base
@@ -478,6 +478,8 @@ Block 8
 coin tiles unique backstory
  active MDMA incentiv thirst
 ```
+
+It should be noted, however, that this alignment is not as absolute as was observed for gradient descent-based methods or for 1-token length greedy search, but it remains apparent that GPT-2 models have more-aligned transformer block features than the features in vision transformers.
 
 To see that the greedy approach using only the last sequence element's activation is equivalent to the greedy approach using all sequence activations, we can modify the algorithm as follows:
 
