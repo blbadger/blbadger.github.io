@@ -261,7 +261,7 @@ ci helriesiти
 haromenIndoz és
 ```
 
-### Heterogeneous features in deep large Llama
+### Heterogeneous features in a large Llama
 
 So far we have seen that features are remarkably well-aligned in Llama-based language models.  But when we investigate the larger versions of Llama more closely, we find that 
 
@@ -384,7 +384,7 @@ $$
 | **Block 8** | Geh       | 20439     | expend    | assetsadobe   |
 
 
-### Greedy Search Feature
+### Greedy Search Features
 
 In light of the difficulties are presented by gradient-based feature visualization as, we return to take a second look at the complete search method introduced above.  We can make an observation that causal language models (which only infer the next word in a sentence, and are the type of model investigated on this page) exclusively read inputs from left to right (as long as they are trained on English and romance languages, rather than Hebrew). This suggests that when building an input that maximizes a model's feature, we can build it exclusively left to right as well. 
 
@@ -479,7 +479,7 @@ coin tiles unique backstory
  active MDMA incentiv thirst
 ```
 
-It should be noted, however, that this alignment is not as absolute as was observed for gradient descent-based methods or for 1-token length greedy search, but it remains apparent that GPT-2 models have more-aligned transformer block features than the features in vision transformers.
+It should be noted, however, that this alignment is not quite as absolute as was observed for gradient descent-based methods or for 1-token length complete search.  It is evident that GPT-2 model transformer blocks exhibit more closely aligned features than those in vision transformers, where it is usually not possible to determine features in block $n-1$ features given features from block $n$.
 
 To see that the greedy approach using only the last sequence element's activation is equivalent to the greedy approach using all sequence activations, we can modify the algorithm as follows:
 
