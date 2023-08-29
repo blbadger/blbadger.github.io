@@ -376,6 +376,7 @@ $$
 a_{n+1} = \mathrm{softmax\;} \left(a_n - \nabla_a ||O(a_n, \theta) - O(a, \theta)|| \right)
 $$
 
+When this method is applied to the 117m parameter GPT-2, we find that the input tokens do not correspond to those found via complete search, as instead we have:
 
 |         | [:, :, 0] | [:, :, 1] | [:, :, 2] | [:, :, 3] |
 |---------|-----------|-----------|-----------|-----------|
@@ -386,7 +387,7 @@ $$
 
 ### Greedy Search Features
 
-In light of the difficulties are presented by gradient-based feature visualization as, we return to take a second look at the complete search method introduced above.  We can make an observation that causal language models (which only infer the next word in a sentence, and are the type of model investigated on this page) exclusively read inputs from left to right (as long as they are trained on English and romance languages, rather than Hebrew). This suggests that when building an input that maximizes a model's feature, we can build it exclusively left to right as well. 
+In light of the difficulties are presented by gradient-based feature visualization, we return to take a second look at the complete search method introduced above.  We can make an observation that causal language models (which only infer the next word in a sentence, and are the type of model investigated on this page) exclusively read inputs from left to right (as long as they are trained on English and romance languages, for example, rather than languages like Hebrew). This suggests that when building an input that maximizes a model's feature, we can build it exclusively left to right as well. 
 
 We focus on maximizing a given feature of the hidden layer's last sequence output only (rather than maximizing the feature over all sequence elements) and iteratively build the input by adding the token yielding maximal output of this feature to the end of the input, for a pre-determined number of iterations $N$ (equaling the token number).  The reason for this is that maximizing each last token only yields the maximal output if each maximal output is chosen per iteration, ie we undergo a greedy search. 
 
