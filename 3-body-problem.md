@@ -402,9 +402,9 @@ Moreover, knowing which starting points diverge for one set of planets does not 
 
 {% include youtube.html id='Y_4NSytASmI' %}
 
-and changing the force of gravity from $g = 9.8 \to g = 28.9\; m/s^2$ we have
+and changing the force of gravity from $g = 0 \to g = 30.7\; m/s^2$ we have
 
-{% include youtube.html id='QIfYKxbpB8M' %}
+{% include youtube.html id='mp69jdbRm1c' %}
 
 This topology is not special to points on the $x, y$ plane: on the $y, z$ plane (holding $x=-10$) with $z$ on the vertical axis and $y$ on the horizontal such that the bottom left is $(y, z) = (-20, -20)$ and the top right is $(y, z) = (20, 20)$ after $50,000$ time steps,
 
