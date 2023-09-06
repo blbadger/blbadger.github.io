@@ -494,6 +494,56 @@ def search_maximal(n_tokens, feature, batch_size=1000):
 
 and repeating the experiment above, we find that the same inputs are generated.  This is because language model transformer blocks only observe tokens to the left of a given sequence index (ie the third transformer block sequence element observes tokens 0, 1, 2, and 3 but not 4).  Therefore as only the last token is chosen, only the last transformer block sequence feature determines this token.
 
+It is interesting to note that other models exhibit far less alignment after training: for example, for a trained Llama 7b we have for features `[:, :, 0-3]`
+
+```python
+Block 1
+Hein Hein mang Hein
+cyl szere Woj cyl
+inf inf char inf
+travers travers assim feb
+
+Block 4
+</s></s>
+cylнциклоuvud Externe
+character postgresql mysqliAppData
+</s>Q</s>l
+
+Block 8
+</s></s>
+cyllista Which Peru
+</s></s></s></s>
+</s>Q</s>Q
+
+Block 12
+</s></s>
+cyl которой|чення
+characterparameters\ \
+</s>武²).
+```
+
+```
+
+Block 16
+1!--puésugo
+ dataframe Broad Mediabestanden
+</s> rép оп нап
+</s>武性ktiv
+
+Block 20
+</s> thor webpack winter
+ Cés That roughly
+ .= Repub‏
+� traject traject traject
+
+Block 24
+</s>CURCURCUR
+aussianclar circuit
+</s> rép оп §
+1) traject/
+
+```
+
 
 
 
