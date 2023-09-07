@@ -522,7 +522,7 @@ characterparameters\ \
 </s>武²).
 ```
 
-Observe that the first token in each block is identical for each feature, but that the following tokens are typically not the same among different blocks.  For deeper layers, this is no longer the case.
+Observe that the first token in each block is identical for each feature, but that the following tokens are typically not the same among different blocks.  For deeper layers, this is no longer the case and an arbitrary feature in a certain block is typically non-identifiable from the same feature in previous blocks.
 
 ```
 Block 16
