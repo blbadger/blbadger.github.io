@@ -212,13 +212,13 @@ When this is done, however, there is no noticeable difference in the representat
 
 In the last section it was observed that changing the parameters (specifically swapping untrained parameters for trained ones) of a layer normalization operation led to an increase in representational accuracy.  Later on this page we will see that layer normalization tends to decrease representational accuracy, and so we will stop to consider what exactly this transformation entails.
 
-Given layer input $x$, the output of layer normalization $y$ is defined as
+Given a layer's features indexed by $n$ with the layer's activations denoted $x_n$, the output of layer normalization $y$ is defined as
 
 $$
-y = \frac{x - \mathrm{E}(x)}{\sqrt{\mathrm{Var}(x) + \epsilon}} * \gamma + \beta
+y = \frac{x - \mathrm{E}(x_n)}{\sqrt{\mathrm{Var}(x_n) + \epsilon}} * \gamma + \beta
 $$
 
-where $\gamma$ and $\beta$ are trainable parameters.  Here the expectation $\mathrm{E}(x)$ refers to the mean of certain dimensions of $x$ and variance $\mathrm{Var}(x)$ is the sum-of-squares variance on those same dimensions.
+where $\gamma$ and $\beta$ are trainable parameters.  Here the expectation $\mathrm{E}(x_n)$ refers to the mean of certain dimensions of $x$, termed features, and variance $\mathrm{Var}(x)$ is the sum-of-squares variance on those same dimensions.  For transformer models, features are typically the activations of each neuron in the MLP of each block, meaning that layer normalization as it is applied to vision transformers most accurately normalizes values in each image patch separately.
 
 Short consideration of the above formula should be enough to convince one that layer normalization is in general non-invertible such that many different possible inputs $x$ may yield one identical output $y$ for any $\gamma, \beta$ values.  For example, observe that $x = [0, 2, 4]^T, t = [-1, 0, 1]^T, u = [2.1, 2.2, 2.3]^T$ are all mapped to the same $y$ despite having very different $\mathrm{Var}(x)$ and $\mathrm{E}(x)$ and elementwise values in $x$.  
 
@@ -326,7 +326,7 @@ $$
 
 Removal of layer normalization transformations does not yield as much of an increase in input representation accuracy for the last layer (24) of the ViT large 16.  This is because without normalization, at that depth the gradient begins to explode for certain patches: observe the high-frequency signal originating from two patches near the center of the layernormless example above. A very small gradient update rate $\epsilon$ must be used in the gradient descent procedure $a_{n+1} = a_n + \epsilon * \nabla_{a_n}O(a_n, \theta)$ to avoid sending those patch values to infinity.  In turn, the finding that a vision transformer (with attention modules intact) results in exploding gradients $\nabla_{a_n}O(a_n, \theta)$ suggests that this model is poorly conditioned.
 
-### Attention cannot transmit most input information
+### Attention does not transmit most input information
 
 Now we will examine the effects of residual connections on input representation in the context of vision transformers.  After removing all residual connections from each transformer encoder layer, we have
 
