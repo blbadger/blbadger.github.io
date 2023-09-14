@@ -140,7 +140,7 @@ $$
 p(a_n | f(a)) = \mathcal{U} (a_{n, i})
 $$
 
-Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are indeed  difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.  The classical central limit theorem states that for independent and identically distributed random variables $X_1, X_2, X_3, ...$
+Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.  The classical central limit theorem states that for independent and identically distributed random variables $X_1, X_2, X_3, ...$
 
 $$
 \lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
@@ -149,29 +149,13 @@ $$
 
 where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}$ are identical or near-identical as is usually the case upon model initialization where the weights are sufficiently close to the origin, $\vert w_{i, j} - 0 < \epsilon \vert \; \forall i, j$.
 
-For the problem at hand, we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if we instead rely on Lindeberg's central limit theorem, which stipulates only that the random variables in question have finite variance, independence, and satisfy Lindenberg's condition.
-
-Do these random variables in question satisfy Lindenberg's condition?  The condition is
-
-$$
-\lim_{n \to \infty} \frac{1}{s_n^2} \sum_{k=1}^n \Bbb E \lbrack (X_k - \mu_k)^2 \cdot 1_{|X_k - \mu_k|< \epsilon s_n} \rbrack = 0
-$$
-
-for all $\epsilon > 0$ where 
-
-$$
-s_n^2 = \sum_{k=1}^n \sigma^2_k
-$$
-
-which for our dataset is not entirely easy to show because there is. 
-
-Happily however there exists a strict subset of sequences of distributions $X_1, X_2, ..., X_n$ that fulfill Lindenberg's condition also satisfy what is termed Lyapunov's condition, where defining
+We consider choosing each $a_n$ such that all $n$ elements are taken 'simultaneously', or in other words choosing $a_1$ does not affect the choice of $a_2$ because the possible values of $a_2$ have been pre-selected to match $f(a_1, a_2, ..., a_n)$ given $a_1.  With this framework+ we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if the data distributions obey the Lyapunov condition. For
 
 $$
 s^2_n = \sum_{i=1}^n \sigma^2_i
 $$
 
-for some $\delta > 0$ the condition is
+for some $\delta > 0$ this condition is
 
 $$
 \lim_{n \to \infty} \frac{1}{s^{2 + \delta}_n} \sum_{i=1}^n \Bbb E \left[ |X_i - \mu_i|^{2+\delta} \right] = 0
