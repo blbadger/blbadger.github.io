@@ -163,13 +163,15 @@ $$
 s_n^2 = \sum_{k=1}^n \sigma^2_k
 $$
 
-which for our dataset is not entirely easy to show. But happily a strict subset of sequences of distriutions $X_1, X_2, ..., X_n$ that fulfill Lindenberg's condition also satisfy Lyapunov's condition, where defining
+which for our dataset is not entirely easy to show because there is. 
+
+Happily however there exists a strict subset of sequences of distributions $X_1, X_2, ..., X_n$ that fulfill Lindenberg's condition also satisfy what is termed Lyapunov's condition, where defining
 
 $$
 s^2_n = \sum_{i=1}^n \sigma^2_i
 $$
 
-for some $\delta > 0$ there is
+for some $\delta > 0$ the condition is
 
 $$
 \lim_{n \to \infty} \frac{1}{s^{2 + \delta}_n} \sum_{i=1}^n \Bbb E \left[ |X_i - \mu_i|^{2+\delta} \right] = 0
