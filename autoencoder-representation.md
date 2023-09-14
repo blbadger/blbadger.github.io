@@ -60,7 +60,7 @@ To re-iterate, [elsewhere](https://blbadger.github.io/depth-generality.html) it 
 
 For this section and much of the rest of this page, we will employ a more sophistocated autoencoder than the one used above.  We use U-net, a model introduced by [Ronneburger and colleagues](https://link.springer.com/chapter/10.1007/978-3-319-24574-4_28) for medical image segmentation.  
 
-The U-net was named after it's distinctive architecture, 
+The U-net was named after it's distinctive architecture, which can be visualized as follows:
 
 ![Unet architcture]({{https://blbadger.github.io}}/deep-learning/modified_unet_architecture.png)
 
@@ -324,13 +324,26 @@ It is interesting to note that the extra width (more precisely doubling the numb
 
 ### The Role of Batch Normalization in Denoising
 
-Comparing the fully connected autoencoder to the Unet version, it is apparent that the latter is a much more capable denoiser than the former. It is interesting to observe that batch normalization plays a key role in this denoising ability: removing this transformation from all convolutions in Unet results in autoencoder outputs that do not have noise, but are also statistically quite different than the original image. Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as argument the mean and standard deviation statistics of the synthesized images.
+Comparing the fully connected autoencoder to the Unet autoencoder, it is apparent that the latter is a more capable denoiser than the former.  It is not particularly surprising that a larger and deeper model (the Unet) would be a better de-noiser than the former being that it can
+
+
+$$
+y = \frac{x - \mathrm{E}(x_{m, n})}{\sqrt{\mathrm{Var}(x_{m, n}) + \epsilon}} * \gamma + \beta
+$$
+
+where $m$ is the index of the layer output across all sequence items (ie convolutional filter outputs specified by height and width for Unet models) and $n$ is the index of the input among all in the batch.
+
+Batch normalization odes play a role in the ability of Unet to denoise: removing batch normalizations from all convolutions in Unet results in autoencoder outputs that do not have noise per se, but are also statistically quite different than the original image. This does not affect the autoencoder's ability to de-blur an input, however.  Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as arguments the mean and standard deviation statistics of the synthesized images.
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unethidden_nobatchnorm_denoising.png)
 
-We can think of batch normalization as enforcing general statistical principles on the synthesized images. For each layer (also called a feature map) of a convolution, batch normalization learns the appropriate mean and standard deviation accross all samples in that batch necessary for copying a batch of images.  During the image synthesis process, batch normalization is apparently capable of enforcing similar statistics on the generated images.
+On the other hand, it can be shown that this does not depend on the presence of a batch at all. We can retain Unet's batch normalizations and simply train and evaluate a the model with batch sizes of 1 to remove the influence of multiple batch members on any given input.  In effect, this removes index $n$ but not $m$ in the batch norm equation above.  After training we see that this model is capable of around the same de-noising abilities that was observed with normal batch norm (ie with 8- or 16-size batches).
 
-It may be wondered whether batch normalization is necessary for accurate input representation in deep layers of the Unet autoencoder after training.  The answer to this question is no, as with or without batch normalization the Unet output has more or less equivalent representation ability of the input after training.
+![modified batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/autoencoder_denoising_1batch.png)
+
+This provides evidence for the idea that the learning of $\gamma$ and $\beta$ only across a single image gives outputs that are statistically similar to the uncorrupted original input. One can think of batch normalization as enforcing general statistical principles on the synthesized images. For each layer (also called a feature map) of a convolution, batch normalization learns the appropriate mean and standard deviation across all samples $n$ in that batch and all spatial locations $m$ necessary for copying a batch of images.  During the image synthesis process, batch normalization is capable of enforcing these learned statistics on the generated images.
+
+It may be wondered whether batch normalization is necessary for accurate input representation in deep layers of the Unet autoencoder after training.  The answer to this question is no, as with or without batch normalization the trained Unet output layer has equivalent representation ability of the input.
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_nobn_representations.png)
 
@@ -374,9 +387,11 @@ Linear attention was introduced primarily to reduce the quadratic time and memor
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_copying.png)
 
-In some respects, the input representation (of the output layer) of the dot-product attention autoencoder in the last figure is surprisingly good given that this module. Indeed, if we remove input and output convoltutions such that only dot-product attention transforms the input to the output, an effective autoencoder may be trained that is capable of good input representation (but does not denoise)
+The input representation (of information present in the the output layer of our modified Unet) of the dot-product attention autoencoder in the last figure is surprisingly good given that dot-product attention is a strictly non-invertible operation. Indeed, if we remove input and output convolutions such that only dot-product attention transforms the input to the output, an effective autoencoder may be trained that is capable of good input representation (but does not denoise) as shown in the following figure.
 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_only_copying.png)
+
+This appears to be mostly due to conditioning: it is very difficult to generate an accurate representation across a dot-product attention transformation without a residual connection.
 
 
 
