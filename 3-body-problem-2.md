@@ -24,6 +24,113 @@ int main(void)
   double m3 = 30;
 ```
 
+```c++
+int main(void){
+  ...
+  double *p1_x, *p1_y, *p1_z;
+  ...
+  double *p1_prime_x, *p1_prime_y, *p1_prime_z;
+  ...
+  double *dv_1_x, *dv_1_y, *dv_1_z;
+  ...
+```
 
+```c++
+int main(void){
+  ...
+  double *d_p1_x, *d_p1_y, *d_p1_z;
+```
+
+```c++
+
+  p1_x = (double*)malloc(N*sizeof(double));
+  ...
+  still_together = (bool*)malloc(N*sizeof(bool));
+  times = (int*)malloc(N*sizeof(int));
+  not_diverged = (bool*)malloc(N*sizeof(bool));  
+```
+
+```c++
+  for (int i = 0; i < N; i++) {
+    int remainder = i % resolution;
+    int step = i / resolution;
+    p1_x[i] = -20. + 40*(double(remainder)/double(resolution));
+    p1_y[i] = -20. + 40*(double(step)/double(resolution));
+    ...
+```
+
+```c++
+  cudaMemcpy(d_p1_x, p1_x, N*sizeof(double), cudaMemcpyHostToDevice);
+```
+
+```c++
+divergence<<<(N+255)/256, 256>>>(
+      N, 
+      steps, 
+      delta_t,
+      d_still_together,
+      d_not_diverged,
+      d_times,
+      m1, m2, m3,
+      critical_distance,
+      d_p1_x,
+      ...
+      );
+```
+
+```c++
+/ kernal declaration
+__global__
+void divergence(int n, 
+              int steps,
+              double delta_t,
+              bool *still_together,
+              bool *not_diverged,
+              int *times,
+              double m_1, double m_2, double m_3,
+              double critical_distance,
+              double *p1_x, double *p1_y, double *p1_z, 
+              double *p1_prime_x, double *p1_prime_y, double *p1_prime_z, 
+              double *dv_1_x, double *dv_1_y, double *dv_1_z,
+              double *dv_1pr_x, double *dv_1pr_y, double *dv_1pr_z,
+              double *v1_x, double *v1_y, double *v1_z,
+              double *v1_prime_x, double *v1_prime_y, double *v1_prime_z,
+              double *nv1_x, double *nv1_y, double *nv1_z,
+              double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  for (int j=0; j < steps; j++) {
+    if (still_together[i]==false) break;
+    if (i < n){
+      // compute accelerations
+      dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
+                  -9.8 * m_3 * (p1_x[i] - p3_x[i]) / pow(sqrt(pow(p1_x[i] - p3_x[i], 2) + pow(p1_y[i] - p3_y[i], 2) + pow(p1_z[i] - p3_z[i], 2)), 3);
+      dv_1pr_x[i] = -9.8 * m_2 * (p1_prime_x[i] - p2_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p2_prime_x[i], 2) + pow(p1_prime_y[i] - p2_prime_y[i], 2) + pow(p1_prime_z[i] - p2_prime_z[i], 2)), 3) \
+                    -9.8 * m_3 * (p1_prime_x[i] - p3_prime_x[i]) / pow(sqrt(pow(p1_prime_x[i] - p3_prime_x[i], 2) + pow(p1_prime_y[i] - p3_prime_y[i], 2) + pow(p1_prime_z[i] - p3_prime_z[i], 2)), 3);
+
+      // find which trajectories have diverged and increment *times
+      not_diverged[i] = sqrt(pow(p1_x[i] - p1_prime_x[i], 2) + pow(p1_y[i] - p1_prime_y[i], 2) + pow(p1_z[i] - p1_prime_z[i], 2)) <= critical_distance;
+      still_together[i] &= not_diverged[i];
+      if (still_together[i] == true){
+        times[i]++;
+      };
+
+      // compute new velocities
+      nv1_x[i] = v1_x[i] + delta_t * dv_1_x[i];
+      nv1_prime_x[i] = v1_prime_x[i] + delta_t * dv_1pr_x[i];
+
+      // compute positions with current velocities
+      p1_x[i] = p1_x[i] + delta_t * v1_x[i];
+      p1_prime_x[i] = p1_prime_x[i] + delta_t * v1_prime_x[i];
+
+      // assign new velocities to current velocities
+      v1_x[i] = nv1_x[i];
+
+      v1_prime_x[i] = nv1_prime_x[i];
+      
+      }
+    }
+  }
+```
 
 
