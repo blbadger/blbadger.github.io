@@ -64,6 +64,8 @@ int main(void){
 ```
 
 ```c++
+std::chrono::time_point<std::chrono::system_clock> start, end;
+start = std::chrono::system_clock::now();
 divergence<<<(N+255)/256, 256>>>(
       N, 
       steps, 
@@ -76,6 +78,13 @@ divergence<<<(N+255)/256, 256>>>(
       d_p1_x,
       ...
       );
+  // don't proceed until kernal run is complete
+  cudaDeviceSynchronize();
+  // measure elapsed kernal runtime
+  end = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end - start;
+  std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+  std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 ```
 
 ```c++
