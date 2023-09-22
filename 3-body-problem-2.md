@@ -109,7 +109,6 @@ void divergence(int n,
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   for (int j=0; j < steps; j++) {
-    if (still_together[i]==false) break;
     if (i < n){
       // compute accelerations
       dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / pow(sqrt(pow(p1_x[i] - p2_x[i], 2) + pow(p1_y[i] - p2_y[i], 2) + pow(p1_z[i] - p2_z[i], 2)), 3) \
@@ -136,10 +135,45 @@ void divergence(int n,
       v1_x[i] = nv1_x[i];
 
       v1_prime_x[i] = nv1_prime_x[i];
-      
       }
     }
   }
 ```
 
+The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
+The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.
+
+Here we compile with `-o` to name the compiled binary file 'divergence'.
+
+```bash
+(base) bbadger@pupu:~/Desktop/threebody$ nvcc -o divergence divergence.cu
+```
+
+For a 300x300 x,y resolution after the full 50,000 timesteps, we have a somewhat disappointing runtime of 
+
+```bash
+(base) bbadger@pupu:~/Desktop/threebody$ ./divergence
+Elapsed Time: 144.3s
+```
+Comopare this to the `torch` library version of the same problem, which requires only 49.4s to complete.  Of course, `torch` optimized the cuda code somewhat so the result is not completely surprising.
+
+
+```c++
+  dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_x[i] - p3_x[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
+```
+
+likewise, we can remove the `pow()` operator from our divergence check by squaring both sides of the $L^2$ norm equation
+
+$$
+N = \sqrt{x^2_1 + x^2_2 + ... + x^2_n} \\
+N^2 = {x^2_1 + x^2_2 + ... + x^2_n} 
+$$
+
+which is implemented as
+
+```c++
+not_diverged[i] = (p1_x[i]-p1_prime_x[i])*(p1_x[i]-p1_prime_x[i]) + (p1_y[i]-p1_prime_y[i])*(p1_y[i]-p1_prime_y[i]) + (p1_z[i]-p1_prime_z[i])*(p1_z[i]-p1_prime_z[i]) <= critical_distance*critical_distance;
+```
+
+other small optimizations we can perform are to change the 
