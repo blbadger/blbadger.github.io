@@ -142,9 +142,9 @@ void divergence(int n,
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
-The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.
+The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full nVidia toolkit use with an Ampere architecture GPU (such as the author's rtx3060) may not be compatible with the latest kernal version, so downgrading to an older kernal version may be necessary.
 
-Here we compile with `-o` to name the compiled binary file 'divergence'.
+Here we compile with the flag `-o` tfollowed by the desired file name where the compiled binary program will be stored.
 
 ```bash
 (base) bbadger@pupu:~/Desktop/threebody$ nvcc -o divergence divergence.cu
@@ -156,8 +156,20 @@ For a 300x300 x,y resolution after the full 50,000 timesteps, we have a somewhat
 (base) bbadger@pupu:~/Desktop/threebody$ ./divergence
 Elapsed Time: 144.3s
 ```
-Comopare this to the `torch` library version of the same problem, which requires only 49.4s to complete.  Of course, `torch` optimized the cuda code somewhat so the result is not completely surprising.
 
+Compare this to the `torch` library version of the same problem, which requires only 49.4s to complete.  Of course, `torch` optimizes the cuda code somewhat so the result is not completely surprising.  In the next section we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using pytorch.
+
+### Optimizing the Three Body Trajectory Computations
+
+Contrary to what one might expect, many parallelized programs applied to GPUs spend more clock cycles (and therefore total time) on memory management than actual computation.  This is nearly always true for deep learning and also holds for many more traditional graphics applications as well.  
+
+For the three body simulation, however, a quick look at the code suggests that this program is not memory-bottlenecked: we allocated memory for each array, initialized each one before sending to the GPU once, and then.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
+
+![profile]({{https://blbadger.github.io}}/3-body-problem/nvidia-nsight.png)
+
+This being the case, we can focus on optimizing the computation rather than memory loading and unloading.  Some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
+
+Thus we can transform the computation of the acceleration into
 
 ```c++
   dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_x[i] - p3_x[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
@@ -176,4 +188,21 @@ which is implemented as
 not_diverged[i] = (p1_x[i]-p1_prime_x[i])*(p1_x[i]-p1_prime_x[i]) + (p1_y[i]-p1_prime_y[i])*(p1_y[i]-p1_prime_y[i]) + (p1_z[i]-p1_prime_z[i])*(p1_z[i]-p1_prime_z[i]) <= critical_distance*critical_distance;
 ```
 
-other small optimizations we can perform are to change the 
+other small optimizations we can perform are to change the evaluation of `still_together[i]` to a binary bit check
+
+```c++
+if (still_together[i] == 1){
+        times[i]++;
+      };
+```
+
+and the like. With these optimizations in place, we have for the 300x300 example
+
+```bash
+(base) bbadger@pupu:~/Desktop/threebody$ ./divergence
+Elapsed Time: 44.9377s
+```
+
+which is a small speedup from the `torch` code (which took 49 seconds).  This difference is not due to module import or other python overheads, as it grows when compute increases (for example, 1k iterations on a 3k by 3k input requires 86.9 seconds with the optimized cuda code but 97.4 seconds via torch).
+
+
