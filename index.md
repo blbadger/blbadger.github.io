@@ -162,9 +162,11 @@ $$
 ## Physics
 As for any natural science, an attempt to explain observations and predict future ones using hypothetical statements called theories.  Unlike the case for axiomatic mathematics, such theories are never proven because some future observation may be more accurately accounted for by a different theory.  As many different theories can accurately describe or predict any given set of observations, it is customary to favor the simplest as a result of Occam's razor.  
 
-### [Three Body Problem](/3-body-problem.md)
+### [Three Body Problem I](/3-body-problem.md)
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
+
+### [Three Body Problem II: Paralellized Computation](/3-body-problem-2.md)
 
 ### [Entropy](/entropy.md)
 
