@@ -157,17 +157,21 @@ For a 300x300 x,y resolution after the full 50,000 timesteps, we have a somewhat
 Elapsed Time: 144.3s
 ```
 
-Compare this to the `torch` library version of the same problem, which requires only 49.4s to complete.  Of course, `torch` optimizes the cuda code somewhat so the result is not completely surprising.  In the next section we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using pytorch.
+Compare this to the `torch` library version of the same problem, which
+
+```python
+[Finished in 107.1s]
+```
+
+Of course, `torch` itself optimizes the cuda code to some extent so this difference is not particularly surprising and only indicates that the movement of the loop into the cuda kernal does not offer the same performance benefit as other optimizations one can perform.  In the next section we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using pytorch.
 
 ### Optimizing the Three Body Trajectory Computations
 
-Contrary to what one might expect, many parallelized programs applied to GPUs spend more clock cycles (and therefore total time) on memory management than actual computation.  This is nearly always true for deep learning and also holds for many more traditional graphics applications as well.  
-
-For the three body simulation, however, a quick look at the code suggests that this program is not memory-bottlenecked: we allocated memory for each array, initialized each one before sending to the GPU once, and then.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
+Contrary to what one might expect, many parallelized programs applied to GPUs spend more clock cycles (and therefore total time) on memory management than actual computation.  This is nearly always true for deep learning and also holds for many more traditional graphics applications as well.  Memory management occurs both within the GPU and in transfers of data to and from the CPU.  For the three body simulation, a quick look at the code suggests that this program should spend very little time sending data to and from the GPU: we allocated memory for each array, initialized each one before sending to the GPU once, and then copied each array back to the CPU once the loop completes.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
 
 ![profile]({{https://blbadger.github.io}}/3-body-problem/nvidia-nsight.png)
 
-This being the case, we can focus on optimizing the computation rather than memory loading and unloading.  Some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
+Ignoring GPU-internal memory optimization for the moment, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
 
 Thus we can transform the computation of the acceleration into
 
@@ -203,6 +207,21 @@ and the like. With these optimizations in place, we have for the 300x300 example
 Elapsed Time: 44.9377s
 ```
 
-which is a small speedup from the `torch` code (which took 49 seconds).  This difference is not due to module import or other python overheads, as it grows when compute increases (for example, 1k iterations on a 3k by 3k input requires 86.9 seconds with the optimized cuda code but 97.4 seconds via torch).
+which is a ~2.4x speedup compared to the `torch` code.  
+
+### Data type optimization
+
+The present optimizations revolve around the 
+
+
+
+
+
+
+
+
+
+
+
 
 
