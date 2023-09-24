@@ -6,7 +6,9 @@ This page is a continuation from [Part 1](https://blbadger.github.io/3-body-prob
 
 Most nonlinear dynamical systems are fundamentally irreducable: one cannot come up with a computational procedure to determine the parameters of some object at any given time in the future using a fixed amount of computation.  This means that these systems are inherently sequential to some extent. This being the case, there are still many problems that benefit from computations that do not have to proceed in sequence.  One particular example is the problem of finding which positions in a given plane are stable for the trajectory of three bodies in space.  This problem can be approached by determining the stability of various starting locations in sequence, but it is much faster to accomplish this goal by determining the stabilities at various starting locations in parallel.  In [Part 1](https://blbadger.github.io/3-body-problem.html) this parallel computation was performed behind the scenes using the Python `torch` library, which abstracts away the direct computation of tensors on parallelized computational devices like graphics processing units (GPUs) or tensor processing units.
 
-Even with the use of the `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.
+Even with the use of the `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute, which is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+
+On this page we will explore speeding up these computations by writing our own CUDA kernal that is implementd on the GPU.
 
 ```c++
 #include <stdio.h>
