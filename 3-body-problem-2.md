@@ -6,9 +6,9 @@ This page is a continuation from [Part 1](https://blbadger.github.io/3-body-prob
 
 Most nonlinear dynamical systems are fundamentally irreducable: one cannot come up with a computational procedure to determine the parameters of some object at any given time in the future using a fixed amount of computation.  This means that these systems are inherently sequential to some extent. This being the case, there are still many problems that benefit from computations that do not have to proceed in sequence.  One particular example is the problem of finding which positions in a given plane are stable for the trajectory of three bodies in space.  This problem can be approached by determining the stability of various starting locations in sequence, but it is much faster to accomplish this goal by determining the stabilities at various starting locations in parallel.  In [Part 1](https://blbadger.github.io/3-body-problem.html) this parallel computation was performed behind the scenes using the Python `torch` library, which abstracts away the direct computation of tensors on parallelized computational devices like graphics processing units (GPUs) or tensor processing units.
 
-Even with the use of the `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute, which is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+Even with the use of the [highly optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute, which is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
 
-On this page we will explore speeding up these computations by writing our own CUDA kernal that is implementd on the GPU.
+On this page we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C++ execution always begins at `int main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
 
 ```c++
 #include <stdio.h>
@@ -17,7 +17,7 @@ On this page we will explore speeding up these computations by writing our own C
 
 int main(void)
 {
-  int N = 10000;
+  int N = 90000;
   int steps = 50000;
   double delta_t = 0.001;
   double critical_distance = 0.5;
@@ -26,25 +26,32 @@ int main(void)
   double m3 = 30;
 ```
 
+And then we continue by assigning pointer variables with the proper data type for each of our planets.  This is the most efficient form of an array in C++, allowing us to allocate memory and initialize each element directly.  
+
+Here `N` is the number of pixels, ie a 300x300 divergence plot contains 90,000 pixels. We will perform all the required computations in 1D arrays for now, such that separate arrays are initialized for each x, y, z component of each attribute of each planet.  We have to initialize position, acceleration (dv), velocity, and a temporary buffer new velocity arrays.
+
 ```c++
-int main(void){
+int main(void)
+{
   ...
   double *p1_x, *p1_y, *p1_z;
   ...
-  double *p1_prime_x, *p1_prime_y, *p1_prime_z;
-  ...
   double *dv_1_x, *dv_1_y, *dv_1_z;
   ...
-```
-
-```c++
-int main(void){
+  double *nv1_x, *nv1_y, *nv1_z;
   ...
-  double *d_p1_x, *d_p1_y, *d_p1_z;
+  double *v1_x, *v1_y, *v1_z;
 ```
 
 ```c++
+bool *still_together,*not_diverged;
+int *
+```
 
+For each array, we must allocate the proper amount of memory depending on the type of data stored.
+
+```c++
+  ...
   p1_x = (double*)malloc(N*sizeof(double));
   ...
   still_together = (bool*)malloc(N*sizeof(bool));
@@ -146,7 +153,7 @@ The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to 
 
 The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full nVidia toolkit use with an Ampere architecture GPU (such as the author's rtx3060) may not be compatible with the latest kernal version, so downgrading to an older kernal version may be necessary.
 
-Here we compile with the flag `-o` tfollowed by the desired file name where the compiled binary program will be stored.
+Here we compile with the flag `-o` followed by the desired file name where the compiled binary program will be stored.
 
 ```bash
 (base) bbadger@pupu:~/Desktop/threebody$ nvcc -o divergence divergence.cu
@@ -159,13 +166,13 @@ For a 300x300 x,y resolution after the full 50,000 timesteps, we have a somewhat
 Elapsed Time: 144.3s
 ```
 
-Compare this to the `torch` library version of the same problem, which
+Compare this to the torch library version of the same problem, which
 
 ```python
 [Finished in 107.1s]
 ```
 
-Of course, `torch` itself optimizes the cuda code to some extent so this difference is not particularly surprising and only indicates that the movement of the loop into the cuda kernal does not offer the same performance benefit as other optimizations one can perform.  In the next section we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using pytorch.
+Pytorch employs some optimizations in its CUDA code, so this difference is not particularly surprising and only indicates that the movement of the loop into the cuda kernal does not offer the same performance benefit as other optimizations that are possible.  In the next section we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using torch.
 
 ### Optimizing the Three Body Trajectory Computations
 
