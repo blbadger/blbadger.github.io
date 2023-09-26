@@ -28,7 +28,7 @@ int main(void)
 
 And then we continue by assigning pointer variables with the proper data type for each of our planets.  This is the most efficient form of an array in C++, allowing us to allocate memory and initialize each element directly.  
 
-Here `N` is the number of pixels, ie a 300x300 divergence plot contains 90,000 pixels. We will perform all the required computations in 1D arrays for now, such that separate arrays are initialized for each x, y, z component of each attribute of each planet.  We have to initialize position, acceleration (dv), velocity, and a temporary buffer new velocity arrays.
+Here `N` is the number of pixels, ie a 300x300 divergence plot contains 90,000 pixels. We will perform all the required computations in 1D arrays for now, such that separate arrays are initialized for each x, y, z component of each attribute of each planet.  We have to initialize position, acceleration (dv), velocity, and a temporary buffer array for new velocities.
 
 ```c++
 int main(void)
@@ -43,12 +43,14 @@ int main(void)
   double *v1_x, *v1_y, *v1_z;
 ```
 
+We also want to initialize boolean arrays for trajectories that have not diverged yet for any given iteration, a boolean array for trajectories that are not diverging right now, and an array to keep track of the iteration in which divergence occurred.
+
 ```c++
 bool *still_together,*not_diverged;
-int *
+int *times
 ```
 
-For each array, we must allocate the proper amount of memory depending on the type of data stored.
+For each array, we must allocate the proper amount of memory depending on the type of data stored. We have $N$ total elements, so we need to allocate the size of each element times $N$ for each array.
 
 ```c++
   ...
@@ -59,6 +61,15 @@ For each array, we must allocate the proper amount of memory depending on the ty
   not_diverged = (bool*)malloc(N*sizeof(bool));  
 ```
 
+We also need to initialize space for each array in the GPU. One way to do this is to declare a new pointer variable corresponding to each array (see below for p1_x) before allocating the proper amount of memory for the reference of that variable.  This must be different than our CPU arrays.
+
+```c++
+double *d_p1_x;
+cudaMalloc(&d_p1_x, N*sizeof(double)); 
+```
+
+Now we need to initialize each array with our starting condition.  As we are working with 1D arrays rather than the 2D arrays, we need to initialize each array to capture 2D information in a single list.  This is similar to how 2D arrays are represented in memory, and should lead to the fastest computation even for an Nvidia GPU which contains built-in 2D and 3D objects.
+
 ```c++
   for (int i = 0; i < N; i++) {
     int remainder = i % resolution;
@@ -68,9 +79,13 @@ For each array, we must allocate the proper amount of memory depending on the ty
     ...
 ```
 
+Now we copy each array from the CPU to the GPU
+
 ```c++
   cudaMemcpy(d_p1_x, p1_x, N*sizeof(double), cudaMemcpyHostToDevice);
 ```
+
+and now we can run the CUDA kernal, keeping track of the time spent.  We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernal instructions have been sent to the GPU.
 
 ```c++
 std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -97,7 +112,7 @@ divergence<<<(N+255)/256, 256>>>(
 ```
 
 ```c++
-/ kernal declaration
+// kernal declaration
 __global__
 void divergence(int n, 
               int steps,
@@ -178,17 +193,37 @@ Pytorch employs some optimizations in its CUDA code, so this difference is not p
 
 Contrary to what one might expect, many parallelized programs applied to GPUs spend more clock cycles (and therefore total time) on memory management than actual computation.  This is nearly always true for deep learning and also holds for many more traditional graphics applications as well.  Memory management occurs both within the GPU and in transfers of data to and from the CPU.  For the three body simulation, a quick look at the code suggests that this program should spend very little time sending data to and from the GPU: we allocated memory for each array, initialized each one before sending to the GPU once, and then copied each array back to the CPU once the loop completes.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
 
-![profile]({{https://blbadger.github.io}}/3-body-problem/nvidia-nsight.png)
+![profile]({{https://blbadger.github.io}}/3_body_problem/nvidia-nsight.png)
 
 Ignoring GPU-internal memory optimization for the moment, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
 
-Thus we can transform the computation of the acceleration into
+Thus we can forego the use of the `pow()` operator for direct multiplication in order to optimize the three body trajectory computation.  This change makes a somewhat-tedious CUDA code block become extremely tedious to write, so we can instead have a Python program write out the code for us.  
+
+```python
+def generate_string(a: str, b: str, c: str, d: str, t: str, , m: str, prime: bool) -> str:
+    if prime:
+        e = '_prime'
+    else:
+        e = ''
+    first_denom =  f'sqrt(({a}{e}_x[i] - {b}{e}_x[i])*({a}{e}_x[i] - {b}{e}_x[i]) + ({a}{e}_y[i] - {b}{e}_y[i])*({a}{e}_y[i] - {b}{e}_y[i]) + ({a}{e}_z[i] - {b}{e}_z[i])*({a}{e}_z[i] - {b}{e}_z[i]))' 
+    second_denom = f'sqrt(({c}{e}_x[i] - {d}{e}_x[i])*({c}{e}_x[i] - {d}{e}_x[i]) + ({c}{e}_y[i] - {d}{e}_y[i])*({c}{e}_y[i] - {d}{e}_y[i]) + ({c}{e}_z[i] - {d}{e}_z[i])*({c}{e}_z[i] - {d}{e}_z[i]))'
+    template = f'''-9.8 * m_{m} * ({a}{e}_{t}[i] - {b}{e}_{t}[i]) / ({first_denom}*{first_denom}*{first_denom}) -9.8 * m_{m} * ({c}{e}_{t}[i] - {d}{e}_{t}[i]) / ({second_denom}*{second_denom}*{second_denom});'''
+    return template
+
+a, b = 'p3', 'p1
+c, d = 'p3', 'p2'
+m = '3'
+t = 'z'
+print (generate_string(a, b, c, d, t, prime=True))
+```
+
+For the acceleration of planet 1, this gives us
 
 ```c++
   dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_x[i] - p3_x[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
 ```
 
-likewise, we can remove the `pow()` operator from our divergence check by squaring both sides of the $L^2$ norm equation
+Likewise, we can remove the `pow()` operator from our divergence check by squaring both sides of the $L^2$ norm equation
 
 $$
 N = \sqrt{x^2_1 + x^2_2 + ... + x^2_n} \\
@@ -216,7 +251,7 @@ and the like. With these optimizations in place, we have for the 300x300 example
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code.  
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.
 
 ### Data type optimization
 
