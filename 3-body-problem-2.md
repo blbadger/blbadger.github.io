@@ -244,14 +244,24 @@ if (still_together[i] == 1){
       };
 ```
 
-and the like. With these optimizations in place, we have for the 300x300 example
+and the like. Finally, we can halt the CUDA kernal if a trajectory has diverged. This allows us to prevent the GPU from continuing to compute the trajectories of starting values that
+have already diverged, which don't yield any useful information.
+
+```c++
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  for (int j=0; j < steps; j++) {
+    if (i < n and still_together[i]){
+    ...
+```
+
+With these optimizations in place, we have for the 300x300 example
 
 ```bash
 (base) bbadger@pupu:~/Desktop/threebody$ ./divergence
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations give more dramatic results as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have
 
 ### Data type optimization
 
