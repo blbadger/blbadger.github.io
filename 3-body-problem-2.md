@@ -210,7 +210,7 @@ def generate_string(a: str, b: str, c: str, d: str, t: str, , m: str, prime: boo
     template = f'''-9.8 * m_{m} * ({a}{e}_{t}[i] - {b}{e}_{t}[i]) / ({first_denom}*{first_denom}*{first_denom}) -9.8 * m_{m} * ({c}{e}_{t}[i] - {d}{e}_{t}[i]) / ({second_denom}*{second_denom}*{second_denom});'''
     return template
 
-a, b = 'p3', 'p1
+a, b = 'p3', 'p1'
 c, d = 'p3', 'p2'
 m = '3'
 t = 'z'
@@ -261,7 +261,7 @@ With these optimizations in place, we have for the 300x300 example
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations give more dramatic results as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have 1095s for our CUDA kernal but 3257s for the torch version.
 
 ### Data type optimization
 
