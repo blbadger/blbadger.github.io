@@ -72,8 +72,7 @@ cudaMalloc(&d_p1_x, N*sizeof(double));
 
 Now we need to initialize each array with our starting condition.  As we are working with 1D arrays rather than the 2D arrays, we need to initialize each array to capture 2D information in a single list.  This is similar to how 2D arrays are represented in memory, and should lead to the fastest computation even for an Nvidia GPU which contains built-in 2D and 3D objects.  
 
-![profile]({{https://blbadger.github.io}}/3_body_problem/1d_cuda.png)
-
+![1d illustration]({{https://blbadger.github.io}}/3_body_problem/1d_cuda.png)
 
 This may be implemented using modulo division in which the x parameter is equivalent to the remainder of the division of the total number of elements by the square root of elements, and the y parameter is equal to the integer (floor) division of the number of elements by the square root of elements. Here we also scale each element by the appropriate constants (here to make a linear interpolation between -20 and 20)
 
@@ -92,8 +91,7 @@ Now we copy each array from the CPU to the GPU
   cudaMemcpy(d_p1_x, p1_x, N*sizeof(double), cudaMemcpyHostToDevice);
 ```
 
-and now we can run the CUDA kernal, keeping track of the time spent.  We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernal instructions have been sent to the GPU.
-
+and now we can run the CUDA kernal, keeping track of the time spent.  
 ```c++
 std::chrono::time_point<std::chrono::system_clock> start, end;
 start = std::chrono::system_clock::now();
@@ -109,6 +107,14 @@ divergence<<<(N+255)/256, 256>>>(
       d_p1_x,
       ...
       );
+
+```
+
+CUDA functions are termed 'kernals', and are called by the kernal name followed by the number of grid blocks and threads per block for execution. We call our CUDA function by `divergence<<<blocks, threads_per_block>>>(args)`. 
+
+We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernal instructions have been sent to the GPU.
+
+```c++
   // don't proceed until kernal run is complete
   cudaDeviceSynchronize();
   // measure elapsed kernal runtime
@@ -117,6 +123,8 @@ divergence<<<(N+255)/256, 256>>>(
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 ```
+
+A typical CUDA kernal declaration is `__global__ void funcname(args)` although `__device__` may also be used.
 
 ```c++
 // kernal declaration
