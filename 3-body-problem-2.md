@@ -6,7 +6,9 @@ This page is a continuation from [Part 1](https://blbadger.github.io/3-body-prob
 
 Most nonlinear dynamical systems are fundamentally irreducable: one cannot come up with a computational procedure to determine the parameters of some object at any given time in the future using a fixed amount of computation.  This means that these systems are inherently sequential to some extent. This being the case, there are still many problems that benefit from computations that do not have to proceed in sequence.  One particular example is the problem of finding which positions in a given plane are stable for the trajectory of three bodies in space.  This problem can be approached by determining the stability of various starting locations in sequence, but it is much faster to accomplish this goal by determining the stabilities at various starting locations in parallel.  In [Part 1](https://blbadger.github.io/3-body-problem.html) this parallel computation was performed behind the scenes using the Python `torch` library, which abstracts away the direct computation of tensors on parallelized computational devices like graphics processing units (GPUs) or tensor processing units.
 
-Even with the use of the [highly optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute, which is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+Even with the use of the [highly optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute: this is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+
+### A CUDA kernal for divergence
 
 On this page we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C++ execution always begins at `int main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
 
@@ -68,7 +70,12 @@ double *d_p1_x;
 cudaMalloc(&d_p1_x, N*sizeof(double)); 
 ```
 
-Now we need to initialize each array with our starting condition.  As we are working with 1D arrays rather than the 2D arrays, we need to initialize each array to capture 2D information in a single list.  This is similar to how 2D arrays are represented in memory, and should lead to the fastest computation even for an Nvidia GPU which contains built-in 2D and 3D objects.
+Now we need to initialize each array with our starting condition.  As we are working with 1D arrays rather than the 2D arrays, we need to initialize each array to capture 2D information in a single list.  This is similar to how 2D arrays are represented in memory, and should lead to the fastest computation even for an Nvidia GPU which contains built-in 2D and 3D objects.  
+
+![profile]({{https://blbadger.github.io}}/3_body_problem/1d_cuda.png)
+
+
+This may be implemented using modulo division in which the x parameter is equivalent to the remainder of the division of the total number of elements by the square root of elements, and the y parameter is equal to the integer (floor) division of the number of elements by the square root of elements. Here we also scale each element by the appropriate constants (here to make a linear interpolation between -20 and 20)
 
 ```c++
   for (int i = 0; i < N; i++) {
