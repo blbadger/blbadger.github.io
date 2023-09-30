@@ -290,6 +290,10 @@ Elapsed Time: 44.9377s
 
 which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have 1095s for our CUDA kernal but 3257s for the torch version.  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups beyond what is reported here.
 
+In the case of block and thread size of 1, the following depicts the difference between our early stopping CUDA code and the torch-based method employed in [part 1](https://blbadger.github.io/3-body-problem.html).  
+
+![early stopping]({{https://blbadger.github.io}}/3_body_problem/cuda_abbreviated.png)
+
 ### Data type optimization
 
 The present optimizations revolve around the 
