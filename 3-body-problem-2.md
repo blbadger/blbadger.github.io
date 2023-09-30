@@ -6,11 +6,11 @@ This page is a continuation from [Part 1](https://blbadger.github.io/3-body-prob
 
 Most nonlinear dynamical systems are fundamentally irreducable: one cannot come up with a computational procedure to determine the parameters of some object at any given time in the future using a fixed amount of computation.  This means that these systems are inherently sequential to some extent. This being the case, there are still many problems that benefit from computations that do not have to proceed in sequence.  One particular example is the problem of finding which positions in a given plane are stable for the trajectory of three bodies in space.  This problem can be approached by determining the stability of various starting locations in sequence, but it is much faster to accomplish this goal by determining the stabilities at various starting locations in parallel.  In [Part 1](https://blbadger.github.io/3-body-problem.html) this parallel computation was performed behind the scenes using the Python `torch` library, which abstracts away the direct computation of tensors on parallelized computational devices like graphics processing units (GPUs) or tensor processing units.
 
-Even with the use of the [highly optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) `torch` library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute: this is due to the large number of iteration required (50,000 or more), the large size of each array (6 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+Even with the use of the [optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) torch library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute: this is due to the large number of iteration required (50,000 or more), the large size of each array (18 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
 
 ### A CUDA kernal for divergence
 
-On this page we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C++ execution always begins at `int main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
+Here we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C++ execution always begins at `int main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
 
 ```c++
 #include <stdio.h>
@@ -63,7 +63,7 @@ For each array, we must allocate the proper amount of memory depending on the ty
   not_diverged = (bool*)malloc(N*sizeof(bool));  
 ```
 
-We also need to initialize space for each array in the GPU. One way to do this is to declare a new pointer variable corresponding to each array (see below for p1_x) before allocating the proper amount of memory for the reference of that variable.  This must be different than our CPU arrays.
+Next, space is allocated for each array in the GPU. One way to do this is to declare a new pointer variable corresponding to each array (see below for p1_x) before allocating the proper amount of memory for that variable (which must be referenced as it was defined as a pointer.  Each must be different than the name for each corresponding CPU array, and here `d_` is prefixed to designate that this is a 'device' array.
 
 ```c++
 double *d_p1_x;
@@ -110,7 +110,7 @@ divergence<<<(N+255)/256, 256>>>(
 
 ```
 
-CUDA functions are termed 'kernals', and are called by the kernal name followed by the number of grid blocks and threads per block for execution. We call our CUDA function by `divergence<<<blocks, threads_per_block>>>(args)`. 
+CUDA functions are termed 'kernals', and are called by the kernal name followed by the number of grid blocks and threads per block for execution. We call our CUDA function by `divergence<<<blocks, threads_per_block>>>(args)`. The denominator of the `blocks` must equal the `threads_per_block` for this experiment for reasons detailed below.
 
 We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernal instructions have been sent to the GPU.
 
@@ -124,7 +124,7 @@ We have to synchronize the GPU before measuring the time of completion, as other
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 ```
 
-A typical CUDA kernal declaration is `__global__ void funcname(args)` although `__device__` may also be used.
+A typical CUDA kernal declaration is `__global__ void funcname(args)` although `__device__` may also be used.  For brevity, only the first planet's arrays are included below but note that the full kernal requires all three planet arrays.
 
 ```c++
 // kernal declaration
@@ -145,8 +145,20 @@ void divergence(int n,
               double *v1_prime_x, double *v1_prime_y, double *v1_prime_z,
               double *nv1_x, double *nv1_y, double *nv1_z,
               double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
+)
+```
+Parallelized computation must now be specified: in the following code, we define index `i` to be a certain block's thread, in one dimension as this is how the arrays were defined as well. Note that as the array is 1D, `blockDim.x` will always evaluate to 1.  The arrangement of blocks and threads in our kernal call is now clearer, as each thread is responsible for one index.
+
+```c++
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
+```
+
+Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernal.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime).
+
+For each index `i` corresponding to one CUDA thread, $steps$ iterations of the three body trajectory are performed and at each iteration the $times$ array is incremented if the trajectory of planet one has not diverged from its slightly shifted counter part (planet one prime). 
+
+```c++
   for (int j=0; j < steps; j++) {
     if (i < n){
       // compute accelerations
@@ -181,7 +193,7 @@ void divergence(int n,
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
-The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full nVidia toolkit use with an Ampere architecture GPU (such as the author's rtx3060) may not be compatible with the latest kernal version, so downgrading to an older kernal version may be necessary.
+The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's rtx 3060) may not be compatible with the latest kernal version, so downgrading to an older kernal version may be necessary.
 
 Here we compile with the flag `-o` followed by the desired file name where the compiled binary program will be stored.
 
@@ -276,7 +288,7 @@ With these optimizations in place, we have for the 300x300 example
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have 1095s for our CUDA kernal but 3257s for the torch version.
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have 1095s for our CUDA kernal but 3257s for the torch version.  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups beyond what is reported here.
 
 ### Data type optimization
 
