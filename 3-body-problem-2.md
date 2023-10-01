@@ -188,7 +188,7 @@ For each index `i` corresponding to one CUDA thread, $steps$ iterations of the t
       v1_prime_x[i] = nv1_prime_x[i];
       }
     }
-  }
+
 ```
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
@@ -296,7 +296,7 @@ In the case of block and thread size of 1, the following depicts the difference 
 
 ### Data type optimization
 
-The present optimizations revolve around the 
+Calculations performed in 64-bit double precisoin floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating point number contain 11 bits for the 
 
 
 
