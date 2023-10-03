@@ -168,7 +168,7 @@ As for any natural science, an attempt to explain observations and predict futur
 
 ### [Three Body Problem II: Paralellized Computation](/3-body-problem-2.md)
 
-![3 body image]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_cover.png)
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/cuda_vs_torch.png)
 
 ### [Entropy](/entropy.md)
 
