@@ -375,14 +375,15 @@ which is a ~2.4x speedup compared to the `torch` code, a substantial improvement
 
 ### Data type optimization
 
-Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating  point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-100, 100]$.  This means that we are effectively wasting 10 bits of information with each calculation, as the bits encode information that is never used for our simulations.
+Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating  point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-1000, 1000]$.  This means that we are effectively wasting 9 bits of information with each calculation, as the bits encode information that is unused for our simulations.
 
-Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to ~400MB vRAM from ~750MB for double precision floating point. But the single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
+Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to 400MB vRAM from 685MB for double precision floating point. But the single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
 
 Thus we could make a substantial time and memory optimization by simply converting to single precision floating point data, but this comes with a problem: single precision leads to noticeable artefacts in the resulting divergence array, which are not present when performing computation using double precision.  Observe in the following plot the grainy appearance of the boundary of diverging regions near the center-right (compare this to the plots using double precision above).
 
-![single precision artefacts]({{https://blbadger.github.io}}/3_body_problem/threebody_divergence_cuda.png)
+![single precision artefacts]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_cuda.png)
 
+In effect, what we are observing is discrete behavior between adjacent pixels, which is a typical indicator of insufficient computational precision.  
 
 
 
