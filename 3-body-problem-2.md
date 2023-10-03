@@ -225,18 +225,19 @@ Thus we want a way to send our C++ CUDA-computed arrays (specifically the `*int 
 The use of `ctypes` can get quite complex, but in this case we can apply this library with only a few lines of code. First we need the proper headers in our `.cu` file containing the CUDA kernal and driver C++ code.
 
 ```c++
+#! C++ CUDA
 #include <cuda.h>
 #include <cuda_runtime_api.h>
 ```
 
-It should be noted that some standard C++ CUDA libraries (ie `<equation.h>`) are incompatible with the CUDA runtime API.  Next we leave the kernal the same as before, but change 
+It should be noted that some standard C++ CUDA libraries (ie `<equation.h>`) are incompatible with the CUDA runtime API, so some care must be taken in choosing the header files for a project that involves `ctypes`.  Next we leave the kernal the same as before, but change the main function declaration
 
 ```c++
 int main(void)
 {...
 ```
 
-to 
+to a function linker that enforces an identical datatype between C++ and C (as we are using **c**types but are programming in C++ Cuda)
 
 ```c++
 extern "C" {
@@ -246,6 +247,7 @@ extern "C" {
     return times;
   }
 ```
+
 where we provide the proper return type (here a pointer to an integer array). This code can be compiled by `nvcc` and sent to a `.so` (dynamic library) file with the proper flags:
 
 ```bash
@@ -255,6 +257,7 @@ where we provide the proper return type (here a pointer to an integer array). Th
 where our CUDA kernal is located in `divergence_kernal.cu` and we are sending the compiled library to `divergence.so`.  Now we can call the `divergence` function in our `.so` file using `ctypes as follows:
 
 ```python
+#! python
 import numpy as np
 import ctypes
 import matplotlib.pyplot as plt 
@@ -270,9 +273,11 @@ f.restype = ctypes.POINTER(ctypes.c_int * dim**2)
 arr = f().contents
 ```
 
-This `ctypes` object can be converted to a Numpy array very quickly, and the result may be plotted via Matplotlib as follows:
+Note that passing an argument from Python to this C++ function is as simple as including the argument with the proper data type in the `divergence()` C++ driver function and specifying the argument values in `f(arg1, arg2,...).contents`.
 
-```
+At this point we have `arr` which is a `ctypes` object that can be converted to a Numpy array very quickly by a direct cast, and the result may be plotted via Matplotlib as follows:
+
+```python
 time_array = np.array(arr)
 time_steps = 50000
 time_array = time_array.reshape(dim, dim)
@@ -284,11 +289,11 @@ plt.savefig('Threebody_divergence_cuda.png', bbox_inches='tight', pad_inches=0, 
 plt.close()
 ```
 
-when we compare a 300x300 array after 50,000 time steps using our CUDA kernal to the Torch-based calculation, we find that the output is identical:
+when we compare a 1000x1000 array after 50,000 time steps using our CUDA kernal to the Torch-based calculation, we find that the output is identical (although with optimization the computation time is reduced by a factor of 3).
 
 ![profile]({{https://blbadger.github.io}}/3_body_problem/cuda_vs_torch.png)
 
-For a nice write-up on the use of `ctypes` for cuda-defined functions where arguments are passed through Python, see Bikulov's [blogpost](https://bikulov.org/blog/2013/10/01/using-cuda-c-functions-in-python-via-.so-and-ctypes/). 
+For a write-up on the use of `ctypes` for cuda-defined functions where Python array arguments are defined and passed to CUDA code, see Bikulov's [blog post](https://bikulov.org/blog/2013/10/01/using-cuda-c-functions-in-python-via-.so-and-ctypes/). 
 
 ### Optimizing the Three Body Trajectory Computations
 
@@ -324,11 +329,11 @@ For the acceleration of planet 1, this gives us
   dv_1_x[i] = -9.8 * m_2 * (p1_x[i] - p2_x[i]) / (sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))*sqrt((p1_x[i] - p2_x[i])*(p1_x[i] - p2_x[i]) + (p1_y[i] - p2_y[i])*(p1_y[i] - p2_y[i]) + (p1_z[i] - p2_z[i])*(p1_z[i] - p2_z[i]))) -9.8 * m_3 * (p1_x[i] - p3_x[i]) / (sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i]))*sqrt((p1_x[i] - p3_x[i])*(p1_x[i] - p3_x[i]) + (p1_y[i] - p3_y[i])*(p1_y[i] - p3_y[i]) + (p1_z[i] - p3_z[i])*(p1_z[i] - p3_z[i])));
 ```
 
-Likewise, we can remove the `pow()` operator from our divergence check by squaring both sides of the $L^2$ norm equation
+Likewise, we can remove the `pow()` operator from our divergence check by squaring both sides of the $L^2$ norm inequality given critical distance $c$,
 
 $$
-N = \sqrt{x^2_1 + x^2_2 + ... + x^2_n} \\
-N^2 = {x^2_1 + x^2_2 + ... + x^2_n} 
+N = \sqrt{x^2_1 + x^2_2 + ... + x^2_n} \leq c \\
+N^2 = {x^2_1 + x^2_2 + ... + x^2_n} \leq c * c
 $$
 
 which is implemented as
@@ -355,22 +360,28 @@ have already diverged, which don't yield any useful information.
     ...
 ```
 
-With these optimizations in place, we have for the 300x300 example
+In the case of block and thread size of 1, the following depicts the difference between our early stopping CUDA code and the torch-based method employed in [part 1](https://blbadger.github.io/3-body-problem.html).  
+
+![early stopping]({{https://blbadger.github.io}}/3_body_problem/cuda_abbreviated.png)
+
+With these optimizations in place, we have for a resolution of $300^2$ a runtime of
 
 ```bash
 (base) bbadger@pupu:~/Desktop/threebody$ ./divergence
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=150,000$ we have 1095s for our CUDA kernal but 3257s for the torch version.  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups beyond what is reported here.
-
-In the case of block and thread size of 1, the following depicts the difference between our early stopping CUDA code and the torch-based method employed in [part 1](https://blbadger.github.io/3-body-problem.html).  
-
-![early stopping]({{https://blbadger.github.io}}/3_body_problem/cuda_abbreviated.png)
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations at a resolution of $1000^2$ we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=200,000$ we have 1181s for our CUDA kernal but 4390s for the torch version (3.7x speedup).  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups as well.
 
 ### Data type optimization
 
-Calculations performed in 64-bit double precisoin floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating point number contain 11 bits for the 
+Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating  point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-100, 100]$.  This means that we are effectively wasting 10 bits of information with each calculation, as the bits encode information that is never used for our simulations.
+
+Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to ~400MB vRAM from ~750MB for double precision floating point. But the single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
+
+Thus we could make a substantial time and memory optimization by simply converting to single precision floating point data, but this comes with a problem: single precision leads to noticeable artefacts in the resulting divergence array, which are not present when performing computation using double precision.  Observe in the following plot the grainy appearance of the boundary of diverging regions near the center-right (compare this to the plots using double precision above).
+
+![single precision artefacts]({{https://blbadger.github.io}}/3_body_problem/threebody_divergence_cuda.png)
 
 
 
