@@ -237,11 +237,11 @@ int main(void)
 {...
 ```
 
-to a function linker that enforces an identical datatype between C++ and C (as we are using **c**types but are programming in C++ Cuda)
+to a function linker that enforces an identical datatype between C++ and C (as we are using **c**types but are programming in C++ Cuda) with whichever arguments we desire.
 
 ```c++
 extern "C" {
-  int* divergence(void)
+  int* divergence(int arg1, int arg2,...)
   {
     ...
     return times;
@@ -270,10 +270,8 @@ Next we need a pointer of the proper type in order to read the function `diverge
 ```python
 dim = 300
 f.restype = ctypes.POINTER(ctypes.c_int * dim**2)
-arr = f().contents
+arr = f(arg1, arg2).contents
 ```
-
-Note that passing an argument from Python to this C++ function is as simple as including the argument with the proper data type in the `divergence()` C++ driver function and specifying the argument values in `f(arg1, arg2,...).contents`.
 
 At this point we have `arr` which is a `ctypes` object that can be converted to a Numpy array very quickly by a direct cast, and the result may be plotted via Matplotlib as follows:
 
@@ -384,6 +382,8 @@ Thus we could make a substantial time and memory optimization by simply converti
 ![single precision artefacts]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_cuda.png)
 
 In effect, what we are observing is discrete behavior between adjacent pixels, which is a typical indicator of insufficient computational precision.  
+
+We can attempt to increase the precision of our computations while maintaining the speedups that `float` offers by instead converting initial values to integers before performing computations using these integers.  This is known as fixed-point arithmetic, and here it will allow us to increase the precision of our datatype compared to the ~6 decimal places of precision offered by `float`.
 
 
 
