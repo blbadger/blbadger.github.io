@@ -98,78 +98,31 @@ It may be wondered then if there is necessarily an equivalence relation between 
 
 So far we have seen empirically that autoencoders are capable of removing noise from an input even when they are not explicitly trained to do so.  This may be understood to be equivalent to the finding that autoencoders learn manifolds that are not noisy, and map arbitrary inputs (even noisy ones) to that manifold.
 
-There is another related phenomenon that may also play a role in the ability of autoencoders to denoise: the non-invertibility of transformations in autoencoders introduces noise into the representations of the input, but much of this noise is removed from the representation during the training process.  Noise is introduced between non-invertible (or approximately non-invertible) transformation representations for the simple reason that many possible inputs may yield one identical output.  These many possible inputs resemble Gaussian noise if the transformation in question contains a large number of independent elements, which is indeed the case for typical deep learning models. 
+There is another related phenomenon that may also play a role in the ability of autoencoders to denoise: the non-invertibility of transformations in untrained models introduces noise into the representations of the input, but much of this noise is removed from the representation during the training process.  Noise is introduced between non-invertible (or approximately non-invertible) transformation representations because many possible inputs may yield one identical output for models composed of non-invertible (singular) linear transformations.  These many possible inputs closely resemble Gaussian noise if the models in question are composed of transformations that are independent which is indeed the case for typical deep learning models at initialization.
 
-To see why non-invertibility for a transformation consisting of a large number of independent elements results in the introduction of Gaussian noise in the output's representation of the input, first define the transformation of some layer of our model to be a function $f: \Bbb R^n \to \Bbb R^m$ where the input $a$ contains $n$ elements and the output $m$ elements. For a fully connected feedforward deep learning model, $f$ is a composition of $m$ functions $f_1, f_2, ... f_m$ each taking all $n$ elements as their inputs as follows:
+To be precise, suppose we are given a simple fully connected model that has been initialized with weights initialized to a uniform distribution, $w_n \sim \mathcal U$ (which is the default for Pytorch). For the purposes of this argument, these weights could actually be distributed in any number of ways so long as the initialization is random and does not vary too much between layers.  
 
-$$
-f = \{ f_1(a_1, a_2, ..., a_n), f_2(a_1, a_2, ... a_n), ... , f_m(a_1, a_2, ..., a_n)\}
-$$
+First assume that an input to be transformed into a representation $x_i$ is initialized near the origin, perhaps to uniform values. Now suppose that the model were composed of one or more layers, each layer being a linear transformation (matrix multiplication) $A_l$ from dimension $n \to m: n > m$ such that the output dimension $d$ is much smaller than the input dimension $D$.  The representation of the output $O(a, \theta)$ by the input is defined as an input $x_i$ such that $O(x_i, \theta) = O(a, \theta)$.  We can show here that given these assumptions the input representation is approximately normal before training, or $O(x_i, \theta) \sim \mathcal N$.
 
-where each $f_m$ is typically a degree one polynomial of the input,
+To see this, first take a model composed of a single linear transformation. Assuming full rank for $A_1$, the number of dimensions in which $x_n$ can change is $n - m$.  For large $n$, the chance that an element of $x_i > \epsilon$ is equal to the volume of a point in an n-dimensional sphere greater than $\epsilon$ away from the origin, which is equal to
 
 $$
-f_m(a_1, a_2, ..., a_n) = w_{1, m} a_1 + w_{2, m} a_2 + \cdots + w_{n, m} a_n
+vol(d) \leq 2 \mathrm{exp} (-n \epsilon^2 / 4) v_n
 $$
 
-Now consider the significance of the output of $f$ being non-unique with respect to the input: this means that many different inputs $a$ yield some identical $f(a)$.  Without prior knowledge besides the given values of $w$ which define the output $y = f(a)$, we can therefore form $m$ probability distributions describing the likelihood of all possible inputs $x_i$ that satisfy $f(x_i) = y$.  
-
-Recalling that the output $f_m$ is a polynomial of all elements of $a$, we can express $f_m$ as follows
+whereas the probability for a point in the normal distribution to exceed $epsilon$ away from the expectation is
 
 $$
-f_m(a) = w_{1, m} * p(a_1 | f(a)) + w_{2, m} * p(a_2 | f(a)) + \cdots + w_{n, m} * p(a_n | f(a))
+p(|x-\epsilon| > \mu) = \mathrm{exp}(-2n\epsilon^2)
 $$
 
-where $p(a_n \vert f(a))$ signifies the probability of input element $a_n$ given the output $f(a)$. We can draw random variable samples from these probability distributions, $A_i \sim p(a_i \vert f(a))$ such that $f_m(a)$ can be expressed as
+This is for one layer: for $k$ layers in a model, the number of dimensions in which $x_n$ has freedom to change is $(n_1 - m_1) * (n_2 - m_2) * \cdots * (n_k - m_k)$.
 
-$$
-f_m(a) = w_{1, m} * A_1 + w_{2, m} * A_2 + \cdots + w_{n, m} * A_n
-$$
+It may be wondered why trained models then do not typically have representations that resemble Gaussian noise.  The answer is that after training we can no longer assume that sucessive layers contain weights that are independent: to put it concretely, the linear combinations of successive layers are no longer guaranteed to be orthogonal such that the representation of an output layer in a deep model is far lower-dimensional than that of an untrained model. 
 
-Ignoring for the present approximate non-invertibility, for absolute non-invertibility only each distribution $p(a_n)$ is uniform over all indicies $i$ of valid values of element $n$ in the input, $a_{n, i}$ that satisfy 
+But notably even trained models would be expected to have Gaussian noise-like corruption after one or a few non-invertible layers.  This is because the dimensions in which an input of a linear transformation with $n > m$ may vary for some fixed $f(x) = y$ are necessarily orthogonal, which is a result of the fundamental theorem of linear algebra.
 
-$$
-\{ a_{n, i} : f_m^{-1}(f(a_n))_i \approx a_{n, i} \}
-$$
-
-so that the corresponding probability distributions are as follows:
-
-$$
-p(a_n | f(a)) = \mathcal{U} (a_{n, i})
-$$
-
-Considering approximate non-invertiblity once again, the distributions $p(a_n \vert f(a))$ are typically not uniform and are difficult to express exactly.  The exact nature of each distribution is irrelevant, however, as we can apply the central limit theorem to $f_m(a)$ because it is the sum of many independent variables.  The classical central limit theorem states that for independent and identically distributed random variables $X_1, X_2, X_3, ...$
-
-$$
-\lim_{n \to \infty} \Bbb P(X_1 + \cdots + X_n \leq n \mu + \sqrt{n} \sigma x) \\
-= \int_{-\infty}^{x} \frac{1}{2 \pi}e^{-y/2} dy
-$$
-
-where the expectation value $\Bbb E(X) = n \mu$ and the standard deviation is $\sqrt{n} \sigma$.  Therefore for independent and identically distributed random variables $A_1, ..., A_n \sim p(a_1 \vert f(a)), ..., p(a_n \vert f(a))$ we may safely assume that the distribution $p(f_m(a))$ is Gaussian if the weights $w_{1, m}, ..., w_{n, m}$ are identical or near-identical as is usually the case upon model initialization where the weights are sufficiently close to the origin, $\vert w_{i, j} - 0 < \epsilon \vert \; \forall i, j$.
-
-We consider choosing each $a_n$ such that all $n$ elements are taken 'simultaneously', or in other words choosing $a_1$ does not affect the choice of $a_2$ because the possible values of $a_2$ have been pre-selected to match $f(a_1, a_2, ..., a_n)$ given $a_1$.  With this notion we are guaranteed independence when choosing $A_1, ..., A_n$ but typically not identical distribution unless certain assumptions are made about the set of possible valid inputs that yield $f(a)$ or on the set of weights $w$.  But we can also forego these assumptions if the data distributions obey the Lyapunov condition. For
-
-$$
-s^2_n = \sum_{i=1}^n \sigma^2_i
-$$
-
-for some $\delta > 0$ this condition is
-
-$$
-\lim_{n \to \infty} \frac{1}{s^{2 + \delta}_n} \sum_{i=1}^n \Bbb E \left[ |X_i - \mu_i|^{2+\delta} \right] = 0
-$$
-
-The Lyapunov condition requires the sum of the expectations of the difference between random variable $X_i$ and the mean of that random variable $\mu_i$ to grow smaller and smaller than the sum of variances of those distributions as the number of random variables increases.  It is straightforward to see that this condition is upheld if all $X_i$ are approximately normal themselves, as many more samples are drawn within one unit of variance of the mean than otherwise for each random variable.
-
-For $\delta = 1$ we can check this condition empirically for a simplified MLP.
-
-This is significant because the central limit theorem states that addition of many independent distributions (of any identity) tends towards a Gaussian distribution.  Therefore the addition of any set of distributions of possible values of $p(a_1)$ tends towards the Gausian distribution as $n \to \infty$. 
-
-It should be remembered, however, that this is only true if the weights $w_{1, m}, ..., w_{n, m}$ on the distributions are approximately identical, and if this is not true then we are by no means guaranteed that the noise will be Gaussian distributed after training. This is because training typically leads to changes in weights such that weights are no longer approximately identical.
-
-One note on the preceeding argument: it may at first seem absurd to suppose that $A_1, A_2, ..., A_n$ are independent random variables because if one chooses a certain value for the first element of $a_1 = A_1$ then there is no reason to suppose that this does not limit the possibilities for choosing subsequent values $a_2, ..., a_n$.  But this does not mean that random variables $A_1, A_2, ..., A_n$ are dependent because the choosing of one random variable from $ A_n \sim p(a_n \vert f(a))$ does not affect which element is chosen from any other distribution, rather only that the joint conditional distribution $p(a_1, a_2, ..., a_n \vert f(a))$ is extremely difficult to explicitly describe.
-
-It may also seem strange to assume that we assume finite variance for $A_1, ..., A_n$ being that for an undercomplete linear transformation an infinite number of inputs $a_i$ may identically yield one output $f(a)$.  This may be done because the input generation process is effectively bounded (only generated inputs $a_g$ near the starting input $a_0$ will be found via gradient descent), and the same is true of gradient updates during the training process.
+This theory is supported by experimental evidence: observe that for [vision transformers](https://blbadger.github.io/vision-transformers.html) the representation of block 1 (which has only two fully connected layers per patch, ignoring attention transformations between patches) for trained and untrained models alike contains noticeable Gaussian noise whereas the deep layers of untrained *but not trained* models exhibits any Gaussian noise.  This is precisely what the theory predicts if training removes independence of weights from one layer to the next.
 
 ### Image Generation with an Autoencoder Manifold Walk
 
