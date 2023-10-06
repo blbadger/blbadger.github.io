@@ -1,6 +1,6 @@
 ## The Henon map
 
-Maurice Henon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space, achieved with the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
+Michel Hénon sought to recapitulate the geometry of the Lorenz attractor in two dimensions.  This requires stretching and folding of space, achieved with the following [discrete system](https://projecteuclid.org/euclid.cmp/1103900150), which is now referred to as the Henon map:
 
 $$
 x_{n+1} = 1-ax_n^2 + y_n \\
