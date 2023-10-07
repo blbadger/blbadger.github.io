@@ -381,9 +381,12 @@ Thus we could make a substantial time and memory optimization by simply converti
 
 ![single precision artefacts]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_cuda.png)
 
-In effect, what we are observing is discrete behavior between adjacent pixels, which is a typical indicator of insufficient computational precision.  
+In effect, what we are observing is discrete behavior between adjacent pixels, which is a typical indicator of insufficient computational precision. What we want therefore is to use the unused bits in the `float` exponent for the mantissa. One way to do this is to define a new C++ data type using `struct` and convert to and from integers at each operation, but this is not 
 
-We can attempt to increase the precision of our computations while maintaining the speedups that `float` offers by instead converting initial values to integers before performing computations using these integers.  This is known as fixed-point arithmetic, and here it will allow us to increase the precision of our datatype compared to the ~6 decimal places of precision offered by `float`.
+We can attempt to increase the precision of our computations while maintaining the speedups that `float` offers by instead converting initial values to integers before performing computations using these integers.  This is known as fixed-point arithmetic, and we will use it to increase the precision of our datatype compared to the 6 or 7 decimal places of precision offered by `float`.
+
+Unfortunately, fixed point arithmetic does not particularly effective here because the process of bit shifting itself requires much more time than a normal float computation.  Performing bit-shifted fixed point arithmetic requires around 70% more time for the three body problem than float arithmetic, meaning that the performance gains from switching to floats compared to double types are nearly eliminated.
+
 
 
 
