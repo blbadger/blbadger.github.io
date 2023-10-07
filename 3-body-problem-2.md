@@ -156,6 +156,8 @@ Parallelized computation must now be specified: in the following code, we define
 
 Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernal.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime).
 
+Moving the loop to the GPU does have another substantial benefit, however: it reduced the electrical power required by the GPU and CPU during the simulation.  For the GPU alone, the internal loop typically requires around 100 watts whereas the external loop usually takes around 125 watts on an Nvidia rtx3060.
+
 For each index `i` corresponding to one CUDA thread, $steps$ iterations of the three body trajectory are performed and at each iteration the $times$ array is incremented if the trajectory of planet one has not diverged from its slightly shifted counter part (planet one prime). 
 
 ```c++
