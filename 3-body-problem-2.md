@@ -371,11 +371,8 @@ Elapsed Time: 44.9377s
 
 which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations at a resolution of $1000^2$ we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=200,000$ we have 1181s for our CUDA kernal but 4390s for the torch version (3.7x speedup).  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups as well.
 
-Finally, we turn to the square root functions. Replacing each `sqrt()` with `__fsqrt_rd()` results in a further speedup: for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal). 
 
-![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
-
-### Data type optimization
+### Data precision optimization
 
 Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating  point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-1000, 1000]$.  This means that we are effectively wasting 9 bits of information with each calculation, as the bits encode information that is unused for our simulations.
 
@@ -391,6 +388,19 @@ We can attempt to increase the precision of our computations while maintaining t
 
 Unfortunately, fixed point arithmetic does not particularly effective here because the process of bit shifting itself requires much more time than a normal float computation.  Performing bit-shifted fixed point arithmetic requires around 70% more time for the three body problem than float arithmetic, meaning that the performance gains from switching to floats compared to double types are nearly eliminated.
 
+Instead of changing the precision of all array elements in our simulation, we instead consider the idea that the precision of certain computations may be less important than the precision of others.  If this is the case, then we can change the precision of those precision-insensitive computations to decrease the program run-time without affecting the precision of the divergence plot itself.  
+
+Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of aN acceleration computations,
+
+$$
+a_1 = -Gm_3\frac{p_1 - p_3}{ \left( \sqrt((p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2) \right) ^3}
+$$
+
+it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
+
+After some more experimentation we find that this guess is accurate: replacing each `sqrt()` with `__fsqrt_rd()` results in a further speedup: for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal). But the divergence plot remains identical to the double-precision square root kernal version as seen below, meaning that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence, which was what we wanted.
+
+![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
 
 
 
