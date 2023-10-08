@@ -395,7 +395,7 @@ Instead of changing the precision of all array elements in our simulation, we in
 Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of aN acceleration computations,
 
 $$
-a_1 = -Gm_3\frac{p_1 - p_3}{ \left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2)} ^3}
+a_1 = -Gm_3\frac{p_1 - p_3}{ \left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} ^3}
 $$
 
 it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
