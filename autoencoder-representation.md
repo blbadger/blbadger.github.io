@@ -113,10 +113,10 @@ $$
 whereas the probability for a point in the normal distribution to exceed $epsilon$ away from the expectation is
 
 $$
-p(|x-\epsilon| > \mu) = \mathrm{exp}(-2n\epsilon^2)
+p(|x-\mu| > \epsilon) = \mathrm{exp}(-2n\epsilon^2)
 $$
 
-This is for one layer: for $k$ layers in a model, the number of dimensions in which $x_n$ has freedom to change is $(n_1 - m_1) * (n_2 - m_2) * \cdots * (n_k - m_k)$.
+This is for one layer: for $k$ layers in a model, the number of dimensions in which $x_n$ has freedom to change is $(n_1 - m_1) (n_2 - m_2) \cdots (n_k - m_k)$.
 
 It may be wondered why trained models then do not typically have representations that resemble Gaussian noise.  The answer is that after training we can no longer assume that sucessive layers contain weights that are independent: to put it concretely, the linear combinations of successive layers are no longer guaranteed to be orthogonal such that the representation of an output layer in a deep model is far lower-dimensional than that of an untrained model. 
 
