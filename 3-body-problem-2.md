@@ -430,9 +430,13 @@ After some more experimentation we find that this guess is accurate.  Replacing 
 
 ![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
 
-With this much faster generation time, we can obtain larger views of the diverged regions.  Extending the x-axis to $x \in [-40, 470] we have
+With this much faster generation time, we can obtain larger views of the diverged regions.  For a wider view of the above region, we have
 
-![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/threebody_compilation.png)
+![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_wide.png)
+
+And extending the x-axis to $x \in [-40, 470] by stitching together multiple plots we find that the region to the right is repeated and stretched.
+
+![compilation]({{https://blbadger.github.io}}/3_body_problem/threebody_compilation.png)
 
 
 
