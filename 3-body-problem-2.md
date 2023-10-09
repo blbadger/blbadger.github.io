@@ -388,6 +388,32 @@ In effect, what we are observing is discrete behavior between adjacent pixels, w
 
 We can attempt to increase the precision of our computations while maintaining the speedups that `float` offers by instead converting initial values to integers before performing computations using these integers.  This is known as fixed-point arithmetic, and we will use it to increase the precision of our datatype compared to the 6 or 7 decimal places of precision offered by `float`.
 
+Perhaps the fastest way of performing fixed point precision calculations using CUDA is to bit shift integer type data. Bit shifting is the process of moving bits right or left in a bitwise representation of a number: for example, the integer 7 can be represented in 8-bit unsigned integer format as 00000101, and if we bit-shift thie number to the left by two then we have 00010100, which may be accomplished in C/C++ CUDA using double less-than symbols (assuming 8-bit unsigned integer format has been implemented),
+
+```cuda
+int8 number = 7 << 2 // 0010100
+```
+
+Similarly we can bit-shift numbers to the right as well, 
+
+```cuda
+int8 number = 7 >> 1 // 0000001
+```
+
+and in both cases the bits shifted out of the 8-bit field are lost.
+
+To use bit shifting to perform fixed point decimal arithmetic, we simply shift all numbers by the number of bits we want to use as the decimal expansion of our approximations of real numbers, in this case 26 bits (corresponding to around 8 decimal digits).  The rest of the bits correspond to the whole number portions of the real numbers we are representing.  The rules for performing fixed point decimal arithmetic are simple: for addition and subtraction the shift must be made to both operands, but for multplication and division the shift must be made to only the operand that we are interested in.  For example, do define fractions like `critical_distance = 0.5` we shift the chosen number of bits and then use integer division by and unshifted value.
+
+```cuda
+#define SHIFT_AMOUNT 26
+int critical_distance = (5 << SHIFT_AMOUNT) / 10; // 0.5
+int m1 = 10 << SHIFT_AMOUNT; // 10
+```
+
+Things are more tricky when we perform multiplication or division when we care about both operands, where if we use two's complement (see the next section) we simply multiply operands and bit shift after doing so.
+
+Representing negative numbers is also somewhat difficult and platform-dependent, as a signed integer may be offset by some amount (such that 00000001 signifies not 1 but $-2^{8-1}+1$) or else the first bit may signify the sign, where $10000101$ might be $-7$ and $00000101$ is $7$ and is much rarer for integer representations) or may involve two's complement, where all bits are flipped before adding 1 (-7 is now $00000101 \to 11111010 \to 11111011$ and is much more common as it does not waste any bit space).  
+
 Unfortunately, fixed point arithmetic does not particularly effective here because the process of bit shifting itself requires much more time than a normal float computation.  Performing bit-shifted fixed point arithmetic requires around 70% more time for the three body problem than float arithmetic, meaning that the performance gains from switching to floats compared to double types are nearly eliminated.
 
 Instead of changing the precision of all array elements in our simulation, we instead consider the idea that the precision of certain computations may be less important than the precision of others.  If this is the case, then we can change the precision of those precision-insensitive computations to decrease the program run-time without affecting the precision of the divergence plot itself.  
@@ -395,7 +421,7 @@ Instead of changing the precision of all array elements in our simulation, we in
 Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of aN acceleration computations,
 
 $$
-a_1 = -Gm_3\frac{p_1 - p_3}{ \left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} ^3}
+a_1 = -Gm_3\frac{p_1 - p_3}{\sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} ^3}
 $$
 
 it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
