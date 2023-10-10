@@ -267,10 +267,11 @@ import matplotlib.pyplot as plt
 f = ctypes.CDLL('./divergence.so').divergence
 ```
 
-Next we need a pointer of the proper type in order to read the function `divergence` output, which is denoted `ctypes.c_int`.  We need the array size as well, so for a 300x300 array we specify a pointer to a block 300*300 ints large.  Then the file contents can be read into an `ctypes` object `<class '__main__.c_int_Array_90000'>`.
+Next we need a pointer of the proper type in order to read the function `divergence` return, which here is `ctypes.c_int` as well as any argument types (here integers as well). Integers may be passed as arguments without supplying a type definition but other types (double, float, etc) must be supplied via `argtypes` definition.  We need the array size as well, so for a 300x300 array we specify a pointer to a block 300*300 ints large.  Then the file contents can be read into an `ctypes` object `<class '__main__.c_int_Array_90000'>`.
 
 ```python
 dim = 300
+f.argtypes = [ctypes.c_int, ctypes.c_int]
 f.restype = ctypes.POINTER(ctypes.c_int * dim**2)
 arr = f(arg1, arg2).contents
 ```
