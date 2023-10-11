@@ -427,7 +427,7 @@ $$
 
 it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
 
-After some more experimentation we find that this guess is accurate.  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal).  For $i=200,000$ iterations with the same resolution the fully optimized kernal requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernal version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence, which was what we wanted.
+After some more experimentation we find that this guess is accurate (at least for the $x, y$ scale used previously, note that at a smaller spatial scale there is a noticeable difference in noise).  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal).  For $i=200,000$ iterations with the same resolution the fully optimized kernal requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernal version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence, which was what we wanted.
 
 ![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
 
@@ -435,10 +435,9 @@ With this much faster generation time, we can obtain larger views of the diverge
 
 ![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/Threebody_divergence_wide.png)
 
-And extending the x-axis to $x \in [-40, 470] by stitching together multiple plots we find that the region to the right is repeated and stretched.
+And extending the x-axis to $x \in [-40, 470]$ by stitching together multiple plots we find that the region to the right is repeated and stretched at each repetition.
 
 ![compilation]({{https://blbadger.github.io}}/3_body_problem/threebody_compilation.png)
-
 
 
 
