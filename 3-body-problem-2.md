@@ -439,7 +439,109 @@ And extending the x-axis to $x \in [-40, 470]$ by stitching together multiple pl
 
 ![compilation]({{https://blbadger.github.io}}/3_body_problem/threebody_compilation.png)
 
+### Divergence fractal zoom
 
+Thus far we have been focusing on the use of parallelized computation to map the stable (dark regions) and unstable (light regions) initial values of a planet at a familiar scale: around forty or sixty or (in the last plot) a few hundred meters.  Once the divergence map is generated, can we simply find the point of interest and have an answer to whether or not that point is stable? In this section we will see that no, the question of whether a point is stable for all time is much more difficult to answer than this.
+
+To address this question, we might want more resolution.  If planet 1 at (x, y) coordinates $(-4.1, 2.3)$ diverges, what about $(-4.1001, 2.3)$? This is not possible to determine using our plot scaled at $x \in [-40, 40]$, but it may be when we compute thousands of points $x \in [-4.11, -4.10]$. 
+
+If the reader attempts to calculate these plots, they will find that there is not that much more detail present at these small scales than is found in our larger map.  But it should be remembered that we seek the eventual stability or instability of these points rather than the limited approximation currently observed.  In particular, for more accuracy at these smaller scales we must both increase the number of maximum iterations of our divergence plot (where each iteration is of Euler's approximation to the solution of an ordinary differential equation, $x_{n+1} = x_n + \delta t x'_n$) as well as decrease the size of the shift performed at the start of our computation such that $x_0 - x'_0 \to 0$.
+
+Doing so results in even more computational requirements than are currently had
+
+```python
+f = ctypes.CDLL('./divergence_zoom.so').divergence
+already_computed = {}
+last_time_steps = 0
+for i in range(60):
+	x_res = 300
+	y_res = 300
+	time_steps = int(50000 + (350000 * i / 400))
+	for pair in already_computed:
+		already_computed[pair] += time_steps - last_time_steps
+	last_time_steps = time_steps
+
+	shift_distance = 0.001 / (2**(i/30))
+	x_center = 5.30031
+	y_center = -0.45
+	x_range = 40 / (2**(i/30))
+	y_range = 40 / (2**(i/30))
+	x, y = [], []
+	return_template = []
+	decimal = int(-np.log(x_range / (x_res)))
+	decimal = 2
+
+	start_x = x_center - x_range/2
+	start_y = y_center - y_range/2
+	for j in range(int(x_res*y_res)):
+		remainder = j % y_res
+		step = j // x_res
+		x_i = start_x + x_range*(remainder/x_res)
+		y_i = start_y + y_range*(step/y_res)
+
+		if (round(x_i, decimal), round(y_i, decimal)) not in already_computed:
+			x.append(x_i) 
+			y.append(y_i)
+			return_template.append(-1)
+		else:
+			return_template.append(already_computed[(round(x_i, decimal), round(y_i, decimal))])
+	length_x, length_y = len(x), len(y)
+	print (f'N elements: {length_x}')
+
+	x_array_type = ctypes.c_float * len(x)
+	y_array_type = ctypes.c_float * len(y)
+	x = x_array_type(*x)
+	y = y_array_type(*y)
+
+	f.argtypes = [ctypes.c_int, 
+		ctypes.c_int, 
+		ctypes.c_int, 
+		ctypes.c_double, 
+		ctypes.c_double, 
+		ctypes.c_double, 
+		ctypes.c_double, 
+		ctypes.c_double, 
+		ctypes.POINTER(ctypes.c_float*len(x)), 
+		ctypes.POINTER(ctypes.c_float*len(y)),
+		ctypes.c_int
+		] 
+
+	f.restype = ctypes.POINTER(ctypes.c_int * length_x) # kernal return type
+	arr = f(x_res, y_res, time_steps, x_center, x_range, y_center, y_range, shift_distance, x, y, length_x).contents
+	time_array = np.array(arr)
+	flattened_arr = time_array.flatten()
+	return_arr = []
+	inc = 0
+	for k in range(len(return_template)):
+		if return_template[k] == -1:
+			return_arr.append(flattened_arr[inc])
+			already_computed[(round(x[inc], decimal), round(y[inc], decimal))] = flattened_arr[inc]
+			inc += 1
+		else:
+			return_arr.append(return_template[k])
+
+
+	output_array = np.array(return_arr).reshape(x_res, y_res)
+	output_array = time_steps - output_array
+	plot(output_array, i)
+
+	# clean computed map
+	keys_to_delete = []
+	for pair in already_computed.keys():
+		if pair[0] > start_x + x_range or pair[0] < start_x or pair[1] > start_y + y_range or pair[1] < start_y:
+			keys_to_delete.append(pair)
+		npair = []
+		npair[0] = round(pair[0], decimal)
+		npair[1] = round(already[0], decimal)
+
+	for k in keys_to_delete:
+		already_computed.pop(k, None)
+```
+
+
+### Why the three body problem is so difficult
+
+It may be wondered why these rather intensive computations are required for the three body problem, considering that 
 
 
 
