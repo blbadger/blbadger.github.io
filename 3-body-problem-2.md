@@ -379,7 +379,7 @@ which is a ~2.4x speedup compared to the `torch` code, a substantial improvement
 
 Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating  point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-1000, 1000]$.  This means that we are effectively wasting 9 bits of information with each calculation, as the bits encode information that is unused for our simulations.
 
-Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to 400MB vRAM from 685MB for double precision floating point. But the single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
+Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to 400MB vRAM from 685MB for double precision floating point. But single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
 
 Thus we could make a substantial time and memory optimization by simply converting to single precision floating point data, but this comes with a problem: single precision leads to noticeable artefacts in the resulting divergence array, which are not present when performing computation using double precision.  Observe in the following plot the grainy appearance of the boundary of diverging regions near the center-right (compare this to the plots using double precision above).
 
@@ -449,18 +449,27 @@ If the reader attempts to calculate these plots, they will find that there is no
 
 Doing so results in even more computational requirements than are currently had
 
-```python
-f = ctypes.CDLL('./divergence_zoom.so').divergence
-already_computed = {}
-last_time_steps = 0
-for i in range(60):
-	x_res = 300
-	y_res = 300
-	time_steps = int(50000 + (350000 * i / 400))
-	for pair in already_computed:
-		already_computed[pair] += time_steps - last_time_steps
-	last_time_steps = time_steps
+How can we reduce the amount of computation per frame in a video on divergence? In other words, given a sequence of divergence maps of decreasing domain sizes, centered on the same region, can we reduce the amount of computation required for some or all of these maps? One way to reduce the total computation amount is to attempt to re-use previously computed values: if the divergence values for $(x, y)$ coordinates calcuated at one scale are again needed at a smaller scale, we can simply save that divergence value and look it up rather than re-calculating.
 
+To implement this cached zoom approach, we can either save values in a cache in C++ such that the cache memory is not freed each time the kernal is called or else we can have the cache in the Python code that uses `ctypes` to interface with our .so CUDA kernal.  Here we will explore the latter, although there is no real expected performance difference between these approaches. 
+
+Therefore we start by initializing our `already_computed` cache as a Python dictionary
+
+```python
+# python
+already_computed = {}
+```
+
+and then we initialize the `time_steps` and `shift_distance` variables such that the number of timesteps increases linearly while the shifted distance decreases logarithmically as the zoom video frame number increases. Likewise we can specify the rate at which we are zooming in on the point `x_center, y_center` by dividing our initial range by the power of two appropriate. In the code below, dividing the video iteration i by 30 serves to have the video halve in range for every 30 frames.
+
+Another decision to be made is how we want to look up coordinates that are sufficiently close to previously computed coordinates. For simplicity we will just round to a decimal place denoted by the variable `decimal`, which needs to increase as the scale decreases to maintain resolution.
+
+```python
+last_time_steps = 0
+video_frames = 500
+for i in range(video_frames):
+	x_res, y_res = 1000, 1000
+	time_steps = int(50000 + (350000 * i / 400))
 	shift_distance = 0.001 / (2**(i/30))
 	x_center = 5.30031
 	y_center = -0.45
@@ -469,8 +478,16 @@ for i in range(60):
 	x, y = [], []
 	return_template = []
 	decimal = int(-np.log(x_range / (x_res)))
-	decimal = 2
 
+```
+Before looking up the values, we need to increment the number of expected iterations until divergence for each stored input (because the number of iterations is continually increasing as the range decreases).
+```python
+	for pair in already_computed:
+		already_computed[pair] += time_steps - last_time_steps
+	last_time_steps = time_steps
+```
+Now we assemble an array of all locations that we do not have a stored value for,
+```python
 	start_x = x_center - x_range/2
 	start_y = y_center - y_range/2
 	for j in range(int(x_res*y_res)):
@@ -486,8 +503,12 @@ for i in range(60):
 		else:
 			return_template.append(already_computed[(round(x_i, decimal), round(y_i, decimal))])
 	length_x, length_y = len(x), len(y)
-	print (f'N elements: {length_x}')
+```
 
+and next we need to modifying the CUDA kernal driver C++ function to accept array objects (pointers) `x, y`.
+
+```python
+	f = ctypes.CDLL('./divergence_zoom.so').divergence
 	x_array_type = ctypes.c_float * len(x)
 	y_array_type = ctypes.c_float * len(y)
 	x = x_array_type(*x)
@@ -519,25 +540,11 @@ for i in range(60):
 			inc += 1
 		else:
 			return_arr.append(return_template[k])
-
-
 	output_array = np.array(return_arr).reshape(x_res, y_res)
 	output_array = time_steps - output_array
 	plot(output_array, i)
-
-	# clean computed map
-	keys_to_delete = []
-	for pair in already_computed.keys():
-		if pair[0] > start_x + x_range or pair[0] < start_x or pair[1] > start_y + y_range or pair[1] < start_y:
-			keys_to_delete.append(pair)
-		npair = []
-		npair[0] = round(pair[0], decimal)
-		npair[1] = round(already[0], decimal)
-
-	for k in keys_to_delete:
-		already_computed.pop(k, None)
 ```
-
+Deleting cache keys that are out-of-range or with too small precision allows us to prevent the cache from growing too large as the zoom video is computed.
 
 ### Why the three body problem is so difficult
 
