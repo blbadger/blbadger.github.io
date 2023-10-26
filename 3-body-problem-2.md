@@ -419,15 +419,15 @@ Unfortunately, fixed point arithmetic does not particularly effective here becau
 
 Instead of changing the precision of all array elements in our simulation, we instead consider the idea that the precision of certain computations may be less important than the precision of others.  If this is the case, then we can change the precision of those precision-insensitive computations to decrease the program run-time without affecting the precision of the divergence plot itself.  
 
-Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of aN acceleration computations,
+Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of the $a_n$ acceleration computation,
 
 $$
-a_1 = -Gm_3\frac{p_1 - p_3}{\left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} \right) ^3}
+a_1 = \cdots -Gm_3\frac{p_1 - p_3}{\left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} \right) ^3}
 $$
 
 it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
 
-After some more experimentation we find that this guess is accurate (at least for the $x, y$ scale used previously, note that at a smaller spatial scale there is a noticeable difference in noise).  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal).  For $i=200,000$ iterations with the same resolution the fully optimized kernal requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernal version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence, which was what we wanted.
+After some more experimentation we find that this guess is accurate (at least for the $x, y$ scale used previously, note that at a smaller spatial scale there is a noticeable difference in noise).  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal).  For $i=200,000$ iterations with the same resolution the fully optimized kernal requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernal version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence (at least not at this scale), which was what we wanted.
 
 ![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
 
@@ -443,11 +443,11 @@ And extending the x-axis to $x \in [-40, 470]$ by stitching together multiple pl
 
 Thus far we have been focusing on the use of parallelized computation to map the stable (dark regions) and unstable (light regions) initial values of a planet at a familiar scale: around forty or sixty or (in the last plot) a few hundred meters.  Once the divergence map is generated, can we simply find the point of interest and have an answer to whether or not that point is stable? In this section we will see that no, the question of whether a point is stable for all time is much more difficult to answer than this.
 
-To address this question, we might want more resolution.  If planet 1 at (x, y) coordinates $(-4.1, 2.3)$ diverges, what about $(-4.1001, 2.3)$? This is not possible to determine using our plot scaled at $x \in [-40, 40]$, but it may be when we compute thousands of points $x \in [-4.11, -4.10]$. 
+To address this question, we might want more resolution.  If planet 1 at (x, y) coordinates $(-4.1, 2.3)$ diverges, what about $(-4.1001, 2.3)$? This is not possible to determine using our plot scaled at $x \in [-40, 40]$, but it may be when we compute thousands of points $x \in [-4.11, -4.10]$.
 
 If the reader attempts to calculate these plots, they will find that there is not that much more detail present at these small scales than is found in our larger map.  But it should be remembered that we seek the eventual stability or instability of these points rather than the limited approximation currently observed.  In particular, for more accuracy at these smaller scales we must both increase the number of maximum iterations of our divergence plot (where each iteration is of Euler's approximation to the solution of an ordinary differential equation, $x_{n+1} = x_n + \delta t x'_n$) as well as decrease the size of the shift performed at the start of our computation such that $x_0 - x'_0 \to 0$.
 
-Doing so results in even more computational requirements than are currently had
+This method is straightforward to implement but results in an increase in the amount of computation required for each successively smaller field of view. Practically speaking this means that even with the optimized CUDA kernal, it takes days to finish the computations required for a zoom video from the tens of meters range (in $x, y$) down to the micrometer range. A little experimentation shows us that subsituting the single-precision square root operation for the double-precision is no longer sufficient around the millimeter scale, as noise begins to overwhelm the divergence plot patterns if this substitution is made. 
 
 How can we reduce the amount of computation per frame in a video on divergence? In other words, given a sequence of divergence maps of decreasing domain sizes, centered on the same region, can we reduce the amount of computation required for some or all of these maps? One way to reduce the total computation amount is to attempt to re-use previously computed values: if the divergence values for $(x, y)$ coordinates calcuated at one scale are again needed at a smaller scale, we can simply save that divergence value and look it up rather than re-calculating.
 
@@ -547,6 +547,10 @@ and next we need to modifying the CUDA kernal driver C++ function to accept arra
 Deleting cache keys that are out-of-range or with too small precision allows us to prevent the cache from growing too large as the zoom video is computed.
 
 ### Multistep Linear Methods
+
+It is a not generally well-known fact that although the advances in computational speed due to hardware and software have led to speed decreases on the order ot $10^7$ over the last seventy years, the advances in terms of better algorithms for many problems in the field of numerical analysis (which this work may be thought to fall under) during this same time have led to speed decreases that exceed even that of rapidly advancing hardware.
+
+When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one very apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  Although we have already attempted to optimize this somewhat, there 
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
