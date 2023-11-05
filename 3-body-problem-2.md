@@ -550,7 +550,7 @@ Deleting cache keys that are out-of-range or with too small precision allows us 
 
 It is a not generally well-known fact that although the advances in computational speed due to hardware and software have led to speed decreases on the order ot $10^7$ over the last seventy years, the advances in terms of better algorithms for many problems in the field of numerical analysis (which this work may be thought to fall under) during this same time have led to speed decreases that exceed even that of rapidly advancing hardware.
 
-When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one very apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  Although we have already attempted to optimize this somewhat, there 
+When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  Although we have already attempted to optimize this somewhat, there are 
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
