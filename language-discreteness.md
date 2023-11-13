@@ -796,7 +796,7 @@ at $N=1500$, whereas the trained model is much more accurate (see above).
 
 But upon some reflection, it may not be surprising that minimizing a cosine distance between outputs of an untrained transformer block does not yield accurate input representations because the dot-product attention is followed by two fully connected layers.  If we instead observe the representation from the first ransformer block's self-attention whilst minimizing $\cos \phi$, 
 
-```
+```python
 class InputGPT(nn.Module):
 
 	def __init__(self, model):
