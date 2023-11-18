@@ -447,6 +447,12 @@ To address this question, we might want more resolution.  If planet 1 at (x, y) 
 
 If the reader attempts to calculate these plots, they will find that there is not that much more detail present at these small scales than is found in our larger map.  But it should be remembered that we seek the eventual stability or instability of these points rather than the limited approximation currently observed.  In particular, for more accuracy at these smaller scales we must both increase the number of maximum iterations of our divergence plot (where each iteration is of Euler's approximation to the solution of an ordinary differential equation, $x_{n+1} = x_n + \delta t x'_n$) as well as decrease the size of the shift performed at the start of our computation such that $x_0 - x'_0 \to 0$.
 
+Such a zoom video becomes computationally feasible for a single GPU using the optimizations detailed in the last two sections.  In the following video, the x-scale and y-scale decrease from 1.28km to 518nm, which to put in perspective means that each pixel is separated from its neighbors by the width of an atom.
+
+{% include youtube.html id='a7Hu6kEzTfQ' %}
+
+This video demonstrates a manifestation of why the three body problem is unsolvable: extreme sensitivity to initial conditions.  Here we see that at scales down to the width of an atom, stable and unstable trajectories may be arbitrarily close to one another.  It is not hard to see that this phenomenon is by no means limited to the scales we have investigated here but extends towards the infinitely small. Indeed, sensitivity to initial conditions stipulates that for any point in our x, y grid any other point arbitrarily close will eventually diverge, but difference in relative stability will also tend to infinity as $t \to \infty$ and $x_0 - x'_0 \to 0$.
+
 This method is straightforward to implement but results in an increase in the amount of computation required for each successively smaller field of view. Practically speaking this means that even with the optimized CUDA kernal, it takes days to finish the computations required for a zoom video from the tens of meters range (in $x, y$) down to the micrometer range. A little experimentation shows us that subsituting the single-precision square root operation for the double-precision is no longer sufficient around the millimeter scale, as noise begins to overwhelm the divergence plot patterns if this substitution is made. 
 
 How can we reduce the amount of computation per frame in a video on divergence? In other words, given a sequence of divergence maps of decreasing domain sizes, centered on the same region, can we reduce the amount of computation required for some or all of these maps? One way to reduce the total computation amount is to attempt to re-use previously computed values: if the divergence values for $(x, y)$ coordinates calcuated at one scale are again needed at a smaller scale, we can simply save that divergence value and look it up rather than re-calculating.
@@ -550,13 +556,9 @@ Deleting cache keys that are out-of-range or with too small precision allows us 
 
 It is a not generally well-known fact that although the advances in computational speed due to hardware and software have led to speed decreases on the order ot $10^7$ over the last seventy years, the advances in terms of better algorithms for many problems in the field of numerical analysis (which this work may be thought to fall under) during this same time have led to speed decreases that exceed even that of rapidly advancing hardware.
 
-When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  Although we have already attempted to optimize this somewhat, there are 
+When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  So far we have optimized the computations per time step and removed superfluous steps for diverged trajectories but we have not 
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
-
-### Why the three body problem is so difficult
-
-It may be wondered why these rather intensive computations are required for the three body problem, considering that 
 
 
 
