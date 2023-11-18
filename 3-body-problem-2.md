@@ -475,24 +475,21 @@ last_time_steps = 0
 video_frames = 500
 for i in range(video_frames):
 	x_res, y_res = 1000, 1000
-	time_steps = int(50000 + (350000 * i / 400))
-	shift_distance = 0.001 / (2**(i/30))
-	x_center = 5.30031
-	y_center = -0.45
+	...
 	x_range = 40 / (2**(i/30))
-	y_range = 40 / (2**(i/30))
-	x, y = [], []
-	return_template = []
 	decimal = int(-np.log(x_range / (x_res)))
 
 ```
 Before looking up the values, we need to increment the number of expected iterations until divergence for each stored input (because the number of iterations is continually increasing as the range decreases).
+
 ```python
 	for pair in already_computed:
 		already_computed[pair] += time_steps - last_time_steps
 	last_time_steps = time_steps
 ```
-Now we assemble an array of all locations that we do not have a stored value for,
+
+Now we assemble an array of all locations that we do not have a stored value for and can
+
 ```python
 	start_x = x_center - x_range/2
 	start_y = y_center - y_range/2
@@ -551,6 +548,8 @@ and next we need to modifying the CUDA kernal driver C++ function to accept arra
 	plot(output_array, i)
 ```
 Deleting cache keys that are out-of-range or with too small precision allows us to prevent the cache from growing too large as the zoom video is computed.
+
+Unfortunately, when implemented we see that this method has a significant flaw: we don't really want to re-use precomputed divergence computations from larger scales at smaller even if they are incremented to match an expected value for more total iteration. Because of sensitivity to initial conditions, such incremented estimates are bound to become more inaccurate the larger the difference in scale (and thus the number of maximum iterations).  Unfortunately our method of saving the values of certain elements is useful only if we can recall the values of elements at much smaller elements.
 
 ### Multistep Linear Methods
 
