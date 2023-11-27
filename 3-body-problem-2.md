@@ -549,7 +549,12 @@ and next we need to modifying the CUDA kernal driver C++ function to accept arra
 ```
 Deleting cache keys that are out-of-range or with too small precision allows us to prevent the cache from growing too large as the zoom video is computed.
 
-Unfortunately, when implemented we see that this method has a significant flaw: we don't really want to re-use precomputed divergence computations from larger scales at smaller even if they are incremented to match an expected value for more total iteration. Because of sensitivity to initial conditions, such incremented estimates are bound to become more inaccurate the larger the difference in scale (and thus the number of maximum iterations).  Unfortunately our method of saving the values of certain elements is useful only if we can recall the values of elements at much smaller elements.
+Unfortunately, when implemented we see that this method has a significant flaw: we don't really want to re-use precomputed divergence computations from larger scales at smaller even if they are incremented to match an expected value for more total iteration. Because of sensitivity to initial conditions, such incremented estimates are bound to become more inaccurate the larger the difference in scale (and thus the number of maximum iterations). Our method of saving the values of certain elements is useful only if we can recall the values of elements at much smaller elements.
+
+For example, observe the following figure where the decimal precision is fixed (and so the time to compute each successive iteration heads to zero as the zoom iteration increases).
+
+![zoom errors]({{https://blbadger.github.io}}/3_body_problem/cached_zoom_errors.png)
+
 
 ### Multistep Linear Methods
 
@@ -559,6 +564,9 @@ When we consider the three body problem divergence plot computation from an algo
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
+There is a problem with using linear multistep methods, however.
+
+![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep_artefacts.png)
 
 
 
