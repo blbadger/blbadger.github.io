@@ -562,6 +562,21 @@ It is a not generally well-known fact that although the advances in computationa
 
 When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  So far we have optimized the computations per time step and removed superfluous steps for diverged trajectories but we have not 
 
+A one-step linear method for a function of three variables (ie for the three body problem, x, y z) is just Euler's method.  For this problem we have a function to compute accelerations, $v'$ and we can find the next position $p_{n+1}$ from $p_{n}$ and velocity $v$ as follows
+
+$$
+v(x, y, z)_{n+1} = v(x, y, z)_n + \delta t *\delta v /\delta t ((x, y, z)_n) \\
+p(x, y, z)_{n+1} = p(x, y, z)_n + \delta t * v((x, y, z)_n)
+$$
+
+To increase the order of the convergence of this dynamical system, we have
+
+$$
+v(x, y, z)_{n+2} = v(x, y, z)_n + \delta t *\delta v /\delta t ((x, y, z)_n) \\
+p(x, y, z)_{n+2} = p(x, y, z)_n + 1/2(3 * \delta t * v((x, y, z)_n) + 1 * \delta t * v((x, y, z)_n) )
+$$
+
+
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
 There is a problem with using linear multistep methods, however.
