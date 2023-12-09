@@ -562,20 +562,40 @@ It is a not generally well-known fact that although the advances in computationa
 
 When we consider the three body problem divergence plot computation from an algorithmic optimization perspective, one apparent place for such optimization is in the number of iterations required for the plot which is generally on the order of $50,000$ but increases to more than $500,000$ at small scales.  So far we have optimized the computations per time step and removed superfluous steps for diverged trajectories but we have not 
 
-A one-step linear method for a function of three variables (ie for the three body problem, x, y z) is just Euler's method.  For this problem we have a function to compute accelerations, $v'$ and we can find the next position $p_{n+1}$ from $p_{n}$ and velocity $v$ as follows
+
+The special case of a multistep linear method with only one step is just Euler's method.
 
 $$
-v(x, y, z)_{n+1} = v(x, y, z)_n + \delta t *\delta v /\delta t ((x, y, z)_n) \\
+x_{n+1} = x_n + \Delta t * f(x_n)
+$$
+
+For the three body problem we must adapt this method somewhat as we can only compute acceleration using three variables (ie for the three body problem, positions of $x, y z$), but we cannot apply acceleration directly to position.  Instead we calculate the velocity $v$ from acceleration $v'$ before finding the next position $p_{n+1}$ from $p_{n}$ as follows:
+
+$$
+v(x, y, z)_{n+1} = v(x, y, z)_n + \delta t * v' ((x, y, z)_n) \\
 p(x, y, z)_{n+1} = p(x, y, z)_n + \delta t * v((x, y, z)_n)
 $$
 
-To increase the order of the convergence of this dynamical system, we have
+To increase the order of the convergence of this dynamical system, we may use a higher-order linear multistep method, also known as Adams-Bashforth methods. The order of convergence is determined by the number of terms the method has, for example the two-step method 
 
 $$
-v(x, y, z)_{n+2} = v(x, y, z)_n + \delta t *\delta v /\delta t ((x, y, z)_n) \\
-p(x, y, z)_{n+2} = p(x, y, z)_n + 1/2(3 * \delta t * v((x, y, z)_n) + 1 * \delta t * v((x, y, z)_n) )
+x_{n+2} = x_n + \Delta t * 1/2(3 * f(x_{n+1}) - 1 * f(x_n))
 $$
 
+converges quadratically, and the four-step method
+
+$$
+x_{n+4} = x_n + \Delta t * 1/24(55*f(x_{n+3}) - 59*f(x_{n+2}) + 37*f(x_{n+1}) - 9*f(x_n))
+$$
+
+converges with order 4. There are some choices available to us for how these methods are adapted to the three body problem trajectories, and below is an example of using a second-order multistep method for both velocity and position computation.
+
+$$
+v(x, y, z)_{n+2} = v(x, y, z)_n + \Delta t * 1/2(v' 3* ((x, y, z)_{n+1})  - 1* v'((x, y, z)_n)\\
+p(x, y, z)_{n+2} = p(x, y, z)_n + \Delta t * 1/2(v 3* ((x, y, z)_{n+1})  - 1* v((x, y, z)_n)
+$$
+
+It may be unclear how one is supposed to first find $x_{n+1}, x_{n+2}...$ given only $x_n$ while using an order >1 multistep method. Here we use a one-step (Euler's) method for computing the first $x_{n+1}$.
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
