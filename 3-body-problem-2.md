@@ -579,23 +579,25 @@ $$
 To increase the order of the convergence of this dynamical system, we may use a higher-order linear multistep method, also known as Adams-Bashforth methods. The order of convergence is determined by the number of terms the method has, for example the two-step method 
 
 $$
-x_{n+2} = x_n + \Delta t *  \frac{1}{2}(3 f(x_{n+1}) - 1 f(x_n))
+x_{n+2} = x_n + \Delta t *  \frac{1}{2}(3 f(x_{n+1}) - 1f(x_n))
 $$
 
 converges quadratically, and the four-step method
 
 $$
-x_{n+4} = x_n + \Delta t * \frac{1}{24}(55f(x_{n+3}) - 59f(x_{n+2}) + 37f(x_{n+1}) - 9*f(x_n))
+x_{n+4} = x_n + \Delta t * \frac{1}{24}(55f(x_{n+3}) - 59f(x_{n+2}) + 37f(x_{n+1}) - 9f(x_n))
 $$
 
 converges with order 4. There are some choices available to us for how these methods are adapted to the three body problem trajectories, and below is an example of using a second-order multistep method for both velocity and position computation.
 
 $$
-v(x, y, z)_{n+2} = v(x, y, z)_n + \Delta t * \frac{1}{2}(3v' ((x, y, z)_{n+1})  - 1v'((x, y, z)_n)\\
-p(x, y, z)_{n+2} = p(x, y, z)_n + \Delta t * \frac{1}{2}(3v ((x, y, z)_{n+1})  - 1v((x, y, z)_n)
+v(x, y, z)_{n+2} = v(x, y, z)_n + \Delta t * \frac{1}{2}(3v' ((x, y, z)_{n+1})  - v'((x, y, z)_n)\\
+p(x, y, z)_{n+2} = p(x, y, z)_n + \Delta t * \frac{1}{2}(3v ((x, y, z)_{n+1})  - v((x, y, z)_n)
 $$
 
 It may be unclear how one is supposed to first find $x_{n+1}, x_{n+2}...$ given only $x_n$ while using an order >1 multistep method. Here we use a one-step (Euler's) method for computing the first $x_{n+1}$.
+
+Because multistep methods converge faster than the one-step Euler's method, we can in principle take fewer steps at a larger step size while maintaining accuracy.  The computational requirements for the three body problem scale somewhat less than linearly with the number of steps required, so reducing a step number by a factor of 10 leads to a substantial speedup.
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
