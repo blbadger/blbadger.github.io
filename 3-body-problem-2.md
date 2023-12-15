@@ -591,17 +591,39 @@ $$
 converges with order 4. There are some choices available to us for how these methods are adapted to the three body problem trajectories, and below is an example of using a second-order multistep method for both velocity and position computation.
 
 $$
-v(x, y, z)_{n+2} = v(x, y, z)_n + \Delta t * \frac{1}{2}(3v' ((x, y, z)_{n+1})  - v'((x, y, z)_n)\\
-p(x, y, z)_{n+2} = p(x, y, z)_n + \Delta t * \frac{1}{2}(3v ((x, y, z)_{n+1})  - v((x, y, z)_n)
+v(x, y, z)_{n+2} = v(x, y, z)_n + \Delta t * \frac{1}{2}(3v' ((x, y, z)_{n+1})  - 1v'((x, y, z)_n)\\
+p(x, y, z)_{n+2} = p(x, y, z)_n + \Delta t * \frac{1}{2}(3v ((x, y, z)_{n+1})  - 1v((x, y, z)_n)
 $$
 
 It may be unclear how one is supposed to first find $x_{n+1}, x_{n+2}...$ given only $x_n$ while using an order >1 multistep method. Here we use a one-step (Euler's) method for computing the first $x_{n+1}$.
 
-Because multistep methods converge faster than the one-step Euler's method, we can in principle take fewer steps at a larger step size while maintaining accuracy.  The computational requirements for the three body problem scale somewhat less than linearly with the number of steps required, so reducing a step number by a factor of 10 leads to a substantial speedup.
+Because multistep methods converge faster than the one-step Euler's method, we can in principle take fewer steps at a larger step size while maintaining accuracy.  The computational requirements for the three body problem scale somewhat less than linearly with the number of steps required, so reducing a step number by a factor of 10 leads to a substantial speedup. 
+
+The order 4 linear multistep method may be implemented using a queue as follows:
+
+```python
+def adams_bashforth(self, current, fn_arr):
+	assert len(fn_arr) >= order
+
+	# note that array is newest to the right, oldest left
+	fn, fn_1, fn_2, fn_3 = fn_arr[-1], fn_arr[-2], fn_arr[-3], fn_arr[-4]
+	v = current + (1/24) * self.delta_t * (55*fn - 59*fn_1 + 37*fn_2 - 9*fn_3)
+	return v
+```
+where for each array we compute and pop the oldest computed `fn` value, for example the velocity computation is as follows:
+
+```python
+dv1_arr = deque([])
+...
+nv1 = self.adams_bashforth(self.v1, dv1_arr)
+dv1_arr.popleft()
+```
+
+When we apply linear multistep method to three body problem trajectories, we see that indeed the use of second or fourth-order updates allows for the use of a larger step size 
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
-There is a problem with using linear multistep methods, however.
+There is a problem with this approach, however: at very small scales, the use of a larger step size results in numerical artefacts regardless of the method used.  For example, we can see vertical lines of quickly-diverging regions appear for Euler's method as well as order 2 or order 4 Adams-Bashforth methods.  
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep_artefacts.png)
 
