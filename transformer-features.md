@@ -78,6 +78,14 @@ and this is reflected in the change from a uniform pattern in the features of th
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_sublayer.png)
 
+It may be wondered if this is due to a mismatch between the loss function we are minimizing (L1 distance) and the transformations that compose the self-attention layers of the transformer that are responsible for moving information from one patch to another.  To recap, vision transformers typicaly use dot-product attention of some scaled version of the following:
+
+$$
+A(q, k, v) = \mathtx{softmax}(q \cdot k) v
+$$ 
+
+![autoencoding]({{https://blbadger.github.io}}/deep-learning/poor_mixing_ViT.png)
+
 When the ability of the first 28 patches (approximately the first two rows for a 224x224 image) to re-create an input is tested, it is clearly seen that this subsection in mixers but not vision transformers are capable of representing an input to any degree of accuracy.
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_vs_vit.png)
