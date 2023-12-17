@@ -78,17 +78,39 @@ and this is reflected in the change from a uniform pattern in the features of th
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_sublayer.png)
 
-It may be wondered if this is due to a mismatch between the loss function we are minimizing (L1 distance) and the transformations that compose the self-attention layers of the transformer that are responsible for moving information from one patch to another.  To recap, vision transformers typicaly use dot-product attention of some scaled version of the following:
-
-$$
-A(q, k, v) = \mathtx{softmax}(q \cdot k) v
-$$ 
-
-![autoencoding]({{https://blbadger.github.io}}/deep-learning/poor_mixing_ViT.png)
 
 When the ability of the first 28 patches (approximately the first two rows for a 224x224 image) to re-create an input is tested, it is clearly seen that this subsection in mixers but not vision transformers are capable of representing an input to any degree of accuracy.
 
 ![mixer features]({{https://blbadger.github.io}}/deep-learning/mixer_vs_vit.png)
+
+It may be wondered if this is due to a mismatch between the loss function we are minimizing (L1 distance) and the transformations that compose the self-attention layers of the transformer that are responsible for moving information from one patch to another.  To recap, vision transformers typicaly use dot-product attention of some scaled version of the following in vector format
+
+$$
+A(q, k, v) = \mathrm{softmax}(q \cdot k) v
+$$ 
+
+or in matrix format,
+
+$$
+A(Q, K, V) = (QK^T)V
+$$
+
+The dot product may be thought of as combining information of relative vector magnitude and angle into one measure, and all information from the query token's vector must pass through the dot product with the other token's key and value vectors (or matricies).  If one assumes that the fully connected layers that come after the self-attention layers in each transformer modules are capable of converting this angle-and-magnitude information into a pure distance (in vector space) information, it does not matter that we are optimizing $L^1$ or $L^2$ distance on this architecture.
+
+But if there is some difficulty in converting between angle-and-magnitude and the difference norm, a more accurate representation may be found by optimizing for angle-and-magnitude instead.  Here we focus on reducing the angle between the output of our generated input $O_l(a_g, \theta)$ and the layer's output of the target input, $O_l(a, \theta)$.  As above we take only the first 24 blocks of the output, so more accurately
+
+Minimization of the angle betwen vectors can be done by finding the gradient of the generated input $a_g$ with respect to the cosine of the vector versions of $O(a_g, \theta)$ and $O(a, \theta)$ as follows:
+
+$$
+\cos(O_l(a, \theta), O_l(a_g, \theta)) = \frac{O_l(a, \theta) \cdot O_l(a_g, \theta)}{|| O_l(a, \theta) ||_2 || O_l(a_g, \theta) ||_2} \\
+a_{n+1} = a_n + \nabla_{a_n} (1 - \cos(O_l(a, \theta), O_l(a_g, \theta))
+$$
+
+where we minimize the value $1 - \cos(\phi)$ because we want to minimize the angle between vectorized versions of the model's output (and $\cos(\phi) = 1$ when $\phi = 0$).
+
+Minimizing angle between target and generated input does lead to mixing of information between the first 24 and the other patches, however. Using the same target input as above, minimizing $\cos (\phi)$ results in poor representations, regardless of whether the output is taken as the MLP or as the dot product attention layer.
+
+![autoencoding]({{https://blbadger.github.io}}/deep-learning/poor_mixing_ViT.png)
 
 The superior mixing in the MLP mixer architecture compared to the vision transformer may also be observed by finding the feature maps of individual patches early in the model, maximizing activations of all elements of patch after an across-patch mixing layer (which occurs second for mixers and first for ViTs) or after the embedding dimension layer (first for mixers and second for ViTs).
 
