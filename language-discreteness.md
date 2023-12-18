@@ -691,7 +691,7 @@ $$
 a_g = \mathtt{This \; is \; hasta \; prompt \; sentence}
 $$
 
-where $\phi > 0.9$.
+where $(\cos(\phi) > 0.9$.
 
 For 
 
@@ -699,7 +699,7 @@ $$
 a= \mathtt{This \; is \; a \; somewhat \; longer \; prompt \; sentence.}
 $$ 
 
-we have at $\phi = 0.76$
+we have at $\cos(\phi) = 0.76$
 
 $$
 a_g = \mathtt{This \; are \; integrated \; somewhat \; longer \; prompt \; sentence –}
@@ -711,7 +711,7 @@ $$
 a = \mathtt{The \; sky \; is \; a \; light \; blue \; today.}
 $$ 
 
-at $\phi=0.75$ we have
+at $\cos(\phi=0.75)$ we have
 
 $$
 a_g = \mathtt{primit \; sky \; is \; a \; light \; blue \; today \; –}
@@ -858,7 +858,7 @@ So far we have been observing the ability of the information in a transformer bl
 For Llama 7b, it is clear that this language model also does not tend to mix information between tokens readily: given the prompt
 
 $$
-a = \mathtt{The sky is blue.}
+a = \mathtt{The \; sky \; is \; blue.}
 $$
 
 For the first transformer block we have
@@ -892,7 +892,7 @@ a_g = \mathtt{The \; sky \; is \; blueblock}
 $$
 
 Taking the output from deeper layers does not help, as
-```
+``` 
 Block 4
 [:, :3, :]
 The sky is advanced courts
@@ -901,6 +901,28 @@ Block 8
 [:, :3, :]
 The sky standards cardgy
 ```
+
+It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
+
+$$
+a = \mathrm{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
+$$
+
+we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. 
+
+The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[, :11, :]$ is
+
+$$
+a_g = \mathrm{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; Rebщение}
+$$
+
+It may be wondered if this is somehow due to the causal language modeling nature of the model used to generate the input.  But for $[:, 3:, :]$ we have
+
+```
+XI Macdet red or blue depending on the time of day.
+```
+
+
 
 ### Noise on a Discreet Channel
 
