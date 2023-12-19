@@ -855,7 +855,7 @@ but for inputs composed of individual words (more precisely tokens) the represen
 
 So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than MLP mixers at representing input regions not aligned to the output's token.
 
-For Llama 7b, it is clear that this language model also does not tend to mix information between tokens readily: given the prompt
+We first repeat the procedure used in the page linked above: we give some target input to the model and then attempt to have the model generate that input using only the information in some output layer, specifically only the first x tokens in the sequence. For Llama 7b, it is clear that this language model also does not tend to mix information in the forward direction between tokens readily: given the prompt
 
 $$
 a = \mathtt{The \; sky \; is \; blue.}
@@ -885,22 +885,7 @@ $$
 a_g = \mathtt{The \; sky \; is \; advancedblock}
 $$
 
-and $[:, :4, ]$ is
 
-$$
-a_g = \mathtt{The \; sky \; is \; blueblock}
-$$
-
-Taking the output from deeper layers does not help, as
-``` 
-Block 4
-[:, :3, :]
-The sky is advanced courts
-
-Block 8
-[:, :3, :]
-The sky standards cardgy
-```
 
 It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
 
@@ -909,18 +894,11 @@ a = \mathrm{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; t
 $$
 
 we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. 
-
-The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[, :11, :]$ is
+  The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ we have
 
 $$
-a_g = \mathrm{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; Rebщение}
+a_g = \mathrm{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.
 $$
-
-It may be wondered if this is somehow due to the causal language modeling nature of the model used to generate the input.  But for $[:, 3:, :]$ we have
-
-```
-XI Macdet red or blue depending on the time of day.
-```
 
 
 
