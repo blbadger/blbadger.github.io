@@ -886,7 +886,6 @@ a_g = \mathtt{The \; sky \; is \; advancedblock}
 $$
 
 
-
 It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
 
 $$
@@ -897,9 +896,8 @@ we can test the accuracy of the input representation when the output of most but
   The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ we have
 
 $$
-a_g = \mathrm{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.
+a_g = \mathrm{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
-
 
 
 ### Noise on a Discreet Channel
