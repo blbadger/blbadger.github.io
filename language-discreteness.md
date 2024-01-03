@@ -875,9 +875,20 @@ $$
 
 Upon some reflection, it may be appreciated that this observation does not by itself mean that transformer-based language models do not share information between their tokens (more accurately the model's activations at each token).  This is because `llama` and other similar causal language models are trained to predict some passage's next token, such that these models should never recieve information from tokens to the right of the current token.  This was not the case for vision transformers, where key, query, and value projections are performed amoung all tokens. 
 
-For causal language models, therefore, we should instead check that a model's activations for tokens *after* a given token are able to specify that input token if masked. Effectively we can ask whether enough information passes between tokens for the language model to determine the identity of the first two tokens, given the activations present in all following tokens.  This may be done by restricting the ouptut to $[:, 2:, :]$, which gives us
+For causal language models, therefore, we should instead check that a model's activations for tokens *after* a given token are able to specify that input token if masked. Effectively we can ask whether enough information passes between tokens for the language model to determine the identity of the first two tokens, given the activations present in all following tokens.  This may be done by restricting the output to $[:, 2:, :]$, which gives us
+
+$$
+a_g = \mathtt{masterlex \; is \; blue2}
+$$
+
+indicating that for this input, the information present in the last three tokens (in the output of the first transformer module) is insufficient to determine the identity of the first two tokens. The same is observed for the input 'This is a prompt sentence', which for $[:, 2:, :]$ gives the representation
 
 
+$$
+a_g = \mathtt{lex \; Sho₂ \; prompt \; sentence2}
+$$
+
+indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.
 
 It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
 
