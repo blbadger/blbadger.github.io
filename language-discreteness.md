@@ -851,9 +851,9 @@ blue land proud{$
 but for inputs composed of individual words (more precisely tokens) the representation is nearly perfect, for example any of the inputs 'This', 'is', 'a', 'prompt','sentence' give a representation identical to that input. As soon as the input contains multiple tokens, however, minimizing the $L^1$ distance on the output is not longer sufficient for perfectly accurate representation, for example 'the sky' is represented as 'sky sky'.
 
 
-### Information between tokens
+### Information sharing between tokens
 
-So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than MLP mixers at representing input regions not aligned to the output's token.
+So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than attentionless MLP mixers at representing input regions not aligned to the output's token.
 
 We first repeat the procedure used in the page linked above: we give some target input to the model and then attempt to have the model generate that input using only the information in some output layer, specifically only the first x tokens in the sequence. For Llama 7b, it is clear that this language model also does not tend to mix information in the forward direction between tokens readily: given the prompt
 
@@ -867,37 +867,31 @@ $$
 a_g = \mathtt{The \; sky \; is \; blue \; fail}
 $$
 
-but if we restrict the output to $[:, :1, :]$ (ie only the first token's output) we have
-
-$$
-a_g = \mathtt{Thelex \; Sho \; advancedblock}
-$$
-
-and for $[:, :2, :]$ we have
+but if we restrict the output to $[:, :2, :]$ we have
 
 $$
 a_g = \mathtt{The \; sky \; Sho \; advancedblock}
 $$
 
-and $[:, :3, :]$ is
+Upon some reflection, it may be appreciated that this observation does not by itself mean that transformer-based language models do not share information between their tokens (more accurately the model's activations at each token).  This is because `llama` and other similar causal language models are trained to predict some passage's next token, such that these models should never recieve information from tokens to the right of the current token.  This was not the case for vision transformers, where key, query, and value projections are performed amoung all tokens. 
 
-$$
-a_g = \mathtt{The \; sky \; is \; advancedblock}
-$$
+For causal language models, therefore, we should instead check that a model's activations for tokens *after* a given token are able to specify that input token if masked. Effectively we can ask whether enough information passes between tokens for the language model to determine the identity of the first two tokens, given the activations present in all following tokens.  This may be done by restricting the ouptut to $[:, 2:, :]$, which gives us
+
 
 
 It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
 
 $$
-a = \mathrm{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
+a = \mathtt{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
 
-we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. 
-  The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ we have
+we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ is
 
 $$
-a_g = \mathrm{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
+a_g = \mathtt{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
+
+indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens.
 
 
 ### Noise on a Discreet Channel
