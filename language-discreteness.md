@@ -239,10 +239,10 @@ $$
 
 Therefore gradient descent is successful in minimizing the cosine distance between the output of the generated and target input (in this case embedding), but the generated input corresponds to nonsense.  The same is true even for single transformer decoders from untrained GPT-2 models, and as we earlier found that these modules can yield accurate input representations using gradient descent on the $L^1$ norm of the output difference, the cosine similarity may be viewed as a weaker measure for representation tasks.
 
-Perhaps a linear combination (parametrized by constants $\alpha, \beta$ of the gradient of the cosine distance and a normed difference would be sufficient for accurate input representation from trained GPT-2 transformer modules.  
+Perhaps a linear combination (parametrized by constants $\alpha, \beta$ of the gradient of the cosine distance and a normed difference would be sufficient for accurate input representation from trained GPT-2 transformer modules.  Specifically we can see if the following update on the embedding is capable of accurate input representation. The update we make is
 
 $$
-e_{n+1} = e_n - \eta * \nabla_{e_n} \left( \alpha \cos (\phi) + \beta ||O(a_g, \theta) - O(a, \theta)||_1 \right)
+e_{n+1} = e_n - \eta * \nabla_{e_n} \left( \alpha (1 - \cos (\phi)) + \beta ||O(a_g, \theta) - O(a, \theta)||_1 \right)
 $$
 
 where $\eta$ is the learning rate hyperparameter, which is typically scheduled such that $\eta = 1 \to \eta = 1/100$ as the input representation iterations $n = 0 \to n = N$. But even for this metric the input representation after only one transformer encoder is quite inaccurate: for the first transformer block of an untrained GPT-2, we have input representations for 'The sky is blue.'
