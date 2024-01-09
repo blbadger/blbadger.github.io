@@ -851,7 +851,7 @@ blue land proud{$
 but for inputs composed of individual words (more precisely tokens) the representation is nearly perfect, for example any of the inputs 'This', 'is', 'a', 'prompt','sentence' give a representation identical to that input. As soon as the input contains multiple tokens, however, minimizing the $L^1$ distance on the output is not longer sufficient for perfectly accurate representation, for example 'the sky' is represented as 'sky sky'.
 
 
-### Information sharing between tokens
+### Information between tokens
 
 So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than attentionless MLP mixers at representing input regions not aligned to the output's token.
 
@@ -881,8 +881,7 @@ $$
 a_g = \mathtt{masterlex \; is \; blue2}
 $$
 
-indicating that for this input, the information present in the last three tokens (in the output of the first transformer module) is insufficient to determine the identity of the first two tokens. The same is observed for the input 'This is a prompt sentence', which for $[:, 2:, :]$ gives the representation
-
+indicating that for this input, the information present in the last three tokens (in the output of the first transformer module) is insufficient to determine the identity of the first two tokens. The same is observed for the input 'This is a prompt sentence', which for `[:, 2:, :]` at the first output layer gives the representation
 
 $$
 a_g = \mathtt{lex \; Sho₂ \; prompt \; sentence2}
@@ -890,20 +889,29 @@ $$
 
 indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.
 
-It may be wondered whether a different metric might allow for more information to pass between tokens.  Given the somewhat lengthy input prompt
+It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Given vectors $q, k, v$ the attention operation is equivalent to
+
+$$
+A(q, k, v) = \mathrm {softmax} \frac{q \cdot k }{\sqrt d} v
+$$
+
+although attention is usually calculated using matricies $Q, K, V$ such that the inner product $QK^T$ rather than the dot product is computed. Regardless, the information that passes between the query token (which for a causal language model is usually the last token) and the key token (typically one of the previous tokens).  
+
+The dot product may be thought of as a measure of vector alignment which is a function of both distance and angle, and in that respect it is perhaps unsurprising that optimizing a pure distance norm metric would be insufficient for information transfer. Instead one could optimize angle metric, for example the cosine distance (see https://blbadger.github.io/language-discreteness.html#indirect-input-representation-via-cosine-similarity for a more thorough explanation).
+
+Given the somewhat lengthy input prompt
 
 $$
 a = \mathtt{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
 
-we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ is
+we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for `[:, 3:, :]` is
 
 $$
 a_g = \mathtt{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
 
-indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens.
-
+indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens. This is also the case when both cosine distance and $L^1$ distance are minimized simultaneously, meaning that even if we minimize both aspects of the dot product information still does not flow sufficiently between tokens to uniquely identify them.
 
 ### Noise on a Discreet Channel
 
