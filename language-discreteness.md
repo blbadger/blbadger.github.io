@@ -742,10 +742,10 @@ Why would the use of cosine similarity be unable to give accurate input represen
 
 ### Cosine loss optimization and model training
 
-Why is direct input representation so inaccurate for single token inputs, even though it is accurate for multi-token inputs?  Consider that the self-attention module in the Llama transformer blocks are based on the dot product operation: the attetion value between any query $q$ token and a key $k$ token is given as 
+Why is direct input representation so inaccurate for single token inputs, even though it is accurate for multi-token inputs?  Consider that the self-attention module in the Llama transformer blocks are based on the dot product operation: the attention between any query $q$ token and a key $k$ token is given as 
 
 $$
-Attention(q, k, v) = (q \cdot k) * v
+A(q, k, v) = \softmax \left( \frac{q \cdot k}{\sqrt(d)} \right) v
 $$
 
 Recalling that the dot product is equivalent to the cosine of the angle between vectors $q, k$ divided by their norms, one can say that attention compares the direction between these vectors.
@@ -873,9 +873,14 @@ $$
 a_g = \mathtt{The \; sky \; Sho \; advancedblock}
 $$
 
-Upon some reflection, it may be appreciated that this observation does not by itself mean that transformer-based language models do not share information between their tokens (more accurately the model's activations at each token).  This is because `llama` and other similar causal language models are trained to predict some passage's next token, such that these models should never recieve information from tokens to the right of the current token.  This was not the case for vision transformers, where key, query, and value projections are performed amoung all tokens. 
+Upon some reflection, it may be appreciated that this observation does not by itself mean that transformer-based language models do not share information between their tokens (more accurately the model's activations at each token).  This is because `llama` and other similar causal language models are trained to predict some passage's next token, such that these models should never receive information from tokens to the right of the current token.  This was not the case for vision transformers, where key, query, and value projections are performed amoung all tokens. 
 
-For causal language models, therefore, we should instead check that a model's activations for tokens *after* a given token are able to specify that input token if masked. Effectively we can ask whether enough information passes between tokens for the language model to determine the identity of the first two tokens, given the activations present in all following tokens.  This may be done by restricting the output to $[:, 2:, :]$, which gives us
+Specifically causal language models perform the query-key matrix multiplications as shown in the following figure: a token's query projection is multiplied to all previous (ie left-oriented) token's value projections (and possibly its own as well). This means that information in a clm transformer's block can be influence by any token to the left of the current token, but not to the right. 
+
+![clm explanation]({{https://blbadger.github.io}}deep-learning/clm_explanation.png)
+
+For causal language models, therefore, we should instead check that a model's activations for tokens *after* a given token are able to specify that input token if masked. 
+Effectively we can ask whether enough information passes between tokens for the language model to determine the identity of the first two tokens, given the activations present in all following tokens.  This may be done by restricting the output to $[:, 2:, :]$, which gives us
 
 $$
 a_g = \mathtt{masterlex \; is \; blue2}
@@ -889,10 +894,10 @@ $$
 
 indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.
 
-It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Given vectors $q, k, v$ the attention operation is equivalent to
+It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Recall from the last section that given vectors $q, k, v$ the attention operation is equivalent to a scaled version of the following
 
 $$
-A(q, k, v) = \mathrm {softmax} \frac{q \cdot k }{\sqrt d} v
+A(q, k, v) = \mathrm {softmax} \left( \frac{q \cdot k } \right) v
 $$
 
 although attention is usually calculated using matricies $Q, K, V$ such that the inner product $QK^T$ rather than the dot product is computed. Regardless, the information that passes between the query token (which for a causal language model is usually the last token) and the key token (typically one of the previous tokens).  
