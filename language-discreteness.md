@@ -212,7 +212,7 @@ $$
 we can instead maximize the cosine similarity (ie the cosine of the angle $\phi$) between vectorized (ie flattened) versions of the output of the target input's embedding $O(e, \theta)^* $ and the vectorized output of the generated input embedding at iteration $n$, $O(e_n, \theta)^*$
 
 $$
-\cos (\phi) = \frac{O(e, \theta)^* \cdot O(e_n, \theta)^* }{||O(e, \theta)^* ||_2 * |||O(e_n, \theta)^* ||_2}
+\cos (\phi) = \frac{O(e, \theta)^* \cdot O(e_n, \theta)^* }{||O(e, \theta)^* ||_2 * ||O(e_n, \theta)^* ||_2}
 $$
 
 such that gradient descent on the embedding $e_n$ is performed as follows:
@@ -676,7 +676,7 @@ It may be wondered whether or not a different metric would give a more accurate 
 To be more precise, we want to minimize the angle $\phi$ between the vector corresponding to the hidden layer output of some target input $a$ and a generated input $a_g$ by maximizing the cosine similarity between the output of the target input $a$, denoted $O(a, \theta)$ and the generated input $a_g$, $O(a_g, \theta)$ via gradient descent on an initially random input $a_0$.  The cosine distance may be calculated on vectorized versions of these outputs, denoted $O()^*$, as follows:
 
 $$
-\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * |||O(a_g, \theta)^* ||_2}
+\cos (\phi) = \frac{O(a, \theta)^* \cdot O(a_g, \theta)^* }{||O(a, \theta)^* ||_2 * ||O(a_g, \theta)^* ||_2}
 $$
 
 such that gradient descent on a vectorized version of the input $a_n$ as follows:
@@ -850,7 +850,6 @@ blue land proud{$
 
 but for inputs composed of individual words (more precisely tokens) the representation is nearly perfect, for example any of the inputs 'This', 'is', 'a', 'prompt','sentence' give a representation identical to that input. As soon as the input contains multiple tokens, however, minimizing the $L^1$ distance on the output is not longer sufficient for perfectly accurate representation, for example 'the sky' is represented as 'sky sky'.
 
-
 ### Information between tokens
 
 So far we have been observing the ability of the information in a transformer block's output to represent some input.  It may also be wondered whether only part of the output would suffice, as would be expected if the information from the input were to be sufficiently mixed among the transformer's tokens before reaching the output.  [Elsewhere](https://blbadger.github.io/vision-transformers.html) it was observed that vision transformers are generally much worse than attentionless MLP mixers at representing input regions not aligned to the output's token.
@@ -892,7 +891,7 @@ $$
 a_g = \mathtt{lex \; Sho₂ \; prompt \; sentence2}
 $$
 
-indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.
+indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.  Similarly, taking the output of the first transformer block of all layers except the first token for the input `Four score and seven years ago` gives `lex score2 seven years ago`.
 
 It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Recall from the last section that given vectors $q, k, v$ the attention operation is equivalent to a scaled version of the following
 
@@ -917,6 +916,10 @@ a_g = \mathtt{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; tim
 $$
 
 indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens. This is also the case when both cosine distance and $L^1$ distance are minimized simultaneously, meaning that even if we minimize both aspects of the dot product information still does not flow sufficiently between tokens to uniquely identify them.
+
+To conclude, we find that there is insufficient information that passes from one token to another via self-attention for a 7 billion parameter Llama model to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
+
+This conclusion is similar to what was found for vision transformers: unlike MLP mixers (which accurately represented masked tokens), vision transformers were found to be unable to transmit sufficient information between tokens for accurate visual representation. 
 
 ### Noise on a Discreet Channel
 
