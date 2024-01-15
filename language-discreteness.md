@@ -896,7 +896,7 @@ indicating that there is insufficient information transfer between later and ear
 It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Recall from the last section that given vectors $q, k, v$ the attention operation is equivalent to a scaled version of the following
 
 $$
-A(q, k, v) = \mathrm {softmax} \left( \frac{q \cdot k } \right) v
+A(q, k, v) = \mathrm {softmax} \left( q \cdot k \right) v
 $$
 
 although attention is usually calculated using matricies $Q, K, V$ such that the inner product $QK^T$ rather than the dot product is computed. Regardless, the information that passes between the query token (which for a causal language model is usually the last token) and the key token (typically one of the previous tokens).  
@@ -915,11 +915,31 @@ $$
 a_g = \mathtt{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
 
-indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens. This is also the case when both cosine distance and $L^1$ distance are minimized simultaneously, meaning that even if we minimize both aspects of the dot product information still does not flow sufficiently between tokens to uniquely identify them.
+indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens. This is also the case when both cosine distance and $L^1$ distance are minimized simultaneously (via optimization of a linear combination of these measures), meaning that even if we minimize both aspects of the dot product information still does not flow sufficiently between tokens to uniquely identify them.
 
-To conclude, we find that there is insufficient information that passes from one token to another via self-attention for a 7 billion parameter Llama model to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
+A little experimentation convinces one that these findings are not peculiar to the choice of input sentence but are found regardless of what input if given to the 7 billion parameter version of Llama. 
 
-This conclusion is similar to what was found for vision transformers: unlike MLP mixers (which accurately represented masked tokens), vision transformers were found to be unable to transmit sufficient information between tokens for accurate visual representation. 
+Being that we have seen larger models to be more and more capable at accurate input representation, it may next be wondered whether a larger model might be capable of more information transfer between tokens as well. Conceptually an arbitrarily large model would be capable of arbitrarily large information transfer between token model elements, but in particular it may be wondered if a somewhat larger version of Llama may be capable of accurate non-self token representation.
+
+We test this by observing the ability of a model approximately twice the size of what has been used thus far: a 13 billion parameter version of Llama, again quantized to 8 bits per parameter.  We try the representation gradient descent procedure first using $L^1$ distance, for the input `This is a prompt sentence` we have `作 is a prompt sentence` if we use the information from all except the first token, ie [:, 1:, :] from the first transformer block.
+
+Likewise, for the 13 billion parameter version of llama when attempting input representation via cosine distance for the input 
+
+$$
+\mathtt{Mario \; the \; man \; versus \; mario \; the \; idea} 
+$$
+
+we have `Mario the man versus mario</s> idea` if all none of the model output is masked, but 
+
+$$
+\mathtt{depois \; the \; man \; versus \; mario</s> \; idea}
+$$
+
+if the first token's output is masked after the first transformer layer. Increasing the number of transformer blocks results in a less-coherent input representation and does not improve masked token identification.
+
+To conclude, we find that there is insufficient information that passes from one token to another via self-attention for a large language model to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
+
+This conclusion is similar to what was found for vision transformers: unlike MLP mixers (which accurately represented masked tokens), vision transformers were found to be unable to transmit sufficient information between tokens for accurate visual representation of tokens using the information in the hidden layers of other tokens.
 
 ### Noise on a Discreet Channel
 
