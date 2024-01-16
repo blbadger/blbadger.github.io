@@ -929,13 +929,41 @@ $$
 \mathtt{Mario \; the \; man \; versus \; mario \; the \; idea} 
 $$
 
-we have `Mario the man versus mario</s> idea` if all none of the model output is masked, but 
+we have **Mario the man versus mario</s> idea** if none of the model output is masked, and
 
 $$
 \mathtt{depois \; the \; man \; versus \; mario</s> \; idea}
 $$
 
 if the first token's output is masked after the first transformer layer. Increasing the number of transformer blocks results in a less-coherent input representation and does not improve masked token identification.
+
+For the even larger 30 billion parameter version of Llama, given the same target input as above and taking all output except that of the first token ([:, 1:, :]) of the first transformer block, after optimizing the $L^1$ distance on this output (using indirect input representation) the input representation $a_g$ is
+
+$$
+\mathtt{'rell \; The \; man \; versus \; mario \; The \; idea}
+$$
+
+And similarly for the input **This is a prompt sentence** we have the representation $a_g$ of **Dragon is    prompt sentence<s>** if the output of the first token is masked for the same model. 
+
+When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of **quietly sky is blue<s>** and for **Blue is the sky.** the representation is **quietly is The sky<s>**.
+
+Upon testing a deeper layer (here the 8th transformer block) with the target input **This is a prompt sentence.** using an $L^1$ metric on [:, 1:, :] we have
+
+$$
+a_g = \mathtt{delta \; Gray \; wer \; prompt \; sentenceInd}
+$$
+
+And for the target input **Mario the man versus Mario the idea** minimizing cosine distance on all tokens ([:, :, :]) we have
+
+$$
+a_g = \mathtt{Mario \; Inside \; man \; versus \; Mario \; Fund \; Mor}
+$$
+
+but when the output of the first token is masked,
+
+$$
+a_g = \mathtt{ódbaum \; man \; versus \; Mario \; processes \; idea}
+$$
 
 To conclude, we find that there is insufficient information that passes from one token to another via self-attention for a large language model to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
 
