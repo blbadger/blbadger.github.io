@@ -885,13 +885,13 @@ $$
 a_g = \mathtt{masterlex \; is \; blue2}
 $$
 
-indicating that for this input, the information present in the last three tokens (in the output of the first transformer module) is insufficient to determine the identity of the first two tokens. The same is observed for the input 'This is a prompt sentence', which for `[:, 2:, :]` at the first output layer gives the representation
+indicating that for this input, the information present in the last three tokens (in the output of the first transformer module) is insufficient to determine the identity of the first two tokens. The same is observed for the input 'This is a prompt sentence', which for $[:, 2:, :]$ at the first output layer gives the representation
 
 $$
 a_g = \mathtt{lex \; Sho₂ \; prompt \; sentence2}
 $$
 
-indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.  Similarly, taking the output of the first transformer block of all layers except the first token for the input `Four score and seven years ago` gives `lex score2 seven years ago`.
+indicating that there is insufficient information transfer between later and earlier tokens to uniquely specify the masked tokens.  Similarly, taking the output of the first transformer block of all layers except the first token for the input ``Four score and seven years ago`` gives ``lex score2 seven years ago``.
 
 It may be wondered whether a different metric might allow for more information to pass between tokens. In particular, consider the information that may pass between tokens via the multi-head attention transformation.  Recall from the last section that given vectors $q, k, v$ the attention operation is equivalent to a scaled version of the following
 
@@ -909,7 +909,7 @@ $$
 a = \mathtt{The \; sky \; is \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
 $$
 
-we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for `[:, 3:, :]` is
+we can test the accuracy of the input representation when the output of most but not all tokens is used to reconstruct the input. The direct input representation found cosine similarity for the trained 7 billion parameter Llama (taking the first transformer block only) for $[:, 3:, :]$ is
 
 $$
 a_g = \mathtt{XI \; Macdet \; red \; or \; blue \; depending \; on \; the \; time \; of \; day.}
@@ -921,7 +921,7 @@ A little experimentation convinces one that these findings are not peculiar to t
 
 Being that we have seen larger models to be more and more capable at accurate input representation, it may next be wondered whether a larger model might be capable of more information transfer between tokens as well. Conceptually an arbitrarily large model would be capable of arbitrarily large information transfer between token model elements, but in particular it may be wondered if a somewhat larger version of Llama may be capable of accurate non-self token representation.
 
-We test this by observing the ability of a model approximately twice the size of what has been used thus far: a 13 billion parameter version of Llama, again quantized to 8 bits per parameter.  We try the representation gradient descent procedure first using $L^1$ distance, for the input **This is a prompt sentence** we have `作 is a prompt sentence` if we use the information from all except the first token, ie [:, 1:, :] from the first transformer block.
+We test this by observing the ability of a model approximately twice the size of what has been used thus far: a 13 billion parameter version of Llama, again quantized to 8 bits per parameter.  We try the representation gradient descent procedure first using $L^1$ distance, for the input **This is a prompt sentence** we have ``作 is a prompt sentence`` if we use the information from all except the first token, ie $[:, 1:, :]$ from the first transformer block.
 
 Likewise, for the 13 billion parameter version of llama when attempting input representation via cosine distance for the input 
 
@@ -929,7 +929,7 @@ $$
 \mathtt{Mario \; the \; man \; versus \; mario \; the \; idea} 
 $$
 
-we have **Mario the man versus mario</s> idea** if none of the model output is masked, and
+we have ``Mario the man versus mario</s> idea`` if none of the model output is masked, and
 
 $$
 \mathtt{depois \; the \; man \; versus \; mario</s> \; idea}
@@ -937,15 +937,15 @@ $$
 
 if the first token's output is masked after the first transformer layer. Increasing the number of transformer blocks results in a less-coherent input representation and does not improve masked token identification.
 
-For the even larger 30 billion parameter version of Llama, given the same target input as above and taking all output except that of the first token ([:, 1:, :]) of the first transformer block, after optimizing the $L^1$ distance on this output (using indirect input representation) the input representation $a_g$ is
+For the even larger 30 billion parameter version of Llama, given the same target input as above and taking all output except that of the first token ($[:, 1:, :]$) of the first transformer block, after optimizing the $L^1$ distance on this output (using indirect input representation) the input representation $a_g$ is
 
 $$
 \mathtt{'rell \; The \; man \; versus \; mario \; The \; idea}
 $$
 
-And similarly for the input **This is a prompt sentence** we have the generated input representation $a_g$ of `Dragon is    prompt sentence <s>` if the output of the first token is masked for the same model. 
+And similarly for the input **This is a prompt sentence** we have the generated input representation $a_g$ of ``Dragon is    prompt sentence <s>`` if the output of the first token is masked for the same model. 
 
-When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of `quietly sky is blue<s>` and for **Blue is the sky. the representation is `quietly is The sky<s>`.
+When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of ``quietly sky is blue<s>`` and for **Blue is the sky.** the representation is ``quietly is The sky<s>``.
 
 Upon testing a deeper layer (here the 8th transformer block) with the target input **This is a prompt sentence.** using an $L^1$ metric on $[:, 1:, :]$ we have
 
