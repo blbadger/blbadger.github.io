@@ -921,7 +921,7 @@ A little experimentation convinces one that these findings are not peculiar to t
 
 Being that we have seen larger models to be more and more capable at accurate input representation, it may next be wondered whether a larger model might be capable of more information transfer between tokens as well. Conceptually an arbitrarily large model would be capable of arbitrarily large information transfer between token model elements, but in particular it may be wondered if a somewhat larger version of Llama may be capable of accurate non-self token representation.
 
-We test this by observing the ability of a model approximately twice the size of what has been used thus far: a 13 billion parameter version of Llama, again quantized to 8 bits per parameter.  We try the representation gradient descent procedure first using $L^1$ distance, for the input `This is a prompt sentence` we have `作 is a prompt sentence` if we use the information from all except the first token, ie [:, 1:, :] from the first transformer block.
+We test this by observing the ability of a model approximately twice the size of what has been used thus far: a 13 billion parameter version of Llama, again quantized to 8 bits per parameter.  We try the representation gradient descent procedure first using $L^1$ distance, for the input **This is a prompt sentence** we have `作 is a prompt sentence` if we use the information from all except the first token, ie [:, 1:, :] from the first transformer block.
 
 Likewise, for the 13 billion parameter version of llama when attempting input representation via cosine distance for the input 
 
@@ -943,17 +943,17 @@ $$
 \mathtt{'rell \; The \; man \; versus \; mario \; The \; idea}
 $$
 
-And similarly for the input **This is a prompt sentence** we have the representation $a_g$ of **Dragon is    prompt sentence <s> ** if the output of the first token is masked for the same model. 
+And similarly for the input **This is a prompt sentence** we have the generated input representation $a_g$ of `Dragon is    prompt sentence <s>` if the output of the first token is masked for the same model. 
 
-When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of **quietly sky is blue<s> ** and for **Blue is the sky.** the representation is **quietly is The sky<s> **.
+When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of `quietly sky is blue<s>` and for **Blue is the sky. the representation is `quietly is The sky<s>`.
 
-Upon testing a deeper layer (here the 8th transformer block) with the target input **This is a prompt sentence.** using an $L^1$ metric on [:, 1:, :] we have
+Upon testing a deeper layer (here the 8th transformer block) with the target input **This is a prompt sentence.** using an $L^1$ metric on $[:, 1:, :]$ we have
 
 $$
 a_g = \mathtt{delta \; Gray \; wer \; prompt \; sentenceInd}
 $$
 
-And for the target input **Mario the man versus Mario the idea** minimizing cosine distance on all tokens ([:, :, :]) we have
+And for the target input **Mario the man versus Mario the idea** minimizing cosine distance on all tokens ($[:, :, :]$) we have
 
 $$
 a_g = \mathtt{Mario \; Inside \; man \; versus \; Mario \; Fund \; Mor}
