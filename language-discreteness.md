@@ -745,7 +745,7 @@ Why would the use of cosine similarity be unable to give accurate input represen
 Why is direct input representation so inaccurate for single token inputs, even though it is accurate for multi-token inputs?  Consider that the self-attention module in the Llama transformer blocks are based on the dot product operation: the attention between any query $q$ token and a key $k$ token is given as 
 
 $$
-A(q, k, v) = \softmax \left( \frac{q \cdot k}{\sqrt(d)} \right) v
+A(q, k, v) = \mathrm{softmax} \left( \frac{q \cdot k}{\sqrt(d)} \right) v
 $$
 
 Recalling that the dot product is equivalent to the cosine of the angle between vectors $q, k$ divided by their norms, one can say that attention compares the direction between these vectors.
@@ -943,9 +943,9 @@ $$
 \mathtt{'rell \; The \; man \; versus \; mario \; The \; idea}
 $$
 
-And similarly for the input **This is a prompt sentence** we have the representation $a_g$ of **Dragon is    prompt sentence<s>** if the output of the first token is masked for the same model. 
+And similarly for the input **This is a prompt sentence** we have the representation $a_g$ of **Dragon is    prompt sentence <s> ** if the output of the first token is masked for the same model. 
 
-When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of **quietly sky is blue<s>** and for **Blue is the sky.** the representation is **quietly is The sky<s>**.
+When we test this larger model's input representation using a cosine distance metric, we again see that there is insufficient information to uniquely identify the first token: for the target input **The sky is blue.** the model yields an $a_g$ of **quietly sky is blue<s> ** and for **Blue is the sky.** the representation is **quietly is The sky<s> **.
 
 Upon testing a deeper layer (here the 8th transformer block) with the target input **This is a prompt sentence.** using an $L^1$ metric on [:, 1:, :] we have
 
