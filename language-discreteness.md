@@ -967,7 +967,7 @@ $$
 
 In the [last section](https://blbadger.github.io/language-discreteness.html#cosine-loss-optimization-and-model-output) it was observed that the cosine similarity metric could be used to find somewhat accurate representations of an input for an untrained Llama 7b, but only if the output of the attention layer rather than the output of the first transformer block (attention layer followed by two fully connected layers) was used to perform optimization upon.  It may then be wondered if we might observe a similar phenomenon here: perhaps if we optimize the cosine similarity of an attention layer, the identity of a token whose output is masked may be found. 
 
-But for untrained langauge models, given the first transformer block's self-attention we can find accurate input representations using $\cos \phi$ as our metric: given the prompt **Mario the idea versus Mario the man** we have a top-5 encoding of
+But for untrained langauge models, given the first transformer block's self-attention we can find accurate non-self token input representations using $\cos \phi$ as our metric: given the prompt **Mario the idea versus Mario the man** and the outputs $[:, 1:, :]$ we have a top-5 encoding of
 
 ```
 Mario man the the Mario man idea
@@ -977,7 +977,7 @@ isi Mario Mario idea idea versusperiment
 Price система idea versus man↓ouvelle
 ```
 
-and for **Geralt of Rivia** we have a representation ``Ger Rivalt Rivia`` given the output of all except the first token ($[:, 1:, :]$) and ``Ger Riv of Rivia`` for $[:, 2:, :]$. As observed before, the tokens are often permuted such that the masked token is not necessarily in the correct place. It should be noted that accurate input representations for any input tokens are not obtained once more than one attention layer is used.
+and for **Geralt of Rivia** we have a representation ``Ger Rivalt Rivia`` given the output of all except the first token ($[:, 1:, :]$) and ``Ger Riv of Rivia`` for all except the first two tokens, $[:, 2:, :]$. As observed before, the tokens are often permuted such that the masked token is not necessarily in the correct place. It should be noted that accurate input representations for any input tokens are not obtained once more than one attention layer is used.
 
 On the other hand, some experimentation is sufficient to convince one that this is not the case for trained models: for a 7 billion parameter trained Llama, the attention layer output does not yield accurate masked token identity. 
 
