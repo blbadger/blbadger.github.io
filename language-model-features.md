@@ -544,7 +544,13 @@ aussianclar circuit
 1) traject/
 ```
 
+### Implications of feature alignment
 
+The finding that features are at least partially aligned, particularly between layers of one model or of similar models, is remarkable for a number of reasons. Firstly, the alignment is much stronger than what is seen for vision models, even vision transformers that mirror the decoder-only transformer models used for language modeling.  Secondly, there is little theoretical basis for why different transformer modules would have such well-aligned features.
+
+But perhaps most usefully, this observation of feature alignment suggests that one can easily combine layers (ie transformer block modules or even individual linear transformation layers) from various different language models to make combination models. The reason for this is that different layers from different models are more likely to have new information than different layers from the same model, being that many models have layers with quite repetitive features.  
+
+There exist the begginings of this sort of model merging already, where one takes layers from various models and merges them together (if of the same model family and size, without any additional transformations between layers) to make a single model (sometimes called a 'Frankenmodel'). For example the [Goliath 120b](https://huggingface.co/alpindale/goliath-120b) model is a direct merge two Llama 70b variants, and in the hands of the author is much superiour to instruction-tuned Llama-70b when it comes to factual recall, reasoning, and problem solving tasks. 
 
 
 
