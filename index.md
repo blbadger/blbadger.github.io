@@ -166,7 +166,7 @@ As for any natural science, an attempt to explain observations and predict futur
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/3_body_cover.png)
 
-### [Three Body Problem II: Paralellized Computation](/3-body-problem-2.md)
+### [Three Body Problem II: Parallelized Computation with CUDA](/3-body-problem-2.md)
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/cuda_vs_torch.png)
 
