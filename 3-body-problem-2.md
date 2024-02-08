@@ -10,7 +10,7 @@ Even with the use of the [optimized](https://pytorch.org/tutorials/advanced/cpp_
 
 ### A CUDA kernal for divergence
 
-Here we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C++ execution always begins at `int main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
+Here we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C or C++ execution always begins with `main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
 
 ```c++
 #include <stdio.h>
@@ -157,9 +157,9 @@ Parallelized computation must now be specified: in the following code, we define
   int i = blockIdx.x*blockDim.x + threadIdx.x;
 ```
 
-Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernal.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime).
+Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernal.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime with no other optimizations performed).
 
-Moving the loop to the GPU does have another substantial benefit, however: it reduced the electrical power required by the GPU and CPU during the simulation.  For the GPU alone, the internal loop typically requires around 100 watts whereas the external loop usually takes around 125 watts on an Nvidia rtx3060.
+Moving the loop to the GPU does have another substantial benefit, however: it reduced the electrical power required by the GPU and CPU during the simulation.  For the GPU alone, the internal loop typically requires around 100 watts whereas the external loop usually takes around 125 watts on an Nvidia RTX 3060.
 
 For each index `i` corresponding to one CUDA thread, $steps$ iterations of the three body trajectory are performed and at each iteration the $times$ array is incremented if the trajectory of planet one has not diverged from its slightly shifted counter part (planet one prime). 
 
@@ -198,7 +198,7 @@ For each index `i` corresponding to one CUDA thread, $steps$ iterations of the t
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
-The cuda kernal with driver c++ code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's rtx 3060) may not be compatible with the latest kernal version, so downgrading to an older kernal version may be necessary.
+The cuda kernal with driver code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's RTX 3060) may not be compatible with the latest Linux kernal version, so downgrading to an older kernal version may be necessary. 
 
 Here we compile with the flag `-o` followed by the desired file name where the compiled binary program will be stored.
 
@@ -213,7 +213,7 @@ For a 300x300 x,y resolution after the full 50,000 timesteps, we have a somewhat
 Elapsed Time: 144.3s
 ```
 
-Compare this to the torch library version of the same problem, which
+Compare this to the Pytorch library version of the same problem (see [part 1](https://blbadger.github.io/3-body-problem.html)), which 
 
 ```python
 [Finished in 107.1s]
@@ -626,11 +626,11 @@ When we apply linear multistep method to three body problem trajectories, we see
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep.png)
 
-There is a problem with this approach, however: at very small scales, the use of a larger step size results in numerical artefacts regardless of the method used.  For example, we can see vertical lines of quickly-diverging regions appear for Euler's method as well as order 2 or order 4 Adams-Bashforth methods.  
+There is a problem with this approach, however: at very small scales, the use of a larger step size results in numerical artefacts regardless of the method used.  For example, we can see vertical lines of quickly-diverging regions appear for Euler's method as well as order 2 or order 4 Adams-Bashforth methods, which are absent from the order 1 method (Euler's).  
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep_artefacts.png)
 
-
+These are evidently numerical instabilities in the calculation of the three body divergence, which leads to discrete shifts in stability for adjacent pixels (which is not expected to occur for our simulation unless the number of time steps heads towards infinity and the initial shift heads towards zero).  These instabilities lead to repetitive shifts in stability, where alternating patterns of stable and unstable regions exist.
 
 
 
