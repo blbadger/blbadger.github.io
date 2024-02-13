@@ -491,7 +491,7 @@ Before looking up the values, we need to increment the number of expected iterat
 	last_time_steps = time_steps
 ```
 
-Now we assemble an array of all locations that we do not have a stored value for and can
+Now we assemble an array of all locations that we do not have a stored value for,
 
 ```python
 	start_x = x_center - x_range/2
