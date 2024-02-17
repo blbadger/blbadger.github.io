@@ -301,11 +301,88 @@ For a write-up on the use of `ctypes` for cuda-defined functions where Python ar
 
 ### Optimizing the Three Body Trajectory Computations
 
-Many data-parallelized programs for which GPUs are used spend more clock cycles (and therefore total time) on memory management than actual computation.  This is nearly always true for deep learning and also holds for many more traditional graphics applications as well.  Memory management occurs both within the GPU and in transfers of data to and from the CPU.  For the three body simulation, a quick look at the code suggests that this program should spend very little time sending data to and from the GPU: we allocated memory for each array, initialized each one before sending to the GPU once, and then copied each array back to the CPU once the loop completes.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
+Many data-parallelized programs implemented on GPUs spend more clock cycles (and therefore typically total runtime) on memory management than actual computation.  This is nearly always true for deep learning mode inference and also holds for many more traditional graphics applications as well.  Memory management occurs both within the GPU and in transfers of data to and from the CPU.  For the three body simulation, a quick look at the code suggests that this program should spend very little time sending data to and from the GPU: we allocated memory for each array, initialized each one before sending to the GPU once, and then copied each array back to the CPU once the loop completes.  This can be confirmed by using a memory profiler such as Nsight-systems, which tells us that the memory copy from GPU (device) to CPU (host) for the 300x300 example requires only ~20ms.  From the screenshot below, it is clear that nearly all the GPU time is spent simply performing the necessary computations (blue boxes on top row).
 
 ![profile]({{https://blbadger.github.io}}/3_body_problem/nvidia-nsight.png)
 
-Ignoring GPU-internal memory optimization for the moment, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
+It may therefore be wondered how much time our kernal spends reading and writing memory within the GPU itself, which for most consumer hardware is one form of vRAM or another.  GPUs have a few types of memory, and modern nvidia GPUs typically have what is termed global memory (which is the vRAM storage and is by far the largest form of memory available), shared local memory, and register memory (which was the smallest capacity and is usually reserved for variables). Speed is inversely proportional to the amount of storage the memory element contains, as is the case for different types of CPU memory.  In particular, global memory is not actually very fast at all and the idea is that the GPU hides this slow memory access via massive data parallelization.
+
+When arrays (such as `double *p1_x`) are read or written to the GPU they are by default stored in global memory, which means that we may suspect our kernal as written above to be slower than overwise it perhaps might be because each thread reads and writes many array elements many times over, typically dozens of elements during each iteration. If global memory is indeed accessed at each iteration, it would be expected that changing the memory access pattern to use shared or register elements would drastically speed up the kernal.
+
+Fortunately it is not too hard to change the memory access to register from global memory in the main loop of our CUDA kernal: all we have to do is to assign variables to the proper array elements before the loop commences, and then use only those variables until the loop ends.  Variables are by default stored in register memory, so we should not have any global memory access operations if we stick to using only variables in the loop.
+
+```cuda
+// kernal declaration
+__global__
+void divergence(int n, 
+              int steps,
+              double delta_t,
+              int *times,
+	...
+	)
+{
+  int i = blockIdx.x*blockDim.x + threadIdx.x;
+  int still_together = 1;
+  int not_diverged = 1;
+  int times_ind = times[i];
+  double p1x = p1_x[i];
+  double p1y = p1_y[i];
+  double p1z = p1_z[i];
+  int times_ind = times[i];
+..
+```
+
+This approach has the added benefit of reducing the number of arguments to the `void divergence()` kernal, as intermediate variable arrays `nv1, dv_1_x` etc. can be initialized inside the kernal,
+
+```cuda
+double nv1x, nv1y, nv1z;
+```
+
+and in the loop we use these variables to avoid any array read/write operations
+
+```cuda
+  if (i < n){
+    for (int j=0; j < steps; j++) {
+        // compute accelerations
+        dv_1_x = -9.8 * m_2 * (p1x - p2x) / pow(sqrt(pow(p1x - p2x, 2) + pow(p1y - p2y, 2) + pow(p1z - p2z, 2)), 3) \
+                 -9.8 * m_3 * (p1x - p3x) / pow(sqrt(pow(p1x - p3x, 2) + pow(p1y - p3y, 2) + pow(p1z - p3z, 2)), 3);
+```
+
+and we can also avoid any `if` statements in the kernal (branches are typically slow for massively parallelized programming frameworks) as follows:
+
+```
+	// find which trajectories have diverged and increment times_ind
+        not_diverged = sqrt(pow(p1x - p1_primex, 2) + pow(p1y - p1_primey, 2) + pow(p1z - p1_primez, 2)) <= critical_distance;
+        still_together &= not_diverged; // still_together is initialized as an int with value 0
+        times_ind = times_ind + still_together; 
+```
+
+The intermediate variables are updated at each iteration, and at the end of the loop the `times_ind` value is written to the `*times` array at the proper location.
+
+```cuda
+ 	// compute new velocities
+        nv1x = v1x + delta_t * dv_1_x;
+	...
+        nv1_primex = v1_primex + delta_t * dv_1pr_x;
+	...
+        // compute positions with current velocities
+        p1x = p1x + delta_t * v1x;
+	...
+        p1_primex = p1_primex + delta_t * v1_primex;
+	...
+        // assign new velocities to current velocities
+        v1x = nv1x;
+	...
+        v1_primex = nv1_primex;
+	...
+        }
+
+    times[i] = times_ind;
+```
+
+Running this kernal, however, shows us that there is practically no difference in time saved when we avoid all inner loop array calls. This is because modern CUDA compiler versions optimize memory management for operations like this by default, such that the previously-read array elements are cached in registers without requiring explicit register allocation.  This indicates that our kernal is not memory-limitted but instead is compute-limited.
+
+Now that we have convinced ourselves that the three body problem simulation is not memory bandwidth-limited, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
 
 Thus we can forego the use of the `pow()` operator for direct multiplication in order to optimize the three body trajectory computation.  This change makes a somewhat-tedious CUDA code block become extremely tedious to write, so we can instead have a Python program write out the code for us.  
 
