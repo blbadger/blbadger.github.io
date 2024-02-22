@@ -967,7 +967,7 @@ $$
 
 In the [last section](https://blbadger.github.io/language-discreteness.html#cosine-loss-optimization-and-model-output) it was observed that the cosine similarity metric could be used to find somewhat accurate representations of an input for an untrained Llama 7b, but only if the output of the attention layer rather than the output of the first transformer block (attention layer followed by two fully connected layers) was used to perform optimization upon.  It may then be wondered if we might observe a similar phenomenon here: perhaps if we optimize the cosine similarity of an attention layer, the identity of a token whose output is masked may be found. 
 
-But for untrained langauge models, given the first transformer block's self-attention we can find accurate non-self token input representations using $\cos \phi$ as our metric: given the prompt **Mario the idea versus Mario the man** and the outputs $[:, 1:, :]$ we have a top-5 encoding of
+For untrained langauge models the representation for 7b and 30b llama is mostly the same as trained, but the untrained model exhibits one advantage: given the first transformer block's self-attention transformation alone we can find accurate non-self token input representations using $\cos \phi$ as our metric: given the prompt **Mario the idea versus Mario the man** and the outputs $[:, 1:, :]$ we have a top-5 encoding of
 
 ```
 Mario man the the Mario man idea
@@ -977,17 +977,52 @@ isi Mario Mario idea idea versusperiment
 Price система idea versus man↓ouvelle
 ```
 
-and for **Geralt of Rivia** we have a representation ``Ger Rivalt Rivia`` given the output of all except the first token ($[:, 1:, :]$) and ``Ger Riv of Rivia`` for all except the first two tokens, $[:, 2:, :]$. As observed before, the tokens are often permuted such that the masked token is not necessarily in the correct place. It should be noted that accurate input representations for any input tokens are not obtained once more than one attention layer is used.
+and for **Geralt of Rivia** we have a representation ``Ger Rivalt Rivia`` given the output of all except the first token ($[:, 1:, :]$) and ``Ger Riv of Rivia`` for all except the first two tokens, $[:, 2:, :]$. As observed before, the tokens are often permuted such that the masked token is not necessarily in the correct place. It should be noted that accurate input representations for any input tokens are not obtained once more than one attention layer is used, or once attention is followed by the MLP layers that normally comprise a transformer block.
 
-The keen observer will not that the information from the last token is able to apparently travel to earlier tokens, which should be impossible if each attention dot-product operation only takes place in the reverse direction.
+An aside: the keen observer will not that the information from the last token is able to apparently travel to earlier tokens, which should be impossible if each attention dot-product operation only takes place in the reverse direction. This is due to the a lack of a causal mask in the attention module, which would normally be added during the causal language modeling training process.
 
-On the other hand, some experimentation is sufficient to convince one that this is not the case for trained models: for a 7 billion parameter trained Llama, the attention layer output does not yield accurate masked token identity. 
+On the other hand, some experimentation is sufficient to convince one that this is not the case for trained models: for a 7 billion parameter trained Llama, the attention layer output does not yield accurate masked token identity.  
 
 It may be wondered why there is insufficient information passed between tokens for a trained model: which operation is required to pass information sufficiently between one layer and the next for a single token?  This is easy to answer, and removal of each transformation in the self-attention module of a trained Llama ([here](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) is the source code) shows that the removal of the residual connection across the self-attention layer is alone capable of preventing even a single input token from being correctly identified (given complete outputs) regardless of what modules follow. As there are not residual connections between token elements in transformer models, it is little surprise in that sense that there is insufficient information to correctly identify the correct input token if that token's output is masked.
 
-Likewise, for an untrained Llama 7b we find the opposite phenomenon: removal of the residual connection across the first transformer block's self-attention layer results in little change in input representation ability: given the input 'Mario the idea versus Mario the man' we have 'Mario man the the versus man idea' without residuals and 'Mario man the the Mario man idea' with residuals intact.  Once again we find that input representation is quite inaccurate when more than one transformer layer (with or without residuals) is stacked.  
+Likewise, for an untrained Llama 7b we find the opposite phenomenon: removal of the residual connection across the first transformer block's self-attention layer results in little change in input representation ability: given the input 'Mario the idea versus Mario the man' we have 'Mario man the the versus man idea' without residuals and 'Mario man the the Mario man idea' with residuals intact.  Once again we find that input representation is quite inaccurate when more than one transformer layer (with or without residuals) is stacked. 
 
-To conclude, we find that there is insufficient information that passes from one token to another via self-attention for trained large language models to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
+Before concluding that insufficient information passes between tokens (via attention transformations) for accurate non-self token identification, however, consider that one might have made a similar conclusion for self-token identification when using models smaller than ~1 billion parameters, but larger models (7 billion parameters and larger) do turn out to be capable of accurate self token representation (due to their increase in layer width, which parallels a communication line's bandwidth).  We may wonder if the same phenomenon would not occur for non-self tokens.
+
+A little experimentation convinces us that an increase in model size is indeed sufficient for non-self token representation: if we initialize one transformer module of the same dimensions as the 70 billion parameter Llama-2 as follows
+
+```python
+llama_config_kwargs = {
+    'hidden_size': 8192,
+    'intermediate_size': 4*8192,
+    'num_hidden_layers': 1,
+    'num_heads': 64
+}
+
+# Initializing a LLaMA llama-70b style configuration
+configuration = LlamaConfig(**llama_config_kwargs)
+model = LlamaForCausalLM(configuration).to(0)
+```
+
+and using indirect input representation (minimizing an $L^2$ metric on the output) we find that the generated input for an output where the first three tokens are masked such that the output is `[:, 3:, :]` for the input **Mario the man versus Mario the idea** we have a top-2 token representation of
+
+```
+Mario the thecenwijні the
+versus Mario idea man到 versusору
+```
+
+and if all tokens but the last are masked (`[:, -1, :]`) we find
+
+```
+versus census thegg canad Marioárt
+```
+where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct spot.
+
+(note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
+
+It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is
+
+To conclude, we find that there is insufficient information passing from one token to another via self-attention for trained large language models to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
 
 This conclusion is similar to what was found for vision transformers: unlike MLP mixers (which accurately represented masked tokens), vision transformers were found to be unable to transmit sufficient information between tokens for accurate visual representation of tokens using the information in the hidden layers of other tokens.
 
