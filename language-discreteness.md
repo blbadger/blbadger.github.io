@@ -1022,6 +1022,7 @@ and if all tokens but the last are masked (`[:, -1, :]`) we find
 ```
 versus census thegg canad Marioárt
 ```
+
 where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct spot (note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
 
 It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is
