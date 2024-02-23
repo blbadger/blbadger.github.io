@@ -917,7 +917,13 @@ $$
 
 indicating that the information in all following tokens for this prompt is insufficient to specify any of the first three tokens. This is also the case when both cosine distance and $L^1$ distance are minimized simultaneously (via optimization of a linear combination of these measures), meaning that even if we minimize both aspects of the dot product information still does not flow sufficiently between tokens to uniquely identify them.
 
-A little experimentation convinces one that these findings are not peculiar to the choice of input sentence but are found regardless of what input if given to the 7 billion parameter version of Llama. 
+A little experimentation convinces one that these findings are not peculiar to the choice of input sentence but are found regardless of what input if given to the 7 billion parameter version of Llama. This observation is also not limited to the Llama model family, as Mistral 7b experiences the same incaccuracy: for [:, 1:, :] from the first transformer block we have for the input **Mario the man versus the idea**
+
+$$
+a_g = \mathtt{agenteli \; man \; versusPEGнал}
+$$
+
+and for **The sky is blue** the generated representaiton for the same output, the corresponding generated input $a_g$ is `sky<s> blue<s>`.
 
 Being that we have seen larger models to be more and more capable at accurate input representation, it may next be wondered whether a larger model might be capable of more information transfer between tokens as well. Conceptually an arbitrarily large model would be capable of arbitrarily large information transfer between token model elements, but in particular it may be wondered if a somewhat larger version of Llama may be capable of accurate non-self token representation.
 
@@ -1016,9 +1022,7 @@ and if all tokens but the last are masked (`[:, -1, :]`) we find
 ```
 versus census thegg canad Marioárt
 ```
-where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct spot.
-
-(note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
+where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct spot (note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
 
 It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is
 
