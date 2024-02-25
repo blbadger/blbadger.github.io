@@ -198,7 +198,9 @@ For each index `i` corresponding to one CUDA thread, $steps$ iterations of the t
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
-The cuda kernal with driver code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's RTX 3060) may not be compatible with the latest Linux kernal version, so downgrading to an older kernal version may be necessary. 
+The cuda kernal with driver code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's RTX 3060) may not be compatible with the latest linux kernal version, so downgrading to an older kernal version may be necessary. The author has found that kernal version `5.19.0-45-generic` is compatible with recent versions of `nvcc`, and this can be selected in the 'advanced options' of the linux boot menu for Ubuntu 22.04.
+
+Those wishing to compile CUDA code via `nvcc` should note that there are two CUDA versions in each distribution: the runtime API version and the driver version.  The driver version should meet or exceed the runtime API software version, which can be checked by ensuring that the CUDA version displayed in the upper right hand corner of the readout called by entering `nvidia-smi` in bash meets or exceeds that shown when calling `nvcc --version`.
 
 Here we compile with the flag `-o` followed by the desired file name where the compiled binary program will be stored.
 
