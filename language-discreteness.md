@@ -1031,7 +1031,7 @@ $$
 a_g = \mathtt{absorF \; man \; versus \; Mario \; The \; idea}
 $$
 
-which indicates that the self-token representation improves upon training, but the non-self token representation ability does not (the full `[:, :, :]` representation is $\mathtt{MarioThe \; man \; versus \; Mario \; The \; idea$). Similarly, for `[:, -1, :]` we have a_g = `absor verb ForumFOimerwho idea`, meaning only the last token is found. This is not peculiar to the chosen prompt: for example, not one of the top-5 representations for **The sky is blue.** finds the masked first token for `[:, -1, :]`,
+which indicates that the self-token representation improves upon training, but the non-self token representation ability does not (the full `[:, :, :]` representation is `MarioThe man versus Mario The idea`). Similarly, for `[:, -1, :]` we have a_g = `absor verb ForumFOimerwho idea`, meaning only the last token is found. This is not peculiar to the chosen prompt: for example, not one of the top-5 representations for **The sky is blue.** finds the masked first token for `[:, -1, :]`,
 
 ```
 ignation sky is blue?
@@ -1040,6 +1040,18 @@ okaysky COblueriften
 broke publishebrace “
 bo System AskFur
 ```
+
+or for different models: the trained 70 billion parameter Llama-2 gives for **Mario the idea versus the man** a top-5 representation for `[:, 1:, :]` of
+
+```
+Priceww idea versusww man
+existed…aire vs…ww
+港 the ideasww the Man
+histor fils winningining cacheono
+limitedэ mostly Pitts’ await
+```
+
+none of which correctly identifies the masked first token
 
 It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is evidently between
 
