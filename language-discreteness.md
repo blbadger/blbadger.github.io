@@ -1051,9 +1051,11 @@ histor fils winningining cacheono
 limitedэ mostly Pitts’ await
 ```
 
-none of which correctly identifies the masked first token
+none of which correctly identifies the masked first token.  
 
-It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is evidently between
+Even if we restrict the [vocaulary](https://blbadger.github.io/language-discreteness.html#restricted-vocabulary-input-representation) such that the represented tokens may only be those that are found in the following sentence: `A sky is blue or red depending on the time of day, and further depending on the size of the vocabulary present.` for the input **The sky is blue**, we find an $a_g$ of ` size sky is blue<s>`.
+
+It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models, the chance of accurate masked token representation depends on parameter initialization but increases with model size: perhaps 1/5ths of models with a hidden dimension of 4096 (Llama 7b size) but more than 4/5ths of models with a hidden dim of 8192 (llama 70b).
 
 To conclude, we find that there is insufficient information passing from one token to another via self-attention for trained large language models to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
 
