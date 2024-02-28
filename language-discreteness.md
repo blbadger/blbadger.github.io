@@ -1023,9 +1023,25 @@ and if all tokens but the last are masked (`[:, -1, :]`) we find
 versus census thegg canad Marioárt
 ```
 
-where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct spot (note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
+where the non-self tokens for `Mario, versus, the` are correctly found, even if they are not in the correct token index (note that as for other randomly initialized, untrained models the exact input representation is somewhat dependent on the weight initializations).
 
-It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is
+For the trained 65 billion parameter Llama, however, the same prompt 'Mario the man versus Mario the idea' for the output of the first transformer block without the first token (`[:, 1:, :]`) representation of
+
+$$
+a_g = \mathtt{absorF \; man \; versus \; Mario \; The \; idea}
+$$
+
+which indicates that the self-token representation improves upon training, but the non-self token representation ability does not (the full `[:, :, :]` representation is $\mathtt{MarioThe \; man \; versus \; Mario \; The \; idea$). Similarly, for `[:, -1, :]` we have a_g = `absor verb ForumFOimerwho idea`, meaning only the last token is found. This is not peculiar to the chosen prompt: for example, not one of the top-5 representations for **The sky is blue.** finds the masked first token for `[:, -1, :]`,
+
+```
+ignation sky is blue?
+CC Skyson Blue when
+okaysky COblueriften
+broke publishebrace “
+bo System AskFur
+```
+
+It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models this is evidently between
 
 To conclude, we find that there is insufficient information passing from one token to another via self-attention for trained large language models to uniquely identify inputs in which the corresponding token's hidden layer activations are masked.  The lack of information transfer between tokens is observed regardless of whether a distance, angle, or combination of distance and angle metric is used to optimize the input's representation similarity to a partially masked target. If this model is representative of others, the finding implies that transformer-based language models typically do not transfer sufficient information between tokens (via QKV matrix multiplications) for unique token identification.
 
