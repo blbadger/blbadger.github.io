@@ -1073,7 +1073,11 @@ Given that deep learning models often behave as if they were noisy communication
 
 ### Implications of Representation Accuracy
 
-Language models are usually trained by first predicting the next word in a sentence, followed by what is termed 'aligmnent' which serves to make the language model return outputs are appropriate for some given at hand, which could be helpfully answering questions or perhaps providing background information.  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches.  
+Modern large language models are usually trained by first predicting the next word in a sentence, followed by what is termed 'aligmnent' which serves to make the language model return outputs are appropriate for some given at hand, which could be helpfully answering questions or perhaps providing background information.  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches. 
+
+It should be appreciated that in some sense most the fundamental problem of language processing, the task of producing gramatically correct language, does not require a very large model at all or even a very sophisticated architecture.  More recently it has become desirable for language models to be able to perform tasks that are intrinsic to language (factual recall, reasoning etc.) but these were not the tasks that were the original goal of current architectures, particularly the transformer which was originally identified as a language model that resisted saturation (defined here as a lack of improvement in perplexity after training on additional tokens). This is not a unique phenomenon to transformers, however, as the same is observed for large convolutional and even fully connected architectures.
+
+Therefore one can wonder whether the transformer is as effective an architecture for meta-language tasks as it is for language tasks. 
 
 In spite of these innovations, it has been observed that models smaller than around 10 billion parameters (using commonly applied scaling measures for MLP and key, query and value projection parameters in transformers) are generally insufficient for anything but the simplest of language tasks.
 
