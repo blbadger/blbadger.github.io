@@ -1061,6 +1061,47 @@ To conclude, we find that there is insufficient information passing from one tok
 
 This conclusion is similar to what was found for vision transformers: unlike MLP mixers (which accurately represented masked tokens), vision transformers were found to be unable to transmit sufficient information between tokens for accurate visual representation of tokens using the information in the hidden layers of other tokens.
 
+### Mixer Information Transfer
+
+In the last section it was observed that large untrained language models are capable of accurate non-self token representation (although the tokens may not be in the correct sequence index), but that this ability vanishes during the training process. Similar conclusions were reached [elsewhere](https://blbadger.github.io/transformer-features.html) for trained dot product attention-based transformers but curiously not for MLP mixer models that replace the self-attention operations with matrix multiplication operations. It may therefore be wondered whether an MLP mixer model might also be capable of accurate non-self token representation for language, as is the case for vision.
+
+A simple implementation of one block of the mixer for language processing is as follows: 
+
+```python
+class LanguageMixer(nn.Module):
+
+    def __init__(self, dim, depth, length, expansion_factor=4, dropout=0.):
+        super().__init__()
+        self.layernorm = nn.LayerNorm(dim)
+        self.seq_layernorm = nn.LayerNorm(length)
+        self.dim = dim
+        self.depth = depth
+        self.length = length
+        self.patch_ff = FeedForward(dim, expansion_factor=expansion_factor)
+        self.conv = nn.Conv1d(dim, dim, 1)
+
+    def forward(self, x: torch.tensor):
+        x = rearrange(x, 'b t f -> b f t')
+        residual = x
+        x = self.conv(x)
+        x += residual
+        x = self.seq_layernorm(x)
+        x = rearrange(x, 'b f t -> b t f')
+        residual = x
+        x = self.patch_ff(x)
+        x += residual
+        x = self.layernorm(x)
+        return x
+```
+
+where the input is expected to be an $m$-length sequence of embeddings $\Bbb R^n$
+
+When we the untrained mixer on non-self token identification on the input **Mario, the Idea, versus Mario, the Man**, a few interesting observations are found, the most dramatic of which is that the embedding size required for accurate self or non-self token representation is drastically smaller than what is required for the dot-product transformer: for example, given the input
+
+**Mario, the Idea, versus Mario, the Man**
+
+we find a perfect input representation for the first-token-masked output `[:, 1:, ]` for a model with an embedding size of $n=128$. As for the transformer, reducing this size leads to a sharp decrease in representation ability such that for $n=90$ the representation is still perfect, for $n=80$ the masked token is incorrect, for $n=31$ around half the tokens are correct and for $n=30$ no token is correct.
+
 ### Noise on a Discreet Channel
 
 To recap, we have found that accurate input representations of language but not images are not formed in trained transformer models unless they contain a very large number of parameters, particularly in trained models.  In the next section, we will consider what this means for a language model's ability to give useful outputs.
