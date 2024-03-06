@@ -12,6 +12,85 @@ This begs the question: are these parameters necessary? It is clear that transfo
 
 A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language. It has been claimed that there are somewhere around $10^570$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as $10^570$ points in an arbitrarily high-dimension space. Now due to a theorem of high-dimensional space, the same points may be obtained with arbitrary precision in a space that is approximately $\log 10^570 = 570$ dimensional.  This means that a model with the same number of parameters may exist such that each sentence may be found via a combination of these parameters.
 
-Although it has been found that for restricted inputs even smaller models (millions rather than billions of parameters) may give coherent outputs.
+What type of model could this be? We will use a combination of representational accuracy and efficiency as our guiding principles and try out some architectures.
 
-[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that 
+### Introduction
+
+[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$. Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer.
+
+The experimental setup will be as follows: for our dataset we will start with TinyStories, which is a collection of simple text that contains a limited vocabulary similar to what a four-year-old would use that allows for effective modeling by transformers in the millions rather than billions of parameter scale. For reference, small versions of state-of-the-art transformer models will be trained and used as a comparison to the new architectures that we will try here.
+
+The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence, rather than token, dimension.  We modify this 
+
+```python
+class MixerBlock(nn.Module):
+
+	def __init__(self, dim, length, mixer_mask=True, dropout=0., expand=False):
+		super().__init__()
+		self.layernorm = nn.LayerNorm(dim)
+		self.seq_layernorm = nn.LayerNorm(length)
+		self.dim = dim
+		self.length = length
+		self.patch_ff = FeedForward(dim, expansion_factor=expansion_factor)
+		if expand:
+			self.conv = ConvForward(dim, expansion_factor=expansion_factor)
+		else:
+			self.conv = nn.Conv1d(dim, dim, 1)
+		
+		# for CLM training: mask conv weights to become upper-triangular
+		if mixer_mask:
+			if expand:
+				self.conv[0].weight = torch.nn.Parameter(torch.triu(self.conv[0].weight))
+				self.conv[2].weight = torch.nn.Parameter(torch.triu(self.conv[2].weight))
+			else:
+				self.conv.weight = torch.nn.Parameter(torch.triu(self.conv.weight))
+```
+
+We will train the architecture using the masking approach that is commonly applied to causal language models in which the objective of training is to predict the next token in a sequence. 
+
+```python
+class LanguageMixer(nn.Module):
+
+	def __init__(self, n_vocab, dim, depth):
+		super().__init__()
+		self.wte = nn.Embedding(n_vocab, dim)
+		self.mixerblocks = nn.ModuleList(
+			[MixerBlock(
+				dim = dim,
+				length = tokenized_length,
+				)
+			for i in range(depth)]
+			).to(device)
+		self.lm_head = nn.Linear(dim, n_vocab)
+		self.cel = nn.CrossEntropyLoss()
+
+	def forward(self, input_ids, labels=None):
+		x = input_ids
+		x = x.to(device)
+		x = self.wte(x)
+		for block in self.mixerblocks:
+			x = block(x)
+		output = self.lm_head(x)
+```
+
+```python
+  def forward(self, input_ids, labels=None):
+  ...
+		labels = rearrange(labels, 'b p t -> b (p t)')
+		output = rearrange(output, 'b t e -> b e t')
+		shift_logits = output[..., :-1].contiguous()
+		shift_labels = labels[..., 1:].contiguous()
+		loss = self.cel(shift_logits, shift_labels)
+		return loss, output
+```
+
+
+
+
+
+
+
+
+
+
+
