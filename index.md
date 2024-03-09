@@ -289,6 +289,7 @@ $$
 
 ![features](/deep-learning/transformer_feature_cover.png)
 
+### [Language Mixer](/smaller-lms.md)
 
 ### [Autoencoders](/autoencoder-representation.md)
 
