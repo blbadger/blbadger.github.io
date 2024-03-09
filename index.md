@@ -291,6 +291,8 @@ $$
 
 ### [Language Mixer](/smaller-lms.md)
 
+![features](/deep-learning/llm_mixer.png)
+
 ### [Autoencoders](/autoencoder-representation.md)
 
 ![autoencoding of landscapes](/deep-learning/autoencoder_cover.png)
