@@ -169,6 +169,20 @@ such that now for the first token we have the output
 
 $$
 \begin{bmatrix}
+x_{0, 0} & x_{0, 1}\\
+x_{1, 0} & x_{1, 1}\\
+x_{2, 0} & x_{2, 1}\\
+\end{bmatrix}
+
+\circ
+
+\begin{bmatrix}
+2 & 1 & 1\\
+0 & 1 & 4\\
+0 & 0 & 1\\
+\end{bmatrix}
+= \\
+\begin{bmatrix}
 2*x_{0, 0} + 0*x_{1, 0} + 0*x_{2, 0} & 2*x_{0, 1} + 0*x{1, 1} + 0*x{2, 1}\\
 1*x_{0, 0} + 1*x_{1, 0} + 0*x_{2, 0} & 1*x_{0, 1} + 1*x{1, 1} + 0*x{2, 1}\\
 1*x_{0, 0} + 4*x_{1, 0} + 1*x_{2, 0} & 1*x_{0, 1} + 4*x{1, 1} + 1*x{2, 1}\\
