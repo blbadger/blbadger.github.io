@@ -67,6 +67,126 @@ def ConvForward(dim, expansion_factor=2):
 
 where the `ConvForward` module is the transformation between tokens.  
 
+We will train the architecture using the masking approach that is commonly applied to causal language models in which the objective of training is to predict the next token in a sequence.  This means that we need to prevent the model from using information from tokens to the right some token when learning to predict that token.
+
+![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
+
+```python
+class LanguageMixer(nn.Module):
+
+	def __init__(self, n_vocab, dim, depth, tie_weights=False):
+		super().__init__()
+		self.wte = nn.Embedding(n_vocab, dim)
+		self.mixerblocks = nn.ModuleList(
+			[MixerBlock(
+				dim = dim,
+				length = tokenized_length,
+				)
+			for i in range(depth)]
+			).to(device)
+		self.lm_head = nn.Linear(dim, n_vocab, bias=False)
+		if tie_weights:
+			self.lm_head.weight = self.wte.weight
+		self.cel = nn.CrossEntropyLoss()
+```
+
+
+For a recursive neural network model, there is pretty much one way to train the model: for each word in a sequence, get the model's prediction, find the loss, and backpropegate. For transformers and other models we could do the same thing but there is a much more efficient way to train: instead of iterating through all words in an input we instead feed the entire input into the model as if we were going to predict the next word, but instead we take the `lm_head` output for each input, find the loss, and backpropegate the total loss.
+
+There are two important modifications necessary for this more parallelizable training. The first is that we need to have the model compare the output of the model for sequence elements $a_0, a_1, ..., a_{n-1}$ to the element $a_n$ during the loss calculation, meaning that we need to shift the target element $a_n$ such that it is accessed when the model is at position $a_{n-1}$. This is accomplished in the forward pass of the model (below) by shifting the labels (the target elements) to start with the input element at index 1 rather than index 0 in `labels[..., 1:].contiguous()`. The model's outputs are clipped such that the last output (which would correspond to the next element after the end of the input and does not exist in the input itself) is omitted. For compatibility with the HuggingFace `trainer`, we compute the cross-entropy loss in the forward pass and supply the value as part of a tuple with the output itself.
+
+The line `labels = rearrange(labels, 'b p t -> b (p t)')` in the forward pass may be unfamiliar with those who have not worked with vision models in the past. For whatever reason, Einstein sum tensor manipulation never became as popular in the language modeling world as for vision models. There are certainly pros (succinct notation) and cons (portability) to using `einsum` notation, but we will use `einsum` mostly for reshaping tensors. For example, `labels = rearrange(labels, 'b p t -> b (p t)')` simply removes an index dimension of our tensor between the `batch` and `token` dimensions and could also be accomplished with `labels = torch.squeeze(labels, dim=1)` but is arguably more expressive.
+
+```python
+class LanguageMixer(nn.Module):
+	...
+	def forward(self, input_ids, labels=None):
+		x = input_ids
+		x = x.to(device)
+		x = self.wte(x)
+		for block in self.mixerblocks:
+			x = block(x)
+		output = self.lm_head(x)
+		labels = rearrange(labels, 'b p t -> b (p t)')
+		output = rearrange(output, 'b t e -> b e t')
+		shift_logits = output[..., :-1].contiguous()
+		shift_labels = labels[..., 1:].contiguous()
+		loss = self.cel(shift_logits, shift_labels)
+		return loss, output
+```
+
+Besides shifting the output, we need a second addendum for causal language modeling: only information from previous tokens $a_0, a_1, ..., a_{n-1}$ must reach token $a_n$ and not information from succeeding tokens $a_{n+1}, a_{n+2}, ...$. For the transformer architecture it is customary to mask the softmax values of the $KQ^T$ to only use information from query projections of past tokens, but as we are using a 1-dimensional convolution transformation with no softmax a different approach will be necessary.
+
+Instead we shall mask the weights of the convolution such that the only non-zero weights supplied to $a_n$ will originate from $a_0, a_1, ..., a_{n-1}$. How this may be done is easier to see if we look at only one convolution between token: given an input matrix $X \in \Bbb R^{m, n}$ with $m=3$ tokens and $n=2$ features per token, 
+
+$$
+\begin{bmatrix}
+x_{0, 0} & x_{0, 1}\\
+x_{1, 0} & x_{1, 1}\\
+x_{2, 0} & x_{2, 1}\\
+\end{bmatrix}
+$$
+
+if we are given convolution weights from a single filter layer
+
+$$
+\begin{bmatrix}
+2\\
+1\\
+0\\
+\end{bmatrix}
+$$
+
+we get the output (ie one token)
+
+$$
+\begin{bmatrix}
+2*x_{0, 0} + 1*x_{1, 0} + 0*x_{2, 0} & 2*x_{0, 1} + 1*x{1, 1} + 0*x{2, 1}\\
+\end{bmatrix}
+$$
+
+Likewise, with two convlutional feature weight layers we perform the same operation with the second to recieve a 2x2 output and for three we have a 3x2 output. If we concatenate the weight layers together in a single matrix such that each column weight becomes a matrix column, we want to use an upper triangular mask:
+
+$$
+\begin{bmatrix}
+2 & 1 & 1\\
+1 & 1 & 1\\
+1 & 3 & 1\\
+\end{bmatrix}
+$$
+
+becomes
+
+$$
+\begin{bmatrix}
+2 & 1 & 1\\
+0 & 1 & 4\\
+0 & 0 & 1\\
+\end{bmatrix}
+$$
+
+such that now for the first token we have the output
+
+$$
+\begin{bmatrix}
+2*x_{0, 0} + 0*x_{1, 0} + 0*x_{2, 0} & 2*x_{0, 1} + 0*x{1, 1} + 0*x{2, 1}\\
+1*x_{0, 0} + 1*x_{1, 0} + 0*x_{2, 0} & 1*x_{0, 1} + 1*x{1, 1} + 0*x{2, 1}\\
+1*x_{0, 0} + 4*x_{1, 0} + 1*x_{2, 0} & 1*x_{0, 1} + 4*x{1, 1} + 1*x{2, 1}\\
+\end{bmatrix}
+$$
+
+which is what we want, as each token recieves non-zero weights from preceeding (after shifting) tokens only.
+
+In our implementation we actually use a lower-triangular mask (`tril`) because we must first re-arrange each convolutional weight tensor into a single weight matrix, and by default our rearrangement places each convolution weight column as a row in our collected matrix, ie it is transposed.
+
+```python
+self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f d p -> f (d p)'))
+self.conv.weight = torch.nn.Parameter(torch.tril(self.conv.weight))
+self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f (d p) -> f d p', p=1))
+```
+
+thus we modify each 1D convolution in the mixer as follows:
+
 ![masked mixer]({{https://blbadger.github.io}}deep-learning/llm_mixer.png)
 
 ```python
@@ -93,46 +213,6 @@ class MixerBlock(nn.Module):
 		x = self.patch_layernorm(x)
 		x = self.patch_ff(x) + residual
 		return x
-```
-We will train the architecture using the masking approach that is commonly applied to causal language models in which the objective of training is to predict the next token in a sequence.  This means that we need to prevent the model from using information from tokens to the right some token when learning to predict that token.
-
-![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
-
-```python
-class LanguageMixer(nn.Module):
-
-	def __init__(self, n_vocab, dim, depth, tie_weights=False):
-		super().__init__()
-		self.wte = nn.Embedding(n_vocab, dim)
-		self.mixerblocks = nn.ModuleList(
-			[MixerBlock(
-				dim = dim,
-				length = tokenized_length,
-				)
-			for i in range(depth)]
-			).to(device)
-		self.lm_head = nn.Linear(dim, n_vocab, bias=False)
-		if tie_weights:
-			self.lm_head.weight = self.wte.weight
-		self.cel = nn.CrossEntropyLoss()
-```
-
-```python
-class LanguageMixer(nn.Module):
-	...
-	def forward(self, input_ids, labels=None):
-		x = input_ids
-		x = x.to(device)
-		x = self.wte(x)
-		for block in self.mixerblocks:
-			x = block(x)
-		output = self.lm_head(x)
-		labels = rearrange(labels, 'b p t -> b (p t)')
-		output = rearrange(output, 'b t e -> b e t')
-		shift_logits = output[..., :-1].contiguous()
-		shift_labels = labels[..., 1:].contiguous()
-		loss = self.cel(shift_logits, shift_labels)
-		return loss, output
 ```
 
 ### Softmax Attention with MLPs
