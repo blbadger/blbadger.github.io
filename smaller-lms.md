@@ -21,7 +21,7 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 [Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$. Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer.
 
 
-The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence, rather than token, dimension.  We modify this architecture for causal language modeling use as follows:
+The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence, rather than token, dimension. This was originally designed for vision tasks, and we will employ a modification of this architecture for language.  The choice of this starting point is mostly due to simplicity (this model does not require positional encoding or attention) and representational efficiency (even small models can accurately represent non-self tokens).
 
 First, we define the operations on one mixer block, which is a module akin to one transformer block, except without self-attention. 
 
@@ -141,7 +141,7 @@ we get the output (ie one token)
 
 $$
 \begin{bmatrix}
-2x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+1x{1, 1}+0x{2, 1}\\
+2x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+1x_{1, 1}+0x_{2, 1}\\
 \end{bmatrix}
 $$
 
@@ -180,12 +180,14 @@ x_{2, 0} & x_{2, 1}\\
 2 & 1 & 1\\
 0 & 1 & 4\\
 0 & 0 & 1\\
-\end{bmatrix}
+\end{bmatrix} 
+\\
 = \\
+\\
 \begin{bmatrix}
-2x_{0, 0} + 0x_{1, 0} + 0x_{2, 0} & 2x_{0, 1} + 0x{1, 1} + 0x{2, 1}\\
-1x_{0, 0} + 1x_{1, 0} + 0x_{2, 0} & 1x_{0, 1} + 1x{1, 1} + 0x{2, 1}\\
-1x_{0, 0} + 4x_{1, 0} + 1x_{2, 0} & 1x_{0, 1} + 4x{1, 1} + 1x{2, 1}\\
+2x_{0, 0}+0x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+0x_{1, 1}+0x_{2, 1}\\
+1x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 1x_{0, 1}+1x_{1, 1}+0x_{2, 1}\\
+1x_{0, 0}+4x_{1, 0}+1x_{2, 0} & 1x_{0, 1}+4x_{1, 1}+1x_{2, 1}\\
 \end{bmatrix}
 $$
 
@@ -227,6 +229,35 @@ class MixerBlock(nn.Module):
 		x = self.patch_layernorm(x)
 		x = self.patch_ff(x) + residual
 		return x
+```
+
+### Mixer Inference
+
+
+
+```python
+class LanguageMixer(nn.Module):
+
+	def forward(self, input_ids, labels=None):
+		x = input_ids
+		x = x.to(device)
+		x = self.wte(x)
+		for block in self.mixerblocks:
+			x = block(x)
+		output = self.lm_head(x)
+		output = rearrange(output, 'b t e -> b e t')
+		return [], output
+```
+
+```python
+fout = []
+for i in range(50):
+	output = model(tokens)[1]
+	last_output = output[:, :, -1]
+	output_index = torch.topk(last_output, dim=-1, k=1).indices
+	fout.append(int(output_index))
+	output_token = output_index.to('cpu')
+	tokens = torch.cat((tokens[:, 1:], output_token), dim=-1)
 ```
 
 ### Softmax Attention with MLPs
