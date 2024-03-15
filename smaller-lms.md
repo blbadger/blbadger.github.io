@@ -23,6 +23,8 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 
 The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence, rather than token, dimension. This was originally designed for vision tasks, and we will employ a modification of this architecture for language.  The choice of this starting point is mostly due to simplicity (this model does not require positional encoding or attention) and representational efficiency (even small models can accurately represent non-self tokens).
 
+![mixer]({{https://blbadger.github.io}}deep-learning/llm_mixer.png)
+
 First, we define the operations on one mixer block, which is a module akin to one transformer block, except without self-attention. 
 
 ```python
@@ -68,8 +70,6 @@ def ConvForward(dim, expansion_factor=2):
 where the `ConvForward` module is the transformation between tokens.  
 
 We will train the architecture using the masking approach that is commonly applied to causal language models in which the objective of training is to predict the next token in a sequence.  This means that we need to prevent the model from using information from tokens to the right some token when learning to predict that token.
-
-![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
 
 ```python
 class LanguageMixer(nn.Module):
@@ -120,6 +120,7 @@ Besides shifting the output, we need a second addendum for causal language model
 Instead we shall mask the weights of the convolution such that the only non-zero weights supplied to $a_n$ will originate from $a_0, a_1, ..., a_{n-1}$. How this may be done is easier to see if we look at only one convolution between token: given an input matrix $X \in \Bbb R^{m, n}$ with $m=3$ tokens and $n=2$ features per token, 
 
 $$
+X = 
 \begin{bmatrix}
 x_{0, 0} & x_{0, 1}\\
 x_{1, 0} & x_{1, 1}\\
@@ -130,6 +131,7 @@ $$
 if we are given convolution weights from a single filter layer
 
 $$
+W_0 = 
 \begin{bmatrix}
 2\\
 1\\
@@ -140,24 +142,28 @@ $$
 we get the output (ie one token)
 
 $$
+X \circ W_0 = \\
+\\
 \begin{bmatrix}
 2x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+1x_{1, 1}+0x_{2, 1}\\
 \end{bmatrix}
 $$
 
-Likewise, with two convlutional feature weight layers we perform the same operation with the second to recieve a 2x2 output and for three we have a 3x2 output. If we concatenate the weight layers together in a single matrix such that each column weight becomes a matrix column, we want to use an upper triangular mask:
+Likewise, with two convlutional feature weight layers we perform the same operation with the second to recieve a 2x2 output and for three we have a 3x2 output. If we concatenate the weight layers together in a single matrix such that each column weight becomes a matrix column, we want to use an upper triangular mask: in this case, the convolutional weight matrix $W$
 
 $$
+W = 
 \begin{bmatrix}
 2 & 1 & 1\\
-1 & 1 & 1\\
+1 & 1 & 4\\
 1 & 3 & 1\\
 \end{bmatrix}
 $$
 
-becomes
+becomes the masked weight matrix
 
 $$
+m(W)
 \begin{bmatrix}
 2 & 1 & 1\\
 0 & 1 & 4\\
@@ -168,6 +174,8 @@ $$
 such that now for the first token we have the output
 
 $$
+X \circ m(W) =  \\
+
 \begin{bmatrix}
 x_{0, 0} & x_{0, 1}\\
 x_{1, 0} & x_{1, 1}\\
@@ -181,9 +189,13 @@ x_{2, 0} & x_{2, 1}\\
 0 & 1 & 4\\
 0 & 0 & 1\\
 \end{bmatrix} 
+
 \\
-= \\
 \\
+= 
+\\
+\\
+
 \begin{bmatrix}
 2x_{0, 0}+0x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+0x_{1, 1}+0x_{2, 1}\\
 1x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 1x_{0, 1}+1x_{1, 1}+0x_{2, 1}\\
@@ -201,9 +213,11 @@ self.conv.weight = torch.nn.Parameter(torch.tril(self.conv.weight))
 self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f (d p) -> f d p', p=1))
 ```
 
-thus we modify each 1D convolution in the mixer as follows:
+Thus we modify each 1D convolution in the mixer such that the convolutional weight is lower-triangular and perform the same operation as before, 
 
-![masked mixer]({{https://blbadger.github.io}}deep-learning/llm_mixer.png)
+![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
+
+but bear in mind that the full mixer has two convolutions separated by a nonlinearity (`self.expand_conv=True` below, so we actually need to perform the reshaping and masking for both convolutions.
 
 ```python
 class MixerBlock(nn.Module):
@@ -231,9 +245,11 @@ class MixerBlock(nn.Module):
 		return x
 ```
 
+
+
 ### Mixer Inference
 
-
+Once we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  For speed we can modify the mixer's forward pass to omit the loss function calculation
 
 ```python
 class LanguageMixer(nn.Module):
@@ -249,6 +265,8 @@ class LanguageMixer(nn.Module):
 		return [], output
 ```
 
+and now we are ready for inference.  Unlike the transformer, the language mixer must always receive the number of input elements it was trained upon (here 512), one for each convolutional filter. Therefore we wimply need to pad our input to that number of elements and take a sliding window of tokens (concatenating each generated token on the right while truncating on the left via `torch.cat((tokens[:, 1:], output_token), dim=-1)`.  For 50 tokens generated we have:
+
 ```python
 fout = []
 for i in range(50):
@@ -262,7 +280,7 @@ for i in range(50):
 
 ### Softmax Attention with MLPs
 
-In the last section we saw that the MLP mixer architecture may be applied to a language task with a modicum of success, but that the model does not 
+In the last section we saw that the MLP mixer architecture may be applied to a language task with a some success, but that the plain mixer does not have the 
 
 
 
