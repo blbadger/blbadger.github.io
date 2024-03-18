@@ -1065,42 +1065,15 @@ This conclusion is similar to what was found for vision transformers: unlike MLP
 
 In the last section it was observed that large untrained language models are capable of accurate non-self token representation (although the tokens may not be in the correct sequence index), but that this ability vanishes during the training process. Similar conclusions were reached [elsewhere](https://blbadger.github.io/transformer-features.html) for trained dot product attention-based transformers but curiously not for MLP mixer models that replace the self-attention operations with matrix multiplication operations. It may therefore be wondered whether an MLP mixer model might also be capable of accurate non-self token representation for language, as is the case for vision.
 
-A simple implementation of one block of the mixer for language processing is as follows: 
+An implementation of a language mixer may be found on [this page](https://blbadger.github.io/smaller-lms.html), but the main idea is that one replaces the self-attention transformations with a 1-dimensional convolution (such that all feature neurons from a certain input element are multiplied by the same weight, and all these multiplied values are added together) to share weights among a token's feature neurons, but not between sequence elements. There are actually two sequential convolutions (separated by a nonlinear activation) connecting each pair of token's feature neurons, and we use a triangular mask on the convolution weights in order to allow for causal language modeling.
 
-```python
-class LanguageMixer(nn.Module):
-
-    def __init__(self, dim, depth, length, expansion_factor=4, dropout=0.):
-        super().__init__()
-        self.layernorm = nn.LayerNorm(dim)
-        self.seq_layernorm = nn.LayerNorm(length)
-        self.dim = dim
-        self.depth = depth
-        self.length = length
-        self.patch_ff = FeedForward(dim, expansion_factor=expansion_factor)
-        self.conv = nn.Conv1d(dim, dim, 1)
-
-    def forward(self, x: torch.tensor):
-        x = rearrange(x, 'b t f -> b f t')
-        residual = x
-        x = self.conv(x)
-        x += residual
-        x = self.seq_layernorm(x)
-        x = rearrange(x, 'b f t -> b t f')
-        residual = x
-        x = self.patch_ff(x)
-        x += residual
-        x = self.layernorm(x)
-        return x
-```
-
-where the input is expected to be an $m$-length sequence of embeddings $\Bbb R^n$
-
-When we the untrained mixer on non-self token identification on the input **Mario, the Idea, versus Mario, the Man**, a few interesting observations are found, the most dramatic of which is that the embedding size required for accurate self or non-self token representation is drastically smaller than what is required for the dot-product transformer: for example, given the input
+When we test the untrained mixer on both self- and non-self token representation, we find that the model size requirements for accurate input representation appear to be similar to the transformers, or perhaps slightly more : for example, given the output of all tokens (`[:, :, :]`) of the input
 
 **Mario, the Idea, versus Mario, the Man**
 
-we find a perfect input representation for the first-token-masked output `[:, 1:, ]` for a model with an embedding size of $n=128$. As for the transformer, reducing this size leads to a sharp decrease in representation ability such that for $n=90$ the representation is still perfect, for $n=80$ the masked token is incorrect, for $n=31$ around half the tokens are correct and for $n=30$ no token is correct.
+one mixer block exhibits an input representation of `f Kaiser Guillaumeweit, welcome Mario,, across认` for $d=512$, a representation of `MarioMain tradition ownership the, residën, Ide,` for $d=1024$, and `Mario, the kwietniaa Mario versus art,別 the` for $d=4096$ and `Mario, the,,,a the the Ide Mario` for $d=7168$ (all using indirect representation via $L^2$ minimization).  However, when the first token's output is masked the we get the $a_g$ representation of `Session, the,,,a the the Ide Mario` for $d=7168$.
+
+Thus we find that the untrained MLP Mixer requires approximately the same block width as the untrained transformer for accurate self-token representation, but that non-self token representation is inaccurate relative to similarly-sized transformers. This is a notable departure from vision MLP mixers.
 
 ### Noise on a Discreet Channel
 
