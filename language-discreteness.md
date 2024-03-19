@@ -1071,9 +1071,9 @@ When we test the untrained mixer on both self- and non-self token representation
 
 **Mario, the Idea, versus Mario, the Man**
 
-One mixer block exhibits an input representation of `f Kaiser Guillaumeweit, welcome Mario,, across认` for $d=512$, a representation of `Mario, the Idea, versus Mario, the Man` and likewise for $d_{model}=2048$. Training does not remove this accurate input representation, as for a trained model (1 billion tokens on TinyStories) we also find a perfectly accurate input representation.  
+One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$, and larger. Training does not remove this accurate input representation, as for a trained model (1 billion tokens on TinyStories) we also find a perfectly accurate input representation.  
 
-Non-self token representation is 
+Non-self token representation is similarly impressive: when the output of the first token is masked via `[:, 1:, :]` there is still perfect input representation for $d_{model}=128$ and even for `[:, 3:, :]`! This is similar to what was found for vision MLP mixers, which also exhibit much more information sharing between 'tokens' (image patches) for trained models compared to trained vision transformers.
 
 ### Noise on a Discreet Channel
 
