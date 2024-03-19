@@ -1071,9 +1071,9 @@ When we test the untrained mixer on both self- and non-self token representation
 
 **Mario, the Idea, versus Mario, the Man**
 
-one mixer block exhibits an input representation of `f Kaiser Guillaumeweit, welcome Mario,, across认` for $d=512$, a representation of `MarioMain tradition ownership the, residën, Ide,` for $d=1024$, and `Mario, the kwietniaa Mario versus art,別 the` for $d=4096$ and `Mario, the,,,a the the Ide Mario` for $d=7168$ (all using indirect representation via $L^2$ minimization).  However, when the first token's output is masked the we get the $a_g$ representation of `Session, the,,,a the the Ide Mario` for $d=7168$.
+One mixer block exhibits an input representation of `f Kaiser Guillaumeweit, welcome Mario,, across认` for $d=512$, a representation of `Mario, the Idea, versus Mario, the Man` and likewise for $d_{model}=2048$. Training does not remove this accurate input representation, as for a trained model (1 billion tokens on TinyStories) we also find a perfectly accurate input representation.  
 
-Thus we find that the untrained MLP Mixer requires approximately the same block width as the untrained transformer for accurate self-token representation, but that non-self token representation is inaccurate relative to similarly-sized transformers. This is a notable departure from vision MLP mixers.
+Non-self token representation is 
 
 ### Noise on a Discreet Channel
 
