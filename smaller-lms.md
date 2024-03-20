@@ -245,7 +245,7 @@ Thus we modify each 1D convolution in the mixer such that the convolutional weig
 
 ![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
 
-but bear in mind that the full mixer has two convolutions separated by a nonlinearity (`self.expand_conv=True` below, so we actually need to perform the reshaping and masking for both convolutions.
+but bear in mind that the full mixer has two convolutions separated by a nonlinearity (`self.expand_conv=True` below) so we actually need to perform the reshaping and masking for both convolutions.
 
 ```python
 class MixerBlock(nn.Module):
@@ -273,11 +273,36 @@ class MixerBlock(nn.Module):
 
 ### Training
 
+We make use of the `transformers.trainer()` module, which has a couple very useful features for ease of use: automatic logging checkpointing the model and optimizer states, masking loss on the pad token, etc. For testing purposes I also used the following barebones trainer (note that this does not mask pad token loss and should not be used for an actual training run):
 
+```
+def train_model():
+	model.train()
+	total_loss = 0
+	for step, batch in enumerate(train_data):
+		batch = rearrange(batch, 'b (p t) -> b p t', p=1)
+		optimizer.zero_grad()
+		batch = batch.to(device) # discard class labels
+		loss, output = model(batch, batch)
+		total_loss += loss.item()
+		loss.backward()
+		optimizer.step()
+	print ('Average loss: ', total_loss / len(batch))
+```
+
+To make results comparable, we use the same batch size (16) and dataset (TinyStories) and observe the training and evaluation cross entropy loss for the Llama-style transformer compared to our MLP mixer.  We perform training runs of around 12 hours on an RTX 3060.  
+
+It should be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is mostly due to the $O(n^2)$ complexity of the transformer model as the context window increases compared to the $O(n)$ complexity inherent in the language mixer. It also stems from the more 'efficient' use of gradients by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $KQV$ projections to the $KQV$ values themselves and back). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
+
+It should also be noted that optimizing a mixer of a similar size to a transformer requires much less time: one typically sees between 10x and 20x more time required for a transformer with $d_{model}=128$ and $n=8$ compared to a mixer with twice the $d_{model}$ and the same number of blocks.
+
+This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers.
+
+Now we train the models: 
 
 ### Mixer Inference
 
-Once we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  
+Now that we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  
 
 It is tempting to simply take the last output of the mixer model as the next token and perform a sliding window on the input to keep a constant number of tokens (which the mixer requires, unlike a transformer model).
 
