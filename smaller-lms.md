@@ -8,7 +8,7 @@ This prohibitive amount of compute power required is mostly down to the very lar
 
 This begs the question: are these parameters necessary? It is clear that transformer-based models do indeed become substantially more effective with an increase in the number of parameters they contain, but if we were not restricted to one particular architecture is it possible that we could design a model with far fewer parameters for language modeling?
 
-A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language. It has been claimed that there are somewhere around $10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. Now due to a theorem of high-dimensional space, the same points may be obtained with arbitrary precision in a space that is approximately $\log 10^{570} = 570$ dimensional.  This means that a model with the same number of parameters may exist such that each sentence may be found via a combination of these parameters. 
+A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language. It has been claimed that there are somewhere around $10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. Now due to a theorem of high-dimensional space, the same points may be obtained with arbitrary precision in a space that is approximately $\log 10^{570} = 570$ dimensional.  This means that a model with the same number of parameters may exist such that each sentence may be found via a combination of 570 parameters, much less than the billions of parameters typically used for language models today. 
 
 That being the case, one can assume that far fewer parameters are required to model language than are currently found in LLMs but it cannot be assumed that a model with that number of parameters is actually trainable: it could be that training requires a large model that must then be converted into a small model.  This is the approach used when performing pruning, where parameters are dropped depending on their importance for some output. Alternatively, instead of removing parameters one could reduce the memory required to store each parameters: this is the approach of quantization methods, which are perhaps the most effective methods currently available for shrinking the effective size of a model. 
 
@@ -271,42 +271,43 @@ class MixerBlock(nn.Module):
 		return x
 ```
 
+### Training
+
+
 
 ### Mixer Inference
 
-Once we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  For speed we can modify the mixer's forward pass to omit the loss function calculation
+Once we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  
 
-```python
-class LanguageMixer(nn.Module):
+It is tempting to simply take the last output of the mixer model as the next token and perform a sliding window on the input to keep a constant number of tokens (which the mixer requires, unlike a transformer model).
 
-	def forward(self, input_ids, labels=None):
-		x = input_ids
-		x = x.to(device)
-		x = self.wte(x)
-		for block in self.mixerblocks:
-			x = block(x)
-		output = self.lm_head(x)
-		output = rearrange(output, 'b t e -> b e t')
-		return [], output
-```
-
-and now we are ready for inference.  Unlike the transformer, the language mixer must always receive the number of input elements it was trained upon (here 512), one for each convolutional filter. Therefore we wimply need to pad our input to that number of elements and take a sliding window of tokens (concatenating each generated token on the right while truncating on the left via `torch.cat((tokens[:, 1:], output_token), dim=-1)`.  For 50 tokens generated we have:
+For 50 tokens generated we have the following inference code:
 
 ```python
 fout = []
-for i in range(50):
-	output = model(tokens)[1]
-	last_output = output[:, :, -1]
-	output_index = torch.topk(last_output, dim=-1, k=1).indices
-	fout.append(int(output_index))
-	output_token = output_index.to('cpu')
-	tokens = torch.cat((tokens[:, 1:], output_token), dim=-1)
+for i in range(50, 0, -1):
+	loss, output = model(tokens, labels=tokens)
+	out_token = torch.topk(output, dim=1, k=1).indices.flatten()[-i]
+	tokens[..., -i+1] = out_token
 ```
 
-### Softmax Attention with MLPs
+The outputs are extremely good: for our mixer of size $d_{model}=256$ and $n=8$ blocks (1.8 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories, we have for the input
 
-In the last section we saw that the MLP mixer architecture may be applied to a language task with a some success, but that the plain mixer does not have the 
+*Once upon a time, there was a little boy named Tim. Tim had a big, orange ball. He loved his ball very much. One day, Tim met a girl named Sue. Sue had a pretty doll. Tim liked Sue's doll, and Sue liked Tim's orange ball.<unk>Tim and Sue thought about a trade. They would trade the ball for the doll. Tim was not sure. He loved his orange ball. Sue said, "I promise to take care of your ball. You can play with it when you*
 
+The actual next 50 tokens to this input are
+
+*want." Tim said, "I promise to take care of your doll too."<unk>They did the trade. Tim played with the doll, and Sue played with the orange ball. But then, Sue's big dog came. The dog saw the orange ball and thought it was a toy. The dog bit the ball and it popped...*
+
+and our langauge mixer supplies an output
+
+**come back."<unk>Tim thought about it and agreed. Sue gave the ball back to Tim. They played together, and Tim was very happy. Sue was happy too. They learned that sharing can make everyone happy. And that is how the orange ball can bring happiness to everyone.**
+
+Compare this to the greedy generation output from the Llama transformer model $d_{model}=128$ and $n=8$ blocks (10.7 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories: 
+
+**'ll find your ball."<unk>Tim was happy. He said, "Thank you, Sue. You are a good friend. You are a good friend." Sue gave Tim a new ball. Tim gave Sue a new ball. Sush was blue and shiny. Sush, Spot, and Spot. They played with their ball**
+
+Thus we see that there is indeed a substantial improvement in output quality, reflective of the lower training and evaluation loss of the trained mixer compared to the transformer.
 
 
 
