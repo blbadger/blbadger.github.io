@@ -180,6 +180,7 @@ m(W) =
 1 & 1 & 4\\
 1 & 3 & 1\\
 \end{bmatrix}
+
 \circ
 
 \begin{bmatrix}
@@ -188,13 +189,13 @@ m(W) =
 0 & 0 & 1\\
 \end{bmatrix}
 
- = 
- \begin{bmatrix}
+= 
+
+\begin{bmatrix}
 2 & 1 & 1\\
 0 & 1 & 4\\
 0 & 0 & 1\\
 \end{bmatrix}
- 
 $$
 
 such that now for the first token we have the output
