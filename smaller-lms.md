@@ -172,18 +172,35 @@ $$
 becomes the masked weight matrix
 
 $$
-m(W)
+m(W) = U \circ W
+\\
+m(W) = 
 \begin{bmatrix}
+2 & 1 & 1\\
+1 & 1 & 4\\
+1 & 3 & 1\\
+\end{bmatrix}
+\circ
+
+\begin{bmatrix}
+1 & 1 & 1\\
+0 & 1 & 1\\
+0 & 0 & 1\\
+\end{bmatrix}
+
+ = 
+ \begin{bmatrix}
 2 & 1 & 1\\
 0 & 1 & 4\\
 0 & 0 & 1\\
 \end{bmatrix}
+ 
 $$
 
 such that now for the first token we have the output
 
 $$
-X \circ m(W) =  \\
+X * m(W) =  \\
 
 \begin{bmatrix}
 x_{0, 0} & x_{0, 1}\\
@@ -191,7 +208,7 @@ x_{1, 0} & x_{1, 1}\\
 x_{2, 0} & x_{2, 1}\\
 \end{bmatrix}
 
-\circ
+*
 
 \begin{bmatrix}
 2 & 1 & 1\\
@@ -217,9 +234,10 @@ which is what we want, as each token recieves non-zero weights from preceeding (
 In our implementation we actually use a lower-triangular mask (`tril`) because we must first re-arrange each convolutional weight tensor into a single weight matrix, and by default our rearrangement places each convolution weight column as a row in our collected matrix, ie it is transposed.
 
 ```python
-self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f d p -> f (d p)'))
-self.conv.weight = torch.nn.Parameter(torch.tril(self.conv.weight))
-self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f (d p) -> f d p', p=1))
+rearranged_shape = rearrange(self.conv.weight, 'f d p -> f (d p)').shape
+mask = torch.tril(torch.ones(rearranged_shape)).to(device)
+applied_mask = rearrange(self.conv.weight, 'f d p -> f (d p)') * mask
+self.conv.weight.data = rearrange(applied_mask, 'f (d p) -> f d p', p=1)
 ```
 
 Thus we modify each 1D convolution in the mixer such that the convolutional weight is lower-triangular and perform the same operation as before, 
@@ -230,30 +248,27 @@ but bear in mind that the full mixer has two convolutions separated by a nonline
 
 ```python
 class MixerBlock(nn.Module):
-	...
+
+	def __init__(self, dim, length, mixer_mask=True, expand_conv=True):
+		super().__init__()
+		...
+
 	def forward(self, x: torch.tensor):
 		if x.dim() > 3:
 			x = rearrange(x, 'b p t f -> (b p) t f')
+
+		# for CLM training, apply lower triangular mask to convolution weights
 		if self.mixer_mask:
-			if self.expand_conv:
-				masked_conv0 = nn.Parameter(rearrange(torch.tril(rearrange(self.conv[0].weight, 'f d p -> f (d p)')), 'f (d p) -> f d p', p=1))
-				masked_conv2 = nn.Parameter(rearrange(torch.tril(rearrange(self.conv[2].weight, 'f d p -> f (d p)')), 'f (d p) -> f d p', p=1))
-				self.conv[0].weight = masked_conv0
-				self.conv[2].weight = masked_conv2
-			else:
-				self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f d p -> f (d p)'))
-				self.conv.weight = torch.nn.Parameter(torch.tril(self.conv.weight))
-				self.conv.weight = torch.nn.Parameter(rearrange(self.conv.weight, 'f (d p) -> f d p', p=1))
+			# Mask logic here
+			...
 		residual = x
 		x = self.seq_layernorm(x)
-		x = rotary_emb.rotate_queries_or_keys(x)
 		x = self.conv(x) + residual
 		residual = x
 		x = self.patch_layernorm(x)
 		x = self.patch_ff(x) + residual
 		return x
 ```
-
 
 
 ### Mixer Inference
