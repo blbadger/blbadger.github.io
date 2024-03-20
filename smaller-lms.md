@@ -1,4 +1,4 @@
-## Language Mixers
+## Smaller, Better Language Models
 
 ### Background 
 
@@ -298,15 +298,19 @@ It should also be noted that optimizing a mixer of a similar size to a transform
 
 This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers.
 
-Now we train the models: 
+Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer).
 
 ### Mixer Inference
 
-Now that we have a trained language mixer, we can see how effective the model is for our language task, which is simply to generate the next word in a sentence.  
+Low training and validation loss are useful guides, but the goal of this research is to find architectures that are more efficient than the transformer at causal language modeling, which is simply to generate the next word in a sentence.  
 
-It is tempting to simply take the last output of the mixer model as the next token and perform a sliding window on the input to keep a constant number of tokens (which the mixer requires, unlike a transformer model).
+It is tempting to simply take the last output of the mixer model as the next token and perform a sliding window on the input to keep a constant number of tokens (which the mixer requires, unlike a transformer model). But there is a problem with this method: the last output is not actually trained at all! Recall that the model used a shifted logits approach, such that the trained output is $[..., :-1]$ which does not include the last element because that is the prediction for the next token after the input ends, information that is absent.
 
-For 50 tokens generated we have the following inference code:
+Instead we can have the mixer simply replace token after token, maintaining the causal language mask after the last supplied token as follows:
+
+![masked mixer generation]({{https://blbadger.github.io}}/deep-learning/masked_mixer_gen.png)
+
+For 50 tokens generated this corresponds to the following inference code:
 
 ```python
 fout = []
