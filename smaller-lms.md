@@ -28,9 +28,9 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 
 ### Language Mixer Basics
 
-[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$. Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer.
+[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$. Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer, an architecture that although effective has inefficiencies acknowledged by the authors of the original transformer paper (GTC 2024).
 
-The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence, rather than token, dimension. This was originally designed for vision tasks, and we will employ a modification of this architecture for language.  The choice of this starting point is mostly due to simplicity (this model does not require positional encoding or attention) and representational efficiency (even small models can accurately represent non-self tokens).
+The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence dimension. This was originally designed for vision tasks, and we will employ a modification of this architecture for language.  The choice of this starting point is mostly due to simplicity (this model does not require positional encoding or attention) and representational efficiency (even small models can accurately represent non-self tokens).
 
 ![mixer]({{https://blbadger.github.io}}deep-learning/llm_mixer.png)
 
@@ -300,6 +300,7 @@ This means that the Chinchilla scaling laws applicable to transformer architectu
 
 Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer).
 
+
 ### Mixer Inference
 
 Low training and validation loss are useful guides, but the goal of this research is to find architectures that are more efficient than the transformer at causal language modeling, which is simply to generate the next word in a sentence.  
@@ -310,37 +311,58 @@ Instead we can have the mixer simply replace token after token, maintaining the 
 
 ![masked mixer generation]({{https://blbadger.github.io}}/deep-learning/masked_mixer_gen.png)
 
-For 50 tokens generated this corresponds to the following inference code:
+For 50 generated tokens at the end of the 512-length context window, this corresponds to the following inference code:
 
 ```python
 fout = []
-for i in range(50, 0, -1):
+for i in range(50, 1, -1):
 	loss, output = model(tokens, labels=tokens)
 	out_token = torch.topk(output, dim=1, k=1).indices.flatten()[-i]
 	tokens[..., -i+1] = out_token
 ```
 
-The outputs are extremely good: for our mixer of size $d_{model}=256$ and $n=8$ blocks (1.8 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories, we have for the input
+while maintaining the `mixer_mask=True` flag on the model.
 
-*Once upon a time, there was a little boy named Tim. Tim had a big, orange ball. He loved his ball very much. One day, Tim met a girl named Sue. Sue had a pretty doll. Tim liked Sue's doll, and Sue liked Tim's orange ball.<unk>Tim and Sue thought about a trade. They would trade the ball for the doll. Tim was not sure. He loved his orange ball. Sue said, "I promise to take care of your ball. You can play with it when you*
+The outputs are extremely good: for our mixer of size $d_{model}=256$ and $n=8$ blocks (1.8 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories, we have for the input (`<unk>` tokens are newlines)
 
-The actual next 50 tokens to this input are
+__Once upon a time, there was a little boy named Tim. Tim had a big, orange ball. He loved his ball very much. One day, Tim met a girl named Sue. Sue had a pretty doll. Tim liked Sue's doll, and Sue liked Tim's orange ball.<unk>Tim and Sue thought about a trade. They would trade the ball for the doll. Tim was not sure. He loved his orange ball. Sue said, "I promise to take care of your ball. You can play with it when you__
 
-*want." Tim said, "I promise to take care of your doll too."<unk>They did the trade. Tim played with the doll, and Sue played with the orange ball. But then, Sue's big dog came. The dog saw the orange ball and thought it was a toy. The dog bit the ball and it popped...*
+The actual next 50 tokens to this input (generated by ChatGPT) are
 
-and our langauge mixer supplies an output
+```
+want." Tim said, "I promise to take care of your doll too."<unk>They did the trade. Tim played with the doll, and Sue played with the orange ball. But then, Sue's big dog came. The dog saw the orange ball and thought it was a toy. The dog bit the ball and it popped...
+```
 
-**come back."<unk>Tim thought about it and agreed. Sue gave the ball back to Tim. They played together, and Tim was very happy. Sue was happy too. They learned that sharing can make everyone happy. And that is how the orange ball can bring happiness to everyone.**
+and our langauge mixer supplies the following output:
+
+```
+come back."<unk>Tim thought about it and agreed. Sue gave the ball back to Tim. They played together, and Tim was very happy. Sue was happy too. They learned that sharing can make everyone happy. And that is how the orange ball can bring happiness to everyone.
+```
 
 Compare this to the greedy generation output from the Llama transformer model $d_{model}=128$ and $n=8$ blocks (10.7 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories: 
 
-**'ll find your ball."<unk>Tim was happy. He said, "Thank you, Sue. You are a good friend. You are a good friend." Sue gave Tim a new ball. Tim gave Sue a new ball. Sush was blue and shiny. Sush, Spot, and Spot. They played with their ball**
+```
+'ll find your ball."<unk>Tim was happy. He said, "Thank you, Sue. You are a good friend. You are a good friend." Sue gave Tim a new ball. Tim gave Sue a new ball. Sush was blue and shiny. Sush, Spot, and Spot. They played with their ball
+```
 
-Thus we see that there is indeed a substantial improvement in output quality, reflective of the lower training and evaluation loss of the trained mixer compared to the transformer.
+although this turns out to be a bad prompt for the transformer. A better one is as follows: 
 
 
+__One day, a little boy named Tim went to play with his friend, Sam. They wanted to play a game with a ball. The game was to see who could get the best score.<unk>Tim threw the ball and Sam tried to catch it. Sam missed the ball and it went far away. Sam was angry. He said, "I don't like this game. I want to lie down and rest."<unk>Tim said, "Okay, let's lie down and rest. Then we can try again to get a good score." They lay down under a big tree and looked at the sky. They saw birds flying and clouds moving.<unk>After a while, they got up an__
 
+The masked mixer completes this story as follows:
 
+```
+played a game of tag. Tim was fast, but Sam was faster. They ran and ran until they reached the finish line. Tim was tired but happy. Sam said, "Good job, Sam!" Sam smiled and said, "Good job, Tim!" They both smiled and hugged each other.
+```
+
+The transformer completes this as
+
+```
+went home. They sat down on the grass and closed their eyes. They closed their eyes and fell asleep. Tim dreamed of the snow he found his way home. He felt safe and happy in his new score. He knew that he could always count on his score again. And he lived happily ever after.
+```
+
+which is somewhat less coherent (snow, closing ehri eyes twice etc.). Thus we see that there is indeed an improvement in output quality, reflective of the lower training and evaluation loss of the trained mixer compared to the transformer.
 
 
 
