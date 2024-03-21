@@ -1067,13 +1067,49 @@ In the last section it was observed that large untrained language models are cap
 
 An implementation of a language mixer may be found on [this page](https://blbadger.github.io/smaller-lms.html), but the main idea is that one replaces the self-attention transformations with a 1-dimensional convolution (such that all feature neurons from a certain input element are multiplied by the same weight, and all these multiplied values are added together) to share weights among a token's feature neurons, but not between sequence elements. There are actually two sequential convolutions (separated by a nonlinear activation) connecting each pair of token's feature neurons, and we use a triangular mask on the convolution weights in order to allow for causal language modeling.
 
+Note that in this section, we use a 4096-size tokenizer fitted to the TinyStories 2M dataset such that the name `Mario` now takes two tokens.
+
 When we test the untrained mixer on both self- and non-self token representation, we find that the model size requirements for accurate input representation appear to be similar to the transformers, or perhaps slightly more : for example, given the output of all tokens (`[:, :, :]`) of the input
 
 **Mario, the Idea, versus Mario, the Man**
 
-One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$, and larger. Training does not remove this accurate input representation, as for a trained model (1 billion tokens on TinyStories) we also find a perfectly accurate input representation.  
+One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$, and larger. Training does not remove this accurate input representation, as for a trained model (on TinyStories 2M) we also find a perfectly accurate input representation.  
 
-Non-self token representation is similarly impressive: when the output of the first token is masked via `[:, 1:, :]` there is still perfect input representation for $d_{model}=128$ and even for `[:, 3:, :]`! This is similar to what was found for vision MLP mixers, which also exhibit much more information sharing between 'tokens' (image patches) for trained models compared to trained vision transformers.
+For the mixer with expanded convolutions between tokens, non-self representation is less impressive: an untrained mixer with $d_{model}=512$ with an expansion factor of 1 yields
+
+```
+it, but ario, the Idea, versus Mario, the Man
+```
+
+And the situation is not helped with training: recall for a $d_{model}=64$ mixer, we have a perfect input representation for `Mario, the Idea, versus Mario, the Man`, but we find that non-self token representation is much worse. For `[:, 1:, :]` we have (ignoring trailing tokens)
+
+```
+selessonario, the Idea, versus Mario, the Man
+```
+
+which is no better than the untrained model's representation,
+
+```
+Cario, the Idea, versus Mario, the Man
+```
+
+Similarly, a trained $d_{model}=256$ does not correctly identify the first token, and gives a representation of
+
+```
+iario, the Idea, versus Mario, the Man
+```
+
+With a non-expanded convolution between sequence elements, non-self tokens may be accurately found: for untrained mixers we have for [:, 1:, :] at $d_{model}=512$
+
+```
+Mario, the Idea, versus Mario, the Man
+```
+
+but for $d_{model}=256$ the non-self token is not accurately represented, and the representation is
+
+```
+iario, the Idea, versus Mario, the Man
+```
 
 ### Noise on a Discreet Channel
 
