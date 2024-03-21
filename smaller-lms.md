@@ -4,9 +4,11 @@
 
 The training of the most effective language models today (3/2024) requires an enormous amount of computational resources: a whopping 1720320 hours of 80GB nvidia A100 compute time were required to train the 70 billion parameter version of [Llama 2](https://arxiv.org/pdf/2307.09288.pdf). Assuming that the meta RSC was used (6080 GPUs), this comes out to nearly two weeks of nonstop training for that entire cluster.  
 
-This prohibitive amount of compute power required is mostly down to the very large size of the models that are currently trained: most LLMs are trained on between 1 and 5 trillion tokens of text, but this is not actually that much information when one considers that each token is typically in bytecode and therefore the training dataset is a few terabytes, substantially smaller than the large image datasets required to train (much smaller) diffusion models.
+This prohibitive amount of compute power required is mostly down to the very large size of the models that are currently trained, not the training dataset itself: most LLMs are trained on between 1 and 5 trillion tokens of text, but this is not actually that much information when one considers that each token is typically expressed as bytecode (ie one byte) and therefore the training dataset is a few terabytes, substantially smaller than the large image datasets required to train (much smaller) diffusion models.
 
-This begs the question: are these parameters necessary? It is clear that transformer-based models do indeed become substantially more effective with an increase in the number of parameters they contain, but if we were not restricted to one particular architecture is it possible that we could design a model with far fewer parameters for language modeling?
+Current state-of-the-art transformer models are very large indeed (~100 billion parameters) but with transformers there is another wrinkle: the key, query, and value projection weights form gradients for all of a training input's sequence.  This means that a 7 billion parameter Llama model will actually require much more space than the 7*=14 GB one might think (if training in 16 bit precision, ignoring optimizers for the moment) for any reasonable context length, and thus has an 'effective' parameter size much larger than the model's actual size during inference. Together this means that it takes hundreds of gigabytes of vRAM to train a model on a small context window and with a small batch size, even though this model can fit in 14 gigabytes of memory during inference.
+
+This begs the question: are these actual and 'effective' parameters necessary? It is clear that transformer-based models do indeed become substantially more effective with an increase in the number of parameters they contain, but if we were not restricted to one particular architecture is it possible that we could design a model with far fewer parameters for language modeling?
 
 A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language. It has been claimed that there are somewhere around $10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. Now due to a theorem of high-dimensional space, the same points may be obtained with arbitrary precision in a space that is approximately $\log 10^{570} = 570$ dimensional.  This means that a model with the same number of parameters may exist such that each sentence may be found via a combination of 570 parameters, much less than the billions of parameters typically used for language models today. 
 
@@ -28,7 +30,7 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 
 ### Language Mixer Basics
 
-[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$. Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer, an architecture that although effective has inefficiencies acknowledged by the authors of the original transformer paper (GTC 2024).
+[Elsewhere](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $e > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- token representation even from very small models with $e < 100$ (non-self representation is only accurate if expansions are not used in the convolutional layers, see below for more information). Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer, an architecture that although effective has inefficiencies acknowledged by the authors of the original 'Attention is all you need' paper (GTC 2024).
 
 The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with linear transformations over the sequence dimension. This was originally designed for vision tasks, and we will employ a modification of this architecture for language.  The choice of this starting point is mostly due to simplicity (this model does not require positional encoding or attention) and representational efficiency (even small models can accurately represent non-self tokens).
 
@@ -275,7 +277,7 @@ class MixerBlock(nn.Module):
 
 We make use of the `transformers.trainer()` module, which has a couple very useful features for ease of use: automatic logging checkpointing the model and optimizer states, masking loss on the pad token, etc. For testing purposes I also used the following barebones trainer (note that this does not mask pad token loss and should not be used for an actual training run):
 
-```
+```python
 def train_model():
 	model.train()
 	total_loss = 0
@@ -294,9 +296,7 @@ To make results comparable, we use the same batch size (16) and dataset (TinySto
 
 It should be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is mostly due to the $O(n^2)$ complexity of the transformer model as the context window increases compared to the $O(n)$ complexity inherent in the language mixer. It also stems from the more 'efficient' use of gradients by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $KQV$ projections to the $KQV$ values themselves and back). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
 
-It should also be noted that optimizing a mixer of a similar size to a transformer requires much less time: one typically sees between 10x and 20x more time required for a transformer with $d_{model}=128$ and $n=8$ compared to a mixer with twice the $d_{model}$ and the same number of blocks.
-
-This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers.
+It should also be noted that optimizing a mixer of a similar size to a transformer requires much less time: one typically sees between 10x and 20x more time required for a transformer with $d_{model}=128$ and $n=8$ compared to a mixer with twice the $d_{model}$ and the same number of blocks.  This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers, at least for their
 
 Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer).
 
@@ -325,44 +325,77 @@ while maintaining the `mixer_mask=True` flag on the model.
 
 The outputs are extremely good: for our mixer of size $d_{model}=256$ and $n=8$ blocks (1.8 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories, we have for the input (`<unk>` tokens are newlines)
 
-__Once upon a time, there was a little boy named Tim. Tim had a big, orange ball. He loved his ball very much. One day, Tim met a girl named Sue. Sue had a pretty doll. Tim liked Sue's doll, and Sue liked Tim's orange ball.<unk>Tim and Sue thought about a trade. They would trade the ball for the doll. Tim was not sure. He loved his orange ball. Sue said, "I promise to take care of your ball. You can play with it when you__
+Once upon a time, there was a little boy named Tim. Tim had a big, orange ball. He loved his ball very much. One day, Tim met a girl named Sue. Sue had a pretty doll. Tim liked Sue's doll, and Sue liked Tim's orange ball.<unk>Tim and Sue thought about a trade. They would trade the ball for the doll. Tim was not sure. He loved his orange ball. Sue said, "I promise to take care of your ball. You can play with it when you
 
 The actual next 50 tokens to this input (generated by ChatGPT) are
 
-```
-want." Tim said, "I promise to take care of your doll too."<unk>They did the trade. Tim played with the doll, and Sue played with the orange ball. But then, Sue's big dog came. The dog saw the orange ball and thought it was a toy. The dog bit the ball and it popped...
-```
+*want." Tim said, "I promise to take care of your doll too."<unk>They did the trade. Tim played with the doll, and Sue played with the orange ball. But then, Sue's big dog came. The dog saw the orange ball and thought it was a toy. The dog bit the ball and it popped*
 
 and our langauge mixer supplies the following output:
 
-```
+**`
 come back."<unk>Tim thought about it and agreed. Sue gave the ball back to Tim. They played together, and Tim was very happy. Sue was happy too. They learned that sharing can make everyone happy. And that is how the orange ball can bring happiness to everyone.
-```
+`**
 
 Compare this to the greedy generation output from the Llama transformer model $d_{model}=128$ and $n=8$ blocks (10.7 GB vRAM for 16-bit training on 512 context tokens), trained for 12 hours on TinyStories: 
 
-```
+**`
 'll find your ball."<unk>Tim was happy. He said, "Thank you, Sue. You are a good friend. You are a good friend." Sue gave Tim a new ball. Tim gave Sue a new ball. Sush was blue and shiny. Sush, Spot, and Spot. They played with their ball
-```
+`**
 
 although this turns out to be a bad prompt for the transformer. A better one is as follows: 
 
-
-__One day, a little boy named Tim went to play with his friend, Sam. They wanted to play a game with a ball. The game was to see who could get the best score.<unk>Tim threw the ball and Sam tried to catch it. Sam missed the ball and it went far away. Sam was angry. He said, "I don't like this game. I want to lie down and rest."<unk>Tim said, "Okay, let's lie down and rest. Then we can try again to get a good score." They lay down under a big tree and looked at the sky. They saw birds flying and clouds moving.<unk>After a while, they got up an__
+*One day, a little boy named Tim went to play with his friend, Sam. They wanted to play a game with a ball. The game was to see who could get the best score.<unk>Tim threw the ball and Sam tried to catch it. Sam missed the ball and it went far away. Sam was angry. He said, "I don't like this game. I want to lie down and rest."<unk>Tim said, "Okay, let's lie down and rest. Then we can try again to get a good score." They lay down under a big tree and looked at the sky. They saw birds flying and clouds moving.<unk>After a while, they got up an*
 
 The masked mixer completes this story as follows:
 
-```
+**`
 played a game of tag. Tim was fast, but Sam was faster. They ran and ran until they reached the finish line. Tim was tired but happy. Sam said, "Good job, Sam!" Sam smiled and said, "Good job, Tim!" They both smiled and hugged each other.
-```
+`**
 
 The transformer completes this as
 
-```
+**`
 went home. They sat down on the grass and closed their eyes. They closed their eyes and fell asleep. Tim dreamed of the snow he found his way home. He felt safe and happy in his new score. He knew that he could always count on his score again. And he lived happily ever after.
-```
+`**
 
-which is somewhat less coherent (snow, closing ehri eyes twice etc.). Thus we see that there is indeed an improvement in output quality, reflective of the lower training and evaluation loss of the trained mixer compared to the transformer.
+which is a little less coherent. Thus we see that there is indeed an improvement in output quality, reflective of the lower training and evaluation loss of the trained mixer compared to the transformer.
+
+### Implications
+
+Seeking to make a more efficient learning algorithm than a transformer, we used the observation that self-token representation is superior for MLP-Mixer architectures to craft a mixer capable of replicating the autoregressive language generation of GPT-style decoder-only transformers.
+
+It is worth restating the more noteworthy findings of this page as concisely as possible:
+
+1. A mixer model with a smilar parameter number, and around 1/5th the 'effective' parameter number, reaches nearly identical loss after a fixed number of updates as a transformer.
+2. Given equal compute, the mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's.
+3. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all) or embedding -langauge modeling head layer weight tying.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
