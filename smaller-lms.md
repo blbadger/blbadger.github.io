@@ -1,6 +1,6 @@
-## Smaller, Better Language Models
+## Smaller, Better Language Models with Masked Mixers
 
-### Background 
+### Background
 
 The training of the most effective language models today (3/2024) requires an enormous amount of computational resources: a whopping 1720320 hours of 80GB nvidia A100 compute time were required to train the 70 billion parameter version of [Llama 2](https://arxiv.org/pdf/2307.09288.pdf). Assuming that the meta RSC was used (6080 GPUs), this comes out to nearly two weeks of nonstop training for that entire cluster.  
 
@@ -369,34 +369,7 @@ It is worth restating the more noteworthy findings of this page as concisely as 
 
 1. A mixer model with a smilar parameter number, and around 1/5th the 'effective' parameter number, reaches nearly identical loss after a fixed number of updates as a transformer.
 2. Given equal compute, the mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's.
-3. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all) or embedding -langauge modeling head layer weight tying.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+3. This is all possible without innovations that are now used nearly ubiquitous for transformers such as attention, rotary positional encoding (or any explicit positional encoding at all) or weight tying between the embedding and langauge modeling head,
 
 
 
