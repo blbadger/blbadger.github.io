@@ -1111,6 +1111,14 @@ but for $d_{model}=256$ the non-self token is not accurately represented, and th
 iario, the Idea, versus Mario, the Man
 ```
 
+If we look deeper into an untrained mixer model, for $d_{model}=1024$, at block 8 we find 
+
+```
+Marario, the Idea, versus Mario, the Man
+```
+
+and for $d_{model}=2048$ at block 8 we do find both accurate self and non-self token representation. This is also true if we scale the depth of the model without increasing the width, for example for $d_{model}=1024$ and $n=24$ layers we have also have a perfect self- and non-self representation for an untrained model (note that the n=8 layer version above was not as capable). What is more remarkable is that even if the first three tokens are masked, the representation is still perfect.
+
 ### Noise on a Discreet Channel
 
 To recap, we have found that accurate input representations of language but not images are not formed in trained transformer models unless they contain a very large number of parameters, particularly in trained models.  In the next section, we will consider what this means for a language model's ability to give useful outputs.
