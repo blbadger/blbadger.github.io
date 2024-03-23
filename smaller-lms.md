@@ -294,13 +294,13 @@ def train_model():
 	print ('Average loss: ', total_loss / len(batch))
 ```
 
-To make results comparable, we use the same batch size (16) and dataset (TinyStories) and observe the training and evaluation cross entropy loss for the Llama-style transformer compared to our MLP mixer.  We perform training runs of around 12 hours on an RTX 3060.  
+To make results comparable, we use the same tokenizer, dataset (TinyStories), and batch size (16) and observe the training and evaluation cross entropy loss for the Llama-style transformer compared to our MLP mixer.  We perform training runs of around 12 hours on an RTX 3060.  
 
 It should be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is mostly due to the $O(n^2)$ complexity of the transformer model as the context window increases compared to the $O(n)$ complexity inherent in the language mixer. It also stems from the more 'efficient' use of gradients by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $KQV$ projections to the $KQV$ values themselves and back). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
 
 It should also be noted that optimizing a mixer of a similar size to a transformer requires much less time: one typically sees between 10x and 20x more time required for a transformer with $d_{model}=128$ and $n=8$ compared to a mixer with twice the $d_{model}$ and the same number of blocks.  This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers, at least for their
 
-Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer).
+Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer) such that simply increasing the dataset size or number of epochs in this case yeilds lower training and validation loss than training a larger model with an effectively smaller dataset.
 
 
 ### Mixer Inference
@@ -371,11 +371,13 @@ which is a little less coherent. Thus we see that there is indeed an improvement
 
 ### Flat Mixers Train Faster
 
-The results in the last section were obtained without any hyperparameter optimization or architectural tuning methods, so it stands to reason that simply tweaking the 
+The results in the last section were obtained without any hyperparameter optimization or architectural tuning methods, so it stands to reason that simply tweaking the model architecturs could result in smaller fixed-compute (12 hours on an rtx 3060 given 12 GB vRAM) loss. If the llama model width is increased to $d_{model}=256$, the loss after 12 hours is lower than for the $d_{model}=128$ version (1.99 and 2.03 training and validation, respectively), which
 
 When examining the ability of a model to [represent](https://blbadger.github.io/language-discreteness.html) its input, it was found that input representation of tokens whose output was masked (called 'non-self' tokens on the linked page) is accurate for untrained masked mixers if either the model were relatively large ($d_{model}=1024, \; n=24$ or $d_{model}=2048, \; n=8$) or else if the model remained small $d_{model}=512, \; n=8$ but the expanded sequential convolutions were replaced with a single convolution as shown in a previous section on this page.  
 
-This suggests that these 'flat' mixers may be able to be trained more effectively than the expanded convolution mixers or transformers, and it turns out that this appears to be the case: a $d_{model}=512, \; n=8$ flat mixer (requiring 3.59 GB vRAM to train on a context window of 512 tokens) achieves a training loss of 1.842 and a validation loss of 1.895 after 12 hours on TinyStories.  Even one compares loss at a fixed number of updates, the flat mixer still outperforms the transformer by a wide margin: 2.116 versus 2.471 loss, respectively, at 114000 steps.  This is most notable as the flat mixer has around a third of the 'effective' parameters that the transformer has.
+This suggests that these 'flat' mixers may be able to be trained more effectively than the expanded convolution mixers or transformers, and it turns out that this appears to be the case: a $d_{model}=512, \; n=8$ flat mixer (requiring 3.59 GB vRAM to train on a context window of 512 tokens) achieves a training loss of 1.842 and a validation loss of 1.895 after 12 hours on TinyStories, which is lower than the $d_{model}=256, \; n=8$ transformer$ that requries more than double the memory (1.99 and 2.03 training and validation, respectively).  
+
+Even one compares loss at a fixed number of updates, the flat mixer still outperforms the $d_{model}=128$ transformer by a wide margin: 2.116 versus 2.471 loss, respectively, at 114000 steps (although it achieves a somewhat higher loss than the $d_{model]=256$ transformer on a .  This is most notable as the flat mixer has around a third of the 'effective' parameters that the transformer has.
 
 For the same prompt in the last section ("One day, a little boy..."), the trained flat mixer yields
 
@@ -384,6 +386,14 @@ played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laugh
 `**
 
 which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer, again reflective of a (much) lower training and validation loss than either architecture.
+
+### Scaling Properties
+
+The masked mixer architecture gives us an easy way to modify the number of inter-token weights (1D convolution `ConvForward` weights) as well as the number of intra-token weights (the `FeedForward` weights). We can observe the loss achieved by varying the number of each type of parameter independently, a feat which is much more difficult to pull off for the transformer as the number of $K, Q, V$ projection weights are usually tied to the $d_{model}$. 
+
+Which type of weight is likely to be more important: that is, given a fixed number of total weights should we allocate more to intra- or inter-token parameters for the lowest loss given a fixed amount of compute?  When considering the causal langauge generation process, there are arguments to be made for both types, as clearly complex relationships between words are just as important if not moreso than a nuanced understanding of a word itself.
+
+One argument for the importance of allocating more parameters to intra-token weights is that all information from all previous words must pass through these weights (ignoring residual connections for the moment), whereas inter-token weights may add information from many parts of an input over many layers.
 
 ### Implications
 
