@@ -1099,17 +1099,15 @@ Similarly, a trained $d_{model}=256$ does not correctly identify the first token
 iario, the Idea, versus Mario, the Man
 ```
 
-With a non-expanded convolution between sequence elements, non-self tokens may be accurately found: for untrained mixers we have for [:, 1:, :] at $d_{model}=512$
+With a non-expanded convolution between sequence elements, non-self tokens may be accurately found: for untrained mixers we have for [:, 1:, :] at $d_{model}=512$ (given the first block),
 
 ```
 Mario, the Idea, versus Mario, the Man
 ```
 
-but for $d_{model}=256$ the non-self token is not accurately represented, and the representation is
+This accurate self- and non-self token representation persists after training for that model, if we take the information in a slightly deeper layer (say the output `[:, 1:, :]` of the second mixer or fourth mixer block). What is more impressive is the trained flat mixer's representation given multiple masked tokens: for the output `[:, 3:, :]` of the second block we get a perfect input representation.
 
-```
-iario, the Idea, versus Mario, the Man
-```
+Reducing the hidden dimension leads to inaccurate non-self representation for the flat masked mixer, as for $d_{model}=256$ the representation is `iario, the Idea, versus Mario, the Man`. 
 
 If we look deeper into an untrained mixer model, for $d_{model}=1024$, at block 8 we find 
 
