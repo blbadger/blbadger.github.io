@@ -2,19 +2,27 @@
 
 ### Background
 
-The training of the most effective language models today (3/2024) requires an enormous amount of computational resources: a whopping 1720320 hours of 80GB nvidia A100 compute time were required to train the 70 billion parameter version of [Llama 2](https://arxiv.org/pdf/2307.09288.pdf). Assuming that the meta RSC was used (6080 GPUs), this comes out to nearly two weeks of nonstop training for that entire cluster.  
+The training of the most effective language models today (3/2024) requires enormous computational resources: a whopping 1720320 hours of 80GB nvidia A100 compute time was required to train the 70 billion parameter version of [Llama 2](https://arxiv.org/pdf/2307.09288.pdf).
 
-This prohibitive amount of compute power required is mostly down to the very large size of the models that are currently trained, not the training dataset itself: most LLMs are trained on between 1 and 5 trillion tokens of text, but this is not actually that much information when one considers that each token is typically expressed as bytecode (ie one byte) and therefore the training dataset is a few terabytes, substantially smaller than the large image datasets required to train (much smaller) diffusion models.
+This prohibitive amount of compute power required is mostly down to the very large 'effective' (read on for a definition) size of the models that are currently trained, not the training dataset itself: most LLMs are trained on between 1 and 5 trillion tokens of text, but this is not actually that much information when one considers that each token is typically expressed as bytecode (ie one byte) and therefore the training dataset is a few terabytes, substantially smaller than the image datasets required to train smaller diffusion models.
 
-Current state-of-the-art transformer models are very large indeed (~100 billion parameters) but with transformers there is another wrinkle: the key, query, and value projection weights form gradients for all of a training input's sequence.  This means that a 7 billion parameter Llama model will actually require much more space than the 7*=14 GB one might think (if training in 16 bit precision, ignoring optimizers for the moment) for any reasonable context length, and thus has an 'effective' parameter size much larger than the model's actual size during inference. Together this means that it takes hundreds of gigabytes of vRAM to train a model on a small context window and with a small batch size, even though this model can fit in 14 gigabytes of memory during inference.
+Current state-of-the-art transformer models are very large indeed (>100 billion parameters) but with transformers there is another wrinkle: the key, query, and value projection weights form gradients for all of a training input's sequence.  This means that a 7 billion parameter Llama model will actually require much more space than the 7 billion params * 2 bytes per param in fp16 =14 gibabytes one might think (if training in 16 bit precision, ignoring optimizers for the moment) for any reasonable context length, and thus has an 'effective' parameter size much larger than the model's actual size during inference. Together this means that it takes hundreds of gigabytes of vRAM to train a model on a small context window and with a small batch size, even though the same model may require only 14 gigabytes of memory during inference.  This extra memory is due to the necessity of storing gradients on and values of attention projection weight matricies, and here we call this extra memory requirement 'effective' parameters because they do not appear when one examines a transformer model for its size, but are required for training the model.
 
 This begs the question: are these actual and 'effective' parameters necessary? It is clear that transformer-based models do indeed become substantially more effective with an increase in the number of parameters they contain, but if we were not restricted to one particular architecture is it possible that we could design a model with far fewer parameters for language modeling?
 
-A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language. It has been claimed that there are somewhere around $10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. Now due to a theorem of high-dimensional space, the same points may be obtained with arbitrary precision in a space that is approximately $\log 10^{570} = 570$ dimensional.  This means that a model with the same number of parameters may exist such that each sentence may be found via a combination of 570 parameters, much less than the billions of parameters typically used for language models today. 
+A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language, at least at the level of the sentence. It has been claimed that there are somewhere around $m = 10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. This being the case, we can apply a result from the concentration of measure phenomenon to greatly simplify this space.
 
-That being the case, one can assume that far fewer parameters are required to model language than are currently found in LLMs but it cannot be assumed that a model with that number of parameters is actually trainable: it could be that training requires a large model that must then be converted into a small model.  This is the approach used when performing pruning, where parameters are dropped depending on their importance for some output. Alternatively, instead of removing parameters one could reduce the memory required to store each parameters: this is the approach of quantization methods, which are perhaps the most effective methods currently available for shrinking the effective size of a model. 
+We will make use of the Johnston-Lindenstrauss lemma, with the result that the same $m$ points may be represented with arbitrary precision in a space that is approximately $8*\log m = 8* \log 10^{570} = 4560$ dimensional. More precisely, this lemma states that for some small $\epsilon > 0$ for set $X$ with $m$ points in $\Bbb R^N$, for $n > 8\ln m / \epsilon^2 there is a (linear) map $f \Bbb R^N \Bbb R^n$ where for all $u, v \in X)$ the following is true:
 
-The observation that weight quantization rather than pruning is the most effective method for reducing a transformer model's effective size suggests that this architecture may indeed require nearly all the trained parameters in order to function effectively, although whether this is the case or not remains an open questions. Regardless, we take the different approach of investigating new architectures and training new models on this page.
+$$
+(1 - \epsilon) ||u - v||^2 \leq ||f(u) - f(v)||^2 \leq (1 + \epsilon)||u - v ||^2
+$$
+
+This means that a model with the same number of parameters may exist such that each sentence may be found via a (linear) combination of 4560 parameters, much less than the billions of parameters typically used for language models today. This being the case, one can assume that far fewer parameters are required to model language than are currently found in language models used today, assuming that the $4560$-dimensional space represents the total number of parameters in that model and not the layer-wise parameter number. If the latter is true, then language models require no more than around 5000 neurons per layer, which makes them around 10 billion parameters if transformer depth scaling is used.
+
+It cannot necessarily be assumed that a model with that number of parameters is actually trainable, however: it could be that training requires a large model that must then be converted into a small model.  This is the approach used when performing pruning, where parameters are dropped depending on their importance for some output. Alternatively, instead of removing parameters one could reduce the memory required to store each parameters: this is the approach of quantization methods, which are perhaps the most effective methods currently available for shrinking the effective size of a model. The observation that weight quantization rather than pruning is the most effective method for reducing a transformer model's effective size suggests that this particular architecture may indeed require nearly all the trained parameters in order to function effectively, although whether this is the case or not remains an open questions. 
+
+Here we take the approach of investigating new architectures and training new models, rather than attempting to extract the most information possible from existing models.
 
 ### Introduction
 
@@ -302,7 +310,6 @@ It should also be noted that optimizing a mixer of a similar size to a transform
 
 Now we train the models, using an approximately fixed compute budget (12 GB vRAM and 12 hours on an RTX 3060).  We find that the masked mixer with the parameters detailed above achieves a substantially smaller training (2.169) and validation (2.201) loss after this twelve hours than the Llama model (2.497 validation and 2.471 training loss).  This is mostly because the mixer is around six times as fast to train as the transformer: there is nearly identical loss if we compare equal steps (2.497 versus 2.505 validation loss at step 160000). Equivalent steps mean little for language models, however, as they are inherently resistant to overfitting (see that there is minimal overfitting after 5.6 epochs at twelve hours of training for the mixer) such that simply increasing the dataset size or number of epochs in this case yeilds lower training and validation loss than training a larger model with an effectively smaller dataset.
 
-
 ### Mixer Inference
 
 Low training and validation loss are useful guides, but the goal of this research is to find architectures that are more efficient than the transformer at causal language modeling, which is simply to generate the next word in a sentence.  
@@ -385,7 +392,7 @@ For the same prompt in the last section ("One day, a little boy..."), the traine
 played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laughed and played until the sun went down.<unk>At the end of the day, Tim and Sam were tired but happy. They went home and took a nap. They dreamed of playing catch again tomorrow. And they did.
 `**
 
-which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer, again reflective of a (much) lower training and validation loss than either architecture.
+which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer, again reflective of a lower training and validation loss than either architecture.
 
 ### Scaling Properties
 
@@ -401,11 +408,11 @@ Seeking to make a more efficient learning algorithm than a transformer, we used 
 
 It is worth restating the more noteworthy findings of this work as concisely as possible:
 
-1. An unoptimized flat masked mixer achieves much lower loss than an effectively larger transformer at a given update step.
+1. Language mixers of equivalent 'size' may be trained using much less computational resources than a transformer.
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
 3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
-4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as attention, rotary positional encoding (or any explicit positional encoding at all) or weight tying between the embedding and langauge modeling head
-5. A masked mixer trained using approximately 1/18th the compute of a transformer model published in the TinyStories paper achieves a similar human evaluation score on that dataset
+4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all).
+5. A masked mixer trained using approximately 1/18th the compute of a transformer model published in the TinyStories paper achieves a similar language abilities as a transformer model.
 
 
 
