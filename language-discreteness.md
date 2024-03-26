@@ -1099,7 +1099,7 @@ Similarly, a trained $d_{model}=256$ does not correctly identify the first token
 iario, the Idea, versus Mario, the Man
 ```
 
-With a non-expanded convolution between sequence elements, non-self tokens may be accurately found: for untrained mixers we have for [:, 1:, :] at $d_{model}=512$ (given the first block),
+With a non-expanded (ie 'flat') convolution between sequence elements, non-self tokens may be accurately found: for untrained mixers we have for [:, 1:, :] at $d_{model}=512$ (given the first block),
 
 ```
 Mario, the Idea, versus Mario, the Man
@@ -1107,9 +1107,9 @@ Mario, the Idea, versus Mario, the Man
 
 This accurate self- and non-self token representation persists after training for that model, if we take the information in a slightly deeper layer (say the output `[:, 1:, :]` of the second mixer or fourth mixer block). What is more impressive is the trained flat mixer's representation given multiple masked tokens: for the output `[:, 3:, :]` of the second block we get a perfect input representation.
 
-Reducing the hidden dimension leads to inaccurate non-self representation for the flat masked mixer, as for $d_{model}=256$ the representation is `iario, the Idea, versus Mario, the Man`. 
+Reducing the hidden dimension leads to inaccurate non-self representation for the flat masked mixer, as for $d_{model}=256$ the representation is `iario, the Idea, versus Mario, the Man`. It may be wondered if a linear combination of 1-dimensional convolutions (ie in parallel rather than in series) would yield even better non-self token representation, and after some testing it does indeed: before training, if we have two parallel 1D convolutions rather than one (added together to make our linear combination) then representation is extremely acurate: given `[:, 10:, :]` of the *last* mixer block (8) for a relatively small model with $d_{model}=64$, the input **Mario, the Idea, versus Mario, the Man** is perfectly represented. 
 
-If we look deeper into an untrained mixer model, for $d_{model}=1024$, at block 8 we find 
+If we look deeper into an untrained flat mixer model, on the other hand, for $d_{model}=1024$, at block 8 we find 
 
 ```
 Marario, the Idea, versus Mario, the Man
@@ -1117,7 +1117,7 @@ Marario, the Idea, versus Mario, the Man
 
 and for $d_{model}=2048$ at block 8 we do find both accurate self and non-self token representation. This is also true if we scale the depth of the model without increasing the width, for example for $d_{model}=1024$ and $n=24$ layers we have also have a perfect self- and non-self representation for an untrained model (note that the n=8 layer version above was not as capable). What is more remarkable is that even if the first three tokens are masked, the representation is still perfect.
 
-This (modified) mixer representation is somewhat more accurate than that obtained from a similarly sized transformer (even when using the same 4096-size tokenizer and training dataset): a trained $d_{model}=256, \; n=8$ transformer (llama style) model yields for `[:, 1:, :]` the input *Mario, the Idea, versus Mario, the Man*
+This flat mixer representation is more accurate than that obtained from a similarly sized transformer (even when using the same 4096-size tokenizer and training dataset): a trained $d_{model}=256, \; n=8$ transformer (llama style) model yields for `[:, 1:, :]` the input *Mario, the Idea, versus Mario, the Man*
 
 `pictureario, the Idea, th let fterMarioiMan`
 
