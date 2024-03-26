@@ -12,13 +12,13 @@ This begs the question: are these actual and 'effective' parameters necessary? I
 
 A very quick calculation suggests that billions or even millions of parameters are far more than would be necessary to model the English language, at least at the level of the sentence. It has been claimed that there are somewhere around $m = 10^{570}$ possible English sentences, as an upper bound. Without knowing how to model these sentences, we can view them as unique points in an arbitrarily high-dimension space. This being the case, we can apply a result from the concentration of measure phenomenon to greatly simplify this space.
 
-We will make use of the Johnston-Lindenstrauss lemma, with the result that the same $m$ points may be represented with arbitrary precision in a space that is approximately $8 \log m = 8 \log 10^{570} = 4560$ dimensional. More precisely, this lemma states that for some small $\epsilon > 0$ for set $X$ with $m$ points in $\Bbb R^N$, for $n > 8\ln m / \epsilon^2$ there is a (linear) representation map $f \Bbb R^N \to \Bbb R^n$ where for all $u, v \in X)$ the following is true:
+We will make use of the Johnston-Lindenstrauss lemma, with the result that the same $m$ points may be represented with arbitrary precision in a space that is approximately $8 \log m = 8 \log 10^{570} = 4560$ dimensional. More precisely, this lemma states that for some small $\epsilon > 0$ for set $X$ with $m$ points in $\Bbb R^N$, for $n > 8\ln m / \epsilon^2$ there is a (linear) representation map $f: \; \Bbb R^N \to \Bbb R^n$ where for all $u, v \in X)$ the following is true:
 
 $$
 (1 - \epsilon) ||u - v||^2 \leq ||f(u) - f(v)||^2 \leq (1 + \epsilon)||u - v ||^2
 $$
 
-This means that a model with the same number of parameters may exist such that each sentence may be found via a (linear) combination of 4560 parameters, much less than the billions of parameters typically used for language models today. This being the case, one can assume that far fewer parameters are required to model language than are currently found in language models used today, assuming that the 4560-dimensional space represents the total number of parameters in that model and not the layer-wise parameter number. If the latter is true, then language models require no more than around 5000 neurons per layer, which makes them around 10 billion parameters if transformer depth scaling is used.
+This means that a model with the same number of parameters may exist such that each sentence may be found via a (linear) combination of 4560 parameters, much less than the billions of parameters typically used for language models today. This being the case, one can assume that far fewer parameters are required to model language than are currently found in language models used today, assuming that the 4560-dimensional space represents the total number of parameters in that model and not the layer-wise parameter number. If the latter is true, then language models require no more than around 5000 neurons per layer, which makes them around 10 billion parameters if typical transformer depth scaling is used.
 
 It cannot necessarily be assumed that a model with that number of parameters is actually trainable, however: it could be that training requires a large model that must then be converted into a small model.  This is the approach used when performing pruning, where parameters are dropped depending on their importance for some output. Alternatively, instead of removing parameters one could reduce the memory required to store each parameters: this is the approach of quantization methods, which are perhaps the most effective methods currently available for shrinking the effective size of a model. The observation that weight quantization rather than pruning is the most effective method for reducing a transformer model's effective size suggests that this particular architecture may indeed require nearly all the trained parameters in order to function effectively, although whether this is the case or not remains an open questions. 
 
@@ -393,6 +393,14 @@ played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laugh
 `**
 
 which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer, again reflective of a lower training and validation loss than either architecture.
+
+### Parallel rather than Sequential Convolutions
+
+We have seen that the original mixer architecture with two 1-Dimensional convolutions sequentially (and GELU inbetween) learns language much more slowly than a mixer with only one 1-Dimensional convolution between sequence elements. 
+
+This observation presents a certain difficulty in that the 1D convolution must have as many filters as sequence elements squared to map a sequence to itself (all to all), meaning that the inter-sequence weights scale with sequence length but not the $d_{model}$.  This is not necessarily a problem for performance, as it is clear that simply increasing $d_model$ yields increased asymptotic performance. 
+
+What if we do want to increase the number of inter-sequence weights? According to studies on [representation accuracy](https://blbadger.github.io/language-discreteness.html), replacing multiple convolutions in series with sets of convolutions in parallel is the solution: both self- and non-self token representation is superior to either expanded or mixers.
 
 ### Scaling Properties
 
