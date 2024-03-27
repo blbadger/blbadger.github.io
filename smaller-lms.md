@@ -402,6 +402,8 @@ This observation presents a certain difficulty in that the 1D convolution must h
 
 What if we do want to increase the number of inter-sequence weights? According to studies on [representation accuracy](https://blbadger.github.io/language-discreteness.html), replacing multiple convolutions in series with sets of convolutions in parallel is the solution: both self- and non-self token representation is superior to either expanded or mixers.
 
+For a given number of training updates, this results in lower loss for a $d_{model}=512,  n=8$ mixer: 1.845 versus 1.886 at 354,000 steps.  However, as the model is slower to train per step it does not reach the same 12-hour fixed compute loss that the flat mixer does.
+
 ### Scaling Properties
 
 The masked mixer architecture gives us an easy way to modify the number of inter-token weights (1D convolution `ConvForward` weights) as well as the number of intra-token weights (the `FeedForward` weights). We can observe the loss achieved by varying the number of each type of parameter independently, a feat which is much more difficult to pull off for the transformer as the number of $K, Q, V$ projection weights are usually tied to the $d_{model}$. 
@@ -409,6 +411,7 @@ The masked mixer architecture gives us an easy way to modify the number of inter
 Which type of weight is likely to be more important: that is, given a fixed number of total weights should we allocate more to intra- or inter-token parameters for the lowest loss given a fixed amount of compute?  When considering the causal langauge generation process, there are arguments to be made for both types, as clearly complex relationships between words are just as important if not moreso than a nuanced understanding of a word itself.
 
 One argument for the importance of allocating more parameters to intra-token weights is that all information from all previous words must pass through these weights (ignoring residual connections for the moment), whereas inter-token weights may add information from many parts of an input over many layers.
+
 
 ### Implications
 
