@@ -1053,7 +1053,7 @@ limitedэ mostly Pitts’ await
 
 none of which correctly identifies the masked first token.  
 
-Even if we restrict the [vocaulary](https://blbadger.github.io/language-discreteness.html#restricted-vocabulary-input-representation) such that the represented tokens may only be those that are found in the following sentence: `A sky is blue or red depending on the time of day, and further depending on the size of the vocabulary present.` for the input **The sky is blue**, we find an $a_g$ of ` size sky is blue<s>`.
+Even if we restrict the [vocabulary](https://blbadger.github.io/language-discreteness.html#restricted-vocabulary-input-representation) such that the represented tokens may only be those that are found in the following sentence: `A sky is blue or red depending on the time of day, and further depending on the size of the vocabulary present.` for the input **The sky is blue**, we find an $a_g$ of ` size sky is blue<s>`.
 
 It may therefore be wondered just how large a model must be in order for non-self tokens to be accurately represented. For untrained models, the chance of accurate masked token representation depends on parameter initialization but increases with model size: perhaps 1/5ths of models with a hidden dimension of 4096 (Llama 7b size) but more than 4/5ths of models with a hidden dim of 8192 (llama 70b).
 
