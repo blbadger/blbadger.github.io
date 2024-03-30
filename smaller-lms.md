@@ -163,7 +163,7 @@ $$
 we get the output (ie one token)
 
 $$
-X \circ W_0 = \\
+X * W_0 = \\
 \\
 \begin{bmatrix}
 2x_{0, 0}+1x_{1, 0}+0x_{2, 0} & 2x_{0, 1}+1x_{1, 1}+0x_{2, 1}\\
@@ -181,10 +181,10 @@ W =
 \end{bmatrix}
 $$
 
-becomes the masked weight matrix
+becomes the masked weight matrix $m(W)$ upon Hadamard multiplication to an upper-triangular mask matrix $U$,
 
 $$
-m(W) = U \circ W
+m(W) = W \circ U
 \\
 m(W) = 
 \begin{bmatrix}
