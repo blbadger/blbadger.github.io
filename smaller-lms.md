@@ -68,7 +68,7 @@ class MixerBlock(nn.Module):
 		self.mixer_mask = mixer_mask
 ```
 
-The last line of the code block above passes the boolean `mixer_mask` to a class variable to be accessed during the forward pass of the `MixerBlock`.  What exactly this mask will look like will depend on whether we expand the inter-token convolution transformations or not, by which is meant mirorring the two-layer linear transformation (with nonlinear activation) that define the `FeedForward` modules. The similarities may be shown as follows:
+The last line of the code block above passes the boolean `mixer_mask` to a class variable to be accessed during the forward pass of the `MixerBlock`.  What exactly this mask will look like will depend on whether we expand the inter-token convolution transformations or not, by which is meant mirroring the two-layer linear transformation (with nonlinear activation) that define the `FeedForward` modules. The similarities may be shown as follows:
 
 ```python
 def FeedForward(dim, expansion_factor=4):
@@ -88,7 +88,7 @@ def ConvForward(dim, expansion_factor=2):
 		)
 ```
 
-where the `ConvForward` module is the transformation between tokens.  
+where the `ConvForward` module is the transformation between tokens.  The kwarg `expand_conv` allows us to use this expansion or forego it for a single convolution (that must have as many output features as sequence elements).
 
 We will train the architecture using the masking approach that is commonly applied to causal language models in which the objective of training is to predict the next token in a sequence.  This means that we need to prevent the model from using information from tokens to the right some token when learning to predict that token.
 
@@ -170,7 +170,7 @@ X \circ W_0 = \\
 \end{bmatrix}
 $$
 
-Likewise, with two convlutional feature weight layers we perform the same operation with the second to recieve a 2x2 output and for three we have a 3x2 output. If we concatenate the weight layers together in a single matrix such that each column weight becomes a matrix column, we want to use an upper triangular mask: in this case, the convolutional weight matrix $W$
+Likewise, with two convolutional feature weight layers we perform the same operation with the second to recieve a 2x2 output and for three we have a 3x2 output. If we concatenate the weight layers together in a single matrix such that each column weight becomes a matrix column, we want to use an upper triangular mask: in this case, the convolutional weight matrix $W$
 
 $$
 W = 
@@ -244,12 +244,12 @@ $$
 
 which is what we want, as each token recieves non-zero weights from preceeding (after shifting) tokens only.
 
-In our implementation we actually use a lower-triangular mask (`tril`) because we must first re-arrange each convolutional weight tensor into a single weight matrix, and by default our rearrangement places each convolution weight column as a row in our collected matrix, ie it is transposed.
+In our implementation we actually use a lower-triangular mask (`tril`) because we must first re-arrange each convolutional weight tensor into a single weight matrix before Hadamard multiplication to the mask, and by default our rearrangement places each convolution weight column as a row in our collected matrix, ie it is transposed.
 
 ```python
 rearranged_shape = rearrange(self.conv.weight, 'f d p -> f (d p)').shape
 mask = torch.tril(torch.ones(rearranged_shape)).to(device)
-applied_mask = rearrange(self.conv.weight, 'f d p -> f (d p)') * mask
+applied_mask = rearrange(self.conv.weight, 'f d p -> f (d p)') * mask # Hadamard mult to mask
 self.conv.weight.data = rearrange(applied_mask, 'f (d p) -> f d p', p=1)
 ```
 
@@ -257,7 +257,7 @@ Thus we modify each 1D convolution in the mixer such that the convolutional weig
 
 ![masked mixer]({{https://blbadger.github.io}}/deep-learning/masked_llm_mixer.png)
 
-We make it optional to use the original mixer architecture (where two 1D convolutions are applied sequentially between each pair of sequence elements) via the kwarg `expand_conv`, and for that we actually need to perform the reshaping and masking for both convolutions.  The architecture with only one convolution between sequence elements we call the 'flat' mixer, as it must have a fixed number of convolutions to sequence length elements.
+We make it optional to use the original mixer architecture (where two 1D convolutions are applied sequentially between each pair of sequence elements) via the kwarg `expand_conv`, and for that we actually need to perform the reshaping and masking for both convolutions.  The architecture with only one convolution between sequence elements we call the 'flat' mixer, as it must have a fixed number of convolutions to sequence length elements.  The mask is applied during the forward pass as follows:
 
 ```python
 class MixerBlock(nn.Module):
@@ -283,6 +283,8 @@ class MixerBlock(nn.Module):
 		return x
 ```
 
+Note that it is tempting to skip a step and simply apply the triangular mask directly to the convolution weights by re-assigning the parameters of those weights to masked values of the original weights. This leads to a tricky problem after backpropegation: the original weights will not be updated! The optimizer (here AdamW) takes as an argument the model as it is initialized, but the parameters after masking during the forward pass are newly initialized at this time and will not be recognized by the optimizer.
+
 ### Training
 
 We make use of the `transformers.trainer()` module, which has a couple very useful features for ease of use: automatic logging checkpointing the model and optimizer states, masking loss on the pad token, 16 bit mixed precision numerical stabilization etc. For testing purposes I also used the following barebones trainer (note that this does not mask pad token loss and should not be used for an actual training run):
@@ -304,7 +306,7 @@ def train_model():
 
 To make results comparable, we use the same tokenizer, dataset (TinyStories), and batch size (16) and observe the training and evaluation cross entropy loss for the Llama-style transformer compared to our MLP mixer.  We perform training runs of around 12 hours on an RTX 3060.  
 
-It should be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is mostly due to the $O(n^2)$ complexity of the transformer model as the context window increases compared to the $O(n)$ complexity inherent in the language mixer. It also stems from the more 'efficient' use of gradients by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $KQV$ projections to the $KQV$ values themselves and back). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
+It should be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is mostly due to the $O(n^2)$ memory complexity of the transformer as the context window increases (these are the 'effective' parameters for that model) wheras the mixer has $O(1)$ constant space once initialized for a given context. It also stems from the more efficient use of gradient flow by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $K,Q,V$ projections to the $K,Q,V$ values themselves and back). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
 
 It should also be noted that optimizing a mixer of a similar size to a transformer requires much less time: one typically sees between 10x and 20x more time required for a transformer with $d_{model}=128$ and $n=8$ compared to a mixer with twice the $d_{model}$ and the same number of blocks.  This means that the Chinchilla scaling laws applicable to transformer architectures are expected to be much more favorable for MLP mixers.
 
@@ -382,7 +384,7 @@ The results in the last section were obtained without any hyperparameter optimiz
 
 When examining the ability of a model to [represent](https://blbadger.github.io/language-discreteness.html) its input, it was found that input representation of tokens whose output was masked (called 'non-self' tokens on the linked page) is accurate for untrained masked mixers if either the model were relatively large ($d_{model}=1024, \; n=24$ or $d_{model}=2048, \; n=8$) or else if the model remained small $d_{model}=512, \; n=8$ but the expanded sequential convolutions were replaced with a single convolution as shown in a previous section on this page.  
 
-This suggests that these 'flat' mixers may be able to be trained more effectively than the expanded convolution mixers or transformers, and it turns out that this appears to be the case: a $d_{model}=512, \; n=8$ flat mixer (requiring 3.59 GB vRAM to train on a context window of 512 tokens) achieves a training loss of 1.842 and a validation loss of 1.895 after 12 hours on TinyStories, which is lower than the $d_{model}=256, \; n=8$ transformer that requries more than double the memory (1.99 and 2.03 training and validation, respectively). Even one compares loss at a fixed number of updates, the flat mixer still outperforms the $d_{model}=128$ transformer by a wide margin: 2.116 versus 2.471 loss, respectively, at 114000 steps. This is most notable as the flat mixer has around a third of the 'effective' parameters that the transformer has. 
+This suggests that these 'flat' mixers may be able to be trained more effectively than the expanded convolution mixers or transformers, and it turns out that this appears to be the case: a $d_{model}=512, \; n=8$ flat mixer (requiring 3.59 GB vRAM to train on a context window of 512 tokens) achieves a training loss of 1.842 and a validation loss of 1.895 after 12 hours on TinyStories, which is lower than the $d_{model}=256, \; n=8$ transformer that requries more than double the memory (1.99 and 2.03 training and validation, respectively) or even a $d_{model}=512, \; n=8$ transformer (that is OOM for 16-size batches and must use 8-size batches). Even one compares loss at a fixed number of updates, the flat mixer still outperforms the $d_{model}=128$ transformer by a wide margin: 2.116 versus 2.471 loss, respectively, at 114000 steps. This is most notable as the flat mixer has around a third of the 'effective' parameters that the transformer has. 
 
 The largest 8-layer transformer that will fit in 12GB vRAM (at 512 token context with a 16-size minibatch) has a $d_{model}=256$, and at 12 hours on a 3060 this achieves 1.99 and 2.03 training and validation loss, respectively. This lags behind the training and validation loss of 1.81 and 1.86 of a $d_{model}=1024, \; n=8$ mixer trained with the same total compute budget. 
 
@@ -398,11 +400,11 @@ which is a more coherent and plot-accurate completion than either the transforme
 
 We have seen that the original mixer architecture with two 1-Dimensional convolutions sequentially (and GELU inbetween) learns language much more slowly than a mixer with only one 1-Dimensional convolution between sequence elements. 
 
-This observation presents a certain difficulty in that the 1D convolution must have as many filters as sequence elements squared to map a sequence to itself (all to all), meaning that the inter-sequence weights scale with sequence length but not the $d_{model}$.  This is not necessarily a problem for performance, as it is clear that simply increasing $d_model$ yields increased asymptotic performance. 
+This observation presents a certain difficulty in that the 1D convolution must have as many filters as sequence elements squared to map a sequence to itself (all to all), meaning that the inter-sequence weights scale with sequence length but not the $d_{model}$.  This is not necessarily a problem for performance, as it is clear that simply increasing the $d_{model}$ yields increased asymptotic performance. 
 
 What if we do want to increase the number of inter-sequence weights? According to studies on [representation accuracy](https://blbadger.github.io/language-discreteness.html), replacing multiple convolutions in series with sets of convolutions in parallel is the solution: both self- and non-self token representation is superior to either expanded or mixers.
 
-For a given number of training updates, this results in lower loss for a $d_{model}=512,  n=8$ mixer: 1.845 versus 1.886 at 354,000 steps.  However, as the model is slower to train per step it does not reach the same 12-hour fixed compute loss that the flat mixer does.
+For a given number of training updates, the 2-parallel convolution mixer results in lower loss for a $d_{model}=512, n=8$ mixer: 1.845 versus 1.886 training loss at 354,000 steps (the most this model can finish in our fixed compute training).  However, as the model is slower to train per step it does tends to reach a very similar 12-hour loss as the flat mixer of the same $d_{model}$ (1.842).
 
 ### Scaling Properties
 
@@ -410,8 +412,7 @@ The masked mixer architecture gives us an easy way to modify the number of inter
 
 Which type of weight is likely to be more important: that is, given a fixed number of total weights should we allocate more to intra- or inter-token parameters for the lowest loss given a fixed amount of compute?  When considering the causal langauge generation process, there are arguments to be made for both types, as clearly complex relationships between words are just as important if not moreso than a nuanced understanding of a word itself.
 
-One argument for the importance of allocating more parameters to intra-token weights is that all information from all previous words must pass through these weights (ignoring residual connections for the moment), whereas inter-token weights may add information from many parts of an input over many layers.
-
+One argument for the importance of allocating more parameters to intra-token weights is that all information from all previous words must pass through these weights (ignoring residual connections for the moment), whereas inter-token weights may add information from many parts of an input over many layers. 
 
 ### Implications
 
@@ -419,7 +420,7 @@ Seeking to make a more efficient learning algorithm than a transformer, we used 
 
 It is worth restating the more noteworthy findings of this work as concisely as possible:
 
-1. Language mixers of equivalent 'size' may be trained using much less computational resources than a transformer.
+1. Language mixers of equivalent 'size' ($d_{model}$ and $n$ layers) may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
 3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all).
