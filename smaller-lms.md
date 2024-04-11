@@ -399,7 +399,9 @@ This suggests that these 'flat' mixers may be able to be trained more effectivel
 
 The largest 8-layer transformer that will fit in 12GB vRAM (at 512 token context with a 16-size minibatch) has a $d_{model}=256$, and at 12 hours on a 3060 this achieves 1.99 and 2.03 training and validation loss, respectively. This lags behind the training and validation loss of 1.81 and 1.86 of a $d_{model}=1024, \; n=8$ mixer trained with the same total compute budget. 
 
-For the same prompt in the last section ("One day, a little boy..."), the trained flat mixer yields
+If one is able to vary the batch size, larger or smaller transformers and mixers may be tested. A transformer of size ($d_{model}=512, \; n = 8$) can just barely fit in the allotted 12 GB vRAM for this experiment and this model achieves a peak of efficiency for the transformer architecture on this test, reaching training and validation losses of 1.873 and 1.908, respectively.  Even for this size of model (disregarding effective parameters from self-attention training for the moment), the flat masked mixer achieves lower losses (1.842 and 1.895).  When we compare a masked mixer with a smaller effective size ($d_{model}=1024, \; n = 8$) and are free to increase the minibatch size to 32 samples (which requires less vRAM than the 'smaller' transformer), we achieve substantially lower losses once again (1.784 and 1.837 train and validation, respectively).
+
+Testing on inference bears out the cross-entropy loss findings: given the same prompt in the last section ("One day, a little boy..."), the trained $d_{model}=1024, \; n=8$ flat mixer yields
 
 **`
 played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laughed and played until the sun went down.<unk>At the end of the day, Tim and Sam were tired but happy. They went home and took a nap. They dreamed of playing catch again tomorrow. And they did.
@@ -415,7 +417,7 @@ This observation presents a certain difficulty in that the 1D convolution must h
 
 What if we do want to increase the number of inter-sequence weights? According to studies on [representation accuracy](https://blbadger.github.io/language-discreteness.html), replacing multiple convolutions in series with sets of convolutions in parallel is the solution: both self- and non-self token representation is superior to either expanded or mixers.
 
-For a given number of training updates, the 2-parallel convolution mixer results in lower loss for a $d_{model}=512, n=8$ mixer: 1.845 versus 1.886 training loss at 354,000 steps (the most this model can finish in our fixed compute training).  However, as the model is slower to train per step it does tends to reach a very similar 12-hour loss as the flat mixer of the same $d_{model}$ (1.842).
+For a given number of training updates, the 2-parallel convolution mixer results in lower loss for a $d_{model}=512, n=8$ mixer: 1.845 versus 1.886 training loss at 354,000 steps (the most this model can finish in our fixed compute training).  However, as the model is slower to train per step it does tends to reach a very similar 12-hour loss as the flat mixer of the same $d_{model}$ (1.842). 
 
 ### Scaling Properties
 
