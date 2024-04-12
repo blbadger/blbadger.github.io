@@ -399,7 +399,9 @@ This suggests that these 'flat' mixers may be able to be trained more effectivel
 
 The largest 8-layer transformer that will fit in 12GB vRAM (at 512 token context with a 16-size minibatch) has a $d_{model}=256$, and at 12 hours on a 3060 this achieves 1.99 and 2.03 training and validation loss, respectively. This lags behind the training and validation loss of 1.81 and 1.86 of a $d_{model}=1024, \; n=8$ mixer trained with the same total compute budget. 
 
-If one is able to vary the batch size, larger or smaller transformers and mixers may be tested. A transformer of size ($d_{model}=512, \; n = 8$) can just barely fit in the allotted 12 GB vRAM for this experiment and this model achieves a peak of efficiency for the transformer architecture on this test, reaching training and validation losses of 1.873 and 1.908, respectively.  Even for this size of model (disregarding effective parameters from self-attention training for the moment), the flat masked mixer achieves lower losses (1.842 and 1.895).  When we compare a masked mixer with a smaller effective size ($d_{model}=1024, \; n = 8$) and are free to increase the minibatch size to 32 samples (which requires less vRAM than the 'smaller' transformer), we achieve substantially lower losses once again (1.784 and 1.837 train and validation, respectively).
+If one is able to vary the batch size, larger or smaller transformers and mixers may be tested. A transformer of size ($d_{model}=512, \; n = 8$) with a batch size of 8 can just barely fit in the allotted 12 GB vRAM and this model achieves a peak of efficiency for the transformer architecture on this test, reaching training and validation losses of 1.873 and 1.908, respectively. We can consider this to be something near to a peak transformer model performance because if the model is further enlarged to $d_{model}=1024$ (which requires a reduction to a batch size of 4 for our vRAM stipulations) then performance suffers dramatically, reaching only 2.313 and 2.315 training and validation loss at the end of one training run. The larger transformer underperforms even when one focuses on the loss after a particular number of images seen: after 440k images, the $d_{model}=1024$ transformer has a training loss of 2.315 but the $d_{model}=512$ transformer reaches a training loss of $2.078$.
+
+Even for the optimal $d_{model}$ for the transformer at ($512$) the flat masked mixer achieves lower losses (1.842 and 1.895).  When we compare a masked mixer with a smaller effective size ($d_{model}=1024, \; n = 8$) and are free to increase the minibatch size to 32 samples (which requires less vRAM than the 'smaller' transformer), we achieve substantially lower losses once again (1.784 and 1.837 train and validation, respectively). 
 
 Testing on inference bears out the cross-entropy loss findings: given the same prompt in the last section ("One day, a little boy..."), the trained $d_{model}=1024, \; n=8$ flat mixer yields
 
@@ -407,7 +409,7 @@ Testing on inference bears out the cross-entropy loss findings: given the same p
 played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laughed and played until the sun went down.<unk>At the end of the day, Tim and Sam were tired but happy. They went home and took a nap. They dreamed of playing catch again tomorrow. And they did.
 `**
 
-which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer, again reflective of a lower training and validation loss than either architecture.
+which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer presented in the last section of this page, again reflective of a lower training and validation loss than either architecture.
 
 ### Parallel rather than Sequential Convolutions
 
