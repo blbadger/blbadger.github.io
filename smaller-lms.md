@@ -44,7 +44,7 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 
 ### Language Mixer Basics
 
-[In other work](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be extremely wide (embedding size $d_model > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self-  and nonself- token representation even from very small models with $e < 100$ (nonself representation is only accurate if expansions are not used in the convolutional layers, see below for more information). Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer, an architecture that although effective has inefficiencies acknowledged by the authors of the original 'Attention is all you need' paper (GTC 2024).
+[In other work](https://blbadger.github.io/language-discreteness.html) it was observed that transformers exhibit a somewhat unexpected phenomena: firstly that transformer blocks must be relatively high-dimensional (embedding size $d_{model} > 3000$) in order to have any accurate input representation ability, and secondly that the ability of a transformer to accurately represent a token it has seen previously (ie a 'non-self' token) disappears after training.  On the other hand, a modification of the MLP mixer architecture was found to have accurate self- and nonself- token representation even from very small models with $e < 100$ (nonself representation is only accurate if expansions are not used in the convolutional layers, see below for more information). Thus this may be a good candidate with which to start the process of looking for more effective architectures than the transformer, an architecture that although effective has inefficiencies acknowledged by the authors of the original 'Attention is all you need' paper (GTC 2024).
 
 The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with one-dimensional convolutoins over the sequence dimension. The mixer was originally designed for vision tasks, and we will test modifications of this architecture for language.  
 
@@ -444,6 +444,22 @@ Which type of weight is likely to be more important: that is, given a fixed numb
 
 One argument for the importance of allocating more parameters to intra-token weights is that all information from all previous words must pass through these weights (ignoring residual connections for the moment), whereas inter-token weights may add information from many parts of an input over many layers. 
 
+"""
+One day, a little boy named Tim went to play with his friend, Sam. They wanted to play a game with a ball. The game was to see who could get the best score.<unk>Tim threw the ball and Sam tried to catch it. Sam missed the ball and it went far away. Sam was angry. He said, "I don't like this game. I want to lie down and rest."<unk>Tim said, "Okay, let's lie down and rest. Then we can try again to get a good score." They lay down under a big tree and looked at the sky. They saw birds flying and clouds moving.<unk>After a while, they got up and
+"""
+
+This can be seen when we compare the completion of a 64-dimension model with 64 layers, which achieves a 2.867 evaluation loss after a training run,
+
+**`
+played. They saw a man who had fallen down the street. Tim said, "Time to go home, please." Tim said, "It's okay to be scared, but we have to be careful." Tim nodded and they went home. They played in the big field and had fun. They had a great time playing in the snow.
+`**
+
+which is gramatically correct but loses the train of the story (Sam is forgotten, playing outside after going home, snow appearing etc.) which is typical of models of that dimension. On the other hand, a 1024-dimension model with 8 layers reaching a evaluation loss of 1.837, which gives the much more coherent 
+
+**`
+played a game. They took turns throwing the ball to each other. Tim was good at catching the ball. Sam was good at catching the ball. They laughed and played until it was time to go home.<unk>The moral of the story is that playing games is fun, but sometimes it's good to try new things and have fun with friends.
+`**
+
 ### Implications
 
 Seeking to make a more efficient learning algorithm than a transformer, we used the observation that token representation is superior for modified MLP-Mixer architectures to craft a model capable of replicating the autoregressive language generation of GPT-style decoder-only transformers.
@@ -454,7 +470,7 @@ It is worth restating the more noteworthy findings of this work as concisely as 
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
 3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
-5. A masked mixer trained using approximately 1/18th the compute of a transformer model published in the TinyStories paper achieves a similar language abilities as a transformer model.
+5. A masked mixer trained using approximately 1/18th the compute of that used to train transformer model published in the TinyStories paper achieves a similar language abilities as that model.
 
 
 
