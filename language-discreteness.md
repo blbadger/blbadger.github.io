@@ -1073,9 +1073,7 @@ When we test the untrained mixer on both self- and non-self token representation
 
 **Mario, the Idea, versus Mario, the Man**
 
-One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$, and larger. Training does not remove this accurate input representation, as for a trained model (on TinyStories 2M) we also find a perfectly accurate input representation.  
-
-For the mixer with expanded convolutions between tokens, non-self representation is less impressive: an untrained mixer with $d_{model}=512$ with an expansion factor of 1 yields
+One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$ and larger. For the mixer with expanded convolutions between tokens, non-self representation is less impressive: an untrained mixer with $d_{model}=512$ with an expansion factor of 1 yields
 
 ```
 it, but ario, the Idea, versus Mario, the Man
@@ -1116,6 +1114,14 @@ Marario, the Idea, versus Mario, the Man
 ```
 
 and for $d_{model}=2048$ at block 8 we do find both accurate self and non-self token representation. This is also true if we scale the depth of the model without increasing the width, for example for $d_{model}=1024$ and $n=24$ layers we have also have a perfect self- and non-self representation for an untrained model (note that the n=8 layer version above was not as capable). What is more remarkable is that even if the first three tokens are masked, the representation is still perfect.
+
+Masked mixer input representation ability decreases somewhat upon training. For example, the flat $d_{model}=1024$ explored above retains perfect input representation of **Mario, the Idea, versus Mario, the Man** for one transformer block, but after 8 blocks we have for `[:, 1:, :]`
+
+```
+Mgiftio, the Idea</s>versus Mario, the Man
+```
+
+which is slightly worse than the perfect representation present in this model before training commenced.
 
 This flat mixer representation is more accurate than that obtained from a similarly sized transformer (even when using the same 4096-size tokenizer and training dataset): a trained $d_{model}=256, \; n=8$ transformer (llama style) model yields for `[:, 1:, :]` the input *Mario, the Idea, versus Mario, the Man*
 
