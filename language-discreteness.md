@@ -1073,13 +1073,13 @@ When we test the untrained mixer on both self- and non-self token representation
 
 **Mario, the Idea, versus Mario, the Man**
 
-One mixer block exhibits an input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$ and larger. For the mixer with expanded convolutions between tokens, non-self representation is less impressive: an untrained mixer with $d_{model}=512$ with an expansion factor of 1 yields
+For untrained models, one mixer block exhibits a perfect input representation of `Mario, the Idea, versus Mario, the Man` for $d_{model}=32$ and larger. For the mixer with expanded convolutions between tokens, non-self representation is less impressive: an untrained mixer with $d_{model}=512$ with an expansion factor of 1 yields
 
 ```
 it, but ario, the Idea, versus Mario, the Man
 ```
 
-And the situation is not helped with training: recall for a $d_{model}=64$ mixer, we have a perfect input representation for `Mario, the Idea, versus Mario, the Man`, but we find that non-self token representation is much worse. For `[:, 1:, :]` we have (ignoring trailing tokens)
+And the situation is not helped with training: recall for one transformer block of an untrained $d_{model}=64$ mixer, we have a perfect input representation for `Mario, the Idea, versus Mario, the Man`, but we find that non-self token representation is much worse. For `[:, 1:, :]` we have (ignoring trailing tokens)
 
 ```
 selessonario, the Idea, versus Mario, the Man
@@ -1127,9 +1127,23 @@ This flat mixer representation is more accurate than that obtained from a simila
 
 `pictureario, the Idea, th let fterMarioiMan`
 
-where some self- and the non-self token are incorrectly identified, although for a trained $d_{model}=512$ we have
+where some self- and the non-self token are incorrectly identified, although for a trained transformer with $d_{model}=512$ we have
 
 `s. They whistch whistsat panstayou're snowpatophch whistsat Man`
+
+### Model Invertibility
+
+Given that masked mixers of a certain size have perfect input representation for both self- and nonself- tokens, it may be wondered how many parameters are
+
+For a trained $d_{model}=64, \; n=64$ flat mixer model at the last layer, we have for `[:, 1:, :]`
+
+`feltDfor a momopened lov. O!weldollcooed in`
+
+for $d_{model}=256, n=8$ we have 
+
+`playingmom.beautifulatican Iwoo. It`
+
+
 
 ### Noise on a Discreet Channel
 
