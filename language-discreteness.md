@@ -1137,12 +1137,15 @@ Given that masked mixers of a certain size have perfect input representation for
 
 For a trained $d_{model}=64, \; n=64$ flat mixer model at the last layer, we have for `[:, 1:, :]`
 
-`feltDfor a momopened lov. O!weldollcooed in`
+```
+feltDfor a momopened lov. O!weldollcooed in
+```
 
 for $d_{model}=256, n=8$ we have 
 
-`playingmom.beautifulatican Iwoo. It`
-
+```
+playingmom.beautifulatican Iwoo. It
+```
 
 
 ### Noise on a Discreet Channel
@@ -1154,33 +1157,6 @@ But first it remains to be seen why training would result in worse input represe
 In developing the theory of communication over a noisy channel, Shannon and others found a mathematical explanation for a phenomenon that initially seemed most curious: the fact that the amount of information reaching the receiver often decreases imperceptably at first and then suddenly plummets as the amount of information increases (given constant noise).  
 
 Given that deep learning models often behave as if they were noisy communication channels, it may be wonderd if the same observation would be made for these models.  Indeed it is found that language model input representation experiences a severe drop as the channel width decreases. For the 7 billion parameter trained Llama with 4096 feature neurons per layer, reducing this number to 2202 yields no incorrect input tokens for the input 'Mario the man versus Mario the idea' but decreasing this by even one neuron (ie taking `[:, :, :2201]` as the output used to perform gradient descent-based input optimization) leads to *no* tokens being correctly represented. The same is true when we consider only the attention layers in modules (no MLPs), where the number of necesary neurons now is 2083.  These observations are not due to the identity of the specific tokens being chosen, but can be thought of as a true bandwidth phenomenon: in the case of the attention-only module taking `[:, :, 1000:2083]` yields no token accurately found but taking `[:, :, 1000:3083]` gives every input token accurately.
-
-### Implications of Representation Accuracy
-
-Modern large language models are usually trained by first predicting the next word in a sentence, followed by what is termed 'aligmnent' which serves to make the language model return outputs are appropriate for some given at hand, which could be helpfully answering questions or perhaps providing background information.  This alignment is usually achieved via supervised fine-tuning, deep reinforcement learning, or a combination of these two approaches. 
-
-It should be appreciated that in some sense most the fundamental problem of language processing, the task of producing gramatically correct language, does not require a very large model at all or even a very sophisticated architecture.  More recently it has become desirable for language models to be able to perform tasks that are intrinsic to language (factual recall, reasoning etc.) but these were not the tasks that were the original goal of current architectures, particularly the transformer which was originally identified as a language model that resisted saturation (defined here as a lack of improvement in perplexity after training on additional tokens). This is not a unique phenomenon to transformers, however, as the same is observed for large convolutional and even fully connected architectures.
-
-Therefore one can wonder whether the transformer is as effective an architecture for meta-language tasks as it is for language tasks. 
-
-In spite of these innovations, it has been observed that models smaller than around 10 billion parameters (using commonly applied scaling measures for MLP and key, query and value projection parameters in transformers) are generally insufficient for anything but the simplest of language tasks.
-
-Does it matter for the purposes of language generation that even otherwise effective models are incapable of differentiating between nonsensical gibberish and meaningful sentences?  At first glance it may seem as though it may not matter: if a language model were to be given these nonsenical phrases then it may confuse them with actual text, but what are the chances that the exact nonsensical phrase would appear as a prompt to a language model in a real application?  
-
-There is, however, reason to wonder whether it is not important that language models form such poor representations of their inputs.  Language models as they currently exist suffer from a significant and currently difficult-to-manage problem sometimes referred to as 'hallucinations', in which the model will return syntactically and semantically correct text that is woefully incorrect in the implicit language task at hand.  Furthermore, at present there appears to be no method that is capable of preventing this hallucination barring directly training against specific examples (either using supervised or reinforcement methods).  
-
-This is fundamentally a problem of representation: if a language model were capable of representing all necessary implicit and explicit language tasks and inputs to a sufficient degree of accuracy, the model would be capable of discerning text that fails to address the implicit tasks from text that does not fail to do so.  As we have already seen that language models cannot represent their inputs uniquely, it may be little wonder why they are sometimes incapable of representing implicit input features as well.
-
-
-
-
-
-
-
-
-
-
-
 
 
 
