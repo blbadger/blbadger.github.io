@@ -1041,7 +1041,7 @@ broke publishebrace “
 bo System AskFur
 ```
 
-or for different models: the trained 70 billion parameter Llama-2 gives for **Mario the idea versus the man** a top-5 representation for `[:, 1:, :]` of
+or for different models: the trained 70 billion parameter Llama-2 gives for **Mario the idea versus the man** a top-5 representation for `[:, 1:, :]` of the first transformer block of
 
 ```
 Priceww idea versusww man
@@ -1079,7 +1079,7 @@ For untrained models, one mixer block exhibits a perfect input representation of
 it, but ario, the Idea, versus Mario, the Man
 ```
 
-And the situation is not helped with training: recall for one transformer block of an untrained $d_{model}=64$ mixer, we have a perfect input representation for `Mario, the Idea, versus Mario, the Man`, but we find that non-self token representation is much worse. For `[:, 1:, :]` we have (ignoring trailing tokens)
+And the situation is not helped with training: recall for one transformer block of an untrained $d_{model}=64$ mixer, we have a perfect input representation for `Mario, the Idea, versus Mario, the Man`, but we find that non-self token representation is much worse. For `[:, 1:, :]` we have (ignoring trailing tokens) from the first mixer block
 
 ```
 selessonario, the Idea, versus Mario, the Man
@@ -1115,6 +1115,10 @@ Marario, the Idea, versus Mario, the Man
 
 and for $d_{model}=2048$ at block 8 we do find both accurate self and non-self token representation. This is also true if we scale the depth of the model without increasing the width, for example for $d_{model}=1024$ and $n=24$ layers we have also have a perfect self- and non-self representation for an untrained model (note that the n=8 layer version above was not as capable). What is more remarkable is that even if the first three tokens are masked, the representation is still perfect.
 
+### Model Invertibility
+
+At the end of the last section, we have seen that an untrained masked mixer's final layer representation is sufficiently powerful to identify nearly all or all of a short prompt's input tokens. 
+
 Masked mixer input representation ability decreases somewhat upon training. For example, the flat $d_{model}=1024$ explored above retains perfect input representation of **Mario, the Idea, versus Mario, the Man** for one transformer block, but after 8 blocks we have for `[:, 1:, :]`
 
 ```
@@ -1131,22 +1135,7 @@ where some self- and the non-self token are incorrectly identified, although for
 
 `s. They whistch whistsat panstayou're snowpatophch whistsat Man`
 
-### Model Invertibility
-
-Given that masked mixers of a certain size have perfect input representation for both self- and nonself- tokens, it may be wondered how many parameters are
-
-For a trained $d_{model}=64, \; n=64$ flat mixer model at the last layer, we have for `[:, 1:, :]`
-
-```
-feltDfor a momopened lov. O!weldollcooed in
-```
-
-for $d_{model}=256, n=8$ we have 
-
-```
-playingmom.beautifulatican Iwoo. It
-```
-
+From these results it is apparent that masked mixers remain invertible after 
 
 ### Noise on a Discreet Channel
 
