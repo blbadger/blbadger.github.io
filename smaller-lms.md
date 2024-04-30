@@ -317,7 +317,7 @@ def train_model():
 
 To make results comparable, we use the same tokenizer, dataset (TinyStories), and batch size (16) and observe the training and evaluation cross entropy loss for the transformer model (Llama, whose source code may be found [here](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py)) compared to our masked mixer.  We perform training runs of around 12 hours on an RTX 3060.
 
-It should first be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is due to inefficient memory usage for that model size, but for larger $d_{model}$ values the large amount of memory required stems from the $O(n^2)$ memory complexity of the transformer as the context window increases (these are the 'effective' parameters for that model) wheras the mixer has $O(1)$ constant space once initialized for a given context. 
+It should first be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is due to inefficient memory usage for that model size (transformers with a width of less than 256 are poorly allocated in memory), but for larger $d_{model}$ values the large amount of memory required stems from the increased number of non-trainable inter-token parameters necessary for backpropegation in the transformer compared to the mixer.
 
 It is also apparent that transformers are much slower to train than mixers. This results from both the number of effective parameters (above) and also from the more efficient use of gradient flow by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $K,Q,V$ projections to the $K,Q,V$ values themselves and back as well as softmax transformations etc). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
 
@@ -459,6 +459,21 @@ which is gramatically correct but loses the train of the story (Sam is forgotten
 **`
 played a game. They took turns throwing the ball to each other. Tim was good at catching the ball. Sam was good at catching the ball. They laughed and played until it was time to go home.<unk>The moral of the story is that playing games is fun, but sometimes it's good to try new things and have fun with friends.
 `**
+
+We can also consider the memory scaling with respect to the number of tokens in the context length, $n_{context}$. It is apparent that both the transformer and masked mixer have the same computational complexity as length increases because every token is operated on by every other token for both models (resulting in an $O(n^2)$ space complexity). But it is also apparent that the flat masked mixer has a much lower constant factor for this scaling than the transformer, as each token-token operation consists of far fewer mathematical operations. When the memory required to make an unbatched forward and backward pass (without a langauge modeling head) for a $d_m = 1024$ flat masked mixer is compared to that for a transformer of the same width, we see that the masked mixer is between four and eight times as memory-efficient.
+
+| $n_{layers}$  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+| -------- | ------- | -------- | ------- | -------- | ------- |
+| 4 | 2071 | 2341 | 2637 | 3573 | 6491 |
+| 8 | 2431 | 2869 | 3425 | 5111 | 10527 |
+| 16 | 2695 | 3159 | 3811 | 5879 | OOM |
+
+| $n_{layers}$  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+| -------- | ------- | -------- | ------- | -------- | ------- |
+| 4 | 2323 | 3275 | 6809 | OOM | OOM |
+| 8 | 3176 | 4800 | 10126 | OOM | OOM |
+| 16 | 4876 | 7750 | OOM | OOM | OOM |
+
 
 ### Implications
 
