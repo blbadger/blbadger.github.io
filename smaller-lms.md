@@ -460,20 +460,21 @@ which is gramatically correct but loses the train of the story (Sam is forgotten
 played a game. They took turns throwing the ball to each other. Tim was good at catching the ball. Sam was good at catching the ball. They laughed and played until it was time to go home.<unk>The moral of the story is that playing games is fun, but sometimes it's good to try new things and have fun with friends.
 `**
 
-We can also consider the memory scaling with respect to the number of tokens in the context length, $n_{context}$. It is apparent that both the transformer and masked mixer have the same computational complexity as length increases because every token is operated on by every other token for both models (resulting in an $O(n^2)$ space complexity). But it is also apparent that the flat masked mixer has a much lower constant factor for this scaling than the transformer, as each token-token operation consists of far fewer mathematical operations. When the memory required to make an unbatched forward and backward pass (without a langauge modeling head) for a $d_m = 1024$ flat masked mixer is compared to that for a transformer of the same width, we see that the masked mixer is between four and eight times as memory-efficient.
+We can also consider the memory scaling with respect to the number of tokens in the context length, $n_{context}$. It is apparent that both the transformer and masked mixer have the same computational complexity as length increases because every token is operated on by every other token for both models (resulting in an $O(n^2)$ space complexity). But it is also apparent that the flat masked mixer has a much lower constant factor for this scaling than the transformer, as each token-token operation consists of far fewer mathematical operations. When the memory required (in megabytes of vRAM, beyond 12 is OOM) to make an unbatched forward and backward pass (without a langauge modeling head) for a $d_m = 1024$ flat masked mixer, 
 
-| $n_{layers}$  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+|  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
 | -------- | ------- | -------- | ------- | -------- | ------- |
-| 4 | 2071 | 2341 | 2637 | 3573 | 6491 |
+| $n_{layers}$ = 4 | 2071 | 2341 | 2637 | 3573 | 6491 |
 | 8 | 2431 | 2869 | 3425 | 5111 | 10527 |
 | 16 | 2695 | 3159 | 3811 | 5879 | OOM |
 
-| $n_{layers}$  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+is compared to that for a transformer of the same width, we see that the masked mixer is around four times as memory-efficient with increasing token length.
+
+|  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
 | -------- | ------- | -------- | ------- | -------- | ------- |
-| 4 | 2323 | 3275 | 6809 | OOM | OOM |
+| $n_{layers}$ = 4 | 2323 | 3275 | 6809 | OOM | OOM |
 | 8 | 3176 | 4800 | 10126 | OOM | OOM |
 | 16 | 4876 | 7750 | OOM | OOM | OOM |
-
 
 ### Implications
 
@@ -485,7 +486,6 @@ It is worth restating the more noteworthy findings of this work as concisely as 
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
 3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
-5. A masked mixer trained using approximately 1/18th the compute of that used to train transformer model published in the TinyStories paper achieves a similar language abilities as that model.
 
 
 
