@@ -462,19 +462,19 @@ played a game. They took turns throwing the ball to each other. Tim was good at 
 
 We can also consider the memory scaling with respect to the number of tokens in the context length, $n_{context}$. It is apparent that both the transformer and masked mixer have the same computational complexity as length increases because every token is operated on by every other token for both models (resulting in an $O(n^2)$ space complexity). But it is also apparent that the flat masked mixer has a much lower constant factor for this scaling than the transformer, as each token-token operation consists of far fewer mathematical operations. When the memory required (in megabytes of vRAM, beyond 12 is OOM) to make an unbatched forward and backward pass (without a langauge modeling head) for a $d_m = 1024$ flat masked mixer, 
 
-|  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+|  | $n_{context} = 512$ | $n_{c}=1024$ | $n_{c}=2048$ | $n_{c}=4096$ | $n_{c}=8192$
 | -------- | ------- | -------- | ------- | -------- | ------- |
 | $n_{layers}$ = 4 | 2071 | 2341 | 2637 | 3573 | 6491 |
-| 8 | 2431 | 2869 | 3425 | 5111 | 10527 |
-| 16 | 2695 | 3159 | 3811 | 5879 | OOM |
+| $n_l=8$  | 2431 | 2869 | 3425 | 5111 | 10527 |
+| $n_l=16$ | 2695 | 3159 | 3811 | 5879 | OOM |
 
 is compared to that for a transformer of the same width, we see that the masked mixer is around four times as memory-efficient with increasing token length.
 
-|  | $n_{context} = 512$ | 1024 | 2048 | 4096 | 8192
+|  | $n_{context} = 512$ | $n_c=1024$ | $n_c=2048$ | $n_c=4096$ | $n_c=8192$
 | -------- | ------- | -------- | ------- | -------- | ------- |
-| $n_{layers}$ = 4 | 2323 | 3275 | 6809 | OOM | OOM |
-| 8 | 3176 | 4800 | 10126 | OOM | OOM |
-| 16 | 4876 | 7750 | OOM | OOM | OOM |
+| $n_{layers} = 4$ | 2323 | 3275 | 6809 | OOM | OOM |
+| $n_l=8$ | 3176 | 4800 | 10126 | OOM | OOM |
+| $n_l=16$ | 4876 | 7750 | OOM | OOM | OOM |
 
 ### Implications
 
