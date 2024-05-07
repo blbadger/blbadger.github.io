@@ -1,4 +1,4 @@
-## Smaller, Better Language Models with Masked Mixers
+## Masked Mixer Language Models
 
 ### Background
 
@@ -459,6 +459,32 @@ which is gramatically correct but loses the train of the story (Sam is forgotten
 **`
 played a game. They took turns throwing the ball to each other. Tim was good at catching the ball. Sam was good at catching the ball. They laughed and played until it was time to go home.<unk>The moral of the story is that playing games is fun, but sometimes it's good to try new things and have fun with friends.
 `**
+
+The following table provides a summary of the results of transformer, expanded mixer, and flat mixer performance after one unit of compute (12 hours on an RTX 3060) applied to the first 2M examples of TinyStories:
+
+Transformer ($n=8$ layers, $h=16$ attention heads, $b=16$ batch size unless otherwise noted):
+
+|  | $d_{model} = 128$ | $d_{m}=256$ | $d_{m}=512$ | $d_{m}=1024$, b=8 | 
+| -------- | ------- | -------- | ------- | -------- | 
+| Train | 2.38 | 1.99 | 1.87 | 2.31 | 
+| Test  | 2.40 | 2.02 | 1.91 | 2.32 | 
+
+
+with the flat mixer (n=8, b=16)
+
+|  | $d_{model} = 256$ | $d_{m}=512$ | $d_{m}=1024$ | $d_m=2014$, b=32 | $d_{m}=2048$ | 
+| -------- | ------- | -------- | ------- | -------- | -------- |
+| Train | 2.11 | 1.84 | 1.81 | 1.78 | 2.05 | 
+| Test  | 2.15 | 1.91 | 1.86 | 1.84 | 2.07 | 
+
+
+And for the expanded mixer (n=8, b=16),
+
+|  | $d_{model}=256$ | $d_{m}=512$ | $d_{m}=1024$ | 
+| -------- | ------- | -------- | ------- |
+| Train | 2.17 | 2.05 | 1.83 | 
+| Test  | 2.20 | 2.08 | 1.89 | 
+
 
 We can also consider the memory scaling with respect to the number of tokens in the context length, $n_{context}$. It is apparent that both the transformer and masked mixer have the same computational complexity as length increases because every token is operated on by every other token for both models (resulting in an $O(n^2)$ space complexity). But it is also apparent that the flat masked mixer has a much lower constant factor for this scaling than the transformer, as each token-token operation consists of far fewer mathematical operations. When the memory required (in megabytes of vRAM, beyond 12 is OOM) to make an unbatched forward and backward pass (without a langauge modeling head) for a $d_m = 1024$ flat masked mixer, 
 
