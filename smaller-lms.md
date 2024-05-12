@@ -502,6 +502,11 @@ is compared to that for a transformer of the same width, we see that the masked 
 | $n_l=8$ | 3176 | 4800 | 10126 | OOM | OOM |
 | $n_l=16$ | 4876 | 7750 | OOM | OOM | OOM |
 
+
+### Transformers with fewer attention heads are more efficient
+
+The observation that the flat mixer performs better than many transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified.
+
 ### Implications
 
 Seeking to make a more efficient learning algorithm than a transformer, we used the observation that token representation is superior for modified MLP-Mixer architectures to craft a model capable of replicating the autoregressive language generation of GPT-style decoder-only transformers.
@@ -512,6 +517,8 @@ It is worth restating the more noteworthy findings of this work as concisely as 
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
 3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
+
+
 
 
 
