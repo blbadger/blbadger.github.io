@@ -353,9 +353,9 @@ $$
 ## Low Voltage
 In many ways less stressful than high voltage engineering, still exciting and rewarding to the practitioner.
 
-![DL server]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
+### [Deep Learning Server](/gpu-server.md)
 
-###[Deep Learning Server](/gpu-server.md)
+![DL server]({{https://blbadger.github.io}}server_setup/gpu_cover.jpg)
  	
 ## High Voltage 
 High voltage engineering projects: follow the links for more on arcs and plasma.
