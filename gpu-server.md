@@ -8,7 +8,7 @@ On this page, the author details the installation of a GPU server node for half 
 
 For the past couple of years, I have been using the following system for experimentation and model development (as well as three body simulation and polynomial root fractal generation and other assorted projects): 
 
-![Desktop]({{https://blbadger.github.io}}/server_setup/desktop.png)
+![Desktop]({{https://blbadger.github.io}}/server_setup/desktop.jpg)
 
 which is an i7-12700F with 48GB RAM, an RTX 3060 with 12 GB vRAM and (more recently added) a GTX 1060 with 6GB vRAM all on a Gigabytre B660 mobo. This is a very capable system for smaller experiments, and I have used it for the majority of the deep learning work I have written about in preprints or on the blog.
 
@@ -24,7 +24,21 @@ What about using another cloud GPU provider like Paperspace or Runpod? Depending
 
 My interest in building a deep learning server came after coming to the estimate that it would be significantly more expensive to buy three 3090s (without upgrading anything else at all) than it would be to build an entire v100 server that would be more capable for DL training by most metrics. I had the same general experience years ago with [high voltage engineering projects](https://blbadger.github.io/#high-voltage): obsolete (by industry standards) industrial equipment is often the cheapest way of accomplishing engineering tasks provided that one has the know-how to work with the equipment out of its intended use niche. On this page I will show you how to do exactly that in the context of a deep learning server.
 
-### 
+The model I chose is a Gigabyte T180-G20, which is a 4x V100 server node built to Facebook's Open Compute Project standard. These are very similar to the more common T181-G20 except that they support Intel Xeon E5 2600 v3 and v4 generation CPUs, whereas the 181 supports Intel Xeon Scalable CPUs (which are effectively the next generation of CPU after the v4 E5s) and has more memory DIMMS (24 versus 16). Because the T180-G20s support older CPUs and potentially less memory than the T181s, they are a good deal cheaper and can be had for under a thousand dollars new. Not bad for a machine that supports up to 750 TFLOPs for FMA (fused multiply-add) matrix operations with up to six V100 GPUs (four sxm2 and two PCIE), 192 GB vRAM with the same configuration, and 1024 GB DDR4 RAM. 
+
+In my configuration only the four SXM2 sockets are used for V100s, with 500 TFLOPs at 64GB vRAM as a starting configuration. These SXM2 sockets are interconnected via 300 GBps NVlink, making these four GPUs behave for all purposes as one large GPU. I use the 16GB rather than the 32GB V100 as they are nearly a factor of 10 cheaper. 
+
+The main exceptions to this are the T181 and T180, and this is because they 
+
+### Power Supply
+
+![psu]({{https://blbadger.github.io}}/server_setup/dell_psu.jpg)
+
+![psu]({{https://blbadger.github.io}}/server_setup/psu_test.jpg)
+
+### Hardware Installation
+
+
 
 
 
