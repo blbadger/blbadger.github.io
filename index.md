@@ -349,8 +349,15 @@ $$
 n!_k \to ?
 \; \\
 $$
+
+## Low Voltage
+In many ways less stressful than high voltage engineering, still exciting and rewarding to the practitioner.
+
+![DL server]({{https://blbadger.github.io}}tesla_images/newtesla.jpg)
+
+###[Deep Learning Server](/gpu-server.md)
  	
-## High voltage 
+## High Voltage 
 High voltage engineering projects: follow the links for more on arcs and plasma.
 
 ### [Tesla coil](/tesla-coils.md)
