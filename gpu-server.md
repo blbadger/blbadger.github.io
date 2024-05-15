@@ -30,13 +30,58 @@ In my configuration only the four SXM2 sockets are used for V100s, with 500 TFLO
 
 The main exceptions to this are the T181 and T180, and this is because they 
 
+
+### Hardware Installation
+
+![heatsinks]({{https://blbadger.github.io}}/server_setup/boxed_heatsinks.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_lid.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/hard_drive_screws.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/cpu_heatsink.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_internals.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_lid.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_socket.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_presink.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/cpu_heatshink.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink_install.png)
+
+![server]({{https://blbadger.github.io}}/server_setup/installed_gpu.jpg)
+
 ### Power Supply
 
 ![psu]({{https://blbadger.github.io}}/server_setup/dell_psu.jpg)
 
 ![psu]({{https://blbadger.github.io}}/server_setup/psu_test.jpg)
 
-### Hardware Installation
+![server]({{https://blbadger.github.io}}/server_setup/server_prepower.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/bus_terminals.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/test_psu.jpg)
+
+### Test
+
+![server]({{https://blbadger.github.io}}/server_setup/server_io.png)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_io_connected.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_post.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_bios.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_htop.jpg)
+
+![server]({{https://blbadger.github.io}}/server_setup/server_nvidia-smi.jpg)
 
 
 
