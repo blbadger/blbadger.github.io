@@ -84,35 +84,55 @@ Here is a side view of the GPU and heatsink after installation. Interestingly th
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_side.jpg)
 
-Replacing the acrylic duct, we have the first GPU installed!
+Replacing the acrylic duct, we have the first GPU installed.
 
 ![server]({{https://blbadger.github.io}}/server_setup/installed_gpu.jpg)
 
-### Power Supply
+### Power Supply Units
 
-
+With a total TDP of around 1500 watts for the chips alone, perhaps the simplest power supply for this server would be a 2000W dell server PSU. Unfortunately these require 240V AC inputs, and I only have 120V outlets. Happily however other dell server PSUs are designed to be run in parallel (as they would be in their native environment) so instead we can just use two 1100W PSUs in parallel (with the current sharing pin connected to avoid burning out one while the other idles). 1100W dell PSUs are very inexpensive on ebay, so I got a couple and started breaking them out (ie making them run outside their intended environment). I used dell z1100p PSUs, not to be confused with l1100e supplies that have very different pins.
 
 ![psu]({{https://blbadger.github.io}}/server_setup/dell_psu.jpg)
 
+One can buy breakout boards for this purpose, but I thought it would be more fun to solder the connections myself. This turned out to be more difficult than I had anticipated, and it turns out that you have to first draw one pin to a GND, supply power and wait a few seconds, and then connect two 'switch' pins together to complete the power on. One of the strangest sequences I have seen for a power supply, but at least it works.
+
 ![psu]({{https://blbadger.github.io}}/server_setup/psu_test.jpg)
+
+Power must be supplied to each of the sockets on the right of the server in the photo below (actually one can also bypass the sockets and install a cable into the cages next to the sockets, but I thought this would be more of a pain to do). To get the power from the PSU to sockets I used a combination of 4 AWG battery cable and 1/4" solid copper bus bar. The 4 AWG cable turned out to be overkill, and I would choose 6 or 8 AWG if doing this over.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_prepower.jpg)
 
+Sawing the bus bar into chunks and drilling for connections allows for one bus bar in each power socket.
+
 ![server]({{https://blbadger.github.io}}/server_setup/bus_terminals.jpg)
+
+Connecting things together with the appropriate hap-hazardness that indicates a test, we have a successful power connection.
 
 ![server]({{https://blbadger.github.io}}/server_setup/test_psu.jpg)
 
 ### Test
 
+The I/O ports are suprisingly comprehensive for a server: one VGA, three RJ45s, and two USB ports. 
+
 ![server]({{https://blbadger.github.io}}/server_setup/server_io.png)
+
+This makes it easy to connect a monitor, keyboard, ethernet connection, and bootable USB (to install ubuntu-server). It is illegal to use a mouse with a Linux server, doing so will lead to Linus finding you and performing a citizen's arrest.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_io_connected.jpg)
 
+After powering on, it POSTs! Much of the hardware in this HPC server is managed by Penguin's software, making a linux OS even more fitting.
+
 ![server]({{https://blbadger.github.io}}/server_setup/server_post.jpg)
+
+Heading to the BIOS, we find that both CPUs are recognized, the memory is performing at its maximum speed (2400 MHz) and that the server was built in 2017.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_bios.jpg)
 
+After installing ubuntu-server, we can check the internals. All 56 threads are active, and not terribly busy which is great.
+
 ![server]({{https://blbadger.github.io}}/server_setup/server_htop.jpg)
+
+After checking that the GPU hardware with `sudo lshw -C display` and finding our V100, installing the proper NVIDIA drivers and rebooting allows interfacing with the GPU. Et voila, our V100 is found and is idling for the moment.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_nvidia-smi.jpg)
 
