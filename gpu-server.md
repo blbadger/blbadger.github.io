@@ -52,25 +52,45 @@ The CPU heatsinks are interesting: only half the base plate contains fins, and t
 
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_heatsink.jpg)
 
-With CPU heatsinks installed, I installed one GPU for testing purposes. In the image below, the four SXM2 sockets are on the left, CPUs on the right, and PCI-E sockets are in the center right. Note the connection to the SXM2 board from one PCI-E socket, leaving the other two free. This connection is limited to 16 
+With CPU heatsinks installed, I installed one GPU for testing purposes. In the image below, the four SXM2 sockets are on the left, CPUs on the right, and PCI-E sockets are in the center right. Note the connection to the SXM2 board from one PCI-E socket, leaving the other two free. This connection from CPU to GPUs is limited to 16 GBps, but data transfer between GPUs on the SXM2 board is a juicy 300 GBps.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_internals.jpg)
 
+The V100 arrived nice and clean with a mirror finish on the lid. The large grey 'TR21...' modules are voltage regulators, and if you have seen an SXM2 P100 this will look very familiar except for the GV100 chip. Came with all the screws and everything!
+
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_lid.jpg)
+
+Below is the SXM2 socket with protecting plastic and acrylic fan ducting removed. Two screws have to be removed before installing the V100.
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_socket.jpg)
 
+The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 0.1nm! This is because there are no springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience.
+
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_presink.jpg)
 
-![server]({{https://blbadger.github.io}}/server_setup/cpu_heatshink.jpg)
+The GPU heatsink comes pre-loaded with thermal paste, nice!
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_heatshink.jpg)
+
+The heatsink has a nice thick base plate and large fins, and is around six times the size of the CPU heatsink. 
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink.jpg)
 
+The heatsink also has a small tolerance window, but with springs it is not quite as small. In the image on the right (below), air moves from right to left.
+
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink_install.png)
+
+Here is a side view of the GPU and heatsink after installation. Interestingly the voltage regulators do not contact the heatsink.
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_side.jpg)
+
+Replacing the acrylic duct, we have the first GPU installed!
 
 ![server]({{https://blbadger.github.io}}/server_setup/installed_gpu.jpg)
 
 ### Power Supply
+
+
 
 ![psu]({{https://blbadger.github.io}}/server_setup/dell_psu.jpg)
 
