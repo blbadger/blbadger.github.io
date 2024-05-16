@@ -24,22 +24,35 @@ What about using another cloud GPU provider like Paperspace or Runpod? Depending
 
 My interest in building a deep learning server came after coming to the estimate that it would be significantly more expensive to buy three 3090s (without upgrading anything else at all) than it would be to build an entire v100 server that would be more capable for DL training by most metrics. I had the same general experience years ago with [high voltage engineering projects](https://blbadger.github.io/#high-voltage): obsolete (by industry standards) industrial equipment is often the cheapest way of accomplishing engineering tasks provided that one has the know-how to work with the equipment out of its intended use niche. On this page I will show you how to do exactly that in the context of a deep learning server.
 
-The model I chose is a Gigabyte T180-G20, which is a 4x V100 server node built to Facebook's Open Compute Project standard. These are very similar to the more common T181-G20 except that they support Intel Xeon E5 2600 v3 and v4 generation CPUs, whereas the 181 supports Intel Xeon Scalable CPUs (which are effectively the next generation of CPU after the v4 E5s) and has more memory DIMMS (24 versus 16). Because the T180-G20s support older CPUs and potentially less memory than the T181s, they are a good deal cheaper and can be had for under a thousand dollars new. Not bad for a machine that supports up to 750 TFLOPs for FMA (fused multiply-add) matrix operations with up to six V100 GPUs (four sxm2 and two PCIE), 192 GB vRAM with the same configuration, and 1024 GB DDR4 RAM. 
+Most deep learning servers with decent GPUs cost many thousands of dollars to buy used, much less new. The main exceptions to this are the Gigabyte T181-G20 and T180-G20, and this is because these servers are built to fit in and be powered by Open Compute Project 1OU racks. These racks are extremely rare and expensive, making even new T181s and T180s relatively indexpensive. Happily, however, these servers run perfectly well outside the OCP rack if supplied with external power from a sufficiently powerful source (12V with at least 80 amps to each of three power sockets). How this may be done will be described later.
 
-In my configuration only the four SXM2 sockets are used for V100s, with 500 TFLOPs at 64GB vRAM as a starting configuration. These SXM2 sockets are interconnected via 300 GBps NVlink, making these four GPUs behave for all purposes as one large GPU. I use the 16GB rather than the 32GB V100 as they are nearly a factor of 10 cheaper. 
+The model I chose is a Gigabyte T180-G20, which is very similar to the T181-G20 except that it supports Intel Xeon E5 2600 v3 and v4 generation CPUs, whereas the T-181 supports Intel Xeon Scalable CPUs (which are effectively the next generation of Intel server CPU after the v4 E5s) and has more memory DIMMS (24 versus 16). For more information on the difference between these servers as well as the other OCP rack entrant from Gigabyte, see [this documentation](https://www.gigabyte.com/FileUpload/TW/MicroSite/354/dl/RACKLUTION-OP_Brochure.pdf) from Gigabyte.
 
-The main exceptions to this are the T181 and T180, and this is because they 
+Because the T180-G20s support older CPUs and potentially less memory than the T181s, they are a good deal cheaper and can be had for under a thousand dollars new. Not bad for a machine that supports up to 750 TFLOPs for FMA (fused multiply-add) matrix operations with up to six V100 GPUs (four sxm2 and two PCIE), 192 GB vRAM with the same configuration, and 1024 GB DDR4 RAM. 
 
+In my initial configuration only the four SXM2 sockets are occupied, each with 16GB V100s with 500 TFLOPs at 64GB vRAM. These SXM2 sockets are interconnected via 300 GBps NVlink, making these four GPUs behave for all purposes as one large GPU. I chose the 16GB rather than the 32GB V100 as they are nearly a factor of 10 cheaper (160 versus >1000 dollars).
 
 ### Hardware Installation
 
+Upon receiving the T180-G20 and opening the box, I was met with the following sight:
+
 ![heatsinks]({{https://blbadger.github.io}}/server_setup/boxed_heatsinks.jpg)
+
+These are the heatsinks for the GPUs (top four) and CPUs (bottom four). These heatsinks contain all the screws necessary pre-installed as well as thermal paste pre-applied, which is a very nice touch but is probably standard in the high performance compute industry. After removing the heatsinks, we find the server itself. In the following picture, the server is oriented where the power sockets are on the left and the I/O ports (and air inlets) are to the right. Note the hardware installation instructions happily present on the top of the case, and the opened HDD/SSD drive tray in the bottom right.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_lid.jpg)
 
+The server even comes with those little storage drive screws which fixes the drive in place as the tray is inserted.
+
 ![server]({{https://blbadger.github.io}}/server_setup/hard_drive_screws.jpg)
 
+This server takes two CPUs which are interconnected and act for most purposes as a single unit. I thought that the Intel Xeon E5 2680 V4 would be a good balance between TDP (120 Watts each) and power (3.3 GHz turbo, with 28 threads, 40 PCIE lanes, and 35 MB caches each). It is remarkable that a CPU of these attributes can be bought for under 20 dollars: to buy a consumer CPU with anywhere near the thread count or PCIE lanes one would have to pay perhaps a hundred times that amount.
+
+The CPU heatsinks are interesting: only half the base plate contains fins, and the whole heatsink is a copper alloy. In the following image you can also see one memory stick installed: this is a 16GB RDIMM RAM module for testing (many more will be added later). As with most servers, only RDIMM or LRDIMM modules may be used.
+
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_heatsink.jpg)
+
+With CPU heatsinks installed, I installed one GPU for testing purposes. In the image below, the four SXM2 sockets are on the left, CPUs on the right, and PCI-E sockets are in the center right. Note the connection to the SXM2 board from one PCI-E socket, leaving the other two free. This connection is limited to 16 
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_internals.jpg)
 
