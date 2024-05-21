@@ -505,7 +505,8 @@ is compared to that for a transformer of the same width, we see that the masked 
 
 ### Transformers with fewer attention heads are more efficient
 
-The observation that the flat mixer performs better than many transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified.
+The observation that the flat mixer performs better than transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified. We have been using 16-headed attention, which corresponds to 16 parallel linear transformations making key, query, and values for each token.
+
 
 ### Implications
 
