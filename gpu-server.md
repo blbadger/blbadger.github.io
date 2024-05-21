@@ -80,6 +80,10 @@ The heatsink has a nice thick base plate and large fins, and is around six times
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink.jpg)
 
+There do not appear to be any heat pipes in the GPU's heatsink, just a hefty base plate (the center of which is copper) and closely spaced fins.
+
+![server]({{https://blbadger.github.io}}/server_setup/through_gpu.jpg)
+
 The heatsink also has a small tolerance window, but with springs it is not quite as small. In the image on the right (below), air moves from right to left.
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink_install.png)
@@ -124,7 +128,9 @@ This makes it easy to connect a monitor, keyboard, ethernet connection, and boot
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_io_connected.jpg)
 
-After powering on, it POSTs! Much of the hardware in this HPC server is managed by Penguin's software, making a linux OS even more fitting.
+After powering on, it POSTs! Note that this server when first booted up is very loud, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after half an hour or so, and the noise becomes much more managable and is what one would expect for a blade server. 
+
+Much of the hardware in this HPC server is managed by Penguin's software, making a linux OS even more fitting.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_post.jpg)
 
@@ -136,19 +142,35 @@ After installing ubuntu-server, we can check the internals. All 56 threads are a
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_htop.jpg)
 
-After checking that the GPU hardware with `sudo lshw -C display` and finding our V100, installing the proper NVIDIA drivers and rebooting allows interfacing with the GPU. Et voila, our V100 is found and is idling for the moment.
+After checking that the GPU hardware with `sudo lshw -C display` and finding our V100, installing the proper NVIDIA drivers and rebooting allows interfacing with the GPU. Et voila, our V100 is found and is idling (although in performance mode, interesting).
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_nvidia-smi.jpg)
 
+### Installing the rest of the hardware
 
+With the test completed, I went ahead and installed the rest of the GPUs and memory sticks. Unfortunately the rest of the GPUs were not pre-cleaned, so I had to wipe some thermal paste off the chip lids.
 
+![server]({{https://blbadger.github.io}}/server_setup/more_gpus.jpg)
 
+I seated the GPUs first before installing the heatsinks. Note that you should never attempt to run a GPU without a heatsink! It will rapidly overheat, and may even turn off automatically. 
 
+![server]({{https://blbadger.github.io}}/server_setup/all_gpus.jpg)
 
+And here is the server with all the GPUs, memory, and heatsinks installed! 
 
+![server]({{https://blbadger.github.io}}/server_setup/full_gpus.jpg)
 
+I had to re-install two of the GPUs a couple times in order to get them to be recognized by the system, and whether this was due to dusty SXM2 pins, incorrectly torqued screws, or just old hardware it is difficult to tell. Happily it is easy to see if a GPU is connected using the `sudo lshw -C display` command
 
+![server]({{https://blbadger.github.io}}/server_setup/full_lshw.jpg)
 
+and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this seems to be typical of SXM-socketed nvidia GPUs, as I have seen the same for cloud A100 clusters. I will probably be changing this to power save mode (p8) for idling to reduce the current draw.
+
+![server]({{https://blbadger.github.io}}/server_setup/full_nvidiasmi.jpg)
+
+And with that everything is installed! We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. It is worth noting that watt-for-watt the V100's performance is practically identical to the A100, which has a TDP of 400W (30% more than the V100), but is typically perhaps 45% faster for real workloads. Not bad for 
+
+While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). 
 
 
 
