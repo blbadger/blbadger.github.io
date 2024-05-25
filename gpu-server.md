@@ -170,7 +170,55 @@ and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly rece
 
 And with that everything is installed! We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. It is worth noting that watt-for-watt the V100's performance is practically identical to the A100, which has a TDP of 400W (30% more than the V100), but is typically perhaps 45% faster for real workloads. Not bad for 
 
-While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). 
+While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards.
+
+### Stress Testing with Deep learning training
+
+Now that the power supply had been sorted out (or so I thought) I went ahead and stress tested the server for workloads typical of what I intended this machine to experience in order to make sure that the GPUs and other hardware elements were performing optimally. 
+
+Launching my `distributed_mixer_trainer.py` module via `torch.distributed.launch` for DDP training via
+
+```bash
+-m torch.distributed.launch \
+  --nproc_per_node=4 \
+  --nnodes=1 \
+  distributed_mixer_trainer.py 
+```
+
+I was in for a surprise: using up to three GPUs (`--nproc_per_node=3`) performed as expected, but adding the fourth caused the GPUs to drop off the bus, or in other words to crash so completely that they cannot be found via `nvidia-smi -q`. The error messages were extremely unhelpful, and essentially conveyed that there was an unknown failure with the GPUs themselves. 
+
+After some reflection I wondered whether this could be due to the power draw being too much for my power supply: even though the supply should be good for 2100W (175 Amps at the terminal), this server is actually designed to be supplied by 200 Amps per terminal and thus is being somewhat underpowered. But if the TDP of the server is 1500W, why would this matter? It turns out that V100s (like A100s and other high-performance datacenter GPUs) are capable of drawing much more current than their maximum rating for short periods of time during boos: I have seen a 16GB V100 SMX2 on this system (rated at 300W) draw nearly 400W. Even this should not be a problem for our server PSUs, but a rapid increase in load (for a PSU not designed for this) might be: in tenths of a second, it is not uncommon to see a V100 go from 150W to 350W. If you multiply this by four, you get nearly 1KW in rapid load increases, which might lead to undervolting. When I tested the power socket voltage during this ramp-up, it indeed did drop to nearly 11V.
+
+A straightforward way to prevent this issue would be to simply limit the amount of current the GPUs may draw. This may be done via `nvidia-smi -pl` followed by an integer corresponding to the number of watts per GPU desired. After enforcing this power limit, we indeed see that the average power does decrease to approximate the limit but that performance is very lightly affected, such that going from 300W -> 200W results in a <10% performance decline for the V100. This is even less that what was observed for [consumer graphics cards](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/), but I ended up having the same GPU bus drop problem as before under full load. 
+
+Close inspection with `watch -n0.1 nvidia-smi` revealed the cause: the average current was lower but the peak current was far above the specified 200 watts per GPU, and even exceeded 300 watts! Clearly the V100s viewed the power limit as more guidelines rather than actual rules, so I resorted to down-clocking the processor to avoid boost as follows:
+
+```bash
+bbadger@servbadge:~/experiments/generative-models/mixer_lm$ sudo nvidia-smi -pm 1
+bbadger@servbadge:~/experiments/generative-models/mixer_lm$ sudo nvidia-smi -ac 877,1005
+```
+where the first command induces persistance and the second specifies the application clock speed in format `<memory_clock,processor_clock`. The exact processor and memory clocks that are allowed are somewhat arbitrary depending on the GPU, and you will have to use `nvidia-smi -q -d SUPPORTED_CLOCKS` to view the clock limits that are supported. Newer GPUs have an `-lgc` flag that can be used to specify a logic versus application clock, but this flag is not present for the V100. 
+
+After applying the clock limit, we have GPUs that are now observing our intended power limit, and training proceeds successfully.
+
+![server]({{https://blbadger.github.io}}/server_setup/training_gpu_power.png)
+
+Note that the GPU in position 2 is running significantly hotter than the others: this is only under load, and is probably due to bad thermal paste or perhaps the heatsink needs to be reseated. 
+
+![server]({{https://blbadger.github.io}}/server_setup/idle_gpu_power.png)
+
+It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1200 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~15% decline in training speed.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
