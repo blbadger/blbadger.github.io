@@ -50,9 +50,17 @@ The server even comes with those little storage drive screws which fixes the dri
 
 ![server]({{https://blbadger.github.io}}/server_setup/hard_drive_screws.jpg)
 
-This server takes two CPUs which are interconnected and act for most purposes as a single unit. I thought that the Intel Xeon E5 2680 V4 would be a good balance between TDP (120 Watts each) and power (3.3 GHz turbo, with 28 threads, 40 PCIE lanes, and 35 MB caches each). It is remarkable that a CPU of these attributes can be bought for under 20 dollars: to buy a consumer CPU with anywhere near the thread count or PCIE lanes one would have to pay perhaps a hundred times that amount.
+This server takes two CPUs which are interconnected and act for most purposes as a single unit. I thought that the Intel Xeon E5 2680 V4 would be a good balance between TDP (120 Watts each) and power (3.3 GHz turbo, with 28 threads, 40 PCIE lanes, and 35 MB caches each). It is remarkable that a CPU of these attributes can be bought for under 20 dollars: to buy a consumer CPU with anywhere near the thread count or PCIE lanes one would have to pay perhaps a hundred times that amount. This CPU has many pins,
 
-The CPU heatsinks are interesting: only half the base plate contains fins, and the whole heatsink is a copper alloy. In the following image you can also see one memory stick installed: this is a 16GB RDIMM RAM module for testing (many more will be added later). As with most servers, only RDIMM or LRDIMM modules may be used.
+![server]({{https://blbadger.github.io}}/server_setup/xeon_pins.jpg)
+
+and here it is ready to be clipped in.
+
+![server]({{https://blbadger.github.io}}/server_setup/cpu_seat.jpg)
+
+To be frank, these two CPUs are extremely overkill for most of the types of workloads I am expecting to run on this machine, that is, CUDA kernals for deep learning and dynamical systems. As we will see later, only one CPU is necessary for excellent performance (and really only a quarter of the cores of one CPU are required). A more powerful CPU does come in handy when one is attempting to perform linear algebraic operations outside the set of matrix multiply, add, convolve, etc: for example, finding the singular value decomposition of a matrix is typically a CPU-intensive process, and there it helps to have all the threads you can get. I will be performing this kind of operation non-infrequently, hence the more powerful CPUs.
+
+The CPU heatsinks are interesting: only half the base plate contains fins, and the whole heatsink is a copper alloy. In the following image you can also see one memory stick installed: this is a 16GB RDIMM RAM module for testing (more were added later). As with most servers, only RDIMM or LRDIMM modules may be used.
 
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_heatsink.jpg)
 
@@ -170,7 +178,11 @@ and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly rece
 
 And with that everything is installed! We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. It is worth noting that watt-for-watt the V100's performance is practically identical to the A100, which has a TDP of 400W (30% more than the V100), but is typically perhaps 45% faster for real workloads. Not bad for 
 
-While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards.
+While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards. 
+
+The PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but it is fairly minimal (12.05v -> 11.95v) and both PSUs are recruited during heavy workloads.
+
+![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
 
 ### Stress Testing with Deep learning training
 
@@ -203,21 +215,31 @@ After applying the clock limit, we have GPUs that are now observing our intended
 
 ![server]({{https://blbadger.github.io}}/server_setup/training_gpu_power.png)
 
-Note that the GPU in position 2 is running significantly hotter than the others: this is only under load, and is probably due to bad thermal paste or perhaps the heatsink needs to be reseated. 
+Note that the GPU in position 2 is running significantly hotter than the others: this is only under load, and was due to an incorrectly torqued heatsink. After tightening, 
 
 ![server]({{https://blbadger.github.io}}/server_setup/idle_gpu_power.png)
 
-It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1200 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~15% decline in training speed.
+It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1290 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~15% decline in training speed.
 
+I should mention one more unexpected cause of stalled training: running `watch -n0.1 nvidia-smi` during training leads to hung CPU threads and frozen memory transfer to one or more GPUs, apparently somewhat randomly. Running the command also leads to significantly slower training, especially when more than one GPU is used: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). These bad behaviours are not observed in my experience for consumer grade hardware (RTX 3060 with i7-12700F) and it is curious why they would manifest here. A simple test to see if this was caused by the NVlink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain.
 
+### Performance
 
+Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060, while having more memory. Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m): with one GPU a certain training run took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 94 seconds. This sort of thing is unheard of without NVLink: it is common to see 20-30% performance degradation for four GPUs that are connected by 16x PCIE lanes to the CPU.
 
+To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization
 
+![server]({{https://blbadger.github.io}}/server_setup/cpu_tokenization.png)
 
+or an even more intensive task, training a model without GPUs,
 
+![server]({{https://blbadger.github.io}}/server_setup/cpu_training.png)
 
+In both cases the majority of thread are heavily utilized. Now for the thread utilization for four-V100 DDP training:
 
+![server]({{https://blbadger.github.io}}/server_setup/all_gpu_training.png)
 
+the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that our 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require ten 16x PCIE lanes.
 
 
 
