@@ -132,13 +132,11 @@ The I/O ports are suprisingly comprehensive for a server: one VGA, three RJ45s, 
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_io.png)
 
-This makes it easy to connect a monitor, keyboard, ethernet connection, and bootable USB (to install ubuntu-server). It is illegal to use a mouse with a Linux server, doing so will lead to Linus finding you and performing a citizen's arrest.
+This makes it easy to connect a monitor, keyboard, ethernet connection, and bootable USB (to install ubuntu-server). There is no reason to connect a mouse as ubuntu-server has no GUI be default (although it is easy to install one). As I am going to `ssh` into this server for almost everything, I did not install a Desktop GUI.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_io_connected.jpg)
 
-After powering on, it POSTs! Note that this server when first booted up is very loud, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after half an hour or so, and the noise becomes much more managable and is what one would expect for a blade server. 
-
-Much of the hardware in this HPC server is managed by Penguin's software, making a linux OS even more fitting.
+After powering on, it POSTs! Much of the hardware in this HPC server is managed by Penguin's software, making a linux OS even more fitting.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_post.jpg)
 
@@ -160,7 +158,7 @@ With the test completed, I went ahead and installed the rest of the GPUs and mem
 
 ![server]({{https://blbadger.github.io}}/server_setup/more_gpus.jpg)
 
-I seated the GPUs first before installing the heatsinks. Note that you should never attempt to run a GPU without a heatsink! It will rapidly overheat, and may even turn off automatically. 
+I seated the GPUs first before installing the heatsinks. Note that you should never attempt to run a GPU without a heatsink! It will rapidly overheat, although it may turn off automatically if you are lucky.
 
 ![server]({{https://blbadger.github.io}}/server_setup/all_gpus.jpg)
 
@@ -172,7 +170,7 @@ I had to re-install two of the GPUs a couple times in order to get them to be re
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_lshw.jpg)
 
-and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this seems to be typical of SXM-socketed nvidia GPUs, as I have seen the same for cloud A100 clusters. I will probably be changing this to power save mode (p8) for idling to reduce the current draw.
+and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this is to be typical of SXM-socketed nvidia GPUs, and indeed the SXM2 V100 cannot be set to any other mode. Note too that watts per GPU at idle has roughly doubled from what it was when a single GPU was installed: this is unsurprising, given that the NVLink connections between GPUs cannot completely idle.
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_nvidiasmi.jpg)
 
@@ -215,11 +213,11 @@ After applying the clock limit, we have GPUs that are now observing our intended
 
 ![server]({{https://blbadger.github.io}}/server_setup/training_gpu_power.png)
 
-Note that the GPU in position 2 is running significantly hotter than the others: this is only under load, and was due to an incorrectly torqued heatsink. After tightening, 
+Note that the GPU in position 2 is running significantly hotter than the others: this is only under load, and was due to an incorrectly torqued heatsink. After tightening, the GPU is more in line with the others and no longer ramps up the fan speed (more on that later).
 
 ![server]({{https://blbadger.github.io}}/server_setup/idle_gpu_power.png)
 
-It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1290 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~15% decline in training speed.
+It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1290 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~13% decline in training speed.
 
 I should mention one more unexpected cause of stalled training: running `watch -n0.1 nvidia-smi` during training leads to hung CPU threads and frozen memory transfer to one or more GPUs, apparently somewhat randomly. Running the command also leads to significantly slower training, especially when more than one GPU is used: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). These bad behaviours are not observed in my experience for consumer grade hardware (RTX 3060 with i7-12700F) and it is curious why they would manifest here. A simple test to see if this was caused by the NVlink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain.
 
@@ -239,7 +237,15 @@ In both cases the majority of thread are heavily utilized. Now for the thread ut
 
 ![server]({{https://blbadger.github.io}}/server_setup/all_gpu_training.png)
 
-the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that our 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require ten 16x PCIE lanes.
+the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that our 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require 160 PCIE lanes.
+
+### Noise
+
+This was one of the things I though hardest about before going the T180/T181 route over a bunch of used 3090s in a PC. The world's best server is useless in a home setting if it sounds like a jet engine, unless one were to make special accommodations such as walling off the server in concrete. This sort of thing did not appeal to me, and while the server was going to be operating in a basement room and could be noisier than the average PC it could not be overly loud.
+
+The reputation of 1U servers (the more common measurement that is most similar to the T180-G20's 1OU form factor) is that they are simply too loud for home use and that they indeed sound like jet engines. This much was even claimed by George Hotz while talking about the motivations for Tinygrad's Tinybox, but I can confirm that it is a bit of a misunderstanding. The potential for a high-performance compute 1OU server such as the T180 for making noise is indeed very high: when first booting up, for example, all 50 of the fans ramp up to their maximum 25000 RPM and the server sounds alot like a jet engine during takeoff, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after a couple minutes, and the noise becomes much more managable and is what one would expect for a blade server (equivalent to a rather loud Desktop PC, just with a timbre more akin to a jet engine).
+
+More importantly, even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM
 
 
 
