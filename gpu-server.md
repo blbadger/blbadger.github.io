@@ -223,13 +223,15 @@ I should mention one more unexpected cause of stalled training: running `watch -
 
 ### Performance
 
-Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060, while having more memory. Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m): with one GPU a certain training run took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 94 seconds. This sort of thing is unheard of without NVLink: it is common to see 20-30% performance degradation for four GPUs that are connected by 16x PCIE lanes to the CPU.
+Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060. The exact difference depends somewhat on the task at hand, and appears to mostly be the result of the difference in memory between these GPUs: the 3060 uses GDDR6 (fast clock, low bandwidth) and the V100 uses HBM2 (slower clock, large bandwidth). Thus for models with small weight matrices the 3060 is more suited, but for larger models the V100's HBM2 becomes far superior. In my tests on a 2048-model dimensional [language mixer](https://blbadger.github.io/smaller-lms.html), a mixed precision training run with the 3060 took 880 seconds, whereas the V100 took 306. The ~3x speedp seems typical of medium-sized models for mixed precision training.
 
-To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization
+Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU the same training run as above took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 93 seconds. This sort of thing is unheard of without NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the NVLink allows us to hit a speedup of 3.88x!
+
+To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization,
 
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_tokenization.png)
 
-or an even more intensive task, training a model without GPUs,
+or a similarly intensive task of performing forward- and back-propegation on a medium-sized model.
 
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_training.png)
 
@@ -245,7 +247,7 @@ This was one of the things I though hardest about before going the T180/T181 rou
 
 The reputation of 1U servers (the more common measurement that is most similar to the T180-G20's 1OU form factor) is that they are simply too loud for home use and that they indeed sound like jet engines. This much was even claimed by George Hotz while talking about the motivations for Tinygrad's Tinybox, but I can confirm that it is a bit of a misunderstanding. The potential for a high-performance compute 1OU server such as the T180 for making noise is indeed very high: when first booting up, for example, all 50 of the fans ramp up to their maximum 25000 RPM and the server sounds alot like a jet engine during takeoff, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after a couple minutes, and the noise becomes much more managable and is what one would expect for a blade server (equivalent to a rather loud Desktop PC, just with a timbre more akin to a jet engine).
 
-More importantly, even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM
+More importantly, even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM provided the ambient temperature is near room temp (72* F).
 
 
 
