@@ -74,7 +74,7 @@ Below is the SXM2 socket with protecting plastic and acrylic fan ducting removed
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_socket.jpg)
 
-The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 0.1nm! This is because there are no springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience.
+The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 5%! This is because there are tiny springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience. To be honest, I would probably just get a precision screwdriver if I were to do this again: I had to go back and re-tighten both heatsink and GPU-board connections multiple times to eliminate various gremlins (a too-warm GPU, GPU that was not recognized at all, strange memory hangs resulting in process kills etc.). To be frank, the SXM2 connection is not nearly as robust as a modern CPU connection.
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_presink.jpg)
 
@@ -229,6 +229,8 @@ It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducin
 
 I should mention one more unexpected cause of stalled training: running `watch -n0.1 nvidia-smi` during training leads to hung CPU threads and frozen memory transfer to one or more GPUs, apparently somewhat randomly. Running the command also leads to significantly slower training, especially when more than one GPU is used: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). These bad behaviours are not observed in my experience for consumer grade hardware (RTX 3060 with i7-12700F) and it is curious why they would manifest here. A simple test to see if this was caused by the NVlink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain.
 
+As a final note, `python3 -m torch.distributed.launch` is a legacy DDP launcher, and I prefer `torchrun` as it is easier and slightly more performant to work with.
+
 ### Performance
 
 Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060. The exact difference depends somewhat on the task at hand, and appears to mostly be the result of the difference in memory between these GPUs: the 3060 uses GDDR6 (fast clock, low bandwidth) and the V100 uses HBM2 (slower clock, large bandwidth). Thus for models with small weight matrices the 3060 is more suited, but for larger models the V100's HBM2 becomes far superior. In my tests on a 2048-model dimensional [language mixer](https://blbadger.github.io/smaller-lms.html), a mixed precision training run with the 3060 took 880 seconds, whereas the V100 took 306. The ~3x speedp seems typical of medium-sized models for mixed precision training.
@@ -255,7 +257,11 @@ This was one of the things I though hardest about before going the T180/T181 rou
 
 The reputation of 1U servers (the more common measurement that is most similar to the T180-G20's 1OU form factor) is that they are simply too loud for home use and that they indeed sound like jet engines. This much was even claimed by George Hotz while talking about the motivations for Tinygrad's Tinybox, but I can confirm that it is a bit of a misunderstanding. The potential for a high-performance compute 1OU server such as the T180 for making noise is indeed very high: when first booting up, for example, all 50 of the fans ramp up to their maximum 25000 RPM and the server sounds alot like a jet engine during takeoff, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after a couple minutes, and the noise becomes much more managable and is what one would expect for a blade server: equivalent to a somewhat noisy Desktop PC, just with a timbre more akin to a jet.
 
-More importantly, even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM provided the ambient temperature is near room temp (72* F). I would not want to run a 1OU HPC server like the T180-G20 in a living room, but in a basement or attic or garage it is virtually unnoticeable outside the room itself.
+More importantly, even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM provided the ambient temperature is near room temp (72* F). I would not want to run a 1OU HPC server like the T180-G20 in a living room, but in a basement or attic or garage it is virtually unnoticeable outside the room itself. If you have ever heard a fan-cooled ebay grow light before, it sounds pretty much identically to that during normal operation.
+
+### Conclusion
+
+To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts of things for around 950 (server) + 160*4 (gpus) + 30 (cpus) + 80 (mem) + 50 (ssd) + 25 (PSUs) = 1775 USD if you are willing to hack a power supply and be patient. 
 
 
 
