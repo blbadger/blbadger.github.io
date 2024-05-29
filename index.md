@@ -351,7 +351,7 @@ n!_k \to ?
 $$
 
 ## Low Voltage
-In many ways less stressful than high voltage engineering, still exciting and rewarding to the practitioner.
+In many ways less stressful than high voltage engineering, still exciting and rewarding.
 
 ### [Deep Learning Server](/gpu-server.md)
 
