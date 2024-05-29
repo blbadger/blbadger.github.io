@@ -174,11 +174,11 @@ and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly rece
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_nvidiasmi.jpg)
 
-And with that everything is installed! We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. It is worth noting that watt-for-watt the V100's performance is practically identical to the A100, which has a TDP of 400W (30% more than the V100), but is typically perhaps 45% faster for real workloads. Not bad for 
+And with that everything is installed! We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. It is worth noting that watt-for-watt the V100's performance is practically identical to the A100, which has a TDP of 400W (30% more than the V100), but is typically perhaps 45% faster for real workloads. 
 
 While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards. 
 
-The PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but it is fairly minimal (12.05v -> 11.95v) and both PSUs are recruited during heavy workloads.
+The PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but both PSUs are recruited during heavy workloads.
 
 ![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
 
@@ -225,7 +225,7 @@ I should mention one more unexpected cause of stalled training: running `watch -
 
 Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060. The exact difference depends somewhat on the task at hand, and appears to mostly be the result of the difference in memory between these GPUs: the 3060 uses GDDR6 (fast clock, low bandwidth) and the V100 uses HBM2 (slower clock, large bandwidth). Thus for models with small weight matrices the 3060 is more suited, but for larger models the V100's HBM2 becomes far superior. In my tests on a 2048-model dimensional [language mixer](https://blbadger.github.io/smaller-lms.html), a mixed precision training run with the 3060 took 880 seconds, whereas the V100 took 306. The ~3x speedp seems typical of medium-sized models for mixed precision training.
 
-Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU the same training run as above took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 93 seconds. This sort of thing is unheard of without NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the NVLink allows us to hit a speedup of 3.88x!
+Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU the same training run as above took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 93 seconds. This sort of thing is unheard of without NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the NVLink allows us to hit a speedup of 3.9x!
 
 To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization,
 
