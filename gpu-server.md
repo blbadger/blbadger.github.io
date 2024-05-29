@@ -182,6 +182,16 @@ The PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from eba
 
 ![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
 
+I also connected the current share pins (which is pin S7) of the two PSUs in an effort to get them to coordinate better under high load. This connection can be with very thin wire as it carries virtually no load (<500mW), so I used insulated AWG 20 wire (black in the picture below).
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_cshare.jpg)
+
+This effort was moderately successful, but there is still a sizeable voltage drop under high load (all four GPUs at ~300W + ~200W CPUs + ~200W fans = ~1600W) which can lead to GPU under-volting and bus drop if this current is drawn for extended periods of time.
+
+![server]({{https://blbadger.github.io}}/server_setup/full_psus.jpg)
+
+Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs, which results in minimal performance degradation (<3%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this
+
 ### Stress Testing with Deep learning training
 
 Now that the power supply had been sorted out (or so I thought) I went ahead and stress tested the server for workloads typical of what I intended this machine to experience in order to make sure that the GPUs and other hardware elements were performing optimally. 
@@ -225,7 +235,7 @@ I should mention one more unexpected cause of stalled training: running `watch -
 
 Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060. The exact difference depends somewhat on the task at hand, and appears to mostly be the result of the difference in memory between these GPUs: the 3060 uses GDDR6 (fast clock, low bandwidth) and the V100 uses HBM2 (slower clock, large bandwidth). Thus for models with small weight matrices the 3060 is more suited, but for larger models the V100's HBM2 becomes far superior. In my tests on a 2048-model dimensional [language mixer](https://blbadger.github.io/smaller-lms.html), a mixed precision training run with the 3060 took 880 seconds, whereas the V100 took 306. The ~3x speedp seems typical of medium-sized models for mixed precision training.
 
-Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU the same training run as above took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 93 seconds. This sort of thing is unheard of without NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the NVLink allows us to hit a speedup of 3.9x!
+Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU the same training run as above took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 92 seconds. This sort of thing is generally not possible NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the very high GPU communication bandwidth allows us to hit a speedup of 3.92x for four GPUs! The same speedups are observed even when the GPU application clock is not limited to 1005 MHz, although in each case there is an approximately ~14% reduction in time at the cost of around 500 watts.
 
 To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization,
 
@@ -239,11 +249,11 @@ In both cases the majority of thread are heavily utilized. Now for the thread ut
 
 ![server]({{https://blbadger.github.io}}/server_setup/all_gpu_training.png)
 
-the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that our 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require 160 PCIE lanes.
+the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that a 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require 160 PCIE lanes.
 
 ### Noise
 
-This was one of the things I though hardest about before going the T180/T181 route over a bunch of used 3090s in a PC. The world's best server is useless in a home setting if it sounds like a jet engine, unless one were to make special accommodations such as walling off the server in concrete. This sort of thing did not appeal to me, and while the server was going to be operating in a basement room and could be noisier than the average PC it could not be overly loud.
+This was one of the things I though hardest about before going the T180/T181 route over a bunch of used 3090s in a PC. The world's best server is useless in a home setting if it has the acoustic properties of a turbojet engine, unless one were to make special accommodations such as walling off the server in concrete. This sort of thing did not appeal to me, and while the server was going to be operating in a basement room and could be noisier than the average PC it could not be overly loud.
 
 The reputation of 1U servers (the more common measurement that is most similar to the T180-G20's 1OU form factor) is that they are simply too loud for home use and that they indeed sound like jet engines. This much was even claimed by George Hotz while talking about the motivations for Tinygrad's Tinybox, but I can confirm that it is a bit of a misunderstanding. The potential for a high-performance compute 1OU server such as the T180 for making noise is indeed very high: when first booting up, for example, all 50 of the fans ramp up to their maximum 25000 RPM and the server sounds alot like a jet engine during takeoff, such that one needs hearing protection to work with it in a small room (testing or setting up ssh, for example). The fans to modulate after a couple minutes, and the noise becomes much more managable and is what one would expect for a blade server (equivalent to a rather loud Desktop PC, just with a timbre more akin to a jet engine).
 
