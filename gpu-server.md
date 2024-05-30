@@ -74,7 +74,7 @@ Below is the SXM2 socket with protecting plastic and acrylic fan ducting removed
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_socket.jpg)
 
-The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 5%! This is because there are tiny springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience. To be honest, I would probably just get a precision screwdriver if I were to do this again: I had to go back and re-tighten both heatsink and GPU-board connections multiple times to eliminate various gremlins (a too-warm GPU, GPU that was not recognized at all, strange memory hangs resulting in process kills etc.). To be frank, the SXM2 connection is not nearly as robust as a modern CPU connection, but this is a small price to pay for huge bandwidth I suppose.
+The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 5%! This is because there are tiny springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience. To be honest, I would probably just get a precision screwdriver if I were to do this again: I had to go back and re-tighten both heatsink and GPU-board connections multiple times to eliminate various gremlins (a too-warm GPU, GPU that was not recognized at all, strange memory hangs resulting in process kills etc). To be frank, the SXM2 connection is not nearly as robust as a modern CPU connection, but this is a small price to pay for huge bandwidth I suppose.
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_presink.jpg)
 
@@ -104,7 +104,9 @@ Replacing the acrylic duct, we have the first GPU installed.
 
 ### Power Supply Units
 
-With a total TDP of around 1500 watts for the chips alone, perhaps the simplest power supply for this server would be a 2000W dell server PSU. Unfortunately these require 240V AC inputs, and I only have 120V outlets. Happily however other dell server PSUs are designed to be run in parallel (as they would be in their native environment) so instead we can just use two 1100W PSUs in parallel (with the current sharing pin connected to avoid burning out one while the other idles). 1100W dell PSUs are very inexpensive on ebay, so I got a couple and started breaking them out (ie making them run outside their intended environment). I used dell z1100p PSUs, not to be confused with l1100e supplies that have very different pins.
+Now we get to a tricky part: powering a 1OU OCP server outside its native habitat (an OCP rack) using power supply units (PSUs) designed for different servers. Whilst most of the safety features of PSUs are retained when doing this (over-draw leads to current trip and shutdown etc.) this is obviously not the intended use of these components and therefore the manufacturers cannot be expected to have planned for it. If you are planning on assembling your own OCP server, proceed at your own risk.
+
+With a total TDP of around 1500 watts for the chips alone, perhaps the simplest power supply would be a 2000W dell server PSU. Unfortunately these require 240V AC inputs, and I only have 120V outlets. Happily however other dell server PSUs are designed to be run in parallel as they would be in their native environment, so instead we can just use two 1100W PSUs in parallel (with the current sharing pin connected to avoid burning out one while the other idles). 1100W dell PSUs are very inexpensive on ebay, so I got a couple and started breaking them out, ie making them run outside their intended environment. I started with dell z1100p PSUs, not to be confused with l1100e supplies that have very different pinouts.
 
 ![psu]({{https://blbadger.github.io}}/server_setup/dell_psu.jpg)
 
@@ -112,7 +114,9 @@ One can buy breakout boards for this purpose, but I thought it would be more fun
 
 ![psu]({{https://blbadger.github.io}}/server_setup/psu_test.jpg)
 
-Power must be supplied to each of the sockets on the right of the server in the photo below (actually one can also bypass the sockets and install a cable into the cages next to the sockets, but I thought this would be more of a pain to do). To get the power from the PSU to sockets I used a combination of 4 AWG battery cable and 1/4" solid copper bus bar. The 4 AWG cable turned out to be overkill, and I would choose 6 or 8 AWG if doing this over.
+Power must be supplied to each of the sockets on the right of the server in the photo below (actually one can also bypass the sockets and install a cable into the cages next to the sockets, but I thought this would be more of a pain to do). Each socket has a +12V (left) and GND (right) connection, and the server expects 80 amps per socket.
+
+To get the power from the PSU to sockets I used a combination of 4 AWG battery cable and 1/4" solid copper bus bar used to insert into the sockets, and for collecting the inputs for the +12V and GND. The 4 AWG cable turned out to be overkill, and I would choose 6 or 8 AWG if doing this over.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_prepower.jpg)
 
@@ -123,6 +127,22 @@ Sawing the bus bar into chunks and drilling for connections allows for one bus b
 Connecting things together with the appropriate hap-hazardness that indicates a test, we have a successful power connection.
 
 ![server]({{https://blbadger.github.io}}/server_setup/test_psu.jpg)
+
+While performing these tests, I noticed that this PSU tended to modulate its fans in response to current draw (which is good) but that it tended to be rather warm when the system itself was powered down (bad, indicates parasitic current draw). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards. 
+
+The new PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but both PSUs are recruited during heavy workloads even without further coordination. This can be seen during experiments where the wattage pulled is greater than a single PSU's rating: doing so results in a reset of the PSU and system crash if one is used, but with two there is no such failure.
+
+![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
+
+I also connected the current share pins (which is pin S7) of the two PSUs in an effort to get them to coordinate better under high load. This connection can be with very thin wire as it carries virtually no load (<500mW), so I used insulated AWG 20 wire (black in the picture below). I alwo used proper copper ring lugs to make the high-current connections to and from the sockets.
+
+![server]({{https://blbadger.github.io}}/server_setup/gpu_cshare.jpg)
+
+This effort was moderately successful, but there is still a sizeable voltage drop under high load (all four GPUs at ~300W + 200W CPUs + 200W other = ~1600W) which can lead to GPU under-volting and GPU bus drop if this amount of current is drawn for extended periods of time.
+
+![server]({{https://blbadger.github.io}}/server_setup/full_psus.jpg)
+
+Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs (pulling around 1400W total), which results in minimal performance degradation (<5%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this and run at 200W per GPU. But if one were to want to train on full clock speed and power for extended periods of time, I would recommend getting a single 2KW server PSU and wiring a 240V wall socket if necessary, as this route is by far the simplest and maintenance-free route.
 
 ### Test
 
@@ -174,22 +194,6 @@ and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly rece
 
 We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. A little-appreciated fact is that watt-for-watt the V100's performance is similar to the A100, which has a TDP of 400W (30% more than the V100), but the A100 typically perhaps 45% faster for real workloads. 
 
-While performing these tests, I noticed that my test PSU (a Dell z1100p) tended to modulate its fans in response to current draw (which is good) but that the PSU tended to be rather warm when the system itself was powered down (bad). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards. 
-
-The PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but both PSUs are recruited during heavy workloads.
-
-![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
-
-I also connected the current share pins (which is pin S7) of the two PSUs in an effort to get them to coordinate better under high load. This connection can be with very thin wire as it carries virtually no load (<500mW), so I used insulated AWG 20 wire (black in the picture below).
-
-![server]({{https://blbadger.github.io}}/server_setup/gpu_cshare.jpg)
-
-This effort was moderately successful, but there is still a sizeable voltage drop under high load (all four GPUs at ~300W + ~200W CPUs + ~200W fans = ~1600W) which can lead to GPU under-volting and bus drop if this current is drawn for extended periods of time.
-
-![server]({{https://blbadger.github.io}}/server_setup/full_psus.jpg)
-
-Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs, which results in minimal performance degradation (<3%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this. But if one were to want to train on full clock speed and power, I would recommend getting a single 2KW server PSU.
-
 ### Stress Testing with Deep learning training
 
 Now that the power supply had been sorted out (or so I thought) I went ahead and stress tested the server for workloads typical of what I intended this machine to experience in order to make sure that the GPUs and other hardware elements were performing optimally. 
@@ -227,7 +231,9 @@ Note that the GPU in position 2 is running significantly hotter than the others:
 
 It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1290 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~13% decline in training speed.
 
-I should mention two unexpected hiccups: firstly, running `watch -n0.1 nvidia-smi` leads to significantly slower training especially when more than one GPU is used: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). These bad behaviours are not observed in my experience for consumer grade hardware (RTX 3060 with i7-12700F) and it is curious why they would manifest here. A simple test to see if this was caused by the NVlink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain.
+That said, once these tests were completed I connected the PSU current share pins (see the PSU section for more information) and after doing so the GPUs were able to run at 300W each without problems. I consider the 400W total saved to be worth a 13% performance drop, and continue to run the GPUs as 200W each.
+
+I should mention two unexpected hiccups: firstly, running `watch -n0.1 nvidia-smi` leads to significantly slower training especially when more than one GPU is used: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). This is a much more noticeable drop than for consumer grade hardware (RTX 3060 with i7-12700F) and it is unknown why it occurs. A simple test to see if this was caused by the NVLink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain.
 
 Secondly, I experienced difficult-to-pin-down training process hangs and freezes which manifested as `nv_queue` processes taking nearly all a CPU's compute followed by interrupt requests (`irq/57-nvidia`) that also froze. Close inspection reveals that these are associated with `nccl` communication problems, which means the GPUs are not communicating properly with each other or the CPU. I was able to solve this problem by simply tightening the screws that affix the GPUs to the SXM2 socket.
 
