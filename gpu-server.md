@@ -130,7 +130,7 @@ Connecting things together with the appropriate hap-hazardness that indicates a 
 
 While performing these tests, I noticed that this PSU tended to modulate its fans in response to current draw (which is good) but that it tended to be rather warm when the system itself was powered down (bad, indicates parasitic current draw). Because of this (and because I accidentally stripped a pin during a de-solder process of one of the PSUs) I switched my original plan to instead use a similar PSU but with breakout boards. 
 
-The new PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but both PSUs are recruited during heavy workloads even without further coordination. This can be seen during experiments where the wattage pulled is greater than a single PSU's rating: doing so results in a reset of the PSU and system crash if one is used, but with two there is no such failure.
+The new PSUs are two Dell l1100e-s1 modules with adjustable breakout boards from ebay. There is some voltage drop from the breakout board output to the server power socket, but both PSUs are recruited during heavy workloads even without further coordination. This can be seen during experiments where the wattage pulled is greater than a single PSU's rating if we use only a single PSU: doing so results in a reset of the PSU and system crash, and unfortunately fried one of my RAM stick in the process. With both PSUs connected there is no such failure. 
 
 ![server]({{https://blbadger.github.io}}/server_setup/final_psu.jpg)
 
