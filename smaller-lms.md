@@ -472,7 +472,7 @@ Transformer ($n=8$ layers, $h=16$ attention heads, $b=16$ batch size unless othe
 
 with the flat mixer (n=8, b=16)
 
-|  | $d_{model} = 256$ | $d_{m}=512$ | $d_{m}=1024$ | $d_m=2014$, b=32 | $d_{m}=2048$ | 
+|  | $d_{model} = 256$ | $d_{m}=512$ | $d_{m}=1024$ | $d_m=1024$, b=32, n=4 | $d_{m}=2048$ | 
 | -------- | ------- | -------- | ------- | -------- | -------- |
 | Train | 2.11 | 1.84 | 1.81 | 1.78 | 2.05 | 
 | Test  | 2.15 | 1.89 | 1.86 | 1.84 | 2.07 | 
@@ -505,8 +505,57 @@ is compared to that for a transformer of the same width, we see that the masked 
 
 ### Transformers with fewer attention heads are more efficient
 
-The observation that the flat mixer performs better than transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified. We have been using 16-headed attention, which corresponds to 16 parallel linear transformations making key, query, and values for each token.
+The observation that the flat mixer performs better than transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified. We have been using 16-headed attention, which corresponds to 16 parallel linear transformations making key, query, and values for each token. We can simply reduce this number by supplying the desired $n$ number of attention heads as follows:
 
+```python
+llama_config_kwargs = {
+    ...
+    'num_attention_heads': n,
+}
+```
+
+Conceptually this may be thought of as changing the number of simultaneous combinations of previous tokens' value vectors that the model 'considers' for each next token. A single-headed attention model would be somewhat similar to a flat mixer, as each would have a single value corresponding to the attention between any two tokens. The best-performing 16-head attention transformer was $d_m=512, n_l=8$ and when we reduce the number of attention heads while keeping the compute the same, we have the following for 12 hours of 3060:
+
+|  | $n_{heads} = 16$ | $n_h=8$ | $n_h=4$ | $n_h=2$ |
+| -------- | ------- | -------- | ------- | -------- |
+| train loss | 1.87 | 1.70 | 1.66 | 1.68 |
+| eval loss | 1.91 | 1.77 | 1.71 | 1.73 |
+
+The main reason for this performance increase is that the smaller number of attention heads results in more samples seen during training in a given compute budget: for example, if we compare the loss after a fixed number of inputs seen we find that the 2-headed attention is not as effective as the 16-headed attention, at 1.96 train and 1.98 eval for two heads versus 1.87 train and 1.90 eval loss for 16 heads after half an epoch.
+
+It might be wondered if this more efficint transformer might have better input representation, but we find that the opposite is true: 
+
+### Mixers do not benefit from positional encoding
+
+By learning values for each combination of two tokens, the masked mixer learns an implicit absolute positional encoding and would not be expected to benefit from more positional encoding information. We can provide positional information in the form of a simple one-element addition to the first block's input vector as follows:
+
+
+```python
+class LanguageMixer(nn.Module):
+
+	def __init__(self, n_vocab, dim, depth, tokenized_length, batch_size, tie_weights=False):
+		...
+
+	def forward(self, input_ids, labels=None):
+		...
+		tokenized_length, batch_size = x.shape[-1], x.shape[0]
+		positional_tensor = rearrange(self.positions, '(s b) -> s b', b = tokenized_length).unsqueeze(0).unsqueeze(-1)
+		positional_tensor = positional_tensor.repeat(batch_size, 1, 1, 1)
+		x = self.wte(x)
+		x = torch.cat((x, positional_tensor), dim=-1)
+		positional_tensor = positional_tensor.squeeze(1).squeeze(-1)
+		x[..., -1] = positional_tensor
+		for block in self.mixerblocks:
+			x = block(x)
+		output = self.lm_head(x[..., :-1])
+```
+but after doing so we see virtually no change in performance after our one unit of compute has been applied. If we instead apply the positional information to every block via
+```	...
+		for block in self.mixerblocks:
+			x = block(x)
+			x[..., -1] = positional_tensor
+```
+we see detrimental effects on training.
 
 ### Implications
 
@@ -514,9 +563,9 @@ Seeking to make a more efficient learning algorithm than a transformer, we used 
 
 It is worth restating the more noteworthy findings of this work as concisely as possible:
 
-1. Language mixers of equivalent 'size' ($d_{model}$ and $n$ layers) may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
+1. Language mixers of equivalent 'size' in terms of $d_{model}$ and $n$ layers may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
 2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
-3. Our mixer implementation uses no traditional regularization techniques (but does not overfit to any greater degree than the transformer), instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets.
+3. Our mixer implementation uses no traditional regularization techniques, instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets. It does not overfit to a greater extent than the transformer, however.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
 
 
