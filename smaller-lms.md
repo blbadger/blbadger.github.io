@@ -535,6 +535,7 @@ class LanguageMixer(nn.Module):
 
 	def __init__(self, n_vocab, dim, depth, tokenized_length, batch_size, tie_weights=False):
 		...
+		self.positions = torch.arange(-tokenized_length//2, tokenized_length//2, 1).to(device)
 
 	def forward(self, input_ids, labels=None):
 		...
@@ -555,7 +556,7 @@ but after doing so we see virtually no change in performance after our one unit 
 			x = block(x)
 			x[..., -1] = positional_tensor
 ```
-we see detrimental effects on training.
+we see detrimental effects on training: our final loss is 1.94 train and 2.10 eval.
 
 ### Implications
 
