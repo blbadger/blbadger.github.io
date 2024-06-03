@@ -138,9 +138,19 @@ I also connected the current share pins (which is pin S7) of the two PSUs in an 
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_cshare.jpg)
 
-This effort was moderately successful, but there is still a sizeable voltage drop under high load (all four GPUs at ~300W + 200W CPUs + 200W other = ~1600W) which can lead to GPU under-volting and GPU bus drop if this amount of current is drawn for extended periods of time.
+This effort was moderately successful, but there is still a sizeable voltage drop under high load (all four GPUs at ~300W + 200W CPUs + 200W other = ~1600W) which can lead to GPU under-volting and GPU bus drop if this amount of current is drawn for extended periods of time. It was not uncommon to see terminal voltages around 11.2V in this configuration under high load.
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_psus.jpg)
+
+Unfortunately, under high load (all four GPUs running) over extended periods of time I found that the bannana plug breakout board connections were getting much too hot such that one of the plug's plastic sleeves ended up melting within the first few dozen experiments. The bannana plug in question was loose and probably would not have melted the plastic if it was tight, but the plugs tend to get loose over time spontaneously. It turns out that the common bannana plugs such as these are rated for only 15A, and at 1kW we would expect both PSU's plugs to operate at 42A if they share the current load perfectly, so it is not surprising that the bannana plugs were overheating.
+
+The highest-rated plug on these breakout boards is the XT60 plug in the upper right: this is rated at a maximum of 60A, meaning that a continuous draw of around 45 should be pretty safe. I got some XT60 male plugs with leads and attached those to the existing terminals as follows:
+
+![server]({{https://blbadger.github.io}}/server_setup/xt60_connection.jpg)
+
+and sure enough the plugs get warm to the touch but not hot under load. The XT60 plug setup also prevents the voltage drops that I was seeing when the bannana plugs were used, and the voltage rarely drops under 11.85V under load. 
+
+![server]({{https://blbadger.github.io}}/server_setup/xt60_final.jpg)
 
 Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs (pulling around 1400W total), which results in minimal performance degradation (<5%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this and run at 200W per GPU. But if one were to want to train on full clock speed and power for extended periods of time, I would recommend getting a single 2KW server PSU and wiring a 240V wall socket if necessary, as this route is by far the simplest and maintenance-free route.
 
