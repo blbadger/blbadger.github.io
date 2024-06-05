@@ -355,7 +355,7 @@ In many ways less stressful than high voltage engineering, still exciting and re
 
 ### [Deep Learning Server](/gpu-server.md)
 
-![DL server]({{https://blbadger.github.io}}server_setup/gpu_cover.jpg)
+![DL server]({{https://blbadger.github.io}}server_setup/server_coverphoto.jpg)
  	
 ## High Voltage 
 High voltage engineering projects: follow the links for more on arcs and plasma.
