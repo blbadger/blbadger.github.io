@@ -1,6 +1,6 @@
 ## Deep Learning Server
 
-When one thinks of state-of-the-art deep learning models, one might tend to think of enormous data centers with thousands of GPUs training models with billions or trillions of parameters. While large computing clusters are indeed necessary for training a variety of models, they are not at all necessary to do interesting work in the field.
+When one thinks of state-of-the-art deep learning models, one might imagine enormous data centers with thousands of GPUs training models with billions or trillions of parameters. While large computing clusters are indeed necessary for training a variety of models, they are not at all necessary to do interesting work in the field.
 
 On this page, I will detail the process of building a high-performance compute server node with four V100 GPUs for less than the cost of a single RTX 4090, but with around triple the GPU memory and compute (assuming 16/32 bit mixed precision training).
 
@@ -12,7 +12,7 @@ For the past couple of years, I have been using the following rig for experiment
 
 which consists of i7-12700F with 48GB RAM, an RTX 3060 with 12 GB vRAM and (more recently added) a GTX 1060 with 6GB vRAM on a Gigabytre B660m motherboard. This is a very capable computer for smaller experiments, and I have used it for the majority of the deep learning work I have written about in preprints or on the blog.
 
-But this system is certainly not ideal for training larger models or more extensive experimentation. This is because the GPU compute one can bring to bear (the 3060) has relatively low memory bandwidth (360 GBps) and CUDA core count (3584) such that it is not particularly fast at training the models that it can fit in the 12 GB vRAM, even accounting for the FP16 support and asynchronous memory copy features that are present in Nvidia's Ampere architecture. The 1060 was really only added for small-scale experiment work and software development purposes, as it is significantly slower (around two thirds the speed to be precise) than the 3060 and therefore would slow down training significantly were it to be used in parallel. This is a notable difference from other applications such as crypto mining, where the cluster runs at a sum speed of all individual GPUs. For deep learning the cluster will typically increase in speed with more parallelization, but will also be bottlenecked by slower GPUs if there is a large enough difference in their compute (especially for training). I typically perform training runs of no more than a few days, on models that are under 1 billion parameters (for foundational models) due to these limitations. To test methods and ideas that appear promising on this relatively modest amount of compute, I wanted to try upgrading my system. 
+But this system is certainly not ideal for training larger models or more extensive experimentation. This is because the GPU compute one can bring to bear (the 3060) has relatively low memory bandwidth (360 GBps) and CUDA core count (3584) such that it is not particularly fast at training the models that it can fit in the 12 GB vRAM, even accounting for the FP16 support and asynchronous memory copy features that are present in Nvidia's Ampere architecture. The 1060 was really only added for small-scale experiment work and software development purposes, as it is significantly slower (around two thirds the speed to be precise) than the 3060 and therefore would slow down training significantly were it to be used in parallel. This is a notable difference from other applications such as crypto mining, where the cluster runs at a sum speed of all individual GPUs. For deep learning the cluster will typically increase in speed with more parallelization, but will also be bottlenecked by slower GPUs if there is a large enough difference in their compute (especially for training). I typically perform training runs of no more than a few days, on models that are under 1 billion parameters (for foundational models) due to these limitations. To test methods and ideas that appear promising on this relatively modest amount of compute, I wanted to try upgrading. 
 
 The most straightforward way to make a significant upgrade to this rig (with some semblance of affordability) would be to buy some used RTX 3090s and use PCIE extenders and a beefier power source or two for my current system. I came very close to choosing this route, but decided against it for a number of reasons: firstly because the B660 mobo has 5 PCIE slots but four of those are 1x PCIE 3.0, meaning 1 GBps data transfer for all GPUs except one. This is not really a problem for inference, but will slow down the gradient synchronization step for very large models during distributed training (especially for 4 or more GPUs). Secondly, 3090s run quite hot (up to 600 watts per gpu) and my PC resides in a small room, and thirdly because mixed precision training (where weights are stored in FP16 and gradients and norms in FP32) is not optimal on these GPUs due to their lack of full FP16 acceleration.
 
@@ -40,19 +40,15 @@ Upon receiving the T180-G20 and opening the box, I was met with the following si
 
 ![heatsinks]({{https://blbadger.github.io}}/server_setup/boxed_heatsinks.jpg)
 
-These are the heatsinks for the GPUs (top four) and CPUs (bottom two). These heatsinks contain all the screws necessary pre-installed as well as thermal paste pre-applied, which is a very nice touch but is probably standard in the high performance compute industry. After removing the heatsinks, we find the server itself. In the following picture, the server is oriented where the power sockets are on the left and the I/O ports (and air inlets) are to the right. Note the hardware installation instructions happily present on the top of the case, and the opened HDD/SSD drive tray in the bottom right.
+These are the heatsinks for the GPUs (top four) and CPUs (bottom two). These heatsinks contain all the screws necessary pre-installed as well as thermal paste pre-applied, which is a very nice touch but is probably standard in the high performance compute industry. After removing the heatsinks, we find the server itself. In the following picture, the server is oriented where the power sockets are on the left and the I/O ports (and air inlets) are to the right. Note the hardware installation instructions happily present on the top of the case, and the opened HDD/SSD drive tray in the bottom right. The server even comes with those little storage drive screws which fixes the drive in place as the tray is inserted.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_lid.jpg)
 
-The server even comes with those little storage drive screws which fixes the drive in place as the tray is inserted.
-
-![server]({{https://blbadger.github.io}}/server_setup/hard_drive_screws.jpg)
-
-This server takes two CPUs which are interconnected and act for most purposes as a single unit. I thought that the Intel Xeon E5 2680 V4 would be a good balance between TDP (120 Watts each) and power (3.3 GHz turbo, with 28 threads, 40 PCIE lanes, and 35 MB caches each). It is remarkable that a CPU of these attributes can be bought for under 20 dollars: to buy a consumer CPU with anywhere near the thread count or PCIE lanes one would have to pay perhaps a hundred times that amount. This CPU has far more pins than the i7 12700K, and the lid is somewhat reminiscent of an AMD Ryzen. It tends to make removing thermal paste messy, as you can see,
+This server takes two CPUs which are interconnected and act for most purposes as a single unit, although it can run with only one. I thought that the Intel Xeon E5 2680 V4 would be a good balance between TDP (120 Watts each) and power (3.3 GHz turbo, with 28 threads, 40 PCIE lanes, and 35 MB caches each). It is remarkable that a CPU of these attributes can be bought for under 20 dollars: to buy a consumer CPU with anywhere near the thread count or PCIE lanes one would have to pay perhaps a hundred times that amount. This CPU has far more pins than the i7 12700K, and the lid is somewhat reminiscent of an AMD Ryzen. It tends to make removing thermal paste messy, as you can see:
 
 ![server]({{https://blbadger.github.io}}/server_setup/xeon_pins.jpg)
 
-and here it is ready to be clipped in.
+and here it is ready to be clipped in:
 
 ![server]({{https://blbadger.github.io}}/server_setup/cpu_seat.jpg)
 
@@ -69,10 +65,6 @@ With CPU heatsinks installed, I installed one GPU for testing purposes. In the i
 The V100 arrived nice and clean with a mirror finish on the lid. The large grey 'TR21...' modules are voltage regulators, and if you have seen an SXM2 P100 this will look very familiar except for the GV100 chip. 
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_lid.jpg)
-
-Below is the SXM2 socket with protecting plastic and acrylic fan ducting removed. Two screws have to be removed before installing each V100.
-
-![server]({{https://blbadger.github.io}}/server_setup/gpu_socket.jpg)
 
 The hardware installation guide warns you that there is a very fine tolerance window for the screws that fasten the GPU to SXM2 board: less than 5%! This is because there are tiny springs used to modulate torque. It is recommended to use a precision torque screwdriver for installation, but I winged it with a small-bore screwdriver and lots of patience. To be honest, I would probably just get a precision screwdriver if I were to do this again: I had to go back and re-tighten both heatsink and GPU-board connections multiple times to eliminate various gremlins (a too-warm GPU, GPU that was not recognized at all, strange memory hangs resulting in process kills etc). To be frank, the SXM2 connection is not nearly as robust as a modern CPU connection, but this is a small price to pay for huge bandwidth I suppose.
 
@@ -148,11 +140,11 @@ The highest-rated plug on these breakout boards is the XT60 plug in the upper ri
 
 ![server]({{https://blbadger.github.io}}/server_setup/xt60_connection.jpg)
 
-and sure enough the plugs get warm to the touch but not hot under load. The XT60 plug setup also prevents the voltage drops that I was seeing when the bannana plugs were used, and the voltage rarely drops under 11.85V under load. 
+and sure enough the plugs get warm to the touch but not hot under load. The XT60 plug setup also prevents the voltage drops that I was seeing when the bannana plugs were used, and the voltage rarely drops under 11.85V under load. Here is the voltage at the terminal under around 1.1kW:
 
 ![server]({{https://blbadger.github.io}}/server_setup/xt60_final.jpg)
 
-Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs (pulling around 1400W total), which results in minimal performance degradation (<5%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this and run at 200W per GPU. But if one were to want to train on full clock speed and power for extended periods of time, I would recommend getting a single 2KW server PSU and wiring a 240V wall socket if necessary, as this route is by far the simplest and maintenance-free route.
+Thus the dual l1100e-s1 PSUs with breakout boards and current share pins connected certainly provides more current than only one PSU would, but not quite as much as the two should under full load (2100 Watts at 120V input). In practice this means that the GPUs need to be limited to 250W each for training runs (pulling around 1400W total), which results in minimal performance degradation (<5%). Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power even more than this and run at 200W per GPU. But if one were to want to train on full clock speed and power for extended periods of time, I would recommend getting a single 2KW server PSU and wiring a 240V wall socket if necessary, as this route is by far the simplest and maintenance-free route.
 
 ### Test
 
@@ -253,7 +245,7 @@ As a final note, `python3 -m torch.distributed.launch` is a legacy DDP launcher,
 
 Now we can test the performance. Happily it is very good! Depending on the workload, each V100 is between two and four times faster than my RTX 3060. The exact difference depends somewhat on the task at hand, and appears to mostly be the result of the difference in memory between these GPUs: the 3060 uses GDDR6 (fast clock, low bandwidth) and the V100 uses HBM2 (slow clock, large bandwidth). Thus for models with small weight matrices the 3060 is relatively better-suited, but for larger models the V100's HBM2 becomes far superior. In my tests on a 2048-model dimensional [language mixer](https://blbadger.github.io/smaller-lms.html), a mixed precision training run with the 3060 took 880 seconds, whereas a single V100 took 286. This ~3.1x speedup seems typical of medium-sized models for mixed precision training, and aligns with what is expected from theoretical values from Dettmer's [blog post](https://timdettmers.com/2023/01/30/which-gpu-for-deep-learning/).
 
-Now we get to enjoy the fruits of our SXM2 socket labor as well: because the inter-GPU bandwidth is a whopping 300GB/s, there is virtually no per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model (~300m parameters) with some current and clock limiting for power reduction: with one GPU a similar training run took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 92 seconds. This sort of thing is generally not possible NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the very high GPU communication bandwidth allows us to hit a speedup of 3.92x for four GPUs! The same speedups are observed even when the GPU application clock is not limited to 1005 MHz, although in each case there is an approximately ~14% reduction in time at the cost of around 500 watts.
+We also get to enjoy the fruits of our SXM2 socket labor: because the inter-GPU bandwidth is a whopping 300GB/s, there is very little per-GPU performance decrease when parallelizing a workload using distributed data parallel for a medium-small model with ~300m parameters, with some current and clock limiting for power reduction: with one GPU a similar training run took 361 seconds, with two 180 seconds, with three 121 seconds, and with all 4 GPUs 92 seconds. This sort of thing is generally not possible NVLink: it is common to see speedups of between 3.5x and 3.6x for four GPUs that are connected by 16x PCIE lanes to the CPU. Here the very high GPU communication bandwidth allows us to hit a speedup of 3.92x for four GPUs! The same speedups are observed even when the GPU application clock is not limited to 1005 MHz, although in each case there is an approximately ~14% reduction in time at the cost of around 500 watts.
 
 To substantiate the claims made earlier that the CPU core number is quite overkill for training deep learning models, observe the single-Xeon 2680 (with 28 threads) CPU utilization for a CPU-intensive task such as fast tokenization,
 
@@ -269,7 +261,7 @@ In both cases the majority of thread are heavily utilized. Now for the thread ut
 
 the cores utilized count is small because the DDP defaults to a single thread per GPU, with a few threads saved for data loading. Increasing the number of threads per GPU in my experience does not result in better performance and indeed often leads to detrimental effects. Because of this, we can estimate that a 28-thread CPU could support nearly two dozen GPUs if the PCIE lane count were high enough! The 4x V100 SXM2 board requires two 16x PCIE lanes, so 20x V100s would require 160 PCIE lanes.
 
-That said, having a large number of cores can come in very handy for CPU-bound tasks such as tokenization or more complicated linear algebraic
+That said, having a large number of cores can come in very handy for CPU-bound tasks such as tokenization or more complicated linear algebraic tasks, and certainly makes cpu tokenization quicker. Because of this I run the server with both CPUs installed rather than just one.
 
 ### Noise
 
