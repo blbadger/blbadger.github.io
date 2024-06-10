@@ -82,17 +82,15 @@ There do not appear to be any heat pipes in the GPU's heatsink, just a hefty bas
 
 ![server]({{https://blbadger.github.io}}/server_setup/through_gpu.jpg)
 
-The heatsink also has a small tolerance window, but with springs it is not quite as small. In the image on the right (below), air moves from right to left.
-
-![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink_install.png)
-
+The heatsink also has a small tolerance window, but with springs it is not quite as small. 
 Here is a side view of the GPU and heatsink after installation. Interestingly the voltage regulators do not contact the heatsink.
 
 ![server]({{https://blbadger.github.io}}/server_setup/gpu_side.jpg)
 
-Replacing the acrylic duct, we have the first GPU installed.
+With that, the first GPU is installed. In the image on the right (below), air moves from right to left.
 
-![server]({{https://blbadger.github.io}}/server_setup/installed_gpu.jpg)
+![server]({{https://blbadger.github.io}}/server_setup/gpu_heatsink_install.png)
+
 
 ### Power Supply Units
 
