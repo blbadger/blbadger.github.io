@@ -6,7 +6,7 @@ This page is a continuation from [Part 1](https://blbadger.github.io/3-body-prob
 
 Most nonlinear dynamical systems are fundamentally irreducible: one cannot come up with a computational procedure to determine the parameters of some object at any given time in the future using a fixed amount of computation.  This means that these systems are inherently sequential to some extent. This being the case, there are still many problems that benefit from computations that do not have to proceed in sequence.  One particular example is the problem of finding which positions in a given plane are stable for the trajectory of three bodies in space.  This problem can be approached by determining the stability of various starting locations in sequence, but it is much faster to accomplish this goal by determining the stabilities at various starting locations in parallel.  In [Part 1](https://blbadger.github.io/3-body-problem.html) this parallel computation was performed behind the scenes using the Python `torch` library, which abstracts away the direct computation of tensors on parallelized computational devices like graphics processing units (GPUs) or tensor processing units.
 
-Even with the use of the [optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) torch library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute: this is due to the large number of iteration required (50,000 or more), the large size of each array (18 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point).
+Even with the use of the [optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) torch library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute on an entry level gaming GPU: this is mostly due to the large number of iteration required (50,000 or more), the large size of each array (18 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point, which gaming GPUs are flow with in general).
 
 ### A CUDA kernal for divergence
 
@@ -710,6 +710,17 @@ There is a problem with this approach, however: at very small scales, the use of
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/linear_multistep_artefacts.png)
 
 These are evidently numerical instabilities in the calculation of the three body divergence, which leads to discrete shifts in stability for adjacent pixels (which is not expected to occur for our simulation unless the number of time steps heads towards infinity and the initial shift heads towards zero).  These instabilities lead to repetitive shifts in stability, where alternating patterns of stable and unstable regions exist.
+
+### Distributed divergence kernal
+
+We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although the other optimizations when stacked together yield a significant 4x decrease in runtime.
+
+Perhaps the easiest way to decrease the runtime of our three body kernal is to simply choose a device that is best suited for the type of computation requried. In particular, the RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU (P100, V100, A100 etc.) with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime. 
+
+Another way to speed up the computational process is to use more than one GPU. This is a common approach in the field of deep learning, where large models are trained on thousands of GPUs simultaneously. Sophisticated algorithms are required for efficient use of resources during deep learning training, but the three body problem simulation is happily much simpler with respect to GPU memory movement: we only need to move memory onto the GPU at the start of the computation, and move it back to the CPU at the end.
+
+
+
 
 
 
