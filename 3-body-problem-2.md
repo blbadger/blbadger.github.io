@@ -711,13 +711,50 @@ There is a problem with this approach, however: at very small scales, the use of
 
 These are evidently numerical instabilities in the calculation of the three body divergence, which leads to discrete shifts in stability for adjacent pixels (which is not expected to occur for our simulation unless the number of time steps heads towards infinity and the initial shift heads towards zero).  These instabilities lead to repetitive shifts in stability, where alternating patterns of stable and unstable regions exist.
 
-### Distributed divergence kernal
+### Parallelizing across many GPUs
 
 We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although the other optimizations when stacked together yield a significant 4x decrease in runtime.
 
 Perhaps the easiest way to decrease the runtime of our three body kernal is to simply choose a device that is best suited for the type of computation requried. In particular, the RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU (P100, V100, A100 etc.) with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime. 
 
-Another way to speed up the computational process is to use more than one GPU. This is a common approach in the field of deep learning, where large models are trained on thousands of GPUs simultaneously. Sophisticated algorithms are required for efficient use of resources during deep learning training, but the three body problem simulation is happily much simpler with respect to GPU memory movement: we only need to move memory onto the GPU at the start of the computation, and move it back to the CPU at the end.
+Another way to speed up the computational process is to use more than one GPU. This is a common approach in the field of deep learning, where large models are trained on thousands of GPUs simultaneously. Sophisticated algorithms are required for efficient use of resources during deep learning training, but the three body problem simulation is happily much simpler with respect to GPU memory movement: we only need to move memory onto the GPU at the start of the computation, and move it back to the CPU at the end. 
+
+This is somewhat easier said than done, however. A naive approach would be to split each original array into however many parts as we have GPUs and then run our kernal on each GPU, and then combine the parts together. This approach has a few problems, however: firstly it would require a substantial re-write of our codebase, secondly copying memory from CUDA device to host must require pre-allocated space which is difficult in this scenario, and more importantly because the GPUs will not execute their kernals in parallel but in sequence. Because of this, we need to modify our approach. The goal will be to do so without modifying the kernal itself, as it is highly optimized already.
+
+Perhaps the most straightforward way to do this is to work in the single thread, multiple data paradigm. The essentials of this approach applied to one array are shown below:
+
+![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/distributed_threebody.png)
+
+Briefly, we first allocate CPU memory for each array in question (shown is the divergence iteration number array but also required are all positions, velocities etc.), find which index corresponds to an even split of this flattened array and make pointers to those positions, allocate GPU memory for each section and copy from CPU, asynchronously run the computations on the GPUs (such that the slowest device determines the speed), and asynchronously copy back to CPU memory.  This is all performed by one thread, and happily this approach requires no change to the `divergence()` kernal itself.
+
+The first step (allocating CPU memory) requires a change in our driver code, however: asynchronous copy to and most importantly from the GPU requires paged-locked memory, rather than the pageable memory get when calling `malloc()`. Happily we can allocate and page-lock memory using the `cudaHostAlloc` call as follows: for our `times` divergence array of `int`s, we allocate using the address of our `times` pointer with the correct size and allocation properties.
+
+```cuda
+int *times,
+cudaHostAlloc((void**)&times, N*sizeof(int), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+```
+
+This replaces our `malloc()` used in the previous section. We repeat this for all arrays (x, y, z, velocity etc.) and can then initialize the arrays with values exactly as before, ie 
+
+```cuda
+int resolution = sqrt(N);
+double range = 40;
+double step_size = range / resolution;
+for (int i = 0; i < N; i++) {
+	times[i] = 0;
+}
+```
+After allocation and initialization, we can send 
+```
+// launch GPUs using one thread
+for (int i=0; i<n_gpus; i++){
+	std::cout << "GPU number " << i << " initialized" << "\n";
+	// assumes that n_gpus divides N with no remainder, which is safe as N is a large square.
+	int start_idx = (N/n_gpus)*i;
+	int end_idx = start_idx + N/n_gpus;
+	int block_n = N/n_gpus;
+	cudaSetDevice(i);
+```
 
 
 
