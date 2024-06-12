@@ -744,8 +744,16 @@ for (int i = 0; i < N; i++) {
 	times[i] = 0;
 }
 ```
-After allocation and initialization, we can send 
+After allocation and initialization, we can find the number of GPUs we have to work with automatically. This can be done using the `cudaGetDeviceCount` function which expects a pointer to an integer, and assigns that integer the proper value via the pointer.
+
+```cuda
+int n_gpus;
+cudaGetDeviceCount(&n_gpus);
 ```
+
+Now that our arrays are allocated and initialized and we know the number of gpus in our system, we can proceed with distributing the arrays among the GPUs. 
+
+```cuda
 // launch GPUs using one thread
 for (int i=0; i<n_gpus; i++){
 	std::cout << "GPU number " << i << " initialized" << "\n";
