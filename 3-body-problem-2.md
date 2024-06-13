@@ -751,7 +751,7 @@ int n_gpus;
 cudaGetDeviceCount(&n_gpus);
 ```
 
-Now that our arrays are allocated and initialized and we know the number of gpus in our system, we can proceed with distributing the arrays among the GPUs. 
+Now that our arrays are allocated and initialized and we know the number of gpus in our system, we can proceed with distributing the arrays among the GPUs present. This is done by supplying `cudaSetDevice()` with an integer corresponding to the GPU number (0, 1, 2, etc.). As we are splitting each array into $n_gpus$ parts, it is helpful to assign variables to the number of array elements per GPU (`block_n`) as well as the starting and ending pointer positions for each block.
 
 ```cuda
 // launch GPUs using one thread
@@ -764,8 +764,19 @@ for (int i=0; i<n_gpus; i++){
 	cudaSetDevice(i);
 ```
 
+Now we can proceed as before, using memory allocations such as `cudaMalloc(&d_p1_x, block_n*sizeof(double));` for each necessary sub-array of size `block_n`. After doing this we can copy just the GPU's block of memory to each allocated space (we don't actually need to specify an asynchronous memory copy)
 
+```cuda
+	cudaMemcpy(d_p1_x, p1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
+```
+and call the kernal `divergence<<<(block_n+127)/128, 128>>>`. After the kernal is called we need to asynchronously copy memory back to the CPU as follows:
 
+```cuda
+	cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
+```
+which allows the loop to continue without waiting for each GPU to finish its computation and send data back to the CPU memory.
+
+There is one last ingredient we need: a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. The last note is that calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation.
 
 
 
