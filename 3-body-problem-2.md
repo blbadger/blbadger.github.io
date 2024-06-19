@@ -1,6 +1,6 @@
 ## Three body problem II: Simulating Divergence with Parallelized Computation
 
-This page is a continuation from [Part 1](https://blbadger.github.io/3-body-problem.html), where simulations of the three body problem are explored.  Here we explore the computation of simulated trajectories using a parallelized computer achitecture, ending with am optimized CUDA kernal that is around five times as fast as the Pytorch code introduced in Part 1.
+This page is a continuation from [Part 1](https://blbadger.github.io/3-body-problem.html), where simulations of the three body problem are explored.  Here we explore the computation of simulated trajectories using a parallelized computer achitecture, ending with am optimized CUDA kernel that is around five times as fast as the Pytorch code introduced in Part 1.
 
 ### Introduction
 
@@ -8,7 +8,7 @@ Most nonlinear dynamical systems are fundamentally irreducible: one cannot come 
 
 Even with the use of the [optimized](https://pytorch.org/tutorials/advanced/cpp_extension.html) torch library, however, computation of stable and unstable locations takes a substantial amount of time.  Most images displayed in [part 1](https://blbadger.github.io/3-body-problem.html) require around 18 minutes to compute on an entry level gaming GPU: this is mostly due to the large number of iteration required (50,000 or more), the large size of each array (18 arrays with more than a million components each) and even the data type used (double precision 64-bit floating point, which gaming GPUs are flow with in general).
 
-### A CUDA kernal for divergence
+### A CUDA kernel for divergence
 
 Here we will explore speeding up the three body computation by writing our own GPU code, rather than relying on torch to supply this when given higher-level instructions.  The author has an Nvidia GPU and code on this page will therefore be written in C/C++ CUDA (Compute Unified Device Architecure).  The code contains a standard C++ -style library inclusion and function initialization (C or C++ execution always begins with `main()`), all of which is performed on the CPU.  Here we first initialize some constants for the three body similation.
 
@@ -93,7 +93,7 @@ Now we copy each array from the CPU to the GPU
   cudaMemcpy(d_p1_x, p1_x, N*sizeof(double), cudaMemcpyHostToDevice);
 ```
 
-and now we can run the CUDA kernal, keeping track of the time spent by initializing a start time clock.
+and now we can run the CUDA kernel, keeping track of the time spent by initializing a start time clock.
 
 ```c++
 std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -113,24 +113,24 @@ divergence<<<(N+255)/256, 256>>>(
 
 ```
 
-CUDA functions are termed 'kernals', and are called by the kernal name followed by the number of grid blocks and threads per block for execution. We call our CUDA function by `divergence<<<blocks, threads_per_block>>>(args)`. The denominator of the `blocks` must equal the `threads_per_block` for this experiment for reasons detailed below.
+CUDA functions are termed 'kernels', and are called by the kernel name followed by the number of grid blocks and threads per block for execution. We call our CUDA function by `divergence<<<blocks, threads_per_block>>>(args)`. The denominator of the `blocks` must equal the `threads_per_block` for this experiment for reasons detailed below.
 
-We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernal instructions have been sent to the GPU.
+We have to synchronize the GPU before measuring the time of completion, as otherwise the code will continue executing in the CPU after the kernel instructions have been sent to the GPU.
 
 ```c++
-  // don't proceed until kernal run is complete
+  // don't proceed until kernel run is complete
   cudaDeviceSynchronize();
-  // measure elapsed kernal runtime
+  // measure elapsed kernel runtime
   end = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_seconds = end - start;
   std::time_t end_time = std::chrono::system_clock::to_time_t(end);
   std::cout << "Elapsed Time: " << elapsed_seconds.count() << "s\n";
 ```
 
-A typical CUDA kernal declaration is `__global__ void funcname(args)` although `__device__` may also be used.  For brevity, only the first planet's arrays are included below but note that the full kernal requires all three planet arrays.
+A typical CUDA kernel declaration is `__global__ void funcname(args)` although `__device__` may also be used.  For brevity, only the first planet's arrays are included below but note that the full kernel requires all three planet arrays.
 
 ```c++
-// kernal declaration
+// kernel declaration
 __global__
 void divergence(int n, 
               int steps,
@@ -150,14 +150,14 @@ void divergence(int n,
               double *nv1_prime_x, double *nv1_prime_y, double *nv1_prime_z,
 )
 ```
-Parallelized computation must now be specified: in the following code, we define index `i` to be a certain block's thread, in one dimension as this is how the arrays were defined as well. Note that as the array is 1D, `blockDim.x` will always evaluate to 1.  The arrangement of blocks and threads in our kernal call is now clearer, as each thread is responsible for one index.
+Parallelized computation must now be specified: in the following code, we define index `i` to be a certain block's thread, in one dimension as this is how the arrays were defined as well. Note that as the array is 1D, `blockDim.x` will always evaluate to 1.  The arrangement of blocks and threads in our kernel call is now clearer, as each thread is responsible for one index.
 
 ```c++
 {
   int i = blockIdx.x*blockDim.x + threadIdx.x;
 ```
 
-Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernal.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime with no other optimizations performed).
+Now the trajectory simulation computations are performed. In the spirit of refraining from as much data transfer from the CPU to the GPU and back, we will perform the simulation calculations entirely inside the GPU by moving the trajectory loop to the CUDA kernel.  This is notably different than the pytorch approach, where the loop existed on the CPU side (in python) and the GPU was instructed to perform one array computation at a time. It can be shown that moving the loop to the GPU saves a small amount of time, although less than what the author would expect (typically ~5% of runtime with no other optimizations performed).
 
 Moving the loop to the GPU does have another substantial benefit, however: it reduced the electrical power required by the GPU and CPU during the simulation.  For the GPU alone, the internal loop typically requires around 100 watts whereas the external loop usually takes around 125 watts on an Nvidia RTX 3060.
 
@@ -198,9 +198,9 @@ For each index `i` corresponding to one CUDA thread, $steps$ iterations of the t
 
 The same needs to be done for all `x, y, z` vectors of `p1, p2, p3` in order to track all the necessary trajectories.  In total we have 63 vectors to keep track of, which makes the cuda code somewhat unpleasant to write even with the help of developer tools.
 
-The cuda kernal with driver code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Linux users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's RTX 3060) may not be compatible with the latest linux kernal version, so downgrading to an older kernal version may be necessary. The author has found that kernal version `5.19.0-45-generic` is compatible with recent versions of `nvcc`, and this can be selected in the 'advanced options' of the linux boot menu for Ubuntu 22.04.
+The cuda kernel with driver code can be compiled via `nvcc`, which is available through the nvidia cuda toolkit.  Ubuntu Desktop users be warned that the drivers necessary for full Nvidia toolkit use with an Ampere architecture GPU (such as the author's RTX 3060) may not be compatible with the latest linux kernel version available, so downgrading to an older kernel version may be necessary. The author has found that kernel version `5.19.0-45-generic` is compatible with recent versions of `nvcc`, and this can be selected in the 'advanced options' of the linux boot menu for Ubuntu 22.04. This is not necessary for Ubuntu Server 22.04, which by default runs a `5.15.0-112-generic` Linux kernel and seems to have no issues with nvidia compiler and toolkit compatibility.
 
-Those wishing to compile CUDA code via `nvcc` should note that there are two CUDA versions in each distribution: the runtime API version and the driver version.  The driver version should meet or exceed the runtime API software version, which can be checked by ensuring that the CUDA version displayed in the upper right hand corner of the readout called by entering `nvidia-smi` in bash meets or exceeds that shown when calling `nvcc --version`.
+Those wishing to compile CUDA code via `nvcc` should note that there are two CUDA versions in each distribution: the runtime API version and the driver version as used by the compiler (and another, the driver version such as `535.171.04` that will not be discussed here).  The driver version should meet or exceed the runtime API software version, which can be checked by ensuring that the CUDA version displayed in the upper right hand corner of the readout called by entering `nvidia-smi` in bash meets or exceeds that shown when calling `nvcc --version`. This is usually the case if you install using automatic package managers, but if for some reason the runtime API version is exceeded by the driver version then the compiler will be riddled with problems and will be unusable and thus should be re-installed (looking at you, Databricks ML runtime 13.x). For Ubuntu server 22.04 with V100s, for example, you typically default to a runtime API `nvcc` version 11.5 with a 12.2 CUDA driver.
 
 Here we compile with the flag `-o` followed by the desired file name where the compiled binary program will be stored.
 
@@ -221,15 +221,15 @@ Compare this to the Pytorch library version of the same problem (see [part 1](ht
 [Finished in 107.1s]
 ```
 
-Pytorch employs some optimizations in its CUDA code, so this difference is not particularly surprising and only indicates that the movement of the loop into the cuda kernal does not offer the same performance benefit as other optimizations that are possible.  In future sections we explore methods to optimize the cuda kernal further to achieve faster runtimes for the three body problem than are available using torch.
+Pytorch employs some optimizations in its CUDA code, so this difference is not particularly surprising and only indicates that the movement of the loop into the cuda kernel does not offer the same performance benefit as other optimizations that are possible.  In future sections we explore methods to optimize the cuda kernel further to achieve faster runtimes for the three body problem than are available using torch.
 
 ### Getting data from CUDA to Numpy
 
-We can compare the planetary array elements from our CUDA kernal to those found for the torch version to be sure that our kernal's computational procedure is correct. But what if we want to plot the divergence map generated by our CUDA kernal?  For the sake of comparison, let's say that we want to plot our array using the same color map as was presented in [part 1](https://blbadger.github.io/3-body-problem.html).  There are no C++ CUDA libraries (to the author's knowledge) that implement the Matlab-style mathematical plots that `matplotlib` does, but that is a python library and cannot be directly applied to C-style arrays.
+We can compare the planetary array elements from our CUDA kernel to those found for the torch version to be sure that our kernel's computational procedure is correct. But what if we want to plot the divergence map generated by our CUDA kernel?  For the sake of comparison, let's say that we want to plot our array using the same color map as was presented in [part 1](https://blbadger.github.io/3-body-problem.html).  There are no C++ CUDA libraries (to the author's knowledge) that implement the Matlab-style mathematical plots that `matplotlib` does, but that is a python library and cannot be directly applied to C-style arrays.
 
 Thus we want a way to send our C++ CUDA-computed arrays (specifically the `*int times` array) from CUDA C++ to Python for manipulation and visualization there.  Perhaps the most straighforward way of accomplishing this task is to use the versatile `ctypes` library, which 
 
-The use of `ctypes` can get quite complex, but in this case we can apply this library with only a few lines of code. First we need the proper headers in our `.cu` file containing the CUDA kernal and driver C++ code.
+The use of `ctypes` can get quite complex, but in this case we can apply this library with only a few lines of code. First we need the proper headers in our `.cu` file containing the CUDA kernel and driver C++ code.
 
 ```c++
 #! C++ CUDA
@@ -237,7 +237,7 @@ The use of `ctypes` can get quite complex, but in this case we can apply this li
 #include <cuda_runtime_api.h>
 ```
 
-It should be noted that some standard C++ CUDA libraries (ie `<equation.h>`) are incompatible with the CUDA runtime API, so some care must be taken in choosing the header files for a project that involves `ctypes`.  Next we leave the kernal the same as before, but change the main function declaration, which was
+It should be noted that some standard C++ CUDA libraries (ie `<equation.h>`) are incompatible with the CUDA runtime API, so some care must be taken in choosing the header files for a project that involves `ctypes`.  Next we leave the kernel the same as before, but change the main function declaration, which was
 
 ```c++
 int main(void)
@@ -258,10 +258,10 @@ extern "C" {
 where we provide the proper return type (here a pointer to an integer array). This code can be compiled by `nvcc` and sent to a `.so` (dynamic library) file with the proper flags:
 
 ```bash
-(base) bbadger@pupu:~/Desktop/threebody$ nvcc -Xcompiler -fPIC -shared -o divergence.so divergence_kernal.cu
+(base) bbadger@pupu:~/Desktop/threebody$ nvcc -Xcompiler -fPIC -shared -o divergence.so divergence_kernel.cu
 ```
 
-where our CUDA kernal is located in `divergence_kernal.cu` and we are sending the compiled library to `divergence.so`.  Now we can call the `divergence` function in our `.so` file using `ctypes as follows:
+where our CUDA kernel is located in `divergence_kernel.cu` and we are sending the compiled library to `divergence.so`.  Now we can call the `divergence` function in our `.so` file using `ctypes as follows:
 
 ```python
 #! python
@@ -295,7 +295,7 @@ plt.savefig('Threebody_divergence_cuda.png', bbox_inches='tight', pad_inches=0, 
 plt.close()
 ```
 
-when we compare a 1000x1000 array after 50,000 time steps using our CUDA kernal to the Torch-based calculation, we find that the output is identical (although with optimization the computation time is reduced by a factor of 2.4).
+when we compare a 1000x1000 array after 50,000 time steps using our CUDA kernel to the Torch-based calculation, we find that the output is identical (although with optimization the computation time is reduced by a factor of 2.4).
 
 ![profile]({{https://blbadger.github.io}}/3_body_problem/cuda_vs_torch.png)
 
@@ -307,14 +307,14 @@ Many data-parallelized programs implemented on GPUs spend more clock cycles (and
 
 ![profile]({{https://blbadger.github.io}}/3_body_problem/nvidia-nsight.png)
 
-It may therefore be wondered how much time our kernal spends reading and writing memory within the GPU itself, which for most consumer hardware is one form of vRAM or another.  GPUs have a few types of memory, and modern nvidia GPUs typically have what is termed global memory (which is the vRAM storage and is by far the largest form of memory available), shared local memory, and register memory (which was the smallest capacity and is usually reserved for variables). Speed is inversely proportional to the amount of storage the memory element contains, as is the case for different types of CPU memory.  In particular, global memory is not actually very fast at all and the idea is that the GPU hides this slow memory access via massive data parallelization.
+It may therefore be wondered how much time our kernel spends reading and writing memory within the GPU itself, which for most consumer hardware is one form of vRAM or another.  GPUs have a few types of memory, and modern nvidia GPUs typically have what is termed global memory (which is the vRAM storage and is by far the largest form of memory available), shared local memory, and register memory (which was the smallest capacity and is usually reserved for variables). Speed is inversely proportional to the amount of storage the memory element contains, as is the case for different types of CPU memory.  In particular, global memory is not actually very fast at all and the idea is that the GPU hides this slow memory access via massive data parallelization.
 
-When arrays (such as `double *p1_x`) are read or written to the GPU they are by default stored in global memory, which means that we may suspect our kernal as written above to be slower than overwise it perhaps might be because each thread reads and writes many array elements many times over, typically dozens of elements during each iteration. If global memory is indeed accessed at each iteration, it would be expected that changing the memory access pattern to use shared or register elements would drastically speed up the kernal.
+When arrays (such as `double *p1_x`) are read or written to the GPU they are by default stored in global memory, which means that we may suspect our kernel as written above to be slower than overwise it perhaps might be because each thread reads and writes many array elements many times over, typically dozens of elements during each iteration. If global memory is indeed accessed at each iteration, it would be expected that changing the memory access pattern to use shared or register elements would drastically speed up the kernel.
 
-Fortunately it is not too hard to change the memory access to register from global memory in the main loop of our CUDA kernal: all we have to do is to assign variables to the proper array elements before the loop commences, and then use only those variables until the loop ends.  Variables are by default stored in register memory, so we should not have any global memory access operations if we stick to using only variables in the loop.
+Fortunately it is not too hard to change the memory access to register from global memory in the main loop of our CUDA kernel: all we have to do is to assign variables to the proper array elements before the loop commences, and then use only those variables until the loop ends.  Variables are by default stored in register memory, so we should not have any global memory access operations if we stick to using only variables in the loop.
 
 ```cuda
-// kernal declaration
+// kernel declaration
 __global__
 void divergence(int n, 
               int steps,
@@ -334,7 +334,7 @@ void divergence(int n,
 ..
 ```
 
-This approach has the added benefit of reducing the number of arguments to the `void divergence()` kernal, as intermediate variable arrays `nv1, dv_1_x` etc. can be initialized inside the kernal,
+This approach has the added benefit of reducing the number of arguments to the `void divergence()` kernel, as intermediate variable arrays `nv1, dv_1_x` etc. can be initialized inside the kernel,
 
 ```cuda
 double nv1x, nv1y, nv1z;
@@ -350,7 +350,7 @@ and in the loop we use these variables to avoid any array read/write operations
                  -9.8 * m_3 * (p1x - p3x) / pow(sqrt(pow(p1x - p3x, 2) + pow(p1y - p3y, 2) + pow(p1z - p3z, 2)), 3);
 ```
 
-and we can also avoid any `if` statements in the kernal (branches are typically slow for massively parallelized programming frameworks) as follows:
+and we can also avoid any `if` statements in the kernel (branches are typically slow for massively parallelized programming frameworks) as follows:
 
 ```
 	// find which trajectories have diverged and increment times_ind
@@ -382,9 +382,9 @@ The intermediate variables are updated at each iteration, and at the end of the 
     times[i] = times_ind;
 ```
 
-Running this kernal, however, shows us that there is practically no difference in time saved when we avoid all inner loop array calls. This is because modern CUDA compiler versions optimize memory management for operations like this by default, such that the previously-read array elements are cached in registers without requiring explicit register allocation.  This indicates that our kernal is not memory-limitted but instead is compute-limited.
+Running this kernel, however, shows us that there is practically no difference in time saved when we avoid all inner loop array calls. This is because modern CUDA compiler versions optimize memory management for operations like this by default, such that the previously-read array elements are cached in registers without requiring explicit register allocation.  This indicates that our kernel is not memory-limitted but instead is compute-limited.
 
-Now that we have convinced ourselves that the three body problem simulation is not memory bandwidth-limited, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernal operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
+Now that we have convinced ourselves that the three body problem simulation is not memory bandwidth-limited, some experimentation can convince us that by far the most effective single change is to forego use of the `pow()` cuda kernel operator for simply multiplying together the necessary operands.  The reason for this is that the cuda `pow(base, exponent)` is designed to handle non-integer `exponent` values which make the evaluatation a [transcendental function](https://forums.developer.nvidia.com/t/register-usage-of-pow/23104), which on the hardware level naturally requires many more registers than one or two multiplication operations.
 
 Thus we can forego the use of the `pow()` operator for direct multiplication in order to optimize the three body trajectory computation.  This change makes a somewhat-tedious CUDA code block become extremely tedious to write, so we can instead have a Python program write out the code for us.  
 
@@ -433,7 +433,7 @@ if (still_together[i] == 1){
       };
 ```
 
-and the like. Finally, we can halt the CUDA kernal if a trajectory has diverged. This allows us to prevent the GPU from continuing to compute the trajectories of starting values that
+and the like. Finally, we can halt the CUDA kernel if a trajectory has diverged. This allows us to prevent the GPU from continuing to compute the trajectories of starting values that
 have already diverged, which don't yield any useful information.
 
 ```c++
@@ -454,14 +454,14 @@ With these optimizations in place, we have for a resolution of $300^2$ a runtime
 Elapsed Time: 44.9377s
 ```
 
-which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations at a resolution of $1000^2$ we have a runtime of 771s for the optimized CUDA kernal but 1951s for the `torch` version (a 2.53x speedup) and for $i=200,000$ we have 1181s for our CUDA kernal but 4390s for the torch version (3.7x speedup).  As the CUDA kernal is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernal execution configuration can lead to modest speedups as well.
+which is a ~2.4x speedup compared to the `torch` code, a substantial improvement.  These optimizations become more effective as the number of iterations increases (and thus the area of the input that has already diverged increases): for example, for $i=90,000$ iterations at a resolution of $1000^2$ we have a runtime of 771s for the optimized CUDA kernel but 1951s for the `torch` version (a 2.53x speedup) and for $i=200,000$ we have 1181s for our CUDA kernel but 4390s for the torch version (3.7x speedup).  As the CUDA kernel is executed block-wise such that the computation only halts if all $i$ indicies for that block evaluate to `false`, decreasing the block size (and concomitantly the number of threads per block) in the kernel execution configuration can lead to modest speedups as well.
 
 
 ### Data precision optimization
 
 Calculations performed in 64-bit double precision floating point format are in the case of the three body problem not optimally efficient.  This is because double precision floating point numbers (according to the IEEE 754 standard) reserve 11 bits for denoting the exponent, but the three body trajectories for the cases observed in [Part 1](https://blbadger.github.io/3-body-problem.html) rarely fall outside the range $[-1000, 1000]$.  This means that we are effectively wasting 9 bits of information with each calculation, as the bits encode information that is unused for our simulations.
 
-Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to 400MB vRAM from 685MB for double precision floating point. But single precision computation is also much faster: 50k iterations require only 215s with our optimized kernal (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
+Memory optimizations for GPUs go far beyond the goal of fitting our calculation into a device's vRAM (virtual random access memory, ie global GPU memory). To give an example, suppose we wanted to use 32-bit single precision floating point data for the three body problem computations. For a $1000^2$ resolution three body divergence computation, this decreases the memory requirements to 400MB vRAM from 685MB for double precision floating point. But single precision computation is also much faster: 50k iterations require only 215s with our optimized kernel (see above), which is less than half the time (472s) required for the same number of iterations using double precision.  
 
 Thus we could make a substantial time and memory optimization by simply converting to single precision floating point data, but this comes with a problem: single precision leads to noticeable artefacts in the resulting divergence array, which are not present when performing computation using double precision.  Observe in the following plot the grainy appearance of the boundary of diverging regions near the center-right (compare this to the plots using double precision above).
 
@@ -501,7 +501,7 @@ Unfortunately, fixed point arithmetic does not particularly effective here becau
 
 Instead of changing the precision of all array elements in our simulation, we instead consider the idea that the precision of certain computations may be less important than the precision of others.  If this is the case, then we can change the precision of those precision-insensitive computations to decrease the program run-time without affecting the precision of the divergence plot itself.  
 
-Some quick experimentation convinces us that most of the CUDA kernal compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of the $a_n$ acceleration computation,
+Some quick experimentation convinces us that most of the CUDA kernel compute time in the three body divergence simulation is taken up by the planet acceleration computations rather than the array element updates or the divergence checks themselves.  When considering one term of the $a_n$ acceleration computation,
 
 $$
 a_1 = \cdots -Gm_3\frac{p_1 - p_3}{\left( \sqrt{(p_{1, x} - p_{3, x})^2 + (p_{1, y} - p_{3, y})^2 + (p_{1, z} - p_{3, z})^2} \right) ^3}
@@ -509,7 +509,7 @@ $$
 
 it may be wondered whether some of the computations in the denominator need to be quite as precise as those of the numerator.  This is because for each $x, y, z$ difference terms in the denominator are raised to a power of three (which necessarily reduces the accuracy after the decimal point for floating point arithmetic) and because the denominator simply scales the numerator and does not change the vector direction.
 
-After some more experimentation we find that this guess is accurate (at least for the $x, y$ scale used previously, note that at a smaller spatial scale there is a noticeable difference in noise).  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernal).  For $i=200,000$ iterations with the same resolution the fully optimized kernal requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernal version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence (at least not at this scale), which was what we wanted.
+After some more experimentation we find that this guess is accurate (at least for the $x, y$ scale used previously, note that at a smaller spatial scale there is a noticeable difference in noise).  Replacing each `sqrt()` with a single-precision (rounded down) square root function `__fsqrt_rd()` for $i=90,000$ iterations at a resolution of $1000^2$ we have a total runtime of 525s, which is 3.72x faster than the `torch` version (and 1.5x faster than the `sqrt` kernel).  For $i=200,000$ iterations with the same resolution the fully optimized kernel requires only 851s, which is a speedup of 5.2x from the torch version.  Accuracy in the divergence estimation itself is not affected, however, as the divergence plot remains identical to the double-precision square root kernel version as seen below at $i=90,000$. Thus we find that reducing the precision of the square root functions in the denominator did not change the trajectory simulations with respect to divergence (at least not at this scale), which was what we wanted.
 
 ![sqrt compare]({{https://blbadger.github.io}}/3_body_problem/sqrt_compare.png)
 
@@ -535,11 +535,11 @@ Such a zoom video becomes computationally feasible for a single GPU using the op
 
 This video demonstrates a manifestation of why the three body problem is unsolvable: extreme sensitivity to initial conditions.  Here we see that at scales down to the width of an atom, stable and unstable trajectories may be arbitrarily close to one another.  It is not hard to see that this phenomenon is by no means limited to the scales we have investigated here but extends towards the infinitely small. Indeed, sensitivity to initial conditions stipulates that for any point in our x, y grid any other point arbitrarily close will eventually diverge, but difference in relative stability will also tend to infinity as $t \to \infty$ and $x_0 - x'_0 \to 0$.
 
-This method is straightforward to implement but results in an increase in the amount of computation required for each successively smaller field of view. Practically speaking this means that even with the optimized CUDA kernal, it takes days to finish the computations required for a zoom video from the tens of meters range (in $x, y$) down to the micrometer range. A little experimentation shows us that subsituting the single-precision square root operation for the double-precision is no longer sufficient around the millimeter scale, as noise begins to overwhelm the divergence plot patterns if this substitution is made. 
+This method is straightforward to implement but results in an increase in the amount of computation required for each successively smaller field of view. Practically speaking this means that even with the optimized CUDA kernel, it takes days to finish the computations required for a zoom video from the tens of meters range (in $x, y$) down to the micrometer range. A little experimentation shows us that subsituting the single-precision square root operation for the double-precision is no longer sufficient around the millimeter scale, as noise begins to overwhelm the divergence plot patterns if this substitution is made. 
 
 How can we reduce the amount of computation per frame in a video on divergence? In other words, given a sequence of divergence maps of decreasing domain sizes, centered on the same region, can we reduce the amount of computation required for some or all of these maps? One way to reduce the total computation amount is to attempt to re-use previously computed values: if the divergence values for $(x, y)$ coordinates calcuated at one scale are again needed at a smaller scale, we can simply save that divergence value and look it up rather than re-calculating.
 
-To implement this cached zoom approach, we can either save values in a cache in C++ such that the cache memory is not freed each time the kernal is called or else we can have the cache in the Python code that uses `ctypes` to interface with our .so CUDA kernal.  Here we will explore the latter, although there is no real expected performance difference between these approaches. 
+To implement this cached zoom approach, we can either save values in a cache in C++ such that the cache memory is not freed each time the kernel is called or else we can have the cache in the Python code that uses `ctypes` to interface with our .so CUDA kernel.  Here we will explore the latter, although there is no real expected performance difference between these approaches. 
 
 Therefore we start by initializing our `already_computed` cache as a Python dictionary
 
@@ -590,7 +590,7 @@ Now we assemble an array of all locations that we do not have a stored value for
 	length_x, length_y = len(x), len(y)
 ```
 
-and next we need to modifying the CUDA kernal driver C++ function to accept array objects (pointers) `x, y`.
+and next we need to modifying the CUDA kernel driver C++ function to accept array objects (pointers) `x, y`.
 
 ```python
 	f = ctypes.CDLL('./divergence_zoom.so').divergence
@@ -612,7 +612,7 @@ and next we need to modifying the CUDA kernal driver C++ function to accept arra
 		ctypes.c_int
 		] 
 
-	f.restype = ctypes.POINTER(ctypes.c_int * length_x) # kernal return type
+	f.restype = ctypes.POINTER(ctypes.c_int * length_x) # kernel return type
 	arr = f(x_res, y_res, time_steps, x_center, x_range, y_center, y_range, shift_distance, x, y, length_x).contents
 	time_array = np.array(arr)
 	flattened_arr = time_array.flatten()
@@ -715,17 +715,17 @@ These are evidently numerical instabilities in the calculation of the three body
 
 We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although the other optimizations when stacked together yield a significant 4x decrease in runtime.
 
-Perhaps the easiest way to decrease the runtime of our three body kernal is to simply choose a device that is best suited for the type of computation requried. In particular, the RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU (P100, V100, A100 etc.) with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime. 
+Perhaps the easiest way to decrease the runtime of our three body kernel is to simply choose a device that is best suited for the type of computation requried. In particular, the RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU (P100, V100, A100 etc.) with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime. 
 
 Another way to speed up the computational process is to use more than one GPU. This is a common approach in the field of deep learning, where large models are trained on thousands of GPUs simultaneously. Sophisticated algorithms are required for efficient use of resources during deep learning training, but the three body problem simulation is happily much simpler with respect to GPU memory movement: we only need to move memory onto the GPU at the start of the computation, and move it back to the CPU at the end. 
 
-This is somewhat easier said than done, however. A naive approach would be to split each original array into however many parts as we have GPUs and then run our kernal on each GPU, and then combine the parts together. This approach has a few problems, however: firstly it would require a substantial re-write of our codebase, secondly copying memory from CUDA device to host must require pre-allocated space which is difficult in this scenario, and more importantly because the GPUs will not execute their kernals in parallel but in sequence. Because of this, we need to modify our approach. The goal will be to do so without modifying the kernal itself, as it is highly optimized already.
+This is somewhat easier said than done, however. A naive approach would be to split each original array into however many parts as we have GPUs and then run our kernel on each GPU, and then combine the parts together. This approach has a few problems, however: firstly it would require a substantial re-write of our codebase, secondly copying memory from CUDA device to host must require pre-allocated space which is difficult in this scenario, and more importantly because the GPUs will not execute their kernels in parallel but in sequence. Because of this, we need to modify our approach. The goal will be to do so without modifying the kernel itself, as it is highly optimized already.
 
 Perhaps the most straightforward way to do this is to work in the single thread, multiple data paradigm. The essentials of this approach applied to one array are shown below:
 
 ![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/distributed_threebody.png)
 
-Briefly, we first allocate CPU memory for each array in question (shown is the divergence iteration number array but also required are all positions, velocities etc.), find which index corresponds to an even split of this flattened array and make pointers to those positions, allocate GPU memory for each section and copy from CPU, asynchronously run the computations on the GPUs (such that the slowest device determines the speed), and asynchronously copy back to CPU memory.  This is all performed by one thread, and happily this approach requires no change to the `divergence()` kernal itself.
+Briefly, we first allocate CPU memory for each array in question (shown is the divergence iteration number array but also required are all positions, velocities etc.), find which index corresponds to an even split of this flattened array and make pointers to those positions, allocate GPU memory for each section and copy from CPU, asynchronously run the computations on the GPUs (such that the slowest device determines the speed), and asynchronously copy back to CPU memory.  This is all performed by one thread, and happily this approach requires no change to the `divergence()` kernel itself.
 
 The first step (allocating CPU memory) requires a change in our driver code, however: asynchronous copy to and most importantly from the GPU requires paged-locked memory, rather than the pageable memory get when calling `malloc()`. Happily we can allocate and page-lock memory using the `cudaHostAlloc` call as follows: for our `times` divergence array of `int`s, we allocate using the address of our `times` pointer with the correct size and allocation properties.
 
@@ -769,7 +769,7 @@ Now we can proceed as before, using memory allocations such as `cudaMalloc(&d_p1
 ```cuda
 	cudaMemcpy(d_p1_x, p1_x+start_idx, block_n*sizeof(double), cudaMemcpyHostToDevice);
 ```
-and call the kernal `divergence<<<(block_n+127)/128, 128>>>`. After the kernal is called we need to asynchronously copy memory back to the CPU as follows:
+and call the kernel `divergence<<<(block_n+127)/128, 128>>>`. After the kernel is called we need to asynchronously copy memory back to the CPU as follows:
 
 ```cuda
 	cudaMemcpyAsync(p1_x+start_idx, d_p1_x, block_n*sizeof(double), cudaMemcpyDeviceToHost);
