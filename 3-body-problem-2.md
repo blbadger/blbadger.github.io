@@ -778,6 +778,60 @@ which allows the loop to continue without waiting for each GPU to finish its com
 
 There is one last ingredient we need: a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. The last note is that calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation.
 
+With that, we have a multi-gpu kernel that scales to any number of GPUs. The exact amount of time this would save any given computational procedure depends on a number of variables, but one can expect to find near-linear speedups for clusters with identical GPUs (meaning that for $n$ GPUs the expected completion time is $t/n$ where $t$ is the time to completion for a single GPU).  This can be shown in practice, where a cluster with one V100 GPU completes 50k iterations of a 1000x1000 starting grid of the three body problem in 73.9 seconds, whereas four V100s complete the same in 18.8s which corresponds to a speedup of 3.93x, which is very close to the expected value of 4x.
+
+### Multithreaded Parallelization
+
+Suppose that one wanted to squeeze a little more performance out of a compute node containing more than one GPU. How would one go about making all GPUs perform as closely as possible to what can be achieved with only one device?
+
+One way to do this is conceptually straightforward: each GPU is assigned a single CPU thread. This should prevent a situation from occuring where one device waits for instructions from the CPU while it is sending other instructions to a different device. All we need is for the number of CPU threads to meet or exceed the number of GPU devices per node, which is practically guaranteed on modern hardware (typically one has over 10 CPU threads per GPU). 
+
+It should be noted that this approach would only be expected to realize the smallest increases in performance for the three body simulation because this kernel is already highly optimized to remove as much communication from the CPU to GPU. One should not see any instances of a device waiting for a thread during kernel execution because no data and very few instructions are sent from CPU to GPU during kernel execution. This is apparent in the near-linear speedup observed in the last section. Nonetheless, as something of an exercise it is interesting to implement a multi-threaded multi-GPU kernel.
+
+In practice multithreading a CUDA is more difficult because threading is usually implementation-specific, and combining multithreading with GPU acceleration is somewhat finnicky for a heave kernel like the one we have. The C libraries standard for multithreading (OpenMP, HPX, etc) were developed long before GPUs were capable of general purpose compute, and are by no means always compatible with CUDA. We will develop a multithreading approach with OpenMP that will illustrate some of the difficulties in doing so here.
+
+Multithreading is in some sense a simple task: we have one thread (the one that begins program execution) initialize other threads to complete sub-tasks of a certain problem, and then either combine the threads or else combine the output in some way. The difficulty of doing this is that CPU threads are heavy (initializing a new thread is costly) and memory access must be made in a way to prevent race conditions where two threads read and write to the same data in memory in an unordered fashion. Happily much of this difficulty is abstracted away when one uses a library like OpenMP, but unhappily these are leaky abstractions when it comes to CUDA.
+
+We begin as before: arrays are allocated in pinned memory,
+
+```cuda
+cudaHostAlloc((void**)&x, N*sizeof(float), cudaHostAllocWriteCombined | cudaHostAllocMapped);
+```
+
+and then initialized as before, and likewise the number of GPUs is found. To make things more clear, it is best practice to use explicit data streams when sending data to multiple devices, rather than relying on default streams. Here we make an array of `n_gpus` streams.
+
+```cuda
+cudaStream_t streams[n_gpus];
+```
+
+and now we can use OpenMP to initialize more threads! This can be done a few different ways: one would be to wrap the `for` loop in the last section (looping over devices) with the preprocessor directive `#pragma omp parallel for`, but this turns out to lead to difficult-to-debug problems with cuda memory access when more than two devices are used. It turns out to be more robust to proceed as follows: first we initialize one thread per device, we get the thread's integer number and assign the thread to the corresponding GPU device, and then we create a stream between that thread and the device.
+
+```cuda
+#pragma omp parallel num_threads(n_gpus)
+{
+	int device=omp_get_thread_num();
+	cudaSetDevice(omp_get_thread_num());
+	cudaStreamCreate(&streams[d]);
+```
+
+After doing so, we can allocate memory on the device for the portion of each array that device will compute. One must use `cudaMemcpyAsync` for both host->device as well as device-> host communication, and for clarity we also specify the stream associated with that device and thread in both memory copies and kernel call. Finally we synchronize each thread rather than the first driver thread.
+
+```cuda
+#pragma omp parallel num_threads(n_gpus)
+{
+	...
+	// H->D
+	cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));
+	cudaMemcpyAsync(d_x, x+start_idx, (N/n_gpus)*sizeof(float), cudaMemcpyHostToDevice, streams[device]);
+	// kernel call
+	divergence<<<(block_n+255)/256, 256, 0, streams[d]>>>(...)
+	// D->H
+	cudaMemcpyAsync(x+start_idx, d_x, (N/n_gpus)*sizeof(float), cudaMemcpyDeviceToHost, streams[device]);
+	cudaDeviceSynchronize();
+}
+```
+
+
 
 
 
