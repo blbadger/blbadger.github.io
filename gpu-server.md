@@ -1,12 +1,10 @@
 ## Deep Learning Server
 
-When one thinks of state-of-the-art deep learning models, one might imagine enormous data centers with thousands of GPUs training models with billions or trillions of parameters. While large computing clusters are indeed necessary for training a variety of models, they are not at all necessary to do interesting work in the field.
-
-On this page, I will detail the process of building a high-performance compute server node with four V100 GPUs for less than the cost of a single RTX 4090, but with around triple the GPU memory and compute for training models (assuming 16/32 bit mixed precision training). The server will be shown to excel at other tasks outside the realm of machine learning, and particularly excels at tasks requiring high-precision (64-bit) computation as it has an impressive 26x the FLOPs of a 4090.
+On this page, I will detail the process of building a high-performance compute server node with four V100 GPUs for less than the cost of a single RTX 4090, but with around triple the GPU memory and compute for training models (assuming 16/32 bit mixed precision training). The server will be shown to be very effective for other tasks outside the realm of machine learning and particularly excels at those requiring high numerical precision, as this machine has an impressive twenty-six times the the 64-bit FLOPs of a 4090.
 
 ### Background
 
-For the past couple of years, I have been using the following rig for experimentation and model development (as well as three body simulation and polynomial root fractal generation and other assorted projects presented on my [blog](https://blbadger.github.io)): 
+When one thinks of state-of-the-art deep learning models, one might imagine enormous data centers with thousands of GPUs training models with billions or trillions of parameters. While large computing clusters are indeed necessary for training the largest foundational models, they are not at all necessary to do interesting work in the field. For the past couple of years, I have been using the following rig for experimentation and model development (as well as three body simulation and polynomial root fractal generation and other assorted projects presented on my [blog](https://blbadger.github.io)): 
 
 ![Desktop]({{https://blbadger.github.io}}/server_setup/desktop.jpg)
 
@@ -134,19 +132,19 @@ This effort was moderately successful, but there is still a sizeable voltage dro
 
 Unfortunately, under high load (all four GPUs running) over extended periods of time I found that the bannana plug breakout board connections were getting much too hot such that one of the plug's plastic sleeves ended up melting within the first few dozen experiments. The bannana plug in question was loose and probably would not have melted the plastic if it was tight, but the plugs tend to get loose over time spontaneously. It turns out that the common bannana plugs such as these are rated for only 15A, and at 1kW we would expect both PSU's plugs to operate at 42A if they share the current load perfectly, so it is not surprising that the bannana plugs were overheating.
 
-The highest-rated plug on these breakout boards is the XT60 plug in the upper right: this is rated at a maximum of 60A, meaning that a continuous draw of around 45 should be pretty safe. I got some XT60 male plugs with leads and attached those to the existing terminals as follows:
+The highest-rated plug on these breakout boards is the XT60 plug in the upper right: this is rated for 60A at 30V DC, meaning that a continuous draw of around 45A at 12V should be pretty safe. I got some XT60 male plugs with leads and attached those to the existing terminals as follows:
 
 ![server]({{https://blbadger.github.io}}/server_setup/xt60_connection.jpg)
 
-and sure enough the plugs get warm to the touch but not hot under load. The XT60 plug setup also prevents the voltage drops that I was seeing when the bannana plugs were used, and the voltage rarely drops under 11.85V under load. Here is the voltage at the terminal under around 1.1kW:
+and sure enough the plugs get somewhat warm to the touch but not hot under load. The XT60 plug setup also prevents the voltage drops that I was seeing when the bannana plugs were used, and the voltage rarely drops under 11.85V under load. Here is the voltage at the terminal under around 1.1kW:
 
 ![server]({{https://blbadger.github.io}}/server_setup/xt60_final.jpg)
 
-The XT60 plug also allows us to run the GPUs at full power (~1700W total for the server) for extended periods of time, although the plug itself and the PSUs get rather warm. Under full load there is somewhat more of a voltage drop at the terminal, with minimums around 11.60V, but no power loss or GPU bus drops.  To deal with the warm XT60 plugs and PSUs, I added small 12V blower fans that you can see in the following image. The temporary power connections were also replaced with more permanant ring terminals, and the two z1100p PSUs make a nice heatsink and support.
+The XT60 plug also allows us to run the GPUs at full power (~1600W total for the server) for extended periods of time, although the plug itself and the PSUs get rather warm if no external airflow is provided. Under full load there is somewhat more of a voltage drop at the terminal, with minimums around 11.60V, but no power loss or GPU bus drops.  To deal with the warm XT60 plugs and PSUs, I added small 12V blower fans that you can see in the following image. The temporary power connections were also replaced with more permanant ring terminals, and the two z1100p PSUs make a nice heatsink and support.
 
 ![server]({{https://blbadger.github.io}}/server_setup/cooled_psu.jpg)
 
-Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power to close to 200W per GPU, which degrades performance only slightly (see below). The plugs and PSUs tend to be much cooler with this limit, especially with the blowers running.
+Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power to close to 200W per GPU, which degrades performance only slightly. The plugs and PSUs tend to be much cooler with this limit, especially with the blowers running. The eventual plan is to add a third PSU for redundancy so that any one unit can fail without killing the server's processes, and with the added benefit of reducing the power drawn from each PSU and through each XT60 for increased longevity.
 
 ### Test
 
@@ -289,10 +287,12 @@ The reputation of 1U servers (the more common measurement that is most similar t
 
 What matters after those first thirty or so seconds is that even heavy loads on all four V100s does not lead to the fans reaching anywhere near their maximum RPM provided the ambient temperature is near room temp (72* F). This means that once the BMC is initialized, the fans should not be expected to reach the speed they started at again. All without adjusting the server's preset fan curves, and with the GPUs never reaching internal temperatures higher than 60 degrees! There is some noise difference when removing the current limiting
 
-I would not want to run a 1OU HPC server like the T180-G20 in a living room, but in a basement or attic or garage it is virtually unnoticeable from living space. If you have ever heard a fan-cooled ebay grow light before, it sounds pretty much identically to that during normal operation just with minor fluctuations as GPUs ramp up and down.
+I would not want to run an unmodified 1OU HPC server like the T180-G20 in a living room, but in a basement or attic or garage it is virtually unnoticeable from living space. If you have ever heard a fan-cooled ebay grow light before, it sounds pretty much identically to that during normal operation just with minor fluctuations as GPUs ramp up and down. 
+
+That said, modifying a 1OU server like the T180-G20 for quiet operation would not be very hard: the only reason this server is noisy is because the fans spin at such high RPM (which is necessary for sufficient air movement as they are very small). Swapping for a much larger but lower RPM fan would remove most noise. There are only two air intakes (one on the front with the IO ports, one on the top for accessory cooling) so simply hooking up a large blower motor (think 1/5 hp floor blower fan or something similar) to the front and sealing the top air intake would provide more than enough airflow to allow one to remove the small fans entirely. 
 
 ### Conclusion
 
-To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts of things for well under two grand if you are willing to be resourceful and hack a power supply together. I reckon that this system is overkill for most types of machine learning model inference, but for training it is great and it is very good at performing simulations too. If you have more cash you could build three of these with 32GB V100s and connect via mellanox fabrics, which would allow for training of models up to around 500 billion parameters via bitwise optimized FSDP.
+To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts of things for well under two grand if you are willing to be resourceful and hack a power supply together. I reckon that this system is overkill for most types of machine learning model inference, but for training models and anything dealing with high-precision floating point operations it seems to be one of the best deals to be had. If you have more cash you could build three of these with 32GB V100s and hook up some mellanox switches (which connect to the free PCIE lanes and ports in the middle of the T180-G20 for 128 GB/s internode communication), which would allow for fairly fast training of models up to around 500 billion parameters via bitwise optimized FSDP.
 
 
