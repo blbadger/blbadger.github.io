@@ -100,7 +100,7 @@ One can buy breakout boards for this purpose, but I thought it would be more fun
 
 Power must be supplied to each of the sockets on the right of the server in the photo below (actually one can also bypass the sockets and install a cable into the cages next to the sockets, but I thought this would be more of a pain to do). Each socket has a +12V (left) and GND (right) connection, and the server expects 80 amps per socket.
 
-To get the power from the PSU to sockets I used a combination of 4 AWG battery cable and 1/4" solid copper bus bar used to insert into the sockets, and for collecting the inputs for the +12V and GND. The 4 AWG cable turned out to be overkill, and I would choose 6 or 8 AWG if doing this over. To make things simple, standard convention is followed where red is HIGH +12V (nominal) and black is LOW, 0V.
+To get the power from the PSU to sockets I used a combination of 4 AWG battery cable and 1/8" thick by 1" wide solid copper bus bar used to insert into the sockets, and for collecting the inputs for the +12V and GND. The 4 AWG cable turned out to be overkill, and I would choose 6 or 8 AWG if doing this over. To make things simple, standard convention is followed where red is HIGH +12V (nominal) and black is LOW, 0V.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_prepower.jpg)
 
