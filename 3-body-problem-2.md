@@ -831,6 +831,12 @@ After doing so, we can allocate memory on the device for the portion of each arr
 }
 ```
 
+This can be compiled using the `-fopenmp` flag for linux machines as follows:
+
+```bash
+badger@servbadge:~/Desktop/threebody$ nvcc -Xcompiler -fopenmp -o mdiv multi_divergence.cu
+```
+
 
 
 
