@@ -523,7 +523,7 @@ Conceptually this may be thought of as changing the number of simultaneous combi
 
 The main reason for this performance increase is that the smaller number of attention heads results in more samples seen during training in a given compute budget: for example, if we compare the loss after a fixed number of inputs seen we find that the 2-headed attention is not as effective as the 16-headed attention, at 1.96 train and 1.98 eval for two heads versus 1.87 train and 1.90 eval loss for 16 heads after half an epoch.
 
-It might be wondered if this more efficint transformer might have better input representation, but we find that the opposite is true: 
+It might be wondered if this more efficient transformer might have better input representation, but we find that the opposite is true: neither at the beginning of training (where 16-headed attemtion transformers have fairly accurate one-block representation) nor at any other step during training does the two- or four-headed attention model exhibit anything remotely resembling accurate representation.
 
 ### Mixers do not benefit from positional encoding
 
