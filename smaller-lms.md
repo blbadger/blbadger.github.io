@@ -315,9 +315,9 @@ def train_model():
 	print ('Average loss: ', total_loss / len(batch))
 ```
 
-To make results comparable, we use the same tokenizer, dataset (TinyStories), and batch size (16) and observe the training and evaluation cross entropy loss for the transformer model (Llama, whose source code may be found [here](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py)) compared to our masked mixer.  We perform training runs of around 12 hours on an RTX 3060.
+To make results comparable, we use the same tokenizer, dataset (TinyStories), and batch size (16) and observe the training and evaluation cross entropy loss for the transformer model (Llama, whose source code may be found [here](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py)) compared to our model. This new model is dubbed the 'masked mixer', both because the model masks convolutional weights during both training and inference and because some versions of this model are not fully-MLP architectures at all but utilize convolutions of size greater than 1 between tokens.  We perform training runs of around 12 hours on an RTX 3060 unless otherwise noted.
 
-It should first be noted that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is due to inefficient memory usage for that model size (transformers with a width of less than 256 are poorly allocated in memory), but for larger $d_{model}$ values the large amount of memory required stems from the increased number of non-trainable inter-token parameters necessary for backpropegation in the transformer compared to the mixer.
+It should first be stated that the transformer requires substantially more memory to store the gradients, optimizer, and parameters than the mixer: given a batch size of 16, a llama model with $d_{model}=128$ and $n=8$ exceeds 10 GB vRAM during training compared to the 2.4 GB vRAM required for a mixer of the same $n$ and double the $d_{model}$, both for a context window size of 512.  This is due to inefficient memory usage for that model size (transformers with a width of less than 256 are poorly allocated in memory), but for larger $d_{model}$ values the large amount of memory required stems from the increased number of non-trainable inter-token parameters necessary for backpropegation in the transformer compared to the mixer.
 
 It is also apparent that transformers are much slower to train than mixers. This results from both the number of effective parameters (above) and also from the more efficient use of gradient flow by the mixer, as gradient do not need to pass along non-trainable parameters as is the case for transformers (where attention gradients travel from $K,Q,V$ projections to the $K,Q,V$ values themselves and back as well as softmax transformations etc). Thus we cannot compare these models directly using only $d_{model}$ and $n$, but instead use a ballpark figure for these and compare training and test vRAM.
 
@@ -436,6 +436,41 @@ What if we do want to increase the number of inter-sequence weights? According t
 
 For a given number of training updates, the 2-parallel convolution mixer results in lower loss for a $d_{model}=512, n=8$ mixer: 1.845 versus 1.886 training loss at 354,000 steps (the most this model can finish in our fixed compute training).  However, as the model is slower to train per step it does tends to reach a very similar or perhaps slightly worse fixed-compute loss as the flat mixer of the same $d_{model}$ (1.842). Increasing the number of parallel convolutions to 4 leads to no apparent fixed-compute loss reduction either.
 
+
+
+### Mixers do not benefit from positional encoding
+
+By learning values for each combination of two tokens, the masked mixer learns an implicit absolute positional encoding and would not be expected to benefit from more positional encoding information. We can provide positional information in the form of a simple one-element addition to the first block's input vector as follows:
+
+
+```python
+class LanguageMixer(nn.Module):
+
+	def __init__(self, n_vocab, dim, depth, tokenized_length, batch_size, tie_weights=False):
+		...
+		self.positions = torch.arange(-tokenized_length//2, tokenized_length//2, 1).to(device)
+
+	def forward(self, input_ids, labels=None):
+		...
+		tokenized_length, batch_size = x.shape[-1], x.shape[0]
+		positional_tensor = rearrange(self.positions, '(s b) -> s b', b = tokenized_length).unsqueeze(0).unsqueeze(-1)
+		positional_tensor = positional_tensor.repeat(batch_size, 1, 1, 1)
+		x = self.wte(x)
+		x = torch.cat((x, positional_tensor), dim=-1)
+		positional_tensor = positional_tensor.squeeze(1).squeeze(-1)
+		x[..., -1] = positional_tensor
+		for block in self.mixerblocks:
+			x = block(x)
+		output = self.lm_head(x[..., :-1])
+```
+but after doing so we see virtually no change in performance after our one unit of compute has been applied. If we instead apply the positional information to every block via
+```	...
+		for block in self.mixerblocks:
+			x = block(x)
+			x[..., -1] = positional_tensor
+```
+we see detrimental effects on training: our final loss is 1.94 train and 2.10 eval.
+
 ### Scaling Properties
 
 The masked mixer architecture gives us an easy way to modify the number of inter-token weights (1D convolution `ConvForward` weights) as well as the number of intra-token weights (the `FeedForward` weights). We can observe the loss achieved by varying the number of each type of parameter independently, a feat which is much more difficult to pull off for the transformer as the number of $K, Q, V$ projection weights are usually tied to the $d_{model}$. 
@@ -503,7 +538,7 @@ is compared to that for a transformer of the same width, we see that the masked 
 | $n_l=16$ | 4876 | 7750 | OOM | OOM | OOM |
 
 
-### Transformers with fewer attention heads are more efficient
+### Transformers with fewer attention heads are more efficient for TinyStories
 
 The observation that the flat mixer performs better than transformers on TinyStories completion given limited compute suggests that perhaps we can get similar performance from transformers if the inter-token information transfer is simplified. We have been using 16-headed attention, which corresponds to 16 parallel linear transformations making key, query, and values for each token. We can simply reduce this number by supplying the desired $n$ number of attention heads as follows:
 
@@ -525,49 +560,34 @@ The main reason for this performance increase is that the smaller number of atte
 
 It might be wondered if this more efficient transformer might have better input representation, but we find that the opposite is true: neither at the beginning of training (where 16-headed attemtion transformers have fairly accurate one-block representation) nor at any other step during training does the two- or four-headed attention model exhibit anything remotely resembling accurate representation.
 
-### Mixers do not benefit from positional encoding
+### Fully Convoluted Mixers for optimal TinyStories training
 
-By learning values for each combination of two tokens, the masked mixer learns an implicit absolute positional encoding and would not be expected to benefit from more positional encoding information. We can provide positional information in the form of a simple one-element addition to the first block's input vector as follows:
+The results in the last section seem to indicate that representational power is more important than representational accuracy, as a transformer model that has poor input representation accuracy and many inter-token parameters outperforms mixer models with extremely accurate input representation but fewer inter-token parameters. This is not necessarily the case, however, as a mixer-derived model with an increased number of inter-token parameters is capable of outperforming even the head number-optimized transformer as we shall see in this section.
 
+The hypothesis here is that the mixer model can 'soak up' larger learning rates than the transformer because it is in most cases easier to optimize once training has proceeded a good ways: the difficulty of accurate back-propegation for transformers is documented elsewhere, but mixers typically do not seem to suffer from these problems. Thus we increase the learning rate of the mixer and repeat the experiments for this model (with 8 layers and a $d_m=1024$ and a batch size of 32).
 
-```python
-class LanguageMixer(nn.Module):
+We can observe scaling properties of these models by training them with a much larger and more powerful compute cluster: a [4x V100](https://blbadger.github.io/gpu-server.html) server. To maintain some relevance to the 12 hours of RTX 3060 compute, only batches which fit in the 12GB vRAM of the 3060 are considered.
 
-	def __init__(self, n_vocab, dim, depth, tokenized_length, batch_size, tie_weights=False):
-		...
-		self.positions = torch.arange(-tokenized_length//2, tokenized_length//2, 1).to(device)
+We train via Distributed Data Parallel, an algorithm that places replicas of the entire model of interest on each GPU and distributes data to each device, before all-gathering the gradients for backpropegation. This means that the effective batch size increases by a factor of 4 compared to the single-GPU training undertaken above, such that instead of say 32 samples per batch we have 32 samples on each of 4 gpus for 128 samples per gradient update total. Large language models are typically trained using modifications of the distributed data parallel algorithm, as these models cannot typically be held entirely in a single GPU's memory. Somewhat arbitrarily, training times are held to around 2 hours (2 hours 10 minutes to be precise).
 
-	def forward(self, input_ids, labels=None):
-		...
-		tokenized_length, batch_size = x.shape[-1], x.shape[0]
-		positional_tensor = rearrange(self.positions, '(s b) -> s b', b = tokenized_length).unsqueeze(0).unsqueeze(-1)
-		positional_tensor = positional_tensor.repeat(batch_size, 1, 1, 1)
-		x = self.wte(x)
-		x = torch.cat((x, positional_tensor), dim=-1)
-		positional_tensor = positional_tensor.squeeze(1).squeeze(-1)
-		x[..., -1] = positional_tensor
-		for block in self.mixerblocks:
-			x = block(x)
-		output = self.lm_head(x[..., :-1])
-```
-but after doing so we see virtually no change in performance after our one unit of compute has been applied. If we instead apply the positional information to every block via
-```	...
-		for block in self.mixerblocks:
-			x = block(x)
-			x[..., -1] = positional_tensor
-```
-we see detrimental effects on training: our final loss is 1.94 train and 2.10 eval.
+With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. This is far below what is achieved for a 8-layer, 4-sized convolution masked mixer (with an increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given this same amount of compute. The masked mixer evaluates samples at a slightly slower speed than the transformer (1729 versus 2071 samples per second on this hardware) but is much faster to train (>140 samples per second per GPU versus 53 samples per second per GPU for the transformer), allowing the model to observe far more samples during a fixed-compute training run.
+
+It should be noted that for different hardware, implementation specifics, or even non-tunable parameter specifications the transformer may outperform the mixer on even this hardware. But this experiment shows that the mixer may indeed be more amenable to scaling to larger models, more data, and more compute than the transformer.
 
 ### Implications
 
-Seeking to make a more efficient learning algorithm than a transformer, we used the observation that token representation is superior for modified MLP-Mixer architectures to craft a model capable of replicating the autoregressive language generation of GPT-style decoder-only transformers.
+Seeking to make a more efficient learning algorithm than a transformer, we used the observation that token representation is superior for modified MLP-Mixer architectures to craft a model capable of replicating the autoregressive language generation of GPT-style decoder-only transformers. This new architecture departs from the original MLP-mixer in a number of ways.
 
 It is worth restating the more noteworthy findings of this work as concisely as possible:
 
 1. Language mixers of equivalent 'size' in terms of $d_{model}$ and $n$ layers may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
-2. Given equal compute, this same mixer reaches a much lower training and validation accuracy which is reflected in its autoregressive output relative to the transformer's output.
-3. Our mixer implementation uses no traditional regularization techniques, instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets. It does not overfit to a greater extent than the transformer, however.
+2. Depending on the hardware the models are implemented on, given equal compute a masked mixer may reach a much lower training and validation causal language model loss or else the transformer may out-perform the mixer.
+3. The mixer implementations uses no traditional regularization techniques, instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets. It does not overfit to a greater extent than the transformer, however.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
+
+Fundamentally the masked mixer may be thought of as a true feedforward model in which all elements of the input are processed in parallel by sequential models. Transformers on the other hand are conceptually somewhat parallelized (as otherwize the causal language mask training trick would not work) but still retain aspects of recurrent neural networks (backpropegation must unroll the KV values, for example) which makes them faster for inference but slower to train. When one considers that training a language model may require a trillion times more compute than inference, this shift does not seem to be entirely uncalled for.
+
+Beyond the accuracy and training properties of this model, however, the masked mixer was designed to operate in a fundamentally different manner than the transformer: rather than focusing on a few input elements for each next token via an attention mechanism, the masked mixer does indeed mix all elements of the input before sorting out the useful information via feed-forward layers, and hence exhibits far superior input representation as by design most input information is not lost. This means that the masked mixer is expected to be far better at tasks requiring more information on the input, in particular information retrieval tasks such as those required by Retrieval-Augmented Generative Search. 
 
 
 
