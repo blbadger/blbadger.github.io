@@ -170,6 +170,10 @@ As for any natural science, an attempt to explain observations and predict futur
 
 ![3 body image]({{https://blbadger.github.io}}/3_body_problem/cuda_vs_torch.png)
 
+### [Three Body Problem III: Distributed Multi-GPU simulations](/3-body-problem-3.md)
+
+![3 body image]({{https://blbadger.github.io}}/3_body_problem/distributed_threebody_cover.png)
+
 ### [Entropy](/entropy.md)
 
 ![malachite]({{https://blbadger.github.io}}misc_images/malachite.png)
@@ -249,11 +253,11 @@ $$
 ### [Language Representation III: Noisy Communication on a Discrete Channel](/language-discreteness.md)
 
 $$
-a_g([:, :, :2202]) = \mathtt{Mario the Idea versus Mario the Man} \\
+a_g([:, :, :2202]) = \mathtt{Mario \; the \; Idea \; versus \; Mario \; the \; Man} \\
 a_g([:, :, :2201]) = \mathtt{largerpectedino missionville printed satisfiedward}
 $$
 
-### [Language Representation IV: Inter-token communcation and Masked Mixers](/llm-invertibility.md)
+### [Language Representation IV: Inter-token communication and Masked Mixers](/llm-invertibility.md)
 
 ![clm_flow](/deep-learning/clm_cover.png)
 
