@@ -436,8 +436,6 @@ What if we do want to increase the number of inter-sequence weights? According t
 
 For a given number of training updates, the 2-parallel convolution mixer results in lower loss for a $d_{model}=512, n=8$ mixer: 1.845 versus 1.886 training loss at 354,000 steps (the most this model can finish in our fixed compute training).  However, as the model is slower to train per step it does tends to reach a very similar or perhaps slightly worse fixed-compute loss as the flat mixer of the same $d_{model}$ (1.842). Increasing the number of parallel convolutions to 4 leads to no apparent fixed-compute loss reduction either.
 
-
-
 ### Mixers do not benefit from positional encoding
 
 By learning values for each combination of two tokens, the masked mixer learns an implicit absolute positional encoding and would not be expected to benefit from more positional encoding information. We can provide positional information in the form of a simple one-element addition to the first block's input vector as follows:
@@ -562,13 +560,19 @@ It might be wondered if this more efficient transformer might have better input 
 
 ### Fully Convoluted Mixers for optimal TinyStories training
 
-The results in the last section seem to indicate that representational power is more important than representational accuracy, as a transformer model that has poor input representation accuracy and many inter-token parameters outperforms mixer models with extremely accurate input representation but fewer inter-token parameters. This is not necessarily the case, however, as a mixer-derived model with an increased number of inter-token parameters is capable of outperforming even the head number-optimized transformer as we shall see in this section.
+The results in the last section seem to indicate that representational power is more important than representational accuracy, as a transformer model that has poor input representation accuracy and many inter-token parameters outperforms mixer models with extremely accurate input representation but fewer inter-token parameters. This is not necessarily the case, however, as a mixer-derived model with an increased number of inter-token parameters is capable of performing on par even the head number-optimized transformer as we shall see in this section.
 
 The hypothesis here is that the mixer model can 'soak up' larger learning rates than the transformer because it is in most cases easier to optimize once training has proceeded a good ways: the difficulty of accurate back-propegation for transformers is documented elsewhere, but mixers typically do not seem to suffer from these problems. Thus we increase the learning rate of the mixer and repeat the experiments for this model (with 8 layers and a $d_m=1024$ and a batch size of 32).
 
 We can observe scaling properties of these models by training them with a much larger and more powerful compute cluster: a [4x V100](https://blbadger.github.io/gpu-server.html) server. To maintain some relevance to the 12 hours of RTX 3060 compute, only batches which fit in the 12GB vRAM of the 3060 are considered.
 
 We train via Distributed Data Parallel, an algorithm that places replicas of the entire model of interest on each GPU and distributes data to each device, before all-gathering the gradients for backpropegation. This means that the effective batch size increases by a factor of 4 compared to the single-GPU training undertaken above, such that instead of say 32 samples per batch we have 32 samples on each of 4 gpus for 128 samples per gradient update total. Large language models are typically trained using modifications of the distributed data parallel algorithm, as these models cannot typically be held entirely in a single GPU's memory. Somewhat arbitrarily, training times are held to around 2 hours (2 hours and a quarter hours to be precise).
+
+For clarity, the mixer architecture is detailed in the following figure: 
+
+![conv mixer]({{https://blbadger.github.io}}/deep-learning/masked_conv2_mixer.png)
+
+In contrast to the paralleled convolutions explored earlier, the convolutional kernal acts on the $d_model$ index, not the token index. The number of inter-token trainable parameters is equal to the kernel size multiplied by the number of weights in the 1D convolution of kernel size 1 (the number of sequence elements squared divided by two for masked mixers).
 
 With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far below what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.64 and 1.70, respectively). Note that the higher test accuracy for the mixer is somewhat of an artefact, as if the training run is extended another 10 minutes then the mixer also reaches a test accuracy of 1.70.
 
@@ -578,8 +582,13 @@ The main finding here is that a compute- and dataset-optimized mixer is generall
 
 The observation that mixers appear to learn a fundamentally different structure than transformers when applied to the same dataset suggests that they may act orthogonally (with some slight abuse to the linear algebraic phrase). This means that the abstract quantities a mixer learns might be complementary to those that a transformer learns, such that combining these architectures in some way might lead to a model that is a more efficient learner than either mixer or transformer alone.
 
-Can adding a mixer component to a transformer or vice versa increase training efficiency? Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test accuracy of 1.66/1.71 on TinyStories with 12 hours of 3060 compute time, whereas the flat mixer with the same $d_m$ achieved values of 1.84 and 1.89, respectively. If these models learned the same way one would not expect for a composite model to outperform the transformer, but a quick test observes that it does: a transformer-mixer (with a flat mixer applied with a convolution size of one) hybrid achieves an accuracies of 1.62 and 1.67 given the same compute limit. 
+This may be implemented as follows:
 
+![conv mixer]({{https://blbadger.github.io}}/deep-learning/mixer_transformer_architecture.png)
+
+Can adding a mixer component to a transformer or vice versa increase training efficiency? Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test accuracy of 1.66/1.71 on TinyStories with 12 hours of RTX 3060 compute time, whereas the flat mixer with the same $d_m$ achieved values of 1.84 and 1.89, respectively. If these models learned the same way one would not expect for a composite model to outperform the transformer, but a quick test observes that it does: a transformer-mixer (with a flat mixer applied with a convolution size of one) hybrid achieves an accuracies of 1.62 and 1.67 given the same compute limit. 
+
+Scaling up the compute power, we find that the transformer-mixer hybrid performs even better: for 2.25 hours on a 4x V100 node the hybrid achieves much lower train and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively.
 
 ### Implications
 
