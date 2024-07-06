@@ -576,19 +576,26 @@ In contrast to the paralleled convolutions explored earlier, the convolutional k
 
 With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far below what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.64 and 1.70, respectively). Note that the higher test accuracy for the mixer is somewhat of an artefact, as if the training run is extended another 10 minutes then the mixer also reaches a test accuracy of 1.70.
 
-The main finding here is that a compute- and dataset-optimized mixer is generally approximately as performant as a transformer, perhaps a little more or less efficient for training on 
+The main finding here is that a compute- and dataset-optimized mixer is generally approximately as performant as a transformer, perhaps a little more or less efficient depending on the implementation. 
 
 ### Transformer mixer hybrids learn most efficiently
 
 The observation that mixers appear to learn a fundamentally different structure than transformers when applied to the same dataset suggests that they may act orthogonally (with some slight abuse to the linear algebraic phrase). This means that the abstract quantities a mixer learns might be complementary to those that a transformer learns, such that combining these architectures in some way might lead to a model that is a more efficient learner than either mixer or transformer alone.
 
-This may be implemented as follows:
+Can adding a mixer component to a transformer or vice versa increase training efficiency? One way to implement this is as follows:
+
+![conv mixer]({{https://blbadger.github.io}}/deep-learning/mixer_transformer_architecture_original.png)
+
+Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test accuracy of 1.66/1.71 on TinyStories with 12 hours of RTX 3060 compute time, whereas the flat mixer with the same $d_m$ achieved values of 1.84 and 1.89, respectively. If these models learned the same way one would not expect for a composite model to outperform the transformer, but a quick test observes that it does: a transformer-mixer (with a flat mixer applied with a convolution size of one) hybrid achieves an accuracies of 1.62 and 1.67 given the same compute limit. 
+
+Scaling up the compute power, we find that this transformer-mixer hybrid once again outperforms the transformer: for 2.25 hours on a 4x V100 node the hybrid achieves lower training and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively, which compares to train/test losses of 1.55 and 1.61 without the masked convolution (both with FlashAttention 2).
+
+Another way to add mixer elements to a transformer is as follows: we instead add the mixer in parallel with the self-attention module. 
 
 ![conv mixer]({{https://blbadger.github.io}}/deep-learning/mixer_transformer_architecture.png)
 
-Can adding a mixer component to a transformer or vice versa increase training efficiency? Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test accuracy of 1.66/1.71 on TinyStories with 12 hours of RTX 3060 compute time, whereas the flat mixer with the same $d_m$ achieved values of 1.84 and 1.89, respectively. If these models learned the same way one would not expect for a composite model to outperform the transformer, but a quick test observes that it does: a transformer-mixer (with a flat mixer applied with a convolution size of one) hybrid achieves an accuracies of 1.62 and 1.67 given the same compute limit. 
+This does not yield any benefit from the standard transformer architecture, however, and achieves the same 1.55 and 1.61 loss values on the 4x V100 cluster.
 
-Scaling up the compute power, we find that the transformer-mixer hybrid performs even better: for 2.25 hours on a 4x V100 node the hybrid achieves much lower train and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively.
 
 ### Implications
 
