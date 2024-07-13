@@ -30,11 +30,7 @@ Because the T180-G20 supports older CPUs and less maximum memory than the T181s,
 
 ### Hardware Installation
 
-Upon receiving the T180-G20 and opening the box, I was met with the following sight:
-
-![heatsinks]({{https://blbadger.github.io}}/server_setup/boxed_heatsinks.jpg)
-
-These are the heatsinks for the GPUs (top four) and CPUs (bottom two). These heatsinks contain all the screws necessary pre-installed as well as thermal paste pre-applied, which is a very nice touch but is probably standard in the high performance compute industry. After removing the heatsinks, we find the server itself. In the following picture, the server is oriented where the power sockets are on the left and the I/O ports (and air inlets) are to the right. Note the hardware installation instructions happily present on the top of the case, and the opened HDD/SSD drive tray in the bottom right. The server even comes with those little storage drive screws which fixes the drive in place as the tray is inserted.
+The T180-G20 comes with heatsinks for the GPUs (four) and CPUs (two). These heatsinks contain all the screws necessary pre-installed as well as thermal paste pre-applied, which is a very nice touch but is probably standard in the high performance compute industry. After removing the heatsinks, we find the server itself. In the following picture, the server is oriented where the power sockets are on the left and the I/O ports (and air inlets) are to the right. Note the hardware installation instructions happily present on the top of the case, and the opened HDD/SSD drive tray in the bottom right. The server even comes with those little storage drive screws which fixes the drive in place as the tray is inserted.
 
 ![server]({{https://blbadger.github.io}}/server_setup/server_lid.jpg)
 
@@ -180,11 +176,7 @@ And here is the server with all the GPUs, memory, and heatsinks installed!
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_gpus.jpg)
 
-I had to re-install two of the GPUs a couple times in order to get them to be recognized by the system, and whether this was due to dusty SXM2 pins, incorrectly torqued screws, or just old hardware it is difficult to tell. Happily it is easy to see if a GPU is connected using the `sudo lshw -C display` command
-
-![server]({{https://blbadger.github.io}}/server_setup/full_lshw.jpg)
-
-and the nvidia toolkit finds the GPUs as well, nice! I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this is to be typical of SXM-socketed nvidia GPUs, and indeed the SXM2 V100 cannot be set to any other mode. Note too that watts per GPU at idle has roughly doubled from what it was when a single GPU was installed to ~40W: this is unsurprising, given that the NVLink connections between GPUs cannot completely power down when not in use (typically at least two of the eight link channels are active at all times). Could be worse: A100s typically idle at aroun 65W each!
+I had to re-install two of the GPUs a couple times in order to get them to be recognized by the system, and whether this was due to dusty SXM2 pins, incorrectly torqued screws, or just old hardware it is difficult to tell. Happily it is easy to see if a GPU is connected using the `sudo lshw -C display` command, and the nvidia toolkit finds the GPUs as well. I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this is to be typical of SXM-socketed nvidia GPUs, and indeed the SXM2 V100 cannot be set to any other mode. Note too that watts per GPU at idle has roughly doubled from what it was when a single GPU was installed to ~40W: this is unsurprising, given that the NVLink connections between GPUs cannot completely power down when not in use (typically at least two of the eight link channels are active at all times). Could be worse: A100s typically idle at aroun 65W each!
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_nvidiasmi.jpg)
 
@@ -228,8 +220,6 @@ Note that the GPU in position 2 is running significantly hotter than the others:
 It is remarkable that removing the V100 boost clock speed (1530 MHz) and reducing the base from 1290 MHz to 1005 MHz (along with our earlier power limits) leads to such a small change in performance: enforcing this for a training run with only two GPUs during a test leads to a ~13% decline in training speed.
 
 That said, once these tests were completed I connected the PSU current share pins (see the PSU section for more information) and after doing so and switching to the XT60 plug output on the breakout board, the GPUs were able to run at full power (up to ~350W each). I consider the ~600W total saved to be worth a 13% performance drop, and continue to run the GPUs as 200W each.
-
-Note that running `watch -n0.1 nvidia-smi` leads to significantly slower distributed training: there is a 15% performance drop when all four GPUs are running at full tilt (although only a ~5% drop for one GPU). This is a much more noticeable drop than for consumer grade hardware (RTX 3060 with i7-12700F) and it is unknown why it occurs. A similar drop in performance is seen for SXM4 A100 clusters with NVLink during training runs with related distributed trainin methods such as FSDP, suggesting that this is not a problem specific to the V100 cluster. A simple test to see if this was caused by nccl calls in the NVLink system would be to remove all GPUs save one and repeat the same training runs with `nvidia-smi` running concurrently, but I will not be doing this as removing and replacing SXM2 modules is a pain. 
 
 I experienced difficult-to-pin-down training process hangs and freezes which manifested as `nv_queue` processes taking nearly all a CPU's compute followed by interrupt requests (`irq/57-nvidia`) that also hangs, leading to stalled GPU processes with high vRAM use. Close inspection reveals that these are associated with `nccl` communication problems, which means the GPUs are not communicating properly with each other or the CPU. I was able to solve this problem by simply tightening the screws that affix the GPUs to the SXM2 socket.
 
