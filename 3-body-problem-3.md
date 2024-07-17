@@ -92,7 +92,9 @@ and then initialized as before, and likewise the number of GPUs is found. To mak
 cudaStream_t streams[n_gpus];
 ```
 
-and now we can use OpenMP to initialize more threads! This can be done a few different ways: one would be to wrap the `for` loop in the last section (looping over devices) with the preprocessor directive `#pragma omp parallel for`, but this turns out to lead to difficult-to-debug problems with cuda memory access when more than two devices are used. It turns out to be more robust to proceed as follows: first we initialize one thread per device, we get the thread's integer number and assign the thread to the corresponding GPU device, and then we create a stream between that thread and the device.
+and now we can use OpenMP to initialize more threads! OpenMP is one of the most widely-used multithreading libraries, and is used by Pytorch under the hood for distributed deep learning training algorithms such as Distributed Data Parallelism. It is typical to use one thread per GPU for those applications as well.
+
+This can be done a few different ways: one would be to wrap the `for` loop in the last section (looping over devices) with the preprocessor directive `#pragma omp parallel for`, but this turns out to lead to difficult-to-debug problems with cuda memory access when more than two devices are used. It turns out to be more robust to proceed as follows: first we initialize one thread per device, we get the thread's integer number and assign the thread to the corresponding GPU device, and then we create a stream between that thread and the device.
 
 ```cuda
 #pragma omp parallel num_threads(n_gpus)
@@ -125,4 +127,5 @@ This can be compiled using the `-fopenmp` flag for linux machines as follows:
 badger@servbadge:~/Desktop/threebody$ nvcc -Xcompiler -fopenmp -o mdiv multi_divergence.cu
 ```
 
+After doing so we find something interesting: parallelizing via this kernel up for two GPUs is flawless, but for three or four GPUs we find memory access errors that result from the CPU threads attempting to load and modify identical memory blocks.
 
