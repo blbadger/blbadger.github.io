@@ -574,7 +574,7 @@ For clarity, the mixer architecture is detailed in the following figure:
 
 In contrast to the paralleled convolutions explored earlier, the convolutional kernal acts on the $d_model$ index, not the token index. The number of inter-token trainable parameters is equal to the kernel size multiplied by the number of weights in the 1D convolution of kernel size 1 (the number of sequence elements squared divided by two for masked mixers).
 
-With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far below what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.64 and 1.70, respectively). Note that the higher test accuracy for the mixer is somewhat of an artefact, as if the training run is extended another 10 minutes then the mixer also reaches a test accuracy of 1.70.
+With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far worse than what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.64 and 1.70, respectively). Note that the higher test accuracy for the mixer is somewhat of an artefact, as if the training run is extended another 10 minutes then the same mixer also reaches a test accuracy of 1.70. If the mixer is modified slightly to contain an extra linear layer after the word-token embedding, the cross-entropy losses are now 1.61 train and 1.71 test.
 
 The main finding here is that a compute- and dataset-optimized mixer is generally approximately as performant as a transformer, perhaps a little more or less efficient depending on the implementation. 
 
@@ -588,13 +588,23 @@ Can adding a mixer component to a transformer or vice versa increase training ef
 
 Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test accuracy of 1.66/1.71 on TinyStories with 12 hours of RTX 3060 compute time, whereas the flat mixer with the same $d_m$ achieved values of 1.84 and 1.89, respectively. If these models learned the same way one would not expect for a composite model to outperform the transformer, but a quick test observes that it does: a transformer-mixer (with a flat mixer applied with a convolution size of one) hybrid achieves an accuracies of 1.62 and 1.67 given the same compute limit. 
 
-Scaling up the compute power, we find that this transformer-mixer hybrid once again outperforms the transformer: for 2.25 hours on a 4x V100 node the hybrid achieves lower training and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively, which compares to train/test losses of 1.55 and 1.61 without the masked convolution (both with FlashAttention 2).
+Scaling up the compute power, we find that this transformer-mixer hybrid once again outperforms the transformer: for 2.25 hours on a 4x V100 node the hybrid achieves lower training and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively, which compares to train/test losses of 1.55 and 1.61 without the masked convolution (both with Flash Attention 2).
 
 Another way to add mixer elements to a transformer is as follows: we instead add the mixer in parallel with the self-attention module. 
 
 ![conv mixer]({{https://blbadger.github.io}}/deep-learning/mixer_transformer_architecture.png)
 
-This does not yield any benefit from the standard transformer architecture, however, and achieves the same 1.55 and 1.61 loss values on the 4x V100 cluster.
+This does not yield any benefit from the standard transformer architecture, however, and achieves the same 1.55 and 1.61 loss values on the 4x V100 cluster (with flash attention 2).
+
+### Accurate Representation and Retrieval
+
+In some sense it is unsuprising that the transformer has relatively poor input representational power compared to the masked mixer. After all, this architecture was design on the principle that some input words are more important than others for sequence-to-sequence tasks such as machine translation; these more important words receive more *attention*. The softmax-transformed dot product attention serves to effectively limit the number of input tokens that influence an output per head, and with multiple heads more of the input may be attended to for any given output. But for accurate input representation we want something entirely different: a sampling of all input elements with some mixing process such that the information in the hidden layers of the model for token $n$ may recapitulate the prior tokens $0, 1, ..., n-1$. This is exactly what the mixer does.
+
+But if transformers exhibit inaccurate input representation but are effective langauge task learners, does input representation accuracy really matter for causal language generation? These results seem to imply that transformational power (ie the set of functions that the model maps from input to output) is more important than accurate representation, at least for causal language modeling. And indeed that is equivalent to the hypothesis that attention brings to a model, that not all words are really useful for language tasks.
+
+But transformers are used for many tasks that are a far cry from sequence-to-sequence models: in particular for this work, language retrieval-style tasks via embedding matching is nearly always accomplished today using transformer-based models. But thinking critically, are transformers really the right models for matching a query to a target text passage using some metric on the respective embeddings of each? 
+
+The answer (at least to this author) is certainly not: the same implicit hypothesis present in self-attention (to only care about a subset of input elements) is generally not applicable to the task of finding an matching passage to a question. More often one wants to consider all elements of each input to make a match, or an important part may be missed without prior knowledge.
 
 
 ### Implications
