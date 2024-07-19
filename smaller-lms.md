@@ -598,14 +598,43 @@ This does not yield any benefit from the standard transformer architecture, howe
 
 ### Accurate Representation and Retrieval
 
-In some sense it is unsuprising that the transformer has relatively poor input representational power compared to the masked mixer. After all, this architecture was design on the principle that some input words are more important than others for sequence-to-sequence tasks such as machine translation; these more important words receive more *attention*. The softmax-transformed dot product attention serves to effectively limit the number of input tokens that influence an output per head, and with multiple heads more of the input may be attended to for any given output. But for accurate input representation we want something entirely different: a sampling of all input elements with some mixing process such that the information in the hidden layers of the model for token $n$ may recapitulate the prior tokens $0, 1, ..., n-1$. This is exactly what the mixer does.
+In some sense it is unsuprising that the transformer has relatively poor input representational accuracy compared to the masked mixer. After all, this architecture was design on the principle that some input words are more important than others for sequence-to-sequence tasks such as machine translation; these more important words receive more *attention*. The softmax-transformed dot product attention serves to effectively limit the number of input tokens that influence an output per head, and with multiple heads more of the input may be attended to for any given output. But for accurate input representation we want something entirely different: a sampling of all input elements with some mixing process such that the information in the hidden layers of the model for token $n$ may recapitulate the prior tokens $0, 1, ..., n-1$. This is exactly what the mixer does.
 
 But if transformers exhibit inaccurate input representation but are effective langauge task learners, does input representation accuracy really matter for causal language generation? These results seem to imply that transformational power (ie the set of functions that the model maps from input to output) is more important than accurate representation, at least for causal language modeling. And indeed that is equivalent to the hypothesis that attention brings to a model, that not all words are really useful for language tasks.
 
 But transformers are used for many tasks that are a far cry from sequence-to-sequence models: in particular for this work, language retrieval-style tasks via embedding matching is nearly always accomplished today using transformer-based models. But thinking critically, are transformers really the right models for matching a query to a target text passage using some metric on the respective embeddings of each? 
 
-The answer (at least to this author) is certainly not: the same implicit hypothesis present in self-attention (to only care about a subset of input elements) is generally not applicable to the task of finding an matching passage to a question. More often one wants to consider all elements of each input to make a match, or an important part may be missed without prior knowledge.
+The answer that can be argued from first principles (at least as apparent to this author) is certainly not: the implicit hypothesis present in self-attention is to only care about a subset of input elements for a next element, but only paying attention to some inputs is perhaps the worst strategy for matching a one input to another. It is better to consider all elements of each input and attempt a match based on more complete information, as otherwise the model is likely to make a mistake. More formally, transformers were designed to map sequences of tokens to individual tokens (specifically the next token for causal language modeling tasks or a masked token for sequence-to-sequence tasks) and are an implementation of the assumption that this process requires removal of most input information. But for document retrieval we instead want to map a sequence of tokens to a sequence of tokens directly, preferably not removing information from each sequence unless there is a prior reason to do so.
 
+Stated this way, it seems obvious that we should prefer a masked mixer to a transformer for the task of generating embeddings to perform retrieval tasks simply because the former model retains more information about its input than the latter. This can be tested using the same models trained to complete Tiny Stories fairly simply, and we will find that indeed the mixer is far better at retrieval tasks.
+
+The metric normally used for retrieval tasks using transformers is a normalized cosine distance on the last hidden layer of the last token: for model $f$ with parameters $\theta$, the distance between inputs $a, b$ is
+
+$$
+d = 1 - \cos (\f(a, \theta)^*, f(b, \theta)^*)
+$$
+
+where $f()^*$ denotes the flattened (vectorized) version of the potentially multi-dimensional model output for each input. This calculation can be done very quickly for many inputs via matrix multiplication on normalized inputs, using the identity relating inner products to cosine distances,
+
+$$
+\cos(x, y) = \frac{x \cdot y}{||x|| ||y||}
+$$
+
+and as the norms $||x||$ and $||y||$ can be set to one the matrix multiplication yields the set of all pairs of cosine distances.
+
+As explored [elseswhere](https://blbadger.github.io/language-discreteness.html), there is an aligment between this metric on the output and the method by which information passes between tokens in the transformer model, such that one may expect for this metric to be a somewhat accurate reflection of the learned inter-token relationships for that model. No such guarantees are present for the mixer, as there is no dot product and thus effective cosine distance computed between tokens for that model. Some preliminary results find that indeed a trained mixer performs very poorly when a cosine distance metric is used to perform retrieval tasks, which is to be expected.
+
+A different method of matching embeddings must be explored for masked mixers, but it turns out that perhaps the most intuitive one (L^1 or L^2 distance on the vectorized output layer) is also very inaccurate. This can be understood as showing that the mixer's last layer does not form a manifold resembling a high-dimensional sphere or anything similar, as otherwise this metric (and the last) would accurately reflect similarites assuming the model were sufficiently trained.
+
+Happily we can evaluate retrieval ability by simply training another model to match the embeddings generated by either the mixer or the transformer.  This can be done a number of ways, but the more established methods of training the language model itself on labeled or unlabeled matches (for instance, the [e5 mistral instruct method](https://arxiv.org/abs/2401.00368)) are not particularly well-suited here as they generally modify the embedding model, or else use very large datasets with characters that the tinystories-trained models would not recognize.  
+
+Instead we train an arbitrary model to match embeddings of retrieval pairs, where the embeddings were either generated by transformers or by masked mixers. We choose to use a modified bidirectional mixer as the matching model, but the model architecture should not affect the results here assuming that it is powerful enough to perform the vector-to-vector mapping. The retrieval model architecture is the same as a normal mixer except that there is no word-token embedding (as the inputs are already embeddings) nor langauge modeling head: instead the 'head' is a map of dimensions $d_{model} \to 1$ such that all outputs for a selection of possible matches may be concatenated as a probability distribution after Softmax transformation. The training proceeds via cross-entropy loss on the softmax-transformed concatenated output, with the inputs being the query (summary) in the first token's position followed by a set number of targets in a random assortment in the following positions. The labels that are used to form the model's loss are one-hots where the one is in the position of the matching tinystory embedding. 
+
+It should be noted that this approach does have practical value: one can perform a B-tree -like algorithm for finding matches from $n$ samples in $n \ log n$ time.
+
+The retrieval pairs themselves are one-sentence summaries, and were generated for the first 200k tinystories samples by the instruction-tuned version of Llama-3 (8b). We have seen that the embeddings formed by masked mixers contain much more information about the input than those formed by transformers, so the hypothesis is that the retrieval process will be far more successful after identical training runs.
+
+And indeed this is what is found: for 200k samples with 32 samples being considered at one time (the 'context'), the mixer's embeddings lead to a train/test loss of 0.05/0.29 whereas the transformer of the same output dimension (1024) peaks at 0.01/0.40. When the number of samples increases the gap widens considerably: for a context size of 128, the mixer achieves train/test losses of 0.01/0.76 with little noticeable overfitting whereas the transformer only manages 0.61/2.27 with severe overfitting. 
 
 ### Implications
 
@@ -613,7 +642,7 @@ Seeking to make a more efficient learning algorithm than a transformer, we used 
 
 It is worth restating the more noteworthy findings of this work as concisely as possible:
 
-1. Language mixers of equivalent 'size' in terms of $d_{model}$ and $n$ layers may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
+1. Language mixers of similar performance and equivalent 'size' in terms of $d_{model}$ and $n$ layers may be trained using far less computational resources than a transformer, typically around 1/3 to 1/5th the memory and FLOPs.
 2. Depending on the hardware the models are implemented on, given equal compute a masked mixer may reach a much lower training and validation causal language model loss or else the transformer may out-perform the mixer.
 3. The mixer implementations uses no traditional regularization techniques, instead relying on the intrinsic generalization inherent in gradient descent-based optimization of high-dimensional space (see [this paper](https://arxiv.org/pdf/2211.09639.pdf) for more on this subject) combined with the 'inherent' regularization in language datasets. It does not overfit to a greater extent than the transformer, however.
 4. This is all possible without innovations that are now used nearly ubiquitous for transformers such as rotary positional encoding (or any explicit positional encoding at all). Positional encoding instead stems directly from the convolutional filter weights.
