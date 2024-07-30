@@ -286,9 +286,7 @@ It may be wondered whether batch normalization is necessary for accurate input r
 
 ### Representations in Unet generative models with Attention
 
-It may be wondered why representation clarity (or lack thereof) would be significant.  So far we have seen that the more accurate (ie Vit Large 16) vision transforms contain representations in their hidden layers that mirror those of convolutional models such as ResNet50, in which a near-perfect autoencoding of the input may be made without prior knowledge in early layers but a substantial amount of information is lost during the forward pass, leading to poor input representation accuracy in later layers.
-
-For tasks of classification, the importance of accurate input representation is unclear.  One might assume that a poor representation accuracy in deep layers prevents overfitting, but as observed [here](https://arxiv.org/pdf/2211.09639.pdf) the gradient descent process itself serves to prevent overfitting regardless of representational accuracy for classifiers.  For generative models, however, there is a theoretical basis as to why imperfect deep representation is favorable.
+It may be wondered why representation clarity (or lack thereof) would be significant. For tasks of classification, the importance of accurate input representation is unclear.  One might assume that a poor representation accuracy in deep layers prevents overfitting, but as observed [here](https://arxiv.org/pdf/2211.09639.pdf) the gradient descent process itself serves to prevent overfitting regardless of representational accuracy for classifiers.  For generative models, however, there is a theoretical basis as to why imperfect deep representation is favorable.
 
 To see why perfect input representation in the output may be detrimental to generative models, take a simple autoencoder designed to copy the input to the output.  For a useful autoencoder we need the model $\theta$ to learn parameters that capture some important invariants in the data distribution $p(x)$ of interest.  But with perfect input representation capability in the output the model may achieve arbitrarily low cost function value by learning to simply copy the input to output.
 
@@ -329,6 +327,21 @@ The input representation (of information present in the the output layer of our 
 ![attention autoencoder]({{https://blbadger.github.io}}/deep-learning/dotprod_attention_only_copying.png)
 
 This appears to be mostly due to conditioning: it is very difficult to generate an accurate representation across a dot-product attention transformation without a residual connection.
+
+### Conclusion
+
+On this page we have seen that autoencoders learn to remove the noise introduced into their input representations via non-invertible transformations, and thus become effective denoising models without ever receiving explicit denoising training. The effect of this is that autoencoders may be used to generate images via a diffusion-like sampling process, and that one can observe the manifold learned by autoencoders is a similar way to that learned by generative adversarial networks.
+
+Does this mean that we should all start using autoencoders to generate images and stop using diffusion models or GANs? Probably not: when typical steps towards scaling up the process of autoencoder training (increasing the batch size, distributing to many GPUs, etc.) are taken, the images generated after the sampling process are not much better than when the relatively small compute used for this page (one RTX 3060 for 12 - 36 hours) is used. This means that these are not particularly efficient learning algorithms.
+
+
+
+
+
+
+
+
+
 
 
 
