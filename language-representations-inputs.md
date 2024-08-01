@@ -85,7 +85,7 @@ tokens = tokenizer.encode(
 	  ).to(device)
 ```
 
-For GPT-2 and other transformer-based langauge models, the total input embedding fed to the model $e_t$ is the addition of the word input embedding $e$ added to a positional encoding $e_p$
+For GPT-2 and other transformer-based language models, the total input embedding fed to the model $e_t$ is the addition of the word input embedding $e$ added to a positional encoding $e_p$
 
 ```python
 model = model.to(device)
@@ -176,7 +176,7 @@ $$
 m = || O_l(e', \theta) - O_l(e, \theta)||_1
 $$
 
-as an estimate for 'close' to $O_l(e, \theta)$ we should try to make $O_l(e_g, \theta)$. For the first transformer block (followed by the langauge modeling head) of GPT, we can see that after 100 iterations of \eqref{eq2} we have a representation
+as an estimate for 'close' to $O_l(e, \theta)$ we should try to make $O_l(e_g, \theta)$. For the first transformer block (followed by the language modeling head) of GPT, we can see that after 100 iterations of \eqref{eq2} we have a representation
 
 $$
 \mathtt{Engine \; casino \; ozlf \; Territ}
@@ -269,7 +269,7 @@ $$
 
 effectively minimize the $L^1$ distance for different initializations of GPT-2, and yield the same next word (bytecode) token as 'The sky is blue.' does.
 
-### Langauge models become less trainable as they are trained
+### Language models become less trainable as they are trained
 
 So far we have only considered input representations from untrained models. It may be wondered what the training process does to the model representational ability, and to do so we will use the same abbreviated model configuration above (with GPT-2 transformer blocks following the input and positional embedding and ending in the language modeling head output).
 
@@ -310,7 +310,7 @@ Returning to the general case, it takes an extremely large number of iterations 
 
 The relative inability of gradient updates to the input embedding to minimize a loss function on the model output suggests that model layers that are adjacent in the backpropegation computational graph (ie the first few transformer encoders) are also poorly optimized towards the end of training.  Indeed, the poor optimization to the input embedding given only one trained transformer block suggests that most of the model is poorly updated towards the end of training, and that only a few output layers are capable of effective updates at this point.
 
-Is there any way to use gradient descent to more effectively minimize some metric distance between a trained model's output of $a$ versus $a_g$? It turns out that there is: removing the langauge modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
+Is there any way to use gradient descent to more effectively minimize some metric distance between a trained model's output of $a$ versus $a_g$? It turns out that there is: removing the language modeling head reduces the number of iterations required to satisfy \eqref{eq4}, by a factor of $>100$ for a one-block GPT-2 model. This makes it feasible to generate $e_g$ that is accurate even when compared with stricter $e'$ but even these embeddings map to inputs that are more or less completely unrecognizable.
 
 $$
 \mathtt{srfAttachPsyNetMessage \; Marketable \; srfAttach \; srfAttachPsyNetMessage}
