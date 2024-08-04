@@ -136,6 +136,10 @@ The XT60 plug also allows us to run the GPUs at full power (~1600W total for the
 
 Due to the power and heat and noise reduction for a slightly larger performance degradation, I tend to limit the power to close to 200W per GPU, which degrades performance only slightly. The plugs and PSUs tend to be much cooler with this limit, especially with the blowers running. The eventual plan is to add a third PSU for redundancy so that any one unit can fail without killing the server's processes, and with the added benefit of reducing the power drawn from each PSU and through each XT60 for increased longevity.
 
+UPDATE: The third and final PSU has been added. This turned out to be necessary for stable training runs where all four GPUs tended to ramp up and down very quickly (as happens during DDP training under certain conditions). When that happens the sharp increases in GPU power draw (which appears to occur in the microsecond timescale) are too much for even two Dell l1100e PSUs, and the supply under-volts (~11.4 V at the server terminals) and the GPUs drop off the bus, even with limited clock speeds and lower power levels. The addition of a third PSU happily prevents this issue even when the V100 clock speeds are not limited and the power levels are not lowered from the default TDP of 300W. I have also added small aluminum heatsinks to the XT60 plugs, which seems to keep them somewhat cooler.
+
+![server]({{https://blbadger.github.io}}/server_setup/final_psu.png)
+
 ### Test
 
 The I/O ports are suprisingly comprehensive for a server: one VGA, three RJ45s, and two USB ports. 
