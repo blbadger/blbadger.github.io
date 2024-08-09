@@ -578,6 +578,14 @@ With this training protocol, the 4-headed, 8-layered llama model achieves a trai
 
 The main finding here is that a compute- and dataset-optimized mixer is generally approximately as performant as a similarly optimized transformer, perhaps a little more or less efficient depending on the implementation. 
 
+### Multi Headed Mixers
+
+As more than one self-attention head increases the learning efficiency for transformers, it may be wondered if increasing the number of mixer 'heads' would also lead to a concomitant increase in mixer learning efficiency. One may implement masked mixer heads in a number of ways but we choose to use a formulation similar to the original transformer. Each head is projected by a unique weight matrix and then a unique mixer is applied to each head, and the outputs are concatenated and then re-projected back to match the $d_{model}$ dimension. The following diagram portrays this approach for the case where each head's convolutional kernal is of size one.
+
+![conv mixer]({{https://blbadger.github.io}}/deep-learning/multiheaded_convs.png)
+
+This approach yields a slight increase in training efficiency relative to the standard flat masked mixer with convolutional kernel of size 4: training/test losses for 2.25h on 4x V100 are  1.60/1.72 for the two-headed mixer versus 1.62/1.74. 
+
 ### Transformer mixer hybrids learn most efficiently
 
 The observation that mixers appear to learn a fundamentally different structure than transformers when applied to the same dataset suggests that they may act orthogonally (with some slight abuse to the linear algebraic phrase). This means that the abstract quantities a mixer learns might be complementary to those that a transformer learns, such that combining these architectures in some way might lead to a model that is a more efficient learner than either mixer or transformer alone.
