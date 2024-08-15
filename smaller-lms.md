@@ -497,7 +497,7 @@ played a game. They took turns throwing the ball to each other. Tim was good at 
 
 The following table provides a summary of the results of transformer, expanded mixer, and flat mixer performance after one unit of compute (12 hours on an RTX 3060) applied to the first 2M examples of TinyStories:
 
-Transformer ($n=8$ layers, $h=16$ attention heads, $b=16$ batch size unless otherwise noted):
+Transformer ($n=8$ layers, $h=16$ attention heads, $b=32$ batch size unless otherwise noted):
 
 |  | $d_{model} = 128$ | $d_{m}=256$ | $d_{m}=512$ | $d_{m}=1024$, b=8 | 
 | -------- | ------- | -------- | ------- | -------- | 
