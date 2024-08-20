@@ -11,7 +11,7 @@ Language input generation presents a unique challenge to gradient-based optimiza
 The standard approach to observing the input information present for some vision model layer is to start with a random normal input $a_0 = \mathcal{N}(a, \mu=1/2, \sigma=1/20)$ and then perform gradient descent on some metric (here $L^1$) distance between the target output $O_l(a, \theta)$ for $N$ total iterations, each step being
 
 $$
-a_{n+1} = a_n + \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
+a_{n+1} = a_n - \eta * \nabla_{a_n} ||O_l(a_n, \theta) - O_l(a, \theta)||_1 \\
 \tag{1}\label{eq1}
 $$
 
@@ -48,7 +48,7 @@ where $D^+$ is simply the transpose of the singular value decomposition diagonal
 Therefore we can instead perform gradient descent on an initially random embedding $e_0 = \mathcal{N}(e, \mu=1/2, \sigma=1/20)$ using
 
 $$
-e_{n+1} = e_n + \eta * \nabla_{e_n} ||O_l(e_n, \theta) - O_l(e, \theta)||_1 \\
+e_{n+1} = e_n - \eta * \nabla_{e_n} ||O_l(e_n, \theta) - O_l(e, \theta)||_1 \\
 \tag{2}\label{eq2}
 $$
 
