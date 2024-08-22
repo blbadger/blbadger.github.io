@@ -425,7 +425,6 @@ played a game of catch. Tim threw the ball to Sam, and Sam caught it. They laugh
 
 which is a more coherent and plot-accurate completion than either the transformer or even the expanded mixer presented in the last section of this page, again reflective of a lower training and validation loss than either architecture.
 
-
 ### Parallel rather than Sequential Convolutions
 
 We have seen that the original mixer architecture with two 1-Dimensional convolutions sequentially (and GELU inbetween) learns language much more slowly than a mixer with only one 1-Dimensional convolution between sequence elements. 
@@ -574,9 +573,9 @@ For clarity, the mixer architecture is detailed in the following figure:
 
 In contrast to the paralleled convolutions explored earlier, the convolutional kernal acts on the $d_{model}$ index, not the token index. The number of inter-token trainable parameters is equal to the kernel size multiplied by the number of weights in the 1D convolution of kernel size 1 (the number of sequence elements squared divided by two for masked mixers).
 
-With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far worse than what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.64 and 1.70, respectively). Note that the higher test accuracy for the mixer is somewhat of an artefact, as if the training run is extended another 10 minutes then the same mixer also reaches a test accuracy of 1.70. If the mixer is modified slightly to contain an extra linear layer after the word-token embedding, the cross-entropy losses are now 1.61 train and 1.71 test.
+With this training protocol, the 4-headed, 8-layered llama model achieves a training (causal language model) loss and validation loss of 1.78 and 1.82, respectively. With the larger learning rate of $\eta=0.005$ this is slightly reduced to 1.76 and 1.79 training and test accuracy. This is far worse than what is achieved for a 8-layer, 4-sized convolution masked mixer (with the increased learning rate) which achieves training and validation losses of 1.62 and 1.74 given the same amount of compute. If we further optimize the transformer by increasing the batch size to 32, the transformer achieves nearly the same accuracies (1.68 and 1.73 respectively). If the mixer is modified slightly to contain an extra linear layer after the word-token embedding, the cross-entropy losses are 1.61 train and 1.71 test.
 
-The main finding here is that a compute- and dataset-optimized mixer is generally approximately as performant as a similarly optimized transformer, perhaps a little more or less efficient depending on the implementation. 
+The main finding here is that a compute- and dataset-optimized mixer is generally slightly more performant than a similarly optimized transformer (notably without Flash Attention 2).
 
 ### Multi Headed Mixers
 
