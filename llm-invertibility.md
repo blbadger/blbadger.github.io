@@ -268,13 +268,13 @@ and for $d_{model}=2048$ at block 8 we do find both accurate self and non-self t
 
 At the end of the last section, we have seen that an untrained masked mixer's final layer representation is sufficiently powerful to identify nearly all or all of a short prompt's input tokens. 
 
-Masked mixer input representation ability decreases somewhat upon training. For example, the flat $d_{model}=1024$ explored above retains perfect input representation of **Mario, the Idea, versus Mario, the Man** for one transformer block, but after 8 blocks we have for `[:, 1:, :]`
+Masked mixer input representation ability decreases somewhat upon training. For example, the flat $d_{model}=1024$ explored above retains perfect input representation of **Mario, the Idea, versus Mario, the Man** for one mixer block, but after 8 blocks we have for `[:, 1:, :]`
 
 ```
 Mgiftio, the Idea</s>versus Mario, the Man
 ```
 
-which is slightly worse than the perfect representation present in this model before training commenced.
+which is slightly worse than the perfect representation present in this model before training commenced. Note, however, that the non-self token 'M' was accurately found.
 
 This flat mixer representation is more accurate than that obtained from a similarly sized transformer (even when using the same 4096-size tokenizer and training dataset): a trained $d_{model}=256, \; n=8$ transformer (llama style) model yields for `[:, 1:, :]` the input *Mario, the Idea, versus Mario, the Man*
 
@@ -284,4 +284,4 @@ where some self- and the non-self token are incorrectly identified, although for
 
 `s. They whistch whistsat panstayou're snowpatophch whistsat Man`
 
-From these results it is apparent that masked mixers remain invertible after 
+From these results it is apparent that masked mixers remain at least somewhat invertible after training, whereas transformers are less so.
