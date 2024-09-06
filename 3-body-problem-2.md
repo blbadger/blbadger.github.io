@@ -261,7 +261,7 @@ where we provide the proper return type (here a pointer to an integer array). Th
 (base) bbadger@pupu:~/Desktop/threebody$ nvcc -Xcompiler -fPIC -shared -o divergence.so divergence_kernel.cu
 ```
 
-where our CUDA kernel is located in `divergence_kernel.cu` and we are sending the compiled library to `divergence.so`.  Now we can call the `divergence` function in our `.so` file using `ctypes as follows:
+where our CUDA kernel is located in `divergence_kernel.cu` and we are sending the compiled library to `divergence.so`. Now we can call the `divergence` function in our `.so` file using `ctypes as follows:
 
 ```python
 #! python
