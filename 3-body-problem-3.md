@@ -64,7 +64,7 @@ and call the kernel `divergence<<<(block_n+127)/128, 128>>>`. After the kernel i
 ```
 which allows the loop to continue without waiting for each GPU to finish its computation and send data back to the CPU memory.
 
-There is one last ingredient we need: a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. The last note is that calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation.
+There are two final ingredients that we need to finish adapting this code for use with many GPUs. Firstly we need a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. Lastly we need to de-allocate our pinned memory: simply calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation. Instead we need to explicitly free the pinned memory via the cuda function `cudaFreeHost(var)`.
 
 With that, we have a multi-gpu kernel that scales to any number of GPUs. The exact amount of time this would save any given computational procedure depends on a number of variables, but one can expect to find near-linear speedups for clusters with identical GPUs (meaning that for $n$ GPUs the expected completion time is $t/n$ where $t$ is the time to completion for a single GPU).  This can be shown in practice, where a cluster with one V100 GPU completes 50k iterations of a 1000x1000 starting grid of the three body problem in 73.9 seconds, whereas four V100s complete the same in 18.8s which corresponds to a speedup of 3.93x, which is very close to the expected value of 4x.
 
@@ -127,5 +127,50 @@ This can be compiled using the `-fopenmp` flag for linux machines as follows:
 badger@servbadge:~/Desktop/threebody$ nvcc -Xcompiler -fopenmp -o mdiv multi_divergence.cu
 ```
 
-After doing so we find something interesting: parallelizing via this kernel up for two GPUs is flawless, but for three or four GPUs we find memory access errors that result from the CPU threads attempting to load and modify identical memory blocks.
+After doing so we find something interesting: parallelizing via this kernel is successful in a hardware implementation-specific manner. For a desktop with two GPUs there is no problem, but on a [4x V100 node](https://blbadger.github.io/gpu-server.html) with three or four GPUs available we find memory access errors that result from the CPU threads attempting to load and modify identical memory blocks. Close inspection reveals that this is due to the CPU (actually two CPUs for that node) attempting to access one identical memory location for each thread. 
+
+Why does this happen? Consider what occurs when we call the following
+
+```cuda
+cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));
+cudaMemcpyAsync(d_x, x+start_idx, (N/n_gpus)*sizeof(float), cudaMemcpyHostToDevice, streams[device]);
+```
+
+with four different threads. Each thread is attempting to allocate memory on its 'own' device, but the address must be fetched and is identical as the variable `double *d_x` was only initialized once. Thus if we print the address of `d_x` for each thread we have one identical integer, something like
+
+```
+std::cout << &d_x; // 0x7ffedb04f2e8
+```
+
+Now for newer hardware implementations this is not apparely a problem: CPU threads are scheduled such that they do not experience read conflicts with `d_x`. But other hardware is not so lucky, and so instead we must use a separate memory location for each device's address. This can be done as follows: first we move 
+
+```cuda
+int n_gpus;
+cudaGetDeviceCount(&n_gpus);
+```
+
+to the start of our C++ driver code, and then we initialize device array pointers as arrays with length equal to the number of GPUs as follows:
+
+```cuda
+double * d_x[n_gpus]; \\ not double *d_x;
+```
+
+Then as we launch threads, each GPU's thread gets a unique address for each 'variable',
+
+```cuda
+cudaMalloc(&d_p1_x[i], block_n*sizeof(double)); 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
