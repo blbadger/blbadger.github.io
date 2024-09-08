@@ -152,13 +152,13 @@ cudaGetDeviceCount(&n_gpus);
 to the start of our C++ driver code, and then we initialize device array pointers as arrays with length equal to the number of GPUs as follows:
 
 ```cuda
-double * d_x[n_gpus]; \\ not double *d_x;
+double * d_x[n_gpus]; // not double *d_x;
 ```
 
 Then as we launch threads, each GPU's thread gets a unique address for each 'variable',
 
 ```cuda
-cudaMalloc(&d_p1_x[i], block_n*sizeof(double)); 
+cudaMalloc(&d_p1_x[i], block_n*sizeof(double));
 ```
 
 
