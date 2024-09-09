@@ -195,7 +195,7 @@ we run into an interesting problem: only the last GPU to have memory allocated (
 
 This might not seem like a huge problem, but if this kernel is driven by a loop (say via a `ctypes` interface with python to make a zoom video) then the GPUs will eventually overflow.  As each 64-bit 1000x1000 three body problem computation requires 452 MB in total per GPU, this occurs rather quickly. Moreover, depening on the hardware implementation a memory segmentation fault will be observed after a mere 2-4 iterations.
 
-What these problems tell us is that the cuda interface forms a link between a pointer in CPU memory and its address for GPU memory allocation, and that critically only one link may be formed per CPU memory address. When one particular address in CPU memory (say `&d_x = 0x7fffdebe1a70` for example) is assigned to one particular GPU via `cudaSetDevice(d); cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));` then that address may be re-assigned to another GPU's memory allocation but the CPU will not be able to free the block it first assigned to the other GPU. This implies that cuda is changing the memory allocation procedure in machine code, as an array at one address should always be able to be de-allocated.
+What these problems tell us is that the cuda interface forms a link between a pointer in CPU memory and its address for GPU memory allocation, and that critically only one link may be formed per CPU memory address. When one particular address in CPU memory (say `&d_x = 0x7fffdebe1a70` for example) is assigned to one particular GPU via `cudaSetDevice(d); cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));` then that address may be re-assigned to another GPU's memory allocation but the CPU will not be able to free the block it first assigned to the other GPU. This implies that cuda is changing the memory allocation procedure in machine code, as an array at one address in a GPU should be able to be de-allocated regardless of the sequence of CPU thread operations.
 
 To remedy this, we can take a similar approach as to what was implemented for multithreading: instead of a single pointer we allocate `d_x` as an array of unique pointers, of length equal to the number of GPUs. Then we can proceed with de-allocation
 
@@ -204,6 +204,21 @@ for (int i=0; i<n_gpus; i++){
       cudaSetDevice(i);
       cudaFree(d_p1_x[i])
 ```
+
+with this approach, memory is correctly de-allocated
+
+For the multithreaded kernel, we don't have to re-iterate over GPUs as we can instead have each CPU thread free its allocated GPU arrays. As long as the memory of any arrays of interest is copied back to the host before freeing, we will get the result we want. `cudaFree()` is a synchronous operation such that we don't really need to add `cudaDeviceSynchronize()` here, but it is added for clarity.
+
+```cuda
+	divergence<<<(block_n+127)/128, 128>>>(
+	cudaMemcpyAsync(times+start_idx, d_times[d], block_n*sizeof(int), cudaMemcpyDeviceToHost, streams[d]);
+	cudaDeviceSynchronize();
+	cudaFree(d_x[d]);
+```
+
+And with that we have working kernels for as many GPUs as we have in one node, using either one CPU thread for all GPUs or one thread per GPU. Practically speaking, a three body zoom video that takes around three days to complete on an RTX 3060 requires only two hours with a 4x V100 node.
+
+Parallelizing across multiple nodes is also possible with MPI (Message Passing Interface).  
 
 
 
