@@ -165,7 +165,7 @@ to the start of our C++ driver code, and then we initialize device array pointer
 double * d_x[n_gpus]; // not double *d_x;
 ```
 
-For an example of what we are accomplishing by initializing an array of integer (pointers), for four GPUs on the V100 cluster this gives us pointers with addresses `&d_x = [0x7fffdebe1a70, 0x7fffdebe1a78, 0x7fffdebe1a80, 0x7fffdebe1a88]` which are unique and nearly contiguous. Then as we launch threads, each GPU's thread gets a unique address for each array as we reference the pointer address corresponding to the thread number during device memory allocation
+For an example of what we are accomplishing by initializing an array of integer (pointers), for four GPUs on the V100 cluster this gives us pointers with addresses `&d_x = [0x7fffdebe1a70, 0x7fffdebe1a78, 0x7fffdebe1a80, 0x7fffdebe1a88]` which are unique and indeed these addresses are contiguous in memory. Then as we launch threads, each GPU's thread gets a unique address for each array as we reference the pointer address corresponding to the thread number during device memory allocation
 
 ```cuda
 #pragma omp parallel num_threads(n_gpus)
@@ -195,7 +195,15 @@ we run into an interesting problem: only the last GPU to have memory allocated (
 
 This might not seem like a huge problem, but if this kernel is driven by a loop (say via a `ctypes` interface with python to make a zoom video) then the GPUs will eventually overflow.  As each 64-bit 1000x1000 three body problem computation requires 452 MB in total per GPU, this occurs rather quickly. Moreover, depening on the hardware implementation a memory segmentation fault will be observed after a mere 2-4 iterations.
 
-What these problems tell us is that the cuda interface forms a link between a pointer in CPU memory and its address for GPU memory allocation, and that only one link may be formed per CPU memory address.
+What these problems tell us is that the cuda interface forms a link between a pointer in CPU memory and its address for GPU memory allocation, and that critically only one link may be formed per CPU memory address. When one particular address in CPU memory (say `&d_x = 0x7fffdebe1a70` for example) is assigned to one particular GPU via `cudaSetDevice(d); cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));` then that address may be re-assigned to another GPU's memory allocation but the CPU will not be able to free the block it first assigned to the other GPU. This implies that cuda is changing the memory allocation procedure in machine code, as an array at one address should always be able to be de-allocated.
+
+To remedy this, we can take a similar approach as to what was implemented for multithreading: instead of a single pointer we allocate `d_x` as an array of unique pointers, of length equal to the number of GPUs. Then we can proceed with de-allocation
+
+```cuda
+for (int i=0; i<n_gpus; i++){
+      cudaSetDevice(i);
+      cudaFree(d_p1_x[i])
+```
 
 
 
