@@ -1,9 +1,9 @@
 
 ### Parallelizing across many GPUs
 
-We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although the other optimizations when stacked together yield a significant 4x decrease in runtime.
+We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although compute optimizations when stacked together yield a significant 4x decrease in runtime to Newton's method.
 
-Perhaps the easiest way to decrease the runtime of our three body kernel is to simply choose a device that is best suited for the type of computation requried. In particular, the RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU (P100, V100, A100 etc.) with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime. 
+Perhaps the easiest way to further decrease the runtime of our three body kernel is to simply choose a device that is best suited for the type of computation required. In particular, the Nvidia RTX 3060 (like virtually all gaming GPUs) has poor support for the double precision computation that is necessary for high-resolution three body problem integration, so switching to a datacenter GPU such as the P100, V100, A100 etc. with more 64-bit cores will yield substantial speedups. Indeed, this is exactly what we find when a [V100 GPU](https://blbadger.github.io/gpu-server.html) is used instead of our 3060: a 9x decrease in runtime compared to the 3060. This is effectively stackable on top of the 
 
 Another way to speed up the computational process is to use more than one GPU. This is a common approach in the field of deep learning, where large models are trained on thousands of GPUs simultaneously. Sophisticated algorithms are required for efficient use of resources during deep learning training, but the three body problem simulation is happily much simpler with respect to GPU memory movement: we only need to move memory onto the GPU at the start of the computation, and move it back to the CPU at the end. 
 
@@ -11,7 +11,7 @@ This is somewhat easier said than done, however. A naive approach would be to sp
 
 Perhaps the most straightforward way to do this is to work in the single thread, multiple data paradigm. The essentials of this approach applied to one array are shown below:
 
-![adam-bashford]({{https://blbadger.github.io}}/3_body_problem/distributed_threebody.png)
+![threebody distributed]({{https://blbadger.github.io}}/3_body_problem/distributed_threebody.png)
 
 Briefly, we first allocate CPU memory for each array in question (shown is the divergence iteration number array but also required are all positions, velocities etc.), find which index corresponds to an even split of this flattened array and make pointers to those positions, allocate GPU memory for each section and copy from CPU, asynchronously run the computations on the GPUs (such that the slowest device determines the speed), and asynchronously copy back to CPU memory.  This is all performed by one thread, and happily this approach requires no change to the `divergence()` kernel itself.
 
@@ -64,9 +64,11 @@ and call the kernel `divergence<<<(block_n+127)/128, 128>>>`. After the kernel i
 ```
 which allows the loop to continue without waiting for each GPU to finish its computation and send data back to the CPU memory.
 
-There are two final ingredients that we need to finish adapting this code for use with many GPUs. Firstly we need a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. Lastly we need to de-allocate our pinned memory: simply calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation. Instead we need to explicitly free the pinned memory via the cuda function `cudaFreeHost(var)`.
+There are two final ingredients that we need to finish adapting this code for use with multiple GPUs. Firstly we need a synchronization step to prevent the process from completing prematurely. This can be done by adding `cudaDeviceSynchronize();` after the loop over `n_gpus`, which prevents further code from executing until the cuda devices on the current thread (all GPUs in this case) have completed their computation. Lastly we need to de-allocate our pinned memory: simply calling `free()` on the `cudaHostAlloc()` arrays leads to a segfault, one must instead use the proper cuda host deallocation. Instead we need to explicitly free the pinned memory via the cuda function `cudaFreeHost(var)`.
 
 With that, we have a multi-gpu kernel that scales to any number of GPUs. The exact amount of time this would save any given computational procedure depends on a number of variables, but one can expect to find near-linear speedups for clusters with identical GPUs (meaning that for $n$ GPUs the expected completion time is $t/n$ where $t$ is the time to completion for a single GPU).  This can be shown in practice, where a cluster with one V100 GPU completes 50k iterations of a 1000x1000 starting grid of the three body problem in 73.9 seconds, whereas four V100s complete the same in 18.8s which corresponds to a speedup of 3.93x, which is very close to the expected value of 4x.
+
+This is not quite the end of our efforts, however: we have thus far avoided performing cuda memory de-allocation, instead relying on automatic deallocation to occur after the kernel processes are completed (and the CPU process is terminated). But if we want to call this kernel repeatedly, say in a loop in order to obtain a zoom video, this approach is not quite complete and gives memory segmentation faults in a hardware implementation-specific manner. Why this is the case and how one can change the approach will be detailed in the last section on this page, as it is closely related to a problem we will find for multi-threading in the next section.
 
 ### Multithreaded Parallelization
 
@@ -78,7 +80,7 @@ It should be noted that this approach would only be expected to realize the smal
 
 In practice multithreading a CUDA is more difficult because threading is usually implementation-specific, and combining multithreading with GPU acceleration is somewhat finnicky for a heave kernel like the one we have. The C libraries standard for multithreading (OpenMP, HPX, etc) were developed long before GPUs were capable of general purpose compute, and are by no means always compatible with CUDA. We will develop a multithreading approach with OpenMP that will illustrate some of the difficulties in doing so here.
 
-Multithreading is in some sense a simple task: we have one thread (the one that begins program execution) initialize other threads to complete sub-tasks of a certain problem, and then either combine the threads or else combine the output in some way. The difficulty of doing this is that CPU threads are heavy (initializing a new thread is costly) and memory access must be made in a way to prevent race conditions where two threads read and write to the same data in memory in an unordered fashion. Happily much of this difficulty is abstracted away when one uses a library like OpenMP, but unhappily these are leaky abstractions when it comes to CUDA.
+Multithreading is in some sense a simple task: we have one thread (the one that begins program execution) initialize other threads to complete sub-tasks of a certain problem, and then either combine the threads or else combine the output in some way. The difficulty of doing this is that CPU threads are heavy (initializing a new thread is costly) and memory access must be made in a way to prevent race conditions where two threads read and write to the same data in memory in an unordered fashion. Happily much of this difficulty is abstracted away when one uses a library like OpenMP, although these are slightly leaky abstractions when it comes to CUDA.
 
 We begin as before: arrays are allocated in pinned memory,
 
@@ -99,7 +101,7 @@ This can be done a few different ways: one would be to wrap the `for` loop in th
 ```cuda
 #pragma omp parallel num_threads(n_gpus)
 {
-	int device=omp_get_thread_num();
+	int d=omp_get_thread_num();
 	cudaSetDevice(omp_get_thread_num());
 	cudaStreamCreate(&streams[d]);
 ```
@@ -121,13 +123,22 @@ After doing so, we can allocate memory on the device for the portion of each arr
 }
 ```
 
-This can be compiled using the `-fopenmp` flag for linux machines as follows:
+The following figure gives a simplified view of this process:
+
+![multithreaded threebody]({{https://blbadger.github.io}}/3_body_problem/multithreaded_threebody.png)
+
+The cuda kernel and driver code can be compiled using the `-fopenmp` flag for linux machines as follows:
 
 ```bash
 badger@servbadge:~/Desktop/threebody$ nvcc -Xcompiler -fopenmp -o mdiv multi_divergence.cu
 ```
 
-After doing so we find something interesting: parallelizing via this kernel is successful in a hardware implementation-specific manner. For a desktop with two GPUs there is no problem, but on a [4x V100 node](https://blbadger.github.io/gpu-server.html) with three or four GPUs available we find memory access errors that result from the CPU threads attempting to load and modify identical memory blocks. Close inspection reveals that this is due to the CPU (actually two CPUs for that node) attempting to access one identical memory location for each thread. 
+After doing so we find something interesting: parallelizing via this kernel is successful in a hardware implementation-specific manner. For a desktop with two GPUs there is no problem, but on a [4x V100 node](https://blbadger.github.io/gpu-server.html) with three or four GPUs available we find memory access errors that result from the CPU threads attempting to load and modify identical memory blocks. Close inspection reveals that this is due to the CPU (actually two CPUs for that node) attempting to access one identical memory location for each thread, which may be found by observing the string associated with the thrown `cudaError_t`,
+
+```cuda
+cudaError_t err = cudaGetLastError(); 
+if (err != cudaSuccess) std::cout << "CUDA error: " << cudaGetErrorString(err) << std::endl;
+```
 
 Why does this happen? Consider what occurs when we call the following
 
@@ -136,30 +147,42 @@ cudaMalloc(&d_x, (N/n_gpus)*sizeof(float));
 cudaMemcpyAsync(d_x, x+start_idx, (N/n_gpus)*sizeof(float), cudaMemcpyHostToDevice, streams[device]);
 ```
 
-with four different threads. Each thread is attempting to allocate memory on its 'own' device, but the address must be fetched and is identical as the variable `double *d_x` was only initialized once. Thus if we print the address of `d_x` for each thread we have one identical integer, something like
+with four different threads. Each thread is attempting to allocate memory on its 'own' device, but the address must be fetched and is identical as the variable `double *d_x` was only initialized once. Thus if we print the address of `d_x` for each thread we have one identical integer, which for me was the following address:
 
 ```
 std::cout << &d_x; // 0x7ffedb04f2e8
 ```
 
-Now for newer hardware implementations this is not apparely a problem: CPU threads are scheduled such that they do not experience read conflicts with `d_x`. But other hardware is not so lucky, and so instead we must use a separate memory location for each device's address. This can be done as follows: first we move 
+Now for newer hardware implementations this does not lead to immediate problems because CPU threads are scheduled such that they do not experience read conflicts with `d_x`. But older hardware is not so lucky, and so instead we must use a separate memory location for each device's address. This can be done as follows: first we move 
 
 ```cuda
 int n_gpus;
 cudaGetDeviceCount(&n_gpus);
 ```
 
-to the start of our C++ driver code, and then we initialize device array pointers as arrays with length equal to the number of GPUs as follows:
+to the start of our C++ driver code, and then we initialize device array pointers as arrays with length equal to the number of GPUs,
 
 ```cuda
 double * d_x[n_gpus]; // not double *d_x;
 ```
 
-Then as we launch threads, each GPU's thread gets a unique address for each 'variable',
+For an example of what we are accomplishing by initializing an array of integer (pointers), for four GPUs on the V100 cluster this gives us pointers with addresses `&d_x = [0x7fffdebe1a70, 0x7fffdebe1a78, 0x7fffdebe1a80, 0x7fffdebe1a88]` which are unique and nearly contiguous. Then as we launch threads, each GPU's thread gets a unique address for each array as we reference the pointer address corresponding to the thread number during device memory allocation
 
 ```cuda
-cudaMalloc(&d_p1_x[i], block_n*sizeof(double));
+#pragma omp parallel num_threads(n_gpus)
+{
+	int d=omp_get_thread_num();
+	cudaMalloc(&d_x[d], block_n*sizeof(double));
+	...
 ```
+
+For example, if `omp_get_thread_num()` returns thread number 0 then we allocate that thread's cuda array block to address `&d_x[0] = 0x7fffdebe1a70`. But why do we need different addresses if each device is different, such that there is no memory conflicts on the devices? This is becase we are accessing the address *on the CPU* in order to allocate on the device, and this access will lead to segfaults if enough threads attempt this at one time (depending on the hardware implementation).
+
+Now that the kernel is complete(ish), we can profile it! Recall that the single-threaded multi-GPU kernel for 50k steps with 1000x1000 resolution completes in around 18.8s on a 4x V100 cluster. If we run our multithreaded version we find that completion occurs in around 19.1s, a little worse. This is because CPU threads are relatively slow to initialize, and in this case slower to initialize than the extra time necessary for one thread to allocate and copy memory to each GPU.
+
+### Multi-GPU memory deallocation
+
+
 
 
 
