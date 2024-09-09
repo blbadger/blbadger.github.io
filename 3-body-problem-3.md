@@ -1,5 +1,4 @@
-
-### Parallelizing across many GPUs
+### Parallelizing the Three Body Problem across many GPUs
 
 We have explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most dramatic of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although compute optimizations when stacked together yield a significant 4x decrease in runtime to Newton's method.
 
@@ -182,8 +181,21 @@ Now that the kernel is complete(ish), we can profile it! Recall that the single-
 
 ### Multi-GPU memory deallocation
 
+Thus far we have avoided the issue of memory deallocation for multiple GPUs. This is a more difficult issue than it otherwise might seem due to the under-the-hood implementation of cuda. First we will tackle the single-threaded multi-GPU kernel to illustrate the problem, and then use the knowledge gained to finish the multi-threaded multi-GPU kernel.
 
+How would one deallocate memory on multiple GPUs and a single CPU? A naive approach to memory deallocation would be to simply free the host memory and then proceed to free each allocated memory block in each GPU, iterating through the devices one by one. As we are using pinned memory on the host, we have to free array `x` via `cudaFreeHost(x);` and doing so for all the arrays in the three body problem results in successful CPU memory deallocation. But if we implement this idea as follows
 
+```cuda
+for (int i=0; i<n_gpus; i++){
+      std::cout << "Deallocating memory from GPU number " << i << "\n";
+      cudaSetDevice(i);
+      cudaFree(d_x[i]);
+```
+we run into an interesting problem: only the last GPU to have memory allocated (this happens sequentially remember when using one host thread) experiences successful deallocation. The other GPUs retain their allocated arrays until the host process is terminated. 
+
+This might not seem like a huge problem, but if this kernel is driven by a loop (say via a `ctypes` interface with python to make a zoom video) then the GPUs will eventually overflow.  As each 64-bit 1000x1000 three body problem computation requires 452 MB in total per GPU, this occurs rather quickly. Moreover, depening on the hardware implementation a memory segmentation fault will be observed after a mere 2-4 iterations.
+
+What these problems tell us is that the cuda interface forms a link between a pointer in CPU memory and its address for GPU memory allocation, and that only one link may be formed per CPU memory address.
 
 
 
