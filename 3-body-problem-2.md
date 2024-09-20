@@ -1,6 +1,6 @@
 ## Three body problem II: Simulating Divergence with Parallelized Computation
 
-This page is a continuation from [Part 1](https://blbadger.github.io/3-body-problem.html), where simulations of the three body problem are explored.  Here we explore the computation of simulated trajectories using a parallelized computer achitecture, ending with am optimized CUDA kernel that is around five times as fast as the Pytorch code introduced in Part 1.
+This page is a continuation from [Part I](https://blbadger.github.io/3-body-problem.html), where simulations of the three body problem are explored.  Here we explore the computation of simulated trajectories using a parallelized computer achitecture, ending with am optimized CUDA kernel that is around five times as fast as the Pytorch code introduced in Part 1. In [[Part III](https://blbadger.github.io/3-body-problem-3.html) we will explore the application of this kernel to many GPUs at once.
 
 ### Introduction
 
