@@ -1,4 +1,6 @@
-### Parallelizing the Three Body Problem across many GPUs
+## Parallelizing the Three Body Problem across many GPUs
+
+### Single CPU threaded parallelization
 
 In [Part II](https://blbadger.github.io/3-body-problem-3.html) we explored a number of different optimization strategies to make integrating a three body problem trajectory faster. The most effective of these (linear multistep methods) are unfortunately not sufficiently numerically stable for very high-resolution divergence plots at small scale, although compute optimizations when stacked together yielded a significant 4x decrease in runtime to Newton's method.
 
@@ -179,7 +181,7 @@ For example, if `omp_get_thread_num()` returns thread number 0 then we allocate 
 
 Now that the kernel is complete(ish), we can profile it! Recall that the single-threaded multi-GPU kernel for 50k steps with 1000x1000 resolution completes in around 18.8s on a 4x V100 cluster. If we run our multithreaded version we find that completion occurs in around 19.1s, a little worse. This is because CPU threads are relatively slow to initialize, and in this case slower to initialize than the extra time necessary for one thread to allocate and copy memory to each GPU.
 
-### Multi-GPU memory deallocation
+### Multiple GPU memory deallocation
 
 Thus far we have avoided the issue of memory deallocation for multiple GPUs. This is a more difficult issue than it otherwise might seem due to the under-the-hood implementation of cuda. First we will tackle the single-threaded multi-GPU kernel to illustrate the problem, and then use the knowledge gained to finish the multi-threaded multi-GPU kernel.
 
