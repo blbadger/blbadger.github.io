@@ -1,5 +1,7 @@
 ## Masked Mixer Language Models
 
+For the findings on this page written in more detail as an academic paper, see [here](https://arxiv.org/abs/2409.01482).
+
 ### Background
 
 The training of the most effective language models today (3/2024) requires enormous computational resources: a whopping 1720320 hours of 80GB nvidia A100 compute time was required to train the 70 billion parameter version of [Llama 2](https://arxiv.org/pdf/2307.09288.pdf).
