@@ -69,6 +69,14 @@ There are two final ingredients that we need to finish adapting this code for us
 
 With that, we have a multi-gpu kernel that scales to any number of GPUs. The exact amount of time this would save any given computational procedure depends on a number of variables, but one can expect to find near-linear speedups for clusters with identical GPUs (meaning that for $n$ GPUs the expected completion time is $t/n$ where $t$ is the time to completion for a single GPU).  This can be shown in practice, where a cluster with one V100 GPU completes 50k iterations of a 1000x1000 starting grid of the three body problem in 73.9 seconds, whereas four V100s complete the same in 18.8s which corresponds to a speedup of 3.93x, which is very close to the expected value of 4x.
 
+We can see this approach in action by observing the CPU and GPU utilizations while the simulation is underway. For a 56-core server CPU, we see that only one core is highly utilized: this is the thread that is running our four GPUs.
+
+![threebody distributed]({{https://blbadger.github.io}}/3_body_problem/single_threaded_cpus.png)
+
+And the GPUs may be checked via `nvidia-smi`, which shows us that indeed all four GPUs for this server are occupied with the simulation
+
+![threebody distributed]({{https://blbadger.github.io}}/3_body_problem/single_threaded_gpus.png)
+
 This is not quite the end of our efforts, however: we have thus far avoided performing cuda memory de-allocation, instead relying on automatic deallocation to occur after the kernel processes are completed (and the CPU process is terminated). But if we want to call this kernel repeatedly, say in a loop in order to obtain a zoom video, this approach is not quite complete and gives memory segmentation faults in a hardware implementation-specific manner. Why this is the case and how one can change the approach will be detailed in the last section on this page, as it is closely related to a problem we will find for multi-threading in the next section.
 
 ### Multithreaded Parallelization
@@ -207,7 +215,7 @@ for (int i=0; i<n_gpus; i++){
       cudaFree(d_p1_x[i])
 ```
 
-with this approach, memory is correctly de-allocated
+with this approach, memory is correctly de-allocated!
 
 For the multithreaded kernel, we don't have to re-iterate over GPUs as we can instead have each CPU thread free its allocated GPU arrays. As long as the memory of any arrays of interest is copied back to the host before freeing, we will get the result we want. `cudaFree()` is a synchronous operation such that we don't really need to add `cudaDeviceSynchronize()` here, but it is added for clarity.
 
@@ -220,7 +228,11 @@ For the multithreaded kernel, we don't have to re-iterate over GPUs as we can in
 
 And with that we have working kernels for as many GPUs as we have in one node, using either one CPU thread for all GPUs or one thread per GPU. Practically speaking, a three body zoom video that takes around three days to complete on an RTX 3060 requires only two hours with a 4x V100 node.
 
-Parallelizing across multiple nodes is also possible with MPI (Message Passing Interface).  
+We can check that indeed each GPU is run by one CPU thread by using `htop`. For the same four-GPU server as above, we find that four CPU cores are 100% utilized and each core's process is running one GPU (which can be checked via `nvidia-smi`) which was what we wanted.
+
+![threebody distributed]({{https://blbadger.github.io}}/3_body_problem/multithreaded_cpus.png)
+
+Parallelizing across multiple nodes is also possible with MPI (Message Passing Interface), but this will not be explored here.
 
 
 
