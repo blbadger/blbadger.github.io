@@ -1,6 +1,6 @@
 ## Deep Learning Server
 
-On this page, I will detail the process of building a high-performance compute server node with four V100 GPUs for less than the cost of a single RTX 4090, but with around triple the GPU memory and compute for training models (assuming 16/32 bit mixed precision training). The server will be shown to be very effective for other tasks outside the realm of machine learning and particularly excels at those requiring high numerical precision, as this machine has an impressive twenty-six times the the 64-bit FLOPs of a 4090.
+On this page, I will detail the process of building a high-performance compute server node with four V100 GPUs for less than the cost of a single Nvidia RTX 4090, but with around triple the GPU memory and compute for training models (assuming 16/32 bit mixed precision training). The server will be shown to be very effective for other tasks outside the realm of machine learning and particularly excels at those requiring high numerical precision, as this machine has an impressive twenty-six times the the 64-bit FLOPs of a 4090.
 
 ### Background
 
@@ -291,6 +291,40 @@ To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts 
 
 That said, this server performs very well for smaller inference tasks: an 8-bit quantized Llama 3 (8b) runs at ~71 tokens per second while only taking around 75 watts per GPU for unbatched inputs, and a 5.5-bit quantized Llama 3 70b (for a model size of 50 GB) runs at ~14 tokens per second with around 125 watts per GPU. Due to the high CUDA and tensor core count, increasing the context to 2k tokens results in a barely noticeable drop in generation time (~13 tokens per second for 70b llama). To be frank, these are not particularly good tests of this server as the GPUs experience very low Tensor and CUDA core utilization even for long-context inputs, typically less than 30% of all CUDA cores are active during such inference runs.
 
-If you have more cash you could build three of these with 32GB V100s and hook up some mellanox switches (which connect to the free PCIE lanes and ports in the middle of the T180-G20 for up to 128 GB/s internode communication), which would allow for fairly fast training of models up to around 500 billion parameters via bitwise optimized FSDP with low rank adapters.
+If you have more cash you could build three of these with 32GB V100s and hook up some mellanox switches (which connect to the free PCIE lanes and ports in the middle of the T180-G20 for up to 128 GB/s internode communication), which would allow for fairly fast training of models up to around 400 billion parameters via bitwise optimized FSDP with low rank adapters.
+
+### Six Month Update
+
+After using this server for a bit more than half a year, I can offer a bit more commentary on its capabilities and suitabilities for various workloads.
+
+**Training small-ish models**: Extremely effective. For models where the parameters and gradients and optimizers fit inside GPU memory (one copy per GPU that is), training is mostly limited by tensor core occupancy and throughput and also memory bandwidth to a larger extent than GPU memory size. This is the case for models less than around 1 billion parameters for the 16GB V100s, and for a typical ~100 million parameter mixer model you can expect a throughput of around 400k tokens per second (~35 billion tokens per day). It is important for the model's matrix multiplications are large enough to make efficient use of the HBM-2 memory (generally $d_m \geq 512$ with efficient architectures will suffice), or performance will be somewhat worse.
+
+**Training LLMs**: Generally capable, sometimes ideal. The server is effective for training of training LLMs via full parameter or efficient (qLoRA) FSDP or ZerRO stage 2/3. For specifics, you can expect to get more than 2800 tokens per second for a qLoRA (r=128) training of an 8b Llama 3.1, or around 500 tokens per second for a full parameter finetune of the same model. If you expect to perform this kind of worload frequently, I would probably recommend investing in the 32 GB V100s as you will get super-linear speedups from the 16GB version due to fewer parameters and optimizer state transfers between GPUs and CPU. 
+
+It is interesting to note that the SXM-2 version of the V100 is substantially faster for FSDP than the PCI-E version of the same, even though the latter is currently much more expensive. As an example, I benchmarked SXM-2 versus PCI-E 4x V100 (16GB) servers against each other for qLoRA FSDP on a Llama 3.1 (8b) training run and the PCI-E throughput reached 1600 t/s compared to the 2800 t/s of the SXM-2 version. This is likely due to both the higher FLOPs of the SXM2 version as well as the substantial increase in inter-GPU bandwidth.
+
+That said, if you are interested in performing lots of qLoRA training runs on large models I would currently recommend choosing an Ampere or newer GPU if you can afford it. The reason for this is that Volta architecture GPUs don't support brainfloat (bfloat16) computation, and right now FSDP+qLoRA requires the 4-bit storage dtype to be all one datatype such that training can become unstable if fp16 is used here instead of bf16. Mixed precision (with norms and certain other parameters in 32-bit precision and the rest in 16 bit) is no problem for full finetunes with FSDP, but it can be a pain to make sure fp16 backbone qLoRA training does not become unstable. Usually the solution is to make the learning rate small and use gradient clipping, but then the training process takes more total time.
+
+As a final note, I have found that FSDP is usually more memory-efficient than ZeRO 2/3 for 8b parameter models, apparently due to the use of standard block sizes. It seems to be a little bit more performant as well, at least in the Pytorch framework.
+
+**Running LLMs**: Mostly overkill. The ability to run 70 billion parameter models with mild quantization very quickly (16 t/s) is quite nice, but even here the GPUs experience low utilization. For batched inference or if multiple models are split between GPUs then the they are better-utilized, but otherwise you are probably better off with 3090s or L40s if price is not an object. If it is, this is still the best deal.
+
+Lastly, this machine is far and away the most cost-effective approach to **anything requiring high precision** (64-bit computation). Consumer GPUs don't really offer proper support for this as it is relatively rare outside scientific computing, and the V100 is by far the best 64-bit FLOP per dollar GPU on the market. There isn't much more to be said here other than as long as your high-precision simulation is sufficiently GPU-limited, this server will offer you remarkable speedups relative to consumer or industrial hardware of equivalent price. In my case what took weeks for an RTX 3060 to compute requires mere hours for the four V100s.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
