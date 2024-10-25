@@ -52,8 +52,6 @@ The experimental setup will be as follows: for our dataset we will start with Ti
 
 The MLP mixer architecture is conceptually similar to a transformer if all the multi-head attention layers were replaced with one-dimensional convolutoins over the sequence dimension. The mixer was originally designed for vision tasks, and we will test modifications of this architecture for language.  The mixer has previously been applied only to vision modeling, where it was found to be not quite as efficient as a transformer of equivalent 'size' for a fixed dataset (the only instance of a mixer applied to language modeling tasks is a nanoscale truncated mixer applied to bloom filtered text that has obvious unsuitibilities as a generative model).  It is important to observe, however, that with language one is typically not bound by a dataset's size but rather the amount of compute one can bring to that dataset, and the efficiency of the models used. 
 
-In its published form, the masked mixer is not suitable for causal language modeling because the mixer layer's convolution (MLP accross sequence dimension) scans across all tokens rendering a causal mask difficult to implement. We modify this architecture such that the convolution scans across the hidden dimension, with each kernel corresponding to weights for a specific input index. This is done as follows:
-
 First, we define the operations on one mixer block, which is a module akin to one transformer block. The 1-dimensional convolutions that replace self-attention may be visualized as follows:
 
 ![mixer]({{https://blbadger.github.io}}deep-learning/llm_mixer.png)
