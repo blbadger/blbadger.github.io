@@ -26,7 +26,7 @@ On the other hand it turns out that langauge training proceeds perfectly well (a
 
 ### Language Generation Training Efficiency
 
-
+The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model to use, the optimization approach, and the dataset are all important factors in whether the generalization actually occurs.
 
 
 ### Linear Mixers
