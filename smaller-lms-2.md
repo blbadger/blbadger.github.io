@@ -9,7 +9,7 @@ In [Part I](https://blbadger.github.io/smaller-lms.html) the motivation behind m
 
 Empirically it appears that the current state-of-the-art model type (the transformer) trains much too slowly to achieve this feat in any reasonable length of time, and the best-performing models are typically trained on thousands of GPUs for many days. From other investigations on information transfer between model layers, we wondered whether an architecture that more accurately represents its inputs (the masked mixer) would learn more efficiently.
 
-Restricting our investigations to a small dataset (TinyStories, ie short stories written by ChatGPT in the style of a four-year-old) we found that although masked mixers are much more efficient learners than the original GPT-style transformers for the task of causal language modeling, highly optimized and current transformers learn even more efficiently.  On the other hand, masked mixers were found to be much more efficient for language retrieval which is expected from their superior input representation properties.
+Restricting our investigations to a small dataset (TinyStories, ie short children's stories written by ChatGPT) we found that although masked mixers are more efficient learners than the original GPT-style transformers for the task of causal language modeling, highly optimized and current transformers learn even more efficiently.  On the other hand, masked mixers were found to be much more efficient for language retrieval which is expected from their superior input representation properties.
 
 ### Accuracy and Flexibility
 
@@ -22,6 +22,62 @@ Perhaps as important is the model architecture *flexibility* of masked mixers. F
 This can be tested more directly by simply removing each component and observing the training process. Ironically for an architecture introduced as 'Attention is all you need', self-attention is actually the only removable component (as long as it is replaced by some other trainiable inter-token parameters): removal of MLPs (or replacing with attention) layer norms or residual connections results in very poor language model training: either failure to minimize a loss function (if MLPs are removed or replaced with attention) or training becomes unstable (for removal of layer norms or residuals) and loss spikes to infinity. The reason for this is that attention is a rather difficult transformation for gradients to propegate across, and this is important because it essentially 'fixes' the architectures of models with attention to similar patterns, all requiring some form or other of the same components transformers have (layer norms, residuals, MLPs, ets.).
 
 On the other hand it turns out that langauge training proceeds perfectly well (although slightly less efficiently) when layer norms or residuals are removed from the masked mixer architecture. This means that the mixer architecture is effectively much more flexible than the transformer, and can be modified to a much greater extent. This topic will be explored more in the 'Linear mixer' section of this page.
+
+### Masked Mixers make better Autoencoders than Transformers
+
+The accurate input representation present in masked mixers suggests that these models retain more information from their inputs than is present in transformers. It appears that next token prediction does not require or indeed is not particularly benefitted by this increased information compared to the focus brought by attention, but it was hypothesized and subsequently observed that masked mixers are far superior retrieval models as this task would be expected to require more information. 
+
+There is a perhaps more direct way to test the hypothesis that masked mixers contain more input information than transformers: we can modify the causal language modeling architectures of the masked mixer and transformer for the task of autoencoding an input. In particular, we want these models to learn a non-trivial autoencoding and not simply return each input token in the output. To do this we can use an encoder-decoder architecture but pass only the last hidden layer of the last token of the encoder to the decoder. For the masked mixer, this may be portrayed as follows:
+
+![autoencoder architecture](/deep-learning/mixer_autoencoder.png)
+
+This is perhaps the most direct way to maintain the parallelization afforded by all-next-token training for a non-trivial autoencoder. For a masked mixer-based
+
+```python
+class AutoencodingMixer(nn.Module):
+  ...
+	def forward(self, input_ids, labels=None):
+		... # word-token eembedding
+    ... # encoder blocks
+
+		encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
+		x = encoder_embedding.repeat(1, self.tokenized_length, 1)
+
+		... # decoder blocks
+    output = self.lm_head(x)
+		labels = rearrange(labels, 'b p t -> b (p t)')
+		output = rearrange(output, 'b t e -> b e t')
+		loss = self.cel(output, labels)
+		return loss, output
+```
+
+For a llama-style transformer, this architecture can be implemented as follows: first we modify the LlamaModelForCaualLM to take embeddings rather than tokens and supply the necessary positions
+
+```python
+class AbbreviatedModel(nn.Module):
+
+	def __init__(self, model, depth=8, tokenized_length=512):
+		super().__init__()
+		self.model = model
+		self.depth = depth
+		self.position_ids = torch.tensor([[i for i in range(tokenized_length)]]).to(device)
+
+	def forward(self, input_ids: torch.Tensor):
+		x = input_ids
+		position_ids = self.position_ids.repeat(input_ids.shape[0], 1)
+
+		for i in range(self.depth):
+			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
+		return x
+
+# initialization
+encoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+decoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+```
+
+and then the autoencoder is implemented in the same manner as the mixer autoencoder.
+
+Recall that masked mixers contain far fewer inter-token parameters and thus may be trained with a much larger $d_m$ size while maintaining other architectural constraints identically to transformers for fixed memory, and mixers of identical architectural 'sizes' train much more quickly. With this in mind, we can first observe autoencoding performance for identically-sized models: given a $d_m$=512 and $n_l=8$ (ie 8 encoder layers and 8 decoder layers) 
 
 
 ### Language Generation Training Efficiency
