@@ -293,7 +293,7 @@ $$
 
 ### [Language Mixers II](/smaller-lms-2.md)
 
-![features](/deep-learning/mixer-autoencoder.png)
+![features](/deep-learning/mixer_autoencoder.png)
 
 
 ### [Autoencoders](/autoencoder-representation.md)
@@ -325,8 +325,6 @@ $$
 
 ![deep learning attributions](/misc_images/attributions_cover.png)
 
-
-### [Training Memory](/neural-networks2.md)
 
 ### [Limitations of Neural Networks](/nn-limitations.md)
 
