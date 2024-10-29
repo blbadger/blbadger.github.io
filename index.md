@@ -231,7 +231,6 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ![layer autoencoding](/neural_networks/representation_cover.png)
 
-
 ### [Input Representation II: Vision Transformers](/vision-transformers.md)
 
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
@@ -286,9 +285,16 @@ $$
 
 ![features](/deep-learning/transformer_feature_cover.png)
 
-### [Language Mixer](/smaller-lms.md)
+
+### [Language Mixers](/smaller-lms.md)
 
 ![features](/deep-learning/llm_mixer.png)
+
+
+### [Language Mixers II](/smaller-lms-2.md)
+
+![features](/deep-learning/mixer-autoencoder.png)
+
 
 ### [Autoencoders](/autoencoder-representation.md)
 
