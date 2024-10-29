@@ -9,7 +9,7 @@ In [Part I](https://blbadger.github.io/smaller-lms.html) the motivation behind m
 
 Empirically it appears that the current state-of-the-art model type (the transformer) trains much too slowly to achieve this feat in any reasonable length of time, and the best-performing models are typically trained on thousands of GPUs for many days. From other investigations on information transfer between model layers, we wondered whether an architecture that more accurately represents its inputs (the masked mixer) would learn more efficiently.
 
-Restricting our investigations to a small dataset (TinyStories, ie small stories written by ChatGPT in the style of a four-year-old) we found that although masked mixers are much more efficient learners than the original GPT-style transformers, highly optimized and current transformers learn slightly more efficiently. Much development has occurred to make the transformer as efficient as it is, so one of the goals for this page is to improve the masked mixer to exceed current transformer efficiency. Masked mixer was found to be much more efficient for language retrieval, a task that will be considered further here as well.
+Restricting our investigations to a small dataset (TinyStories, ie short stories written by ChatGPT in the style of a four-year-old) we found that although masked mixers are much more efficient learners than the original GPT-style transformers for the task of causal language modeling, highly optimized and current transformers learn even more efficiently.  On the other hand, masked mixers were found to be much more efficient for language retrieval which is expected from their superior input representation properties.
 
 ### Accuracy and Flexibility
 
