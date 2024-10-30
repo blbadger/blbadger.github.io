@@ -35,8 +35,46 @@ It is straightforward to see that this is not a particularly efficient method of
 
 To train more efficiently, we can instead mask no tokens while maintaining the all-next-token approach of causal language modeling, but apply this method in both the forward and reverse directions simultaneously with some careful tensor shifting. This means that every token is trained upon each forward pass, as each 'next' token is both 'next' in forward and reverse directions. There are a number of different methods to implement this idea, and as we will focus on two that require some care to do so. Firstly, we will examine a masked mixer implementation before proceeding to a Llama-style transformer.
 
-Recall that the causal language modeling masked mixer uses a lower-triangular mask on the inter-token convolutional weights to prevent information from right-indexed tokens from moving 'backward' and influencing next token prediction. 
+Recall that the causal language modeling masked mixer uses a lower-triangular mask on the inter-token convolutional weights to prevent information from right-indexed tokens from moving 'backward' and influencing next token prediction. We can use the exact same implementation for the 'forward' direction but as we now want information from tokens to the right of our predicted token (but importantly not that token itself) to be used, we can include convolutions with weights connecting tokens $t_{n+2}, t_{n+3}, ..., t_{N}$ to $t_n$. Note again that $t_{n+1}$ remains masked, as this is the token we are attempting to predict. This can be depicted as follows:
 
+![bidirectional mixer](/deep-learning/bidirectional_mixer.png)
+
+A naive implementation of which (using two separate convolutional weight matrices rather than one for clarity) is
+
+```python
+class DoubleMixerBlock(nn.Module):
+
+	def __init__(self, dim, length, clm_mask=False, expand_conv=False):
+		super().__init__()
+		self.patch_layernorm = nn.LayerNorm(dim)
+		self.seq_layernormf = nn.LayerNorm(dim)
+		self.seq_layernormr = nn.LayerNorm(dim)
+		self.dim = dim
+		self.length = length
+		self.patch_ff = FeedForward(dim)
+		self.convf = nn.Conv1d(length, length, 1)
+		self.convr = nn.Conv1d(length, length, 1)
+
+	def forward(self, x: torch.Tensor):
+		masked_convf = torch.tril(rearrange(self.convf.weight, 'f d p -> p f d'), diagonal=0)
+		self.convf.weight.data = rearrange(masked_convf, 'p f d -> f d p').contiguous()
+
+		masked_convr = torch.triu(rearrange(self.convr.weight, 'f d p -> p f d'), diagonal=2)
+		self.convr.weight.data = rearrange(masked_convr, 'p f d -> f d p').contiguous()
+
+		residualf, residualr = x, x
+		y = x.clone()
+		x = self.seq_layernormf(x)
+		x, y = self.convf(x) + residualf, self.convr(y) + residualr
+		residualf, residualr = x, y
+		x, y = self.patch_layernorm(x), self.patch_layernorm(y)
+		x, y = self.patch_ff(x) + residualf, self.patch_ff(y) + residualr
+		return x + y
+```
+
+At first glance it seems that we can just substitute this `DoubleMixerBlock` for a normal mixer block and proceed, but doing so for all models containing more than one mixer block leads to very fast loss minimization towards the origin (CEL $L(O(a, \theta), y)<0.1$ in less than half an epoch) suggesting that something went wrong. Closer examination of the figure above shows what happens: in that case, information from token $t_2$ reaches $t_0$ during the reverse convolution step, which is what we want. But then consider that in the next layer, information travels from hidden layers of $t_0 \to t_1$ and as the model predicts $t_2$ the hidden layer $t_1$, it learns a trivial mapping of that output. This phenomenon is perhaps easier to appreciated diagramatically, and can be shown as follows:
+
+![bidirectional mixer](/deep-learning/bidirectional_mixer_explained.png)
 
 
 ### Masked Mixers make better Autoencoders than Transformers
@@ -100,8 +138,6 @@ These are very large performance gaps: recall that the difference between transf
 ![autoencoders](/deep-learning/language_autoencoders.png)
 
 The gap is even larger when we consider that the mixer occupies a much smaller memory footpring for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds of times as efficient an autoencoder as a transformer.
-
-###  
 
 ### Language Generation Training Efficiency
 
