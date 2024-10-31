@@ -76,6 +76,9 @@ At first glance it seems that we can just substitute this `DoubleMixerBlock` for
 
 ![bidirectional mixer](/deep-learning/bidirectional_mixer_explained.png)
 
+When we compare mixer versus transformer performance on bidirectional token prediction versus causal language modeling-style next token prediction, we see that the relative performance is nearly identical. 
+
+![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
 
 ### Masked Mixers make better Autoencoders than Transformers
 
