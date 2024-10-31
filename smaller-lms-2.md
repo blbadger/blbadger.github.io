@@ -76,6 +76,64 @@ At first glance it seems that we can just substitute this `DoubleMixerBlock` for
 
 ![bidirectional mixer](/deep-learning/bidirectional_mixer_explained.png)
 
+This problem is general to any token pair, and is not even specific to mixers as a bidirectional transformer experiences the same problem. Happily there is a simple solution: observe that two sequential convolutions are required for $t_{n+1}$ information to pass to $t_n$, which is why a model with only one mixer block will not rapidly minimize its loss function as a two or more blocked mixer will. Without loss of generality, one reverse and one forward convolution is required sequentially for this transfer.  Therefore this problem may be avoided by placing all forward and reverse convolutions in parallel rather than in sequence, which can be implemented by having each block take both $x, y$ and return a tuple of both,
+
+```python
+class DoubleMixerBlock(nn.Module):
+	...
+	def forward(self, x: torch.Tensor, y: torch.Tensor):
+		...
+		return x, y
+```
+
+where the linear combination only occurs after all blocks have been passed. The forward pass for the double-sided mixer becomes
+
+```python
+class LanguageMixer(nn.Module):
+	...
+	def forward(self, input_ids, labels=None, **kwargs):
+		x = self.wte(x)
+		y = torch.clone(x)
+		for block in self.mixerblocks:
+			x, y = block(x, y)
+		output = self.lm_head(x + y) # combine after mixer blocks
+		# shift and CEL computation
+```
+
+An analagous implementation may be made for a transformer, but this would require rewriting the causal langauge model mask on scaled dot-product attention layers to act in reverse with a changed $torch.triu$ diagonal. A simpler method is to keep the transformer blocks as they are normally implemented and instead reverse the sequence of $y$ such that the 'reverse' block sees tokens in reverse order via `torch.flip()`, maintaining a left-to-right causal mask. One can then undo the reversed `y` order in the token dimension and shift the forward and reverse last hidden layers such that their sequence indices align, add the result, and perform language model head linear transformation and loss calculation. Note that one does not need to truncate the labels as normally occurs, as the $t_0$ is predicted only in the reverse direction. A diagram showing how this works for a sequence of four tokens is given below.
+
+![bidirectional mixer](/deep-learning/bidirectional_transformer_explained.png)
+
+An implementation of this is as follows:
+
+```python
+class BidirectionalTransformer(nn.Module):
+
+	def __init__(self, n_vocab, dim, forward_model, reverse_model):
+		super().__init__()
+		...
+		self.forward_model = forward_model # transformer blocks only, no wte or lm_head
+		self.reverse_model = reverse_model # transformer blocks only, no wte or lm_head
+
+	def forward(self, input_ids, labels=None, attention_mask=None):
+		x = input_ids
+		x = x.to(device).squeeze(1)
+		x = self.wte(x)
+		y = torch.flip(x.clone(), dims=[1]) # reversed in token dim
+		
+		forward = self.forward_model(x)
+		reverse = self.reverse_model(y)
+		pad = torch.zeros(x.shape[0], 1, x.shape[2]).to(device)
+
+		reverse = torch.cat([torch.flip(reverse, dims=[1])[..., 1:, :], pad], dim=1) # right pad reverse
+		forward = torch.cat([pad, forward[..., :-1, :]], dim=1) # left pad forward
+
+		output = self.lm_head(forward + reverse)
+		logits = rearrange(output, 'b t e -> b e t')
+		loss = self.cel(logits, labels)
+		return loss, output
+```
+
 When we compare mixer versus transformer performance on bidirectional token prediction versus causal language modeling-style next token prediction, we see that the relative performance is nearly identical. 
 
 ![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
