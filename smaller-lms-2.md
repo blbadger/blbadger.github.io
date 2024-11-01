@@ -204,6 +204,7 @@ The gap is even larger when we consider that the mixer occupies a much smaller m
 
 The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model to use, the optimization approach, and the dataset are all important factors in whether the generalization actually occurs.
 
+
 ### Linear Mixers
 
 In the field of numerical analysis one can generally say that there are a number of differences between linear and nonlinear processes, at least at a very high level. Perhaps most notably, linear transformations may be completed in one effective 'step' whereas nonlinear transformations require many 'steps'. Whether this is accurate or not in practice is somewhat dubious, but for our particular application it will indeed be.
@@ -212,6 +213,7 @@ This is relevant because we can get an idea of how to make an extremely fast (to
 
 Clearly it would be advantageous to reduce the number of layers in a model, but how can this be done while maintaining an efficiently trainable architecture? 
 
+![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
 
 
