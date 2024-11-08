@@ -200,7 +200,7 @@ These are very large performance gaps: recall that the difference between transf
 
 The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
 
-### Language Generation Training Efficiency
+### Fineweb Modeling Efficiency
 
 The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model architecture to use, the optimization approach, the amount of compute employed, and the dataset are all important factors in whether the generalization actually occurs.
 
@@ -217,7 +217,15 @@ Applying masked mixers and modern transformers to larger, more difficult dataset
 
 ### One Step Language Completion Efficiency
 
-So far we have seen that masked mixers are better at tasks requiring approximately bijective functions like autoencoding or retrieval, and worse at tasks requiring injective mappings. It may be wondered
+So far we have seen that masked mixers are better at tasks requiring approximately bijective functions like autoencoding or retrieval, and worse at tasks requiring injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and injective mappings
+
+To elaborate, the task is to generate all the completion tokens in a text segment in one step. Arbitrarily choosing text segments of length 512 such that the model recieves information from tokens ($\{t_0, t_1, .., t_{255}\}$) and generates tokens $\{t_{256}, t_{257}, ... t_{511}\}$, we want information from each of the first 256 tokens to be available for the subsequent 256 tokens during the forward pass. One way to do this would be to use the last hidden layer of token $t_{255}$ as an input to a decoder in a similar architecture to the autoencoders presented above, but this would require all input information to be present in that token and we have already seen that this sort of task is much better suited for masked mixers. Instead we want to provide information from all input tokens $\{t_{0-255}\}$ directly, while preventing the passage for information from the prediction tokens $\{t_{256-511}\}$.
+
+Perhaps the most efficient way to accomplish this would be to change the causal language masking from lower triangular to block form (where the weights from all prediction tokens are masked, and weights from input to outputs are bidirectional). This would require substantial changes to the causal language masking implementation for transformers, however, but there is a much simpler method: retain causal langauge masking but mask the hidden layers of prediction tokens at a certain layer of the model. We use an encoder-decoder model in which the masking occurs half-way through the models layers (at layer 8 or a 16-layer model to be precise) paired with loss masking on the inputs. This can easily be applied to both masked mixers and llama-style transformers, and for clarity here is a depiction of this process:
+
+![fineweb_loss](/deep-learning/completion_model.png)
+
+As expected, there is nearly complete parity in training efficiency for the masked mixer and transformer when applied to this one-step completion paradigm. Note that both train relatively poorly: unsurprisingly, it turns out that attempting to predict many tokens at once in one step is much more difficult than predicting one token at a time.
 
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
 
