@@ -241,6 +241,8 @@ For small datasets like TinyStories, the answer is somewhat surprisingly yes: fu
 
 Before proceeding further, however, it is best to understand a few theoretical arguments for and agasint the use of linear models.
 
+How might one go about converting a masked mixer into a linear model?
+
 
 
 
