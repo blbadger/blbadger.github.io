@@ -23,6 +23,187 @@ This can be tested more directly by simply removing each component and observing
 
 On the other hand it turns out that langauge training proceeds perfectly well (although slightly less efficiently) when layer norms or residuals are removed from the masked mixer architecture. This means that the mixer architecture is effectively much more flexible than the transformer, and can be modified to a much greater extent. This topic will be explored more in the 'Linear mixer' section of this page.
 
+### Masked Mixers make better Autoencoders than Transformers
+
+The accurate input representation present in masked mixers suggests that these models retain more information from their inputs than is present in transformers. It appears that next token prediction does not require or indeed is not particularly benefitted by this increased information compared to the focus brought by attention, but it was hypothesized and subsequently observed that masked mixers are far superior retrieval models as this task would be expected to require more information. 
+
+There is a perhaps more direct way to test the hypothesis that masked mixers contain more input information than transformers: we can modify the causal language modeling architectures of the masked mixer and transformer for the task of autoencoding an input. In particular, we want these models to learn a non-trivial autoencoding and not simply return each input token in the output. To do this we can use an encoder-decoder architecture but pass only the last hidden layer of the last token of the encoder to the decoder. For the masked mixer, this may be portrayed as follows:
+
+![autoencoder architecture](/deep-learning/mixer_autoencoder.png)
+
+This is perhaps the most direct way to maintain the parallelization afforded by all-next-token training for a non-trivial autoencoder. For a masked mixer-based
+
+```python
+class AutoencodingMixer(nn.Module):
+  ...
+	def forward(self, input_ids, labels=None):
+		... # word-token eembedding
+    ... # encoder blocks
+
+		encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
+		x = encoder_embedding.repeat(1, self.tokenized_length, 1)
+
+		... # decoder blocks
+    output = self.lm_head(x)
+		labels = rearrange(labels, 'b p t -> b (p t)')
+		output = rearrange(output, 'b t e -> b e t')
+		loss = self.cel(output, labels)
+		return loss, output
+```
+
+For a llama-style transformer, this architecture can be implemented as follows: first we modify the LlamaModelForCaualLM to take embeddings rather than tokens and supply the necessary positions
+
+```python
+class AbbreviatedModel(nn.Module):
+
+	def __init__(self, model, depth=8, tokenized_length=512):
+		super().__init__()
+		self.model = model
+		self.depth = depth
+		self.position_ids = torch.tensor([[i for i in range(tokenized_length)]]).to(device)
+
+	def forward(self, input_ids: torch.Tensor):
+		x = input_ids
+		position_ids = self.position_ids.repeat(input_ids.shape[0], 1)
+
+		for i in range(self.depth):
+			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
+		return x
+
+# initialization
+encoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+decoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+```
+
+and then the autoencoder is implemented in the same manner as the mixer autoencoder.
+
+Recall that masked mixers contain far fewer inter-token parameters and thus may be trained with a much larger $d_m$ size while maintaining other architectural constraints identically to transformers for fixed memory, and mixers of identical architectural 'sizes' train much more quickly. With this in mind, we can first observe autoencoding performance for identically-sized models: given a $d_m$=512 and $n_l=8$ (ie 8 encoder layers and 8 decoder layers). After 2.25 of TinyStories training, the masked mixer autoencoder reaches train/test losses of 4.53/4.35 respectively whereas the same-dimensional transformer only manages losses of 5.31/5.23. For $d_m=1024, n_l=4$ (the largest $d_m=1024$ transformer that fits in V100 memory) reaches 5.05/4.99 train/test loss after three epochs, whereas a masked mixer autoencoder of the same $d_m, n_l$ reaches 3.85, 3.66 (below).
+
+These are very large performance gaps: recall that the difference between transformer and mixer CLM loss is typically 0.5-2%, such that with a modest increase in training duration one architecture is able to achieve the loss of the other. But from the figure below it is apparent that it would take a huge number of steps (perhaps 1000x) for the transformer to match the mixer's loss achieved, if it ever is. The figure below provides the loss curves upon various training runs. Note that the 1024-dim mixer is more or less equivalent in memory and somewhat faster than the 512-dim transformer model, and that the mixers are trained with dropout ($p=0.05$) hence the drop in evaluation loss compared to training loss at all steps.
+
+![autoencoders](/deep-learning/language_autoencoders.png)
+
+The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
+
+### Fineweb Modeling Efficiency
+
+The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model architecture to use, the optimization approach, the amount of compute employed, and the dataset are all important factors in whether the generalization actually occurs.
+
+In [Part I](https://blbadger.github.io/smaller-lms.html) this question was addressed for two model architectures on a relatively small language dataset composed of synthetic one-paragraph children's stories written in the vocabulary of a four-year-old. There it was found that masked mixers are nearly as efficient language modelers as transformers for next token generative tasks, and far more efficient retrieval models.
+
+It may be wondered just how generally applicable these results are: perhaps mixers with their relatively simple inter-token linear transformations are effective modelers of TinyStories because that dataset is itself extremely simple? If this were the case then one would expect to find that the masked mixer is much worse than modern, optimized transformers for causal language modeling on more complex datasets.
+
+This hypothesis must be taken seriously because lack of correspondence of model training from a very small and self-contained dataset to larger ones is somewhat common in the deep learning field. Examples abound of model architectures that effectively modeled small datasets but were found to be relatively inefficient for large ones. Notable vision model cases are the variational autoencoder, which models MNIST well but is not powerful enough to train efficiently on ImageNet, and the Generative Adversarial Networks that model small and medium-sized datsets with some training instability but suffer from more frequent training instabilities upon application to larger and more varied datasets. As a counterpoint to those examples, it should be noted that GANs (and to some extent VAEs) are generally more efficient and flexible modelers of very small datasets (MNIST etc.) compared to diffusion models, but the latter have proven to be much more effective for large datasets.
+
+Applying masked mixers and modern transformers to larger, more difficult datasets with more compute can give us an indication whether the masked mixers would or would not be efficient general language learners. The [fineweb-edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu) dataset is particularly well-suited to this kind of test, as it is an extensively curated dataset containing a wide variety of text that has been shown to be capable of training large language models more efficiently than less-curated datasets. Specifically, this dataset began as a compilation of the Common Crawl, underwent multiple rounds of filtering via LLMs for quality and then educational content and finally deduplication. This dataset is designed to be similar but somewhat more efficient than (proprietary) datasets used to train Mistral and Llama models, and can in that respect be considered to be much more difficult to model than TinyStories. We use the 10 billion token (GPT2 tokens, that is) subset of the `fineweb-edu` dataset so that our relatively small models may be trained in a reasonable amount of time on a single 4x V100 compute node.
+
+The primary challenge of training a model on a large dataset like this (versus a small one) is that the larger the datset, the less likely it can be stored in memory for fast access during batched forward and reverse passes during training. To see why this is, observe that each token is usually stored as a `torch.long = torch.int64` datatype, meaning that each token requires eight bytes. A ten billion token dataset would therefore be expected to require around 80 GB of memory, and for distributed data parallel training each GPU requires its own dataset by default (although this could be modified if necessary). Thus we can expect to require 320 GB for a four-GPU system, which is currently a little more than the node used here contains.
+
+One option would be to simply increase the existing server's memory (more than one terabyte of memory can be installed in this machine) but that is a temporary solution, as any dataset larger than this memory value will experience the same problem that we are meeting with the `fineweb-edu`.  Very large datasets may be streamed directly from storage in the cloud (an S3 bucked or Azure Blob, for example) such that a local machine never stores more than a fixed amount of an arbitrarily large dataset, but this approach is heavily bandwidth-dependent. In the author's experience streaming large datasets lead to poor GPU usage for training smaller models, where the forward and reverse passes do not provide enough time to load a batch of data over the network without subsequenty delays. Instead, we can use clever data loading algorithms to load training and test data from storage into memory and back again during the training process, a process analagous to streaming the data from disk to CPU memory, and thence to GPU memory. Modern solid state drives read and write contiguous data at speeds of ~500MB/s, which is much faster than one will typically see for network streaming (which does typically not match one's internet bandwidth).
+
+With this approach settled on, there are a number of subsequent design considerations to make: for example, do we want to load only the text from storage and tokenize each batch before sending the tokens to the GPUs, or do we want to tokenize ahead of time and simply load the tokens directly and send these to GPUs? Some quick testing is enough to show that tokenizing large batches (say $n=128, n_ctx=1024$) leads to poor GPU allocation and delays in data processing, so we take the latter approach. We make use of the HuggingFace `datasets` library, which implements datasets as PyArrow (python bindings for the C++ Apache Arrow libs) tables. This library is handy for fast loading from disk, and was chosen as it is well-integrated with the `fineweb-edu` dataset schema without too many modifications for most tasks. 
+
+`fineweb-edu` 10BT is composed of approximately 10 billion tokens distributed accross around 90 million examples. In the following code snippet, we use batch encoding to store the first 1024 tokens of each of these examples (padding where necessary) using the `datset.map()` functionality.
+
+Let's examine a random sample of the `fineweb-edu` 10BT dataset. This dataset is stored as an Arrow table, and upon calling the `datasets.load_from_disk()` or `load_dataset` utility each row of this table may be represented Python dictionary. Below is one such sample (the text is truncated for brevity). Here we can see the `'text'` itself, a universally unique identifier for this sample (`'id'`), the actual source `'url'`, the Common Crawl dump source `'dump'`, and the path to the file's cloud storage (`'file_path'`), the `'language'`, a number of measurements determining the quality and educational content of this text (`'language_score', 'score', 'int_score'`), and the number of (GPT2) tokens in the text.
+
+```python
+{'text': ['Researchers from the United States and Switzerland have developed mathematical and statistical tools for reconstructing viral populations using pyrosequencing, a novel and effective technique for sequencing DNA. They describe their findings in an article published May 9th in the open-access journal PLoS Computational Biology.\nThe scientists knew that pyrosequencing reads are short and error-prone, and thus set out to improve upon this process...'], 'id': ['<urn:uuid:b3a05e48-160f-424f-8545-119be2db0560>'], 'dump': ['CC-MAIN-2017-26'], 'url': ['https://www.eurekalert.org/pub_releases/2008-05/plos-ncm050808.php'], 'file_path': ['s3://commoncrawl/crawl-data/CC-MAIN-2017-26/segments/1498128320270.12/warc/CC-MAIN-20170624170517-20170624190517-00112.warc.gz'], 'language': ['en'], 'language_score': [0.846785843372345], 'token_count': [609], 'score': [2.71875], 'int_score': [3]}
+```
+
+We want to tokenize the text, but don't necessarily care about the metadata. Perhaps the fastest approach is to tokenize the text in batches, truncating samples that are too long and padding those that are too short as follows
+
+```python
+def tokenization(example):
+    tokens = tokenizer.batch_encode_plus(
+		example['text'],
+		add_special_tokens=False,
+		return_tensors='pt',
+		truncation=True,
+		max_length=1024,
+		padding='max_length',
+		padding_side='right'
+             )
+    return tokens
+```
+
+where we use the dictionary lookup `example['text']` to access the text. We can then perform a train/text split of the dataset and add the tokens to the dataset via batched `dataset.map()` with the tokenizer above, and save the resulting tokenized dataset to disk in the desired location.
+
+```
+import datasets
+from datasets import load_dataset, load_from_disk
+
+def tokenization(example):
+	...
+
+def map_dataset(text, path):
+	dataset = text.map(tokenization, batched=True)
+	dataset.save_to_disk(train_path)
+	return
+
+if __name__ == '__main__':
+	train_path = "/path/to/store/training/tokens"
+	train_path = "/path/to/store/test/tokens"
+	dataset = load_dataset("HuggingFaceFW/fineweb-edu", split="train", name="sample-10BT", streaming=False)
+	train_data, test_data = dataset.skip(split_index), dataset.take(split_index)
+	map_dataset(train_text, train_path)
+	map_dataset(test_text, test_path)
+```
+
+If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not requried.
+
+The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. In this case, we cannot use batched tokenization examples are typically of different lengths: instead we perform unbatched tokenization without truncation followed by reshaping such that each sample has `len(tokens) // n_ctx` tensors each with `n_ctx` tokens. What we are doing here is to split up each example's sequence of tokens into a batch of many sequences tokens, discarding the last sequence if its length is less than `n_ctx` (which is faster than padding). The following example is called during `map_dataset()` via `train_dataset = train_text.map(tokenization, batched=False)` and the same for the test dataset.
+
+```python
+def tokenization(example, n_ctx=32):
+    tokens = tokenizer.encode_plus(
+			example['text'],
+			add_special_tokens=False,
+			return_tensors='pt',
+			truncation=False,
+			padding=False,
+		).input_ids
+    tokens = torch.flatten(tokens, start_dim=0)
+    batch_size = len(tokens) // n_ctx 
+    length = n_ctx * batch_size
+    tokens = tokens[:length].reshape(batch_size, n_ctx)
+    return {'input_ids': tokens}
+```
+
+Debatching the input is trickier than it sounds: we really want to convert each example into however many examples there are batches in that sample, which the `datasets` library does not natively support. Instead we can form an array of inputs (one for each batch sample in our example), convert the array to a PyArrow Table object and return that object to the mapper. The key to this approach is that `dataset.map()` only allows batched outputs if `batched=True` is specified in the mapper args, but we actually need a `batch_size=` (unbatched) input as each example is expected to have a different batch size than any other example. This can be implemented as follows: after the dataset is tokenized into batches as above, it is loaded and debatched and saved to a new dataset object as open datasets cannot be overwritten.
+
+```
+def debatch(example):
+	batch_size = len(example['input_ids'])
+	keys = list(example.keys())
+	debatched_inputs = [{'input_ids': tokens} for tokens in example["input_ids"][0]]
+	examples = pa.Table.from_pylist(debatched_inputs)
+	return examples
+
+test_dataset = test_dataset.map(debatch, batched=True, batch_size=1)
+train_dataset.save_to_disk(train_path + '-debatched')
+```
+
+Making use of `datasets` PyArrow objects is straightforward: first we use `load_from_disk` and then the datsets may be passed directly to the `transformer.Trainer` as follows:
+
+```python
+train_dataset = load_from_disk(train_path)
+test_dataset = load_from_disk(test_path)
+...
+trainer = transformers.Trainer(
+	model=model,
+	train_dataset=train_dataset,
+	eval_dataset=test_dataset,
+	args=training_arguments,
+	data_collator=transformers.DataCollatorForLanguageModeling(tokenizer, mlm=False),
+)
+```
+
+Once this is done, we can observe model performance on the `fineweb-edu`! Some quick testing tells us some things that one would probably expect: firstly that this more difficult dataset requires much deeper models than `TinyStories`, as the latter was most efficiently modeled by 4- or 8-layer mixers and transformers whereas the `fineweb-edu` is most efficiently modeled by 16 (or more) -layer models. We mostly stick to 16-layer models, as these are the deepest that are efficiently trainable on the 4x V100 hardware (batch size of 128 such that the entirey of `fineweb-edu` 10BT is trainable in under one day.
+
+![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
+
+
 ### Bidirectional Language Modeling
 
 We have seen that attention appears to confer benefits to next token prediction, and theoretically this can be expected due to the many-to-one map inherent in this task as well as the inherent noise in real language (not every word necessarily follows from the last, but may be chosen at will). It may be wondered which of these two has a greater influence on the abilities of language models, a question that in this case may be rephrased as follows: is it the inherent noise present in language that is most responsible for the greater efficiency of transformers versus mixers in CLM tasks, or else is it simply the type of mapping performed which is many-to-one?
@@ -134,176 +315,9 @@ class BidirectionalTransformer(nn.Module):
 		return loss, output
 ```
 
-When we compare mixer versus transformer performance on bidirectional token prediction versus causal language modeling-style next token prediction, we see that the relative performance is nearly identical. 
+When we compare mixer versus transformer performance on bidirectional token prediction versus causal language modeling-style next token prediction on the `fineweb-edu` 10BT dataset, we see that the relative performance is nearly identical, suggesting that it is not language stochasticity but many-to-one mapping that give transformers a training efficiency advantage over masked mixers for token prediction.
 
 ![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
-
-### Masked Mixers make better Autoencoders than Transformers
-
-The accurate input representation present in masked mixers suggests that these models retain more information from their inputs than is present in transformers. It appears that next token prediction does not require or indeed is not particularly benefitted by this increased information compared to the focus brought by attention, but it was hypothesized and subsequently observed that masked mixers are far superior retrieval models as this task would be expected to require more information. 
-
-There is a perhaps more direct way to test the hypothesis that masked mixers contain more input information than transformers: we can modify the causal language modeling architectures of the masked mixer and transformer for the task of autoencoding an input. In particular, we want these models to learn a non-trivial autoencoding and not simply return each input token in the output. To do this we can use an encoder-decoder architecture but pass only the last hidden layer of the last token of the encoder to the decoder. For the masked mixer, this may be portrayed as follows:
-
-![autoencoder architecture](/deep-learning/mixer_autoencoder.png)
-
-This is perhaps the most direct way to maintain the parallelization afforded by all-next-token training for a non-trivial autoencoder. For a masked mixer-based
-
-```python
-class AutoencodingMixer(nn.Module):
-  ...
-	def forward(self, input_ids, labels=None):
-		... # word-token eembedding
-    ... # encoder blocks
-
-		encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
-		x = encoder_embedding.repeat(1, self.tokenized_length, 1)
-
-		... # decoder blocks
-    output = self.lm_head(x)
-		labels = rearrange(labels, 'b p t -> b (p t)')
-		output = rearrange(output, 'b t e -> b e t')
-		loss = self.cel(output, labels)
-		return loss, output
-```
-
-For a llama-style transformer, this architecture can be implemented as follows: first we modify the LlamaModelForCaualLM to take embeddings rather than tokens and supply the necessary positions
-
-```python
-class AbbreviatedModel(nn.Module):
-
-	def __init__(self, model, depth=8, tokenized_length=512):
-		super().__init__()
-		self.model = model
-		self.depth = depth
-		self.position_ids = torch.tensor([[i for i in range(tokenized_length)]]).to(device)
-
-	def forward(self, input_ids: torch.Tensor):
-		x = input_ids
-		position_ids = self.position_ids.repeat(input_ids.shape[0], 1)
-
-		for i in range(self.depth):
-			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
-		return x
-
-# initialization
-encoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
-decoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
-```
-
-and then the autoencoder is implemented in the same manner as the mixer autoencoder.
-
-Recall that masked mixers contain far fewer inter-token parameters and thus may be trained with a much larger $d_m$ size while maintaining other architectural constraints identically to transformers for fixed memory, and mixers of identical architectural 'sizes' train much more quickly. With this in mind, we can first observe autoencoding performance for identically-sized models: given a $d_m$=512 and $n_l=8$ (ie 8 encoder layers and 8 decoder layers). After 2.25 of TinyStories training, the masked mixer autoencoder reaches train/test losses of 4.53/4.35 respectively whereas the same-dimensional transformer only manages losses of 5.31/5.23. For $d_m=1024, n_l=4$ (the largest $d_m=1024$ transformer that fits in V100 memory) reaches 5.05/4.99 train/test loss after three epochs, whereas a masked mixer autoencoder of the same $d_m, n_l$ reaches 3.85, 3.66 (below).
-
-These are very large performance gaps: recall that the difference between transformer and mixer CLM loss is typically 0.5-2%, such that with a modest increase in training duration one architecture is able to achieve the loss of the other. But from the figure below it is apparent that it would take a huge number of steps (perhaps 1000x) for the transformer to match the mixer's loss achieved, if it ever is. The figure below provides the loss curves upon various training runs. Note that the 1024-dim mixer is more or less equivalent in memory and somewhat faster than the 512-dim transformer model, and that the mixers are trained with dropout ($p=0.05$) hence the drop in evaluation loss compared to training loss at all steps.
-
-![autoencoders](/deep-learning/language_autoencoders.png)
-
-The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
-
-### Fineweb Modeling Efficiency
-
-The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model architecture to use, the optimization approach, the amount of compute employed, and the dataset are all important factors in whether the generalization actually occurs.
-
-In [Part I](https://blbadger.github.io/smaller-lms.html) this question was addressed for two model architectures on a relatively small language dataset composed of synthetic one-paragraph children's stories written in the vocabulary of a four-year-old. There it was found that masked mixers are nearly as efficient language modelers as transformers for next token generative tasks, and far more efficient retrieval models.
-
-It may be wondered just how generally applicable these results are: perhaps mixers with their relatively simple inter-token linear transformations are effective modelers of TinyStories because that dataset is itself extremely simple? If this were the case then one would expect to find that the masked mixer is much worse than modern, optimized transformers for causal language modeling on more complex datasets.
-
-This hypothesis must be taken seriously because lack of correspondence of model training from a very small and self-contained dataset to larger ones is somewhat common in the deep learning field. Examples abound of model architectures that effectively modeled small datasets but were found to be relatively inefficient for large ones. Notable vision model cases are the variational autoencoder, which models MNIST well but is not powerful enough to train efficiently on ImageNet, and the Generative Adversarial Networks that model small and medium-sized datsets with some training instability but suffer from more frequent training instabilities upon application to larger and more varied datasets. As a counterpoint to those examples, it should be noted that GANs (and to some extent VAEs) are generally more efficient and flexible modelers of very small datasets (MNIST etc.) compared to diffusion models, but the latter have proven to be much more effective for large datasets.
-
-Applying masked mixers and modern transformers to larger, more difficult datasets with more compute can give us an indication whether the masked mixers would or would not be efficient general language learners. The [fineweb-edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu) dataset is particularly well-suited to this kind of test, as it is an extensively curated dataset containing a wide variety of text that has been shown to be capable of training large language models more efficiently than less-curated datasets. Specifically, this dataset began as a compilation of the Common Crawl, underwent multiple rounds of filtering via LLMs for quality and then educational content and finally deduplication. This dataset is designed to be similar but somewhat more efficient than (proprietary) datasets used to train Mistral and Llama models, and can in that respect be considered to be much more difficult to model than TinyStories. We use the 10 billion token (GPT2 tokens, that is) subset of the `fineweb-edu` dataset so that our relatively small models may be trained in a reasonable amount of time on a single 4x V100 compute node.
-
-The primary challenge of training a model on a large dataset like this (versus a small one) is that the larger the datset, the less likely it can be stored in memory for fast access during batched forward and reverse passes during training. To see why this is, observe that each token is usually stored as a `torch.long = torch.int64` datatype, meaning that each token requires eight bytes. A ten billion token dataset would therefore be expected to require around 80 GB of memory, and for distributed data parallel training each GPU requires its own dataset by default (although this could be modified if necessary). Thus we can expect to require 320 GB for a four-GPU system, which is currently a little more than the node used here contains.
-
-One option would be to simply increase the existing server's memory (more than one terabyte of memory can be installed in this machine) but that is a temporary solution, as any dataset larger than this memory value will experience the same problem that we are meeting with the `fineweb-edu`.  Very large datasets may be streamed directly from storage in the cloud (an S3 bucked or Azure Blob, for example) such that a local machine never stores more than a fixed amount of an arbitrarily large dataset, but this approach is heavily bandwidth-dependent. In the author's experience streaming large datasets lead to poor GPU usage for training smaller models, where the forward and reverse passes do not provide enough time to load a batch of data over the network without subsequenty delays. Instead, we can use clever data loading algorithms to load training and test data from storage into memory and back again during the training process, a process analagous to streaming the data from disk to CPU memory, and thence to GPU memory. Modern solid state drives read and write contiguous data at speeds of ~500MB/s, which is much faster than one will typically see for network streaming (which does typically not match one's internet bandwidth).
-
-With this approach settled on, there are a number of subsequent design considerations to make: for example, do we want to load only the text from storage and tokenize each batch before sending the tokens to the GPUs, or do we want to tokenize ahead of time and simply load the tokens directly and send these to GPUs? Some quick testing is enough to show that tokenizing large batches (say $n=128, n_ctx=1024$) leads to poor GPU allocation and delays in data processing, so we take the latter approach. We make use of the HuggingFace `datasets` library, which implements datasets as PyArrow (python bindings for the C++ Apache Arrow libs) tables. This library is handy for fast loading from disk, and was chosen as it is well-integrated with the `fineweb-edu` dataset schema without too many modifications for most tasks. 
-
-`fineweb-edu` 10BT is composed of approximately 10 billion tokens distributed accross around 90 million examples. In the following code snippet, we use batch encoding to store the first 1024 tokens of each of these examples (padding where necessary) using the `datset.map()` functionality.
-
-Let's examine a random sample of the `fineweb-edu` 10BT dataset. This dataset is stored as an Arrow table, and upon calling the `datasets.load_from_disk()` or `load_dataset` utility each row of this table may be represented Python dictionary. Below is one such sample (the text is truncated for brevity). Here we can see the `'text'` itself, a universally unique identifier for this sample (`'id'`), the actual source `'url'`, the Common Crawl dump source `'dump'`, and the path to the file's cloud storage (`'file_path'`), the `'language'`, a number of measurements determining the quality and educational content of this text (`'language_score', 'score', 'int_score'`), and the number of (GPT2) tokens in the text.
-
-```python
-{'text': ['Researchers from the United States and Switzerland have developed mathematical and statistical tools for reconstructing viral populations using pyrosequencing, a novel and effective technique for sequencing DNA. They describe their findings in an article published May 9th in the open-access journal PLoS Computational Biology.\nThe scientists knew that pyrosequencing reads are short and error-prone, and thus set out to improve upon this process...'], 'id': ['<urn:uuid:b3a05e48-160f-424f-8545-119be2db0560>'], 'dump': ['CC-MAIN-2017-26'], 'url': ['https://www.eurekalert.org/pub_releases/2008-05/plos-ncm050808.php'], 'file_path': ['s3://commoncrawl/crawl-data/CC-MAIN-2017-26/segments/1498128320270.12/warc/CC-MAIN-20170624170517-20170624190517-00112.warc.gz'], 'language': ['en'], 'language_score': [0.846785843372345], 'token_count': [609], 'score': [2.71875], 'int_score': [3]}
-```
-
-We want to tokenize the text, but don't necessarily care about the metadata. Perhaps the fastest approach is to tokenize the text in batches, truncating samples that are too long and padding those that are too short as follows
-
-```python
-def tokenization(example):
-    tokens = tokenizer.batch_encode_plus(
-		example['text'],
-		add_special_tokens=False,
-		return_tensors='pt',
-		truncation=True,
-		max_length=1024,
-		padding='max_length',
-		padding_side='right'
-             )
-    return tokens
-```
-
-where we use the dictionary lookup `example['text']` to access the text. We can then perform a train/text split of the dataset, add the tokens to the dataset via batched `dataset.map()` with the tokenizer above, and save the resulting tokenized dataset to disk in the desired location.
-
-```
-import datasets
-from datasets import load_dataset, load_from_disk
-
-def map_dataset(train_path, test_path, split_index=50000):
-	"""
-	Map dataset to tokens. Suitable for large datasets, note that split_index is low (5k means hold out 5k rows from training)
-	"""
-	train_text = load_dataset("HuggingFaceFW/fineweb-edu", split="train", name="sample-10BT", streaming=False).skip(split_index)
-	test_text = load_dataset("HuggingFaceFW/fineweb-edu", split="train", name="sample-10BT", streaming=False).take(split_index)
-	train_dataset = train_text.map(tokenization, batched=True)
-	test_dataset = test_text.map(tokenization, batched=True)
-	train_dataset.save_to_disk(train_path)
-	return
-
-train_path = "/path/to/store/training/tokens"
-map_dataset(train_path, test_path)
-```
-
-If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not requried.
-
-The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. 
-
-```python
-def tokenization(example, n_ctx=32):
-    tokens = tokenizer.encode_plus(
-			example['text'],
-			add_special_tokens=False,
-			return_tensors='pt',
-			truncation=False,
-			padding=False,
-		).input_ids
-    tokens = torch.flatten(tokens, start_dim=0)
-    batch_size = len(tokens) // n_ctx #if len(tokens) % n_ctx==0 else len(tokens) // n_ctx + 1
-    length = n_ctx * batch_size
-    #tokens = tokenizer.pad(tokens, padding='max_length', max_length=length, padding_side='right')
-    tokens = tokens[:length].reshape(batch_size, n_ctx)
-    return {'input_ids': tokens}
-
-def debatch(example):
-	batch_size = len(example['input_ids'])
-	keys = list(example.keys())
-	for key in keys:
-		if key != 'input_ids':
-			example.pop(key, None)
-	debatched_inputs = [{'input_ids': tokens} for tokens in example["input_ids"][0]]
-	return pa.Table.from_pylist(debatched_inputs)
-
-map_dataset(train_path, test_path) # see last code snippet
-train_dataset = load_from_disk(train_path)
-test_dataset = load_from_disk(test_path)
-
-test_dataset = test_dataset.map(debatch, batched=True, batch_size=1)
-test_dataset.save_to_disk(test_path+'-debatched')
-
-train_dataset = train_dataset.map(debatch, batched=True, batch_size=1)
-train_dataset.save_to_disk(train_path+'-debatched')
-```
-
-![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
 
 ### One Step Language Completion Efficiency
