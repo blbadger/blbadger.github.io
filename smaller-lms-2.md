@@ -210,7 +210,98 @@ It may be wondered just how generally applicable these results are: perhaps mixe
 
 This hypothesis must be taken seriously because lack of correspondence of model training from a very small and self-contained dataset to larger ones is somewhat common in the deep learning field. Examples abound of model architectures that effectively modeled small datasets but were found to be relatively inefficient for large ones. Notable vision model cases are the variational autoencoder, which models MNIST well but is not powerful enough to train efficiently on ImageNet, and the Generative Adversarial Networks that model small and medium-sized datsets with some training instability but suffer from more frequent training instabilities upon application to larger and more varied datasets. As a counterpoint to those examples, it should be noted that GANs (and to some extent VAEs) are generally more efficient and flexible modelers of very small datasets (MNIST etc.) compared to diffusion models, but the latter have proven to be much more effective for large datasets.
 
-Applying masked mixers and modern transformers to larger, more difficult datasets with more compute can give us an indication whether the masked mixers would or would not be efficient general language learners.
+Applying masked mixers and modern transformers to larger, more difficult datasets with more compute can give us an indication whether the masked mixers would or would not be efficient general language learners. The [fineweb-edu](https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu) dataset is particularly well-suited to this kind of test, as it is an extensively curated dataset containing a wide variety of text that has been shown to be capable of training large language models more efficiently than less-curated datasets. Specifically, this dataset began as a compilation of the Common Crawl, underwent multiple rounds of filtering via LLMs for quality and then educational content and finally deduplication. This dataset is designed to be similar but somewhat more efficient than (proprietary) datasets used to train Mistral and Llama models, and can in that respect be considered to be much more difficult to model than TinyStories. We use the 10 billion token (GPT2 tokens, that is) subset of the `fineweb-edu` dataset so that our relatively small models may be trained in a reasonable amount of time on a single 4x V100 compute node.
+
+The primary challenge of training a model on a large dataset like this (versus a small one) is that the larger the datset, the less likely it can be stored in memory for fast access during batched forward and reverse passes during training. To see why this is, observe that each token is usually stored as a `torch.long = torch.int64` datatype, meaning that each token requires eight bytes. A ten billion token dataset would therefore be expected to require around 80 GB of memory, and for distributed data parallel training each GPU requires its own dataset by default (although this could be modified if necessary). Thus we can expect to require 320 GB for a four-GPU system, which is currently a little more than the node used here contains.
+
+One option would be to simply increase the existing server's memory (more than one terabyte of memory can be installed in this machine) but that is a temporary solution, as any dataset larger than this memory value will experience the same problem that we are meeting with the `fineweb-edu`.  Very large datasets may be streamed directly from storage in the cloud (an S3 bucked or Azure Blob, for example) such that a local machine never stores more than a fixed amount of an arbitrarily large dataset, but this approach is heavily bandwidth-dependent. In the author's experience streaming large datasets lead to poor GPU usage for training smaller models, where the forward and reverse passes do not provide enough time to load a batch of data over the network without subsequenty delays. Instead, we can use clever data loading algorithms to load training and test data from storage into memory and back again during the training process, a process analagous to streaming the data from disk to CPU memory, and thence to GPU memory. Modern solid state drives read and write contiguous data at speeds of ~500MB/s, which is much faster than one will typically see for network streaming (which does typically not match one's internet bandwidth).
+
+With this approach settled on, there are a number of subsequent design considerations to make: for example, do we want to load only the text from storage and tokenize each batch before sending the tokens to the GPUs, or do we want to tokenize ahead of time and simply load the tokens directly and send these to GPUs? Some quick testing is enough to show that tokenizing large batches (say $n=128, n_ctx=1024$) leads to poor GPU allocation and delays in data processing, so we take the latter approach. We make use of the HuggingFace `datasets` library, which implements datasets as PyArrow (python bindings for the C++ Apache Arrow libs) tables. This library is handy for fast loading from disk, and was chosen as it is well-integrated with the `fineweb-edu` dataset schema without too many modifications for most tasks. 
+
+`fineweb-edu` 10BT is composed of approximately 10 billion tokens distributed accross around 90 million examples. In the following code snippet, we use batch encoding to store the first 1024 tokens of each of these examples (padding where necessary) using the `datset.map()` functionality.
+
+Let's examine a random sample of the `fineweb-edu` 10BT dataset. This dataset is stored as an Arrow table, and upon calling the `datasets.load_from_disk()` or `load_dataset` utility each row of this table may be represented Python dictionary. Below is one such sample (the text is truncated for brevity). Here we can see the `'text'` itself, a universally unique identifier for this sample (`'id'`), the actual source `'url'`, the Common Crawl dump source `'dump'`, and the path to the file's cloud storage (`'file_path'`), the `'language'`, a number of measurements determining the quality and educational content of this text (`'language_score', 'score', 'int_score'`), and the number of (GPT2) tokens in the text.
+
+```python
+{'text': ['Researchers from the United States and Switzerland have developed mathematical and statistical tools for reconstructing viral populations using pyrosequencing, a novel and effective technique for sequencing DNA. They describe their findings in an article published May 9th in the open-access journal PLoS Computational Biology.\nThe scientists knew that pyrosequencing reads are short and error-prone, and thus set out to improve upon this process...'], 'id': ['<urn:uuid:b3a05e48-160f-424f-8545-119be2db0560>'], 'dump': ['CC-MAIN-2017-26'], 'url': ['https://www.eurekalert.org/pub_releases/2008-05/plos-ncm050808.php'], 'file_path': ['s3://commoncrawl/crawl-data/CC-MAIN-2017-26/segments/1498128320270.12/warc/CC-MAIN-20170624170517-20170624190517-00112.warc.gz'], 'language': ['en'], 'language_score': [0.846785843372345], 'token_count': [609], 'score': [2.71875], 'int_score': [3]}
+```
+
+We want to tokenize the text, but don't necessarily care about the metadata. Perhaps the fastest approach is to tokenize the text in batches, truncating samples that are too long and padding those that are too short as follows
+
+```python
+def tokenization(example):
+    tokens = tokenizer.batch_encode_plus(
+		example['text'],
+		add_special_tokens=False,
+		return_tensors='pt',
+		truncation=True,
+		max_length=1024,
+		padding='max_length',
+		padding_side='right'
+             )
+    return tokens
+```
+
+where we use the dictionary lookup `example['text']` to access the text. We can then perform a train/text split of the dataset, add the tokens to the dataset via batched `dataset.map()` with the tokenizer above, and save the resulting tokenized dataset to disk in the desired location.
+
+```
+import datasets
+from datasets import load_dataset, load_from_disk
+
+def map_dataset(train_path, test_path, split_index=50000):
+	"""
+	Map dataset to tokens. Suitable for large datasets, note that split_index is low (5k means hold out 5k rows from training)
+	"""
+	train_text = load_dataset("HuggingFaceFW/fineweb-edu", split="train", name="sample-10BT", streaming=False).skip(split_index)
+	test_text = load_dataset("HuggingFaceFW/fineweb-edu", split="train", name="sample-10BT", streaming=False).take(split_index)
+	train_dataset = train_text.map(tokenization, batched=True)
+	test_dataset = test_text.map(tokenization, batched=True)
+	train_dataset.save_to_disk(train_path)
+	return
+
+train_path = "/path/to/store/training/tokens"
+map_dataset(train_path, test_path)
+```
+
+If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not requried.
+
+The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. 
+
+```python
+def tokenization(example, n_ctx=32):
+    tokens = tokenizer.encode_plus(
+			example['text'],
+			add_special_tokens=False,
+			return_tensors='pt',
+			truncation=False,
+			padding=False,
+		).input_ids
+    tokens = torch.flatten(tokens, start_dim=0)
+    batch_size = len(tokens) // n_ctx #if len(tokens) % n_ctx==0 else len(tokens) // n_ctx + 1
+    length = n_ctx * batch_size
+    #tokens = tokenizer.pad(tokens, padding='max_length', max_length=length, padding_side='right')
+    tokens = tokens[:length].reshape(batch_size, n_ctx)
+    return {'input_ids': tokens}
+
+def debatch(example):
+	batch_size = len(example['input_ids'])
+	keys = list(example.keys())
+	for key in keys:
+		if key != 'input_ids':
+			example.pop(key, None)
+	debatched_inputs = [{'input_ids': tokens} for tokens in example["input_ids"][0]]
+	return pa.Table.from_pylist(debatched_inputs)
+
+map_dataset(train_path, test_path) # see last code snippet
+train_dataset = load_from_disk(train_path)
+test_dataset = load_from_disk(test_path)
+
+test_dataset = test_dataset.map(debatch, batched=True, batch_size=1)
+test_dataset.save_to_disk(test_path+'-debatched')
+
+train_dataset = train_dataset.map(debatch, batched=True, batch_size=1)
+train_dataset.save_to_disk(train_path+'-debatched')
+```
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
