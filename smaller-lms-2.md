@@ -5,7 +5,7 @@ Application of masked mixers to larger datasets will be explored, theory is expa
 
 ### Why Masked Mixers?
 
-In [Part I](https://blbadger.github.io/smaller-lms.html) the motivation behind masked mixers for language modeling was detailed, but can be restated briefly: from high-dimensional projection theory (specifically the Johnson-Lindenstrauss lemma) we can accurately represent points in high-dimensional space in a space with much fewer dimensions (approximately the log of the number of points we have). This is an important result here because it implies that one can make language models that are capable of fitting extremely large datasets with what is currently considered an extremly small number of parameters: for example, a dataset one million times the size of the already large 15 trillion token Llama-3.1 dataset ($1.5 * 10^{19}$ tokens to be precise) may be arbitrarily well fitted by a 352-dimensional model, which would require around 100 million parameters for a llama-style generative model.
+In [Part I](https://blbadger.github.io/smaller-lms.html) the motivation behind masked mixers for language modeling was detailed, but can be restated briefly: from high-dimensional projection theory (specifically the Johnson-Lindenstrauss lemma) we can accurately represent points in high-dimensional space in a space with much fewer dimensions (approximately the log of the number of points we have). This is an important result here because it implies that one can make language models that are capable of fitting extremely large datasets with what is currently considered an extremly small number of parameters: for example, a dataset one million times the size of the already large 15 trillion token Llama-3.1 dataset ($1.5 * 10^{19}$ tokens to be precise) may be arbitrarily well fit by a 352-dimensional model, which would require around 100 million parameters for a llama-style generative model.
 
 Empirically it appears that the current state-of-the-art model type (the transformer) trains much too slowly to achieve this feat in any reasonable length of time, and the best-performing models are typically trained on thousands of GPUs for many days. From other investigations on information transfer between model layers, we wondered whether an architecture that more accurately represents its inputs (the masked mixer) would learn more efficiently.
 
@@ -121,7 +121,8 @@ Let's examine a random sample of the `fineweb-edu 10BT` dataset. This dataset is
 'language_score': [0.846785843372345],
 'token_count': [609],
 'score': [2.71875],
-'int_score': [3]}
+'int_score': [3]
+}
 ```
 
 We want to tokenize the text, but don't necessarily care about the metadata. Perhaps the fastest approach is to tokenize the text in batches, truncating samples that are too long and padding those that are too short as follows
@@ -218,7 +219,7 @@ Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` a
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
-There are a few notable observations from the above figure, the primary being the answer to the question posed at the start of this section that masked mixers scale just as well (if not better than transformers) to large and difficult datasets. Recall that the loss gap between the most-optimized Llama model and masked mixer for language generation evaluation was 1.71 and 1.61 (6%) for $n_{ctx}=512$. For the same $n_{ctx}, we see a smaller gap (less than 3%) corresponding to fewer extra training steps required to have the masked mixer's accuracy match that of the transformer. Furthermore, for $n_{ctx}=512$ it is apparent that the gap between mixer and transformer loss narrows as training proceeds such that with more compute applied one would expect the masked mixer to be the more efficient architecture given the current constraints. This notion is supported byobserving that $n_{ctx]=128$ models experience exactly this phenomenon of the course of their training, which uses 4x the batch size and thus 4x the number of samples that $n_{ctx=512}$ training does.
+There are a few notable observations from the above figure, the primary being the answer to the question posed at the start of this section that masked mixers scale just as well (if not better than transformers) to large and difficult datasets. Recall that the loss gap between the most-optimized Llama model and masked mixer for language generation evaluation was 1.71 and 1.61 (6%) for $n_{ctx}=512$. For the same $n_{ctx}$, we see a smaller gap (less than 3%) corresponding to fewer extra training steps required to have the masked mixer's accuracy match that of the transformer. Furthermore, for $n_{ctx}=512$ it is apparent that the gap between mixer and transformer loss narrows as training proceeds such that with more compute applied one would expect the masked mixer to be the more efficient architecture given the current constraints. This notion is supported byobserving that $n_{ctx]=128$ models experience exactly this phenomenon of the course of their training, which uses 4x the batch size and thus 4x the number of samples that $n_{ctx=512}$ training does.
 
 From earlier investigations we hypothesized that the transformer is a somewhat more efficient causal language model than the masked mixer because next token prediction is fundamentally a many-to-one mapping: we have many previous tokens and only get logits for one next token. This mapping mirrors the intrinsic properties of the transformer's attention operation, where information from most inputs is removed during the forward pass. If this were the case then one would expect for next token prediction with fewer previous tokens (which is closer to a bijective mapping) to favor the masked mixer, and this is precisely what is found for $n_{ctx}=32$ or even $n_{ctx}=128$.
 
@@ -362,9 +363,9 @@ Clearly it would be advantageous to reduce the number of layers in a model, but 
 
 For small datasets like TinyStories, the answer is somewhat surprisingly yes: fully linear language models are capable of generating gramatically correct text, and nearly-linear models are only slightly less efficient to train than highly non-linear, many-layered models explored previously. 
 
-Before proceeding further, however, it is best to understand a few theoretical arguments for and agasint the use of linear models.
+Before proceeding further, however, it is best to understand a few theoretical arguments for and against the use of linear models. The arguments for mostly revolve around their utility: they are fast (because they can be mostly or wholly parallelized on hardware), easy to optimize, and somewhat more interpretable than nonlinear ones. The downsides revolve around their lack of representational power: 
 
-How might one go about converting a masked mixer into a linear model?
+How might one go about converting a masked mixer into a linear model? We will take the approach to nonlinear transformations, 
 
 
 
