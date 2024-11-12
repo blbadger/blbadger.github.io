@@ -15,13 +15,16 @@ Restricting our investigations to a small dataset (TinyStories, ie short childre
 
 Even with these promising features, the question may be asked: why masked mixers? Before proceeding to further investigations on this architecture, it is worth considering what you get when you swap self-attention for masked convolutions.
 
-Before masked mixers were first trained, it was found that these models give much more accurate representations of their inputs than transformers. In effect, this means that given an input, the information necessary to uniquely identify that input via gradient descent is retained throughout the mixer but not the transformer. It could be argued for or against the idea that this would be useful for language generation, and perhaps more convincingly argued that this is important for langauge retrieval. But accurate input representation remains a useful feature of mixers for a variety of applications. We will refer to this input representation *accuracy* more in the future.
+Before masked mixers were first trained, it was found that these models give much more accurate representations of their inputs than transformers. In effect, this means that given an input, the information necessary to uniquely identify that input via gradient descent is retained throughout the mixer but not the transformer. It could be argued for or against the idea that this would be useful for language generation, and perhaps more convincingly argued that this is important for langauge retrieval. But accurate input representation remains a useful feature of mixers for a variety of applications. 
 
 Perhaps as important is the model architecture *flexibility* of masked mixers. From investigations into representation in [vision transformers](https://blbadger.github.io/vision-transformers.html), it was apparent that vision transformers require each key component of their architectures: layer normalizations, MLPs, self-attention, and residual connections are all required for effective gradient propegation.
 
-This can be tested more directly by simply removing each component and observing the training process. Ironically for an architecture introduced as 'Attention is all you need', self-attention is actually the only removable component (as long as it is replaced by some other trainiable inter-token parameters): removal of MLPs (or replacing with attention) layer norms or residual connections results in very poor language model training: either failure to minimize a loss function (if MLPs are removed or replaced with attention) or training becomes unstable (for removal of layer norms or residuals) and loss spikes to infinity. The reason for this is that attention is a rather difficult transformation for gradients to propegate across, and this is important because it essentially 'fixes' the architectures of models with attention to similar patterns, all requiring some form or other of the same components transformers have (layer norms, residuals, MLPs, ets.).
+This can be tested more directly by simply removing each component and observing the training process. Ironically for an architecture introduced as 'Attention is all you need', self-attention is actually the only removable component (as long as it is replaced by some other trainiable inter-token parameters): removal of MLPs, layer norms, or residual connections results in very poor language model training with either a failure to minimize a loss function (even if MLPs are removed or replaced with attention) or else training becomes unstable (for removal of layer norms or residuals) and gradients spikes to infinity. The reason for this is that attention is a rather difficult transformation for gradients to propegate across, and this is important because it essentially fixes the architectures of models with attention to similar patterns, all requiring some form or other of the same components transformers have (layer norms, residuals, MLPs, ets.).
 
-On the other hand it turns out that langauge training proceeds perfectly well (although slightly less efficiently) when layer norms or residuals are removed from the masked mixer architecture. This means that the mixer architecture is effectively much more flexible than the transformer, and can be modified to a much greater extent. This topic will be explored more in the 'Linear mixer' section of this page.
+On the other hand it turns out that langauge training proceeds perfectly well but is slightly less efficient when layer norms or residuals are removed from the masked mixer architecture. Even on a relatively large and difficult dataset such as the `fineweb-edu 10BT`, a 16-layer masked mixer with no layer norms whatsoever does not experience any spikes in loss during training, provided that the learning rate is relatively modest. 
+
+
+This means that the mixer is effectively much more flexible than the transformer, and can be modified to a much greater extent. This topic will be explored more in the 'Linear mixer' section of this page.
 
 ### Masked Mixers make better Autoencoders than Transformers
 
@@ -103,12 +106,22 @@ One option would be to simply increase the existing server's memory (more than o
 
 With this approach settled on, there are a number of subsequent design considerations to make: for example, do we want to load only the text from storage and tokenize each batch before sending the tokens to the GPUs, or do we want to tokenize ahead of time and simply load the tokens directly and send these to GPUs? Some quick testing is enough to show that tokenizing large batches (say $n=128, n_ctx=1024$) leads to poor GPU allocation and delays in data processing, so we take the latter approach. We make use of the HuggingFace `datasets` library, which implements datasets as PyArrow (python bindings for the C++ Apache Arrow libs) tables. This library is handy for fast loading from disk, and was chosen as it is well-integrated with the `fineweb-edu` dataset schema without too many modifications for most tasks. 
 
-`fineweb-edu` 10BT is composed of approximately 10 billion tokens distributed accross around 90 million examples. In the following code snippet, we use batch encoding to store the first 1024 tokens of each of these examples (padding where necessary) using the `datset.map()` functionality.
+`fineweb-edu 10BT` is composed of approximately 10 billion tokens distributed across around 90 million examples. In the following code snippet, we use batch encoding to store the first 1024 tokens of each of these examples (padding where necessary) using the `datset.map()` functionality.
 
-Let's examine a random sample of the `fineweb-edu` 10BT dataset. This dataset is stored as an Arrow table, and upon calling the `datasets.load_from_disk()` or `load_dataset` utility each row of this table may be represented Python dictionary. Below is one such sample (the text is truncated for brevity). Here we can see the `'text'` itself, a universally unique identifier for this sample (`'id'`), the actual source `'url'`, the Common Crawl dump source `'dump'`, and the path to the file's cloud storage (`'file_path'`), the `'language'`, a number of measurements determining the quality and educational content of this text (`'language_score', 'score', 'int_score'`), and the number of (GPT2) tokens in the text.
+Let's examine a random sample of the `fineweb-edu 10BT` dataset. This dataset is stored as an Arrow table, and upon calling the `datasets.load_from_disk()` or `load_dataset` utility each row of this table may be represented Python dictionary. Below is one such sample (the text is truncated for brevity). Here we can see the `'text'` itself, a universally unique identifier for this sample (`'id'`), the actual source `'url'`, the Common Crawl dump source `'dump'`, and the path to the file's cloud storage (`'file_path'`), the `'language'`, a number of measurements determining the quality and educational content of this text (`'language_score', 'score', 'int_score'`), and the number of (GPT2) tokens in the text.
 
 ```python
-{'text': ['Researchers from the United States and Switzerland have developed mathematical and statistical tools for reconstructing viral populations using pyrosequencing, a novel and effective technique for sequencing DNA. They describe their findings in an article published May 9th in the open-access journal PLoS Computational Biology.\nThe scientists knew that pyrosequencing reads are short and error-prone, and thus set out to improve upon this process...'], 'id': ['<urn:uuid:b3a05e48-160f-424f-8545-119be2db0560>'], 'dump': ['CC-MAIN-2017-26'], 'url': ['https://www.eurekalert.org/pub_releases/2008-05/plos-ncm050808.php'], 'file_path': ['s3://commoncrawl/crawl-data/CC-MAIN-2017-26/segments/1498128320270.12/warc/CC-MAIN-20170624170517-20170624190517-00112.warc.gz'], 'language': ['en'], 'language_score': [0.846785843372345], 'token_count': [609], 'score': [2.71875], 'int_score': [3]}
+{
+'text':['Researchers from the United States and Switzerland have developed mathematical and statistical tools for reconstructing viral populations using pyrosequencing, a novel and effective technique for sequencing DNA. They describe their findings in an article published May 9th in the open-access journal PLoS Computational Biology.\nThe scientists knew that pyrosequencing reads are short and error-prone, and thus set out to improve upon this process...'],
+'id': ['<urn:uuid:b3a05e48-160f-424f-8545-119be2db0560>'],
+'dump': ['CC-MAIN-2017-26'],
+'url': ['https://www.eurekalert.org/pub_releases/2008-05/plos-ncm050808.php'],
+'file_path': ['s3://commoncrawl/crawl-data/CC-MAIN-2017-26/segments/1498128320270.12/warc/CC-MAIN-20170624170517-20170624190517-00112.warc.gz'],
+'language': ['en'],
+'language_score': [0.846785843372345],
+'token_count': [609],
+'score': [2.71875],
+'int_score': [3]}
 ```
 
 We want to tokenize the text, but don't necessarily care about the metadata. Perhaps the fastest approach is to tokenize the text in batches, truncating samples that are too long and padding those that are too short as follows
@@ -129,7 +142,7 @@ def tokenization(example):
 
 where we use the dictionary lookup `example['text']` to access the text. We can then perform a train/text split of the dataset and add the tokens to the dataset via batched `dataset.map()` with the tokenizer above, and save the resulting tokenized dataset to disk in the desired location.
 
-```
+```python
 import datasets
 from datasets import load_dataset, load_from_disk
 
@@ -152,7 +165,7 @@ if __name__ == '__main__':
 
 If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not requried.
 
-The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. In this case, we cannot use batched tokenization examples are typically of different lengths: instead we perform unbatched tokenization without truncation followed by reshaping such that each sample has `len(tokens) // n_ctx` tensors each with `n_ctx` tokens. What we are doing here is to split up each example's sequence of tokens into a batch of many sequences tokens, discarding the last sequence if its length is less than `n_ctx` (which is faster than padding). The following example is called during `map_dataset()` via `train_dataset = train_text.map(tokenization, batched=False)` and the same for the test dataset.
+The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. In this case, we cannot use batched tokenization examples are typically of different lengths: instead we perform unbatched tokenization without truncation followed by reshaping such that each sample has `len(tokens) // n_ctx` tensors each with `n_{ctx}` tokens. What we are doing here is to split up each example's sequence of tokens into a batch of many sequences tokens, discarding the last sequence if its length is less than `n_{ctx}` (which is faster than padding). The following example is called during `map_dataset()` via `train_dataset = train_text.map(tokenization, batched=False)` and the same for the test dataset.
 
 ```python
 def tokenization(example, n_ctx=32):
@@ -170,9 +183,9 @@ def tokenization(example, n_ctx=32):
     return {'input_ids': tokens}
 ```
 
-Debatching the input is trickier than it sounds: we really want to convert each example into however many examples there are batches in that sample, which the `datasets` library does not natively support. Instead we can form an array of inputs (one for each batch sample in our example), convert the array to a PyArrow Table object and return that object to the mapper. The key to this approach is that `dataset.map()` only allows batched outputs if `batched=True` is specified in the mapper args, but we actually need a `batch_size=` (unbatched) input as each example is expected to have a different batch size than any other example. This can be implemented as follows: after the dataset is tokenized into batches as above, it is loaded and debatched and saved to a new dataset object as open datasets cannot be overwritten.
+Debatching the input is trickier than it sounds: we really want to convert each example into however many examples there are batches in that sample, which the `datasets` library does not natively support. Instead we can form an array of inputs (one for each batch sample in our example), convert the array to a PyArrow Table object and return that object to the mapper. The key to this approach is that `dataset.map()` only allows batched outputs if `batched=True` is specified in the mapper args, but we actually need a `batch_size=1` (unbatched) input as each example is expected to have a different batch size than any other example. This can be implemented as follows: after the dataset is tokenized into batches as above, it is loaded and debatched and saved to a new dataset object as open datasets cannot be overwritten.
 
-```
+```python
 def debatch(example):
 	batch_size = len(example['input_ids'])
 	keys = list(example.keys())
@@ -199,10 +212,15 @@ trainer = transformers.Trainer(
 )
 ```
 
-Once this is done, we can observe model performance on the `fineweb-edu`! Some quick testing tells us some things that one would probably expect: firstly that this more difficult dataset requires much deeper models than `TinyStories`, as the latter was most efficiently modeled by 4- or 8-layer mixers and transformers whereas the `fineweb-edu` is most efficiently modeled by 16 (or more) -layer models. We mostly stick to 16-layer models, as these are the deepest that are efficiently trainable on the 4x V100 hardware (batch size of 128 such that the entirey of `fineweb-edu` 10BT is trainable in under one day.
+Once this is done, we can observe model performance on the `fineweb-edu`! Some quick testing tells us some things that one would probably expect: firstly that this more difficult dataset requires much deeper models than `TinyStories`, as the latter was most efficiently modeled by 4- or 8-layer mixers and transformers whereas the `fineweb-edu` is most efficiently modeled by 16 (or more) -layer models. We mostly stick to 16-layer models, as these are the deepest that for reasonable $d_m$ layer widths (batch size of 128 or larger) such that `fineweb-edu 10BT` is trainable in under one day on a 4x V100 node. We find that $d_m=1024, n_l=16$ mixers train in approximately the same time and memory per step as $d_m=512, n_l=16$ Llama-style transformers (4-headed) that are otherwise optimized for minimum loss per given compute. 
+
+Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc).
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
+There are a few notable observations from the above figure, the primary being the answer to the question posed at the start of this section that masked mixers scale just as well (if not better than transformers) to large and difficult datasets. Recall that the loss gap between the most-optimized Llama model and masked mixer for language generation evaluation was 1.71 and 1.61 (6%) for $n_{ctx}=512$. For the same $n_{ctx}, we see a smaller gap (less than 3%) corresponding to fewer extra training steps required to have the masked mixer's accuracy match that of the transformer. Furthermore, for $n_{ctx}=512$ it is apparent that the gap between mixer and transformer loss narrows as training proceeds such that with more compute applied one would expect the masked mixer to be the more efficient architecture given the current constraints. This notion is supported byobserving that $n_{ctx]=128$ models experience exactly this phenomenon of the course of their training, which uses 4x the batch size and thus 4x the number of samples that $n_{ctx=512}$ training does.
+
+From earlier investigations we hypothesized that the transformer is a somewhat more efficient causal language model than the masked mixer because next token prediction is fundamentally a many-to-one mapping: we have many previous tokens and only get logits for one next token. This mapping mirrors the intrinsic properties of the transformer's attention operation, where information from most inputs is removed during the forward pass. If this were the case then one would expect for next token prediction with fewer previous tokens (which is closer to a bijective mapping) to favor the masked mixer, and this is precisely what is found for $n_{ctx}=32$ or even $n_{ctx}=128$.
 
 ### Bidirectional Language Modeling
 
