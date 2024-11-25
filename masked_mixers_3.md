@@ -1,4 +1,4 @@
-##Masked Mixers III: Custom CUDA kernels
+## Masked Mixers III: Custom CUDA kernels
 
 ### Introduction
 
@@ -40,4 +40,27 @@ For my 4x V100 (Volta, compute capability 7.0) this container unfortunately fail
 ```
 blbadger/cuda122_pytorch240
 ```
+
+At this point, your GPUs will still be invisible to the docker container's runtime: running a container with Nvidia toolkits installed yields the following:
+
+```
+WARNING: The NVIDIA Driver was not detected. GPU functionality will not be available.
+  Use the NVIDIA Container Toolkit to start this container with GPU support; see
+  https://docs.nvidia.com/datacenter/cloud-native/
+```
+
+This is a most helpful error message, as following the link leads us (indirectly) to the Nvidia toolkit [documentation](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html), which explaines that you must modify the docker daemon file (`/etc/docker/daemon.json`) to allow the Nvidia Container Runtime, which can be done via
+
+```sh
+$ sudo nvidia-ctx runtime configure --runtime=docker
+$ sudo systemctl restart docker
+```
+
+Now you can run a docker container and access your GPUs! You have to include the `--gpus` flag in your run command or the devices will remain invisible to the container. In the following command, we run the `blbadger/cuda120_pytorch240:updated` docker container interactively with all GPUs visible (use `--gpus 0` for device 0 only, etc.) and enter bash upon initialization.
+
+```sh
+$ docker run -i -t --gpus all blbadger/cuda120_pytorch240:updated /bin/bash
+```
+
+
 
