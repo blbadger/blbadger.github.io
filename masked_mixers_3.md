@@ -6,24 +6,38 @@
 
 ### Getting Started
 
-Developing your own CUDA kernels usually requires some form of the Nvidia CUDA Compiler (NVCC) driver. 
+Developing your own CUDA kernels usually requires some form of the Nvidia CUDA Compiler (NVCC) driver. When you are developing a kernel for stand-alone use, you can install the Nvidia C t
 
 
 Containerization of this process allows you (the developer) to spin up a self-contained virtual environment that can match your desired CUDA runtime, driver and host library (in this case `Torch`) versions. But it also brings a level of complexity: most container runtimes like Docker are unable to interact with specialized hardware like GPUs without some help in the form of driver toolkits. 
 
-After some experimentation, I was able to 
+To deal with this, Nvidia helpfully supplies you with repositories for the CUDA toolkit (including `nvcc`) on their developer website, where you can choose the toolkit version, your operating system, and CPU architecture and find the matching repositories. For example, for CUDA toolkit 12.0 with Ubuntu 22.04 and an x86-64 CPU, [this link](https://developer.nvidia.com/cuda-12-0-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04) gives you the following bash commands
 
-pc_nvidia-smi
+```sh
+$ wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+$ sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
+$ wget https://developer.download.nvidia.com/compute/cuda/12.0.0/local_installers/cuda-repo-ubuntu2204-12-0-local_12.0.0-525.60.13-1_amd64.deb
+$ sudo dpkg -i cuda-repo-ubuntu2204-12-0-local_12.0.0-525.60.13-1_amd64.deb
+$ sudo cp /var/cuda-repo-ubuntu2204-12-0-local/cuda-*-keyring.gpg /usr/share/keyrings/
+$ sudo apt-get update
+$ sudo apt-get -y install cuda
+```
+
+which installs the toolkit. 
+
+Which toolkit should one use?
+
+![autoencoder architecture](/deep-learning/pc_nvidiasmi.png)
 
 ```
 docker pull blbadger/cuda120_pytorch240
 ```
 
-For my 4x V100 (Volta, compute capability 7.0) this container unfortunately fails to compile our test custom CUDA extensions to Pytorch, so I put together another container that is by matching the CUDA minor version
+For my 4x V100 (Volta, compute capability 7.0) this container unfortunately fails to compile our test custom CUDA extensions to Pytorch, so I put together another container that is by matching the CUDA minor version, which as you can see from the following image is 12.2. The minor version should not matter for functionality, but for this server I found that the test CUDA extension was non-compilable if it did not match the Nvidia CUDA driver version (see below). This is likely a CUDA implementation bug (on the V100), as minor versions should always be compatible with each other but here are not.
 
-![server_nvidiasmi]
+![autoencoder architecture](/deep-learning/server_nvidiasmi.png)
 
 ```
-docker pull blbadger/cuda122_pytorch240
+blbadger/cuda122_pytorch240
 ```
 
