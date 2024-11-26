@@ -89,7 +89,7 @@ These are very large performance gaps: recall that the difference between transf
 
 The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
 
-### Fineweb Modeling Efficiency
+### Fineweb CLM Efficiency
 
 The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model architecture to use, the optimization approach, the amount of compute employed, and the dataset are all important factors in whether the generalization actually occurs.
 
@@ -165,7 +165,7 @@ if __name__ == '__main__':
 	map_dataset(test_text, test_path)
 ```
 
-If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not requried.
+If desired, one can remove the unneeded keys from each dataset entry (columns in Arrow format) by using a `dataset.map()` that iterates through each example's keys, deleting all that are not required.
 
 The method above works well for higher-context (512 and 1024) entries but leads to too many tokens being removed when smaller context windows (<512) are required. In this case, we cannot use batched tokenization examples are typically of different lengths: instead we perform unbatched tokenization without truncation followed by reshaping such that each sample has `len(tokens) // n_ctx` tensors each with `n_ctx` tokens. What we are doing here is to split up each example's sequence of tokens into a batch of many sequences tokens, discarding the last sequence if its length is less than `n_ctx` (which is faster than padding). The following example is called during `map_dataset()` via `train_dataset = train_text.map(tokenization, batched=False)` and the same for the test dataset.
 
@@ -215,6 +215,8 @@ trainer = transformers.Trainer(
 ```
 
 Once this is done, we can observe model performance on the `fineweb-edu`! Some quick testing tells us some things that one would probably expect: firstly that this more difficult dataset requires much deeper models than `TinyStories`, as the latter was most efficiently modeled by 4- or 8-layer mixers and transformers whereas the `fineweb-edu` is most efficiently modeled by 16 (or more) -layer models. We mostly stick to 16-layer models, as these are the deepest that for reasonable $d_m$ layer widths (batch size of 128 or larger) such that `fineweb-edu 10BT` is trainable in under one day on a 4x V100 node. We find that $d_m=1024, n_l=16$ mixers train in approximately the same time and memory per step as $d_m=512, n_l=16$ Llama-style transformers (4-headed) that are otherwise optimized for minimum loss per given compute. 
+
+It should be noted that using only 4 heads is somewhat unusual, as the default Llama head number is 32. This number was chosen
 
 Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc).
 
@@ -375,6 +377,17 @@ y = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} * \gamma + \beta
 $$
 
 where $\gamma$ and $\beta$ are trainable parameters (which are usually held in very high precision) and $\mu, \sigma^2$ denote the mean (expectation) and variance of the random variable $x$. This is clearly a nonlinear operation (although it could be transformed into a linear one) and so we will simply remove this transformation for now.
+
+
+### TinyStories versus Fineweb
+
+Whenever one studies a complex phenomena, one may wonder whether the use of limited, small-scale and hopefully representative samples are worth building correspondingly small and simple models for. These are usually called 'toy' models in the physical and life sciences, and their merit is continually debated. Those in favor point to the advances that have been made (sometimes well before their time) by using such models, whereas detractors point out the many times a toy model led a person, field, or group entirely astray with respect to learning something about the actual phenomena, usually because the toy model neglected one or more crucial variables.
+
+It is extremely difficult to know whether a toy model has all the important variables in a complex system accounted for. This is firstly because variables may or may not even be separable in a complex system, and secondly because the number of combinations of all variables scales with $n!$ and is not computationally feasible to address which variables are required.
+
+For this work, one may wonder if TinyStories is in fact a decent toy model dataset of the general English language. On the outset, it would seem that the ability to write simple stories about imaginary characters would have very little bearing on
+
+
 
 
 
