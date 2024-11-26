@@ -89,7 +89,7 @@ These are very large performance gaps: recall that the difference between transf
 
 The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
 
-### Fineweb CLM Efficiency
+### Fineweb Causal Language Modeling Efficiency
 
 The goal of a machine learning algorithm is to minimize some loss function on a dataset efficiently, and the hope is that the minimization process and dataset are sufficient to generalize to the task you actually want to perform (typically representation by a 'test' or 'evaluation' dataset). The choice of a loss function, the model architecture to use, the optimization approach, the amount of compute employed, and the dataset are all important factors in whether the generalization actually occurs.
 
@@ -216,13 +216,15 @@ trainer = transformers.Trainer(
 
 Once this is done, we can observe model performance on the `fineweb-edu`! Some quick testing tells us some things that one would probably expect: firstly that this more difficult dataset requires much deeper models than `TinyStories`, as the latter was most efficiently modeled by 4- or 8-layer mixers and transformers whereas the `fineweb-edu` is most efficiently modeled by 16 (or more) -layer models. We mostly stick to 16-layer models, as these are the deepest that for reasonable $d_m$ layer widths (batch size of 128 or larger) such that `fineweb-edu 10BT` is trainable in under one day on a 4x V100 node. We find that $d_m=1024, n_l=16$ mixers train in approximately the same time and memory per step as $d_m=512, n_l=16$ Llama-style transformers (4-headed) that are otherwise optimized for minimum loss per given compute. 
 
-It should be noted that using only 4 heads is somewhat unusual, as the default Llama head number is 32. This number was chosen
+It should be noted that using only 4 heads is somewhat unusual in training models today, as the default Llama head number is much larger at 32. This number was initially chosen because it was found to be optimal for TinyStories training, and after testing we see that it is also optimal for `fineweb-edu` as well: in the following figure, we can see that a four headed llama learns virtually identically to an 8-headed model on a per-step basis, and somewhat more efficiently than a 32-headed llama (all models have $n_l=16, d_m=512$). Increasing the number of attention heads leads to a significant decrease in the number of samples trained per second, such that on a per-compute basis the 4-headed llama is most efficient. 
+
+![fineweb heads](/deep-learning/fineweb_heads.png)
 
 Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc).
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
-There are a few notable observations from the above figure, the primary being the answer to the question posed at the start of this section that masked mixers scale just as well (if not better than transformers) to large and difficult datasets. Recall that the loss gap between the most-optimized Llama model and masked mixer for language generation evaluation was 1.71 and 1.61 (6%) for $n_{ctx}=512$. For the same $n_{ctx}$, we see a smaller gap (less than 3%) corresponding to fewer extra training steps required to have the masked mixer's accuracy match that of the transformer. Furthermore, for $n_{ctx}=512$ it is apparent that the gap between mixer and transformer loss narrows as training proceeds such that with more compute applied one would expect the masked mixer to be the more efficient architecture given the current constraints. This notion is supported by observing that $n_{ctx}=128$ models experience exactly this phenomenon of the course of their training, which uses 4x the batch size and thus 4x the number of samples that $n_{ctx=512}$ training does.
+There are a few notable observations from the above figure, the primary being the answer to the question posed at the start of this section that masked mixers scale just as well as, if not better than, transformers to large and difficult datasets. Recall that the loss gap between the most-optimized Llama model and masked mixer for language generation evaluation was 1.71 and 1.61 (a gap of 6%) for $n_{ctx}=512$. For the same $n_{ctx}$, we see a smaller gap (at 200k training steps or around 24 hours on 4x V100s, mixers achieve evaluation CEL of 1.63 versus transformers with 1.58, a difference of approximately 3%) corresponding to fewer extra training steps required to have the masked mixer's accuracy match that of the transformer. Furthermore, for $n_{ctx}=512$ it is apparent that the gap between mixer and transformer loss narrows as training proceeds such that with more compute applied one would expect the masked mixer to be the more efficient architecture given the current constraints. This notion is supported by observing that $n_{ctx}=128$ models experience exactly this phenomenon of the course of their training, which uses 4x the batch size and thus 4x the number of samples that $n_{ctx=512}$ training does.
 
 From earlier investigations we hypothesized that the transformer is a somewhat more efficient causal language model than the masked mixer because next token prediction is fundamentally a many-to-one mapping: we have many previous tokens and only get logits for one next token. This mapping mirrors the intrinsic properties of the transformer's attention operation, where information from most inputs is removed during the forward pass. If this were the case then one would expect for next token prediction with fewer previous tokens (which is closer to a bijective mapping) to favor the masked mixer, and this is precisely what is found for $n_{ctx}=32$ or even $n_{ctx}=128$.
 
@@ -341,7 +343,6 @@ When we compare mixer versus transformer performance on bidirectional token pred
 
 ![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
 
-
 ### One Step Language Completion Efficiency
 
 So far we have seen that masked mixers are better at tasks requiring approximately bijective functions like autoencoding or retrieval, and worse at tasks requiring injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and injective mappings
@@ -355,6 +356,15 @@ Perhaps the most efficient way to accomplish this would be to change the causal 
 As expected, there is nearly complete parity in training efficiency for the masked mixer and transformer when applied to this one-step completion paradigm. Note that both train relatively poorly: unsurprisingly, it turns out that attempting to predict many tokens at once in one step is much more difficult than predicting one token at a time.
 
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
+
+
+### Retrieval 
+
+We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
+
+So far we have observed that the findings on that dataset have translated very closely to the much larger and more difficult FineWeb. What about retrieval?  Before guessing how mixers and transformers will fare on this task, we should examine how the process of retrieval differs for the fineweb versus tinystories.
+
+In many respects, it can be claimed that TinyStories retrieval is a quite difficult task for language models. This is mostly because many stories tend to have very similar structures, characters, and partly because the training task is very limited for the generative model (write small stories only). To illustrate the former point, taking a random sample of a 16 stories we find that the same characters tend to appear very frequently: 'Ben' and 'Lily' appear in six stories each, and 'Anna' appears in four. This means that a retrieval model must
 
 ### Linear Mixers
 
