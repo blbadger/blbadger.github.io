@@ -2,12 +2,13 @@
 
 ### Introduction
 
+As presented in [Part I](https://blbadger.github.io/smaller-lms.html), causal language modeling may be accomplished for 1D convolutions by lower triangular masking of the (reshaped) convolutional weights, or alternatively masking of an matrix multiply weights. It can easily be appreciated that this operation is only half as efficient as an approach without masking, being that half of all convolutional kernel weights are sent to 0 but are still used for the (rectangular) convolutional operation. What one really wants is a triangular-weighted convolution, in which each output index $i$ only receives input from indices $k \leq i$.
 
+Such an operation is currently not found in among the major deep learning libraries (Pytorch, JAX, TensorFlow etc.), so we will have to build it ourselves. But if we want to be able to fit this operation into one of these libraries to use automatic gradient propegation and other useful features, we will need to use an extension framework for that language. This page details the process of writing a Pytorch C CUDA extension to accomplish a triangular convolution for causal language modeling. 
 
 ### Getting Started
 
-Developing your own CUDA kernels usually requires some form of the Nvidia CUDA Compiler (NVCC) driver. When you are developing a kernel for stand-alone use, you can install the Nvidia C t
-
+Developing your own CUDA kernels usually requires some form of the Nvidia CUDA Compiler (NVCC) driver. When you are developing a kernel for stand-alone use, using `nvcc` is a simple matter of having a relatively recent CUDA-capable GPU and downloading the CUDA toolkit from Nvidia.
 
 Containerization of this process allows you (the developer) to spin up a self-contained virtual environment that can match your desired CUDA runtime, driver and host library (in this case `Torch`) versions. But it also brings a level of complexity: most container runtimes like Docker are unable to interact with specialized hardware like GPUs without some help in the form of driver toolkits. 
 
