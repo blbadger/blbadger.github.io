@@ -23,7 +23,7 @@ This can be tested more directly by simply removing each component and observing
 
 On the other hand it turns out that langauge training proceeds perfectly well but is slightly less efficient when layer norms are removed from the masked mixer architecture. Even on a relatively large and difficult dataset such as the `fineweb-edu 10BT`, a 16-layer masked mixer with no layer norms whatsoever does not experience any spikes in loss during training, provided that the learning rate is relatively modest (<20%).
 
-It is interesting to note that this is not the case for residual removal.
+It is interesting to note that this is not the case for residual removal: even relatively shallow models suffer severely from the removal of residual connections, transformer or mixer.
 
 This means that the mixer is effectively much more flexible than the transformer, and can be modified to a much greater extent. This topic will be explored more in the 'Linear mixer' section of this page.
 
@@ -362,9 +362,15 @@ As expected, there is nearly complete parity in training efficiency for the mask
 
 We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
 
-So far we have observed that the findings on that dataset have translated very closely to the much larger and more difficult FineWeb. What about retrieval?  Before guessing how mixers and transformers will fare on this task, we should examine how the process of retrieval differs for the fineweb versus tinystories.
+So far we have observed that the findings on that dataset have translated very closely to the much larger and more difficult Fineweb. What about retrieval?  Before guessing how mixers and transformers will fare on this task, we should examine how the process of retrieval differs for the fineweb versus tinystories.
 
-In many respects, it can be claimed that TinyStories retrieval is a quite difficult task for language models. This is mostly because many stories tend to have very similar structures, characters, and partly because the training task is very limited for the generative model (write small stories only). To illustrate the former point, taking a random sample of a 16 stories we find that the same characters tend to appear very frequently: 'Ben' and 'Lily' appear in six stories each, and 'Anna' appears in four. This means that a retrieval model must
+In many respects, it can be claimed that TinyStories retrieval is a quite difficult task for language models. This is mostly because many stories tend to have very similar structures, characters, and partly because the training task is very limited for the generative model (write small stories only). To illustrate the former point, taking a random sample of a 16 stories we find that the same characters tend to appear very frequently: 'Ben' and 'Lily' appear in six stories each, and 'Anna' appears in four. 
+
+Thus we can expect retrieval model training to be 'easier' for summaries of Fineweb entries versus TinyStories. Additionally, there is much greater variety of content in the fineweb such that a given summary may be uniquely identified to its matching entry among a batch via only one or two keywords, such that one would expect for transformer embeddings to perhaps fare better than they did for TinyStories retrieval.
+
+What we find when we observe performance of retrieval models on Fineweb summary and passage embeddings is that these guesses are more or less accurate: focusing on embeddings from $d_m=512$ CLM models with retrieval models trained on 200k of these samples, embeddings from masked mixers resulted in lower evaluation loss and faster optimization compared to 
+
+It is interesting to consider what happens when we try a llama model with many more attention heads. The hypothesis is that these models would be better at retrieval, and we tested this with models trained using $n_h=4$ attention heads (at the time of this testing we did not have any trained llama models with a larger number of heads). We find that this is indeed the case, and see substantial improvements in low-context (ie small sample) retrieval for $n_h=32$ versus $n_h=4$, but this benefit disappears as the context size increases. 
 
 ### Linear Mixers
 
@@ -388,14 +394,33 @@ $$
 
 where $\gamma$ and $\beta$ are trainable parameters (which are usually held in very high precision) and $\mu, \sigma^2$ denote the mean (expectation) and variance of the random variable $x$. This is clearly a nonlinear operation (although it could be transformed into a linear one) and so we will simply remove this transformation for now.
 
-
 ### TinyStories versus Fineweb
 
 Whenever one studies a complex phenomena, one may wonder whether the use of limited, small-scale and hopefully representative samples are worth building correspondingly small and simple models for. These are usually called 'toy' models in the physical and life sciences, and their merit is continually debated. Those in favor point to the advances that have been made (sometimes well before their time) by using such models, whereas detractors point out the many times a toy model led a person, field, or group entirely astray with respect to learning something about the actual phenomena, usually because the toy model neglected one or more crucial variables.
 
 It is extremely difficult to know whether a toy model has all the important variables in a complex system accounted for. This is firstly because variables may or may not even be separable in a complex system, and secondly because the number of combinations of all variables scales with $n!$ and is not computationally feasible to address which variables are required.
 
-For this work, one may wonder if TinyStories is in fact a decent toy model dataset of the general English language. On the outset, it would seem that the ability to write simple stories about imaginary characters would have very little bearing on
+For this work, one may wonder if TinyStories is in fact a decent toy model dataset of the general English language. On the outset, it would seem that the ability to write simple stories about imaginary characters would have very little bearing on something as large and complex as a refined subset of the educational content of the Common Crawl of the web. It is somewhat surprising, then, that we have found the results of training mixers and transformers on TinyStories to be fairly representative of their performance on `fineweb-edu 10BT`. The following similarities and differences are observed:
+
+1. High-level performance characteristics of mixers and transformers are very similar: mixers are more efficient retrieval model encoders for both TinyStories and the Fineweb, whereas Transformers are slightly more efficient causal language models for both.
+2. It was found that a relatively small (by default standards) head number of 4 was compute-optimal for TinyStories, and the same is true for the Fineweb (for this model size).
+3. Unsurprisingly the Fineweb is much better-modeled by deeper models than were optimal for TinyStories (16 versus 8 layers), but otherwise the optimal model architectures are quite similar ($d_m=1024$ mixers being similar to $d_m=512$ transformers for learning efficiency, similar $\eta$ values for the optimizer etc.)
+4. One notable difference is that transformer embedding models (for retrieval) trained on `fineweb-edu 10BT` are often benefitted by initializing a larger $n_h$ than the model was trained with, which is the opposite for the TinyStories.
+5. Also as expected, the retrieval model training process is much faster for the Fineweb, often requiring fewer than 20 epochs for optimal evaluation loss compared to 100 or more for embedding models trained on TinyStories.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
