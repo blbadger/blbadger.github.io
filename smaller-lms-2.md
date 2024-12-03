@@ -368,9 +368,10 @@ In many respects, it can be claimed that TinyStories retrieval is a quite diffic
 
 Thus we can expect retrieval model training to be 'easier' for summaries of Fineweb entries versus TinyStories. Additionally, there is much greater variety of content in the fineweb such that a given summary may be uniquely identified to its matching entry among a batch via only one or two keywords, such that one would expect for transformer embeddings to perhaps fare better than they did for TinyStories retrieval.
 
-What we find when we observe performance of retrieval models on Fineweb summary and passage embeddings is that these guesses are more or less accurate: focusing on embeddings from $d_m=512$ CLM models with retrieval models trained on 200k of these samples, embeddings from masked mixers resulted in lower evaluation loss and faster optimization compared to 
+What we find when we observe performance of retrieval models on Fineweb summary and passage embeddings is that these guesses are more or less accurate: focusing on embeddings from $d_m=512$ CLM models with retrieval models trained on 200k of these samples, embeddings from masked mixers resulted in lower evaluation loss and faster optimization compared to embeddings from transformers. This is particularly apparent for retrieval models trained using large context windows (ie compare one summary sentence to many potential matching text excerpts): for $n_{ctx}=1024$ (one summary matched to one story among 1024 possibilities) we find that embeddings from a mixers gives a CEL of 1.2, whereas embeddings from the transformer result in the retrieval model failing to break symmetry even after a very large number of epochs of training, with a CEL of ~6.94.
 
-It is interesting to consider what happens when we try a llama model with many more attention heads. The hypothesis is that these models would be better at retrieval, and we tested this with models trained using $n_h=4$ attention heads (at the time of this testing we did not have any trained llama models with a larger number of heads). We find that this is indeed the case, and see substantial improvements in low-context (ie small sample) retrieval for $n_h=32$ versus $n_h=4$, but this benefit disappears as the context size increases. 
+It is interesting to consider what happens when we try a llama model with many more attention heads. The hypothesis is that these models would be better at retrieval, and we tested this with models trained using $n_h=32$ heads rather than four. We find that indeed embeddings from these models achieve somewhat lower retrieval evaluation loss than embeddings of transformers trained with $n_h=4$, but are substantially worse than the embeddings from masked mixers once again.
+
 
 ### Linear Mixers
 
@@ -407,9 +408,6 @@ For this work, one may wonder if TinyStories is in fact a decent toy model datas
 3. Unsurprisingly the Fineweb is much better-modeled by deeper models than were optimal for TinyStories (16 versus 8 layers), but otherwise the optimal model architectures are quite similar ($d_m=1024$ mixers being similar to $d_m=512$ transformers for learning efficiency, similar $\eta$ values for the optimizer etc.)
 4. One notable difference is that transformer embedding models (for retrieval) trained on `fineweb-edu 10BT` are often benefitted by initializing a larger $n_h$ than the model was trained with, which is the opposite for the TinyStories.
 5. Also as expected, the retrieval model training process is much faster for the Fineweb, often requiring fewer than 20 epochs for optimal evaluation loss compared to 100 or more for embedding models trained on TinyStories.
-
-
-
 
 
 
