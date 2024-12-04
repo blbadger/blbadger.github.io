@@ -362,15 +362,33 @@ As expected, there is nearly complete parity in training efficiency for the mask
 
 We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
 
-So far we have observed that the findings on that dataset have translated very closely to the much larger and more difficult Fineweb. What about retrieval?  Before guessing how mixers and transformers will fare on this task, we should examine how the process of retrieval differs for the fineweb versus tinystories.
+So far we have observed that the findings on that dataset have translated very closely to the much larger and more difficult Fineweb. What about retrieval?  Before guessing how mixers and transformers will fare on this task, we should examine how the process of retrieval differs for the fineweb versus tinystories. In many respects, it can be claimed that TinyStories retrieval is a quite difficult task for language models. This is mostly because many stories tend to have very similar structures, characters, and partly because the training task is very limited for the generative model (write small stories only). To illustrate the former point, taking a random sample of a 16 stories we find that the same characters tend to appear very frequently: 'Ben' and 'Lily' appear in six stories each, and 'Anna' appears in four. 
 
-In many respects, it can be claimed that TinyStories retrieval is a quite difficult task for language models. This is mostly because many stories tend to have very similar structures, characters, and partly because the training task is very limited for the generative model (write small stories only). To illustrate the former point, taking a random sample of a 16 stories we find that the same characters tend to appear very frequently: 'Ben' and 'Lily' appear in six stories each, and 'Anna' appears in four. 
+Thus we can expect retrieval model training to be 'easier' for summaries of Fineweb entries versus TinyStories. Additionally, there is much greater variety of content in the fineweb such that a given summary may be uniquely identified to its matching entry among a batch via only one or two keywords, such that one would expect for transformer embeddings to perhaps fare better than they did for TinyStories retrieval. We use the same retrieval training method as for TinyStories: a CLM-trained model is used to generate a second-to-last token's last hidden layer activations for each summary and passage (here a 200k subset), and subsequently a non-masked mixer retrieval model is trained on these embeddings using standard cross-entropy loss (refer to [this paper](https://arxiv.org/pdf/2409.01482) for more information on exactly how this training is achieved). 
 
-Thus we can expect retrieval model training to be 'easier' for summaries of Fineweb entries versus TinyStories. Additionally, there is much greater variety of content in the fineweb such that a given summary may be uniquely identified to its matching entry among a batch via only one or two keywords, such that one would expect for transformer embeddings to perhaps fare better than they did for TinyStories retrieval.
+What we find when we observe performance of retrieval models on Fineweb summary and passage embeddings is that these guesses are more or less accurate: focusing on embeddings from $d_m=512$ CLM models with retrieval models trained on 200k of these samples, embeddings from masked mixers resulted in lower evaluation loss and faster optimization compared to embeddings from transformers. This is particularly apparent for retrieval models trained using large context windows (ie compare one summary sentence to many potential matching text excerpts): for $n_{ctx}=1024$ (one summary matched to one story among 1024 possibilities) we find that embeddings from a mixers gives a CEL of 1.2, whereas embeddings from the transformer result in the retrieval model failing to break symmetry even after a very large number of epochs of training, with a CEL of ~6.93 (see table below for full results).
 
-What we find when we observe performance of retrieval models on Fineweb summary and passage embeddings is that these guesses are more or less accurate: focusing on embeddings from $d_m=512$ CLM models with retrieval models trained on 200k of these samples, embeddings from masked mixers resulted in lower evaluation loss and faster optimization compared to embeddings from transformers. This is particularly apparent for retrieval models trained using large context windows (ie compare one summary sentence to many potential matching text excerpts): for $n_{ctx}=1024$ (one summary matched to one story among 1024 possibilities) we find that embeddings from a mixers gives a CEL of 1.2, whereas embeddings from the transformer result in the retrieval model failing to break symmetry even after a very large number of epochs of training, with a CEL of ~6.94.
+It is interesting to consider what happens when we try a llama model with many more attention heads. The hypothesis is that these models would be better at retrieval, and we tested this with models trained using $n_h=32$ heads rather than four. We find that indeed embeddings from these models achieve somewhat lower retrieval evaluation loss than embeddings of transformers trained with $n_h=4$ for some context lengths, but are substantially worse than the embeddings from masked mixers once again.
 
-It is interesting to consider what happens when we try a llama model with many more attention heads. The hypothesis is that these models would be better at retrieval, and we tested this with models trained using $n_h=32$ heads rather than four. We find that indeed embeddings from these models achieve somewhat lower retrieval evaluation loss than embeddings of transformers trained with $n_h=4$, but are substantially worse than the embeddings from masked mixers once again.
+|  emb model | c32  | c128  | c256  | c512  | c1024  |
+|---|---|---|---|---|---|
+| mixer  | 0.28  |  0.58 | 0.78  | 0.88  | 1.20  |
+| llama h=4 | 0.55  | 1.24  |  1.76 | 1.84  |   |
+| llama h=32  | 0.61  | 1.19  | 1.59  |  1.88 | 6.93  |
+
+We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
+
+$$
+min \Bbb L = - \log \frac{f(q^+, d^+)}{f(q^+, d^+) + \sum_{n_i \in N} (f(q^+, n_i))}
+$$
+
+where perhaps the most common metric $f()$ that is used for contrast is temperatured cosine distance, in which case we have
+
+$$
+f(a, b) = \mathrm(exp)(1/\tau \cos O(a, \theta), O(b, \theta))
+$$
+
+where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter.
 
 
 ### Linear Mixers
