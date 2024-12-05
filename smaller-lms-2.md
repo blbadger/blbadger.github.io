@@ -379,13 +379,13 @@ It is interesting to consider what happens when we try a llama model with many m
 We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
 
 $$
-min \Bbb L = - \log \frac{f(q^+, d^+)}{f(q^+, d^+) + \sum_{n_i \in N} (f(q^+, n_i))}
+\Bbb L = - \log \; \frac{f(q^+, d^+)}{f(q^+, d^+) + \sum_{n_i \in N} (f(q^+, n_i))}
 $$
 
 where perhaps the most common metric $f()$ that is used for contrast is temperatured cosine distance, in which case we have
 
 $$
-f(a, b) = \mathrm(exp)(1/\tau \cos O(a, \theta), O(b, \theta))
+f(a, b) = \mathrm{exp} (1/\tau \cos O(a, \theta), O(b, \theta))
 $$
 
 where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter.
