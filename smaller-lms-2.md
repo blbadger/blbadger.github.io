@@ -373,7 +373,7 @@ It is interesting to consider what happens when we try a llama model with many m
 |  emb model | c32  | c128  | c256  | c512  | c1024  |
 |---|---|---|---|---|---|
 | mixer  | 0.28  |  0.58 | 0.78  | 0.88  | 1.20  |
-| llama h=4 | 0.55  | 1.24  |  1.76 | 1.84  |   |
+| llama h=4 | 0.55  | 1.24  |  1.76 | 1.84  | 6.93  |
 | llama h=32  | 0.61  | 1.19  | 1.59  |  1.88 | 6.93  |
 
 We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
@@ -385,11 +385,16 @@ $$
 where perhaps the most common metric $f()$ that is used for contrast is temperatured cosine distance, in which case we have
 
 $$
-f(a, b) = \mathrm{exp} (1/\tau \cos O(a, \theta), O(b, \theta))
+f(a, b) = \mathrm{exp} \left( \frac{1}{\tau} \cos (O(a, \theta), O(b, \theta)) \right)
 $$
 
 where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter.
 
+Ideally we want to be able to have one $q^+, d^+$ pair across all inputs, which means we want to be able to compare across batches on different GPUs.
+
+### Representation
+
+[Previous work](https://blbadger.github.io/smaller-lms.html) found that masked mixers tend to have much more accurate input representation than transformers before and after TinyStories training, with some amount of convergence for smaller ($d_m=256$ or $d_m=512$) models as measured by a modified Hamming metric on gradient descent-generated inputs. Now that similar architectures of somewhat larger size have been applied to a much larger and more challenging dataset and apply >10x the compute during training, it may be wondered whether the same holds true. This can be investigated by repeating the Hamming metric measurements detailed in that paper using models trained on the Fineweb, and comparing to what was found for TinyStories. Models are trained over different context windows on the Fineweb, but we will begin by comparing models trained on the same $n_{ctx}=512$ token window that 
 
 ### Linear Mixers
 
