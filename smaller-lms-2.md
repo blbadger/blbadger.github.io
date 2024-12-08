@@ -358,7 +358,7 @@ As expected, there is nearly complete parity in training efficiency for the mask
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
 
 
-### Retrieval 
+### Retrieval
 
 We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
 
@@ -394,7 +394,9 @@ Ideally we want to be able to have one $q^+, d^+$ pair across all inputs, which 
 
 ### Representation
 
-[Previous work](https://blbadger.github.io/smaller-lms.html) found that masked mixers tend to have much more accurate input representation than transformers before and after TinyStories training, with some amount of convergence for smaller ($d_m=256$ or $d_m=512$) models as measured by a modified Hamming metric on gradient descent-generated inputs. Now that similar architectures of somewhat larger size have been applied to a much larger and more challenging dataset and apply >10x the compute during training, it may be wondered whether the same holds true. This can be investigated by repeating the Hamming metric measurements detailed in that paper using models trained on the Fineweb, and comparing to what was found for TinyStories. Models are trained over different context windows on the Fineweb, but we will begin by comparing models trained on the same $n_{ctx}=512$ token window that 
+[Previous work](https://blbadger.github.io/smaller-lms.html) found that masked mixers tend to have much more accurate input representation than transformers before and after TinyStories training, with some amount of convergence for smaller ($d_m=256$ or $d_m=512$) models as measured by a modified Hamming metric on gradient descent-generated inputs. Now that similar architectures of somewhat larger size have been applied to a much larger and more challenging dataset and apply >10x the compute during training, it may be wondered whether the same holds true. This can be investigated by repeating the Hamming metric measurements detailed in that paper using models trained on the Fineweb, and comparing to what was found for TinyStories, starting with the same $n_{ctx}=512$ token window that was used to train on the TinyStories dataset.
+
+Recall that the major finding was that masked mixers are biased towards accurate input representation, and transformers towards inaccurate representation.
 
 ### Linear Mixers
 
