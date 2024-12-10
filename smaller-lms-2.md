@@ -220,7 +220,7 @@ It should be noted that using only 4 heads is somewhat unusual in training model
 
 ![fineweb heads](/deep-learning/fineweb_heads.png)
 
-Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc).
+Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc). Here all model are $n_l=16$ layers except for the $n_{ctx}=1024$, which are $n_l=8$.
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
@@ -388,9 +388,32 @@ $$
 f(a, b) = \mathrm{exp} \left( \frac{1}{\tau} \cos (O(a, \theta), O(b, \theta)) \right)
 $$
 
-where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter.
+where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter. We modify this metric somewhat by removing $\tau$, after finding numerical instabilities for the small batches that can fit on one or a few GPUs.
 
-Ideally we want to be able to have one $q^+, d^+$ pair across all inputs, which means we want to be able to compare across batches on different GPUs.
+It should be noted that this loss is similar to standard (unweighted) Cross-Entropy loss, 
+
+$$
+\Bbb l_n (x, y) = - \log \frac{\mathrm{exp} x_{n, y_n}}{\sum_c x_{n, c}}
+$$
+
+There are two ways we can use multiple GPUs to train using this loss function: either we use Distributed Data Parallel and have one $q^+, d^+$ pair per GPU and all-gather gradients during each update, or else we have one $q^+, d^+$ pair across all inputs and compare across batches on different GPUs. The latter complicates implementation slightly because we cannot use a strict DDP training algorithm anymore, being that we need to communicate more than just gradients across GPUs. We start by applying only one GPU to see how performance is for relatively amounts of small vRAM.
+
+```python
+def infoNCEloss(output, matching_index=None):
+	"""
+	Implements Noise-Contrastive Loss. Assumes that there is one positive pair per batch and all 
+	the rest are negative samples.
+
+	"""
+	match_embedding = output[0, :, -1] # b t e shape
+	summary_embedding = output[matching_index, :, -1]
+	nonmatch_embeddings = torch.cat((output[1:matching_index, :, -1], output[matching_index+1:, :, -1]), dim=0)
+	cosine_sim = torch.nn.CosineSimilarity()
+	codists = torch.exp(cosine_sim(summary_embedding, match_embedding))
+	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
+	loss = torch.sum(-torch.log(codists / (codists + nondists)))
+	return loss
+```
 
 ### Representation
 
