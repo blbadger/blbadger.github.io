@@ -393,27 +393,116 @@ where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\the
 It should be noted that this loss is similar to standard (unweighted) Cross-Entropy loss, 
 
 $$
-\Bbb l_n (x, y) = - \log \frac{\mathrm{exp} x_{n, y_n}}{\sum_c x_{n, c}}
+\Bbb l_n (x, y) = - \log \frac{\mathrm{exp} (x_{n, y_n})}{\sum_c \mathrm{exp} (x_{n, c})}
 $$
 
-There are two ways we can use multiple GPUs to train using this loss function: either we use Distributed Data Parallel and have one $q^+, d^+$ pair per GPU and all-gather gradients during each update, or else we have one $q^+, d^+$ pair across all inputs and compare across batches on different GPUs. The latter complicates implementation slightly because we cannot use a strict DDP training algorithm anymore, being that we need to communicate more than just gradients across GPUs. We start by applying only one GPU to see how performance is for relatively amounts of small vRAM.
+There are two ways we can use multiple GPUs to train using this loss function: either we use Distributed Data Parallel and have one $q^+, d^+$ pair per GPU and all-gather gradients during each update, or else we have one $q^+, d^+$ pair across all inputs and compare across batches on different GPUs. The latter complicates implementation slightly because we cannot use a strict DDP training algorithm anymore, being that we need to communicate more than just gradients across GPUs. We therefore begin by using DDP, where each GPU has one $q^+, d^+$ pair. 
+
+```python
+class RetrievalDataset(torch.utils.data.Dataset):
+
+	def __init__(self, text_tokens, summary_tokens, batch_size=32, replace=False):
+		self.summary_tokens = summary_tokens
+		self.text_tokens = text_tokens
+		self.context_length = len(summary_tokens[0])
+		self.prob_weights = torch.ones(len(summary_tokens))
+		self.allocated_input = torch.zeros((batch_size, self.context_length))
+		self.replace = replace
+		self.batch_size = batch_size
+
+	def __getitem__(self, idx):
+		input = torch.zeros((self.batch_size, self.context_length)) # b t shape
+		input[0] = self.summary_tokens[idx]
+		self.prob_weights[idx] = 0
+		indices = torch.multinomial(self.prob_weights, self.batch_size-1, replacement=self.replace)
+		self.prob_weights[idx] = 1
+		input[1:] = self.text_tokens[indices]
+		target_index = random.randint(1, self.batch_size-1) # random index to put target embedding
+		matching_target = self.text_tokens[idx] # target the query matches
+		input[target_index] = matching_target
+		labels = torch.tensor(target_index-1, dtype=torch.long)
+		retrieval_dict = {'input_ids': input.to(torch.long), 'matching_index': labels}
+		return retrieval_dict
+
+	def __len__(self):
+		return len(self.summary_tokens)
+```
+
+Our noise-contrastive loss is implemented as follows:
 
 ```python
 def infoNCEloss(output, matching_index=None):
 	"""
 	Implements Noise-Contrastive Loss. Assumes that there is one positive pair per batch and all 
 	the rest are negative samples.
-
 	"""
 	match_embedding = output[0, :, -1] # b t e shape
 	summary_embedding = output[matching_index, :, -1]
 	nonmatch_embeddings = torch.cat((output[1:matching_index, :, -1], output[matching_index+1:, :, -1]), dim=0)
-	cosine_sim = torch.nn.CosineSimilarity()
+	cosine_sim = torch.nn.CosineSimilarity(dim=1)
 	codists = torch.exp(cosine_sim(summary_embedding, match_embedding))
 	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
 	loss = torch.sum(-torch.log(codists / (codists + nondists)))
 	return loss
 ```
+
+```python
+class RetrievalMixer(nn.Module):
+
+	def __init__(self, n_vocab, dim, depth, prebatched_input=True):
+		super().__init__()
+		self.prebatched_input = prebatched_input
+		self.wte = nn.Embedding(n_vocab, dim)
+		self.mixerblocks = nn.ModuleList(
+			[MixerBlock(
+				dim = dim,
+				length = tokenized_length,
+				expand_conv=False
+				)
+			for i in range(depth)]
+			).to(device)
+		self.lm_head = nn.Linear(dim, n_vocab, bias=False)
+
+
+	def forward(self, input_ids, matching_index, **kwargs):
+		x = input_ids
+		#print (input_ids[0], matching_index)
+		if self.prebatched_input:
+			x = x.squeeze(0) # p b t -> b t
+		x = x.to(device)
+		x = self.wte(x)
+		for i, block in enumerate(self.mixerblocks):
+			x = block(x)
+		output = x
+		loss = infoNCEloss(x, matching_index=matching_index)
+		return loss, output
+
+```
+
+```python
+class RetrievalTransformer(nn.Module):
+
+	def __init__(self, model, prebatched=True):
+		super().__init__()
+		self.model = model
+		self.prebatched = prebatched
+
+	def forward(self, input_ids, matching_index, *kwargs):
+		# LlamaModel forward pass
+		if self.prebatched:
+			input_ids = input_ids.squeeze(0) # p b t -> b t
+		model_output = self.model(input_ids)[0]
+		loss = infoNCEloss(model_output, matching_index=matching_index)
+		return loss, model_output
+```
+
+The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hunred or a thousand times larger than ours.
+
+This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
+
+It should be noted just how much faster the optimized retrieval model training method is than a standard infoNCE approach is. One way to look at this is to see how many total samples the retrieval model is able to train per second, irregardless of whether these are positive matches or negatives. By this approach we can train constrasive 4 GPUs, each taking around 5 steps per second on batch sizes of 32 which gives us 640 samples per second. This is a staggeringly small amount compared to the throughput of the optimized retrieval training algorithm, which for each of 4 GPUs can use 128 embeddings per sample and 128 samples per GPU and 4 passes per second for a total of 262,144 samples per second.
+
+The sole benefit of using the standard infoNCE training algorithm is that forward passes during inference can be 'cached', meaning that one can obtain embeddings of corpora segments ahead of time and only needs to perform a forward pass on the query input followed by matrix multiplication. 
 
 ### Representation
 
