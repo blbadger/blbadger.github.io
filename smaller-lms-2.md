@@ -382,13 +382,13 @@ $$
 \Bbb L = - \log \; \frac{f(q^+, d^+)}{f(q^+, d^+) + \sum_{n_i \in N} (f(q^+, n_i))}
 $$
 
-where perhaps the most common metric $f()$ that is used for contrast is temperatured cosine distance, in which case we have
+where perhaps the most common metric $f()$ that is used for contrast is temperatured cosine similarity, in which case we have
 
 $$
 f(a, b) = \mathrm{exp} \left( \frac{1}{\tau} \cos (O(a, \theta), O(b, \theta)) \right)
 $$
 
-where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter. We modify this metric somewhat by removing $\tau$, after finding numerical instabilities for the small batches that can fit on one or a few GPUs.
+where $O(a, \theta)$ is the model's embedding of input $a$ with parameters $\theta$ and $\tau$ is a temperature parameter. Note that $\cos$ here signifies the trigonometric function itself also known as cosine similarity such that pairs of vectors pointing in similar directions have outputs closer to one, rather than cosine distance defined as $1-\cos(\phi)$. We modify this metric somewhat by removing $\tau$, after finding numerical instabilities for the small batches that can fit on one or a few GPUs.
 
 It should be noted that this loss is similar to standard (unweighted) Cross-Entropy loss, 
 
@@ -397,6 +397,21 @@ $$
 $$
 
 There are two ways we can use multiple GPUs to train using this loss function: either we use Distributed Data Parallel and have one $q^+, d^+$ pair per GPU and all-gather gradients during each update, or else we have one $q^+, d^+$ pair across all inputs and compare across batches on different GPUs. The latter complicates implementation slightly because we cannot use a strict DDP training algorithm anymore, being that we need to communicate more than just gradients across GPUs. We therefore begin by using DDP, where each GPU has one $q^+, d^+$ pair. 
+
+The usual method for training retrieval models is to start with a model trained for a language task (usually causal language modeling) and proceed to further train for retrieval itself. InfoNCE is usually applied to train the model performing the embedding (which is the same as the model previously trained to predict all next tokens) such that the finished model generates embeddings that can be used for retrieval via a simple cosine similarity metric. 
+
+To train a model to perform retrieval using noise-constrastive estimation on CLM-trained model embeddings, we need to sample sequences of tokens from our dataset of queries and texts. As for our other experiments, we use a set of 200k summaries of Fineweb passages together with the matching passages themselves. A simple approach to this is to first tokenize each summary and text passage and then save these tokens as a single `safetensors` file, which may be read very quickly as this is a zero-copy file format. We access these tokens as follows:
+
+```
+path = "/path/to/safetensors"
+tokens = {}
+with safe_open(path, framework="pt", device=0) as f:
+	for k in f.keys():
+		tokens[k] = f.get_tensor(k)
+# tokens is a dict with keys 'text' and 'summary' mapped to token sequences as tensors
+```
+
+The sampling procedure may be performed in a number of different ways, but the primary difficulty is that the `transformers.Trainer` class was not really designed for the purposes of matching entire sequences to each other such that sampling a batch using custom distributions becomes tricky when attempting. This difficulty may be obviated by creating a custom `torch.utils.data.Dataset` class that assembles the appropriate batch of inputs, such that the `transformers.Trainer` class specifies a batch size of 1 but each element is its own batch.
 
 ```python
 class RetrievalDataset(torch.utils.data.Dataset):
@@ -428,23 +443,22 @@ class RetrievalDataset(torch.utils.data.Dataset):
 		return len(self.summary_tokens)
 ```
 
-Our noise-contrastive loss is implemented as follows:
+Noise-contrastive estimation loss is implemented as follows:
 
 ```python
 def infoNCEloss(output, matching_index=None):
-	"""
-	Implements Noise-Contrastive Loss. Assumes that there is one positive pair per batch and all 
-	the rest are negative samples.
-	"""
-	match_embedding = output[0, :, -1] # b t e shape
-	summary_embedding = output[matching_index, :, -1]
-	nonmatch_embeddings = torch.cat((output[1:matching_index, :, -1], output[matching_index+1:, :, -1]), dim=0)
+	summary_embedding = output[0, -1, :] # b t e shape
+	match_embedding = output[matching_index, -1, :]
+	nonmatch_embeddings = torch.cat((output[1:matching_index, -1, :], output[matching_index+1:, -1, :]), dim=0)
 	cosine_sim = torch.nn.CosineSimilarity(dim=1)
 	codists = torch.exp(cosine_sim(summary_embedding, match_embedding))
 	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
 	loss = torch.sum(-torch.log(codists / (codists + nondists)))
 	return loss
+
 ```
+
+This is a fairly straightforward but non-optimized implementation: we use `torch.nn.CosineSimilarity` to compute the cosine similarity first between the embedding of the summary and the embedding of the matching text, and then computes the sum of the cosine similarites between embeddings of the summary and the non-matching text segments before computing the temperatureless noise-contrastive loss.
 
 ```python
 class RetrievalMixer(nn.Module):
