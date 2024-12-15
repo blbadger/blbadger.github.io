@@ -402,7 +402,7 @@ The usual method for training retrieval models is to start with a model trained 
 
 To train a model to perform retrieval using noise-constrastive estimation on CLM-trained model embeddings, we need to sample sequences of tokens from our dataset of queries and texts. As for our other experiments, we use a set of 200k summaries of Fineweb passages together with the matching passages themselves. A simple approach to this is to first tokenize each summary and text passage and then save these tokens as a single `safetensors` file, which may be read very quickly as this is a zero-copy file format. We access these tokens as follows:
 
-```
+```python
 path = "/path/to/safetensors"
 tokens = {}
 with safe_open(path, framework="pt", device=0) as f:
@@ -443,7 +443,7 @@ class RetrievalDataset(torch.utils.data.Dataset):
 		return len(self.summary_tokens)
 ```
 
-Noise-contrastive estimation loss is implemented as follows:
+Noise-contrastive estimation loss itself implemented as follows:
 
 ```python
 def infoNCEloss(output, matching_index=None):
@@ -455,10 +455,11 @@ def infoNCEloss(output, matching_index=None):
 	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
 	loss = torch.sum(-torch.log(codists / (codists + nondists)))
 	return loss
-
 ```
 
 This is a fairly straightforward but non-optimized implementation: we use `torch.nn.CosineSimilarity` to compute the cosine similarity first between the embedding of the summary and the embedding of the matching text, and then computes the sum of the cosine similarites between embeddings of the summary and the non-matching text segments before computing the temperatureless noise-contrastive loss.
+
+With our loss and data access methods implemented, we apply a masked mixer that was CLM-pretrained on the Fineweb-10BT by loading the model and then modifying its forward call to unbatch our prebatched input, pass the resulting inputs to the mixer blocks, and then obtain the noise-contrastive estimation loss using the above function.
 
 ```python
 class RetrievalMixer(nn.Module):
@@ -466,21 +467,10 @@ class RetrievalMixer(nn.Module):
 	def __init__(self, n_vocab, dim, depth, prebatched_input=True):
 		super().__init__()
 		self.prebatched_input = prebatched_input
-		self.wte = nn.Embedding(n_vocab, dim)
-		self.mixerblocks = nn.ModuleList(
-			[MixerBlock(
-				dim = dim,
-				length = tokenized_length,
-				expand_conv=False
-				)
-			for i in range(depth)]
-			).to(device)
-		self.lm_head = nn.Linear(dim, n_vocab, bias=False)
-
+		...
 
 	def forward(self, input_ids, matching_index, **kwargs):
 		x = input_ids
-		#print (input_ids[0], matching_index)
 		if self.prebatched_input:
 			x = x.squeeze(0) # p b t -> b t
 		x = x.to(device)
@@ -490,15 +480,16 @@ class RetrievalMixer(nn.Module):
 		output = x
 		loss = infoNCEloss(x, matching_index=matching_index)
 		return loss, output
-
 ```
+
+We can perform an analagous modification to a CLM-pretrained Llama style transformer by simply passing the unbatched input through the base `model.model` which omits the language modeling head before passing the output (hidden layer activations) to the infoNCE loss function.
 
 ```python
 class RetrievalTransformer(nn.Module):
 
 	def __init__(self, model, prebatched=True):
 		super().__init__()
-		self.model = model
+		self.model = model.model # no lm head
 		self.prebatched = prebatched
 
 	def forward(self, input_ids, matching_index, *kwargs):
@@ -510,13 +501,13 @@ class RetrievalTransformer(nn.Module):
 		return loss, model_output
 ```
 
-The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hunred or a thousand times larger than ours.
+The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
 
-This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
+This result is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hundred to a thousand times larger than ours, with the Mistral e5 [paper](https://arxiv.org/pdf/2401.00368) describing the retrieval process as using batches of size 2048 requiring 32 V100s for LoRA training of the 7b parameter Mistral model. 
 
-It should be noted just how much faster the optimized retrieval model training method is than a standard infoNCE approach is. One way to look at this is to see how many total samples the retrieval model is able to train per second, irregardless of whether these are positive matches or negatives. By this approach we can train constrasive 4 GPUs, each taking around 5 steps per second on batch sizes of 32 which gives us 640 samples per second. This is a staggeringly small amount compared to the throughput of the optimized retrieval training algorithm, which for each of 4 GPUs can use 128 embeddings per sample and 128 samples per GPU and 4 passes per second for a total of 262,144 samples per second.
+It should be noted just how much faster the optimized retrieval model training method is than a standard infoNCE approach is. One way to look at this is to see how many total samples the retrieval model is able to train per second, irregardless of whether these are positive matches or negatives. By this approach we can train constrasive 4 GPUs, each taking around 5 steps per second on batch sizes of 32 which gives us 640 samples per second. This is a staggeringly small amount compared to the throughput of the optimized retrieval training algorithm, which for each of 4 GPUs can use 128 embeddings per sample and 128 samples per GPU and 4 passes per second for a total of 262,144 samples per second. The sole benefit of using the standard infoNCE training algorithm is that forward passes during inference can be 'cached', meaning that one can obtain embeddings of corpora segments ahead of time and only needs to perform a forward pass on the query input followed by matrix multiplication. 
 
-The sole benefit of using the standard infoNCE training algorithm is that forward passes during inference can be 'cached', meaning that one can obtain embeddings of corpora segments ahead of time and only needs to perform a forward pass on the query input followed by matrix multiplication. 
+To conclude, we find that noise constrastive estimation -based training of model embeddings are not feasible for retrieval, given a limited amount of compute and GPU memory. But for larger compute budgets, it is dubious whether this tmethod of training really endows a CLM-pretrained language model with any significant increase in retrieval ability: the [e5 Mistral](https://arxiv.org/pdf/2401.00368) paper found that contrastive noise esimation retrieval training was beneficial for a model that received a relatively small amount of CLM pretraining (XLM-R) but not for a model that was more extensively pre-trained (Mistral 7b). These results together with our investigations suggest that constrastive noise estimation-based retrieval training is unsuitable for small batch sizes, dubiously effective for larger ones, and several orders of magnitude less efficient (in terms of training throughput) than mixer-based retrieval model training outlined [here](https://arxiv.org/pdf/2409.01482). 
 
 ### Representation
 
