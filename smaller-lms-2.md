@@ -446,10 +446,13 @@ class RetrievalDataset(torch.utils.data.Dataset):
 Noise-contrastive estimation loss itself implemented as follows:
 
 ```python
-def infoNCEloss(output, matching_index=None):
-	summary_embedding = output[0, -1, :] # b t e shape
-	match_embedding = output[matching_index, -1, :]
-	nonmatch_embeddings = torch.cat((output[1:matching_index, -1, :], output[matching_index+1:, -1, :]), dim=0)
+def infoNCEloss(output, matching_index=None, embedding_index=-2):
+	summary_embedding = output[0, embedding_index, :] # b t e shape
+	match_embedding = output[matching_index, embedding_index, :]
+	nonmatch_embeddings = torch.cat(
+		(output[1:matching_index, embedding_index, :],
+		output[matching_index+1:, embedding_index, :]
+		), dim=0)
 	cosine_sim = torch.nn.CosineSimilarity(dim=1)
 	codists = torch.exp(cosine_sim(summary_embedding, match_embedding))
 	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
@@ -457,7 +460,7 @@ def infoNCEloss(output, matching_index=None):
 	return loss
 ```
 
-This is a fairly straightforward but non-optimized implementation: we use `torch.nn.CosineSimilarity` to compute the cosine similarity first between the embedding of the summary and the embedding of the matching text, and then computes the sum of the cosine similarites between embeddings of the summary and the non-matching text segments before computing the temperatureless noise-contrastive loss.
+This is a fairly straightforward but non-optimized implementation: we use `torch.nn.CosineSimilarity` to compute the cosine similarity first between the embedding of the summary and the embedding of the matching text, and then computes the sum of the cosine similarites between embeddings of the summary and the non-matching text segments before computing the temperatureless noise-contrastive loss. The `embedding_index` is usually set to the last token in the literature (ie -1), but we test both last and second-to-last embeddings as masked mixers are not trained on the last token.
 
 With our loss and data access methods implemented, we apply a masked mixer that was CLM-pretrained on the Fineweb-10BT by loading the model and then modifying its forward call to unbatch our prebatched input, pass the resulting inputs to the mixer blocks, and then obtain the noise-contrastive estimation loss using the above function.
 
@@ -503,7 +506,7 @@ class RetrievalTransformer(nn.Module):
 
 For both masked mixer and transformer, we pretrain on models that are exposed to left-padded inputs in order to be able to take the last token's hidden layer for infoNCE loss.
 
-The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
+The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, or whether we use the last token or second-to-last token embedding for loss calculation, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
 
 This result is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hundred to a thousand times larger than ours, with the Mistral e5 [paper](https://arxiv.org/pdf/2401.00368) describing the retrieval process as using batches of size 2048 requiring 32 V100s for LoRA training of the 7b parameter Mistral model. 
 
@@ -515,7 +518,9 @@ To conclude, we find that noise constrastive estimation -based training of model
 
 [Previous work](https://blbadger.github.io/smaller-lms.html) found that masked mixers tend to have much more accurate input representation than transformers before and after TinyStories training, with some amount of convergence for smaller ($d_m=256$ or $d_m=512$) models as measured by a modified Hamming metric on gradient descent-generated inputs. Now that similar architectures of somewhat larger size have been applied to a much larger and more challenging dataset and apply >10x the compute during training, it may be wondered whether the same holds true. This can be investigated by repeating the Hamming metric measurements detailed in that paper using models trained on the Fineweb, and comparing to what was found for TinyStories, starting with the same $n_{ctx}=512$ token window that was used to train on the TinyStories dataset.
 
-Recall that the major finding was that masked mixers are biased towards accurate input representation, and transformers towards inaccurate representation.
+Recall that the major finding of [that work](https://arxiv.org/pdf/2409.01482) was that masked mixers are biased towards accurate input representation, and transformers towards inaccurate representation. This manifests as a near-0 Hamming distance between inputs and representations of inputs for untrained masked mixers, compared to a near-1 (the largest possible value) Hamming distance between inputs and representations of inputs for untrained transformers. It was then found that causal language training lead to a partial convergence in representation accuracy for smaller ($d_m \leq 512$) models but not larger models, meaning that masked mixer representation became less accurate whereas transformer representation accuracy become slightly more accurate upon CLM training on TinyStories. 
+
+The same general observations are found after training (200k steps, requiring ~24 hours) on `Fineweb-10BT`: llama-style transformers exhibit modified Hamming metrics between representation and actual input of near unity, whereas masked mixers exhibit more accurate input representation.
 
 ### Linear Mixers
 
