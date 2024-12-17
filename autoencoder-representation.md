@@ -110,7 +110,7 @@ $$
 vol(d) \leq 2 \mathrm{exp} (-n \epsilon^2 / 4) v_n
 $$
 
-whereas the probability for a point in the normal distribution to exceed $epsilon$ away from the expectation is
+whereas the probability for a point in the normal distribution to exceed $\epsilon$ away from the expectation is
 
 $$
 p(|x-\mu| > \epsilon) = \mathrm{exp}(-2n\epsilon^2)
@@ -223,6 +223,10 @@ This method of continually de-noising an image is conceptually similar to the me
 
 {% include youtube.html id='HbdgA3i6JOA' %}
 
+As is common for generative methods, applying larger models with more compute to the same dataset results in superior generative properties. This turns out to be true for autoencoders (Unet-style with no residuals) trained using MSE loss on the LSUN Churches dataset using the markov noise sampling method detailed above in the case where the model is larger and the compute power has increased a little more than tenfold. In the figure below, we compare the image generation results from 24 hours of training using 1x 3060 to the same timeframe but with 4x V100s, which for model training purposes results in a 10x-15x increase in throughput. Note the superior image detail, clarity, and realism in the images produced by the model trained using the larger compute cluster.
+
+![3060 vs v100]({{https://blbadger.github.io}}/deep-learning/msn_3060_v100.png)
+
 It is interesting to note that these statistical characteristics (for example, the dark maze-like lines and red surfaces on buildings that make a somewhat Banksy-style of generated image) are specific to the manifold learned. Observe that a similar model, Unet with a hidden MLP, as follows:
 
 ![unet modified architecture]({{https://blbadger.github.io}}/deep-learning/hidden_unet_architecture.png)
@@ -332,7 +336,13 @@ This appears to be mostly due to conditioning: it is very difficult to generate 
 
 On this page we have seen that autoencoders learn to remove the noise introduced into their input representations via non-invertible transformations, and thus become effective denoising models without ever receiving explicit denoising training. The effect of this is that autoencoders may be used to generate images via a diffusion-like sampling process, and that one can observe the manifold learned by autoencoders is a similar way to that learned by generative adversarial networks.
 
-Does this mean that we should all start using autoencoders to generate images and stop using diffusion models or GANs? Probably not: when typical steps towards scaling up the process of autoencoder training (increasing the batch size, distributing to many GPUs, etc.) are taken, the images generated after the sampling process are not much better than when the relatively small compute used for this page (one RTX 3060 for 12 - 36 hours) is used. This means that these are not particularly efficient learning algorithms.
+Does this mean that we should all start using autoencoders to generate images and stop using diffusion models or GANs? Probably not, primarily because this approach relies on an implicitly trained ability rather than an explicitly trained one and secondarily because of the architectural limitations that autoencoders have.
+
+What does it mean for a machine learning model to train explicitly for a task? The idea is that as we have seen on this page, autoencoders learn to denoise because the undercomplete linear transformations in each layer introduces noise into the model's input representation before training, and this noise is removed as a result of MSE loss minimization on the output compared to input. The important thing to note there is that the process of denoising is itself never trained explicitly: one could imagine a model that minimizes autoencoder loss while not denoising at all, and indeed this is true for very small models. 
+
+
+
+
 
 
 
