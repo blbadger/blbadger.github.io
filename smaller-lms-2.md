@@ -357,7 +357,6 @@ As expected, there is nearly complete parity in training efficiency for the mask
 
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
 
-
 ### Fineweb Retrieval
 
 We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
@@ -521,6 +520,8 @@ To conclude, we find that noise constrastive estimation -based training of model
 Recall that the major finding of [that work](https://arxiv.org/pdf/2409.01482) was that masked mixers are biased towards accurate input representation, and transformers towards inaccurate representation. This manifests as a near-0 Hamming distance between inputs and representations of inputs for untrained masked mixers, compared to a near-1 (the largest possible value) Hamming distance between inputs and representations of inputs for untrained transformers. It was then found that causal language training lead to a partial convergence in representation accuracy for smaller ($d_m \leq 512$) models but not larger models, meaning that masked mixer representation became less accurate whereas transformer representation accuracy become slightly more accurate upon CLM training on TinyStories. 
 
 The same general observations are found after training (200k steps, requiring ~24 hours) on `Fineweb-10BT`: llama-style transformers exhibit modified Hamming metrics between representation and actual input of near unity, whereas masked mixers exhibit more accurate input representation after training on the same dataset.
+
+![fineweb_loss](/deep-learning/fineweb_representation.png)
 
 ### Linear Mixers
 
