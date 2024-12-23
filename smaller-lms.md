@@ -585,7 +585,7 @@ As more than one self-attention head increases the learning efficiency for trans
 
 This approach yields a slight increase in training efficiency relative to the standard flat masked mixer with convolutional kernel of size 4: training/test losses for 2.25h on 4x V100 are  1.60/1.72 for the two-headed mixer versus 1.62/1.74. 
 
-### Transformer mixer hybrids learn most efficiently
+### Transformer mixer hybrids
 
 The observation that mixers appear to learn a fundamentally different structure than transformers when applied to the same dataset suggests that they may act orthogonally (with some slight abuse to the linear algebraic phrase). This means that the abstract quantities a mixer learns might be complementary to those that a transformer learns, such that combining these architectures in some way might lead to a model that is a more efficient learner than either mixer or transformer alone.
 
@@ -597,11 +597,11 @@ Recall that the 4-headed, $d_m=512$ transformer model achieved an train/test acc
 
 Scaling up the compute power via the 4x V100, we find that this transformer-mixer hybrid once again outperforms the transformer: for 2.25 hours on a 4x V100 node the hybrid achieves lower training and test loss than either mixer or transformer (above) with values of 1.53 and 1.59, respectively, which compares to train/test losses of 1.55 and 1.61 without the masked convolution (both with Flash Attention 2).
 
-Another way to add mixer elements to a transformer is as follows: we instead add the mixer in parallel with the self-attention module. 
+Another way to add mixer elements to a transformer is as follows: we instead add the mixer in parallel with the self-attention module. This does not yield any benefit from the standard transformer architecture, however, and achieves the same 1.55 and 1.61 loss values on the 4x V100 cluster (with flash attention 2).
 
 ![conv mixer]({{https://blbadger.github.io}}/deep-learning/mixer_transformer_architecture.png)
 
-This does not yield any benefit from the standard transformer architecture, however, and achieves the same 1.55 and 1.61 loss values on the 4x V100 cluster (with flash attention 2).
+It seems strange that the precise ordering of self-attention versus convolution should affect the model training abilities, and with further investigation the cause of this is revealed. It is even stranger that these effects are only observed using left padding during training and not right padding. A clue to this is what is observed in a sample-by-sample manner: we see that certain inputs that add a critical number of pad tokens preceeding the word tokens in the padding process result in a cross-entropy loss of 0! This is a sign of next token information being passed to the current token, and sure enough the Huggingface [Llama implementation](https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py) uses scaled dot-product attention layers that re-index the outputs of highly padded inputs.
 
 ### Masked Mixers outperform early CLM Transformers
 
