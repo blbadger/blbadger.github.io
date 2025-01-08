@@ -265,16 +265,17 @@ It is interesting to note that the extra width (more precisely doubling the numb
 
 ### The Role of Batch Normalization in Denoising
 
-Comparing the fully connected autoencoder to the Unet autoencoder, it is apparent that the latter is a more capable denoiser than the former.  It is not particularly surprising that a larger and deeper model (the Unet) would be a better de-noiser than the former being that it can
-
+Comparing the fully connected autoencoder to the Unet autoencoder, it is apparent that the latter is a more capable denoiser than the former.  It is not particularly surprising that a larger and deeper model (ie the Unet) would be a better de-noiser than the former, as we can think of the latter as exhibiting more representational power (meaning that we can train the latter model to better approximate even very complex functions in less time). One significant difference between these models is the presence of batch normalization in the Unet, which may be described as follows:
 
 $$
 y = \frac{x - \mathrm{E}(x_{m, n})}{\sqrt{\mathrm{Var}(x_{m, n}) + \epsilon}} * \gamma + \beta
 $$
 
-where $m$ is the index of the layer output across all sequence items (ie convolutional filter outputs specified by height and width for Unet models) and $n$ is the index of the input among all in the batch.
+where $m$ is the index of the layer output across all sequence items (ie convolutional filter outputs specified by height and width for Unet models) and $n$ is the index of the input among all in the batch. The idea here is that we enforce a mean of 0 and variance of 1 (with an $\epsilon$ for numerical stability) with learnable parameters $\gamma$ and $\beta$ for greater expressive power. 
 
-Batch normalization odes play a role in the ability of Unet to denoise: removing batch normalizations from all convolutions in Unet results in autoencoder outputs that do not have noise per se, but are also statistically quite different than the original image. This does not affect the autoencoder's ability to de-blur an input, however.  Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as arguments the mean and standard deviation statistics of the synthesized images.
+Does batch normalization play a role in the greater denoising abilities of the Unet compared to a small and fully connected autoencoder? This is a particularly relevant question because the sampled examples viewed so far on this page do not switch batch normalization from their training phase (with accumulated $\mathrm{E}(x_{m, n})$ and $\mathrm{Var}(x_{m, n})$ values from the training procedure rather than new statistical values to the new inputs), as is usually done for model inference.
+
+With some testing, we can see that batch normalization does play a role in the ability of Unet to denoise: removing batch normalizations from all convolutions in Unet results in autoencoder outputs that do indeed denoise the input but are quite statistically quite different than the original image. Note that batch norm on this page is not switched to evaluation mode during image synthesis such that the model continues to take as arguments the mean and standard deviation statistics of the synthesized images.
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unethidden_nobatchnorm_denoising.png)
 
@@ -282,11 +283,13 @@ On the other hand, it can be shown that this does not depend on the presence of 
 
 ![modified batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/autoencoder_denoising_1batch.png)
 
-This provides evidence for the idea that the learning of $\gamma$ and $\beta$ only across a single image gives outputs that are statistically similar to the uncorrupted original input. One can think of batch normalization as enforcing general statistical principles on the synthesized images. For each layer (also called a feature map) of a convolution, batch normalization learns the appropriate mean and standard deviation across all samples $n$ in that batch and all spatial locations $m$ necessary for copying a batch of images.  During the image synthesis process, batch normalization is capable of enforcing these learned statistics on the generated images.
+This provides evidence for the idea that the learning of $\gamma$ and $\beta$ only across a single image gives outputs that are statistically similar to the uncorrupted original input. One can think of batch normalization as enforcing general statistical principles on the synthesized images. For each convolutional weight layer (also called a feature map), batch normalization learns the appropriate mean and standard deviation across all samples $n$ in that batch and all spatial locations $m$ necessary for copying a batch of images.  During the image synthesis process, batch normalization is capable of enforcing these learned statistics on the generated images.
 
 It may be wondered whether batch normalization is necessary for accurate input representation in deep layers of the Unet autoencoder after training.  The answer to this question is no, as with or without batch normalization the trained Unet output layer has equivalent representation ability of the input.
 
 ![no batchnorm autoencoder]({{https://blbadger.github.io}}/deep-learning/unet_nobn_representations.png)
+
+To conclude, we find that batch normalization is not necessary for input denoising but does help enforce statistical priors in the representation for aspects such as color balance. Layer-only normalization as gives us approximately the same sampling denoising abilities as the full batch normalization, suggesting that it is the learned $\beta, \gamma$ parameters applied to each layer that are most importance for enforcing these priors, not the ability to compare across multiple samples themselves.
 
 ### Representations in Unet generative models with Attention
 
