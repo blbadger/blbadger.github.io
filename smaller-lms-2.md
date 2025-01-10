@@ -376,6 +376,12 @@ When we compare mixer versus transformer performance on bidirectional token pred
 
 ![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
 
+### Mathematics Modeling Efficiency
+
+The finding in the last section is that it is the many-to-one mapping rather than inherent language stochasticity that gives transformers an advantage in next token prediction relative to masked mixers. If the reader is not convinced that bidirectional language modeling is capable of telling us this, we can search for evidence for or against this idea elsewhere.
+
+One good way of testing the hypothesis is to train these models on datasets that have much less language stochasticity than a natural language like English. What we want therefore is to observe training efficiencies on a dataset primarily composed of a formal language such as mathematics or a programming language.
+
 ### One Step Language Completion Efficiency
 
 So far we have seen that masked mixers are better at tasks requiring approximately bijective functions like autoencoding or retrieval, and worse at tasks requiring injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and injective mappings
