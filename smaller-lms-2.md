@@ -35,27 +35,27 @@ There is a perhaps more direct way to test the hypothesis that masked mixers con
 
 ![autoencoder architecture](/deep-learning/mixer_autoencoder.png)
 
-This is perhaps the most direct way to maintain the parallelization afforded by all-next-token training for a non-trivial autoencoder. For a masked mixer-based
+This is perhaps one of the most direct ways to maintain the parallelization afforded by all-next-token training for a non-trivial autoencoder. For a masked mixer-based model, we can implement this by passing the inputs to the masked mixer blocks, obtain the last token's last hidden layer vector values, repeat this embedding to the decoder mixer, and complete the forward pass. We don't
 
 ```python
 class AutoencodingMixer(nn.Module):
   ...
 	def forward(self, input_ids, labels=None):
 		... # word-token eembedding
-    ... # encoder blocks
+    		... # encoder blocks forward pass
 
 		encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
 		x = encoder_embedding.repeat(1, self.tokenized_length, 1)
 
-		... # decoder blocks
-    output = self.lm_head(x)
+		... # decoder blocks foward pass
+    		output = self.lm_head(x)
 		labels = rearrange(labels, 'b p t -> b (p t)')
 		output = rearrange(output, 'b t e -> b e t')
 		loss = self.cel(output, labels)
 		return loss, output
 ```
 
-For a llama-style transformer, this architecture can be implemented as follows: first we modify the LlamaModelForCaualLM to take embeddings rather than tokens and supply the necessary positions
+For an autoencoder version of Llama, there are a couple extra steps we need to take in order to preserve as much as possible from the original architecture while making the necessary modifications for autoencoding. First we need to overwrite the base model's forward pass to avoid applying word-token embedding transformations (as we only want to transform tokens to embeddings once, not before each of the encoder and decoder stacks) and also avoid any transformations after the transformer blocks themselves. We can use either a `LlamaModel` (which does not contain the language modeling head) or the `LlamaForCausalLM` base class, and we choose the latter as that is the class we have used to train Llama models elsewhere on this page, and we are re-writing the forward pass regardless. This may be achieved as follows, where we supply the positional ids for each token and pass the inputs directly to the transformer blocks. We use this to initialize both the encoder and decoder modules.
 
 ```python
 class AbbreviatedModel(nn.Module):
@@ -66,28 +66,59 @@ class AbbreviatedModel(nn.Module):
 		self.depth = depth
 		self.position_ids = torch.tensor([[i for i in range(tokenized_length)]]).to(device)
 
-	def forward(self, input_ids: torch.Tensor):
+	def forward(self, input_ids: torch.Tensor, **attention_mask: torch.Tensor):
+		# Matrix mult instead of embedding to prevent type incompatibility
 		x = input_ids
 		position_ids = self.position_ids.repeat(input_ids.shape[0], 1)
-
 		for i in range(self.depth):
 			x = self.model.model.layers[i](x, position_ids=position_ids)[0]
 		return x
-
-# initialization
-encoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
-decoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
 ```
 
-and then the autoencoder is implemented in the same manner as the mixer autoencoder.
+Now we can combine encoder and decoder into the autoencoder model, applying the word-token embedding transformation before both modules and the language modeling head afterwards. 
 
-Recall that masked mixers contain far fewer inter-token parameters and thus may be trained with a much larger $d_m$ size while maintaining other architectural constraints identically to transformers for fixed memory, and mixers of identical architectural 'sizes' train much more quickly. With this in mind, we can first observe autoencoding performance for identically-sized models: given a $d_m$=512 and $n_l=8$ (ie 8 encoder layers and 8 decoder layers). After 2.25 of TinyStories training, the masked mixer autoencoder reaches train/test losses of 4.53/4.35 respectively whereas the same-dimensional transformer only manages losses of 5.31/5.23. For $d_m=1024, n_l=4$ (the largest $d_m=1024$ transformer that fits in V100 memory) reaches 5.05/4.99 train/test loss after three epochs, whereas a masked mixer autoencoder of the same $d_m, n_l$ reaches 3.85, 3.66 (below).
+```python
+class AutoencodingTransformer(nn.Module):
+
+	def __init__(self, n_vocab, dim, encoder_model, decoder_model):
+		super().__init__()
+		self.wte = nn.Embedding(n_vocab, dim)
+		self.encoder = encoder_model
+		self.decoder = decoder_model
+		self.lm_head = nn.Linear(dim, n_vocab, bias=False)
+		self.cel = nn.CrossEntropyLoss()
+		self.tokenized_length = tokenized_length
+
+	def forward(self, input_ids, labels=None, attention_mask=None):
+		x = input_ids
+		x = x.to(device).squeeze(1)
+		x = self.wte(x)
+		x = self.encoder(x)
+
+		encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
+		encoder_embedding = encoder_embedding.repeat(1, self.tokenized_length, 1)
+		x = encoder_embedding
+		x = self.decoder(x)
+
+		output = self.lm_head(x)
+		output = rearrange(output, 'b t e -> b e t')
+		loss = self.cel(output, labels)
+		return loss, output
+
+# initialization
+configuration = LlamaConfig(**llama_config_kwargs)
+encoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+decoder_model = AbbreviatedModel(LlamaForCausalLM(configuration), tokenized_length=tokenized_length)
+model = AutoencodingTransformer(n_vocab, dim, encoder_model, decoder_model)
+```
+
+Recall that masked mixers contain far fewer inter-token parameters and thus may be trained with a much larger $d_m$ size while maintaining other architectural constraints identically to transformers for fixed memory, and mixers of identical architectural 'sizes' train much more quickly. With this in mind, we can first observe autoencoding performance for identically-sized models: given a $d_m$=512 and $n_l=8$ (ie 8 encoder layers and 8 decoder layers). After 2.25 hours of TinyStories training on the 4x V100 cluster, the masked mixer autoencoder reaches train/test losses of 4.53/4.35 respectively whereas the same-dimensional transformer only manages losses of 5.31/5.23. For $d_m=1024, n_l=4$ (the largest $d_m=1024$ transformer that fits in V100 memory) reaches 5.05/4.99 train/test loss after three epochs, whereas a masked mixer autoencoder of the same $d_m, n_l$ reaches 3.85, 3.66 (below).
 
 These are very large performance gaps: recall that the difference between transformer and mixer CLM loss is typically 0.5-2%, such that with a modest increase in training duration one architecture is able to achieve the loss of the other. But from the figure below it is apparent that it would take a huge number of steps (perhaps 1000x) for the transformer to match the mixer's loss achieved, if it ever is. The figure below provides the loss curves upon various training runs. Note that the 1024-dim mixer is more or less equivalent in memory and somewhat faster than the 512-dim transformer model, and that the mixers are trained with dropout ($p=0.05$) hence the drop in evaluation loss compared to training loss at all steps.
 
 ![autoencoders](/deep-learning/language_autoencoders.png)
 
-The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require hundreds or thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer.
+The gap is even larger when we consider that the mixer occupies a much smaller memory footprint for identical $d_m, n_l$ parameters. If we match the mixer to the $d_m=1024, n_l=4$ transformer's memory on device by doubling the $n_l \to 8$, the mixer reaches 1.65/1.37 train/test loss using the same compute (4x V100s, 6h) as the above transformer. This would be expected to require thousands (!) of epochs for the transformer to match, and in that way one could claim that the mixer is hundreds or thousands of times as efficient an autoencoder as a transformer. It would be expected that the masked mixer would be a better autoencoder than a transformer because of its bias towards invertibility, but the performance gap here is remarkable nonetheless.
 
 ### Fineweb Causal Language Modeling Efficiency
 
