@@ -376,15 +376,21 @@ When we compare mixer versus transformer performance on bidirectional token pred
 
 ![uni vs bidirectional](/deep-learning/uni_vs_bidirectional.png)
 
-### Mathematics Modeling Efficiency
+### Mathematics Causal Language Modeling Efficiency
 
 The finding in the last section is that it is the many-to-one mapping rather than inherent language stochasticity that gives transformers an advantage in next token prediction relative to masked mixers. If the reader is not convinced that bidirectional language modeling is capable of telling us this, we can search for evidence for or against this idea elsewhere.
 
-One good way of testing the hypothesis is to train these models on datasets that have much less language stochasticity than a natural language like English. What we want therefore is to observe training efficiencies on a dataset primarily composed of a formal language such as mathematics or a programming language.
+One good way of testing the hypothesis is to train these models on datasets that have much less language stochasticity than a natural language like English. What we want therefore is to observe training efficiencies on a dataset primarily composed of a formal language such as mathematics or a programming language. We chose the `FineMath-4+` dataset available [here](https://huggingface.co/datasets/HuggingFaceTB/finemath) to test this idea, as it closely mirrors the `Fineweb-10BT` dataset used elsewhere on this page in both size (9.6B tokens) and source (a refined version of the Common Crawl). We do not train a new tokenizer on this dataset, as examination of the entries therein reveals that is has a similar vocabular to the `Fineweb-10BT` dataset only with much more mathematical content. Most importantly, both datasets tend to include mathematical content in markdown format.
+
+Recall that for the fineweb, we saw causal language model training to be more efficient for masked mixers of equivalent memory on device (during training) for smaller context windows ($n_{ctx}< 512$) but less efficient for larger context windows. We see a similar phenomena for the `FineMath-4+` dataset, as shown below. Note that the $n_{ctx}=32$ mixer has 18 layers rather than the usual 16, this is to match the on-device memory requirements of the respective llama model.
+
+![finemath efficiency](/deep-learning/finemath_clm.png)
+
+Thus we find more evidence for the idea that it is not the intrinsic noise present in language but rather the nature of the mapping itself that differentiates transformer and masked mixer causal language model training efficiencies.
 
 ### One Step Language Completion Efficiency
 
-So far we have seen that masked mixers are better at tasks requiring approximately bijective functions like autoencoding or retrieval, and worse at tasks requiring injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and injective mappings
+So far we have seen that masked mixers are better at tasks requiring approximately bijective functions such as autoencoding or retrieval, and worse at tasks requiring non-injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both non-injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and non-bijective mappings because we map many previous tokens to individual next tokens as is the case for normal CLM, but at the same time we use a strict subset of previous tokens such that the map is more approximately one-to-one (ie lower context in the input).
 
 To elaborate, the task is to generate all the completion tokens in a text segment in one step. Arbitrarily choosing text segments of length 512 such that the model recieves information from tokens ($\{t_0, t_1, .., t_{255}\}$) and generates tokens $\{t_{256}, t_{257}, ... t_{511}\}$, we want information from each of the first 256 tokens to be available for the subsequent 256 tokens during the forward pass. One way to do this would be to use the last hidden layer of token $t_{255}$ as an input to a decoder in a similar architecture to the autoencoders presented above, but this would require all input information to be present in that token and we have already seen that this sort of task is much better suited for masked mixers. Instead we want to provide information from all input tokens $\{t_{0-255}\}$ directly, while preventing the passage for information from the prediction tokens $\{t_{256-511}\}$.
 
@@ -392,7 +398,7 @@ Perhaps the most efficient way to accomplish this would be to change the causal 
 
 ![fineweb_loss](/deep-learning/completion_model.png)
 
-As expected, there is nearly complete parity in training efficiency for the masked mixer and transformer when applied to this one-step completion paradigm. Note that both train relatively poorly: unsurprisingly, it turns out that attempting to predict many tokens at once in one step is much more difficult than predicting one token at a time.
+As expected, there is nearly complete parity in training efficiency for the masked mixer and transformer when applied to this one-step completion paradigm for the `Fineweb-10BT` dataset. Note that both train relatively poorly: unsurprisingly, it turns out that attempting to predict many tokens at once in one step is much more difficult than predicting one token at a time.
 
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
 
