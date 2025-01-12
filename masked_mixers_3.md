@@ -63,5 +63,10 @@ Now you can run a docker container and access your GPUs! You have to include the
 $ docker run -i -t --gpus all blbadger/cuda120_pytorch240:updated /bin/bash
 ```
 
+I like to use git inside docker, in which case we can add the path to our git ssh key to our docker run command as follows:
+
+```sh
+$ docker run -i -t -v /path/to/rsa:/root/.ssh/id_rsa --gpus all blbadger/cuda120_pytorch240 /bin/bash
+```
 
 
