@@ -6,7 +6,7 @@ As presented in [Part I](https://blbadger.github.io/smaller-lms.html), causal la
 
 Such an operation is currently not found in among the major deep learning libraries (Pytorch, JAX, TensorFlow etc.), so we will have to build it ourselves. But if we want to be able to fit this operation into one of these libraries to use automatic gradient propegation and other useful features, we will need to use an extension framework for that language. This page details the process of writing a Pytorch C CUDA extension to accomplish a triangular convolution for causal language modeling. 
 
-### Getting Started
+### Getting Started with CUDA compatible Docker containers
 
 Developing your own CUDA kernels usually requires some form of the Nvidia CUDA Compiler (NVCC) driver. When you are developing a kernel for stand-alone use, using `nvcc` is a simple matter of having a relatively recent CUDA-capable GPU and downloading the CUDA toolkit from Nvidia.
 
@@ -68,5 +68,9 @@ I like to use git inside docker, in which case we can add the path to our git ss
 ```sh
 $ docker run -i -t -v /path/to/rsa:/root/.ssh/id_rsa --gpus all blbadger/cuda120_pytorch240 /bin/bash
 ```
+
+### C and CUDA extensions for Pytorch
+
+To reiterate, the effort expended to 
 
 
