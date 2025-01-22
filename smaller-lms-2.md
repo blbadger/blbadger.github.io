@@ -386,9 +386,9 @@ Recall that for the fineweb, we saw causal language model training to be more ef
 
 ![finemath efficiency](/deep-learning/finemath_clm.png)
 
-Thus we find more evidence for the idea that it is not the intrinsic noise present in language but rather the nature of the mapping itself that differentiates transformer and masked mixer causal language model training efficiencies.
+Thus if we assume that a mathematicasl dataset such as `FineMath-4+` contains less intrinsic noise than a general corpora dataset such as the fineweb,  we find more evidence for the idea that it is not the intrinsic noise present in language but rather the nature of the mapping itself that differentiates transformer and masked mixer causal language model training efficiencies.
 
-### Multiple Token Prediction
+### Multiple Token Prediction Training Efficiency
 
 Recent work in the language modeling field has focused on extending the all-next-token prediction training (that still forms the basis of nearly all current models' pretraining) using a variety of techniques such as output-only supervised finetuning, deep reinforcement learning via human feedback with algorithms like DPO and PPO, and most recently monte carlo tree search-based reinforcement learning for reasoning.
 
@@ -422,7 +422,6 @@ class MTPTransformer(nn.Module):
 ```
 
 We can initialize a two-token-ahead model for training via `model = MTPTransformer(model, n_tokens=2)` where the `model` is a `LlamaForCausalLM` object, but note that a masked mixer base model can be substituted as well.
-
 
 
 ### One Step Language Completion Efficiency
