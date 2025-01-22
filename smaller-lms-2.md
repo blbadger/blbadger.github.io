@@ -388,6 +388,43 @@ Recall that for the fineweb, we saw causal language model training to be more ef
 
 Thus we find more evidence for the idea that it is not the intrinsic noise present in language but rather the nature of the mapping itself that differentiates transformer and masked mixer causal language model training efficiencies.
 
+### Multiple Token Prediction
+
+Recent work in the language modeling field has focused on extending the all-next-token prediction training (that still forms the basis of nearly all current models' pretraining) using a variety of techniques such as output-only supervised finetuning, deep reinforcement learning via human feedback with algorithms like DPO and PPO, and most recently monte carlo tree search-based reinforcement learning for reasoning.
+
+One particularly interesting extension is to train on multiple next tokens in one forward pass, which has lately been referred to as 'multiple token prediction' or 'non-myopic pretraining'. As an example, [Deepseek V3](https://arxiv.org/abs/2412.19437) has incorporated multiple token prediction into pretraining via specialized cross-attention modules. There are many other approaches to multiple next token prediction training, but the general idea is that during autoregressive inference one typically wants to predict not just one but many 'next' tokens in sequence, and including that information in a pretraining recipe might increase model inference fidelity.
+
+Training a language model to predict multiple future tokens rather than simply one can be done in a number of ways, but perhaps the simplest method is to perform $n$ forward passes and collect the corresponding loss values for each of $n$ tokens predicted using the standard label shifting method shown previously. This can be implemented succintly for a transformer model as follows:
+
+```python
+class MTPTransformer(nn.Module):
+
+	def __init__(self, model, n_tokens=2):
+		super().__init__()
+		self.model = model
+		self.n_tokens = n_tokens
+		self.cel = torch.nn.CrossEntropyLoss()
+
+	def forward(self, input_ids, labels=None, **kwargs):
+		x = input_ids
+		for i in range(self.n_tokens):
+			output = self.model.lm_head(self.model.model(x)[0])
+			output = rearrange(output, 'b t e -> b e t')
+			shift_logits = output[..., :-(1 + i)].contiguous()
+			shift_labels = labels[..., (1 + i):].contiguous()
+			if 'loss' in vars():
+				loss += self.cel(shift_logits, shift_labels)
+			else:
+				loss = self.cel(shift_logits, shift_labels)
+			x = torch.argmax(output, dim=-2)
+
+		return loss, output
+```
+
+We can initialize a two-token-ahead model for training via `model = MTPTransformer(model, n_tokens=2)` where the `model` is a `LlamaForCausalLM` object, but note that a masked mixer base model can be substituted as well.
+
+
+
 ### One Step Language Completion Efficiency
 
 So far we have seen that masked mixers are better at tasks requiring approximately bijective functions such as autoencoding or retrieval, and worse at tasks requiring non-injective mappings such as causal language modeling (where many previous tokens are mapped to one next token). It could be wondered how efficiently each model learns a task that exhibits aspects of both non-injective and bijective mappings, say one-step text completion on a per-token basis. The hypothesis is that these models will be approximately equivalently efficient, assuming that this task requires a relatively even mix of bijective and non-bijective mappings because we map many previous tokens to individual next tokens as is the case for normal CLM, but at the same time we use a strict subset of previous tokens such that the map is more approximately one-to-one (ie lower context in the input).
