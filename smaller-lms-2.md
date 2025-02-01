@@ -456,7 +456,7 @@ It is interesting to consider what happens when we try a llama model with many m
 | llama h=4 | 0.55  | 1.24  |  1.76 | 1.84  | 6.93  |
 | llama h=32  | 0.61  | 1.19  | 1.59  |  1.88 | 6.93  |
 
-We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
+The primary downside to the retrieval training method detailed in [this work](https://arxiv.org/pdf/2409.01482), is the test time compute requirement: we cannot save embeddings and simply perform matrix multiplication as a forward pass is required each time a retrieval is made. We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
 
 $$
 \Bbb L = - \log \; \frac{f(q^+, d^+)}{f(q^+, d^+) + \sum_{n_i \in N} (f(q^+, n_i))}
@@ -527,16 +527,18 @@ Noise-contrastive estimation loss itself implemented as follows:
 
 ```python
 def infoNCEloss(output, matching_index=None, embedding_index=-2):
-	summary_embedding = output[0, embedding_index, :] # b t e shape
+	"""
+	Implements Noise-Contrastive Loss. Assumes that there is one positive pair per batch and all 
+	the rest are negative samples.
+	"""
+	summary_embedding = output[0, embedding_index, :].unsqueeze(0) # b t e shape
 	match_embedding = output[matching_index, embedding_index, :]
-	nonmatch_embeddings = torch.cat(
-		(output[1:matching_index, embedding_index, :],
-		output[matching_index+1:, embedding_index, :]
-		), dim=0)
+	nonmatch_embeddings = torch.cat((output[1:matching_index, embedding_index, :], output[matching_index+1:, embedding_index, :]), dim=0)
 	cosine_sim = torch.nn.CosineSimilarity(dim=1)
-	codists = torch.exp(cosine_sim(summary_embedding, match_embedding))
-	nondists = torch.sum(torch.exp(cosine_sim(summary_embedding, nonmatch_embeddings)))
-	loss = torch.sum(-torch.log(codists / (codists + nondists)))
+	temp = 0.02
+	codists = torch.exp((1/temp)*cosine_sim(summary_embedding, match_embedding))
+	nondists = torch.sum(torch.exp((1/temp)*cosine_sim(summary_embedding, nonmatch_embeddings)))
+	loss = -torch.sum(torch.log(codists / (codists + nondists)))
 	return loss
 ```
 
@@ -586,7 +588,7 @@ class RetrievalTransformer(nn.Module):
 
 For both masked mixer and transformer, we pretrain on models that are exposed to left-padded inputs in order to be able to take the last token's hidden layer for infoNCE loss.
 
-The results are not promising: regardless of whether we begin with a CLM-trained mixer or transformer, and regardless of whether we use a transformer or mixer, or whether we use the last token or second-to-last token embedding for loss calculation, models do not effectively reduce the noise-contrastive loss objective (using an AdamW optimizer with standard learning rates) when we use DDP with a maximum batch size of 64 per GPU (for masked mixers) or 32 (for transformers) given the 16-layer, $d_m=512$ sized models trained for CLM on the Fineweb. After a certain number of iterations, gradient explosion occurs and training fails completely. This is in contrast to the optimized retrieval model training method detailed in [this work](https://arxiv.org/pdf/2409.01482), which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
+which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
 
 This result is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hundred to a thousand times larger than ours, with the Mistral e5 [paper](https://arxiv.org/pdf/2401.00368) describing the retrieval process as using batches of size 2048 requiring 32 V100s for LoRA training of the 7b parameter Mistral model. 
 
