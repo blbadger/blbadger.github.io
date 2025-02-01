@@ -496,7 +496,7 @@ The sampling procedure may be performed in a number of different ways, but the p
 ```python
 class RetrievalDataset(torch.utils.data.Dataset):
 
-	def __init__(self, text_tokens, summary_tokens, batch_size=32, replace=False):
+	def __init__(self, text_tokens, summary_tokens, batch_size=64, replace=False):
 		self.summary_tokens = summary_tokens
 		self.text_tokens = text_tokens
 		self.context_length = len(summary_tokens[0])
@@ -514,16 +514,17 @@ class RetrievalDataset(torch.utils.data.Dataset):
 		input[1:] = self.text_tokens[indices]
 		target_index = random.randint(1, self.batch_size-1) # random index to put target embedding
 		matching_target = self.text_tokens[idx] # target the query matches
+		#print (matching_target, self.summary_tokens[idx])
 		input[target_index] = matching_target
-		labels = torch.tensor(target_index-1, dtype=torch.long)
-		retrieval_dict = {'input_ids': input.to(torch.long), 'matching_index': labels}
+		labels = torch.tensor(target_index, dtype=torch.long)
+		retrieval_dict = {'input_ids': input.to(torch.long), 'matching_index': labels} # results in p b t shape upon load
 		return retrieval_dict
 
 	def __len__(self):
 		return len(self.summary_tokens)
 ```
 
-Noise-contrastive estimation loss itself implemented as follows:
+Noise-contrastive estimation loss itself implemented in a batchwise mannar as follows:
 
 ```python
 def infoNCEloss(output, matching_index=None, embedding_index=-2):
@@ -586,15 +587,13 @@ class RetrievalTransformer(nn.Module):
 		return loss, model_output
 ```
 
-For both masked mixer and transformer, we pretrain on models that are exposed to left-padded inputs in order to be able to take the last token's hidden layer for infoNCE loss.
+For both masked mixer and transformer, we pretrain on models that are exposed to left-padded inputs in order to be able to take the last token's hidden layer for infoNCE loss. A modification to our loss function allows one to pretrain on right-padded inputs and then extract the last non-pad token embedding rather than the last (or second-to-last) token embedding and proceed with NCE calculation.
 
-which when applied to the Fineweb results in extremely fast convergence, usually in under half and hour and within a dozen epochs of a 200k-sized retrieval dataset. Using this approach, we don't even have a fifth of the dataset pass through the model in that timeframe. 
+As for the direct embedding [training method](https://arxiv.org/abs/2409.01482) detailed previously, InfoNCE results in very fast convergence in the training set for summary-to-passage retrieval of Fineweb text excerpts. This is somewhat surprising as it is common in the literature to see batch sizes far larger than the ones we use here, for example the Mistral e5 [paper](https://arxiv.org/pdf/2401.00368) describing the retrieval training process as using batches of size 2048 requiring 32 V100s (presumably 32GB vRAM each) for LoRA training of the 7b parameter Mistral model. 
 
-This result is not particularly surprising being that it is well known how difficult it is to train using noise contrastive methods (CLIP, infoNCE, etc) using small batch sizes: standards batch sizes used in the literature are a hundred to a thousand times larger than ours, with the Mistral e5 [paper](https://arxiv.org/pdf/2401.00368) describing the retrieval process as using batches of size 2048 requiring 32 V100s for LoRA training of the 7b parameter Mistral model. 
+The two major advantages of InfoNCE over direct embedding model training are as follows: firstly training to generate embeddings that can be compared by a simple operation like cosine distance allows one to 'cache' many embeddings by performing batched forward passes of the target text segments before inference, before looking up the target embeddings when one performs the forward pass on the query (followed by cosine distance computation). The second becomes apparent after training many retrieval models: direct embedding training tends to overfit the retrieval training dataset, whereas InfoNCE typically does not.
 
-It should be noted just how much faster the optimized retrieval model training method is than a standard infoNCE approach is. One way to look at this is to see how many total samples the retrieval model is able to train per second, irregardless of whether these are positive matches or negatives. By this approach we can train constrasive 4 GPUs, each taking around 5 steps per second on batch sizes of 32 which gives us 640 samples per second. This is a staggeringly small amount compared to the throughput of the optimized retrieval training algorithm, which for each of 4 GPUs can use 128 embeddings per sample and 128 samples per GPU and 4 passes per second for a total of 262,144 samples per second. The sole benefit of using the standard infoNCE training algorithm is that forward passes during inference can be 'cached', meaning that one can obtain embeddings of corpora segments ahead of time and only needs to perform a forward pass on the query input followed by matrix multiplication. 
-
-To conclude, we find that noise constrastive estimation -based training of model embeddings are not feasible for retrieval, given a limited amount of compute and GPU memory. But for larger compute budgets, it is dubious whether this tmethod of training really endows a CLM-pretrained language model with any significant increase in retrieval ability: the [e5 Mistral](https://arxiv.org/pdf/2401.00368) paper found that contrastive noise esimation retrieval training was beneficial for a model that received a relatively small amount of CLM pretraining (XLM-R) but not for a model that was more extensively pre-trained (Mistral 7b). These results together with our investigations suggest that constrastive noise estimation-based retrieval training is unsuitable for small batch sizes, dubiously effective for larger ones, and several orders of magnitude less efficient (in terms of training throughput) than mixer-based retrieval model training outlined [here](https://arxiv.org/pdf/2409.01482). 
+That said, it should be noted just how much faster the optimized retrieval model training method is than a infoNCE approach is. One way to look at this is to see how many total samples the retrieval model is able to train per second, irregardless of whether these are positive matches or negatives. By this approach we can train constrasive 4 GPUs, each taking around 5 steps per second on batch sizes of 32 which gives us 640 samples per second. This is a staggeringly small amount compared to the throughput of the optimized retrieval training algorithm, which for each of 4 GPUs can use 128 embeddings per sample and 128 samples per GPU and 4 passes per second for a total of 262,144 samples per second. The sole benefit of using the standard infoNCE training algorithm is that forward passes during inference can be 'cached', meaning that one can obtain embeddings of corpora segments ahead of time and only needs to perform a forward pass on the query input followed by matrix multiplication. 
 
 ### Representation Accuracy
 
