@@ -438,7 +438,7 @@ As expected, there is nearly complete parity in training efficiency for the mask
 
 ![fineweb_loss](/deep-learning/mixer_vs_llamacompletion.png)
 
-### Fineweb Retrieval
+### Fineweb Retrieval via Direct Embeddings
 
 We have seen that masked mixers are far more efficient learners than transformers for tasks requiring approximately bijective functions, whereas these models are somehwat less efficient for learning tasks requiring injective functions.  In [Part I](https://blbadger.github.io/smaller-lms.html) it was observed that summary-story retrieval on TinyStories, a task requiring an approximately bijective mapping, is much easier for a masked mixer to learn than a transformer. Furthermore, embeddings from masked mixers provide far better trained retrieval model performance than embeddings from transformers, providing evidence for the idea that attention is somewhat unsuitable to the task of language retrieval.
 
@@ -455,6 +455,8 @@ It is interesting to consider what happens when we try a llama model with many m
 | mixer  | 0.28  |  0.58 | 0.78  | 0.88  | 1.20  |
 | llama h=4 | 0.55  | 1.24  |  1.76 | 1.84  | 6.93  |
 | llama h=32  | 0.61  | 1.19  | 1.59  |  1.88 | 6.93  |
+
+### Masked Mixers are better for InfoNCE-trained retrieval
 
 The primary downside to the retrieval training method detailed in [this work](https://arxiv.org/pdf/2409.01482), is the test time compute requirement: we cannot save embeddings and simply perform matrix multiplication as a forward pass is required each time a retrieval is made. We can also observe which models are most suitable for direct training, that is, modifying the CLM-trained base model itself for the purposes of retrieval. This is often achieved by minimizing a variant of noise-contrastive estimation, which is defined as follows: for a text excerpt $d^+$ with its matching summary $q^+$ with other non-matching text excerpts $n_i \in N$, we minimize
 
