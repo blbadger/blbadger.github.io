@@ -605,13 +605,14 @@ This difficulty is borne out when we compare the accuracy achieved by the top-1 
 
 The training method proceeds as follows: first the mixer or Llama model is initialized with random weights and then pretrained on the `Finemath 4+` dataset, with context windows of length 512. Note that the mixer has essentially fixed positional information, so we train that model using left padding whereas the transformer does not and can be trained with either left or right padding. Pretraining occurs for 200k steps, requiring approximately 20 hours to complete via 4x V100 GPUs. Once pretraining is completed, we then continue training on the first 180k retrieval samples via batched infoNCE loss, holding out the last 20k as our test dataset, using batches of size 32 (ie matching one query to 31 potential target text segments with one positive per group) and left-padded inputs.  Typically most target inputs do not receive pad tokens, but the query is mostly pad tokens due to its brevity. This retrieval training proceeds for one epoch (45k steps on 4x V100s) and requires around two and a half hours. As masked mixers with identical $d_m$ to transformers are much more memory- and compute-efficient to train for these context windows, we increase the number of masked mixer layers to $32$ rather than the usual $16$.
 
-We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for $d_m=512$ models are shown below along with the $d_m=4096$ e5 Mistral Instruct for reference:
+We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for the models trained using these methods as well as the near-SOTA e5 Mistral instruct (7b) are as follows:
 
 | Model        | Accuracy (%) |
 | --------     | ------- |
-| Transformer (Llama)  | 70.4    |
-| e5 Mistral (7b) | 81.3     |
-| Masked Mixer    | **84.6**  |
+| Transformer (Llama)  $d_m=512$   | 70.4 |
+| e5 Mistral (7b), $d_m=4096$ | 81.3   |
+| Masked Mixer, $d_m=512$    | 84.6  |
+| Masked Mixer, $d_m=1024$ | **86.0** |
 
 To gain an appreciation for how remarkable these results are, it is helpful to note the scale of the computational resources with which each model is trained. It is unknown exactly how many GPUs and for how long the Mistral 7b model was CLM pretrained, or even whether this model was indeed trained from scratch without weight transfer, but interpolating this model's performance with others for which these values are known (particularly Llama 2 (8b) which required [184320 A100 GPU-hours](https://arxiv.org/pdf/2307.09288) and Llama 3.1 (8b) which required [1.46M H100 hours](https://huggingface.co/meta-llama/Llama-3.1-8B) suggests that the 7b Mistral model would require around 500k A100 GPU-hours as a rough ballpark figure. Assuming an equivalence of 1.5* V100 = A100 (which is fairly close for 16/32 bit mixed precision training) we get 750k V100 GPU-hours, which is approximately 10000x the amount of compute that the transformer and masked mixer was pretrained with (80 hours). The e5 Mistral Instruct model was retrieval- trained with 32 V100s (presumably 32GB each) over days, which is between 100x and 1000x the compute we used here for retrieval training.
 
