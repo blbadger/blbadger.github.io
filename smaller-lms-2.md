@@ -624,10 +624,10 @@ It could be argued that this comparison between the e5 Mistral instruct and the 
 
 | Pretraining Dataset   | Accuracy (%) |
 | --------     | ------- |
-| `Fineweb-10BT`    | 69.0 |
+| `Fineweb-10BT`  | 69.0 |
 | `Finemath 4+` | **81.8**   |
 
-The counterargument for this is that the `Fineweb-10BT` is likely much smaller (by a factor of around 1000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text as a whole. 
+A counterargument for this is that the `Fineweb-10BT` is presumably much smaller (by a factor of around 1000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text in total. This means that the dataset used to train Mistral 7b likely contained as much if not more mathematical text than the `Finemath 4+` dataset, meaning that a comparison with the `Fineweb-10BT` is not particularly germane. Another argument on the side of the masked mixer is that the retrieval training methods are more or less completely non-optimized: for example if we extend the InfoNCE training to 2 epochs instead of one, we find that the `Fineweb-10BT`-pretrained mixer's test accuracy increases slightly to 71.3% (and training loss end up very close to the origin). 
 
 ### Representation Accuracy
 
