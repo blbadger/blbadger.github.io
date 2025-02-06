@@ -605,12 +605,12 @@ This difficulty is borne out when we compare the accuracy achieved by the top-1 
 
 The training method proceeds as follows: first the mixer or Llama model is initialized with random weights and then pretrained on the `Finemath 4+` dataset, with context windows of length 512. Note that the mixer has essentially fixed positional information, so we train that model using left padding whereas the transformer does not and can be trained with either left or right padding. Pretraining occurs for 200k steps, requiring approximately 20 hours to complete via 4x V100 GPUs. Once pretraining is completed, we then continue training on the first 180k retrieval samples via batched infoNCE loss, holding out the last 20k as our test dataset, using batches of size 32 (ie matching one query to 31 potential target text segments with one positive per group) and left-padded inputs.  Typically most target inputs do not receive pad tokens, but the query is mostly pad tokens due to its brevity. This retrieval training proceeds for one epoch (45k steps on 4x V100s) and requires around two and a half hours. As masked mixers with identical $d_m$ to transformers are much more memory- and compute-efficient to train for these context windows, we increase the number of masked mixer layers to $32$ rather than the usual $16$.
 
-We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for the models pretrained on the `Finemath 4+` dataset followed by InfoNCE training on the retrieval dataset (train split) and for reference the near-SOTA e5 Mistral instruct (7b with $d_m=4096$)
+We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for the models pretrained on the `Finemath 4+` dataset followed by InfoNCE training on the retrieval dataset (train split) and for reference the near-SOTA e5 Mistral instruct (7b with $d_m=4096$, quantized to 4 bits per parameter which was confirmed to not affect retrieval accuracy on a subset of the test set)
 
 | Model        | Accuracy (%) |
 | --------     | ------- |
 | Transformer, $d_m=512$    | 70.4 |
-| e5 Mistral (7b), $d_m=1024$ | 81.2   |
+| e5 Mistral (7b), $d_m=4096$ | 81.2   |
 | Masked Mixer, $d_m=512$    | 84.6  |
 | Masked Mixer, $d_m=1024$ | **86.0** |
 
@@ -620,13 +620,14 @@ This is particularly notable because the transformer model in the above table re
 
 What is perhaps more remarkable here is that the masked mixers also substantially outperform a transformer model that approximates the current state of the art in the retrieval field. To gain an appreciation for why this is, it is helpful to note the scale of the computational resources with which each model is trained. It is unknown exactly how many GPUs and for how long the Mistral 7b model was pretrained for causal language modeling, or even whether this model was indeed trained from scratch without weight transfer, but interpolating this model's performance with others for which data is available (particularly Llama 2 (8b) which required [184320 A100 GPU-hours](https://arxiv.org/pdf/2307.09288) and Llama 3.1 (8b) which required [1.46M H100 hours](https://huggingface.co/meta-llama/Llama-3.1-8B) suggests that the 7b Mistral model would require at least 500k A100 GPU-hours as a rough ballpark figure. Assuming an equivalence of 1.5* V100 = A100 (which is fairly close for 16/32 bit mixed precision training) we get 750k V100 GPU-hours, which is approximately 10000x the amount of compute that the transformer and masked mixer was pretrained with (80 GPU-hours). The e5 Mistral Instruct model was then retrieval-trained with 32 V100s (presumably 32GB each due to the memory requirements of the specified batch) over days, which is between 100x and 1000x the compute we used here for the retrieval training process.
 
-It could be argued that this comparison between the e5 Mistral instruct and the mixer models trained here is unfair, as the mixers and transformer were pretrained 
+It could be argued that this comparison between the e5 Mistral instruct and the mixer models trained here is unfair, but close examination reveals that this claim could be made on either side. On the one hand, mixers and the llama style  transformer were pretrained on the Finemath dataset whereas the e5 Mistral instruct model was probably not trained on this mix of word problems (although it was almost certainly trained on a fair amount of mathematical data). CLM pretraining on I.I.D. data to the retrieval targets (or even the retrieval targets themselves) does indeed increase retrieval accuracy, as can be seen for a $d_m=512, n_l=16$ masked mixer's Finemath retrieval scores when two different pretraining datasets are applied:
 
 | Pretraining Dataset   | Accuracy (%) |
 | --------     | ------- |
 | `Fineweb-10BT`    | 69.0 |
 | `Finemath 4+` | **81.8**   |
 
+The counterargument for this is that the `Fineweb-10BT` is likely much smaller (by a factor of around 1000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text as a whole. 
 
 ### Representation Accuracy
 
@@ -673,19 +674,6 @@ For this work, one may wonder if TinyStories is in fact a decent toy model datas
 3. Unsurprisingly the Fineweb is much better-modeled by deeper models than were optimal for TinyStories (16 versus 8 layers), but otherwise the optimal model architectures are quite similar ($d_m=1024$ mixers being similar to $d_m=512$ transformers for learning efficiency, similar $\eta$ values for the optimizer etc.)
 4. One notable difference is that transformer embedding models (for retrieval) trained on `fineweb-edu 10BT` are often benefitted by initializing a larger $n_h$ than the model was trained with, which is the opposite for the TinyStories.
 5. Also as expected, the retrieval model training process is much faster for the Fineweb, often requiring fewer than 20 epochs for optimal evaluation loss compared to 100 or more for embedding models trained on TinyStories.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
