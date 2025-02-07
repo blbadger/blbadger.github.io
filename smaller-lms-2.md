@@ -605,12 +605,12 @@ This difficulty is borne out when we compare the accuracy achieved by the top-1 
 
 The training method proceeds as follows: first the mixer or Llama model is initialized with random weights and then pretrained on the `Finemath 4+` dataset, with context windows of length 512. Note that the mixer has essentially fixed positional information, so we train that model using left padding whereas the transformer does not and can be trained with either left or right padding. Pretraining occurs for 200k steps, requiring approximately 20 hours to complete via 4x V100 GPUs. Once pretraining is completed, we then continue training on the first 180k retrieval samples via batched infoNCE loss, holding out the last 20k as our test dataset, using batches of size 32 (ie matching one query to 31 potential target text segments with one positive per group) and left-padded inputs.  Typically most target inputs do not receive pad tokens, but the query is mostly pad tokens due to its brevity. This retrieval training proceeds for one epoch (45k steps on 4x V100s) and requires around two and a half hours. As masked mixers with identical $d_m$ to transformers are much more memory- and compute-efficient to train for these context windows, we increase the number of masked mixer layers to $32$ rather than the usual $16$.
 
-We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for the models pretrained on the `Finemath 4+` dataset followed by InfoNCE training on the retrieval dataset (train split) and for reference the near-SOTA e5 Mistral instruct (7b with $d_m=4096$, quantized to 4 bits per parameter which was confirmed to not affect retrieval accuracy on a subset of the test set)
+We then measure the top-1 accuracy of the hold-out test dataset, where neither the query nor target sequences were exposed during the infoNCE training procedure. The results for the models pretrained on the `Finemath 4+` dataset followed by InfoNCE training on the retrieval dataset (train split) and for reference the near-SOTA e5 Mistral instruct (7 billion parameters) quantized to 4 bits per parameter which was confirmed to not affect retrieval accuracy on a subset of the test set. It should be noted that this dataset is left-padded to facilitate efficient training on second-to-last token outputs, which is not idea orientation for e5 Mistral. 
 
 | Model        | Accuracy (%) |
 | --------     | ------- |
 | Transformer, $d_m=512$    | 70.4 |
-| e5 Mistral (7b), $d_m=4096$ | 81.2   |
+| e5 Mistral (7b), $d_m=4096$ | 81.2  |
 | Masked Mixer, $d_m=512$    | 84.6  |
 | Masked Mixer, $d_m=1024$ | **86.0** |
 
@@ -625,9 +625,11 @@ It could be argued that this comparison between the e5 Mistral instruct and the 
 | Pretraining Dataset   | Accuracy (%) |
 | --------     | ------- |
 | `Fineweb-10BT`  | 69.0 |
-| `Finemath 4+` | **81.8**   |
+| `Finemath 4+` | **81.8** |
 
-A counterargument for this is that the `Fineweb-10BT` is presumably much smaller (by a factor of around 1000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text in total. This means that the dataset used to train Mistral 7b likely contained as much if not more mathematical text than the `Finemath 4+` dataset, meaning that a comparison with the `Fineweb-10BT` is not particularly germane. Another argument on the side of the masked mixer is that the retrieval training methods are more or less completely non-optimized: for example if we extend the InfoNCE training to 2 epochs instead of one, we find that the `Fineweb-10BT`-pretrained mixer's test accuracy increases slightly to 71.3% (and training loss end up very close to the origin). 
+A counterargument for this is that the `Fineweb-10BT` dataset is presumably much smaller (by a factor of around 1000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text in total. This means that the dataset used to train Mistral 7b likely contained as much if not more mathematical text than the `Finemath 4+` dataset, meaning that a comparison with the `Fineweb-10BT` is not particularly germane. Another argument on the side of the masked mixer is that the retrieval training methods are more or less completely non-optimized: for example if we extend the InfoNCE training to 2 epochs instead of one, we find that the `Fineweb-10BT`-pretrained mixer's test accuracy increases slightly to 71.3% (and training loss end up very close to the origin). 
+
+A stronger argument to be made is that the e5 Mistral instruct model is likely poorly suited to the left-padded inputs we are giving for the `Finemath 4+` target passages (note that the queries are not padded until they are formatted for an inference batch using e5 Mistral instruct utilities). We can test to see if this is the case by using right padding for the `Finemath 4+` target passages and repeating the benchmarking run, and find that indeed e5 Mistral Instruct performs substantially better with right-padded inputs and achieves a test set accuracy of around 91%. 
 
 ### Representation Accuracy
 
