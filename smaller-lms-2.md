@@ -611,12 +611,12 @@ We then measure the top-1 accuracy of the hold-out test dataset, where neither t
 
 | Model        | Top-1 Accuracy (%) |
 | --------     | ------- |
-| Transformer, $d_m=512$    | 70.4 |
+| Transformer, $d_m=512$    | 70.4 | 
 | Masked Mixer, $d_m=512$  | 82.1 |
-| Masked Mixer, $d_m=512, n_l=32$    | 84.6  |
+| Masked Mixer, $d_m=512, n_l=32$  | 84.6  |
 | Masked Mixer, $d_m=1024$ | 86.0 |
 | e5 Mistral Instruct | 95.1 |
-| Masked Mixer, $d_m=1024$, n=400k | **97.8** |
+| Masked Mixer, $d_m=1024$, n=400k | **98.2** |
 
 The first conclusion we can draw here is that the masked mixer is once again a substantially more accurate retrieval model compared with the transformer assuming the two have undergone identical training (in this case, pretraining on one dataset with fixed number of steps with model architectures variable to keep vRAM constant, followed by InfoNCE retrieval training using equivalent steps). This suggests that not only is a CLM-trained mixer's embedding more suitable to retrieval (as we saw in the last section), but that the masked mixer itself is more suitable to retrieval training via a contrastive loss method such as InfoNCE.
 
