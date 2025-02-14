@@ -261,6 +261,13 @@ There are a few notable observations from the above figure, the primary being th
 
 From earlier investigations we hypothesized that the transformer is a somewhat more efficient causal language model than the masked mixer because next token prediction is fundamentally a many-to-one mapping: we have many previous tokens and only get logits for one next token. This mapping mirrors the intrinsic properties of the transformer's attention operation, where information from most inputs is removed during the forward pass. If this were the case then one would expect for next token prediction with fewer previous tokens (which is closer to a bijective mapping) to favor the masked mixer, and this is precisely what is found for $n_{ctx}=32$ or even $n_{ctx}=128$.
 
+### Masked Mixers outperform Transformer implementations
+
+[Elsewhere](https://blbadger.github.io/smaller-lms.html) it was found that masked mixers outperformed early transformer implementations for causal language modeling of a small and relatively simple langauge dataset (TinyStories). It may be wondered whether or not this is also the case for a much larger and more complex dataset such as the Fineweb. 
+
+![fineweb gpt](/deep-learning/gpt_versus_mixer.png)
+
+
 ### Bidirectional Language Modeling
 
 We have seen that attention appears to confer benefits to next token prediction, and theoretically this can be expected due to the many-to-one map inherent in this task as well as the inherent noise in real language (not every word necessarily follows from the last, but may be chosen at will). It may be wondered which of these two has a greater influence on the abilities of language models, a question that in this case may be rephrased as follows: is it the inherent noise present in language that is most responsible for the greater efficiency of transformers versus mixers in CLM tasks, or else is it simply the type of mapping performed which is many-to-one?
