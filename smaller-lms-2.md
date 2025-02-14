@@ -261,12 +261,15 @@ There are a few notable observations from the above figure, the primary being th
 
 From earlier investigations we hypothesized that the transformer is a somewhat more efficient causal language model than the masked mixer because next token prediction is fundamentally a many-to-one mapping: we have many previous tokens and only get logits for one next token. This mapping mirrors the intrinsic properties of the transformer's attention operation, where information from most inputs is removed during the forward pass. If this were the case then one would expect for next token prediction with fewer previous tokens (which is closer to a bijective mapping) to favor the masked mixer, and this is precisely what is found for $n_{ctx}=32$ or even $n_{ctx}=128$.
 
-### Masked Mixers outperform Transformer implementations
+### Masked Mixers outperform an early CLM Transformer on the Fineweb
 
-[Elsewhere](https://blbadger.github.io/smaller-lms.html) it was found that masked mixers outperformed early transformer implementations for causal language modeling of a small and relatively simple langauge dataset (TinyStories). It may be wondered whether or not this is also the case for a much larger and more complex dataset such as the Fineweb. 
+[Elsewhere](https://blbadger.github.io/smaller-lms.html) it was found that masked mixers outperformed early transformer implementations for causal language modeling of a small and relatively simple langauge dataset (TinyStories). It may be wondered whether or not this is also the case for a much larger and more complex dataset such as the Fineweb, or whether an early transformer exhibits superior scaling properties compared to the masked mixer.
+
+We can investigate this question by training a GPT-1 style transformer model using the same tokenizer, loss, and dataset as the masked mixer. We performed hyperparameter optimization and architectural tuning on a smaller dataset before applying GPT to this large dataset to ensure that the comparison between early transformer and masked mixer is valid. The results for the default context window $n_{ctx}=512$ with the largest batch sizes that fit in GPU memory (16GB x4 GPUs) are as follows:
 
 ![fineweb gpt](/deep-learning/gpt_versus_mixer.png)
 
+From this we can clearly see that the masked mixer is more efficient for causal langauge model training than an early CLM-style transformer for a large and diverse dataset, suggesting that early transformer implementations do not in fact scale to larger datasets in superior ways to masked mixers.
 
 ### Bidirectional Language Modeling
 
