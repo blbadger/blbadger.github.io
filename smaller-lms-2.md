@@ -625,7 +625,8 @@ We then measure the top-1 accuracy of the hold-out test dataset, where neither t
 | Masked Mixer, $d_m=512$  | 82.1 |
 | Masked Mixer, $d_m=512, n_l=32$  | 84.6  |
 | Masked Mixer, $d_m=1024$ | 86.0 |
-| e5 Mistral Instruct | 95.1 |
+| Transformer, $d_m=512$, n=400k | 95.0  |
+| e5 Mistral Instruct, $d_m=4096$ | 95.1 |
 | Masked Mixer, $d_m=1024$, n=400k | **98.2** |
 
 The first conclusion we can draw here is that the masked mixer is once again a substantially more accurate retrieval model compared with the transformer assuming the two have undergone identical training (in this case, pretraining on one dataset with fixed number of steps with model architectures variable to keep vRAM constant, followed by InfoNCE retrieval training using equivalent steps). This suggests that not only is a CLM-trained mixer's embedding more suitable to retrieval (as we saw in the last section), but that the masked mixer itself is more suitable to retrieval training via a contrastive loss method such as InfoNCE.
@@ -633,12 +634,6 @@ The first conclusion we can draw here is that the masked mixer is once again a s
 This is particularly notable because the transformer model in the above table reaches lower train/eval loss (CEL values of 1.36, 1.39) than either the $d_m=512, n_l=32$ mixer (CELs of 1.62 and 1.65, respectively) or the $d_m=1024, n_l=16$ model (CELs of 1.48, 1.53). It has been shown in the literature that models with better representations of their inputs w.r.t. causal langauge modeling (ie next token prediction) usually also exhibit better retrieval properties, so the finding that masked mixers substantially outperform the transformer model even without matching the CLM loss suggests that the mixers would outperform the transformer by an even wider margin if pretraining were continued until these models matched the CEL values of the transformer.
 
 What is perhaps more remarkable here is that the masked mixer (with a bit more retrieval training data) also substantially outperforms a transformer model that approximates the current state of the art in the retrieval field, or at least the state-of-the-art when this project was started (early 2024). To gain an appreciation for what this means, it is helpful to note the scale of the computational resources with which each model is trained. It is unknown exactly how many GPUs and for how long the Mistral 7b model was pretrained for causal language modeling, or even whether this model was indeed trained from scratch without weight transfer (ie from Llama 1), but interpolating this model's performance with others for which data is available such as Llama 2 (8b) which required [184320 A100 GPU-hours](https://arxiv.org/pdf/2307.09288) and Llama 3.1 (8b) which required [1.46M H100 hours](https://huggingface.co/meta-llama/Llama-3.1-8B) suggests that the 7b Mistral model would require at least 500k A100 GPU-hours for pretraining, as a rough ballpark figure. Assuming an equivalence of 1.5 * V100 = A100 (which is empirically a fairly accurate value for for 16/32 bit mixed precision training) we get 750k V100 GPU-hours, which is approximately 10,000x the amount of compute that the transformer and masked mixer was pretrained with (80 GPU-hours). The e5 Mistral Instruct model was then retrieval-trained with 32 V100s (presumably 32GB each due to the memory requirements of the specified batch) over days, which is between 100x and 1,000x the compute we used here for the retrieval training process.
-
-| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8132 |
-| ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
-| e5 Mistral | 95.1 | 93.3 | 90.9 | 88.5 | 85.6 | 82.2 | 78.4 | 73.5 | 68.7 | 
-| Masked Mixer | 98.2 | 97.2 | 95.8 | 93.4 | 90.2 | 86.5 | 81.7 | 76.6 | 70.9 |
-
 
 These numbers are purely illustrative, as a thorough measurement of just how much more efficient masked mixers are than transformers for retrieval would require an in-depth scaling study. We leave this to future work, and only comment on the ability to train a masked mixer to surpass a near-SOTA retrieval model's accuracy for a task both are trained for using a miniscule fraction of the compute the latter required.
 
@@ -649,7 +644,16 @@ It could be argued that this comparison between the e5 Mistral instruct and the 
 | `Fineweb-10BT`  | 69.0 |
 | `Finemath 4+` | **81.8** |
 
-A counterargument for this is that the `Fineweb-10BT` dataset is presumably much smaller (by a factor of perhaps 1,000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text in total. This means that the dataset used to train Mistral 7b likely contained as much if not more mathematical text than the `Finemath 4+` dataset, meaning that a comparison with the `Fineweb-10BT` is not particularly germane. Another argument on the side of the masked mixer is that the retrieval training methods are more or less completely non-optimized: for example if we extend the InfoNCE training to 2 epochs instead of one, we find that the `Fineweb-10BT`-pretrained mixer's test accuracy increases slightly to 71.3% (and training loss end up very close to the origin). 
+A counterargument for this is that the `Fineweb-10BT` dataset is presumably much smaller (by a factor of perhaps 1,000x) than the dataset used to train Mistral 7b, and would contain far less mathematical text in total. This means that the dataset used to train Mistral 7b likely contained as much if not more mathematical text than the `Finemath 4+` dataset, meaning that a comparison with the `Fineweb-10BT` is not particularly germane. Another argument on the side of the masked mixer is that the retrieval training methods are more or less completely non-optimized: for example if we extend the InfoNCE training to 2 epochs instead of one, we find that the `Fineweb-10BT`-pretrained mixer's test accuracy increases slightly to 71.3% (and training loss end up very close to the origin). A much larger performance gain is obtained by simply training on much more retrieval data (see the table before the last for evidence), and this likely accounts for a portion of the performance gain of the small mixer and transformer compared to e5 Mistral.
+
+From the data presented above, it is evident that the masked mixer is much more effective for retrieval when trained on the 200k-sized synthetic retrieval dataset (180k training and 20k evaluation samples to be precise). It may be wondered whether a transformer trained on the larger 400k-size retrieval datset is also capable of outperforming the e5 Mistral model on this datset's evaluation samples, as would be the case if most of the benefit to 
+
+| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8132 |
+| ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
+| Transformer | 95.0 | 92.3 | 88.9 | 84.5 | 79.1 | 72.6 | 65.7 | 57.6 | 50.4 |
+| e5 Mistral | 95.1 | 93.3 | 90.9 | 88.5 | 85.6 | 82.2 | 78.4 | 73.5 | 68.7 | 
+| Masked Mixer | 98.2 | 97.2 | 95.8 | 93.4 | 90.2 | 86.5 | 81.7 | 76.6 | 70.9 |
+
 
 ### Representation Accuracy
 
