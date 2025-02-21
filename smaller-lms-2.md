@@ -253,7 +253,7 @@ It should be noted that using only 4 heads is somewhat unusual in training model
 
 ![fineweb heads](/deep-learning/fineweb_heads.png)
 
-Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc). Here all model are $n_l=16$ layers except for the $n_{ctx}=1024$, which are $n_l=8$.
+Loss curves during masked mixer and transformer training on `fineweb-edu 10BT` are given below, where each training run requires approximately 20 hours on the 4x V100 (batch sizes are modified to maximize memory usage such that $n_{ctx}=32$ samples are trained with a total batch size of $4* 512 = 2048$, $n_{ctx}=128$ with batches of size $4* 128 = 512$, and $n_{ctx}=512$ with batches of size $4*32=128$ etc). Here all model are $n_l=16$ layers.
 
 ![fineweb_loss](/deep-learning/fineweb_clm_loss.png)
 
