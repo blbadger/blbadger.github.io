@@ -431,8 +431,9 @@ class MTPTransformer(nn.Module):
 		return loss, output
 ```
 
-We can initialize a two-token-ahead model for training via `model = MTPTransformer(model, n_tokens=2)` where the `model` is a `LlamaForCausalLM` object, but note that a masked mixer base model can be substituted as well.
+We can initialize a two-token-ahead model for training via `model = MTPTransformer(model, n_tokens=2)` where the `model` is a `LlamaForCausalLM` object, but note that a masked mixer base model can be substituted as well. The results of two-token-ahead training are shown below for $n_{ctx}=512$, and show that as expected the efficiency gap between masked mixer and transformer has decreased relative to the one-token-ahead training (see above).
 
+![fineweb_loss](/deep-learning/mtp_2.png)
 
 ### One Step Language Completion Efficiency
 
@@ -442,7 +443,7 @@ To elaborate, the task is to generate all the completion tokens in a text segmen
 
 Perhaps the most efficient way to accomplish this would be to change the causal language masking from lower triangular to block form (where the weights from all prediction tokens are masked, and weights from input to outputs are bidirectional). This would require substantial changes to the causal language masking implementation for transformers, however, but there is a much simpler method: retain causal langauge masking but mask the hidden layers of prediction tokens at a certain layer of the model. We use an encoder-decoder model in which the masking occurs half-way through the models layers (at layer 8 or a 16-layer model to be precise) paired with loss masking on the inputs. This can easily be applied to both masked mixers and llama-style transformers, and for clarity here is a depiction of this process:
 
-![fineweb_loss](/deep-learning/completion_model.png)
+![completion model architecture](/deep-learning/completion_model.png)
 
 As expected, there is nearly complete parity in training efficiency for the masked mixer and transformer when applied to this one-step completion paradigm for the `Fineweb-10BT` dataset. Note that both train relatively poorly: unsurprisingly, it turns out that attempting to predict many tokens at once in one step is much more difficult than predicting one token at a time.
 
@@ -642,6 +643,7 @@ It could be argued that this comparison between the e5 Mistral instruct and the 
 | Pretraining Dataset   | Accuracy (%) |
 | --------     | ------- |
 | `Fineweb-10BT`, 1 epoch  | 69.0 |
+| `Fineweb-10BT` autoencoder, 1 epoch | 70.7 |
 | `Fineweb-10BT`, 2 epochs | 71.3 |
 | `Finemath 4+`, 1 epoch | **81.8** |
 
