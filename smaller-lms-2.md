@@ -651,12 +651,30 @@ A counterargument for this is that the `Fineweb-10BT` dataset is presumably much
 
 From the data presented above, it is evident that the masked mixer is much more effective for retrieval when trained on the 200k-sized synthetic retrieval dataset (180k training and 20k evaluation samples to be precise). It may be wondered whether a transformer trained on the larger 400k-size retrieval datset is also capable of outperforming the e5 Mistral model on this datset's evaluation samples, as would be the case if most of the benefit to 
 
-| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8132 |
+| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 |
 | ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
 | Transformer | 95.0 | 92.3 | 88.9 | 84.5 | 79.1 | 72.6 | 65.7 | 57.6 | 50.4 |
 | e5 Mistral | 95.1 | 93.3 | 90.9 | 88.5 | 85.6 | 82.2 | 78.4 | 73.5 | 68.8 | 
 | Masked Mixer | 98.2 | 97.2 | 95.8 | 93.4 | 90.2 | 86.5 | 81.7 | 76.6 | 70.6 |
 
+The substantial increase in $n=32$ sample size retrieval accuracy for the transformer with the increase in dataset size (from 180k to 380k samples) makes one wonder whether this model would become more accurate than the e5 Mistral model if it were to be trained on many more samples, even if it never matches the accuracy of the masked mixer trained on the same data. We can address this question by doubleing the InfoNCE synthetic retrieval training dataset size (400k to 800k total samples, or 380k to 780k training samples) and training each model. The accuracy on the hold-out test set for transformer and masked mixer are below, with e5 Mistral included for reference. 
+
+| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 |
+| ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
+| Transformer | 94.9 | 92.1 | 89.0 | 84.6 | 79.5 | 72.8 | 65.9 | 58.8 | 51.1 |
+| e5 Mistral | 95.1 | 93.3 | 90.9 | 88.5 | 85.6 | 82.2 | 78.4 | 73.5 | 68.8 | 
+| Masked Mixer | 98.6 | 97.8 | 96.5 | 94.5 | 91.7 | 88.5 | 83.8 | 79.0 | 73.9 |
+
+We can draw a coule of noteworthy of observations from this experiments. Firstly these results suggest that it would require a dataset of truly gargantuam proportions for the small transformer to match the e5 Mistral Instruct model's large-sample performance: assuming logarithmic growth in accuracy per sample which we can approximate linearly using the above values, we would require a dataset of size $s=400000 *2^\frac{68.8-50.4}{51.1-50.4}\approx 2^26.3 > 26 * 10^12$ which is clearly an infeasibly large dataset as each sample in this dataset is a pair of sequences. Secondly, The addition of more data is more beneficial to the masked mixer than transformer, with the former model increasing its 8192-size retrieval accuracy by a factor of 4.7x relative to the increase in the transformer upon dataset doubling. 
+
+### Autoencoders may also be used for effective retrieval
+
+Below are the results of the mixer and transformer autoencoder applied to the retrieval datset of size $s=400k$.
+
+| Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 |
+| ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
+| Transformer | 94.4 | 92.0 | 88.4 | 84.3 | 79.1 | 73.1 | 67.0 | 60.6 | 53.3 |
+| Masked Mixer| 97.1 | 95.4 | 93.1 | 90.0 | 86.3 | 82.1 | 76.7 | 70.7 | 64.5 |
 
 ### Representation Accuracy
 
