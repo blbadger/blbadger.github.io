@@ -668,7 +668,7 @@ The substantial increase in $n=32$ sample size retrieval accuracy for the transf
 We can draw a couple of noteworthy of observations from this experiments. Firstly these results suggest that it would require a dataset of gargauntuam proportions for the transformer to match the masked mixer's retrieval accuracy: this can be shown by making an assumption where perform a single linear extrapolation to esimate that the next dataset doubling will add $0.153$ to the accuracy value (as the first two doublings add accuracy differences of 31.6 and 2.2), and then ignore the exponential decay of this increase further and assume that all doublings will yield this value. Note that this assumption  almost certainly overestimates the accuracy at a given number of samples for this model. Even with this model, we require a dataset that is
 
 $$
-2^\frac{70.6-50.4}{0.153} \approx 2^{132} > 5 * 10^39
+2^\frac{70.6-50.4}{0.153} \approx 2^{132} > 5 * 10^{39}
 $$
 
 times as large as that for a masked mixer for the transformer to match the masked mixer's $s=8192$ accuracy at 400k training samples as an upper bound, which is clearly an infeasibly large number. Secondly, The addition of more data is more beneficial to the masked mixer than transformer, with the former model increasing its 8192-size retrieval accuracy by a factor of 1.5x relative to the increase in the transformer upon dataset size doubling. 
