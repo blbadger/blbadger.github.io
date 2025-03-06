@@ -661,11 +661,17 @@ The substantial increase in $n=32$ sample size retrieval accuracy for the transf
 
 | Model | $n=32$ | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 |
 | ---- | ---- | ----- | ----- | ----- | ----- | ---- | ---| ---- | ---- |
-| Transformer | 94.9 | 92.1 | 89.0 | 84.6 | 79.5 | 72.8 | 65.9 | 58.8 | 51.1 |
+| Transformer | 95.8 | 93.3 | 90.2 | 86.0 | 80.8 | 74.4 | 67.6 | 60.5 | 52.6 |
 | e5 Mistral | 95.1 | 93.3 | 90.9 | 88.5 | 85.6 | 82.2 | 78.4 | 73.5 | 68.8 | 
 | Masked Mixer | 98.6 | 97.8 | 96.5 | 94.5 | 91.7 | 88.5 | 83.8 | 79.0 | 73.9 |
 
-We can draw a coule of noteworthy of observations from this experiments. Firstly these results suggest that it would require a dataset of truly gargantuam proportions for the small transformer to match the e5 Mistral Instruct model's large-sample performance: assuming logarithmic growth in accuracy per sample which grows more slowly than a linear function, we would require a dataset of lower bound size $s=400000 * 2^\frac{68.8-50.4}{51.1-50.4} \approx 400000 * 2^{26.3} > 26 * 10^{12} $ which is clearly an infeasibly large dataset as each sample in this dataset is a pair of sequences. Similarly, we can estimate that one requires a dataset $2^\frac{70.6-50.4}{51.1-50.4} \approx 2^{28.9} > 5*10^8 $ as large as that for a masked mixer for the transformer to match the masked mixer's $s=8192$ accuracy. Secondly, The addition of more data is more beneficial to the masked mixer than transformer, with the former model increasing its 8192-size retrieval accuracy by a factor of 4.7x relative to the increase in the transformer upon dataset doubling. 
+We can draw a couple of noteworthy of observations from this experiments. Firstly these results suggest that it would require a very large dataset for the small transformer to match the masked mixer's retrieval accuracy: assuming logarithmic growth in accuracy per sample, we can estimate that one requires a dataset a factor of
+
+$$
+2.05^\frac{70.6-50.4}{52.6-50.4} \approx 2.05^{9.3} > 800
+$$
+
+times as large as that for a masked mixer for the transformer to match the masked mixer's $s=8192$ accuracy at 400k training samples. Secondly, The addition of more data is more beneficial to the masked mixer than transformer, with the former model increasing its 8192-size retrieval accuracy by a factor of 1.5x relative to the increase in the transformer upon dataset size doubling. 
 
 With this data, we can begin to answer the question of just how much more effective masked mixers are for retrieval compared to transformers. From the compute quantity estimation for e5 Mistral versus our masked mixer for this specific task, it could be claimed that the masked mixer 50,000x more compute efficient. From the dataset scaling results above, it could be claimed that the masked mixer is on the order of a trillion times more efficient with respect to the amount of data required for high large-context accuracy. These values are both very imprecise by nature but do give some appreciation for just how effective masked mixers are for retrieval compared to transformers.
 
