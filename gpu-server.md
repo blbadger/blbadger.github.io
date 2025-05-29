@@ -199,7 +199,7 @@ Now that the power supply had been sorted out (or so I thought) I went ahead and
 Launching my `distributed_mixer_trainer.py` module via `torch.distributed.launch` for DDP training via
 
 ```bash
--m torch.distributed.launch \
+$ python -m torch.distributed.launch \
   --nproc_per_node=4 \
   --nnodes=1 \
   distributed_mixer_trainer.py 
@@ -233,7 +233,11 @@ That said, once these tests were completed I connected the PSU current share pin
 
 I experienced difficult-to-pin-down training process hangs and freezes which manifested as `nv_queue` processes taking nearly all a CPU's compute followed by interrupt requests (`irq/57-nvidia`) that also hangs, leading to stalled GPU processes with high vRAM use. Close inspection reveals that these are associated with `nccl` communication problems, which means the GPUs are not communicating properly with each other or the CPU. I was able to solve this problem by simply tightening the screws that affix the GPUs to the SXM2 socket.
 
-As a final note, `python3 -m torch.distributed.launch` is a legacy DDP launcher, and I prefer `torchrun` as it is easier and slightly more performant to work with for this server.
+As a final note, `python3 -m torch.distributed.launch` is a legacy DDP launcher, and I prefer `torchrun` as it is easier and slightly more performant to work with for this server, e.g.
+
+```bash
+$ torchrun --nproc_per_node=4 model_run.py
+```
 
 ### Performance
 
