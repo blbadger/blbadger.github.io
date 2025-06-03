@@ -1,6 +1,8 @@
 ## Masked Mixer Language Models
 
-For the findings on this page written in more detail as an academic paper, see [here](https://arxiv.org/abs/2409.01482).
+This work is continued in another blog post located here: [Part II](https://blbadger.github.io/smaller-lms-2.html). 
+
+For the findings on both pages written in more detail and structure as an academic paper, see [this paper](https://arxiv.org/abs/2409.01482). 
 
 ### Background
 
