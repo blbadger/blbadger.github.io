@@ -178,7 +178,7 @@ With the test completed, I went ahead and installed the rest of the GPUs and mem
 
 ![server]({{https://blbadger.github.io}}/server_setup/more_gpus.jpg)
 
-I seated the GPUs first before installing the heatsinks. Note that you should never attempt to run a GPU without a heatsink! It will rapidly overheat, although it may turn off automatically if you are lucky.
+I seated the GPUs first before installing the heatsinks. Note that you should never attempt to run a GPU without a heatsink! It will rapidly overheat, although it may turn off automatically if you are lucky before the DRAM is damaged.
 
 ![server]({{https://blbadger.github.io}}/server_setup/all_gpus.jpg)
 
@@ -186,11 +186,11 @@ And here is the server with all the GPUs, memory, and heatsinks installed!
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_gpus.jpg)
 
-I had to re-install two of the GPUs a couple times in order to get them to be recognized by the system, and whether this was due to dusty SXM2 pins, incorrectly torqued screws, or just old hardware it is difficult to tell. Happily it is easy to see if a GPU is connected using the `sudo lshw -C display` command, and the nvidia toolkit finds the GPUs as well. I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this is to be typical of SXM-socketed nvidia GPUs, and indeed the SXM2 V100 cannot be set to any other mode. Note too that watts per GPU at idle has roughly doubled from what it was when a single GPU was installed to ~40W: this is unsurprising, given that the NVLink connections between GPUs cannot completely power down when not in use (typically at least two of the eight link channels are active at all times). Could be worse: A100s typically idle at aroun 65W each!
+I had to re-install two of the GPUs a couple times in order to get them to be recognized by the system, and whether this was due to dusty SXM2 pins, incorrectly torqued screws, or just old hardware it is difficult to tell. Happily it is easy to see if a GPU is connected using the `sudo lshw -C display` command, and the nvidia toolkit finds the GPUs as well. I had installed fairly recent CUDA driver (535.172.04) and API (12.2) versions, and you can see that here. Note that the GPUs are by default in maximum performance mode (P0) even while idling: this is to be typical of SXM-socketed nvidia GPUs, and indeed the SXM2 V100 cannot be set to any other mode. Note too that watts per GPU at idle has roughly doubled from what it was when a single GPU was installed to ~40W: this is unsurprising, given that the NVLink connections between GPUs cannot completely power down when not in use (typically at least two of the eight link channels are active at all times). Could be worse: A100s typically idle at around 65W each, and H100s (95 GB version) at 100W each!
 
 ![server]({{https://blbadger.github.io}}/server_setup/full_nvidiasmi.jpg)
 
-We have an impressive 500 teraflops of matmult performance for ~650$ worth of GPUs. A little appreciated fact is that watt-for-watt the V100's performance is similar to the A100, which has a TDP of 400W (30% more than the V100), while the A100 is typically perhaps 45% faster for real workloads. Both wattage estimates are averaged over time, as it is uncommon for the V100 to near 350W and the A100 to approach 475W at peak boost.
+With the four V100s installed have an impressive 500 teraflops of matmult performance for ~600$ worth of GPUs. A little appreciated fact is that watt-for-watt the V100's performance is similar to the A100, which has a TDP of 400W (30% more than the V100), while the A100 is typically perhaps 45% faster for real workloads. Both wattage estimates are averaged over time, as it is uncommon for the V100 to near 350W and the A100 to approach 475W at peak boost.
 
 ### Stress Testing with Deep learning training
 
@@ -287,17 +287,17 @@ What matters after those first thirty or so seconds is that even heavy loads on 
 
 I would not want to run an unmodified 1OU HPC server like the T180-G20 in a living room, but in a basement or attic or garage it is virtually unnoticeable from living space. If you have ever heard a fan-cooled ebay grow light before, it sounds pretty much identically to that during normal operation just with minor fluctuations as GPUs ramp up and down. 
 
-That said, modifying a 1OU server like the T180-G20 for quiet operation would not be very hard: the only reason this server is noisy is because the fans spin at such high RPM (which is necessary for sufficient air movement as they are very small). Swapping for a much larger but lower RPM fan would remove most noise. There are only two air intakes (one on the front with the IO ports, one on the top for accessory cooling) so simply hooking up a large blower motor (think 1/5 hp floor blower fan) to the front and sealing the top air intake would provide more than enough airflow to allow one to remove the small fans entirely. 
+That said, modifying a 1OU server like the T180-G20 for quiet operation would not be very hard: the only reason this server is noisy is because the fans spin at such high RPM (which is necessary for sufficient air movement as they are very small). Swapping for a much larger but lower RPM fan would prevent most of the running noise. There are only two air intakes (one on the front with the IO ports, one on the top for accessory cooling) so simply hooking up a large blower motor (think 1/5 hp floor fan) to the front and sealing the top air intake would provide more than enough airflow to allow one to remove the small fans entirely. 
 
 ### Conclusion
 
-To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts of things for well under two grand if you are willing to be resourceful and hack a power supply together. I reckon that this system is overkill for small-batch inference, but for large-context or large-batch LLM inference where compute is limiting, or else training models, or especially anything dealing with high-precision floating point operations it seems to be one of the best deals to be had. 
+To conclude, you can build a 4x SXM2 V100 server that is very good at all sorts of things for well under two grand if you are willing to be resourceful and hack together a power supply. I reckon that this system is overkill for small-batch inference, but for large-context or large-batch LLM inference where compute is limiting, or else training models, or especially anything dealing with high-precision floating point operations it seems to be one of the best deals to be had. 
 
 That said, this server performs very well for smaller inference tasks: an 8-bit quantized Llama 3 (8b) runs at ~71 tokens per second while only taking around 75 watts per GPU for unbatched inputs, and a 5.5-bit quantized Llama 3 70b (for a model size of 50 GB) runs at ~14 tokens per second with around 125 watts per GPU. Due to the high CUDA and tensor core count, increasing the context to 2k tokens results in a barely noticeable drop in generation time (~13 tokens per second for 70b llama). To be frank, these are not particularly good tests of this server as the GPUs experience very low Tensor and CUDA core utilization even for long-context inputs, typically less than 30% of all CUDA cores are active during such inference runs.
 
 If you have more cash you could build three of these with 32GB V100s and hook up some mellanox switches (which connect to the free PCIE lanes and ports in the middle of the T180-G20 for up to 128 GB/s internode communication), which would allow for fairly fast training of models up to around 400 billion parameters via bitwise optimized FSDP with low rank adapters.
 
-### Nine Month Update
+### One Year Update
 
 After using this server for a little under a year, I can offer a bit more commentary on its capabilities and suitabilities for various workloads.
 
@@ -325,7 +325,7 @@ Processed prompts:  99%|█████▍| 127/128 [00:07<00:00, 52.95it/s, est
 
 If you are not planning to perform batched inference, you are probably better off with 3090s or L40s if price is not an object. If inference throughput is of utmost importance and your model framework supports 8-bit or 4-bit integer computation (vLLM currently supports fp8 and int8 for Hopper GPUs), you are probably better off with an Ampere (which supports 8-bit int) or a Hopper (4-bit int and 8-bit float) architecture GPU. Additionally, these newer GPUs will give you the ability to use optimizations (like chunked prefill available as an experimental feature in vLLM) that speed up input and output processing especially for large context windows.
 
-**Anything requiring high numerical precision**: This machine is far and away the most cost-effective approach to 64-bit computation. Consumer GPUs don't really offer proper support for this as it is relatively rare outside scientific computing, and the V100 is by far the best 64-bit FLOP per dollar GPU on the market (~8 TFLOPS for 150 dollars, compared to ~10 TFLOPS for 3k dollars for an A100 for example). There isn't much more to be said here other than as long as your high-precision simulation is sufficiently GPU-limited, this server will offer you remarkable speedups relative to consumer or industrial hardware of equivalent price. In my case what took weeks for an RTX 3060 to compute requires mere hours for the four V100s.
+**Anything requiring high numerical precision**: This machine is far and away the most cost-effective approach to 64-bit computation. Consumer GPUs don't really offer proper support for this as it is relatively rare outside scientific computing, and the V100 is by far the best 64-bit FLOP per dollar GPU on the market (~8 TFLOPS for 150 dollars, compared to ~10 TFLOPS for 3k dollars for an A100 for example). There isn't much more to be said here other than as long as your high-precision simulation is sufficiently GPU-limited, this server will offer you remarkable speedups relative to consumer or industrial hardware of equivalent price. In my case what took weeks for an RTX 3060 to compute requires a few hours for the four V100s.
 
 
 
