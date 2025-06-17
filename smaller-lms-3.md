@@ -19,15 +19,15 @@ If the equations are linear and the loss function is a quadratic function like m
 If the equations are nonlinear, or the loss function is more complicated than a quadratic (and in particular if it is non-convex) then we must turn to other optimization methods that are typically iterative in nature. The methods commonly used for deep learning model optimization are based on gradient descent, in which many small steps are taken each in the direction of steepest decline in the loss function. If gradient descent-based optimization converges (meaning that it reaches a sufficiently small loss value) then the convergence occurs linearly: as we take a step of no more than the learning rate size for each iteration, we need at least $n$ steps for our initial model to reach the point of convergence. More precisely, 
 
 $$
-|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||) \tag{eq1}
+|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||) \label{eq1}
 $$
 
-This is somewhat of an oversimplification of today's methods, the most common of which being AdamW which typically one uses adaptive learning rates to estimate the momentum of a point in its loss trajectory, such that the accuracy of applying \ref{eq1} may be questioned. However, it can be shown that AdamW and other moment-estimating methods cannot converge any more quickly than pure gradient descent with well-chosen parameters (ref) such that \ref{eq1} is valid.
+This is somewhat of an oversimplification of today's methods, the most common of which being AdamW which typically one uses adaptive learning rates to estimate the momentum of a point in its loss trajectory, such that the accuracy of applying \eqref{eq1} may be questioned. However, it can be shown that AdamW and other moment-estimating methods cannot converge any more quickly than pure gradient descent with well-chosen parameters (ref) such that \eqref{eq1} is valid.
 
 Happily there are other methods that converge much more quickly: one in particular is Newton's method. This name is somewhat confusing because it is applied to two different different optimization techniques, one that is essentially an improvement on gradient descent but requires the computation of Hessian matrices (which is usually computationally infeasible for large models) and one that requires only the Jacobian of the weight matrix, which in the case of functions $F: \Bbb R^m \to \Bbb R^1$ is equivalent to the gradient. This method is iterative but takes large steps, solving a linear equation for an intercept at each step. Newton's method converges quadratically provided some mild assumtions are made as to the continuity and nonsingularity of the system of equations,
 
 $$
-|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||^2) \tag{eq2}
+|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||^2) \label{eq2}
 $$
 
 This may not seem like much of an improvement on gradient descent, but it is actually an enormous improvement in terms of asymptotic characteristics.
