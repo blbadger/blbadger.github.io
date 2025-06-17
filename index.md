@@ -299,8 +299,9 @@ $$
 
 $$
 x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)}) \\
-\theta_W = (X^TX)^{-1} X^T y = X^+ y\\
-X^+ = \lim_\alpha \to 0^+ (X^TX + \alpha I)^{-1} X^T
+\; \\
+\theta_W = (X^TX)^{-1} X^T y = X^+ y, \\
+X^+ = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1} X^T
 $$
 
 ### [Vision Autoencoders](/autoencoder-representation.md)
