@@ -24,16 +24,51 @@ $$
 
 This is somewhat of an oversimplification of today's methods, the most common of which being AdamW which typically one uses adaptive learning rates to estimate the momentum of a point in its loss trajectory, such that the accuracy of applying \eqref{eq1} may be questioned. However, it can be shown that AdamW and other moment-estimating methods cannot converge any more quickly than pure gradient descent with well-chosen parameters (ref) such that \eqref{eq1} is valid.
 
-Happily there are other methods that converge much more quickly: one in particular is Newton's method. This name is somewhat confusing because it is applied to two different different optimization techniques, one that is essentially an improvement on gradient descent but requires the computation of Hessian matrices (which is usually computationally infeasible for large models) and one that requires only the Jacobian of the weight matrix, which in the case of functions $F: \Bbb R^m \to \Bbb R^1$ is equivalent to the gradient. This method is iterative but takes large steps, solving a linear equation for an intercept at each step. Newton's method converges quadratically provided some mild assumtions are made as to the continuity and nonsingularity of the system of equations,
+Happily there are other methods that converge much more quickly: one in particular is Newton's method. This name is somewhat confusing because it is applied to two different related optimization techniques, one that is commonly applied to minimizing a loss function for nonlinear models and requires the computation of Hessian matrices (which is usually computationally infeasible for large models) and one that finds the roots of a function and requires only the Jacobian of the weight matrix, which in the case of functions $F: \Bbb R^m \to \Bbb R^1$ is equivalent to the gradient. This method is iterative but takes large steps, solving a linear equation for an intercept at each step. Newton's method converges quadratically provided some mild assumtions are made as to the continuity and nonsingularity of the system of equations,
 
 $$
 || x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||^2) \label{eq2}
 $$
 
-This may not seem like much of an improvement on gradient descent, but it is actually an enormous improvement in terms of asymptotic characteristics.
-
+This may not seem like much of an improvement on gradient descent, but it is actually an enormous improvement in terms of asymptotic characteristics. Say you were given some target $x_*$ that required $n$ steps of gradient descent to reach from an initial value $x_0$. The same target would be expected to require only $\sqrt{n}$ steps for Newton's method, which is a substantial improvement as $n$ increases.
 
 ### Newton's method
+
+As mentioned in the last section, there are two related versions of Newton's method that may be applied to the problem of minimizing an model's loss function given some data. It is helpful to first understand the differences between these methods and show how they are related before examining how they can be applied to deep learning models. At its heart, Newton's method is an iterative method that computes the roots (zeros) of an arbitrary equation $f(x)$: given an initial point $x_0$, we perform some number of iterations such that for each iteration at point $x_n$ we compute the next point $x_{n+1} via \eqref{eq3).
+
+$$
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \label{eq3}
+$$
+
+The derivation of this formula is straightforward: given $f$ differentiable at point $x_n$ by definition $f'(x_n) = \delta y / \delta x$. We solve for the $\delta x$ such that $y=0$, meaning that $y=f(x_n)$ and 
+
+$$
+\frac{f(x_n)}{\delta x} = f'(x_n) \implies \delta x = \frac{f(x_n}{f'(x_n)}
+$$
+
+and add this value's inverse (additive inverse) to our original point $x_n$ to obtain the next point.
+
+$$
+x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n}{f'(x_n)}
+$$
+
+For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root
+
+$$
+x_{n+1} = x_n - \frac{f'(x_n)}{f''(x_n)} \label{eq4}
+$$
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
