@@ -291,12 +291,17 @@ $$
 ![features](/deep-learning/llm_mixer.png)
 
 
-### [Language Mixers II](/smaller-lms-2.md)
+### [Language Mixers II: Retrieval and Autoencoding](/smaller-lms-2.md)
 
-![features](/deep-learning/mixer_autoencoder.png)
+![qutoencoder](/deep-learning/mixer_autoencoder.png)
 
+### [Language Mixers III: Optimization](/smaller-lms-3.md)
 
-### [Autoencoders](/autoencoder-representation.md)
+$$
+x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)})
+$$
+
+### [Vision Autoencoders](/autoencoder-representation.md)
 
 ![autoencoding of landscapes](/deep-learning/autoencoder_cover.png)
 
