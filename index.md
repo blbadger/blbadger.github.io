@@ -298,7 +298,8 @@ $$
 ### [Language Mixers III: Optimization](/smaller-lms-3.md)
 
 $$
-x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)})
+x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)}) \\
+(X^TX)^{-1} X^T L(O(X, \theta)) = \theta_W
 $$
 
 ### [Vision Autoencoders](/autoencoder-representation.md)
