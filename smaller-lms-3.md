@@ -88,7 +88,7 @@ $$
 In the case where our input $x$ is a vector rather than a scalar and our function $f: \Bbb R^n \to \Bbb R^m$ is of many variables, we must compute the Jacobian $J$ of $f$, which is defined as 
 
 $$
-J_{ij}(x) = 
+J_{ij}(x) = \frac{f_i}{x_j}x
 $$
 
 $$
