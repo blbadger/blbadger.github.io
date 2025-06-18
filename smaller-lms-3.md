@@ -19,7 +19,7 @@ If the equations are linear and the loss function is a quadratic function like m
 If the equations are nonlinear, or the loss function is more complicated than a quadratic (and in particular if it is non-convex) then we must turn to other optimization methods that are typically iterative in nature. The methods commonly used for deep learning model optimization are based on gradient descent, in which many small steps are taken each in the direction of steepest decline in the loss function. If gradient descent-based optimization converges (meaning that it reaches a sufficiently small loss value) then the convergence occurs linearly: as we take a step of no more than the learning rate size for each iteration, we need at least $n$ steps for our initial model to reach the point of convergence. More precisely, 
 
 $$
-|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||) 
+|| x_{(k+1)} - x^* || = O(|| x_{(k)} - x^* ||) 
 \tag{1} \label{eq1}
 $$
 
@@ -28,18 +28,42 @@ This is somewhat of an oversimplification of today's methods, the most common of
 Happily there are other methods that converge much more quickly: one in particular is Newton's method. This name is somewhat confusing because it is applied to two different related optimization techniques, one that is commonly applied to minimizing a loss function for nonlinear models and requires the computation of Hessian matrices (which is usually computationally infeasible for large models) and one that finds the roots of a function and requires only the Jacobian of the weight matrix, which in the case of functions $F: \Bbb R^m \to \Bbb R^1$ is equivalent to the gradient. This method is iterative but takes large steps, solving a linear equation for an intercept at each step. Newton's method converges quadratically provided some mild assumtions are made as to the continuity and nonsingularity of the system of equations,
 
 $$
-|| x^{(k+1)} - x_* || = O(|| x^{(k)} - x_* ||^2) 
+|| x_{(k+1)} - x^* || = O(|| x_{(k)} - x^* ||^2) 
 \tag{2} \label{eq2}
 $$
 
-This may not seem like much of an improvement on gradient descent, but it is actually an enormous improvement in terms of asymptotic characteristics. Say you were given some target $x_*$ that required $n$ steps of gradient descent to reach from an initial value $x_0$. The same target would be expected to require only $\sqrt{n}$ steps for Newton's method, which is a substantial improvement as $n$ increases.
+This may not seem like much of an improvement on gradient descent, but it is actually an enormous improvement in terms of asymptotic characteristics. Say you were given some target $x^*$ that required $n$ steps of gradient descent to reach from an initial value $x_0$. The same target would be expected to require only $\sqrt{n}$ steps for Newton's method, which is a substantial improvement as $n$ increases.
 
 ### Ordinary Least Squares via the Normal Equation
 
-$$
+Suppose we were told that a linear model would be perfectly acceptable for language tasks and that we can choose to minimize any loss function we wanted. In this case perhaps the simplest conceptual approach is to choose a quadratic loss function like mean squared error and simply solve the resulting equation for the model parameters $\hat \beta$ given input $X$ and target output $y$, and for now we can avoid the details of exactly how this would be implemented. In the case of a $\beta$ being a square weight matrix of full rank, we can simply solve the model equation to get our desired weights (with zero loss):
 
 $$
+y = X\beta \implies X^{-1}y = \beta
+$$
 
+
+This is usually not possible as a weight matrix is in general non strictly invertible, such that there could be many or more commonly no exact solutions to the equation. In this case we have to decide on a loss function and find some value for our weights that minimizes this loss. In the common case in which there are no exact solutions for the equation, we can still solve for a desired weight value if the loss function is sufficiently simple. Mean squared error is happily simple enough to solve when applied to a linear regression, and there are a number of ways to approach this problem. 
+
+One of the most straighforward ways of deriving this equation is to simply solve the derivative of the system of equations 
+
+$$
+\Bbb L = || X \beta - y||
+$$
+
+This gives us the following equation:
+
+$$
+\hat \beta = (X^T X)^{-1}X^Ty
+$$
+
+This is unfortunately not the most numerically stable equation for larger matricies $X$: we can implement this equation directly using a tensor library like Pytorch, and upon doing so we will not find that even moderately large models are capable of being solved to an exact degree. Happily, however, there is a more stable formulation utilizing the singular value decomposition components $U, D, V$,
+
+$$
+\theta_W = \lim_{\alpha \to 0^+} (X^TX + \alphaI)^{-1}X^T y = X^+y = VD^+U^Ty
+$$
+
+where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. 
 
 ### Newton's method
 
@@ -64,7 +88,7 @@ $$
 In the case where our input $x$ is a vector rather than a scalar and our function $f: \Bbb R^n \to \Bbb R^m$ is of many variables, we must compute the Jacobian $J$ of $f$, which is defined as 
 
 $$
-J_{ij}(x) = \
+J_{ij}(x) = 
 $$
 
 $$
