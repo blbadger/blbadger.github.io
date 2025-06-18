@@ -86,23 +86,23 @@ $$
 The derivation of this formula is straightforward: given $f$ differentiable at point $x_n$ by definition $f'(x_n) = \delta y / \delta x$. We solve for the $\delta x$ such that $y=0$, meaning that $y=f(x_n)$ and 
 
 $$
-\frac{f(x_n)}{\delta x} = f'(x_n) \implies \delta x = \frac{f(x_n}{f'(x_n)}
+\frac{f(x_n)}{\delta x} = f'(x_n) \implies \Delta x = \frac{f(x_n}{f'(x_n)}
 $$
 
 and add this value's inverse (additive inverse) to our original point $x_n$ to obtain the next point.
 
 $$
-x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n)}{f'(x_n)}
+x_{n+1} = x_n - \Delta x = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
 In the case where our input $x$ is a vector rather than a scalar and our function $f: \Bbb R^n \to \Bbb R^m$ is of many variables, we must compute the Jacobian $J$ of $f$, which is defined as 
 
 $$
-J_{ij}(x) = \frac{f_i}{x_j}x
+J_{ij}(x) = \frac{\delta f_i}{ \delta x_j}x
 $$
 
 $$
-x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n)}{f'(x_n)}
+x_{n+1} = x_n - \Delta x = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
 For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root
