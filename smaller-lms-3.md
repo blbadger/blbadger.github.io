@@ -45,22 +45,32 @@ $$
 
 This is usually not possible as a weight matrix is in general non strictly invertible, such that there could be many or more commonly no exact solutions to the equation. In this case we have to decide on a loss function and find some value for our weights that minimizes this loss. In the common case in which there are no exact solutions for the equation, we can still solve for a desired weight value if the loss function is sufficiently simple. Mean squared error is happily simple enough to solve when applied to a linear regression, and there are a number of ways to approach this problem. 
 
-One of the most straighforward ways of deriving this equation is to simply solve the derivative of the system of equations 
+One of the most straighforward ways of deriving this equation is to simply solve the system of equations present when we set the gradient to be zero,
 
 $$
-\Bbb L = || X \beta - y||
+\Bbb L = || X \beta - y||_2^2
 $$
 
-This gives us the following equation:
+which can be done via distribution and chain rule application
+
 
 $$
-\hat \beta = (X^T X)^{-1}X^Ty
+\nabla_\beta (1/m) (X\beta - y)^2 = 0 \implies \\
+\nabla_\beta (\beta^TX^TX \beta - \beta^TX^Ty - y^TX\beta - y^Ty) \\implies \\
+2X^TX\beta - X^Ty - y^TX = 0
 $$
+
+Recalling that $y$ is a vector, we have $X^Ty = y^TX$ as both are the vector formed by the dot prods of columns of $X$ with y, so we have
+
+$$
+2X^TX\beta - 2X^Ty = 0 \implies \beta = (X(TX)^{-1}X^Ty
+$$
+
 
 This is unfortunately not the most numerically stable equation for larger matricies $X$: we can implement this equation directly using a tensor library like Pytorch, and upon doing so we will not find that even moderately large models are capable of being solved to an exact degree. Happily, however, there is a more stable formulation utilizing the singular value decomposition components $U, D, V$,
 
 $$
-\theta_W = \lim_{\alpha \to 0^+} (X^TX + \alphaI)^{-1}X^T y = X^+y = VD^+U^Ty
+\theta_W = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1}X^T y = X^+y = VD^+U^Ty
 $$
 
 where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. 
@@ -82,7 +92,7 @@ $$
 and add this value's inverse (additive inverse) to our original point $x_n$ to obtain the next point.
 
 $$
-x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n}{f'(x_n)}
+x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
 In the case where our input $x$ is a vector rather than a scalar and our function $f: \Bbb R^n \to \Bbb R^m$ is of many variables, we must compute the Jacobian $J$ of $f$, which is defined as 
@@ -92,7 +102,7 @@ J_{ij}(x) = \frac{f_i}{x_j}x
 $$
 
 $$
-x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n}{f'(x_n)}
+x_{n+1} = x_n - \delta x = x_n - \frac{f(x_n)}{f'(x_n)}
 $$
 
 For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root
