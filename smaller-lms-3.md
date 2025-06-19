@@ -150,9 +150,14 @@ def newton(model, train_batch, loss_constant=0.01):
     return 
 ```
 
-Unforunately, application of Newton's method (even for relatively large `loss_constant` values) results in explosion of loss rather than minimization when applied to the 
+Unforunately, application of Newton's method (even for relatively large `loss_constant` values) results in explosion of loss rather than minimization when applied to a language task. This can be shown to be a problem of numerical stability. To work around this problem, we can exploit the additive property of gradients, which can be stated as follows: the gradient of the sum of elements is the sum of the gradients. In symbols, 
 
-To make our algorithm more numerically stable, we can instead compute the components of the gradient of the relevant loss by preventing gradient reduction with `self.mse = nn.MSELoss(reduction=None)`. We can then backpropegate from each loss term (retaining the computational graph each time, as Pytorch does not save the graph by default to reduce memory load) as follows:
+$$
+\nabla_{\theta} \sum_n \Bbb L(O_n(a, \theta), y_n)) \\
+= \sum_n \nabla_\theta \Bbb L(O_n(a, \theta), y_n))
+$$
+
+Now what we usually get when we call `MSELoss()` (or most any other loss function in the Pytorch library) is a scalar output that is the sum (or average) of each loss component in the output, because one usually wants to use the loss to perform gradient descent and gradients are only defined with respect to scalars. To use our additive property workaround, we can specify `self.mse = nn.MSELoss(reduction=None)` in order to prevent loss reduction and then backpropegate from each element of the loss separately, adding loss gradients to the model weight tensor iteratively. We can then backpropegate from each loss term (retaining the computational graph each time, as Pytorch does not save the graph by default to reduce memory load) as follows:
 
 ```python
 def newton_components(model, train_data, loss_constant=0.1):
