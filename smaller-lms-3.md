@@ -84,84 +84,19 @@ where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. This can be implemented
 beta_hat = torch.pinverse(X) @ target
 ```
 
-We will use a small linear language model to test the ability of the normal equation to minimize loss.
-
-```
-class LinearBlock(nn.Module):
-
-    def __init__(self, dim, length):
-        super().__init__()
-        self.dim = dim
-        self.length = length
-        self.conv = nn.Conv1d(length, length, 1)
-
-    def forward(self, x: torch.tensor):
-        if x.dim() > 3:
-            x = rearrange(x, 'b p t f -> (b p) t f')
-
-        # for CLM training, apply lower triangular mask to convolution weights
-        rearranged_shape = rearrange(self.conv.weight, 'f d p -> f (d p)').shape
-        mask = torch.tril(torch.ones(rearranged_shape)).to(device)
-        applied_mask = rearrange(self.conv.weight, 'f d p -> f (d p)') * mask
-        self.conv.weight.data = rearrange(applied_mask, 'f (d p) -> f d p', p=1)
-
-        residual = x
-        x = self.conv(x) + residual
-        return x
-```
-
-```
-class LinearMixer(nn.Module):
-
-    def __init__(self, n_vocab, dim, depth):
-        super().__init__()
-        self.wte = nn.Embedding(n_vocab, dim)
-        self.mixerblocks = nn.ModuleList(
-            [LinearBlock(
-                dim = dim,
-                length = tokenized_length
-                )
-            for i in range(depth)]
-            ).to(device)
-        self.lm_head = nn.Linear(dim, n_vocab, bias=False)
-        self.mse = nn.MSELoss()
-
-    def forward(self, input_ids, labels=None):
-        x = input_ids
-        x = x.to(device)
-        x = self.wte(x)
-        for block in self.mixerblocks:
-            x = block(x)
-        
-        if labels is not None:
-            x_prelim = x
-            output = self.lm_head(x)
-            labels = rearrange(labels, 'b p t -> b (p t)')
-            output = rearrange(output, 'b t e -> b e t')
-            shift_labels, shift_logits = labels, output
-            shift_logits = output[..., :-1].contiguous()
-            shift_labels = labels[..., 1:].contiguous()
-            # convert labels to one hots, compute mse
-            one_hots = torch.nn.functional.one_hot(shift_labels, num_classes=len(tokenizer)).transpose(1,2) 
-            converted_labels = torch.tensor(one_hots, requires_grad=False, dtype=torch.double)
-            loss = self.mse(shift_logits, converted_labels)
-            return loss, output, x_prelim
-        else:
-            return x
-```
+We will use a small linear language model to test the ability of the normal equation to minimize loss, although any model could in principle be used, as this model has only three linear transformations: a token embedding layer, a masked convolution, and a language modeling head layer. We can apply the normal equations to this model by saving the activations of the input of this `lm_head` layer, onverting the target output to one-hot tensors for use with mean squared error loss, shifting the target and inputs for causal language modeling (next token prediction), computation of the minimal lm_head weight, and assignment of that weight.
 
 ```python
-  @torch.no_grad()
-  def normal_solve(model, train_data):
-      train_batch = torch.stack(train_data[0:1], dim=0).to('cuda')
-      loss, output, X = model(train_batch, labels=train_batch)
-      target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1)
-      X = X[:, :-1, :].contiguous()
-      target = target[:, 1:, :].contiguous()
-      beta_hat = torch.pinverse(X) @ target
-      model.lm_head.weight = torch.nn.Parameter(beta_hat.T)
-      loss, output, X = model(train_batch, labels=train_batch) 
-      return loss.item()
+@torch.no_grad()
+def normal_solve(model, train_data):
+    train_batch = torch.stack(train_data[0:1], dim=0).to('cuda')
+    loss, output, X = model(train_batch, labels=train_batch) # X is the input to the lm_head layer
+    target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1)
+    X = X[:, :-1, :].contiguous()
+    target = target[:, 1:, :].contiguous()
+    beta_hat = torch.pinverse(X) @ target
+    model.lm_head.weight = torch.nn.Parameter(beta_hat.T)
+    return
 ```
 
 ### Newton's method
@@ -198,16 +133,62 @@ $$
 For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root
 
 $$
-x_{n+1} = x_n - \frac{f'(x_n)}{f''(x_n)} \label{eq4}
+x_{n+1} = x_n - \frac{f'(x_n)}{f''(x_n)}
+\tag{4} \label{eq4}
 $$
 
+```python
+def newton(model, train_batch, loss_constant=0.01):
+    train_batch = torch.stack(train_data[0:1], dim=0).to('cuda')
+    for i in range(5):
+            model.zero_grad()
+            loss, output, _ = model(train_batch, labels=train_batch)
+            loss -= loss_constant # subtract suspected irreducible loss so root exists
+            loss.backward()
+            loss_term = torch.pinverse(model.lm_head.weight.grad) * loss 
+            model.lm_head.weight = torch.nn.Parameter(model.lm_head.weight - loss_term.T)
+    return 
+```
 
+Unforunately, application of Newton's method (even for relatively large `loss_constant` values) results in explosion of loss rather than minimization when applied to the 
 
+To make our algorithm more numerically stable, we can instead compute the components of the gradient of the relevant loss by preventing gradient reduction with `self.mse = nn.MSELoss(reduction=None)`. We can then backpropegate from each loss term (retaining the computational graph each time, as Pytorch does not save the graph by default to reduce memory load) as follows:
 
+```python
+def newton_components(model, train_data, loss_constant=0.1):
+    train_batch = torch.stack(train_data[0:100], dim=0).to('cuda')
+    for i in range(10):
+        loss, output, _ = model(train_batch, labels=train_batch)
+        loss -= loss_constant # subtract suspected irreducible loss so root exists
+        loss_terms = []
+        for j in range(tokenized_length-1):
+            for k in range(len(train_batch)):
+                loss[k][j].backward(retain_graph=True)
+                loss_term = torch.pinverse(model.lm_head.weight.grad) * loss[k][j]
+                loss_terms.append(loss_term)
+                model.zero_grad()
+        for loss_term in loss_terms:
+            model.lm_head.weight = torch.nn.Parameter(model.lm_head.weight - loss_term.T)
+    return 
+```
 
+This method is more stable but still results in loss explosion for the large `lm_head` matrices necessary for typical language modeling tasks. We can make this algorithm even more stable at the expense of greatly increased computation by recomputing the gradient after each model parameter update from the components of each loss element.
 
-
-
+```python
+def newton_components_recalculated(model, train_data, steps=10, loss_constant=0.9):
+    train_batch = torch.stack(train_data[0:100], dim=0).to('cuda')
+    for i in range(steps):
+        for j in range(tokenized_length-1):
+            for k in range(len(train_batch)):
+                loss, output, _ = model(train_batch, labels=train_batch)
+                loss -= loss_constant # subtract suspected irreducible loss so root exists
+                loss[k][j].backward()
+                loss_term = torch.pinverse(model.lm_head.weight.grad) * loss[k][j] 
+                with torch.no_grad():
+                    model.lm_head.weight-= loss_term.T
+                model.zero_grad()
+    return
+```
 
 
 
