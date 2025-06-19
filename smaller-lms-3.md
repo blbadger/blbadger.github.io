@@ -51,36 +51,126 @@ $$
 \Bbb L = || X \beta - y||_2^2
 $$
 
-which can be done via distribution and chain rule application
-
+which can be done via distribution and gradient application
 
 $$
 \nabla_\beta (1/m) (X\beta - y)^2 = 0 \implies \\
-\nabla_\beta (\beta^TX^TX \beta - \beta^TX^Ty - y^TX\beta - y^Ty) \\implies \\
+\nabla_\beta (\beta^TX^TX \beta - \beta^TX^Ty - y^TX\beta - y^Ty) = \\
 2X^TX\beta - X^Ty - y^TX = 0
 $$
 
 Recalling that $y$ is a vector, we have $X^Ty = y^TX$ as both are the vector formed by the dot prods of columns of $X$ with y, so we have
 
 $$
-2X^TX\beta - 2X^Ty = 0 \implies \beta = (X(TX)^{-1}X^Ty
+2X^TX\beta - 2X^Ty = 0 \implies \beta = (X^TX)^{-1}X^Ty
 $$
 
+This is unfortunately not the most numerically stable equation for larger matricies $X$: we can implement this equation directly using a tensor library like Pytorch as follows, and upon doing so we will not find that the parameters we obtain do not minimize our MSE loss function even for relatively small equations.
 
-This is unfortunately not the most numerically stable equation for larger matricies $X$: we can implement this equation directly using a tensor library like Pytorch, and upon doing so we will not find that even moderately large models are capable of being solved to an exact degree. Happily, however, there is a more stable formulation utilizing the singular value decomposition components $U, D, V$,
+```python
+beta_hat = (torch.inverse(X.T @ X) @ X.T) @ y
+```
+
+Happily, however, there is a more stable formulation utilizing the singular value decomposition components $U, D, V$,
 
 $$
-\theta_W = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1}X^T y = X^+y = VD^+U^Ty
+\theta_W = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1}X^T y \\
+= X^+y = VD^+U^Ty
 $$
 
-where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. 
+where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. This can be implemented simply in `torch` as follows:
+
+```python
+beta_hat = torch.pinverse(X) @ target
+```
+
+We will use a small linear language model to test the ability of the normal equation to minimize loss.
+
+```
+class LinearBlock(nn.Module):
+
+    def __init__(self, dim, length):
+        super().__init__()
+        self.dim = dim
+        self.length = length
+        self.conv = nn.Conv1d(length, length, 1)
+
+    def forward(self, x: torch.tensor):
+        if x.dim() > 3:
+            x = rearrange(x, 'b p t f -> (b p) t f')
+
+        # for CLM training, apply lower triangular mask to convolution weights
+        rearranged_shape = rearrange(self.conv.weight, 'f d p -> f (d p)').shape
+        mask = torch.tril(torch.ones(rearranged_shape)).to(device)
+        applied_mask = rearrange(self.conv.weight, 'f d p -> f (d p)') * mask
+        self.conv.weight.data = rearrange(applied_mask, 'f (d p) -> f d p', p=1)
+
+        residual = x
+        x = self.conv(x) + residual
+        return x
+```
+
+```
+class LinearMixer(nn.Module):
+
+    def __init__(self, n_vocab, dim, depth):
+        super().__init__()
+        self.wte = nn.Embedding(n_vocab, dim)
+        self.mixerblocks = nn.ModuleList(
+            [LinearBlock(
+                dim = dim,
+                length = tokenized_length
+                )
+            for i in range(depth)]
+            ).to(device)
+        self.lm_head = nn.Linear(dim, n_vocab, bias=False)
+        self.mse = nn.MSELoss()
+
+    def forward(self, input_ids, labels=None):
+        x = input_ids
+        x = x.to(device)
+        x = self.wte(x)
+        for block in self.mixerblocks:
+            x = block(x)
+        
+        if labels is not None:
+            x_prelim = x
+            output = self.lm_head(x)
+            labels = rearrange(labels, 'b p t -> b (p t)')
+            output = rearrange(output, 'b t e -> b e t')
+            shift_labels, shift_logits = labels, output
+            shift_logits = output[..., :-1].contiguous()
+            shift_labels = labels[..., 1:].contiguous()
+            # convert labels to one hots, compute mse
+            one_hots = torch.nn.functional.one_hot(shift_labels, num_classes=len(tokenizer)).transpose(1,2) 
+            converted_labels = torch.tensor(one_hots, requires_grad=False, dtype=torch.double)
+            loss = self.mse(shift_logits, converted_labels)
+            return loss, output, x_prelim
+        else:
+            return x
+```
+
+```python
+  @torch.no_grad()
+  def normal_solve(model, train_data):
+      train_batch = torch.stack(train_data[0:1], dim=0).to('cuda')
+      loss, output, X = model(train_batch, labels=train_batch)
+      target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1)
+      X = X[:, :-1, :].contiguous()
+      target = target[:, 1:, :].contiguous()
+      beta_hat = torch.pinverse(X) @ target
+      model.lm_head.weight = torch.nn.Parameter(beta_hat.T)
+      loss, output, X = model(train_batch, labels=train_batch) 
+      return loss.item()
+```
 
 ### Newton's method
 
 As mentioned in the last section, there are two related versions of Newton's method that may be applied to the problem of minimizing an model's loss function given some data. It is helpful to first understand the differences between these methods and show how they are related before examining how they can be applied to deep learning models. At its heart, Newton's method is an iterative method that computes the roots (zeros) of an arbitrary equation $f(x)$: given an initial point $x_0$, we perform some number of iterations such that for each iteration at point $x_n$ we compute the next point $x_{n+1} via \eqref{eq3).
 
 $$
-x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} \label{eq3}
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)} 
+\tag{3} \label{eq3}
 $$
 
 The derivation of this formula is straightforward: given $f$ differentiable at point $x_n$ by definition $f'(x_n) = \delta y / \delta x$. We solve for the $\delta x$ such that $y=0$, meaning that $y=f(x_n)$ and 
