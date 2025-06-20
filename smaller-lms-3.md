@@ -126,8 +126,10 @@ $$
 J_{ij}(x) = \frac{\delta f_i}{ \delta x_j}x
 $$
 
+making Newton's method as follows:
+
 $$
-x_{n+1} = x_n - \Delta x = x_n - \frac{f(x_n)}{f'(x_n)}
+x_{n+1} = x_n - \frac{f(x_n)}{J(x_n)}
 $$
 
 For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root
