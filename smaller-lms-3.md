@@ -42,7 +42,6 @@ $$
 y = X\beta \implies X^{-1}y = \beta
 $$
 
-
 This is usually not possible as a weight matrix is in general non strictly invertible, such that there could be many or more commonly no exact solutions to the equation. In this case we have to decide on a loss function and find some value for our weights that minimizes this loss. In the common case in which there are no exact solutions for the equation, we can still solve for a desired weight value if the loss function is sufficiently simple. Mean squared error is happily simple enough to solve when applied to a linear regression, and there are a number of ways to approach this problem. 
 
 One of the most straighforward ways of deriving this equation is to simply solve the system of equations present when we set the gradient to be zero,
@@ -84,20 +83,49 @@ where $X^+$ denotes the Roy-Moore Pseudo-inverse of $X$. This can be implemented
 beta_hat = torch.pinverse(X) @ target
 ```
 
-We will use a small linear language model to test the ability of the normal equation to minimize loss, although any model could in principle be used, as this model has only three linear transformations: a token embedding layer, a masked convolution, and a language modeling head layer. We can apply the normal equations to this model by saving the activations of the input of this `lm_head` layer, onverting the target output to one-hot tensors for use with mean squared error loss, shifting the target and inputs for causal language modeling (next token prediction), computation of the minimal lm_head weight, and assignment of that weight.
+We will use a small linear language model to test the ability of the normal equation to minimize loss as this model has only three linear transformations: a token embedding layer, a masked convolution, and a language modeling head layer. In principle, however, a model of any type could be used, as long as the last layer is linear and we optimize the weights of that layer. This is because we can decompose the model output to be the input to the `lm_head` transformation (which is linear) multiplied by the weights of that transformation, which in traditional notation is
 
-```python
+$$
+O(a, \theta) = O_l(a, \theta) \beta = X \beta
+$$
+
+The wrinke is that we need to convert integer tokens to vector spaces to be able to measure mean squared error. We can do this using the one-hot pytorch transform as follows:
+
+```
+target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1) # [b t e] shape
+```
+
+Mean squared error is not a perticularly good choice of loss function for categorical data such as token identity, but we can make it a somewhat more reliable loss function by scaling our one-hot to be approximately the size of the tokenizer: for example, given a tokenizer with the size of a few thousand tokens we can scale the one-hot from one to one thousand. This is helpful because it increases the penalty of any optimizer choosing a function that assigns all inputs to the origin: in this case, the trivial reduced mean squared error is $1000^2/4096 \approx 244$ instead of $1^2/4096 \\approx 0.001$.
+
+For causal language modeling we want to compare the model's output at position $n$ to the token at position $n+1$, so in this case we want the input to be the activations of the
+
+```
+output, X = model(train_batch) # X is the input to the lm_head, ie tensor of activations
+X = X[:, :-1, :].contiguous()
+target = target[:, 1:, :].contiguous()
+```
+
+We can apply the normal equations to this model by saving the activations of the input of this `lm_head` layer, onverting the target output to one-hot tensors for use with mean squared error loss, shifting the target and inputs for causal language modeling (next token prediction), computation of the minimal lm_head weight, and assignment of that weight.
+
+We don't need to compute gradients when using the normal equations for loss minimization. All together, we have
+
+```
 @torch.no_grad()
-def normal_solve(model, train_data):
-    train_batch = torch.stack(train_data[0:1], dim=0).to('cuda')
-    loss, output, X = model(train_batch, labels=train_batch) # X is the input to the lm_head layer
-    target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1)
+def normal_solve(model, train_data, scale=1000):
+    train_batch = train_data.unsqueeze(0).to('cuda')
+    loss, output, X = model(train_batch, labels=train_batch)
+    target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1) * scale # [b t e] shape
     X = X[:, :-1, :].contiguous()
     target = target[:, 1:, :].contiguous()
-    beta_hat = torch.pinverse(X) @ target
+    prefix = torch.pinverse(X)
+    beta_hat = (prefix @ target)[0]
     model.lm_head.weight = torch.nn.Parameter(beta_hat.T)
-    return
+    loss, output, X = model(train_batch, labels=train_batch) 
+    return loss.item()
 ```
+
+When we observe the pre-optimized loss, we find almost exactly what we were expecting: $\Bbb L=244.52$ for a 4096-size tokenizer. 
+
 
 ### Newton's method
 
