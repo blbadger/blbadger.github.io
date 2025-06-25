@@ -91,15 +91,15 @@ $$
 
 The wrinke is that we need to convert integer tokens to vector spaces to be able to measure mean squared error. We can do this using the one-hot pytorch transform as follows:
 
-```
+```python
 target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1) # [b t e] shape
 ```
 
 Mean squared error is not a perticularly good choice of loss function for categorical data such as token identity, but we can make it a somewhat more reliable loss function by scaling our one-hot to be approximately the size of the tokenizer: for example, given a tokenizer with the size of a few thousand tokens we can scale the one-hot from one to one thousand. This is helpful because it increases the penalty of any optimizer choosing a function that assigns all inputs to the origin: in this case, the trivial reduced mean squared error is $1000^2/4096 \approx 244$ instead of $1^2/4096 \\approx 0.001$.
 
-For causal language modeling we want to compare the model's output at position $n$ to the token at position $n+1$, so in this case we want the input to be the activations of the
+For causal language modeling we want to compare the model's output at position $n$ to the token at position $n+1$, so in this case we want the input to be the activations of the last hidden layer (which is the input to the `lm_head` layer in our model) shifted so that we mask the last token, and the target shifted to mask the first token.
 
-```
+```python
 output, X = model(train_batch) # X is the input to the lm_head, ie tensor of activations
 X = X[:, :-1, :].contiguous()
 target = target[:, 1:, :].contiguous()
@@ -109,23 +109,39 @@ We can apply the normal equations to this model by saving the activations of the
 
 We don't need to compute gradients when using the normal equations for loss minimization. All together, we have
 
-```
+```python
 @torch.no_grad()
 def normal_solve(model, train_data, scale=1000):
     train_batch = train_data.unsqueeze(0).to('cuda')
     loss, output, X = model(train_batch, labels=train_batch)
-    target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.double).squeeze(1) * scale # [b t e] shape
+    target = torch.nn.functional.one_hot(train_batch, num_classes=len(tokenizer)).to(torch.float).squeeze(1) * scale # [b t e] shape
     X = X[:, :-1, :].contiguous()
     target = target[:, 1:, :].contiguous()
     prefix = torch.pinverse(X)
-    beta_hat = (prefix @ target)[0]
+    beta_hat = (prefix @ target)[0] # automatically forms the batch dim, squeezes this here
     model.lm_head.weight = torch.nn.Parameter(beta_hat.T)
     loss, output, X = model(train_batch, labels=train_batch) 
     return loss.item()
 ```
 
-When we observe the pre-optimized loss, we find almost exactly what we were expecting: $\Bbb L=244.52$ for a 4096-size tokenizer. 
+When we observe the pre-optimized loss, we find almost exactly what we were expecting: for $d_m=128$ model with a tokenizer of size 4096 and a context window (meaning the number of tokens in the sequence we are modeling), we have
 
+```
+Starting loss: 244.5254053321467
+Ending loss: 0.9978399276733398
+```
+
+This ending loss may be considered the irredicuble error that is associated with imprecise numerical computation: with 128 equations and 128 unknowns, we should be able to find a weight configuration that gives us an ending loss of 0. 
+
+### Floating-point instabilities whilst solving the Normal equations
+Interestingly, the ending loss is usually much higher than what was found above: repeating the same calculations in fp32 rather than fp16 takes a good deal longer and yields
+
+```
+Starting loss: 244.5254053321467
+Ending loss: 58.21005218079172
+```
+
+but
 
 ### Newton's method
 
