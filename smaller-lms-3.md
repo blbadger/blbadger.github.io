@@ -105,9 +105,9 @@ X = X[:, :-1, :].contiguous()
 target = target[:, 1:, :].contiguous()
 ```
 
-We can apply the normal equations to this model by saving the activations of the input of this `lm_head` layer, onverting the target output to one-hot tensors for use with mean squared error loss, shifting the target and inputs for causal language modeling (next token prediction), computation of the minimal lm_head weight, and assignment of that weight.
+We can apply the normal equations to this model by saving the activations of the input of this `lm_head` layer, converting the target output to one-hot tensors for use with mean squared error loss, shifting the target and inputs for causal language modeling (next token prediction), computation of the minimal lm_head weight, and assignment of that weight.
 
-We don't need to compute gradients when using the normal equations for loss minimization. All together, we have
+Finally, we don't need to compute gradients when using the normal equations for loss minimization so we can wrap our function using the handy `@torch.no_grad()` to save memory. All together, we have
 
 ```python
 @torch.no_grad()
@@ -133,7 +133,7 @@ Ending loss: 0.9978399276733398
 
 This ending loss may be considered the irredicuble error that is associated with imprecise numerical computation: with 128 equations and 128 unknowns, we should be able to find a weight configuration that gives us an ending loss of 0. 
 
-### Floating-point instabilities whilst solving the Normal equations
+### Floating-point instabilities whilst solving the normal equations
 Interestingly, the ending loss is usually much higher than what was found above: repeating the same calculations in fp32 rather than fp16 takes a good deal longer and yields
 
 ```
@@ -141,7 +141,8 @@ Starting loss: 244.5254053321467
 Ending loss: 58.21005218079172
 ```
 
-but
+When we plot the mean squared error loss for 
+![normal precision](/deep-learning/normal_precision.png)
 
 ### Newton's method
 
