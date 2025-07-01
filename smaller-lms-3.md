@@ -220,7 +220,9 @@ def newton_components(model, train_data, loss_constant=0.1):
     return 
 ```
 
-This method is more stable but still results in loss explosion for the large `lm_head` matrices necessary for typical language modeling tasks. We can make this algorithm even more stable at the expense of greatly increased computation by recomputing the gradient after each model parameter update from the components of each loss element.
+Component decomposition-based Newton's Method is more stable but still results in loss explosion for the large `lm_head` matrices necessary for typical language modeling tasks. This can be illustrated by restricting the loss we minimize to just a few elements rather than the hundreds or thousands usually used for sequence modeling. For TinyStories inputs where we have a known minimal loss value (found via the normal equations) such that we are guaranteed convergence if the numerical calculations are stable, the component-wise Newton's method implementation is numerically stable for over a hundred output elements (10 tokens for 10 hidden units each) whereas the standard Newton's method implementation is only stable for up to around four (2x2), and becomes unstable when we attempt to minimize the loss of only six elements.
+
+We can make this algorithm even more stable at the expense of greatly increased computation by recomputing the gradient after each model parameter update from the components of each loss element.
 
 ```python
 def newton_components_recalculated(model, train_data, steps=10, loss_constant=0.9):
@@ -237,7 +239,7 @@ def newton_components_recalculated(model, train_data, steps=10, loss_constant=0.
                 model.zero_grad()
     return
 ```
-It should be noted that this is no longer equivalent to computing and applying the exact gradient: as the model is updated and the gradient re-calculated component-wise, one cannot expect for this form of Newton's method to be equivalent to the others even with unlimited arithmetic precision. 
+It should be noted that this the above is no longer equivalent to computing and applying the exact gradient: as the model is updated and the gradient re-calculated component-wise, one cannot expect for this form of Newton's method to be equivalent to the others even with unlimited arithmetic precision. 
 
 
 ### The other Newton's method
