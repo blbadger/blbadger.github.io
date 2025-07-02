@@ -179,6 +179,7 @@ $$
 
 For \eqref{eq3} to actually find a root after many iterations, we need a few conditions to be satisfied (Lipschitz continuity and nonsingularity of $f'$ at $x_n$ for example) but most importantly there must actually be a root to find or each iteration will send us off in an entirely incorrect direction. This can be ensured in two ways: one is use an offset such that the zero of the loss is more or less guaranteed to be attainable, and another is to use complex-valued arithmetic.
 
+Using an offset brings a difficulty: what value will give us guaranteed roots? If we use Mean Squared Error loss, we can find minimal loss values for specific input and model combinations using the normal equation method presented in the last section, and simply set the offset to be equal to this minimal loss. In the following function, this offset is set by the `loss_constant` kwarg.
 
 ```python
 def newton(model, train_batch, loss_constant=0.01):
@@ -193,7 +194,7 @@ def newton(model, train_batch, loss_constant=0.01):
     return 
 ```
 
-Unforunately, application of Newton's method (even for relatively large `loss_constant` values) results in explosion of loss rather than minimization when applied to a language task. This can be shown to be a problem of numerical stability. To work around this problem, we can exploit the additive property of gradients, which can be stated as follows: the gradient of the sum of elements is the sum of the gradients. To be precise, 
+Unforunately, application of Newton's method (even for relatively large `loss_constant` values) results in explosion of loss rather than minimization when applied to a language task. This can be shown to be a problem of numerical stability, specifically in the dimensionality of the output that we reduce during loss computation (as we will see later). To work around this problem, we can exploit the additive property of gradients, which can be stated as follows: the gradient of the sum of elements is the sum of the gradients. To be precise, 
 
 $$
 \nabla_{\theta} \sum_n \Bbb L(O_n(a, \theta), y_n)) \\
@@ -240,7 +241,6 @@ def newton_components_recalculated(model, train_data, steps=10, loss_constant=0.
     return
 ```
 It should be noted that this the above is no longer equivalent to computing and applying the exact gradient: as the model is updated and the gradient re-calculated component-wise, one cannot expect for this form of Newton's method to be equivalent to the others even with unlimited arithmetic precision. 
-
 
 ### The other Newton's method
 
