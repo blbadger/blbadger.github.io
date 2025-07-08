@@ -231,13 +231,16 @@ Machine learning with layered representations.  Originally inspired by efforts t
 
 ![layer autoencoding](/neural_networks/representation_cover.png)
 
+
 ### [Input Representation II: Vision Transformers](/vision-transformers.md)
 
 ![vision transformer layer representations](/neural_networks/vit_cover.png)
 
+
 ### [Language Representation I: Spatial Information](/language-representations.md)
 
 ![vision transformer layer representations](/deep-learning/gpt2_features_viz.png)
+
 
 ### [Language Representation II: Sense and Nonsense](/language-representations-inputs.md)
 
@@ -303,6 +306,11 @@ x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)}) \\
 \theta_W = (X^TX)^{-1} X^T y = X^+ y, \\
 X^+ = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1} X^T
 $$
+
+### [Linear Language Models](/linear-lms.md)
+
+![linear architecture](/deep-learning/linear_mixer_architecture.png)
+
 
 ### [Vision Autoencoders](/autoencoder-representation.md)
 
