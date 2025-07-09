@@ -307,6 +307,10 @@ x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)}) \\
 X^+ = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1} X^T
 $$
 
+### [Language Mixers IV: Compression and Memory](/memory-models.md)
+
+![Memory models](deep-learning/memory_encoder_options.png)
+
 ### [Linear Language Models](/linear-lms.md)
 
 ![linear architecture](/deep-learning/linear_mixer_architecture.png)
