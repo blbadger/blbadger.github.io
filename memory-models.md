@@ -64,7 +64,11 @@ With this in mind, it may be wondered if we can combine the advantages of causal
 
 ### Memory Models
 
+The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation.
 
+The architecture we will experiment with here is mostly similar to the embedding-augmented causal langauge model architecture implemented above, where we use the token dimension concatenation to maximize the number of embeddings we can provide to the decoder model. One notable difference
+
+![memory decoder architectures](/deep-learning/memory_transformer.png)
 
 
 
