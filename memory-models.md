@@ -32,6 +32,8 @@ From an architectural perspective, the masked mixer architecture is largely base
 
 Recalling that transformers require approximately double the device (GPU) memory for the same $n_l, d_m$ configuration as masked mixers due to the large number of activations formed by $K, Q, V$ projections, we can compare a transformer decoder of dim $d_m/2$ to a masked mixer decoder of dim $d_m$ all else equal.
 
+![decoder options](/deep-learning/autoencoder_decoder_fig.png)
+
 ### Text Compression Background
 
 Although it may not seem to be very important to the field of artificial intelligence, text compression in many ways has been proven time and time again to be a very apt predictor of a language model's abilities in areas usually lumped together in that field, and has been shown to be important for everything from language generation to q/a chat capability to chain-of-thought reasoning capability. 
