@@ -66,9 +66,11 @@ There are a few options for
 
 ![memory decoder architectures](/deep-learning/memory_encoder_options.png)
 
-
-
 ![memory decoder performances](/deep-learning/decoder_options.png)
+
+We observe something interesting when we nor
+
+![memory decoder performances](/deep-learning/memory_compression_fig.png)
 
 ### Memory Models
 
