@@ -52,6 +52,14 @@ With this in mind, we have a clear alternative to next token prediction-based co
 
 ### Text Compression in Masked Mixer Autoencoders
 
+If we have a negative log likelihood loss $\Bbb L$, we can compute the number of bits per input byte for a given segment of text if we know the length of text in bytes $L_b$ and the number of tokens required to encode that text for a given tokenizer $L_t$. 
+
+$$
+\mathrm{bpb} = (L_t / L_b) \Bbb L / \ln (2)
+$$
+
+On this page we report loss as the `torch` implementation of `CrossEntropyLoss`, which is equivalent to taking the Negative Log Likelihood of a softmax-tranformed logit output. This means that we can simply substitute our CEL loss values for the negative log likelihood $\Bbb L$ values (the softmax simply transforms the model's outputs to a probability distribution). We also make the simplifying assumption that our text is encoded in single-byte UTF-8.
+
 ### Embedding-augmented causal language models
 
 Recalling our original motivation to introduce input embeddings to remove the source entropy of text for a language model compressor, it may be wondered if one cannot combine the advantages of the autoencoder with next token prediction-based compression. The reson why this might be beneficial is as follows: it is apparent that masked mixer autoencoders require a compressed $d_m$ that is too large (in bits per $n_{ctx}$ tokens) to improve upon the compression found using next token prediction models given the relatively small amount of compute we have been applying to train these models. 
@@ -68,9 +76,31 @@ There are a few options for
 
 ![memory decoder performances](/deep-learning/decoder_options.png)
 
-We observe something interesting when we nor
+Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as follows:
+
+$$
+\mathrm{bpb} = \frac{n_p * b_p} / \frac{n_{ctx} * (L_b / L_t)}
+$$
+
+Once this value is known, we can find the loss offset $\Bbb L_o$ that corresponds to this extra required information,
+
+$$
+\Bbb L_o = \frac{\mathrm{bpb} * \ln 2}{(L_t / L_b)} 
+$$
+
+and add this offset to the causal language modeling negative log likelihood loss for next token prediction to find the total loss.
+
+$$
+\Bbb L = \Bbb L(O(a, \theta), y) + \Bbb L_o
+$$
+
+We call this the 'normalized loss' for brevity. For a relativel small embedding ($d_m=64$) assuming 4 bits per parameter, and with a context window of $n_{ctx}=1024$ we have the following normalized loss:
 
 ![memory decoder performances](/deep-learning/memory_compression_fig.png)
+
+There is some expected behavior here: the embedding-augmented models begin training with higher loss (the result of the offset required for storage of the 64 floats in the embedding vector) but then approach or pass the purely causal model's loss (or equivalently its bpb compression of the input). 
+
+It is interesting however that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder.
 
 ### Memory Models
 
