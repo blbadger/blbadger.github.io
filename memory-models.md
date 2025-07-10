@@ -55,7 +55,7 @@ With this in mind, we have a clear alternative to next token prediction-based co
 If we have a negative log likelihood loss $\Bbb L$, we can compute the number of bits per input byte for a given segment of text if we know the length of text in bytes $L_b$ and the number of tokens required to encode that text for a given tokenizer $L_t$. 
 
 $$
-\mathrm{bpb} = (L_t / L_b) \Bbb L / \ln (2)
+\mathtt{BPB} = (L_t / L_b) \Bbb L / \ln (2)
 $$
 
 On this page we report loss as the `torch` implementation of `CrossEntropyLoss`, which is equivalent to taking the Negative Log Likelihood of a softmax-tranformed logit output. This means that we can simply substitute our CEL loss values for the negative log likelihood $\Bbb L$ values (the softmax simply transforms the model's outputs to a probability distribution). We also make the simplifying assumption that our text is encoded in single-byte UTF-8.
@@ -70,22 +70,24 @@ Some reflection may convince us that there is a good reason for this: it may be 
 
 With this in mind, it may be wondered if we can combine the advantages of causal modeling and autoencoding to make an encoder-decoder architecture that exhibits superior compression ability to either autoencoder or causal language model alone, give similar compute to what has been used previously.
 
-There are a few options for 
+There are a number of options for how one could introduce the encoder's embedding into the decoder. Three straightforward candidates are concatenation in the token dimension, concatenation in the embedding dimension, or a linear combination in the embedding dimension. For embedding concatenation, we decrease the size of the token embeddings for the decoder commensurately to maintain a constant decoder size while comparing to other methods. These are illustrated in the following figure for convience.
 
 ![memory decoder architectures](/deep-learning/memory_encoder_options.png)
+
+When we test the use of these three methods on FineMath 4+ data using a masked mixer decoder as our causal language model, we find that in general they are similarly efficient to train with the embedding concatenation method obtaining a slightly lower loss than embeddings combination or token concatenation.
 
 ![memory decoder performances](/deep-learning/decoder_options.png)
 
 Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as follows:
 
 $$
-\mathrm{bpb} = \frac{n_p * b_p} / \frac{n_{ctx} * (L_b / L_t)}
+\mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)}
 $$
 
 Once this value is known, we can find the loss offset $\Bbb L_o$ that corresponds to this extra required information,
 
 $$
-\Bbb L_o = \frac{\mathrm{bpb} * \ln 2}{(L_t / L_b)} 
+\Bbb L_o = \frac{\mathtt{BPB} * \ln 2}{(L_t / L_b)} 
 $$
 
 and add this offset to the causal language modeling negative log likelihood loss for next token prediction to find the total loss.
@@ -100,7 +102,7 @@ We call this the 'normalized loss' for brevity. For a relativel small embedding 
 
 There is some expected behavior here: the embedding-augmented models begin training with higher loss (the result of the offset required for storage of the 64 floats in the embedding vector) but then approach or pass the purely causal model's loss (or equivalently its bpb compression of the input). 
 
-It is interesting however that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder.
+It is interesting that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder, which is particularly apparent later in training.
 
 ### Memory Models
 
