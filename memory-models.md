@@ -60,7 +60,13 @@ Some reflection may convince us that there is a good reason for this: it may be 
 
 With this in mind, it may be wondered if we can combine the advantages of causal modeling and autoencoding to make an encoder-decoder architecture that exhibits superior compression ability to either autoencoder or causal language model alone, give similar compute to what has been used previously.
 
+There are a few options for 
+
 ![memory decoder architectures](/deep-learning/memory_encoder_options.png)
+
+
+
+![memory decoder performances](/deep-learning/decoder_options.png)
 
 ### Memory Models
 
