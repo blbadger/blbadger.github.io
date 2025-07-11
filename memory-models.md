@@ -78,7 +78,7 @@ $$
 
 A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding. Experimentally this is more efficient of one uses a larger $d_m$ in the encoder and decoder with a compression module that transforms $d_m \to d_m//n \to d_m$ rather than decreasing the hidden size of the encoder and decoder. This is in some ways unsurprising for a given step number as shown in the following figure as a larger-width model requires more compute to train, but closer inspection shows that it is also true when one normalizes for this condition (compare the 100k step loss of the $d_m=1024$ model to the 200k step loss of the $d_m=512$ model). 
 
-![compression benefits](/deep-learning/compressed_vs_concompressed.png)
+![compression benefits](/deep-learning/compressed_vs_noncompressed.png)
 
 As an aside, using $d_m=512$ transformers for both encoder and decoder for this dataset leads to a plateau a loss of around 5.0 by the equivalent of 50k steps, which is far worse than either mixer.
 
