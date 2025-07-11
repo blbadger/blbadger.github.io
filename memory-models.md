@@ -78,9 +78,9 @@ $$
 
 A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding. Experimentally this is more efficient of one uses a larger $d_m$ in the encoder and decoder with a compression module that transforms $d_m \to d_m//n \to d_m$ rather than decreasing the hidden size of the encoder and decoder. This is in some ways unsurprising for a given step number as shown in the following figure as a larger-width model requires more compute to train, but closer inspection shows that it is also true when one normalizes for this condition (compare the 100k step loss of the $d_m=1024$ model to the 200k step loss of the $d_m=512$ model). 
 
-![memory decoder architectures](/deep-learning/compressed_vs_concompressed.png)
+![compression benefits](/deep-learning/compressed_vs_concompressed.png)
 
-As an aside, using $d_m=512$ transformers for encoder and decoder for this dataset leads to a plateau a loss of around 5.0, by the equivalent of 50k steps, which is far worse than either mixer.
+As an aside, using $d_m=512$ transformers for both encoder and decoder for this dataset leads to a plateau a loss of around 5.0 by the equivalent of 50k steps, which is far worse than either mixer.
 
 ### Embedding-augmented causal language models
 
@@ -96,13 +96,15 @@ There are a number of options for how one could introduce the encoder's embeddin
 
 ![memory decoder architectures](/deep-learning/memory_encoder_options.png)
 
-When we test the use of these three methods on FineMath 4+ data using a masked mixer decoder as our causal language model, we find that in general they are similarly efficient to train with the embedding concatenation method obtaining a slightly lower loss than embeddings combination or token concatenation.
+When we test the use of these three methods on FineMath 4+ data using a masked mixer decoder as our causal language model, we find that in general they are similarly efficient to train with the embedding concatenation method obtaining a slightly lower loss than embeddings combination or token concatenation. 
 
 ![memory decoder performances](/deep-learning/decoder_options.png)
 
-One may expect for a transformer decoder to be somewhat more effective
+One may expect for a transformer decoder to exhibit more training efficiency if given a token concatenation relative to embedding concatenation or combination, and indeed this is what we find (this time applied to the FineWeb-edu dataset):
 
 ![memory decoder performances](/deep-learning/transformer_memory_fig.png)
+
+It appears from the above results that transformers are relatively invariant to how exactly the encoder's embedding is introduced among these three methods, so for text compression purposes we will use them interchangeably. 
 
 Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as previously via
 
@@ -128,15 +130,23 @@ We call this the 'normalized loss' for brevity. For a relatively small embedding
 
 There is some expected behavior here: the embedding-augmented models begin training with higher loss (the result of the offset required for storage of the 64 floats in the embedding vector) but then approach or pass the purely causal model's loss (or equivalently its bpb compression of the input). 
 
-It is interesting that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder, which is particularly apparent later in training.
+It is somewhat less expected that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder, a pattern that is particularly apparent later in training. It is currently unclear why this would be. 
 
 ### Memory Models
 
 The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation.
 
-The architecture we will experiment with here is mostly similar to the embedding-augmented causal langauge model architecture implemented above, where we use the token dimension concatenation to maximize the number of embeddings we can provide to the decoder model. One notable difference
+The architecture we will experiment with here is mostly similar to the embedding-augmented causal langauge model architecture implemented above, where we use the token dimension concatenation to maximize the number of embeddings we can provide to the decoder model.
 
 ![memory decoder architectures](/deep-learning/memory_transformer.png)
 
+The notable difference between this architecture and the token concatenation-based autoencoder introduced above is that we not longer care about compressing the embedding fed from the encoder to decoder. This is because if one uses token concatenation, each token in the decoder is converted to a vector of dimension $d_m$ such that it is natural to supply the encoder's embedding as a vector of that same dimension. This also allows us to provide embeddings of $n$ encoded text sequences as $n$ embeddings, taking the place of $n$ tokens of the decoder. It is clear to see that this is much more efficient in terms of decoder input space than embeding concatenation.
 
+The idea of compressing input sequences into embeddings that take the place of transformer token embeddings is not new, and was explored in various forms (see particularly the [recurrent memory transformer](https://arxiv.org/abs/2207.06881)). Such models were shown to be able to perform simple information retrieval (needle-in-haystack style) on the compressed inputs but little more, and certainly do not retain most information of the input. 
+
+The insight here is that as we have seen that transformers are quite inefficient with respect to capturing input information in encodings, we can use masked mixer encoders instead to greatly increase the encoder's fidelity.
+
+
+
+ 
 
