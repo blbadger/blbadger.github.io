@@ -78,6 +78,10 @@ When we test the use of these three methods on FineMath 4+ data using a masked m
 
 ![memory decoder performances](/deep-learning/decoder_options.png)
 
+One may expect for a transformer decoder to be somewhat more effective
+
+![memory decoder performances](/deep-learning/transformer_memory_fig.png)
+
 Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as follows:
 
 $$
