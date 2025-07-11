@@ -18,33 +18,35 @@ To begin with, it is helpful to recall the architecture of the masked mixer-base
 
 This architecture recieved little to no optimization in that work, as it was mostly presented as evidence for a hypothesis involving bijective functions and autoencoding. But now that we want to improve and elaborate upon this architecture, where would we start? 
 
-One obvious question is whether or not the convolutions really need to be masked: after all, we are generating the output in one step and are not adhering to the causal language modeling objective of next token prediction, so why would we really want to mask the model's convolutions? Bearing this in mind, it is somewhat unexpected that removing the encoder convolution's mask results in substantially less efficient training and even more surprising that removal of the decoder's mask (keeping the encoder unmasked as well) results in highly unstable training with gradient norm spikes leading to rapid rises in loss during training.
+One obvious question is whether or not the convolutions really need to be masked: after all, we are generating the output in one step and are not adhering to the causal language modeling objective of next token prediction, so why would we really want to mask the model's convolutions? Bearing this in mind, it is somewhat unexpected that removing the encoder convolution's mask results in substantially less efficient training and even more surprising that removal of the decoder's mask (keeping the encoder unmasked as well) results in highly unstable training with gradient norm spikes leading to rapid rises in loss during training. The following figure details the cross-entropy losses achieved by masked mixer-based autoencoders ($d_m=1024, n_{ctx}=512, n_l=8$) on the `FineWeb-edu (10BT)` dataset, where the evaluation is a hold-out sample from the corpora (which has been measured to contain <5% duplicate documents). Here 'masked' indicates a causal (left-to-right) mask implemented using a lower triangular mask on the 1D convolution weight matrix, and the right panel is simply an extended training run of the conditions in the left panel (omitting the unstable no-masked model).
 
 ![mixer autoencoder efficiencies](/deep-learning/autoencoder_causality.png)
 
 Why would causal masking be so important to a model that does not perform causal modeling? There is usually some benefit to matching a model's structure to any prior we know about the dataset that is being modeled, and with that perspective one could perhaps guess that enforcing causality is beneficial because the data being modeled (text) is in some way fundamentally causal as it is understood in one orientation. It is less certain why removing all causality masks leads to highly unstable training, as one may expect for a simple decrease in efficiency in this paradigm rather than exploding gradients. 
 
-In addition to whether encoders and decoders should be causally masked, it may also be wondered whether the masked mixer is even the optimal architecture for the decoder, and in particular whether a transformer decoder might be more effective. In the [paper](https://arxiv.org/pdf/2409.01482v1) introducing the mixer autoencoder, it was observed that transformer-based autoencoders are far less efficiently trainable than autoencoders based on the masked mixer. There are fairly convincing theoretical and empirical arguments to suggest that this is primarily because self-attention is simply not well suited for encoding if one cares about capturing as much of the input as possible. This does not preclude the possibility that transformers may be well suited for the autoencoder's decoder, however. 
+In addition to whether encoders and decoders should be causally masked, it may also be wondered whether the masked mixer is even the optimal architecture for the decoder at all, and in particular whether a transformer decoder might be more effective. In the [paper](https://arxiv.org/pdf/2409.01482v1) introducing the mixer autoencoder, it was observed that transformer-based autoencoders are far less efficiently trainable than autoencoders based on the masked mixer. There are fairly convincing theoretical and empirical arguments to suggest that this is primarily because self-attention is simply not well suited for encoding if one cares about capturing as much of the input as possible. This does not preclude the possibility that transformers may be well suited for the autoencoder's decoder, however, although there are similar arguments to be made for the better suitability of masked mixers to decoding when one wants to generate all output elements simultaneously as is performed here.
 
 From an architectural perspective, the masked mixer architecture is largely based on the transformer such that we are essentially testing whether or not a masked convolution (with a somewhat larger $d_m$ in the decoder) is more efficient to train than multi-headed attention (with a somewhat smaller $d_m$ due to memory and FLOPs required to compute the $K, Q, V$ projections). This can be appreciated when we compare the autoencoder architecture diagram above with the transformer-mixer hybrid autoencoder below:
 
 ![mixer autoencoder efficiencies](/deep-learning/autoencoder_transfixer.png)
 
-Recalling that transformers require approximately double the device (GPU) memory for the same $n_l, d_m$ configuration as masked mixers due to the large number of activations formed by $K, Q, V$ projections, we can compare a transformer decoder of dim $d_m/2$ to a masked mixer decoder of dim $d_m$ all else equal.
+Recalling that transformers require approximately double the device (GPU) memory for the same $n_l, d_m$ configuration as masked mixers due to the large number of activations formed by $K, Q, V$ projections, we can compare a transformer decoder of dim $d_m/2$ to a masked mixer decoder of dim $d_m$ all else equal. In the following figure, we observe losses upon training $n_l=16, n_{ctx}=1024$ models on the FineWeb. The 1024-dim transformer decoder is wall-clock-matched to the other models, such that the training run for that model was shortened to make the total compute applied to each model approximately constant.
 
 ![decoder options](/deep-learning/autoencoder_decoder_fig.png)
 
+From these loss values it is clear that the masked mixer decoder is a good deal more efficient to train than the transformer decoder given the repeat embeddings from a masked mixer encoder. Earlier this was implied to be the expected result, and this is because transformers have been [shown](https://arxiv.org/abs/2409.01482) to be less capable than mixers in retaining information from the input in the output. This characteristic is broadly beneficial to causal language modeling where one wants a model to predict one next token given a sequence of many previous tokens (many of which are irrelevant to that prediction), but here we want all tokens to be predicted in one forward pass. One would expect for a model that is capable of better informational retention to be more efficient to train as a decoder in this setting, and indeed this is what we have found, albeit for a somewhat limited amount of compute applied.
+
 ### Text Compression Background
 
-Although it may not seem to be very important to the field of artificial intelligence, text compression in many ways has been proven time and time again to be a very apt predictor of a language model's abilities in areas usually lumped together in that field, and has been shown to be important for everything from language generation to q/a chat capability to chain-of-thought reasoning capability. 
+Although it may not seem to be very important to the field of artificial intelligence, text compression in many ways has been proven time and time again to be a very apt predictor of a language model's abilities across the spectrum and has been shown to be important for everything from language generation to q/a chat capability to chain-of-thought reasoning capability. 
 
-Language compression is an old goal, and attempts to understand how to compress text and how much text can be compressed go back to the beginnings of information theory. Shannon's [seminal work](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) focuses on the problem of compression and transmission of information of text,
+Language compression is an old goal, and attempts to understand how to compress text and how much text can be compressed go back to the beginnings of information theory. Shannon's [seminal work](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf) focuses on the problem of compression and transmission of textual information, as does earlier work in the field from Hartley and Nyquist. There were practical reasons for that: it has long been appreciated that one needs to send much less information to regenerate a string of characters than to generate the sound of someone speaking those characters, so figuring out exactly how much information is required was and is an important problem to data transmission. 
 
-One of the most general methods of measuring text compression is bits per byte (bpb), which is the number of bits required for encoding a byte of input text. Often the input is assumed to be encoded in UTF-8, which uses one byte per character and makes this measure effectively the number of bits per input character.
+We focus on compression rather than transmission, although one can view deep learning models themselves as being somewhat similar to noisy communication channels. One of the most general methods of measuring text compression is bits per byte (bpb), which is the number of bits required for encoding a byte of input text. Often the input is assumed to be encoded in UTF-8, which uses one byte per character and makes this measure effectively the number of bits per input character if single-byte encoding predominates.
 
 Although less well known than other model capabilities, the most effective text compression methods today are frontier large language models trained to predict each next token in a very large corpus of text. The gap between classical compression algorithms and these models is vast in the scale of information theory: perhaps the most widely used compression algorithm `gzip` achieves up to around 2 bits per byte, highly tuned dictionary and bit matcher decoders achieve around 1.2 bits per byte, whereas Deepseek v3 achieves 0.54 bits per byte.
 
-The way large language models compress text is simply by being able to predict next tokens, where the compression is simply the number of bits required to correct errors in the model's prediction for each token.  Causal language model-style compression is nearly as old as text compression itself. For example, Shannon used next character prediction by people as a way to attempt to estimate the source entropy for the English language. Shannon estimated a lower bound of around 0.6 bits per character, very similar to what we see for large language models today.
+The way large language models are usually used to compress text is simply by being able to predict next tokens, where the compression is simply the number of bits required to correct errors in the model's prediction for each token.  Causal language model-style compression is nearly as old as text compression itself. For example, Shannon used next character prediction by people as a way to attempt to estimate the source entropy for the English language. Shannon estimated a lower bound of around 0.6 bits per character, very similar to what we see for large language models today.
 
 There is a clear upper bound to causal language model text compression, however: in natural languages such as English, there is a certain amount of inherent ambiguity such that no particular word necessarily follows from a given previous sequence of words. This is what Shannon referred to as 'source entropy', and it may be thought of as irreducible error and provides a hard lower bound on the bits-per-byte compression of a causal-style model. 
 
@@ -55,10 +57,30 @@ With this in mind, we have a clear alternative to next token prediction-based co
 If we have a negative log likelihood loss $\Bbb L$, we can compute the number of bits per input byte for a given segment of text if we know the length of text in bytes $L_b$ and the number of tokens required to encode that text for a given tokenizer $L_t$. 
 
 $$
-\mathtt{BPB} = (L_t / L_b) \Bbb L / \ln (2)
+\mathtt{BPB} = (L_t / L_b) * \Bbb L / \ln (2)
 $$
 
 On this page we report loss as the `torch` implementation of `CrossEntropyLoss`, which is equivalent to taking the Negative Log Likelihood of a softmax-tranformed logit output. This means that we can simply substitute our CEL loss values for the negative log likelihood $\Bbb L$ values (the softmax simply transforms the model's outputs to a probability distribution). We also make the simplifying assumption that our text is encoded in single-byte UTF-8.
+
+We can now compare the compression achieved using masked mixer autoencoders to that obtained when using next-token-prediction models. Taking the FineMath 4+ dataset and a tokenizer that averages 2.82 characters (which equals 2.82 bytes assuming single UTF-8) and a model with a 512-dimensional embedding with an $n_{ctx}=512$ stored using 4 bits per parameter, we can calculate the amortized BPB as follows:
+
+$$
+\mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)} \\
+\mathtt{BPB} = \frac{512 * 4}{512 * 2.82} \approx 1.42
+$$
+
+assuming that we have zero loss after training (we actually have around $\Bbb L=0.7$). This compares disfavorably with the compression achieved by a causal language model transformer on this dataset using approximately the same compute,
+
+$$
+\mathtt{BPB} = (L_t / L_b) * \Bbb L / \ln (2) \\
+\mathtt{BPB} = (1/2.82) * 1.4 / \ln(2) \approx 0.72
+$$
+
+A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding. Experimentally this is more efficient of one uses a larger $d_m$ in the encoder and decoder with a compression module that transforms $d_m \to d_m//n \to d_m$ rather than decreasing the hidden size of the encoder and decoder. This is in some ways unsurprising for a given step number as shown in the following figure as a larger-width model requires more compute to train, but closer inspection shows that it is also true when one normalizes for this condition (compare the 100k step loss of the $d_m=1024$ model to the 200k step loss of the $d_m=512$ model). 
+
+![memory decoder architectures](/deep-learning/compressed_vs_concompressed.png)
+
+As an aside, using $d_m=512$ transformers for encoder and decoder for this dataset leads to a plateau a loss of around 5.0, by the equivalent of 50k steps, which is far worse than either mixer.
 
 ### Embedding-augmented causal language models
 
@@ -82,7 +104,7 @@ One may expect for a transformer decoder to be somewhat more effective
 
 ![memory decoder performances](/deep-learning/transformer_memory_fig.png)
 
-Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as follows:
+Can adding an encoder's embedding lead to increased compression? To answer this we first need to know how large our embeddings are (particularly how many bytes they require) and then we can convert this to a bits-per-byte value.  Suppose one trains an embedding-augmented causal model where the embedding is of dimension $n_p$, each parameter being stored using $b_p$ bits, for a context window of size $n_{ctx}$ and $L_b / L_t$ bytes of input text per token. Then we can calculate the bits per byte required to store this embedding (amortized over the input) as previously via
 
 $$
 \mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)}
@@ -91,7 +113,7 @@ $$
 Once this value is known, we can find the loss offset $\Bbb L_o$ that corresponds to this extra required information,
 
 $$
-\Bbb L_o = \frac{\mathtt{BPB} * \ln 2}{(L_t / L_b)} 
+\Bbb L_o = \frac{\mathtt{BPB} * \ln (2)}{(L_t / L_b)} 
 $$
 
 and add this offset to the causal language modeling negative log likelihood loss for next token prediction to find the total loss.
@@ -100,7 +122,7 @@ $$
 \Bbb L = \Bbb L(O(a, \theta), y) + \Bbb L_o
 $$
 
-We call this the 'normalized loss' for brevity. For a relativel small embedding ($d_m=64$) assuming 4 bits per parameter, and with a context window of $n_{ctx}=1024$ we have the following normalized loss:
+We call this the 'normalized loss' for brevity. For a relatively small embedding ($d_m=64$) assuming 4 bits per parameter, and with a context window of $n_{ctx}=1024$ we have the following normalized loss:
 
 ![memory decoder performances](/deep-learning/memory_compression_fig.png)
 
