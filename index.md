@@ -294,9 +294,9 @@ $$
 ![features](/deep-learning/llm_mixer.png)
 
 
-### [Language Mixers II: Retrieval and Autoencoding](/smaller-lms-2.md)
+### [Language Mixers II: Large datasets, Bidirectional and one-pass modeling, Retrieval](/smaller-lms-2.md)
 
-![qutoencoder](/deep-learning/mixer_autoencoder.png)
+![qutoencoder](/deep-learning/bidirectional_transformer_explained.png)
 
 ### [Language Mixers III: Optimization](/smaller-lms-3.md)
 
