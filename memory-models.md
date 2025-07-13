@@ -40,6 +40,10 @@ If the mixer is a better autoencoder encoder and decoder in this paradigm (where
 
 ![decoder options](/deep-learning/multi_headed_autoencoder.png)
 
+For the case where $n_h=$ and we keep the concatenated projection dimension to be equal to $d_m$ as above we have a notable increase in autoencoder training efficiency.
+
+![decoder options](/deep-learning/mixer_heads_figure.png)
+
 ### Text Compression Background
 
 Although it may not seem to be very important to the field of artificial intelligence, text compression in many ways has been proven time and time again to be a very apt predictor of a language model's abilities across the spectrum and has been shown to be important for everything from language generation to q/a chat capability to chain-of-thought reasoning capability. 
