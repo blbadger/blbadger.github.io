@@ -36,13 +36,23 @@ Recalling that transformers require approximately double the device (GPU) memory
 
 From these loss values it is clear that the masked mixer decoder is a good deal more efficient to train than the transformer decoder given the repeat embeddings from a masked mixer encoder. Earlier this was implied to be the expected result, and this is because transformers have been [shown](https://arxiv.org/abs/2409.01482) to be less capable than mixers in retaining information from the input in the output. This characteristic is broadly beneficial to causal language modeling where one wants a model to predict one next token given a sequence of many previous tokens (many of which are irrelevant to that prediction), but here we want all tokens to be predicted in one forward pass. One would expect for a model that is capable of better informational retention to be more efficient to train as a decoder in this setting, and indeed this is what we have found, albeit for a somewhat limited amount of compute applied.
 
-If the mixer is a better autoencoder encoder and decoder in this paradigm (where we regenerate all tokens of a sequence in one pass), how might one improve the mixer's architecture for further training efficiency? One straightforward guess might be to increase the number of inter-token trainable parameters, and this increase may be achieved in a number of different ways (multiple convolutional kernels, expanded convolutions with nonlinearities, multi-headed masked mixers) but when a number of architectures were tested for causal language modeling the most performant among these was the multi-headed mixer. This architecture is shown in the following figure for the case where there are $n_h=2$ heads and the projection dim is just $d_m / n_h$.
+If the mixer is a better autoencoder encoder and decoder in this paradigm (where we regenerate all tokens of a sequence in one pass), how might one improve the mixer's architecture for further training efficiency? One straightforward guess might be to increase the number of inter-token trainable parameters, and this increase may be achieved in a number of different ways (multiple convolutional kernels, expanded convolutions with nonlinearities, multi-headed masked mixers) but when a number of architectures were tested for causal language modeling the most performant among these was the multi-headed mixer. We modify the original multi-headed mixer architecture as shown in the following figure for the case where there are $n_h=2$ heads and the projection dim is just $d_m / n_h$. 
 
 ![decoder options](/deep-learning/multi_headed_autoencoder.png)
 
-For the case where $n_h=$ and we keep the concatenated projection dimension to be equal to $d_m$ as above we have a notable increase in autoencoder training efficiency.
+As long as we stick to the $d_m / n_h$ total projection dimension limitation, the number of inter-token parameters is 
+
+$$
+n_p = n_h * n_{ctx}^2 + 2 * d_m^2
+$$ 
+
+whereas we have $n_{ctx}^2$ inter-token parameters for the 'flat' masked mixer, so we have a linear increase in inter-token parameters as the number of heads (ie 2x the parameters for 4 heads instead of 2). To see why this is the number of parameters, observe that each head has a corresponding convolution (with weight matrix of size $n_{ctx}^2$) and the input and output projections are of constant factor, in particular the output projection is size $d_m^2$ and the input $d_m*d_m *n_h / n_h$.  
+
+For the case where $n_h=$ and we keep the concatenated projection dimension to be equal to $d_m$ as above, we have a notable increase in autoencoder training efficiency (see the figure below) relative to the 'flat' masked mixer which has no projections and only a single 1D-convolution.
 
 ![decoder options](/deep-learning/mixer_heads_figure.png)
+
+Interestingly, however, the multi-headed mixer autoencoder experiences late training instabilities characterized by exploding gradient norm with a rapid rise in training and evaluation loss. 
 
 ### Text Compression Background
 
