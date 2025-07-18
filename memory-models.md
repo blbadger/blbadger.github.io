@@ -18,9 +18,11 @@ We are in a position to now further explore the training efficiencies for transf
 
 ![prebuilt vs module transformer autoencoder](/deep-learning/prebuilt_transformer_autoencoder.png)
 
-The other main oustanding question is whether the increased masked mixer autoencoder training efficiency might be due to the larger embedding dimension in that model versus the transformer, at least for larger and more diverse datasets like finemath 4+ or fineweb-edu. This is primarily a scaling question with respect to increases in the model $d_m$ (and thus the embedding dimension in this case), so one can obtain a more general idea of the differences in masked mixer versus transformers for autoencoder training efficiency by comparing the losses achieved as one scales the model $d_m$ for a given training dataset...
+The other main oustanding question is whether the increased masked mixer autoencoder training efficiency might be due to the larger embedding dimension in that model versus the transformer, at least for larger and more diverse datasets like finemath 4+ or fineweb-edu. This is primarily a scaling question with respect to increases in the model $d_m$ (and thus the embedding dimension in this case), so one can obtain a more general idea of the differences in masked mixer versus transformers for autoencoder training efficiency by comparing the losses achieved as one scales the model $d_m$ for a given training dataset.
 
-[dm scaling figure]
+From the following figure, it can be appreciated that indeed transformers are far less efficient to train as autoencoders than masked mixers for multiple $d_m$ values, providing evidence for the idea that differences in autoencoding abilities between these models are not due to differences in $d_m$. Not only do transformers far underperform masked mixers for a given $d_m$, they also scale badly both in terms of samples per model as apparent by the negative asymptotic slope of the transformer training curves being far smaller than that of the masked mixer (here we have a total of $n = 200,000 * 128 * 512 = 13.1 * 10^9$ tokens trained at 200k steps) and also in terms of scaling the embedding size or equivalently the model width. The latter can be seen by observing that $d_m=512 \to d_m=1024$ corresponds to around a 5% decrease in CEL at 200k steps, whereas we have a ~34% decrease in CEL for the same change in masked mixer hidden size.
+
+![transformer versus mixer autoencoders](/deep-learning/mixer_vs_transformer_autoencoder.png)
 
 ### Causal masking increases autoencoder training efficiency
 
