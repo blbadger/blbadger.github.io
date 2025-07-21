@@ -24,7 +24,7 @@ From the following figure, it can be appreciated that indeed transformers are fa
 
 ![transformer versus mixer autoencoders](/deep-learning/autoencoder_scaling_figure.png)
 
-It is also apparent that transformers scale badly in terms of samples per model, as apparent by the negative asymptotic slope of the transformer training curves being far smaller than that of the masked mixer. Transformers-based autoencoders also scale poorly in terms of scaling the embedding size or equivalently the model width, which is apparent as doubling the $d_m$ of a transformer autoencoder twice gives decreasing loss achieved with each doubling, whereas the opposite is true for masked mixer autoencoders.
+It is apparent that transformers scale badly in terms of samples per model, as apparent by the negative asymptotic slope of the transformer training curves being far smaller than that of the masked mixer. Transformers-based autoencoders also scale poorly in terms of scaling the embedding size or equivalently the model width, which is apparent as doubling the $d_m$ of a transformer autoencoder twice gives decreasing loss achieved with each doubling, whereas the opposite is true for masked mixer autoencoders.
 
 None of this is particularly surprising given the results and theory outlined in the masked mixer [introductory paper](https://arxiv.org/pdf/2409.01482). One major finding there is that transformers are relatively inefficient to train for tasks requiring retention of information present in the input, either in a single or multiple output embeddings. 
 
@@ -140,15 +140,13 @@ A straightforward way to attempt to increase the compression in our autoencoder 
 
 ![compression benefits](/deep-learning/compressed_vs_noncompressed.png)
 
-As an aside, using $d_m=512$ transformers for both encoder and decoder for this dataset leads to a plateau a loss of around 5.0 by the equivalent of 50k steps, which is far worse than either mixer.
-
 ### Embedding-augmented causal language models
 
 Recalling our original motivation to introduce input embeddings to remove the source entropy of text for a language model compressor, it may be wondered if one cannot combine the advantages of the autoencoder with next token prediction-based compression. The reson why this might be beneficial is as follows: it is apparent that masked mixer autoencoders require a compressed $d_m$ that is too large (in bits per $n_{ctx}$ tokens) to improve upon the compression found using next token prediction models given the relatively small amount of compute we have been applying to train these models. 
 
-The primary reason for this is that each token (which usually representes between 3 and 5 bytes of text) is greatly expanded by the embedding transformation, whereby each token becomes represented by vectors of at least 512 elements, or at least 1024 bytes in fp16. This is such a large expansion that even our subsequent many-to-one token compression abilities do not give greater total compression than causal language models.
+The primary reason for this is that each token (which usually represents between 3 and 5 bytes of text) is greatly expanded by the embedding transformation, whereby each token becomes represented by vectors of at least 512 elements, or at least 1024 bytes in fp16. This is such a large expansion that even our subsequent many-to-one token compression abilities do not give greater total compression than causal language models.
 
-Some reflection may convince us that there is a good reason for this: it may be conjectured that our autoencoder less efficiently trainable than a next-token-prediction model (for our compute) because it must generate the entire context window in one forward pass, whereas the causal language model generates one next token at a time using information from all previous tokens. 
+Some reflection may convince us that there is a good reason for this: it may be conjectured that our autoencoder is less efficiently trainable than a next-token-prediction model (for our compute) because it must generate the entire context window in one forward pass, whereas the causal language model generates one next token at a time using information from all previous tokens. 
 
 With this in mind, it may be wondered if we can combine the advantages of causal modeling and autoencoding to make an encoder-decoder architecture that exhibits superior compression ability to either autoencoder or causal language model alone, give similar compute to what has been used previously.
 
@@ -198,9 +196,13 @@ From the figure above, we may wonder whether an extended training run would lead
 
 From these results it appears that the informational content of the embedding (only 64 parameters in this case) is not saturated even after a relatively long training run such that the loss continues to decrease nearly linearly. It seems safe to assume that the embedding-augmented mixer would be a more efficient compression model for a fixed compute applied at training even if the embedding were quantized with 8 or 16 bits per parameter.
 
-The above results are obtained for flat masked mixers, and as we observed superior training efficiencies with multi-headed mixers of the same size one may expect to find better training properties for embedding-augmented causal mixers as well. It comes a some suprise, therefore, that an embedding-augmented causal masked mixer (using embedding dimension concatentation) with four-headed mixer layers in the encoder slightly underperforms the same model without heads.
+The above results are obtained for flat masked mixers, and as we observed superior training efficiencies with multi-headed mixers of the same size one may expect to find better training properties for embedding-augmented causal mixers as well. It comes a some suprise, therefore, that an embedding-augmented causal masked mixer (using embedding dimension concatentation) with four-headed mixer layers in the encoder slightly underperforms the same model without heads as shown in the figure below.
 
 ![memory decoder performances](/deep-learning/ememory_encoder_heads.png)
+
+A similar result is obtained where we instead increase the number of inter-token parameters by using convolutional kernels of size four rather than one, where we see no increase in training efficiency upon doing so when the encoder's embedding is introduced via embedding concatenation but curiously not when we use token dimension introduction for the embedding, in which case there is a notable improvement in training efficiency.
+
+![memory decoder performances](/deep-learning/token_memory_figure.png)
 
 ### Memory Models
 
@@ -219,11 +221,11 @@ The architecture we will experiment with here is mostly similar to the embedding
 The notable difference between this architecture and the token concatenation-based autoencoder introduced above is that we not longer care about compressing the embedding fed from the encoder to decoder. This is because if one uses token concatenation, each token in the decoder is converted to a vector of dimension $d_m$ such that it is natural to supply the encoder's embedding as a vector of that same dimension. This also allows us to provide embeddings of $n$ encoded text sequences as $n$ embeddings, taking the place of $n$ tokens of the decoder. It is clear to see that this is much more efficient in terms of decoder input space than embeding concatenation, and avoid sthe problems of input ambuguity present when performing linear combinations in the embedding dimension.
 
 Is it better to train both encoder and causal decoder simultanously, or use an encoder from a previously-trained autoencoder and train the causal decoder separately? The latter may be implemented by training an autoencoder, discarding the decoder, adding a causal decoder, and freezing the encoder's parameters during training. To save memory and compute during training, one could simply save the embeddings generated by this autoencoder to storage and reference them when training and evaluating the decoder, but we choose the former implementation to avoid a significant storage overhaed.
-
+ 
 As shown in the left figure below, at least for a non-optimized encoder the answer is that training both simultaneously is far more efficient. A significant caveat here is that the encoder used in this experiments is fairly weak: the autoencoder it came from only obtained a CEL > 2.5 on this dataset.
 
 ![memory decoder architectures](/deep-learning/fineweb_memory_figure.png)
  
-As using multiple mixer heads 
+As is the case for memory models designed for information compression (ie with very small embeddings), a multi-headed mixer showed no benefit over the flat masked mixer early in its training run. Instead, we see a precipitous drop in cross-entropy loss when increasing the convolutional kernel to four (from one) to the point that our $d_m=1024$ memory model is able to effectively perform a $512 \to 1$ compression on token embeddings after training for half a day on two H100s with very little error resulting from this compression. 
 
-How much of the difference in training loss between frozen and standard memory model (above left) is due to the relatively high loss achieved by the autoencoder? As training encoder and decoder separately has significant advantages with respect to memory and compute required, so it is worth looking into what is required for effective 'frozen' memory model training as well.
+How much of the difference in training loss between frozen and standard memory models (shown in the above left) is due to the relatively high loss achieved by the autoencoder? As training encoder and decoder separately has significant advantages with respect to memory and compute required, so it is worth looking into what is required for effective frozen memory model training as well.
