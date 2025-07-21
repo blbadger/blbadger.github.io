@@ -10,7 +10,7 @@ It may be wondered why text compression ability is important: even if large lang
 
 We will first tweak the autoencoder mixer architecture to try to obtain optimal text compression in fixed compute budgets before using this information to attempt to test whether one can obtain better text compression ratios than the current best methods (ie large transformers). We will conclude by examining the suitability of autoencoding embeddings for extending generative language model context with sub-quadratic complexity using encoder embeddings.
 
-### Transformer-based autoencoders are inefficient and scale poorly
+### Transformer-based autoencoders train and scale poorly
 
 In [previous work](https://arxiv.org/pdf/2409.01482) evidence was presented for the idea that masked mixers were far better autoencoders than transformers, with the primary large-scale data evidence being the following: if one trains a $d_m=1024$ masked mixer autoencoder with $n_l=8$ layers in the encoder and decoder, one reaches a far lower CEL than the compute- and memory- transformer model with $d_m=512$ (transformers contain far more activations per $d_m$ due to their $K, Q, V$ projections). One may object that this could be mostly due to differences in the amount of information available in a 512-dimensional vector compared to a 1024-dimensional vector, although that was not found to be the case on the much smaller TinyStories dataset where equivalent-dimensional transformers far underperformed their masked mixer counterparts despite requiring around double the compute and device memory.
 
@@ -20,9 +20,13 @@ We are in a position to now further explore the training efficiencies for transf
 
 The other main oustanding question is whether the increased masked mixer autoencoder training efficiency might be due to the larger embedding dimension in that model versus the transformer, at least for larger and more diverse datasets like finemath 4+ or fineweb-edu. This is primarily a scaling question with respect to increases in the model $d_m$ (and thus the embedding dimension in this case), so one can obtain a more general idea of the differences in masked mixer versus transformers for autoencoder training efficiency by comparing the losses achieved as one scales the model $d_m$ for a given training dataset.
 
-From the following figure, it can be appreciated that indeed transformers are far less efficient to train as autoencoders than masked mixers for multiple $d_m$ values, providing evidence for the idea that differences in autoencoding abilities between these models are not due to differences in $d_m$. Not only do transformers far underperform masked mixers for a given $d_m$, they also scale badly both in terms of samples per model as apparent by the negative asymptotic slope of the transformer training curves being far smaller than that of the masked mixer (here we have a total of $n = 200,000 * 128 * 512 = 13.1 * 10^9$ tokens trained at 200k steps) and also in terms of scaling the embedding size or equivalently the model width. The latter can be seen by observing that $d_m=512 \to d_m=1024$ corresponds to around a 5% decrease in CEL at 200k steps, whereas we have a ~34% decrease in CEL for the same change in masked mixer hidden size.
+From the following figure, it can be appreciated that indeed transformers are far less efficient to train as autoencoders than masked mixers for multiple $d_m$ values, providing evidence for the idea that differences in autoencoding abilities between these models are not due to those differences but are instead model intrinsic (specifically attention-intrinsic). For context, we have a total of $n = 200,000 * 128 * 512 \approx 13.1 * 10^9$ tokens trained at 200k steps for each model in the following figure.
 
-![transformer versus mixer autoencoders](/deep-learning/mixer_vs_transformer_autoencoder.png)
+![transformer versus mixer autoencoders](/deep-learning/autoencoder_scaling_figure.png)
+
+It is also apparent that transformers scale badly in terms of samples per model, as apparent by the negative asymptotic slope of the transformer training curves being far smaller than that of the masked mixer. Transformers-based autoencoders also scale poorly in terms of scaling the embedding size or equivalently the model width, which is apparent as doubling the $d_m$ of a transformer autoencoder twice gives decreasing loss achieved with each doubling, whereas the opposite is true for masked mixer autoencoders.
+
+None of this is particularly surprising given the results and theory outlined in the masked mixer [introductory paper](https://arxiv.org/pdf/2409.01482). One major finding there is that transformers are relatively inefficient to train for tasks requiring retention of information present in the input, either in a single or multiple output embeddings. 
 
 ### Causal masking increases autoencoder training efficiency
 
