@@ -222,7 +222,7 @@ The first question we can ask is as follows: can a causal decoder make use of th
 
 ![memory decoder architectures](/deep-learning/frozen_memory_figure.png)
 
-Now that we have seen that casual decoders can indeed make use of encoded information, we can investigate the question of efficiency: is it better to train both encoder and causal decoder simultanously, or use an encoder from a previously-trained autoencoder and train the causal decoder separately? As shown in the left figure below, at least for a non-optimized encoder the answer is that training both simultaneously is far more efficient. A significant caveat here is that the encoder used in this experiments is fairly weak: the autoencoder it came from only obtained a CEL > 2.5 on this dataset.
+Now that we have seen that casual decoders can indeed make use of encoded information, we can investigate the question of efficiency: is it better to train both encoder and causal decoder simultanously, or use an encoder from a previously-trained autoencoder and train the causal decoder separately? As shown in the left figure below, at least for a non-optimized encoder the answer is that training both simultaneously is far more efficient. A significant caveat here is that the encoder used in this experiments is fairly weak: the autoencoder it came from only obtained a CEL of $\Bbb L \approx 3.3$ on this dataset, which is not particularly low.
 
 ![memory decoder architectures](/deep-learning/fineweb_memory_figure.png)
  
