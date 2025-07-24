@@ -237,4 +237,6 @@ As is the case for memory models designed for information compression (ie with v
 
 How much of the difference in training loss between frozen and standard memory models (shown in the above left) is due to the relatively high loss achieved by the autoencoder? As training encoder and decoder separately has significant advantages with respect to memory and compute required, so it is worth looking into what is required for effective frozen memory model training as well.
 
+![memory decoder architectures](/deep-learning/fineweb_memory_d1024_fig.png)
+
 
