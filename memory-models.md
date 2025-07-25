@@ -44,9 +44,47 @@ Why would causal masking be so important to a model that does not perform causal
 
 ### Why transformers struggle in this autoencoding paradigm
 
-From the last section we observed that transformers make far worse autoencoders (with the architecture presented at least) than masked mixers. The next question to ask is why this is: why would transformers be so much worse than masked mixers, given that in previous work has shown more modest differences in information retention between transformers and masked mixers?
+From the last section we observed that transformers make far worse autoencoders (with the architecture presented at least) than masked mixers. The next question to ask is why this is: why would transformers be so much worse than masked mixers, given that in previous work has shown more modest differences in information retention between transformers and masked mixers? More specifically, why would attention lead to poor autoencoding in this architecture?
 
-When we consider the nature 
+Some reflection will provide a reasonable hypothesis: recall that attention may be expressed as follows:
+
+$$
+A(Q, K, V) = \mathrm{softmax} \left( \frac{QK^T}{\sqrt(d_k)} \right)V
+$$
+
+where the $Q, K, V$ are matrices of packed vectors projected from each token embedding. To make these operations clearer from the perspective of token indices, we can ignore the $d_k$ scaling factor and  express this equation as follows: the attention between the query projection for token $i$ and key and value projections at index $j$, for ${i, j \in n}$ is
+
+$$
+A(q_i, k_j, v_j) = \frac{\exp \left( (q_i \cdot k_j) v_j \right)}{ \sum_n \exp \left( (q_i \cdot k_n) v_n \right)}
+$$
+
+Now consider what we have done by repeating the input embedding for all tokens in the decoder: as the projection weight matrices $W_k, W_q, W_v$ are identical for all tokens, the necessarily $k_i = k_j \forall i, j$ and similarly $q_i = q_j \forall i, j$ and $v_i = v_j \forall i, j$ and thus $q_i \cdot k_j = q_i \cdot k_l \forall i, l$. Therefore $A(q_i, k, v) = A(q_j, k, v) \forall i, j$ such that our outputs from attention are identical across all token embeddings.
+
+Given this observation, it is not hard to see that this identicality will persist for more than one layer as each feedforward module following attention is identical. Thus it is little wonder why transformers would perform so poorly when applied to repeated input embeddings.
+
+Is there experimental evidence for this idea? We can test the performance of various autoencoder topologies to look for some.
+
+Given some evidence for our idea, how would one go about injecting an encoder's embedding to a transformer decoder while avoiding the identical attention problem? One simple but effective way to do this is to 'unroll' the embedding by projecting sliding window views
+
+This can be implemented as follows: given a linear projection layer that assumes the input is half the size of the ouput, `self.projection = nn.Linear(dim//2, dim)`, we can replace the embedding repeat with
+our unrolled projections as follows:
+
+```python
+encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
+embedding_stack = []
+# sliding window unroll over hidden dim
+for i in range(self.tokenized_length):
+    sliding_window = encoder_embedding[..., i:i+self.dim//2]
+    if i+self.dim//2 > self.tokenized_length:
+        residual = i+self.dim//2 - self.tokenized_length
+        # loop around to first index
+        sliding_window = torch.cat((sliding_window, encoder_embedding[..., :residual]), dim=2)
+    embedding_stack.append(sliding_window)
+encoder_embedding = torch.cat(embedding_stack, dim=1)
+encoder_embedding = self.projection(encoder_embedding)
+```
+
+Note here that an implementation most faithful to our figure above would be to apply the projection at each index in the for loop before concatenation, but this is much less efficient as applying the projection to the pre-concatenated output allows us to make use of device (GPU) parallelization that is otherwise tricky to add to the loop via Pytorch primitives.
 
 ### Masked mixers versus transformer autoencoder decoders
 
