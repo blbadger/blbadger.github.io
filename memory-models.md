@@ -91,7 +91,7 @@ There is a substantial decrease in loss per step for causal autoencoders trained
 One can increase the number of trainable inter-token parameters in a simpler way than using multiple heads: using a convolutional kernel of size greater than unity (k=2 here denotes two kernels) scales the number of inter-token parameters as 
 
 $$
-p=n_l (k * n_{ctx}^2
+p=n_l (k * n_{ctx}^2)
 $$
 
 as there are simply $k$ weight maps per convolutional layer. From the figure it is apparent that a flat masked mixer with k=8 achieves identical loss to the 4-headed mixer, but does not suffer the numerical instabilities associated with the latter.
