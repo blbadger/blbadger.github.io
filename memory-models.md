@@ -64,7 +64,12 @@ Given this observation, it is not hard to see that this identicality will persis
 
 Is there experimental evidence for this idea? We can test the performance of various autoencoder topologies to look for some.
 
-Given some evidence for our idea, how would one go about injecting an encoder's embedding to a transformer decoder while avoiding the identical attention problem? One simple but effective way to do this is to 'unroll' the embedding by projecting sliding window views
+Given some evidence for our idea, how would one go about injecting an encoder's embedding to a transformer decoder while avoiding the identical attention problem? One simple but effective way to do this is to 'unroll' the embedding by projecting unique subsets of the encoder's embedding into each of the decoder's input positions. A relatively simple but flexible method to get unique subsets of a vector is to use a sliding window, where we project from a certain number of contiguous elements of a vector in our 'window' and shift the elements projected from at each of the decoder's indices, keeping the projection weights identical across all input windows. This requires an embedding vector satisfying $d_m \geq n_{ctx}$ for every decoder index vector to be unique, but we can simply add a projection to enlarge the $d_m$ of the embedding as required if necessary. 
+
+For cases where we want to project from $n_d$ elements and $d_m < n_d + n_{ctx} - 1$, or in other words where our window slides off our embedding vector to make all decoder inputs, we can simply wrap our window around to the first index of the embedding, concatenate, and project accordingly. For the case where $n_ctx=4, d_m=6, n_d = 4$, the following diagram illustrates the projection and wrapping process:
+
+![mixer autoencoder efficiencies](/deep-learning/sliding_window_embedding.png)
+
 
 This can be implemented as follows: given a linear projection layer that assumes the input is half the size of the ouput, `self.projection = nn.Linear(dim//2, dim)`, we can replace the embedding repeat with
 our unrolled projections as follows:
