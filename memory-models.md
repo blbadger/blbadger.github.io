@@ -79,9 +79,9 @@ encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
 embedding_stack = []
 # sliding window unroll over hidden dim
 for i in range(self.tokenized_length):
-    sliding_window = encoder_embedding[..., i:i+self.dim//2]
-    if i+self.dim//2 > self.tokenized_length:
-        residual = i+self.dim//2 - self.tokenized_length
+    sliding_window = encoder_embedding[..., i:i+dim//2]
+    if i+dim//2 > dim:
+        residual = i+dim//2 - self.tokenized_length
         # loop around to first index
         sliding_window = torch.cat((sliding_window, encoder_embedding[..., :residual]), dim=2)
     embedding_stack.append(sliding_window)
