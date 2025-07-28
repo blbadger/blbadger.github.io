@@ -28,20 +28,6 @@ It is apparent that transformers scale badly in terms of samples per model, as a
 
 None of this is particularly surprising given the results and theory outlined in the masked mixer [introductory paper](https://arxiv.org/pdf/2409.01482). One major finding there is that transformers are relatively inefficient to train for tasks requiring retention of information present in the input, either in a single or multiple output embeddings. 
 
-### Causal masking increases autoencoder training efficiency
-
-To begin with, it is helpful to recall the architecture of the masked mixer-based autoencoder as presented in the work linked in the last section:
-
-![mixer autoencoder architecture](/deep-learning/mixer_autoencoder.png)
-
-This architecture recieved little to no optimization in that work, as it was mostly presented as evidence for a hypothesis involving bijective functions and autoencoding. But now that we want to improve and elaborate upon this architecture, where would we start? 
-
-One obvious question is whether or not the convolutions really need to be masked: after all, we are generating the output in one step and are not adhering to the causal language modeling objective of next token prediction, so why would we really want to mask the model's convolutions? Bearing this in mind, it is somewhat unexpected that removing the encoder convolution's mask results in substantially less efficient training and even more surprising that removal of the decoder's mask (keeping the encoder unmasked as well) results in highly unstable training with gradient norm spikes leading to rapid rises in loss during training. The following figure details the cross-entropy losses achieved by masked mixer-based autoencoders ($d_m=1024, n_{ctx}=512, n_l=8, b=128$) on the `FineWeb-edu (10BT)` dataset, where the evaluation is a hold-out sample from the corpora (which has been measured to contain <5% duplicate documents). Here 'masked' indicates a causal (left-to-right) mask implemented using a lower triangular mask on the 1D convolution weight matrix, and the right panel is simply an extended training run of the conditions in the left panel (omitting the unstable no-masked model).
-
-![mixer autoencoder efficiencies](/deep-learning/autoencoder_causality.png)
-
-Why would causal masking be so important to a model that does not perform causal modeling? There is usually some benefit to matching a model's structure to any prior we know about the dataset that is being modeled, and with that perspective one could perhaps guess that enforcing causality is beneficial because the data being modeled (text) is in some way fundamentally causal as it is understood in one orientation. It is less certain why removing all causality masks leads to highly unstable training, as one may expect for a simple decrease in efficiency in this paradigm rather than exploding gradients. 
-
 ### Why transformers struggle in this autoencoding paradigm
 
 From the last section we observed that transformers make far worse autoencoders (with the architecture presented at least) than masked mixers. The next question to ask is why this is: why would transformers be so much worse than masked mixers, given that in previous work has shown more modest differences in information retention between transformers and masked mixers? More specifically, why would attention lead to poor autoencoding in this architecture?
@@ -58,18 +44,19 @@ $$
 A(q_i, k_j, v_j) = \frac{\exp \left( (q_i \cdot k_j) v_j \right)}{ \sum_n \exp \left( (q_i \cdot k_n) v_n \right)}
 $$
 
-Now consider what we have done by repeating the input embedding for all tokens in the decoder: as the projection weight matrices $W_k, W_q, W_v$ are identical for all tokens, the necessarily $k_i = k_j \forall i, j$ and similarly $q_i = q_j \forall i, j$ and $v_i = v_j \forall i, j$ and thus $q_i \cdot k_j = q_i \cdot k_l \forall i, l$. Therefore $A(q_i, k, v) = A(q_j, k, v) \forall i, j$ such that our outputs from attention are identical across all token embeddings.
+Now consider what we have done by repeating the input embedding for all tokens in the decoder: as the projection weight matrices $W_k, W_q, W_v$ are identical for all tokens, the necessarily $k_i = k_j \; \forall i, j$ and similarly $q_i = q_j \; \forall i, j$ and $v_i = v_j \; \forall i, j$ and thus $q_i \cdot k_j = q_i \cdot k_l \; \forall i, i, l$. Therefore $A(q_i, k, v) = A(q_j, k, v) \forall i, j$ such that output activations from the attention layer are identical across all token embeddings. 
 
-Given this observation, it is not hard to see that this identicality will persist for more than one layer as each feedforward module following attention is identical. Thus it is little wonder why transformers would perform so poorly when applied to repeated input embeddings.
+Given this observation, it is not hard to see that this identicality will persist for more than one layer as each feedforward module following attention is identical. But this is not the whole picture: as implemented, Llama-style transformers apply positional encoding (RoPE in this case) before self-attention such that the embeddings at each position are actually unique, assuming that the positional encoding is itself unique for the token indices we are training on (on this page it always will be). Thus is is not strictly correct to point to identical activations due to self-attention as being the cause of the poor transformer training for repeat-embedding autoencoders, but one might wonder whether perhaps transformers are less well-suited to autoencoding with repeated embeddings relative to masked mixers.
 
-Is there experimental evidence for this idea? We can test the performance of various autoencoder topologies to look for some.
+One indirect way we can test this is as follows: if a transformer were significantly worse for decoding repeated embeddings than a masked mixer, we would expect for an autoencoder with a mixer encoder and transformer decoder to perform worse than an autoencoder with a mixer encoder and decoder, or an autoencoder with a transformer encoder and mixer decoder. As shown in the following figure, this is indeed what is found (although an optimized masked mixer autoencoder is more efficient than either compound architecture).
+
+![transformer versus mixer autoencoders](/deep-learning/autoencoder_options_figure.png)
 
 Given some evidence for our idea, how would one go about injecting an encoder's embedding to a transformer decoder while avoiding the identical attention problem? One simple but effective way to do this is to 'unroll' the embedding by projecting unique subsets of the encoder's embedding into each of the decoder's input positions. A relatively simple but flexible method to get unique subsets of a vector is to use a sliding window, where we project from a certain number of contiguous elements of a vector in our 'window' and shift the elements projected from at each of the decoder's indices, keeping the projection weights identical across all input windows. This requires an embedding vector satisfying $d_m \geq n_{ctx}$ for every decoder index vector to be unique, but we can simply add a projection to enlarge the $d_m$ of the embedding as required if necessary. 
 
 For cases where we want to project from $n_d$ elements and $d_m < n_d + n_{ctx} - 1$, or in other words where our window slides off our embedding vector to make all decoder inputs, we can simply wrap our window around to the first index of the embedding, concatenate, and project accordingly. For the case where $n_ctx=4, d_m=6, n_d = 4$, the following diagram illustrates the projection and wrapping process:
 
 ![mixer autoencoder efficiencies](/deep-learning/sliding_window_embedding.png)
-
 
 This can be implemented as follows: given a linear projection layer that assumes the input is half the size of the ouput, `self.projection = nn.Linear(dim//2, dim)`, we can replace the embedding repeat with
 our unrolled projections as follows:
@@ -90,6 +77,29 @@ encoder_embedding = self.projection(encoder_embedding)
 ```
 
 Note here that an implementation most faithful to our figure above would be to apply the projection at each index in the for loop before concatenation, but this is much less efficient as applying the projection to the pre-concatenated output allows us to make use of device (GPU) parallelization that is otherwise tricky to add to the loop via Pytorch primitives.
+
+For a dm=512, nl=8 (eight layer for encoder, eight for decoder) applied to nctx=512 FineWeb-edu, we have the following:
+
+![transformer versus mixer autoencoders](/deep-learning/repeat_vs_unroll_transformer_figure.png)
+
+As we will later see that changing the number of heads or the convolutional kernel size causes substantial changes in autoencoder training efficiency, we 
+
+![transformer versus mixer autoencoders](/deep-learning/transformer_heads_figure.png)
+
+### Causal masking increases autoencoder training efficiency
+
+To begin with, it is helpful to recall the architecture of the masked mixer-based autoencoder as presented in the work linked in the last section:
+
+![mixer autoencoder architecture](/deep-learning/mixer_autoencoder.png)
+
+This architecture recieved little to no optimization in that work, as it was mostly presented as evidence for a hypothesis involving bijective functions and autoencoding. But now that we want to improve and elaborate upon this architecture, where would we start? 
+
+One obvious question is whether or not the convolutions really need to be masked: after all, we are generating the output in one step and are not adhering to the causal language modeling objective of next token prediction, so why would we really want to mask the model's convolutions? Bearing this in mind, it is somewhat unexpected that removing the encoder convolution's mask results in substantially less efficient training and even more surprising that removal of the decoder's mask (keeping the encoder unmasked as well) results in highly unstable training with gradient norm spikes leading to rapid rises in loss during training. The following figure details the cross-entropy losses achieved by masked mixer-based autoencoders ($d_m=1024, n_{ctx}=512, n_l=8, b=128$) on the `FineWeb-edu (10BT)` dataset, where the evaluation is a hold-out sample from the corpora (which has been measured to contain <5% duplicate documents). Here 'masked' indicates a causal (left-to-right) mask implemented using a lower triangular mask on the 1D convolution weight matrix, and the right panel is simply an extended training run of the conditions in the left panel (omitting the unstable no-masked model).
+
+![mixer autoencoder efficiencies](/deep-learning/autoencoder_causality.png)
+
+Why would causal masking be so important to a model that does not perform causal modeling? There is usually some benefit to matching a model's structure to any prior we know about the dataset that is being modeled, and with that perspective one could perhaps guess that enforcing causality is beneficial because the data being modeled (text) is in some way fundamentally causal as it is understood in one orientation. It is less certain why removing all causality masks leads to highly unstable training, as one may expect for a simple decrease in efficiency in this paradigm rather than exploding gradients. 
+
 
 ### Masked mixers versus transformer autoencoder decoders
 
