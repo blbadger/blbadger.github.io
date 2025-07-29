@@ -200,9 +200,12 @@ $$
 \mathtt{BPB} = (1/2.82) * 1.4 / \ln(2) \approx 0.72
 $$
 
+<!---
+TODO: the below figure seems to be in error: there is no down/up 
 A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding. Experimentally this is more efficient of one uses a larger $d_m$ in the encoder and decoder with a compression module that transforms $d_m \to d_m//n \to d_m$ rather than decreasing the hidden size of the encoder and decoder. This is in some ways unsurprising for a given step number as shown in the following figure as a larger-width model requires more compute to train, but closer inspection shows that it is also true when one normalizes for this condition (compare the 100k step loss of the $d_m=1024$ model to the 200k step loss of the $d_m=512$ model). In the following figure, we increase the number of layers to $n_l=16$ for both encoder and decoder.
 
 ![compression benefits](/deep-learning/compressed_vs_noncompressed.png)
+--->
 
 ### Embedding-augmented causal language models
 
