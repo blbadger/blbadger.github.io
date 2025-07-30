@@ -86,6 +86,11 @@ As we will later see that changing the number of heads or the convolutional kern
 
 ![transformer versus mixer autoencoders](/deep-learning/transformer_heads_figure.png)
 
+![transformer versus mixer autoencoders](/deep-learning/compressed_vs_uncompressed_figure.png)
+
+![transformer versus mixer autoencoders](/deep-learning/unrolled_versus_repeated_mixer_figure.png)
+
+
 ### Causal masking increases autoencoder training efficiency
 
 To begin with, it is helpful to recall the architecture of the masked mixer-based autoencoder as presented in the work linked in the last section:
@@ -99,7 +104,6 @@ One obvious question is whether or not the convolutions really need to be masked
 ![mixer autoencoder efficiencies](/deep-learning/autoencoder_causality.png)
 
 Why would causal masking be so important to a model that does not perform causal modeling? There is usually some benefit to matching a model's structure to any prior we know about the dataset that is being modeled, and with that perspective one could perhaps guess that enforcing causality is beneficial because the data being modeled (text) is in some way fundamentally causal as it is understood in one orientation. It is less certain why removing all causality masks leads to highly unstable training, as one may expect for a simple decrease in efficiency in this paradigm rather than exploding gradients. 
-
 
 ### Masked mixers versus transformer autoencoder decoders
 
