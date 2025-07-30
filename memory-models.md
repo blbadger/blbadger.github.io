@@ -88,7 +88,7 @@ As we will later see that changing the number of heads or the convolutional kern
 
 ![transformer versus mixer autoencoders](/deep-learning/compressed_vs_uncompressed_figure.png)
 
-![transformer versus mixer autoencoders](/deep-learning/unrolled_versus_repeated_mixer_figure.png)
+![transformer versus mixer autoencoders](/deep-learning/unrolled_repeated_mixer_figure.png)
 
 
 ### Causal masking increases autoencoder training efficiency
