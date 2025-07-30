@@ -44,7 +44,15 @@ $$
 A(q_i, k_j, v_j) = \frac{\exp \left( (q_i \cdot k_j) v_j \right)}{ \sum_n \exp \left( (q_i \cdot k_n) v_n \right)}
 $$
 
-Now consider what we have done by repeating the input embedding for all tokens in the decoder: as the projection weight matrices $W_k, W_q, W_v$ are identical for all tokens, the necessarily $k_i = k_j \; \forall i, j$ and similarly $q_i = q_j \; \forall i, j$ and $v_i = v_j \; \forall i, j$ and thus $q_i \cdot k_j = q_i \cdot k_l \; \forall i, i, l$. Therefore $A(q_i, k, v) = A(q_j, k, v) \forall i, j$ such that output activations from the attention layer are identical across all token embeddings. 
+Now consider what we have done by repeating the input embedding for all tokens in the decoder: as the projection weight matrices $W_k, W_q, W_v$ are identical for all tokens, the necessarily we have the following:
+
+$$
+k_i = k_j \\
+q_i = q_j \\
+v_i = v_j \forall i, j
+$$
+
+and thus $q_i \cdot k_j = q_i \cdot k_l \; \; \forall i, j, l$. Therefore we have $A(q_i, k_j, v_j) = A(q_i, k_l, v_l) \; \forall i, j, l$ such that output activations from the attention layer are identical across all token embeddings. 
 
 Given this observation, it is not hard to see that this identicality will persist for more than one layer as each feedforward module following attention is identical. But this is not the whole picture: as implemented, Llama-style transformers apply positional encoding (RoPE in this case) before self-attention such that the embeddings at each position are actually unique, assuming that the positional encoding is itself unique for the token indices we are training on (on this page it always will be). Thus is is not strictly correct to point to identical activations due to self-attention as being the cause of the poor transformer training for repeat-embedding autoencoders, but one might wonder whether perhaps transformers are less well-suited to autoencoding with repeated embeddings relative to masked mixers.
 
