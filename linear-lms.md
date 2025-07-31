@@ -38,7 +38,9 @@ What is necessary for efficient TinyStories modeling? Some experimentation can c
 
 The above results are to be expected from the fundamentals of linear algebra where matrix multiplication is by definition linear such that multiplication by multiple matrices in succession may always be reduced to multiplication by a single matrix (assuming no nonlinearities are added between layers). This is true regardless of whether or not the weight matrices expand the vector's width at intermediate stages or not: for example if $W$ is a 8x2 (m by n, rows by columns) matrix and $H$ an 2x8 matrix such that $Wx$ expands $x$ by a factor of four and $H(Wx)$ reduces $Wx$ by a factor of four again then one can always make an equivalent matrix $Q$ that is 2x2. 
 
-From the above argument, one would not expect for matrices with 'expanded' hidden layers in a linear model to be beneficial, and this is true for TinyStories modeling when applying feedforward layers. It is suprisingly not true for the model as a whole: given a tokenizer of size $n_t=4096$, we observe the following cross-entropy losses for linear mixers of various $d_m$ when trained on TinyStories:
+From the above argument, one would not expect for matrices with 'expanded' hidden layers in a linear model to be beneficial, and this is true for TinyStories modeling when applying feedforward layers. It is suprisingly not true for the model as a whole: given a tokenizer of size $n_t=4096$, we observe the following scaling for cross-entropy losses for linear mixers of various $d_m$ when trained on TinyStories:
+
+![linear mixer computation](/deep-learning/linear_mixer_figure.png)
 
 | dm  | 4096  | 8192  | 16384  | 32768  |  65536 |
 |---|---|---|---|---|---|
