@@ -12,11 +12,11 @@ For small datasets like TinyStories, the answer is somewhat surprisingly yes: fu
 
 ### Linear Mixer Architecture
 
-Before proceeding further, however, it is best to understand a few theoretical arguments for and against the use of linear models. The arguments for mostly revolve around their utility: they are fast (because they can be mostly or wholly parallelized on hardware), easy to optimize, and somewhat more interpretable than nonlinear ones. The downsides revolve around their lack of representational power: 
+Before proceeding further, however, it is best to understand a few theoretical arguments for and against the use of linear models. The arguments for mostly revolve around their utility: they are fast (because they can be mostly or wholly parallelized on hardware), easy to optimize, and somewhat more interpretable than nonlinear ones. The downsides revolve around their lack of representational power.
 
-How might one go about converting a masked mixer into a linear model? We will take the approach to remove nonlinear transformations and optimize the resulting linear model to train most efficiently using adaptive versions of stochastic gradient descent.
+How might one go about converting a masked mixer into a linear model? We will take the approach to remove nonlinear transformations and optimize the resulting linear model to train most efficiently using adaptive versions of stochastic gradient descent. We start with a [masked mixer](https://blbadger.github.io/smaller-lms.html) as this model may be thought of as a transformer with self-attention replaced by a single linear transformation (a masked convolution and proceed to linearize the rest of the model.
 
-The equation for layer normalization is as follows: for a specific layer input $x$, the output $y$ is
+Besides removing nonlinear activations, we must also deal with layer normalizations, which are defined as follows: for a specific layer input $x$, the output $y$ is
 
 $$
 y = \frac{x - \mu}{\sqrt{\sigma^2 + \epsilon}} * \gamma + \beta
@@ -24,12 +24,15 @@ $$
 
 where $\gamma$ and $\beta$ are trainable parameters (which are usually held in very high precision) and $\mu, \sigma^2$ denote the mean (expectation) and variance of the random variable $x$. This is clearly a nonlinear operation (although it could be transformed into a linear one) and so we will simply remove this transformation for now.
 
-The architecture we use may be compared with the transformer and masked mixer diagramatically. In the following depiction, all nonlinear transformations are colored red and all linear transformations are blue or purple.
+The linear masked mixer architecture we use may be compared with the transformer and masked mixer diagramatically. In the following depiction, all nonlinear transformations are colored red and all linear transformations are blue or purple.
 
 ![linear mixer arch](/deep-learning/linear_mixer_architecture.png)
 
+### Larger linear model layer widths lead to more efficient training
 
-### TinyStories results
+We can be confident that a linear model will not have the representational power of a nonlinear one from an abundance of arguments for this idea. But can a linear model be trained to effectively model language? At least for simple langauge datasets such as TinyStories (synthetic paragraph-length stories written as if from a five-year-old's perspective, albeit much less creatively than what you would get from a real five-year-old), the answer is suprisingly yes as we will see below. This dataset is certainly much less challenging to model compared to broad text corpora with code, mathematics, web pages, and books that are commonly fed to frontier models today, but it is important to note that much is included in modeling even TinyStories (
+
+![linear mixer computation](/deep-learning/linear_mixer_computation.png)
 
 The results for a linear mixer are as follows:
 
@@ -39,14 +42,13 @@ The results for a linear mixer are as follows:
 |  2e |  2.94 | 2.81  | 2.69  | 2.59  | 2.50  |
 |  3e | 2.87  | 2.75  | 2.62  | 2.50  | 2.41 |
 
-
-For a 'nearly' linear mixer with inter-token transformations conv1D -> gelu -> conv1d, we have the following:
+For a 'nearly' linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), we have the following:
 
 | dm  | 4096  | 8192  | 16384  |
 |---|---|---|---|
 | 1e  | 3.25  | 3.27  | 3.24  |
-|  2e |  2.91 | 3.04  | 3.00  |
-|  3e | 2.85  | 2.94  | 2.87  |
+|  2e |  3.09 | 3.04  | 3.00  |
+|  3e | 3.02  | 2.94  | 2.87  |
 
 Whereas for a one-layer mixer (with nonlinearities in each intra-token transformation) or transformer, we have
 
