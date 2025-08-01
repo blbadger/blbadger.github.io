@@ -42,17 +42,23 @@ From the above argument, one would not expect for matrices with 'expanded' hidde
 
 ![linear mixer computation](/deep-learning/linear_mixer_figure.png)
 
-| dm  | 4096  | 8192  | 16384  | 32768  |  65536 |
-|---|---|---|---|---|---|
-| 1e | 3.08  | 2.95  | 2.84  | 2.74  | 2.65 |
-| 2e |  2.94 | 2.81  | 2.69  | 2.59  | 2.50 |
-| 3e | 2.87  | 2.75  | 2.62  | 2.50  | 2.41 |
-
 To show why this is suprising, it is helpful to map out the computational graph of a small $n_{ctx}=3$ linear mixer. In the following figure, we assume that the tokens have been pre-converted to one-hot vectors and denote vectors in lower-case italic letters, constants in lower-case letters, and matrices in upper-case letters.
 
 ![linear mixer computation](/deep-learning/linear_mixer_computation.png)
 
 The equivalence in the top row to the second row may be seen as all convolutional weight elements are constants, and scaling a given matrices' row before multiplying to another matrices' column (ie forming a dot product) is equivalent to multiplying first and scaling after, and follows from the linearity of matrix multiplication. Now note that $HWx$ fulfills the same matrix multiplication we saw before: one should not expect to have any performance increase if $W$ expands the dimensionality of $x$ and $H$ decreases it, as one can always find a $Q$ that is equivalent that does not expand $x$. But we see above that increasing the hidden dimension (which is the expanded size of $x$ by $W$) actually vastly increases training efficiency.
+
+There are a number of reasons why expanding the hidden dimension of linear model could lead to more efficient training.
+
+For inference, the linear mixer can be further composed: given trained weight matrices $W$ and $H$, we can multiply these to find $Q$ that will be much smaller if we use a larger dimension than the tokenizer size $d_m > \lvert t\rvert$. Recalling that $t_n$ is a one-hot vector and $c_n$ a constant, computation of $c_n t_n$ is simply a scaled one-hot vector and is extremly fast as well, and furthermore adding these scaled one-hots together is fast and requires only $n$ operations, resulting in a vector $a$ of size $\lvert t \rvert$. All together, the computation of each next token is simply a single matrix-vector multiplication once the vector $a$ has been formed
+
+$$
+O_n = HW(c_0 t_0 + c_1 t_1 + \cdots + c_n t_n) \\
+O_n = Q(a_n)
+$$
+
+
+### Nearly Linear Models
 
 For a 'nearly' linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), we have the following:
 
@@ -66,13 +72,9 @@ Whereas for a one-layer mixer (with nonlinearities in each intra-token transform
 
 | dm  | Mixer 4096  | Mixer 8192  | Llama 4096 |
 |---|---|---|---|
-| 1e  | 2.51  | 2.38 |  2.30 |
+|  1e  | 2.51  | 2.38 |  2.30 |
 |  2e |  2.36 | 2.25  |  2.18 |
 |  3e | 2.28  | 2.16  |  2.12 |
-
-This is somewhat promising: 
-
-### 
 
 
 
