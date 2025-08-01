@@ -180,7 +180,7 @@ There is a clear upper bound to causal language model text compression, however:
 
 With this in mind, we have a clear alternative to next token prediction-based compression. We can use our new masked mixer-based autoencoder to compress the input directly and thereby avoid the problem of source entropy alltogether. The reason for this is that our autoencoder effectively compresses the entire input into one vector and uses this vector to reconstruct that input, where the source entropy becomes irrelevant for an arbitrarily powerful autoencoder capable of capturing all necessary information in the embedding vector. In real-world applications the source entropy is clearly important to the ease of actually training a model (as we shall see for mathematical versus general text later), but in the idealized scenario of arbitrary power our only lower bound is the size of the autoencoder's embedding.
 
-### Text Compression in Masked Mixer Autoencoders
+### Text Compression via Autoencoders
 
 If we have a negative log likelihood loss $\Bbb L$, we can compute the number of bits per input byte for a given segment of text if we know the length of text in bytes $L_b$ and the number of tokens required to encode that text for a given tokenizer $L_t$. 
 
@@ -204,12 +204,16 @@ $$
 \mathtt{BPB} = (1/2.82) * 1.4 / \ln(2) \approx 0.72
 $$
 
-<!---
-TODO: the below figure seems to be in error: there is no down/up 
-A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding. Experimentally this is more efficient of one uses a larger $d_m$ in the encoder and decoder with a compression module that transforms $d_m \to d_m//n \to d_m$ rather than decreasing the hidden size of the encoder and decoder. This is in some ways unsurprising for a given step number as shown in the following figure as a larger-width model requires more compute to train, but closer inspection shows that it is also true when one normalizes for this condition (compare the 100k step loss of the $d_m=1024$ model to the 200k step loss of the $d_m=512$ model). In the following figure, we increase the number of layers to $n_l=16$ for both encoder and decoder.
+A straightforward way to attempt to increase the compression in our autoencoder is to use a smaller embedding, perhaps to 128 parameters. In the following figure, we train mixer and transformer-based autoencoders using embeddings of size $128$ on Fineweb using $n_ctx=512$. The 8k-size FineWeb tokenizer averages 3.92 characters per token on that dataset, resulting in the following lower bound for compression using this model:
 
-![compression benefits](/deep-learning/compressed_vs_noncompressed.png)
---->
+$$
+\mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)} \\
+\mathtt{BPB} = \frac{128 * 4}{512 * 3.92} \approx 0.255
+$$
+
+Unfortunately after 200k steps (which equates to 13 billion tokens, or around 12 hours on a 4x A100 node) these autoencoders are no where close to achieving this compression, as their loss is far from the origin. Somewhat encouraging is the observation that these models do not exhibit exponential decay scaling in terms of loss per number of tokens trained (below right, observe the lack of linearity on the semilog axes), suggesting that if much more compute were to be applied they may be capable of effectively reaching zero loss.
+
+![causal mixer heads](/deep-learning/mixer_vs_transformer_compressed_figure.png)
 
 ### Embedding-augmented causal language models
 
