@@ -30,25 +30,17 @@ The linear masked mixer architecture we use may be compared with the transformer
 
 ![linear mixer arch](/deep-learning/linear_mixer_architecture.png)
 
-### Larger linear model layer widths lead to more efficient training
-
 We can be confident that a linear model will not have the representational power of a nonlinear one from an abundance of arguments for this idea. But can a linear model be trained to effectively model language? At least for simple langauge datasets such as TinyStories (synthetic paragraph-length stories written as if from a five-year-old's perspective, albeit much less creatively than what you would get from a real five-year-old), the answer is suprisingly yes as we will see below. This dataset is certainly much less challenging to model compared to broad text corpora with code, mathematics, web pages, and books that are commonly fed to frontier models today, but it is important to note that much is included in modeling even TinyStories; factual recall (names and places and simple events), grammar, story coherence and context for a few.
 
 What is necessary for efficient TinyStories modeling? Some experimentation can convince use that simply stacking linear layers does not increase training efficiency, and indeed decreases it slightly. This is true both when the entire linear mixer architecture (above) contains more than one module, or else when we use two or three or more linear transformations after the convolutional layer. 
 
 The above results are to be expected from the fundamentals of linear algebra where matrix multiplication is by definition linear such that multiplication by multiple matrices in succession may always be reduced to multiplication by a single matrix (assuming no nonlinearities are added between layers). This is true regardless of whether or not the weight matrices expand the vector's width at intermediate stages or not: for example if $W$ is a 8x2 (m by n, rows by columns) matrix and $H$ an 2x8 matrix such that $Wx$ expands $x$ by a factor of four and $H(Wx)$ reduces $Wx$ by a factor of four again then one can always make an equivalent matrix $Q$ that is 2x2. 
 
-From the above argument, one would not expect for matrices with 'expanded' hidden layers in a linear model to be beneficial, and this is true for TinyStories modeling when applying feedforward layers. It is suprisingly not true for the model as a whole: given a tokenizer of size $n_t=4096$, we observe the following scaling for cross-entropy losses for linear mixers of various $d_m$ when trained on TinyStories:
-
-![linear mixer computation](/deep-learning/linear_mixer_figure.png)
-
-To show why this is suprising, it is helpful to map out the computational graph of a small $n_{ctx}=3$ linear mixer. In the following figure, we assume that the tokens have been pre-converted to one-hot vectors and denote vectors in lower-case italic letters, constants in lower-case letters, and matrices in upper-case letters.
+Therefore one would not expect for matrices with 'expanded' hidden layers in a linear model to be beneficial, and this is true for TinyStories modeling when one uses a tokenizer of fixed size. To see why this is, consider the computational graph of an $n_{ctx}=3$ linear mixer. In the following figure, we assume that the tokens have been pre-converted to one-hot vectors and denote vectors in lower-case italic letters, constants in lower-case letters, and matrices in upper-case letters.
 
 ![linear mixer computation](/deep-learning/linear_mixer_computation.png)
 
 The equivalence in the top row to the second row may be seen as all convolutional weight elements are constants, and scaling a given matrices' row before multiplying to another matrices' column (ie forming a dot product) is equivalent to multiplying first and scaling after, and follows from the linearity of matrix multiplication. Now note that $HWx$ fulfills the same matrix multiplication we saw before: one should not expect to have any performance increase if $W$ expands the dimensionality of $x$ and $H$ decreases it, as one can always find a $Q$ that is equivalent that does not expand $x$. But we see above that increasing the hidden dimension (which is the expanded size of $x$ by $W$) actually vastly increases training efficiency.
-
-There are a number of reasons why expanding the hidden dimension of linear model could lead to more efficient training.
 
 For inference, the linear mixer can be further composed: given trained weight matrices $W$ and $H$, we can multiply these to find $Q$ that will be much smaller if we use a larger dimension than the tokenizer size $d_m > \lvert t\rvert$. Recalling that $t_n$ is a one-hot vector and $c_n$ a constant, computation of $c_n t_n$ is simply a scaled one-hot vector and is extremly fast as well, and furthermore adding these scaled one-hots together is fast and requires only $n$ operations, resulting in a vector $a$ of size $\lvert t \rvert$. All together, the computation of each next token is simply a single matrix-vector multiplication once the vector $a$ has been formed
 
@@ -57,10 +49,27 @@ O_n = HW(c_0 t_0 + c_1 t_1 + \cdots + c_n t_n) \\
 O_n = Q(a_n)
 $$
 
+Thus no matter what the inner dimension of $H, W$ are (ie the expansion factor, assuming m>n for $W_{m,n}) the operations performed are equivalent to a linear model with no expansion and $Q$ substituted for $HW$. Experimental results bear this out: regardless of whether one uses m=n or m=4n or m=8n, we see identical training efficiencies when the resulting model is applied to TinyStories. This is notably not the case for $m<n$, as in that case the resulting matrix $Q$ is not full rank and thus the model can learn only a limited subset of all potential matrices representing the composed weights.
+
+Composing these transformations allows for extremely efficient inference via parallelization. To see why this is, observe that for any given token $t_n$ we want to generate, we simply form a polynomial of powers of $Q$ with scaled (one-hot) $t_0$. 
+
+$$
+t_1 = HW(c_0 t_0) = Q(c_0 t_0) \\
+t_2 = H(c_1Wt_0 + c_2W(HWc_0 t_0)) = Q(c_1 t_0) + Q^2(c_0 t_0) \\
+t_3 = Qc_3t_0 + Q^2c_4c_0t_0 + Q^2c_1c_5t_0 + Q^3c_0t_0
+$$
+
+This allows one to calculate $t_n$ and $t_{n+1}$ in parallel, and indeed one can calculate all next tokens in parallel because of the linearity of the model in question. To further save computational costs, for $N$ tokens one wants to generate one can compute the $N$ powers of $Q$ in $N \log N$ time and then save the single column of each matrix that is required to compute the multiplication with $t_0$, which requires $mxN$ memory. If this is done, each polynomial term reduces to a single scaling of a vector and the computation of the polynomial as a whole is simply vector addition. In this sense, one can cache vectors and compute all next tokens required in parallel via cache lookups and addition.
+
+How can one increase the dimensionality of a linear mixer model? As we are effectively limited to $W_{m, n}, m=n$ we can simply increase the tokenizer size to increase the dimensionality of the transformation $W$. 
 
 ### Nearly Linear Models
 
-For a 'nearly' linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), we have the following:
+It may be wondered how models that contain a minimal number of nonlinear layers perform for TinyStories training. The following figure shows how a model with ReLU activations after the convolution scales: here we use a tokenizer of size 4096 and hidden dimensions as denoted.
+
+![linear mixer computation](/deep-learning/linear_mixer_figure.png)
+
+This architecture performs in a superior manner to a linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), as for that architecture we have the following cross-entropy losses:
 
 | dm  | 4096  | 8192  | 16384  |
 |---|---|---|---|
