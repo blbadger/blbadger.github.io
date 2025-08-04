@@ -49,7 +49,7 @@ O_n = HW(c_0 t_0 + c_1 t_1 + \cdots + c_n t_n) \\
 O_n = Q(a_n)
 $$
 
-Thus no matter what the inner dimension of $H, W$ are (ie the expansion factor, assuming m>n for $W_{m,n}) the operations performed are equivalent to a linear model with no expansion and $Q$ substituted for $HW$. Experimental results bear this out: regardless of whether one uses m=n or m=4n or m=8n, we see identical training efficiencies when the resulting model is applied to TinyStories. This is notably not the case for $m<n$, as in that case the resulting matrix $Q$ is not full rank and thus the model can learn only a limited subset of all potential matrices representing the composed weights.
+Thus no matter what the inner dimension of $H, W$ are (ie the expansion factor, assuming m>n for $W_{m,n}$) the operations performed are equivalent to a linear model with no expansion and $Q$ substituted for $HW$. Experimental results bear this out: regardless of whether one uses m=n or m=4n or m=8n, we see identical training efficiencies when the resulting model is applied to TinyStories. This is notably not the case for $m<n$, as in that case the resulting matrix $Q$ is not full rank and thus the model can learn only a limited subset of all potential matrices representing the composed weights.
 
 Composing these transformations allows for extremely efficient inference via parallelization. To see why this is, observe that for any given token $t_n$ we want to generate, we simply form a polynomial of powers of $Q$ with scaled (one-hot) $t_0$. 
 
