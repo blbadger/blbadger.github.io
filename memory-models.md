@@ -279,6 +279,10 @@ A similar result is obtained where we instead increase the number of inter-token
 
 ![memory decoder performances](/deep-learning/token_memory_figure.png)
 
+But when we measure the ability of embedding-augmented masked mixers to compress FineWeb at a larger $n_ctx=1024$, we see that the multi-kernel mixer training (with token concatenation) actually exhibits decreased per-step loss relative to single-kernel mixers (with embedding concatenation).
+
+![memory decoder performances](/deep-learning/fineweb_memory_mixer_kernels.png)
+
 ### Memory Models
 
 The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation. Extensive research has been performed on methods to reduce the amount of computation and memory required to train and perform inference on a model applied to $n$ tokens, and this problem has been particularly relevant to recent advances in code generation, mathematical problem solving, and other domains benefitting from chain-of-thought test-time compute scaling. In this paradigm, the performance of a model scales with the number of tokens one generates (before generating a final answer) such that inference compute and memory become significant bottlenecks. 
