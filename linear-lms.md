@@ -32,6 +32,30 @@ The linear masked mixer architecture we use may be compared with the transformer
 
 We can be confident that a linear model will not have the representational power of a nonlinear one from an abundance of arguments for this idea. But can a linear model be trained to effectively model language? At least for simple langauge datasets such as TinyStories (synthetic paragraph-length stories written as if from a five-year-old's perspective, albeit much less creatively than what you would get from a real five-year-old), the answer is suprisingly yes as we will see below. This dataset is certainly much less challenging to model compared to broad text corpora with code, mathematics, web pages, and books that are commonly fed to frontier models today, but it is important to note that much is included in modeling even TinyStories; factual recall (names and places and simple events), grammar, story coherence and context for a few.
 
+### Nearly Linear Models
+
+Before proceeding to fully linear models, it may be beneficial to observe how almost-linear models (with only one nonlinear activation) perform when modeling TinyStories. Recalling that single-hidden-layer (with practically any nonlinear activation) neural networks are universal for all computable functions, we would expect models of sufficient size of this architecture to be capable of arbitrarily good TinyStories modeling, but it remains to be seen whether or not these models are practically trainable given limited hardware.
+
+The following figure shows how a model with ReLU activations after the convolution scales: here we use a tokenizer of size 4096 and hidden dimensions as denoted.
+
+![linear mixer computation](/deep-learning/linear_mixer_figure.png)
+
+This architecture performs in a superior manner to a linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), as for that architecture we have the following cross-entropy losses:
+
+| dm  | 4096  | 8192  | 16384  |
+|---|---|---|---|
+| 1e  | 3.25  | 3.27  | 3.24  |
+|  2e |  3.09 | 3.04  | 3.00  |
+|  3e | 3.02  | 2.94  | 2.87  |
+
+Whereas for a one-layer mixer (with nonlinearities in each intra-token transformation) or transformer, we have
+
+| dm  | Mixer 4096  | Mixer 8192  | Llama 4096 |
+|---|---|---|---|
+|  1e  | 2.51  | 2.38 |  2.30 |
+|  2e |  2.36 | 2.25  |  2.18 |
+|  3e | 2.28  | 2.16  |  2.12 |
+
 ### Linear models inference with O(log n) complexity
 
 What is necessary for efficient TinyStories modeling? Some experimentation can convince use that simply stacking linear layers does not increase training efficiency, and indeed decreases it slightly. This is true both when the entire linear mixer architecture (above) contains more than one module, or else when we use two or three or more linear transformations after the convolutional layer. 
@@ -61,33 +85,21 @@ t_2 = H(c_1Wt_0 + c_2W(HWc_0 t_0)) = Q(c_1 t_0) + Q^2(c_0 t_0) \\
 t_3 = Qc_3t_0 + Q^2c_4c_0t_0 + Q^2c_1c_5t_0 + Q^3c_0t_0
 $$
 
-This allows one to calculate $t_n$ and $t_{n+1}$ in parallel, and indeed one can calculate all next tokens in parallel because of the linearity of the model in question. To further save computational costs, for $N$ tokens one wants to generate one can compute the $N$ powers of $Q$ in $O(\log N)$ time and then save the single column of each matrix that is required to compute the multiplication with $t_0$, which requires $mxN$ memory. If this is done, each polynomial term reduces to a single scaling of a vector and the computation of the polynomial as a whole is reducible to vector addition, which may also be achieved in $O(\log N)$ time. In this sense, one can cache vectors and compute all next tokens required in parallel via cache lookups and addition with $O(log N)$ time complexity (and $O(N)$ space) without any modifications to the mixer architecture itself.
+This allows one to calculate $t_n$ and $t_{n+1}$ in parallel, and indeed one can calculate all next tokens in parallel because of the linearity of the model in question. To further save computational costs, for $N$ tokens one wants to generate one can compute the $N$ powers of $Q$ in $O(N \log m)$ time and then save the single column of each matrix that is required to compute the multiplication with $t_0$, which requires $mxN$ memory. If this is done, each polynomial term reduces to a single scaling of a vector and the computation of the polynomial as a whole is reducible to vector addition, which may be achieved in $O(\log N)$ time via prefix sum. In this sense, one can cache vectors and compute all next tokens required in parallel via cache lookups and addition with $O(log N)$ time complexity (and $O(N)$ space) without any modifications to the mixer architecture itself.
 
 ### Linear Mixer Scaling
 
-How can one increase the dimensionality of a linear mixer model? As we are effectively limited to $W_{m, n}, m=n$ we can simply increase the tokenizer size to increase the dimensionality of the transformation $W$. 
+How can one increase the dimensionality of a linear mixer model? As we are effectively limited to $W_{m, n}, m=n$ where $m = \vert t \vert$ we can simply increase the tokenizer size to increase the dimensionality of the transformation $W$. But this presents a problem: one cannot directly compare cross-entropy loss values of models with different tokenizers, as the amount of information necessary to match a target distribution clearly changes depending on how many elements exist in that distribution (as guessing one of two values is easier than guessing one of a thousand). We must instead convert our cross-entropy loss values to a more universal measurement, which we choose somewhat arbitrarily to be compression in terms of Bits per Byte (of text). The cross-entropy loss on this page is equivalent to negative log likelihood loss $\Bbb L$ on softmax-transformed logits, which happily makes calculation of bits per byte straightforward.
 
-### Nearly Linear Models
+To find the number of bits per byte compression each model achieves, first we calculate the average number of characters per token $L_t / L_c$ and then find the model's loss and calculate as follows:
 
-It may be wondered how models that contain a minimal number of nonlinear layers perform for TinyStories training. The following figure shows how a model with ReLU activations after the convolution scales: here we use a tokenizer of size 4096 and hidden dimensions as denoted.
+$$
+BPC = (L_t/L_c) * \Bbb L / \ln(2) 
+$$
 
-![linear mixer computation](/deep-learning/linear_mixer_figure.png)
+Now able to compare compression results between models with different tokenizers, we find that compression does increase as $d_m=\vert t \vert$ increases, but that there is rather fast saturation with respect to compression per sample trained upon relative to the nearly-linear models above.
 
-This architecture performs in a superior manner to a linear mixer with inter-token transformations conv1D -> gelu -> conv1d (such that we only have $n_{ctx}$ nonlinear transformations in the model), as for that architecture we have the following cross-entropy losses:
-
-| dm  | 4096  | 8192  | 16384  |
-|---|---|---|---|
-| 1e  | 3.25  | 3.27  | 3.24  |
-|  2e |  3.09 | 3.04  | 3.00  |
-|  3e | 3.02  | 2.94  | 2.87  |
-
-Whereas for a one-layer mixer (with nonlinearities in each intra-token transformation) or transformer, we have
-
-| dm  | Mixer 4096  | Mixer 8192  | Llama 4096 |
-|---|---|---|---|
-|  1e  | 2.51  | 2.38 |  2.30 |
-|  2e |  2.36 | 2.25  |  2.18 |
-|  3e | 2.28  | 2.16  |  2.12 |
+![linear mixer computation](/deep-learning/linear_mixer_scaling.png)
 
 
 
