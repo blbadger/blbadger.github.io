@@ -279,7 +279,7 @@ A similar result is obtained where we instead increase the number of inter-token
 
 ![memory decoder performances](/deep-learning/token_memory_figure.png)
 
-But when we measure the ability of embedding-augmented masked mixers to compress FineWeb at a larger $n_ctx=1024$, we see that the multi-kernel mixer training (with token concatenation) actually exhibits decreased per-step loss relative to single-kernel mixers (with embedding concatenation).
+But when we measure the ability of embedding-augmented masked mixers to compress FineWeb at a larger $n_ctx=1024$, we see that the multi-kernel mixer training actually exhibits decreased per-step loss relative to single-kernel mixers. As for FineMath, we again observe embedding concatenation to yield slightly more efficient training after 200k steps (~13 billion tokens).
 
 ![memory decoder performances](/deep-learning/fineweb_memory_mixer_kernels.png)
 
