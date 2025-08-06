@@ -323,12 +323,24 @@ Why would this occur? One hypothesis is that large-embedding models simply form 
 
 A good example of a trivial autoencoding is for the case where the model's context window is equal to the embedding dimension, $n_{ctx} = d_m$, and the model learns to represent each single input token as in a single embedding element. On this page we typically use a tokenizer of size 8000 and embeddings encoded in 16 bits per parameter. Clearly each embedding element can encode a token fairly accurately (for all tokenizers up to size $2^16=65536$), so a powerful autoencoder might simply learn this encoding.
 
-Testing for this specific trivial encoding is not difficult, but one could imagine many other forms of trivial autoencoding such that it is difficult to directly test for all such encodings. Happily there is a somewhat indirect way one can test for all trivial autoencodings as they are defined above: we can observe the loss (compression) for the model in question first on tokens that are drawn from a random distribution and compare this to in-distribution loss. If nothing is learned about the actual data distribution, these values will be approximately equivalent. 
+Testing for this specific trivial encoding is not difficult, but one could imagine many other forms of trivial autoencoding such that it is difficult to directly test for all such encodings. Happily there is a somewhat indirect way one can test for all trivial autoencodings as they are defined above: we can observe the loss (compression) for the model in question first on tokens that are drawn from a uniform random distribution and compare this to in-distribution loss. If nothing is learned about the actual data distribution, these values will be approximately equivalent. 
 
+Generating a uniform distribution on all possible tokens of a tokenizer is fairly straightforward: we can just check the size of an input and reassign the input as a tensor of random integers of the same shape.
 
+```python
+input_ids = torch.randint(1, self.n_vocab, input_ids.shape)
+```
+
+For reference, we can decode these random inputs and confirm that they are indeed far outside the distribution of FineWeb-edu data, and the following shows that this is indeed the case.
 
 ```
 adequate mot smart receive ruralgment wonvis requestusaloney |lessictues Pl legislationager guarduresiverse.comulin minutesí excessive ign-G blue pictures Environment kit hoursCE task enhanceuff oral Cast<|reserved_special_token_147|> individual.Cil Glick examined changing awayolesplace wid sector twenty du tox covered White<|reserved_special_token_13|> famouses influen.e
 ```
 
-Once this is done, we can also observe the generalization of a given model by comparing the loss achieved on in-distribution versus somewhat out-of-distribution data.
+Does loss on these random tokens mirror loss on in-distriution data for large-embedding models, either autoencoders or memory models? The answer for both is no: across all models tested, the loss for these random strings is much larger than the in-disribution loss and indeed exceeds the untrained model loss (which is typically 9-10). This is strong evidence against these models forming a trivial autoencoding as defined above.
+
+
+
+We can also observe the generalization of a given model by comparing the loss achieved on in-distribution versus marginally out-of-distribution data. We use FineMath as our marginally out-of-distribution dataset for models trained on the FineWeb, and FineWeb for models trained on FineMath. We have already observed good generalization for in-distribution data for most models on this page (there is <5% duplication between train and eval datasets for either FineWeb or FineMath but very little difference in train loss versus test loss). We observe
+
+
