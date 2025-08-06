@@ -315,4 +315,20 @@ How much of the difference in training loss between frozen and standard memory m
 
 ![memory decoder architectures](/deep-learning/fineweb_memory_d1024_fig.png)
 
+### Autoencoders and Memory Models don't make trivial encodings
 
+Thus far we have seen curiously diverging training efficiencies with architectural changes for the case where the encoder's embedding is as large or larger than the context window, versus the case where an encoder's embedding is significantly smaller than the context window. For example, consider the widely different effect of using more mixer heads or a $k>1$ convolution for large embeddings (where this leads to much more efficient training) compared to small embeddings (where it leads to a decrease in training efficiency). Another example is the sharp drop in efficiency in both autoencoders and memory models as one decreases the encoder embedding size past the $n_{ctx}$ boundary.
+
+Why would this occur? One hypothesis is that large-embedding models simply form trivial autoencodings that are easy to train and that this is assisted by the architectural modifications we have explored above, whereas it is impossible for small-embedding models to form trivial autoencodings. What is signified by a 'trivial' autoencoding is one in which the information from input token indices are passed to the output (or at least decoder) such that nothing is actually learned about the actual data distribution (educational text or mathematical text in this case). 
+
+A good example of a trivial autoencoding is for the case where the model's context window is equal to the embedding dimension, $n_{ctx} = d_m$, and the model learns to represent each single input token as in a single embedding element. On this page we typically use a tokenizer of size 8000 and embeddings encoded in 16 bits per parameter. Clearly each embedding element can encode a token fairly accurately (for all tokenizers up to size $2^16=65536$), so a powerful autoencoder might simply learn this encoding.
+
+Testing for this specific trivial encoding is not difficult, but one could imagine many other forms of trivial autoencoding such that it is difficult to directly test for all such encodings. Happily there is a somewhat indirect way one can test for all trivial autoencodings as they are defined above: we can observe the loss (compression) for the model in question first on tokens that are drawn from a random distribution and compare this to in-distribution loss. If nothing is learned about the actual data distribution, these values will be approximately equivalent. 
+
+
+
+```
+adequate mot smart receive ruralgment wonvis requestusaloney |lessictues Pl legislationager guarduresiverse.comulin minutesí excessive ign-G blue pictures Environment kit hoursCE task enhanceuff oral Cast<|reserved_special_token_147|> individual.Cil Glick examined changing awayolesplace wid sector twenty du tox covered White<|reserved_special_token_13|> famouses influen.e
+```
+
+Once this is done, we can also observe the generalization of a given model by comparing the loss achieved on in-distribution versus somewhat out-of-distribution data.
