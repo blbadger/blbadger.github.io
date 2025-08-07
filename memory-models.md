@@ -94,9 +94,13 @@ We can also take the effort to find the optimal number of heads for our autoenco
 
 ![transformer versus mixer autoencoders](/deep-learning/transformer_heads_figure.png)
 
-Does the use of unrolled embeddings lead to masked mixer autoencoders training more efficiently? The answer is generally not: for the most performant convolutional kernel sizes, the use of repeated embeddings leads to more efficient training.
+Does the use of unrolled embeddings lead to masked mixer autoencoders training more efficiently? The answer is generally not at one $d_m$: for the most performant convolutional kernel sizes, the use of repeated embeddings leads to more efficient training.
 
 ![transformer versus mixer autoencoders](/deep-learning/unrolled_repeated_mixer_figure.png)
+
+It is interesting, therefore, that for a model with a larger embedding ($d_m=1024$) we find that this is not the case: 
+
+![transformer versus mixer autoencoders](/deep-learning/fineweb_autoencoder_d1024_c512_figure.png)
 
 It should be noted that the masked mixers in the above figure use around half the compute and device memory as the transformers in the figure before, and cannot be compared directly for training efficiency purposes. It is interesting to note that expanding the transformer width and using a compression layer (two linear transformations that compress $d_m \to d_m/2 \to d_m$ lead to substantially worse training efficiency than using a smaller $d_m$ with no compression between encoder and decoder, despite the smaller-$d_m$ model requiring half the compute and memory to train.
 
@@ -265,13 +269,13 @@ There is some expected behavior here: the embedding-augmented models begin train
 
 It is somewhat less expected that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder, a pattern that is particularly apparent later in training. As the transformer encoder -> transformer decoder model exhibits the same tendancy, this could result from an alignment between encoder and decoder with respect to architecture.
 
-From the figure above, we may wonder whether an extended training run would lead to the embedding-augmented masked mixer overtaking the transformer with respect to normalized log likelihood loss (ie total compression). We find that this is indeed the case: training on more samples (with the same lr scheduler and batch size etc.) leads to the masked mixer achieving the lowest total bits per byte, assuming 4 bits per parameter for the embedding.
+From the figure above, we may wonder whether an extended training run would lead to the embedding-augmented masked mixer overtaking the transformer with respect to normalized log likelihood loss (ie total compression). We find that this is indeed the case: training on more samples (with the same lr scheduler and batch size etc.) leads to the masked mixer achieving the lowest total bits per byte, assuming 4 bits per parameter for the embedding. Even assuming that one can only quantize the embedding to 8 bits per parameter, we find that the memory transformer exceeds the compression of the causal-trained transformer on this dataset.
 
-![memory decoder performances](/deep-learning/extended_memory_figure.png)
+![memory decoder performances](/deep-learning/memory_model_extended_figure.png)
 
 From these results it appears that the informational content of the embedding (only 64 parameters in this case) is not saturated even after a relatively long training run such that the loss continues to decrease nearly linearly. It seems safe to assume that the embedding-augmented mixer would be a more efficient compression model for a fixed compute applied at training even if the embedding were quantized with 8 or 16 bits per parameter.
 
-The above results are obtained for flat masked mixers, and as we observed superior training efficiencies with multi-headed mixers of the same size one may expect to find better training properties for embedding-augmented causal mixers as well. It comes a some suprise, therefore, that an embedding-augmented causal masked mixer (using embedding dimension concatentation) with four-headed mixer layers in the encoder slightly underperforms the same model without heads as shown in the figure below.
+The above results are obtained for flat masked mixers, and as we observed superior training efficiencies with multi-headed mixers of the same size one may expect to find better training properties for embedding-augmented causal mixers as well. It comes a some suprise, therefore, that an embedding-augmented causal masked mixer (using embedding dimension concatentation) with four-headed mixer layers in the encoder slightly underperforms the same model without heads as shown in the figure below. Note here that $d_m=64$ denotes the embedding dimension, where use use a 256-width encoder and 1024-width decoder.
 
 ![memory decoder performances](/deep-learning/ememory_encoder_heads.png)
 
@@ -344,3 +348,9 @@ Does loss on these random tokens mirror loss on in-distriution data for large-em
 We can also observe the generalization of a given model by comparing the loss achieved on in-distribution versus marginally out-of-distribution data. We use FineMath as our marginally out-of-distribution dataset for models trained on the FineWeb, and FineWeb for models trained on FineMath. We have already observed good generalization for in-distribution data for most models on this page (there is <5% duplication between train and eval datasets for either FineWeb or FineMath but very little difference in train loss versus test loss). 
 
 ![memory decoder architectures](/deep-learning/in_and_ood_figure.png)
+
+These results tell us that near-distribution generalization scales in a very similar manner between autoencoders and memory models. Curiously, however, masked mixer-based models of both types tend to be somewhat better generalizers than transformer models, as shown in the following figure.
+
+![memory decoder architectures](/deep-learning/mixer_transformer_generalization_figure.png)
+
+
