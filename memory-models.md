@@ -265,11 +265,13 @@ We call this the 'normalized loss' for brevity. For a relatively small embedding
 
 ![memory decoder performances](/deep-learning/memory_compression_fig_2.png)
 
-There is some expected behavior here: the embedding-augmented models begin training with higher loss (the result of the offset required for storage of the 64 floats in the embedding vector) but then approach or pass the purely causal model's loss (or equivalently its bpb compression of the input). 
+There is some expected behavior here: the embedding-augmented models begin training with higher loss (the result of the offset required for storage of the 64 floats in the embedding vector) but then approach or pass the purely causal model's loss (or equivalently its bpb compression of the input). We can see this most clearly by observing the difference between embedding-augmented and plain causal model at a given step or causal model loss value as shown in the following figure. As we expect for the embedding to allow a model to circumvent the difficulty of learning a corpus with a certain amount of language-intrinsic source entropy, we would expect for the embedding to be less useful early in training when this source entropy is a small part of the total model's cross-entropy loss with respect to the text corpus.
+
+![memory decoder performances](/deep-learning/loss_diff_fig.png)
 
 It is somewhat less expected that the masked mixer decoder appears to be able to learn to use the information present in the embedding more efficiently than the transformer decoder, a pattern that is particularly apparent later in training. As the transformer encoder -> transformer decoder model exhibits the same tendancy, this could result from an alignment between encoder and decoder with respect to architecture.
 
-From the figure above, we may wonder whether an extended training run would lead to the embedding-augmented masked mixer overtaking the transformer with respect to normalized log likelihood loss (ie total compression). We find that this is indeed the case: training on more samples (with the same lr scheduler and batch size etc.) leads to the masked mixer achieving the lowest total bits per byte, assuming 4 bits per parameter for the embedding. Even assuming that one can only quantize the embedding to 8 bits per parameter, we find that the memory transformer exceeds the compression of the causal-trained transformer on this dataset.
+We may wonder whether this near-linear loss decrease for embedding-augmented models persists as models are trained on more tokens. We find that this is indeed the case: training on more samples (with the same lr scheduler and batch size etc.) leads to the masked mixer achieving the lowest total bits per byte, assuming 4 bits per parameter for the embedding. Even assuming that one can only quantize the embedding to 8 bits per parameter, we find that the memory transformer exceeds the compression of the causal-trained transformer on this dataset.
 
 ![memory decoder performances](/deep-learning/memory_model_extended_figure.png)
 
