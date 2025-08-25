@@ -331,7 +331,7 @@ As is the case for memory models designed for information compression (ie with v
 
 To conclude, the answer to our initial question in this section is yes: decoders (transformers or masked mixers) are certainly able to be trained to use information present in an encoder's embedding,
 
-### Memory models are efficient to train
+### Memory model training efficiency
 
 Now that we have seen that decoders are indeed capable of learning to use practically all information present in an encoder, we can proceed with training memory models wherre encoders store information from previous tokens, not the token to be predicted.
 
@@ -349,7 +349,26 @@ This is not the case for transformers, however, such that the full-context versi
 
 ![memory decoder architectures](/deep-learning/memory_model_comparison_figure.png)
 
-It may also be wondered whether the embeddings learned by a one-pass autoencoder compare with a memory model-style autoencoder in which the model predicts all next tokens with the use of an embedding of the input, as explored in the last section...
+It may be wondered whether it is beneficial to fix the positions of memory embeddings and token embeddings or else allow the indices of the start of token embeddings to vary. The difference between the fixed-position and variable-position embedding implementation may be depicted as follows:
+
+
+Masked mixers effectively use fixed, absolute positional encodings such that is is natural to use fixed-position embeddings. But as this is not the case for transformers, such that it is useful to compare the training efficiencies between fixed and variable position embeddings. As shown in the following figure, there is a rather small increase in efficiency using fixed positional encodings for transformers. 
+
+![memory decoder architectures](/deep-learning/fixed_vs_var_memtrans_fig.png)\
+
+### A separation between encoder and decoder allows for efficient training
+
+It may also be wondered how these encoder-decoder memory models compare with decoder-only-style memory models with respect to training efficiency. A notable example of this is the [recurrent memory transformer] (https://arxiv.org/abs/2207.06881) architecture in which a decoder model reserves one or more embeddings as memory 'tokens'. For causal language modeling, this means that these decoders are tasked with both encoding (in the sense of storing information in the memory embeddings) as well as decoding, in the sense of using embeddings of tokens as well as sequences of tokens to generate individual tokens.
+
+In the figure beliow, we see that 
+
+![memory decoder architectures](/deep-learning/fineweb_1024_memory_fig.png)
+
+If the memory models contain trainable encoders, these models are very similar in memory and compute requirements for a given input and model size. This is because these models form gradients on all $n$ tokens of their extended context, which occurs for RMTs via back-propegation through time and for memory models via gradients on encoders. In the case of RMTs, it was shown to be necessary to perform this back-progegation through time in order to maintain training efficiency, as other approaches that only back-propegate in local chunks (ie transformer-xl) exhibit worse performance.  
+
+Recalling that these models combine encoder and decoder tasks into one architectural unit, this is not particularly surpising: clearly training an encoder is not efficient if one does not backpropegate an encoder's gradients to model blocks on token indices that are actually required for information retention. Separating encoders from decoders would be expected to be different: here we can train an encoder first on all necessary token chunks and then use this model to form the memory embeddings that may be used to train the decoder without requiring gradient flow to the encoder.
+
+Is this efficient to train?
 
 ### Autoencoders and memory models don't learn trivial encodings
 
