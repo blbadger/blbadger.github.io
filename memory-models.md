@@ -351,16 +351,21 @@ This is not the case for transformers, however, such that the full-context versi
 
 It may be wondered whether it is beneficial to fix the positions of memory embeddings and token embeddings or else allow the indices of the start of token embeddings to vary. The difference between the fixed-position and variable-position embedding implementation may be depicted as follows:
 
+![fixed vs variable position](/deep-learning/variable_vs_fixed_inputs.png)
 
 Masked mixers effectively use fixed, absolute positional encodings such that is is natural to use fixed-position embeddings. But as this is not the case for transformers, such that it is useful to compare the training efficiencies between fixed and variable position embeddings. As shown in the following figure, there is a rather small increase in efficiency using fixed positional encodings for transformers. 
 
-![memory decoder architectures](/deep-learning/fixed_vs_var_memtrans_fig.png)\
+![fixed vs variable results](/deep-learning/fixed_vs_var_memtrans_fig.png)
 
 ### A separation between encoder and decoder allows for efficient training
 
 It may also be wondered how these encoder-decoder memory models compare with decoder-only-style memory models with respect to training efficiency. A notable example of this is the [recurrent memory transformer] (https://arxiv.org/abs/2207.06881) architecture in which a decoder model reserves one or more embeddings as memory 'tokens'. For causal language modeling, this means that these decoders are tasked with both encoding (in the sense of storing information in the memory embeddings) as well as decoding, in the sense of using embeddings of tokens as well as sequences of tokens to generate individual tokens.
 
-In the figure beliow, we see that 
+To show the differnce between the encoder-decoder memory models as defined above (which we can think of as 'parallel' memory models) and recurrent memory models, the following diagram illustrates how each model type processes inputs of up to three chunks.
+
+![memory decoder architectures](/deep-learning/parallel_vs_recurrent_mem.png)
+
+In the figure below, we see that parellelized memory models are slightly more efficient to train on FineWeb, 
 
 ![memory decoder architectures](/deep-learning/fineweb_1024_memory_fig.png)
 
