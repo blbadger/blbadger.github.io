@@ -375,15 +375,17 @@ If the memory models contain trainable encoders, these two architectures are ver
 
 Recalling that recurrent memory models combine encoder and decoder tasks into one architectural unit, this is not particularly surpising: clearly training an encoder is not efficient if one does not backpropegate an encoder's gradients to model blocks on token indices that are actually required for information retention. Separating encoders from decoders would be expected to largely ameliorate this issue: instead, we can train an encoder first on all necessary token chunks and then use this model to form the memory embeddings that may be used to train the decoder without requiring gradient flow to the encoder. The fundamental idea here is that one may separate the encoding (information-saving) function from the decoding (information-discriminating) function in order to achieve very large memory savings during training.
 
-Is a memory model with a frozen encoder efficiently triainable? It would not be of much use to train using a frozen encoder if the decoder was not able to learn to use the encoder's information efficiently in the first place. We can test this by comparing per-step losses of frozen encoder models to no-memory and trainable encoder-based memory models. When using a mixer encoder (which achieves an autoencoding CEL of <0.3 on 512 tokens) we have the following:
+Is a memory model with a frozen encoder efficiently triainable? It would not be of much use to train using a frozen encoder if the decoder was not able to learn to use the encoder's information efficiently in the first place. We can test this by comparing per-step losses of frozen encoder models to no-memory and trainable encoder-based memory models. The following figure (left) shows the training losses achieved using a frozen encoder with an architecture matched to the memory model decoder where both encoders achieve an autoencoder CEL of <0.3 on 512 tokens.
 
 ![memory decoder architectures](/deep-learning/frozen_memory_trainings.png)
 
-From the left panel, we can see that the frozen encoder is initially not as helpful as a trainable one but as training proceeds the performance gap narrows. This can be more clearly appreciated in the following figure:
+To display the differences between frozen and unfrozen memory model encoder training efficiencies more effectively, the right panel shows the proportion of memory loss (1.0 being equal to the memory models, 0.0 being equal to the loss of no-memory model at each step) achieved by mixer and transformer frozen memory models. For both architectures, we see that the difference between frozen and trainable memory encoder decreases as training proceeds, but it is also apparent that mixers are more readily capable of using frozen encoder information compared to transformers. This is notably not due to the encoder itself, as the transformer encoder used here achieved a slightly lower evaluation cross-entropy loss ($\Bbb L =0.289$) compared to the mixer encoder ($ \Bbb L = 0.292$) on the same dataset.
 
 ![memory decoder architectures](/deep-learning/frozen_loss_recovery_figure.png)
 
-Curiously, on the right we see that there is actually a small *increase* in per-step loss for a transformer memory model if it is given the mixer embedding compared to a model with no memory at all. As we have seen in the text compression work that even trainable encoders are much more efficiently trainable if their architecture matches that of the decoder (meaning that we pair mixer encoders with mixer decoders and transformer encoders with transformer decoders), it may be wondered if a similar phenomenon is occuring here such that the transformer decoder is unable to make use of the information present in the mixer's embedding. 
+As we have seen in the text compression work that even trainable encoders are much more efficiently trainable if their architecture matches that of the decoder (meaning that we pair mixer encoders with mixer decoders and transformer encoders with transformer decoders), it may be wondered if a similar phenomenon would here such that the transformer decoder would be less capable of using the information present in the mixer's embedding. We find that there is actually an *increase* in per-step loss for a transformer memory model if it is given the mixer embedding compared to a model with no memory at all, suggesting that this transformer decoder is more or less comopletely incapable of using a frozen mixer encoder's information, at least early in training.
+
+![memory decoder architectures](/deep-learning/frozen_mixmem_transformer_fig.png)
 
 ### Autoencoders and memory models do not learn trivial encodings
 
@@ -426,8 +428,5 @@ We employ an efficiently-trainable autoencoder architecture ($n_{ctx}=512, d_m=1
 As shown in the following figure, this autoencoder experiences virtually no loss minimization and thus does not learn a trivial autoencoding on these random tokens. 
 
 ![memory decoder architectures](/deep-learning/random_train_figure.png)
-
-
-
 
 
