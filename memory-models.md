@@ -299,7 +299,7 @@ Decreasing both memory and compute growth is an active area of current research,
 
 The idea of compressing input sequences into embeddings that take the place of transformer token embeddings is not new, and was explored in various forms (see particularly the [recurrent memory transformer](https://arxiv.org/abs/2207.06881)). Such models were shown to be able to perform simple information retrieval (needle-in-haystack style) on the compressed inputs but little more than that, and certainly do not retain most information of the input. The insight here is that as we have seen that transformers are quite inefficient with respect to capturing input information in encodings but masked mixers are not, we can use masked mixer encoders instead to greatly increase the amount of information that is stored in each embedding.
 
-The architecture we will experiment with here is mostly similar to the embedding-augmented causal langauge model architecture implemented above, where we use the token dimension concatenation to maximize the number of embeddings we can provide to the decoder model. We begin by testing the ability of a memory embedding to provide information to allow for an increase in decoder causal modeling accuracy where this embedding is formed from all tokens in the sequence, both previous and future, which we refer to as an 'oracle' memory. For clarity, the architecture used for such oracle memories is as follows:
+The architecture we will experiment with here is mostly similar to the embedding-augmented causal langauge model architecture implemented above, where we use the token dimension concatenation to maximize the number of embeddings we can provide to the decoder model. We begin by testing the ability of a memory embedding to provide information to allow for an increase in decoder causal modeling accuracy where this embedding is formed from all tokens in the sequence, both previous and future, which we refer to as an 'oracle' memory. For clarity, a transformer-based architecture used for such oracle memories is as follows:
 
 ![memory decoder architectures](/deep-learning/memory_transformer.png)
 
@@ -469,9 +469,19 @@ meaning that the encoder is responsible for approximately 0.921 bits per byte, w
 
 Thus the large-dimensional oracle memory embeddings contain more input information than causal model embeddings and untrained models, but still only exhibit retention of a fraction of the total information in the input. Recall previous results showing that that this relatively low-information embedding results in better next token prediction than a frozen high-information autoencoder embedding when paired with a causal decoder. As the decoder is fed all previous tokens at each forward pass, this suggests that a small amount of input information is necessary to provide next token information when paried with this previous token information. 
 
+How much information exactly does this memory model encoder embedding contain? After training our decoder, we have a BPB compression of
 
+$$
+\mathtt{BPB} = (L_t/L_b) \Bbb L / \ln(2) = (1/3.92) * 4.93 / \ln(2) \approx 1.81
+$$
 
+whereas the amortized bits per input byte of the embedding ($d_m=1024, n_{ctx}=512$ is
 
+$$
+\mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)} = \frac{1024 * 8}{512 * 3.92} \approx 4.08
+$$
+
+Thus there is a substantial amount of redundancy in the memory model encoder even with its limited informational content, and furthermore the encoder only needs to compress to around half its achieved value (0.921 bits per byte) if it were independent of the decoder. 
 
 
 
