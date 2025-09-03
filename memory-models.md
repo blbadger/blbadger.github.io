@@ -1,4 +1,4 @@
-## Language Mixers IV: Memory Models
+## Language Mixers IV: Text Compression and Memory Models
 
 This page focuses on information compression, specifically how we can achieve better compression via new language model architectures and how this can be used for large-context models.
 
@@ -411,15 +411,15 @@ adequate mot smart receive ruralgment wonvis requestusaloney |lessictues Pl legi
 
 Does loss on these random tokens mirror loss on in-distriution data for large-embedding models, either autoencoders or memory models? The answer for both is no: across all models tested, the loss for these random strings is much larger than the in-disribution loss and indeed exceeds the untrained model loss (which is typically 9-10). This is strong evidence against these models forming a trivial autoencoding as defined above.
 
-![memory decoder architectures](/deep-learning/random_loss_figure.png)
+![random loss](/deep-learning/random_loss_figure.png)
 
 We can also observe the generalization of a given model by comparing the loss achieved on in-distribution versus marginally out-of-distribution data. We use FineMath as our marginally out-of-distribution dataset for models trained on the FineWeb, and FineWeb for models trained on FineMath. We have already observed good generalization for in-distribution data for most models on this page (there is <5% duplication between train and eval datasets for either FineWeb or FineMath but very little difference in train loss versus test loss). 
 
-![memory decoder architectures](/deep-learning/in_and_ood_figure.png)
+![in and ood](/deep-learning/in_and_ood_figure.png)
 
 These results tell us that near-distribution generalization scales in a very similar manner between autoencoders and memory models. Curiously, however, masked mixer-based models of both types tend to be somewhat better generalizers than transformer models, as shown in the following figure.
 
-![memory decoder architectures](/deep-learning/mixer_transformer_generalization_figure.png)
+![mixer generalization](/deep-learning/mixer_transformer_generalization_figure.png)
 
 Thus neither memory models nor one-pass autoencoders learn trivial encodings, regardless of whether masked mixer or transformer architectures are used. It is natural to wonder next whether these models are even capable to learning a trivial encoding at all. As we observe nearly similar generalization properties for mixers and transformers, we may be free to pick either architecture and test the ability of a model that otherwise learns non-trivial autoencodings to learn a trivial autoencoding by simply training on uniform random tokens used earlier for evaluation. 
 
@@ -427,6 +427,9 @@ We employ an efficiently-trainable autoencoder architecture ($n_{ctx}=512, d_m=1
 
 As shown in the following figure, this autoencoder experiences virtually no loss minimization and thus does not learn a trivial autoencoding on these random tokens. 
 
-![memory decoder architectures](/deep-learning/random_train_figure.png)
+![random train](/deep-learning/random_train_figure.png)
 
+### How much information embeddings contain
+
+![mixer information recovery](/deep-learning/mixer_information_recovery.png)
 
