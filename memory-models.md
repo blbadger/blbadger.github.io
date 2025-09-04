@@ -479,13 +479,16 @@ $$
 \mathtt{BPB} = (L_t/L_b) \Bbb L / \ln(2) = (1/3.92) * 4.93 / \ln(2) \approx 1.81
 $$
 
-whereas the amortized bits per input byte of the embedding ($d_m=1024, n_{ctx}=512$ is
+whereas the amortized bits per input byte of the embedding ($d_m=1024, n_{ctx}=512$) assuming no compression is
 
 $$
 \mathtt{BPB} = \frac{n_p * b_p}{n_{ctx} * (L_b / L_t)} = \frac{1024 * 8}{512 * 3.92} \approx 4.08
 $$
 
-Thus there is a substantial amount of redundancy in the memory model encoder even with its limited informational content, and furthermore the encoder only needs to compress to around half its achieved value (0.921 bits per byte) if it were independent of the decoder. 
+Thus the encoder has learned to compress the input by a factor of 1.81:4.08, even though it would not have to in the sense that an uncompressed embedding contains 4.08 bits per input byte of information which would be sufficient for allowing the decoder to achieve zero loss. 
+
+Equivalently we have an input of 512 tokens each containing 3.92 bytes, we have an input of 2007 bytes and thus our encoder contains around 2007 bytes * 1.81 bits/byte = 3633 bits of information per context window. This is much smaller than the (uncompressed) 1024 parameters * 8 bits/parameter = 8096 bits present in the encoder's embedding, assuming 8 bits per parameter quantization.
+
 
 
 
