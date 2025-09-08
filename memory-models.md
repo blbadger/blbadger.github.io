@@ -291,9 +291,51 @@ But when we measure the ability of embedding-augmented masked mixers to compress
 
 ### Embedding Quantization
 
-In the section above, we assumed an 8 bit per parameter quantization would be possible with minimal loss. Is this a reasonable assumption?
+In the section above, we assumed an 8 bit per parameter quantization would be possible with minimal loss. Is this a reasonable assumption? 
+
+There are typically two ways one can take to quantize a model: either train the model using the quantization (or a facsimile of that quantization) which is called quantization-aware training or else train the model in full accuracy (here fp16/fp32 mixed precision) and quantize after training, which is known as post-training quantization. In this case, all we care about is quantizing the activations of one particular layer (activations between the `down` and `up` compression transformations) rather than the weights and activations, making this a somewhat atypical quantization investigation. We start by observing post-training quantization accuracy.
+
+Perhaps the simplest post-training quantization we can perform is to cast the activations in our compressed representation layer to the desired data type, assuming that both data types are floating points. There are two pytorch-native 8-bit floating point data types: `float8_e5m2` (five bits for the exponent, two for the mantissa, and one for the sign) and `float8_e4m3fn` (four exponent, three mantissa, and one sign bit and one bit pattern for NaN overflows), which were originally introduced in [this paper](https://arxiv.org/pdf/2209.05433). The difference between these data types is effectively more precision for e4m3 versus more range for e5m2.
+
+When we 
+
+| Embedding Datatype   | Loss |
+| -------- | ------- |
+| Float16 (E5M10)  | 2.26   |
+| Float16 (E8M7)  | 2.28   |
+| Float8 (E4M3fn) | 4.86  |
+| Float8 (E5M2) | 6.65   |
+
+Thus we have a large increase in evaluation loss when we go from seven precision bits to three. When we observe the distribution of activations typical in this embedding layer, we see the reason: in the following figure, we see that activations for ten samples divided into 128 buckets (the most represntable by 8 bits) lie entirely within [-7, 7] and thus we only require three bits in the mantissa, but there is substantial overlap in activation values given this bucket size near the origin. 
 
 ![memory quantization](/deep-learning/memory_activations.png)
+
+A more sophisticated quantization approach is to use the statistics of the distribution of activations to attempt to assign buckets (quantized values) such that the probability of two distinct values becoming quantized to the same value is minimized. From the above figure it appears that our data follows an approximately normal distribution, which is typical of language model activations. One successful approach to near-lossless quantization of such values is the [Bitsandbytes Int8](https://arxiv.org/abs/2208.07339) matrix multiplication algorithm in which activations and weights are quantized to 8 bits per element and multiplied and unquantized, with large outlier parameters held out and processed at full precision. We observe little to no large outliers in our activation distribution, and thus can assume that 8 bit quantization is applied to nearly every activation element.
+
+We can apply the Int8() approach while avoiding any loss penalty resulting from quantizing weights in addition to activations as follows: we insert a linear layer 'probe' into the model in between the `down` and `up` compression transformations, and assign this linear probe to have weights corresponding to the identity matrix such that the input and output of this linear layer are identical, $xP = x$. As the identity matrix contains all zeros and ones, it may be trivially quantized in 8 bits without a performance degradation. We can compare the loss obtained quantizing this probe to the loss obtained quantizing the `up` layer to observe the relative importance of activation versus activation-and-weight quantization.
+
+| Embedding Datatype   | Loss |
+| -------- | ------- |
+| Float16 (E5M10)  | 2.13   |
+| BNB Int8() on probe | 2.47  |
+| BNB Int8() on `up` | 2.52   |
+
+Int8() is clearly a far more powerful quantization method than naieve casting, but we still have a substantial performance gap present. This model (and indeed this particular embedding layer) is much more sensitive to quantization than a typical causal language model, which would normally see a <2% loss difference upon Int8() quantization from FP16 data. 
+
+If there is some difficult-to-reduce error upon post-training quantization, the usual strategy is to train a quantization-aware model. We have a particularly simple quantization goal: one layer's activation quantized to around 8 bits per parameter. As most trainings are performed on older hardware that does not natively support the newer 8 bit datatypesin their tensor cores, we do not actually train using 8 bits per activation but instead use a fascimile of this: we add noise to Float16 activations to approximate the precision achievable using 8 bits, specifically we target the E4M3 datatype with three mantissa bits. To do this we add uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`) and retrain our embedding-augmented model. 
+
+We first note that there is minimal (<0.1%) difference between loss achieved using our noise-added model versus a standard transformer-based embedding-augmented model after 100k training steps, indicating that our noised quantization-aware model trains approximately as efficiently as our unquantization-aware model. When we evaluate this, we observe the following:
+
+| Embedding Datatype   | Loss |
+| -------- | ------- |
+| Float16 (E5M10)  | 2.56   |
+| BNB Int8() | 2.55  |
+| Float8 (E4M3fn) | 2.58   |
+| Float8 (E5M2) | 2.65   |
+
+We observe very little loss difference between the unquantized and Float8 E4M3-quantized model, which is what we wanted. We also find no loss decrease upon bitsandbytes Int8() probe quantization, and only a modest loss increase with Float8 E5M2. When we observe the distribution of embedding activations, we find that there is less clustering around the origin but notable we still observe no outliers. We thus expect to be able to quantize to 6 bits per activation using E3M2 with the same amount of loss as E5M2.
+
+![memory quantization](/deep-learning/noise_qat_embeddings.png)
 
 ### Memory Model Introduction
 
