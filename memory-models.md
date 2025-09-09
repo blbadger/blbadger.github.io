@@ -339,6 +339,26 @@ We observe very little loss difference between the unquantized and Float8 E4M3-q
 
 ![memory quantization](/deep-learning/noise_qat_embeddings.png)
 
+After 200k training steps, we have the following:
+
+| Embedding Datatype   | Loss |
+| -------- | ------- |
+| Float16 (E5M10)  | 2.424   |
+| BNB Int8() | 2.437  |
+| Float8 (E4M3fn) | 2.672   |
+| Float8 (E5M2) | 3.253   |
+
+and the distribution fo activations is as follows:
+
+![memory quantization](/deep-learning/qat_trained_figure.png)
+
+The approximately normal distribution present in these activations would be expected to account for the gap between BNB Int8() and FLoat8 E4M3fn accuracy.
+
+When we compare the distribution of this quantization-aware model to the non-quantized-aware model, we see that the mean is still centered around the origin but the variance is larger, and the distribution is notably flattened.
+
+![memory quantization](/deep-learning/qat_vs_nonqat_memtransformer.png)
+
+
 ### Memory Model Introduction
 
 The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation. Extensive research has been performed on methods to reduce the amount of computation and memory required to train and perform inference on a model applied to $n$ tokens, and this problem has been particularly relevant to recent advances in code generation, mathematical problem solving, and other domains benefitting from chain-of-thought test-time compute scaling. In this paradigm, the performance of a model scales with the number of tokens one generates (before generating a final answer) such that inference compute and memory become significant bottlenecks. 
