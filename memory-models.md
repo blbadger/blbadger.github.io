@@ -304,11 +304,11 @@ Perhaps the simplest post-training quantization we can perform is to cast the ac
 | Float8 (E4M3fn) | 4.86  |
 | Float8 (E5M2) | 6.65   |
 
-Thus we have a large increase in evaluation loss when we go from seven precision bits to three. This is somewhat surprising given that we are performing relatively mild quantization on activations of only one layer. It may be wondered whether this is typical of layers in oracle memory models or not, and we can investigate this question by performing quantization on the output activations of each linear transformation in our model, observing the resulting evaluation loss with each quantized layer. This may be thought of as a rough approximation of the amount of information per parameter present in each layer's activation.
+Thus we have a large increase in evaluation loss when we go from seven precision bits to three. This is somewhat surprising given that we are performing relatively mild quantization on activations of only one layer. It may be wondered whether this is typical of layers in oracle memory models or not, and we can investigate this question by performing quantization on the output activations of each linear transformation in our model, observing the resulting evaluation loss with each quantized layer. In the folling figure, we see that indeed the activations of `down` and `up` projections are by a wide margin the most sensitive of all layers in the model.
 
-![memory quantization](/deep-learning/quantization_layer_figure.png)
+![memory quantization](/deep-learning/quantization_layers_figure.png)
 
-When we observe the distribution of activations typical in this embedding layer, we see the reason: in the following figure, we see that activations for ten samples divided into 128 buckets (the most represntable by 8 bits) lie entirely within [-7, 7] and thus we only require three bits in the mantissa, but there is substantial overlap in activation values given this bucket size near the origin. 
+When we observe the distribution of activations typical in this embedding layer, we see the reason: activations for ten samples divided into 128 buckets (the most represntable by 8 bits) lie entirely within [-7, 7] and thus we only require three bits in the mantissa, but there is substantial overlap in activation values given this bucket size near the origin. In the following figure, we observe the distribution embedding activation values for ten samples, aggregated on the left and separated by color (ie all red bars correspond to activations from one sample). The right panel shows that there generally not a distinct drift in mean and variance between samples.
 
 ![memory quantization](/deep-learning/memory_activations.png)
 
@@ -326,7 +326,13 @@ Int8() is clearly a far more powerful quantization method than naieve casting, b
 
 If there is some difficult-to-reduce error upon post-training quantization, the usual strategy is to train a quantization-aware model. We have a particularly simple quantization goal: one layer's activation quantized to around 8 bits per parameter. As most trainings are performed on older hardware that does not natively support the newer 8 bit datatypesin their tensor cores, we do not actually train using 8 bits per activation but instead use a fascimile of this: we add noise to Float16 activations to approximate the precision achievable using 8 bits, specifically we target the E4M3 datatype with three mantissa bits. 
 
-To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). This is an old trick used in deep learning, and although at first glance it might seem strange to add noise to simulate quantization consider that doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value. As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values. 
+To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). 
+
+$$
+O_{up} = W_{up} \left( W_{down} (x) + \mathcal{U}(x, -2^{-4}, 2^{-4}) \right)
+$$
+
+The use of noise to simulate low-precision arithmetic is an old trick in the deep learning field, and although at first glance it might seem strange to add noise to simulate quantization consider that doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value. As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values. 
 
 We first note that there is minimal (<0.1%) difference between loss achieved using our noise-added model versus a standard transformer-based embedding-augmented model after 100k training steps, indicating that our noised quantization-aware model trains as efficiently as our unquantization-aware model. When we evaluate this, we observe the following:
 
@@ -358,9 +364,13 @@ The approximately normal distribution present in these activations would be expe
 
 ![memory quantization](/deep-learning/quantization_aware_loss.png)
 
-When we compare the distribution of this quantization-aware model to the non-quantized-aware model, we see that the mean is still centered around the origin but the variance is larger, and the distribution is notably flattened.
+When we compare the distribution of this quantization-aware model to the non-quantized-aware model, we see that the mean is still centered around the origin but the variance is larger, and the distribution is notably flattened. This is to be expected, as activation values must be pushed farther apart in order to remain distinct upon addition of the uniform noise.
 
 ![memory quantization](/deep-learning/qat_vs_nonqat_memtransformer.png)
+
+When we observe the sensitivity of each layer in a noise-induced quantization-aware trained model compared to our original full-precision model, we find something interesting: not only are activations of the layer to which we added the noise (`down`) no longer sensitive to 8-bit quantization, but also neither are the other layers that were found to be relatively quantization-sensitive (early transformer layers in the decoder and encoder, up projection, etc.). This suggests that injection of noise into an arbitrary model layer's activations is capable of imparting quantization insensitivity on all layers.
+
+![memory quantization](/deep-learning/qat_vs_noqat_layer_figure.png)
 
 
 ### Memory Model Introduction
