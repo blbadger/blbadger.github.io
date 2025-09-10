@@ -326,7 +326,7 @@ Int8() is clearly a far more powerful quantization method than naieve casting, b
 
 If there is some difficult-to-reduce error upon post-training quantization, the usual strategy is to train a quantization-aware model. We have a particularly simple quantization goal: one layer's activation quantized to around 8 bits per parameter. As most trainings are performed on older hardware that does not natively support the newer 8 bit datatypesin their tensor cores, we do not actually train using 8 bits per activation but instead use a fascimile of this: we add noise to Float16 activations to approximate the precision achievable using 8 bits, specifically we target the E4M3 datatype with three mantissa bits. 
 
-To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). This is an old trick used in deep learning, and although at first glance it might seem strange to add noise to simulate quantization consider that doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value. As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values.
+To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). This is an old trick used in deep learning, and although at first glance it might seem strange to add noise to simulate quantization consider that doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value. As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values. 
 
 We first note that there is minimal (<0.1%) difference between loss achieved using our noise-added model versus a standard transformer-based embedding-augmented model after 100k training steps, indicating that our noised quantization-aware model trains as efficiently as our unquantization-aware model. When we evaluate this, we observe the following:
 
@@ -350,11 +350,13 @@ After 200k training steps, we have the following:
 | Float8 (E4M3fn) | 2.672   |
 | Float8 (E5M2) | 3.253   |
 
-and the distribution fo activations is as follows:
+and the distribution for activations is as follows:
 
 ![memory quantization](/deep-learning/qat_trained_figure.png)
 
 The approximately normal distribution present in these activations would be expected to account for the gap between BNB Int8() and FLoat8 E4M3fn accuracy.
+
+![memory quantization](/deep-learning/quantization_aware_loss.png)
 
 When we compare the distribution of this quantization-aware model to the non-quantized-aware model, we see that the mean is still centered around the origin but the variance is larger, and the distribution is notably flattened.
 
