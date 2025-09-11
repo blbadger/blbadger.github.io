@@ -378,6 +378,20 @@ This is also true of the weight layers: noise injection into the compressed embe
 
 ![memory quantization](/deep-learning/weight_sensitivities_figure.png)
 
+### Estimation of language entropy with embedding-augmented models
+
+We seen that the introduction of an (oracle) embedding into a causal decoder allows for more efficient language compression than either a standard one-pass encoder-decoder or causal decoder-only architecture. It is particularly noteworthy that embedding-augmented models exhibit different asymptotic training characteristics relative to causal decoder models: for this section, it is important to observe that causal model loss during training is well approxiated by a log-linear relationship, where a constant decrease in loss occurs upon a fixed magnitude change in training inputs (ie number of tokens or training steps). For example, if we may see a 0.4 CEL decrease upon doubling of the number of input steps, we would expect to see another 0.4 CEL decrease upon another step doubling.
+
+Now consider the following question: how effective can language models possibly be? We can think about this in terms of both how much incompressible information language exhibits, or in terms of the intrinsic entropy present in langauge itself. To see that language does have non-zero intrinsic entropy, for any given word on this page observe that you could replace the rest of the text with an equally grammatically valid (and factually valid etc.) unique completion.
+
+One straightforward way to estimate this intrinsic language entropy is to train large causal decoders on more and more tokens using a cross-entropy loss metric, and observe this loss after the training has converged. But even supposing that we had an arbitrarily large model capable of training on finite hardware, this approach is not computationally feasible: as long as loss curves remain log-linear, not only does convergence never actually occur but we require an exponential amount of data and compute to achieve a linear increase in estimation accuracy.
+
+With the observation that embedding-augmented models experience linear rather than exponential decay during training, it is clear that these models are much more suitable for intrinsic language entropy estimation. The approach is straightforward, train sufficiently large encoder-augmented embedding models with smaller and smaller embedding sizes and observe the size required for convergence to 0 CEL. The smallest embedding size required for zero loss is your langauge entropy estimation.
+
+### Combining embeddings with causal decoders allows for token-specific entropy estimation
+
+The combination of an oracle embedding with a causal decoder allows for the estimation of language entropy at fine granularity, all the way down the level of the token. One can 
+
 ### Memory Model Introduction
 
 The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation. Extensive research has been performed on methods to reduce the amount of computation and memory required to train and perform inference on a model applied to $n$ tokens, and this problem has been particularly relevant to recent advances in code generation, mathematical problem solving, and other domains benefitting from chain-of-thought test-time compute scaling. In this paradigm, the performance of a model scales with the number of tokens one generates (before generating a final answer) such that inference compute and memory become significant bottlenecks. 
