@@ -332,7 +332,9 @@ $$
 O_{up} = W_{up} \left( W_{down}x + \mathbf{U}(x, -q, q) \right)
 $$
 
-The use of noise to simulate low-precision arithmetic is an old trick in the deep learning field, and although at first glance it might seem strange to add noise to simulate quantization consider that doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value. As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values. 
+The use of noise addition to weights to estimate the information required to store those weights is an [old trick](https://papers.cnl.salk.edu/PDFs/Learning%20and%20Relearning%20in%20Boltzmann%20Machines%201986-3239.pdf) in the field, and an early use of uniform noise addition to weights in order to estimate the number of bits required to store those weights is found in [Sejnowski and Rosenberg](https://www.cs.ubc.ca/~murphyk/Teaching/CS340-Fall07/reading/nettalk.pdf). In the linked papers, the authors sought to understand the contribution of each weight (layer) to the model in question by adding noise at various magnitudes and observing the inference accuracy, and the ability to re-train the 'damaged' model.  In the latter, they estimate the number of bits required per parameter based on this noise amount combined with knowledge of the range of values present. We modify those approaches for quantization-aware training by injecting noise upon each forward pass (rather than only once) in the activation rather than weights and training from scratch, rather than re-training a previously-trained model after one-shot noise addition.
+
+At first glance it might seem strange to add noise to simulate quantization, but doing so simply decreases the effective precision of the embedding vector as given a noised output one can only assign an approximate value.  As quantization decreases the effective precision (and range, but that is not as relevant to this implementation) in a similar way, we only have to scale the noise appropriately for the target quantization to achieve near-zero loss gap between noised and quantized implementations. We use a factor of 1/2 the desired quantization precision as the maximum distance any point is away from the closest quantized value is precisely half the distance between quantized values. 
 
 We first note that there is minimal (<0.1%) difference between loss achieved using our noise-added model versus a standard transformer-based embedding-augmented model after 100k training steps, indicating that our noised quantization-aware model trains as efficiently as our unquantization-aware model. When we evaluate this, we observe the following:
 
@@ -372,6 +374,9 @@ When we observe the sensitivity of each layer in a noise-induced quantization-aw
 
 ![memory quantization](/deep-learning/qat_vs_noqat_layer_figure.png)
 
+This is also true of the weight layers: noise injection into the compressed embedding layer activations imports quantization insensitivity to both encoder and decoder weight layers as well as the compression layer weights.
+
+![memory quantization](/deep-learning/weight_sensitivities_figure.png)
 
 ### Memory Model Introduction
 
