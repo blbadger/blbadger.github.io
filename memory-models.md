@@ -378,6 +378,21 @@ This is also true of the weight layers: noise injection into the compressed embe
 
 ![memory quantization](/deep-learning/weight_sensitivities_figure.png)
 
+We can hypothesize that the converse of the last statement may also be true: if noise is injected into another layer, it may result in quantization insensitivity in our vector of interest (the compressed layer activations). Rather than injecting noise directly into our compressed embedding layer, we inject before the compression (`down`) transformation and add a residual across the injection point. As shown in the following figure, we do indeed see quantization insensitivity in our layer of interest as well as all others in this model.
+
+![memory quantization](/deep-learning/precompression_resid_qat_layers.png)
+
+The real benefit of this approach is that it empirically results in greater quantization insensitivity in the compressed embedding, while also leading to slightly lower loss after training: the following figure shows that Bitsandbytes Int8 quantization now results in less than a 0.1% loss increase from the Float16 reference. 
+
+| Embedding Datatype   | Loss |
+| -------- | ------- |
+| Float16 (E5M10)  | 2.4203   |
+| BNB Int8() | 2.4228  |
+| Float8 (E4M3fn) | 2.4687   |
+| Float8 (E5M2) | 2.6070   |
+
+To conclude, we find that embeddings can indeed be quantized to 8 bits per parameter with no real loss difference (using BitsandBytes Int8()) from the unquantized embedding using noise-injected QAT models. As this QAT method imparts minimal increase in evaluation loss compared to full-precision training, we conclude that the compressed embeddings of a QAT model are quantizable without loss, with little to no training efficiency difference from the full-precision model training detailed previously.
+
 ### Estimation of language entropy with embedding-augmented models
 
 We seen that the introduction of an (oracle) embedding into a causal decoder allows for more efficient language compression than either a standard one-pass encoder-decoder or causal decoder-only architecture. It is particularly noteworthy that embedding-augmented models exhibit different asymptotic training characteristics relative to causal decoder models: for this section, it is important to observe that causal model loss during training is well approxiated by a log-linear relationship, where a constant decrease in loss occurs upon a fixed magnitude change in training inputs (ie number of tokens or training steps). For example, if we may see a 0.4 CEL decrease upon doubling of the number of input steps, we would expect to see another 0.4 CEL decrease upon another step doubling.
