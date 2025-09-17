@@ -593,15 +593,14 @@ The natural question to ask is how much information these cross-entropy loss val
 Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathbf{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following
 
 $$
-\Bbb L_0 = \frac{1}{|t|} \sum_{|t|} \Bbb L (\mathbf{U}(|t|), t) = 9.03
+H(p_0, q) = \frac{1}{|t|} \sum_{|t|} \Bbb L (\mathbf{U}(|t|), t) = 9.03
 $$
 
 where $t$ is sampled from the input distribution, or equivalently any distribution given that the reference is uniform, such that we have a range of $\Bbb L \in [0, 9.03]$ for our tokenizer. We can therefore define the embedding information as the complement of the fraction of our cross-entropy loss
 
 $$
-I_e = 1 - H(p, q) / H(p_0, q) \\
- = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))} \\
- = 1 - H(p, q) / 9.03
+I_e = 1 - H(p, q) / H(p_0, q) = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))} \\
+= 1 - H(p, q) / 9.03
 $$
 
 
