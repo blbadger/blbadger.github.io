@@ -391,6 +391,10 @@ The real benefit of this approach is that it empirically results in greater quan
 | Float8 (E4M3fn) | 2.4687   |
 | Float8 (E5M2) | 2.6070   |
 
+When we re-train noise-injected (at the compressed embedding unless otherwise noted) models and compare to a re-trained full-precision model, we find that there is a non-obvious relationship between increased noise magnitude and training efficiency. Most notably, there is little to no difference between training efficencies of the QAT model with $2^{-4}$ uniform noise injected at the compressed embedding, a model with $2^{-2}$ noise injected inside a residual before compression, or the full-precision model.
+
+![memory qat model training](/deep-learning/noise_scaling_qat_figure.png)
+
 To conclude, we find that embeddings can indeed be quantized to 8 bits per parameter with no real loss difference (using BitsandBytes Int8()) from the unquantized embedding using noise-injected QAT models. As this QAT method imparts minimal increase in evaluation loss compared to full-precision training, we conclude that the compressed embeddings of a QAT model are quantizable without loss, with little to no training efficiency difference from the full-precision model training detailed previously.
 
 ### Estimation of language entropy with embedding-augmented models
@@ -542,10 +546,10 @@ Does loss on these random tokens mirror loss on in-distriution data for large-em
 
 ![random loss](/deep-learning/random_loss_figure.png)
 
-Why does the untrained model have a loss of around 9.5? Untrained models (with either uniform or Kaiming normal weight initialization) typically exhibit activations that approximate Gaussian distributions, which is observed for [vision models](https://arxiv.org/pdf/2211.06496) as well as for language models. As we are sampling tokens $n$ from a uniform distribution, we can compute the average cross-entropy loss between a normal distribution $\mathbf{N}$ over the tokenizer size (here $\vert t \vert = 8000) and all possible token indices,
+Why does the untrained model have a loss of around 9.5? Untrained models (with either uniform or Kaiming normal weight initialization) typically exhibit activations that approximate Gaussian distributions, which is observed for [vision models](https://arxiv.org/pdf/2211.06496) as well as for language models. As we are sampling tokens $n$ from a uniform distribution, we can compute the average cross-entropy loss between a normal distribution $\mathbf{N}$ over the tokenizer size (here $\vert t \vert = 8000$) and all possible token indices,
 
 $$
-\frac{1}{n} \sum_n \Bbb L(\mathbf{N}((|t|, 0, 1), n) = 9.501
+\frac{1}{n} \sum_n \Bbb L \left( \mathbf{N}((|t|, 0, 1), n \right) = 9.501
 $$
 
 Thus the loss we observe for our untrained model is nearly equivalent to the loss obtained if we assume that the activations of the output layer are approximately normal.
@@ -593,17 +597,15 @@ The natural question to ask is how much information these cross-entropy loss val
 Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathbf{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following
 
 $$
-H(p_0, q) = \frac{1}{|t|} \sum_{|t|} \Bbb L (\mathbf{U}(|t|), t) = 9.03
+H(p_0, q) = \frac{1}{|t|} \sum_{|t|} \Bbb L \left( \mathbf{U}(|t|), \right) = 9.03
 $$
 
 where $t$ is sampled from the input distribution, or equivalently any distribution given that the reference is uniform, such that we have a range of $\Bbb L \in [0, 9.03]$ for our tokenizer. We can therefore define the embedding information as the complement of the fraction of our cross-entropy loss
 
 $$
-I_e = 1 - H(p, q) / H(p_0, q) = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))} \\
+I_e = 1 - \frac{H(p, q)}{H(p_0, q)} = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))} \\
 = 1 - H(p, q) / 9.03
 $$
-
-
 
 This is a notably different conclusion from another study using similar techniques to measure informational content in large causal transformers by [Morris and colleagues](https://arxiv.org/abs/2311.13647). There, the authors found that one can achieve at least somewhat accurate inversion of models using output logits of a next token predicted after a hidden prompt is fed to the model. We note that this is likely due to a difference in scale: there, the authors were interested in regenerating prompts rather than entire text segments, and accordingly train decoders using a context window of 64 tokens rather than the 512 tokens used here. Most models in that work are furthermore much larger than those considered here, and the dataset considered is much more restricted (sytem prompts rather than arbitrary text). Here and [Elsewhere](https://arxiv.org/abs/2409.01482) it was observed that information retention in an embedding is highly dependent on context window size with smaller contexts being much easier to retain information from. In this light, the finding that causal models struggle to retain most information of arbitrary text with much larger context window is perhaps unsurprising.
 
