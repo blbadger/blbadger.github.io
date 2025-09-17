@@ -326,10 +326,10 @@ Int8() is clearly a far more powerful quantization method than naieve casting, b
 
 If there is some difficult-to-reduce error upon post-training quantization, the usual strategy is to train a quantization-aware model. We have a particularly simple quantization goal: one layer's activation quantized to around 8 bits per parameter. As most trainings are performed on older hardware that does not natively support the newer 8 bit datatypesin their tensor cores, we do not actually train using 8 bits per activation but instead use a fascimile of this: we add noise to Float16 activations to approximate the precision achievable using 8 bits, specifically we target the E4M3 datatype with three mantissa bits. 
 
-To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). This makes our down and up operations equivalent to the following where $q=2^{-4}$ and $\mathbf{U}(x, -q, q)$ indicates a vector of length $x$ is formed by sampling a uniform distribution bounded by $[-q, q)$,
+To perform quantization simulation, we add our embedding vector to a vector of identical size of uniform noise scaled to 1/2 the desired precision of $2^{-3}$ (ie `x += torch.rand(x.shape) * 2**-4`). This makes our down and up operations equivalent to the following where $q=2^{-4}$ and $\mathcal{U}_x(-q, q)$ indicates a vector of length $x$ is formed by sampling a uniform distribution bounded by $[-q, q)$,
 
 $$
-O_{up} = W_{up} \left( W_{down}x + \mathbf{U}(x, -q, q) \right)
+O_{up} = W_{up} \left( W_{down}x + \mathcal{U}_x(-q, q) \right)
 $$
 
 The use of noise addition to weights to estimate the information required to store those weights is an [old trick](https://papers.cnl.salk.edu/PDFs/Learning%20and%20Relearning%20in%20Boltzmann%20Machines%201986-3239.pdf) in the field, and an early use of uniform noise addition to weights in order to estimate the number of bits required to store those weights is found in [Sejnowski and Rosenberg](https://www.cs.ubc.ca/~murphyk/Teaching/CS340-Fall07/reading/nettalk.pdf). In the linked papers, the authors sought to understand the contribution of each weight (layer) to the model in question by adding noise at various magnitudes and observing the inference accuracy, and the ability to re-train the 'damaged' model.  In the latter, they estimate the number of bits required per parameter based on this noise amount combined with knowledge of the range of values present. We modify those approaches for quantization-aware training by injecting noise upon each forward pass (rather than only once) in the activation rather than weights and training from scratch, rather than re-training a previously-trained model after one-shot noise addition.
@@ -546,10 +546,10 @@ Does loss on these random tokens mirror loss on in-distriution data for large-em
 
 ![random loss](/deep-learning/random_loss_figure.png)
 
-Why does the untrained model have a loss of around 9.5? Untrained models (with either uniform or Kaiming normal weight initialization) typically exhibit activations that approximate Gaussian distributions, which is observed for [vision models](https://arxiv.org/pdf/2211.06496) as well as for language models. As we are sampling tokens $n$ from a uniform distribution, we can compute the average cross-entropy loss between a normal distribution $\mathbf{N}$ over the tokenizer size (here $\vert t \vert = 8000$) and all possible token indices,
+Why does the untrained model have a loss of around 9.5? Untrained models (with either uniform or Kaiming normal weight initialization) typically exhibit activations that approximate Gaussian distributions, which is observed for [vision models](https://arxiv.org/pdf/2211.06496) as well as for language models. As we are sampling tokens $n$ from a uniform distribution, we can compute the average cross-entropy loss between a normal distribution $\mathcal{N}$ over the tokenizer size (here $\vert t \vert = 8000$) and all possible token indices,
 
 $$
-\frac{1}{n} \sum_n \Bbb L \left( \mathbf{N}((|t|, 0, 1), n \right) = 9.501
+\frac{1}{n} \sum_n \Bbb L \left( \mathcal{N}((|t|, 0, 1), n \right) = 9.501
 $$
 
 Thus the loss we observe for our untrained model is nearly equivalent to the loss obtained if we assume that the activations of the output layer are approximately normal.
@@ -594,10 +594,10 @@ For both model architectures, retrieval and causal embeddings contain only a sma
 
 The natural question to ask is how much information these cross-entropy loss values represent. The answer depends on our definition of information: one could define information as a Hamming metric on the tokenized output and target (input) tokens, such that the information present in the embedding is a measure of the proportion of correct tokens predicted. 
 
-Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathbf{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following for $n$ tokens:
+Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathcal{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following for $n$ tokens:
 
 $$
-H(p_0, q) = \frac{1}{n} \sum_{n} \Bbb L \left( \mathbf{U}(|t|), t \right) = 9.03
+H(p_0, q) = \frac{1}{n} \sum_{n} \Bbb L \left( \mathcal{U}(|t|), t \right) = 9.03
 $$
 
 where $t$ is sampled from the input distribution, or equivalently any distribution given that the reference is uniform, such that we have a range of $\Bbb L \in [0, 9.03]$ for our tokenizer. We can therefore define the embedding information as the complement of the fraction of our cross-entropy loss
