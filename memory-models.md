@@ -609,8 +609,31 @@ $$
 which for our tokenizer simplifies to
 
 $$
-= 1 - \frac{H(p, q)}{9.03}
+I_e = 1 - \frac{H(p, q)}{9.03}
 $$
+
+For mixers, we have the following: 
+
+| Encoder Model   | Loss | Input Information (%) |
+| -------- | ------- | ---------- |
+| Autoencoder (validation) encoder  | 0.435 | 95.2 |
+| Autoencoder encoder | 1.528 | 83.1 |
+| Untrained    | 5.937   | 34.3 |
+| Causal Trained | 5.815   | 35.6 |
+| Causal -> Retrieval Trained | 5.594   | 38.1 |
+| Autoencoder -> Retrieval Trained | 5.846 | 35.3 |
+
+and for transformers,
+
+| Encoder Model   | Loss | Input Information (%) |
+| -------- | ------- | ---------- |
+| Autoencoder (validation) encoder  | 2.924 | 67.6 |
+| Autoencoder encoder | 2.935 | 67.5 |
+| Untrained    | 6.643   | 26.4 |
+| Causal Trained | 6.214 | 31.1 |
+| Causal -> Retrieval Trained | 6.380   | 29.3 |
+
+By this metric, therefore, we observe that causal language and retrieval model training result in small increases in information retention, on the scale of 1-4%, compared to untrained models but that autoencoder training results in an order of magnitude larger information retention increase. We conclude that causal models do not retain most input information (and indeed barely more than untrained models) and somewhat suprisingly neither do retrieval models, whereas autoencoders do.
 
 This is a notably different conclusion from another study using similar techniques to measure informational content in large causal transformers by [Morris and colleagues](https://arxiv.org/abs/2311.13647). There, the authors found that one can achieve at least somewhat accurate inversion of models using output logits of a next token predicted after a hidden prompt is fed to the model. We note that this is likely due to a difference in scale: there, the authors were interested in regenerating prompts rather than entire text segments, and accordingly train decoders using a context window of 64 tokens rather than the 512 tokens used here. Most models in that work are furthermore much larger than those considered here, and the dataset considered is much more restricted (sytem prompts rather than arbitrary text). Here and [Elsewhere](https://arxiv.org/abs/2409.01482) it was observed that information retention in an embedding is highly dependent on context window size with smaller contexts being much easier to retain information from. In this light, the finding that causal models struggle to retain most information of arbitrary text with much larger context window is perhaps unsurprising.
 
