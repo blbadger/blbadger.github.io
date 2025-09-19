@@ -624,7 +624,7 @@ $$
 
 For mixers, we have the following: 
 
-| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $h(x, y)$ |
+| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $1-h(x, y)$ |
 | -------- | ------- | ---------- | --------- |
 | Autoencoder (validation) encoder  | 0.435 | 0.952 | 0.7696 |
 | Autoencoder encoder | 1.528 | 0.831 |  |
@@ -635,7 +635,7 @@ For mixers, we have the following:
 
 and for transformers,
 
-| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $h(x, y)$ |
+| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $1-h(x, y)$ |
 | -------- | ------- | ---------- | ------------- |
 | Autoencoder (validation) encoder  | 2.924 | 0.676 | 0.3882 |
 | Autoencoder encoder | 2.935 | 0.675 | 0.391 |
@@ -667,7 +667,7 @@ meaning that the encoder is responsible for approximately 0.921 bits per byte, w
 
 If we compute the information metrics used previously 
 
-| Encoder Model   | Loss | Input Information (%) | Hamming $h(x, y)$ |
+| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $1-h(x, y)$ |
 | -------- | ------- | ---------- | ------------- |
 | Mixer memory (repeat)  | 4.953 | 0.451 | 0.1390 |
 | Mixer memory (unrolled)| 4.980 | 0.449 | 0.1589 |
