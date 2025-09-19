@@ -601,7 +601,7 @@ $$
 we then find the cardinality (size) of the set of tokens at position $i$ where the target token index does not match the model output token index, ignoring padding tokens, and divide this number by the number of non-pad tokens $j$ and take the complement:
 
 $$
-h(x, y) = 1 - \frac{1}{j} \mathrm{Card} \left( \{x_i \neq y_i } \right) : x_i \neq t_{pad}
+h(x, y) = 1 - \frac{1}{j} \mathrm{Card} \left( \{ x_i \neq y_i \} \right) : x_i \neq t_{pad}
 $$
 
 Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathcal{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following for $n$ tokens:
