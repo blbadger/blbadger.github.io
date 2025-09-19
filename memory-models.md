@@ -627,11 +627,11 @@ For mixers, we have the following:
 | Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $1-h(x, y)$ |
 | -------- | ------- | ---------- | --------- |
 | Autoencoder (validation) encoder  | 0.435 | 0.952 | 0.7696 |
-| Autoencoder encoder | 1.528 | 0.831 |  |
-| Untrained    | 5.937   | 0.343 |  |
-| Causal Trained | 5.815   | 0.356 |  |
-| Causal -> Retrieval Trained | 5.594   | 0.381 |  |
-| Autoencoder -> Retrieval Trained | 5.846 | 0.353 | 0.0447
+| Autoencoder encoder | 1.528 | 0.831 | 0.5534 |
+| Untrained    | 5.937   | 0.343 | 0.0408 |
+| Causal Trained | 5.815   | 0.356 | 0.9521 |
+| Causal -> Retrieval Trained | 5.594   | 0.381 | 0.0476 |
+| Autoencoder -> Retrieval Trained | 5.767 | 0.361 | 0.0447 |
 
 and for transformers,
 
