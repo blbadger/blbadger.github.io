@@ -626,22 +626,22 @@ For mixers, we have the following:
 
 | Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $h(x, y)$ |
 | -------- | ------- | ---------- | --------- |
-| Autoencoder (validation) encoder  | 0.435 | 95.2 | 0.7696 |
-| Autoencoder encoder | 1.528 | 83.1 |  |
-| Untrained    | 5.937   | 34.3 |  |
-| Causal Trained | 5.815   | 35.6 |  |
-| Causal -> Retrieval Trained | 5.594   | 38.1 |  |
-| Autoencoder -> Retrieval Trained | 5.846 | 35.3 | 0.0447
+| Autoencoder (validation) encoder  | 0.435 | 0.952 | 0.7696 |
+| Autoencoder encoder | 1.528 | 0.831 |  |
+| Untrained    | 5.937   | 0.343 |  |
+| Causal Trained | 5.815   | 0.356 |  |
+| Causal -> Retrieval Trained | 5.594   | 0.381 |  |
+| Autoencoder -> Retrieval Trained | 5.846 | 0.353 | 0.0447
 
 and for transformers,
 
-| Encoder Model   | Loss | Input Information (%) | Hamming $h(x, y)$ |
+| Encoder Model   | Loss | Entropy proportion $I_e$ | Hamming $h(x, y)$ |
 | -------- | ------- | ---------- | ------------- |
-| Autoencoder (validation) encoder  | 2.924 | 67.6 | 0.3882 |
-| Autoencoder encoder | 2.935 | 67.5 | 0.391 |
-| Untrained    | 6.643   | 26.4 | 0.0409 |
-| Causal Trained | 6.214 | 31.1 | 0.0462 |
-| Causal -> Retrieval Trained | 6.380   | 29.3 | 0.0438 |
+| Autoencoder (validation) encoder  | 2.924 | 0.676 | 0.3882 |
+| Autoencoder encoder | 2.935 | 0.675 | 0.391 |
+| Untrained    | 6.643   | 0.264 | 0.0409 |
+| Causal Trained | 6.214 | 0.311 | 0.0462 |
+| Causal -> Retrieval Trained | 6.380   | 0.293 | 0.0438 |
 
 By this metric, therefore, we observe that causal language and retrieval model training result in small increases in information retention, on the scale of 1-4%, compared to untrained models but that autoencoder training results in an order of magnitude larger information retention increase. We conclude that causal models do not retain most input information (and indeed barely more than untrained models) and somewhat suprisingly neither do retrieval models, whereas autoencoders do.
 
@@ -669,9 +669,9 @@ If we compute the information metrics used previously
 
 | Encoder Model   | Loss | Input Information (%) | Hamming $h(x, y)$ |
 | -------- | ------- | ---------- | ------------- |
-| Mixer memory (repeat)  | 4.953 | 45.1 | 0.1390 |
-| Mixer memory (unrolled)| 4.980 | 44.9 | 0.1589 |
-| Transformer memory (unrolled)    | 5.549  | 38.5 | 0.0842 |
+| Mixer memory (repeat)  | 4.953 | 0.451 | 0.1390 |
+| Mixer memory (unrolled)| 4.980 | 0.449 | 0.1589 |
+| Transformer memory (unrolled)  | 5.549 | 0.385  | 0.0842 |
 
 Thus the large-dimensional oracle memory embeddings contain more input information than causal model embeddings and untrained models, but still only exhibit retention of a fraction of the total information in the input. Recall previous results showing that that this relatively low-information embedding results in better next token prediction than a frozen high-information autoencoder embedding when paired with a causal decoder. As the decoder is fed all previous tokens at each forward pass, this suggests that a small amount of input information is necessary to provide next token information when paried with this previous token information. 
 
