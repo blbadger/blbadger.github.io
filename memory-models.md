@@ -419,6 +419,11 @@ Once the relative token entropy is estimated, the second step is to incorporate 
 
 Taking a step back, does it make sense to decrease the changes made to a model with respect to high- and low-entropy tokens? One approach to language modeling is to simply train on everything you can get your hands on, with the idea that a model can 'soak up' the data and will perform better than when trained on curated data. This is an inefficient way to train models, however, as it has been shown numerous times that models trained on filtered data far outperform models trained on unfiltered data. The reason for this is that it is not inaccurate to think of a model as a sponge that can indeed 'soak up' the training data, but that this sponge is finite in size and can only soak up so much given a fixed amount of compute (or data). In this analogy, we want the model to attempt to learn the aspects of a dataset that indeed learnable, rather than the ones that are fundamentally not such as token prediction where the tokens contain large intrinsic entropy.
 
+We can compare some general statistics on these token attributions as follows:
+
+
+![memory qat model training](/deep-learning/normalized_entropy_estimation.png)
+
 
 ### Memory Model Introduction
 
