@@ -500,7 +500,7 @@ Besides occlusion, there is another way to measure attribution: we can forward p
 The use of this method for our entropy estimation requires a few extra steps that are not normally taken, partially because we want to find the attribution of all outputs with one input (rather than one output with all inputs as is normally the case) and partially because we don't want to actually backpropegate to the input rather only the encoder's output (which is an embedding of floats). We can backpropegate the $L^1$ norm of the output as follows:
 
 $$
-Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)) |
+Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)) | \circ O(x, \theta_e)
 $$
 
 where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by 0, 1, ..., i-1 and $j$ is indexed over the embedding dimension.
