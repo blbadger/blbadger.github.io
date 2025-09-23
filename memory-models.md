@@ -423,7 +423,7 @@ x_o = \mathbf{0} \oplus W_{wte}x \\
 Attr(x) = m(O(x, \theta_d), O(x_o, \theta_d))
 $$
 
-where $W_{wte}$ is the decoder's word token embedding transformation, not the encoder's, and $\oplus$ signifies concatenation (in this case in the sequence dimension) and $\mathbf{0}$ the zero vector. In addition to occluding the memory input, we apply an attention mask to that input as well for transformer models.
+where $W_{wte}$ is the decoder's word token embedding transformation, not the encoder's, and $\oplus$ signifies concatenation (in this case in the sequence dimension),  $\mathbf{0}$ the zero vector, $\theta_e$ the encoder model, and $\theta_d$ the decoder. In addition to occluding the memory input, we apply an attention mask to that input as well for transformer models.
 
 THere are a number of options we can use for our metric: a Banach space norm like $L^1$ or $L^2$, cosine similarity, a max norm, or even quantity that is not strictly a matric on a space at all such as
 
@@ -444,7 +444,7 @@ where $j$ iterates on the sequence dimension, and $\mathrm{max}, \mathrm{min}$ a
 We can also use the complement of the cosine similarity (distance) as our metric, and to remain consistent with our $L^1$ metric introduced earlier we use the complement of the cosine distance,
 
 $$
-m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) =  1 -  \frac{O(x, \theta_d) \cdot O(x_o, \theta_d)}{|| O(x, \theta_d) || \cdot ||  O(x_o, \theta_d) ||}
+m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) =  1 -  \frac{O(x, \theta_d) \cdot O(x_o, \theta_d)}{|| O(x, \theta_d) || \; ||  O(x_o, \theta_d) ||}
 $$
 
 This metric has the advantage of not needing to be normalized, as the range is $m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) \in [0, 2]$ with nearly all values in $[0, 1]$ for sufficiently high-dimensinoal output vectors.
@@ -485,11 +485,25 @@ And for the same corpus using the cosine similarity complement metric, we have
     </body>
 </html>
 
-From the above visualizations, it is clear that the attributions as measured by an $L^1$ metric are substantially similar to those obtained using the cosine similarity complement, although there is a larger dynamic range for $L^1$ data.
+It is worthwhile to check and see how reasonable these entropy estimations are, and one way we can do this is to observe the words that tend to have higher or lower entropy estimation in the above corpus. This sort of analysis is of limited benefit to the actual modeling process, as deep learning as a discipline may be thought of as foregoing such rule-based models for models that learn their own rules from arbitrary starting points, but is useful for checking to see if our model we are using here is at all capable of the kind of entropy estimation we want.
+
+The first observation is that this passage is about software licenses, so we would expect most of the predictions of the phrase 'software license' to be of lower entropy. Indeed this is what we find: for the $L^1$ metric in particular, no mention of this phrase occurs with higher-than-average entropy estimation. On the other hand, observe that articles like 'and', 'the', 'of' in the sentence 'Take *the* complexity *of* technology *and* stir in *the* complexity *of the* legal system and what do you get?' are of high predicted entropy (and similarly articles in later sentences tend to be as well) which is what would be expected given the high degree of freedom one has in choosing articles in English (definite vs. indefinite, partitive, proper, etc.). Finally, we can take an example of a few tokens that are more of less guaranteed to be of non-zero entropy: the author's name. Observe that the first tokens of both 'Chris' and 'Peters' are high-entropy according to our model, as expected.
+
+It is clear that the attributions as measured by an $L^1$ metric are substantially similar to those obtained using the cosine similarity complement, although there is a larger dynamic range for $L^1$ data. It seems justified therefore to simply choose one (or a combination of both) and proceed. 
 
 It is interesting to take some time to observe some general statistics on the relationship between token index and entropy. We can guess that tokens existing early in a corpus will in general have higher attribution to the embedding (ie higher entropy) than later tokens as there are more degrees of freedom early in a given corpus. We find that his is indeed the case when we look at attribution values from 80 random samples, 
 
 ![memory qat model training](/deep-learning/normalized_entropy_estimation.png)
+
+Besides occlusion, there is another way to measure attribution: we can forward propegate from the input $x$, back-propegate all the way back to $x$, and multiply the gradient of $x$ by the value of $x$. This effectively measures the sensitivity of the model to a very small change in the input, as opposed to a large change that we observe with occlusion. This is somewhat unimaginatively commonly termed 'gradientxinput'.
+
+The use of this method for our entropy estimation requires a few extra steps that are not normally taken, partially because we want to find the attribution of all outputs with one input (rather than one output with all inputs as is normally the case) and partially because we don't want to actually backpropegate to the input rather only the encoder's output (which is an embedding of floats).
+
+$$
+Attr(x_i) = \nabla_{O(x, \theta_e)} O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)
+$$
+
+where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by 0, 1, ..., i-1. 
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
