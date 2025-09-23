@@ -497,13 +497,13 @@ It is interesting to take some time to observe some general statistics on the re
 
 Besides occlusion, there is another way to measure attribution: we can forward propegate from the input $x$, back-propegate all the way back to $x$, and multiply the gradient of $x$ by the value of $x$. This effectively measures the sensitivity of the model to a very small change in the input, as opposed to a large change that we observe with occlusion. This is somewhat unimaginatively commonly termed 'gradientxinput'.
 
-The use of this method for our entropy estimation requires a few extra steps that are not normally taken, partially because we want to find the attribution of all outputs with one input (rather than one output with all inputs as is normally the case) and partially because we don't want to actually backpropegate to the input rather only the encoder's output (which is an embedding of floats).
+The use of this method for our entropy estimation requires a few extra steps that are not normally taken, partially because we want to find the attribution of all outputs with one input (rather than one output with all inputs as is normally the case) and partially because we don't want to actually backpropegate to the input rather only the encoder's output (which is an embedding of floats). We can backpropegate the $L^1$ norm of the output as follows:
 
 $$
-Attr(x_i) = \nabla_{O(x, \theta_e)} O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)
+Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)) |
 $$
 
-where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by 0, 1, ..., i-1. 
+where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by 0, 1, ..., i-1 and $j$ is indexed over the embedding dimension.
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
