@@ -415,13 +415,15 @@ We approach the filtering of data at a very granular level, at the token rather 
 
 How can one perform this entropy-aware training? The first step is to be able to estimate what the entropy of each (conditional) token is, and happily model to be able to do so in an efficient manner: the embedding-augmented causal decoder model presented above.  To see why this is the case, first observe that any model trained for causal language prediction yields an entropy estimation for each conditional token, which is the model's cross-entropy loss on that token. The lower the model's loss across all tokens (which is usually mean reduced) the more accurate this entropy estimate is, such that the embedding-augmented entropy prediction model is a more accurate token entropy predictor than a purely causal model.
 
-What about when we use a strong entropy prediction model and effectively reduce the average loss to zero? The entropy estimatino model allows for another method to estimate token entropy in this case: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only one forward and one backward pass per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
+What about when we use a strong entropy prediction model and effectively reduce the average loss to zero? The entropy estimatino model allows for another method to estimate token entropy in this case: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
 $$
-x = O(x, \theta_e) \oplus W_{decoder \; wte}x \\
-x_o = \mathbf{0} \oplus W_{decoder \; wte}x \\
-A(x) = m(O(x, \theta_d), O(x_o, \theta_d))
+x = O(x, \theta_e) \oplus W_{wte}x \\
+x_o = \mathbf{0} \oplus W_{wte}x \\
+Attr(x) = m(O(x, \theta_d), O(x_o, \theta_d))
 $$
+
+where $W_{wte}$ is the decoder's word token embedding transformation, not the encoder's, and $\oplus$ signifies concatenation (in this case in the sequence dimension) and $\mathbf{0}$ the zero vector. In addition to occluding the memory input, we apply an attention mask to that input as well for transformer models.
 
 THere are a number of options we can use for our metric: a Banach space norm like $L^1$ or $L^2$, cosine similarity, a max norm, or even quantity that is not strictly a matric on a space at all such as
 
@@ -437,12 +439,12 @@ $$
 N_{minmax}(y) = \frac{y_j - \mathrm{min} \; y}{\mathrm{max}\; y - \mathrm{min} \; y }
 $$
 
-where $j$ iterates on the sequence dimension, and $\mathrm{max}, \mathrm{min}$ are computed on this dimension as well.
+where $j$ iterates on the sequence dimension, and $\mathrm{max}, \mathrm{min}$ are computed on this dimension as well. We mask all pad input elements during this normalization process, such that these are assigned infinite values for minimum computation and zero values for maximum computation (the norms of the actual $y$ values are usually >10000, and none have zero distance due to their very high dimensionality).
 
 We can also use the complement of the cosine similarity (distance) as our metric, and to remain consistent with our $L^1$ metric introduced earlier we use the complement of the cosine distance,
 
 $$
-m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) =  1 -  \frac{O(x, \theta_d) \cdot O(x_o, \theta_d)}{|| O(x, \theta_d) || ||  O(x_o, \theta_d) ||}
+m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) =  1 -  \frac{O(x, \theta_d) \cdot O(x_o, \theta_d)}{|| O(x, \theta_d) || \cdot ||  O(x_o, \theta_d) ||}
 $$
 
 This metric has the advantage of not needing to be normalized, as the range is $m_{cosine}(O(x, \theta_d), O(x_o, \theta_d)) \in [0, 2]$ with nearly all values in $[0, 1]$ for sufficiently high-dimensinoal output vectors.
