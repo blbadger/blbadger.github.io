@@ -413,17 +413,39 @@ When large language models are trained, the current approach is to feed a large 
 
 We approach the filtering of data at a very granular level, at the token rather than passage. Given a certain passage (which we assume can be tokenized to fit in a given context window), which tokens are 'more important' to be trained on and which are less? This is a somewhat subjective question as it depends on what one wants a language model to do, but from the perspective of training a model to minimize language entropy there is a single answer: as no model can surpass the entropy of a conditional next token, training should be performed such that the model's weights are not modified in order to attempt to do so. It is clear that attempting to train a model past each token's intrinsic entropy is impossible, and in practical terms is a waste of compute and data.
 
-How can one perform this entropy-aware training? The first step is to be able to estimate what the entropy of each (conditional) token is, and happily we have the perfect model to be able to do so in an efficient manner, at least in relative terms compared to the other tokens in the given corpus.  
+How can one perform this entropy-aware training? The first step is to be able to estimate what the entropy of each (conditional) token is, and happily model to be able to do so in an efficient manner: the embedding-augmented causal decoder model presented above.  To see why this is the case, first observe that any model trained for causal language prediction yields an entropy estimation for each conditional token, which is the model's cross-entropy loss on that token. The lower the model's loss across all tokens (which is usually mean reduced) the more accurate this entropy estimate is, such that the embedding-augmented entropy prediction model is a more accurate token entropy predictor than a purely causal model.
+
+What about when we use a strong entropy prediction model and effectively reduce the average loss to zero? The entropy estimatino model allows for another method to estimate token entropy in this case: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss.
+
+$$
+x = O(x, \theta_e) \oplus W_{decoder wte}x \\
+x_o = \mathbf{0} \oplus W_{decoder wte}x \\
+A(x) = m(O(x, \theta_d), O(x_o, \theta_d))
+$$
+
+THere are a number of options we can use for our metric: a Banach space norm like $L^1$ or $L^2$, cosine similarity, a max norm, or even quantity that is not strictly a matric on a space at all such as
+
+$$
+m_{l^1}(O(x, \theta_d), O(x_o, \theta_d)) = || O(x, \theta_d) - O(x_o, \theta_d) ||_1 = \sum_i | O_i(x, \theta_d) - O_i(x_o, \theta_d) | 
+$$
+
+where $i$ is indexed in the embedding dimension. Here we actually use the logit activations rather than the embeddings, so effectively $m_{l^1}$ measures the Manhattan metric bewteen the decoder's logits with versus without the encoder's embedding. For transformers, we also 
+
+An $L^1$ norm is sensitive to changes in scale between samples, which can be a problem as gradient descent is normally calculated batchwise such that scale inequalities between samples in a batch lead to biases in gradient magnitude once weights are applied. To normalize all token attributions to take values in $[0, 1]$, we use a simple linear minmax approach,
+
+$$
+N_{minmax}(y) = \frac{y_j - \mathrm{min} \; y}{\mathrm{max}\; y - \mathrm{min} \; y }
+$$
+
+where $j$ iterates on the sequence dimension, and $\mathrm{max}, \mathrm{min}$ are computed on this dimension as well.
+
+We can guess that tokens existing early in a corpus will in general have higher attribution to the embedding (ie higher entropy) than later tokens as there are more degrees of freedom early in a given corpus. We find that his is indeed the case when we look at attribution values from 80 random samples, 
+
+![memory qat model training](/deep-learning/normalized_entropy_estimation.png)
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
 Taking a step back, does it make sense to decrease the changes made to a model with respect to high- and low-entropy tokens? One approach to language modeling is to simply train on everything you can get your hands on, with the idea that a model can 'soak up' the data and will perform better than when trained on curated data. This is an inefficient way to train models, however, as it has been shown numerous times that models trained on filtered data far outperform models trained on unfiltered data. The reason for this is that it is not inaccurate to think of a model as a sponge that can indeed 'soak up' the training data, but that this sponge is finite in size and can only soak up so much given a fixed amount of compute (or data). In this analogy, we want the model to attempt to learn the aspects of a dataset that indeed learnable, rather than the ones that are fundamentally not such as token prediction where the tokens contain large intrinsic entropy.
-
-We can compare some general statistics on these token attributions as follows:
-
-
-![memory qat model training](/deep-learning/normalized_entropy_estimation.png)
-
 
 ### Memory Model Introduction
 
