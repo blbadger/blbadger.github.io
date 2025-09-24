@@ -503,7 +503,7 @@ $$
 Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d)) | \circ O(x, \theta_e)
 $$
 
-where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by 0, 1, ..., i-1 and $j$ is indexed over the embedding dimension.
+where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by $i$ and the embedding dimension is indexed by $j$.
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
@@ -718,7 +718,7 @@ For mixers, we have the following:
 | Autoencoder (validation) encoder  | 0.435 | 0.952 | 0.7696 |
 | Autoencoder encoder | 1.528 | 0.831 | 0.5534 |
 | Untrained    | 5.937   | 0.343 | 0.0408 |
-| Causal Trained | 5.815   | 0.356 | 0.9521 |
+| Causal Trained | 5.815   | 0.356 | 0.0479 |
 | Causal -> Retrieval Trained | 5.594   | 0.381 | 0.0476 |
 | Autoencoder -> Retrieval Trained | 5.767 | 0.361 | 0.0447 |
 
