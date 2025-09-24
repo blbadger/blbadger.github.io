@@ -500,10 +500,10 @@ Besides occlusion, there is another way to measure attribution: we can forward p
 The use of this method for our entropy estimation requires a few extra steps, partially because we want to find the attribution of all outputs with one input (rather than one output with all inputs as is normally the case) and partially because we don't want to actually backpropegate to the input rather only the encoder's output (which is an embedding of floats). We can backpropegate the $L^1$ norm of the output as follows:
 
 $$
-Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_k \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d))_{k, j, i} | \circ O(x, \theta_e)
+Attr(x_i) = \nabla_{O(x, \theta_e)} \sum_j | O(O(x, \theta_e) \oplus x_{:i-1}, \theta_d))_{j, i} | \circ O(x, \theta_e)
 $$
 
-where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by $i$ and the embedding dimension is indexed by $j$ and the batch dimension by $k$. Note that we cannot reduce the gradients formed on the output tokens $0, 1, 2, ..., i$ before backpropegating, as we need to keep the token gradients separate in order to determine attribution of each with respect to the embedding (we do reduce across the batch dimension as these elements are separable). This results in a very large time complexity penalty when using this method compared to occlusion: we need to perform $N$ backwards passes for $N$ tokens of one sequence, making this method around a thousand times less efficient than occlusion. As before, we perform minmax normalization on the raw outputs of $Attr(x_i)$.
+where $A \circ B$ signifies the Hadamard product of A and B, and $x_{:i-1}$ the tokens of $x$ indexed by $i$ and the embedding dimension is indexed by $j$. Note that we cannot reduce the gradients formed on the output tokens $0, 1, 2, ..., i$ before backpropegating, as we need to keep the token gradients separate in order to determine attribution of each with respect to the embedding (we do reduce across the batch dimension as these elements are separable). This results in a very large time complexity penalty when using this method compared to occlusion: we need to perform $N$ backwards passes for $N$ tokens of one sequence, making this method around a thousand times less efficient than occlusion. As before, we perform minmax normalization on the raw outputs of $Attr(x_i)$.
 
 <html>
     <body>
@@ -526,7 +526,7 @@ The
 It is also worth observing how the attribution values obtained above relate to the (normalized) loss per token we get when we inference a purely causal model trained on the same data. For a perfect causal model, the cross-entropy loss values per token are the text's intrinsic entropy values and are the same as the information a decoder requires per token from an oracle embedding for our entropy estimators. We have far from perfect models, however: the causal transformer used to estimate token losses below achieves an average CEL of 2.5, meaning that the model achieves a bits per byte compression of
 
 $$
-\mathttt{bpb} = \frac{L_t / L_b * \Bbb L}{\ln 2} \approx 0.920
+\mathtt{bpb} = \frac{L_t / L_b * \Bbb L}{\ln 2} \approx 0.920
 $$
 
 which is far less than state-of-the-art models like Deepseek V3, which achieve <0.5 BPB on similar datasets. This means that the majority of this model's loss is not due to intrinsic entropy of language but instead to the difference between the model's probability distributions and the underlying data. Nevertheless, we can perform entropy estimation using this model, and highlight the same text segment (again using red for higher and green for lower entropy).
