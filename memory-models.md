@@ -417,11 +417,11 @@ How can one perform this entropy-aware training? The first step is to be able to
 
 What if we train a strong entropy prediction model such that the causal decoder obtains zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? There is a nice direct way to do so: the token entropy (in bits) is the amount of information lost when predicting this token without the embedding. 
 
-The decomposition here is straightforward: if we have achieved a minimal embedding size such that the cross-entropy value between our model's output for a given token index $i$ and the true token $x_i$, the cross entropy of the encoder-decoder model and the token sequence element $H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i)$ is equal to the intrinsic entropy of $H(x_i)$ given the token sequence $x_{:i-1} = (x_0, x_1, ..., x_{i-1} \)$ (the decoder's loss if we withhold an encoder) minus the information stored in the decoder, $H(O(x_{:i-1}, \theta_d), x_i)$, such that
+The decomposition here is straightforward: if we have achieved a minimal embedding size such that the cross-entropy value between our model's output for a given token index $i$ and the true token $x_i$, the cross entropy of the encoder-decoder model (using abbreviated notation for the encoding, $O(x, \theta_e) = e$) and the token sequence element $H(e \circ x_{:i-1}, \theta_d), x_i)$ is equal to the intrinsic entropy of $H(x_i)$ given the token sequence $x_{:i-1} = (x_0, x_1, ..., x_{i-1} \)$ (the decoder's loss if we withhold an encoder) minus the information stored in the decoder, $H(O(x_{:i-1}, \theta_d), x_i)$, such that
 
 $$
-H(x_i \vert (x_0, x_1, ..., x_{i-1} ) = H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i) + H(O(x_{:i-1}, \theta_d), x_i) \\
-H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i) = 0 \implies H(x_i ) = H(O(x_{:i-1}, \theta_d), x_i) )
+H(x_i \vert (x_0, x_1, ..., x_{i-1} ) = H(O(e \circ x_{:i-1}, \theta_d), x_i) + H(O(x_{:i-1}, \theta_d), x_i) \\
+H(O(e \circ x_{:i-1}, \theta_d), x_i) = 0 \implies H(x_i ) = H(O(x_{:i-1}, \theta_d), x_i) )
 $$
 
 This is effectively a single-token decomposition of the idea that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; in the entropy estimation, we find out exactly how the bits in the embedding are distributed exactly among tokens.
