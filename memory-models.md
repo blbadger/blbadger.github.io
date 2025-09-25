@@ -1,4 +1,4 @@
-## Language Mixers IV: Text Compression and Memory Models
+## Language Mixers IV: Text Compression, Memory, and Entropy
 
 This page focuses on information compression, specifically how we can achieve better compression via new language model architectures and how this can be used for dataset augmentation and large-context models.
 
@@ -545,9 +545,19 @@ which is far less than state-of-the-art models like Deepseek V3, which achieve <
     </body>
 </html>
 
-When we observe statistics across many samples, we find that there is a strong correlation between $L^1$ and cosine similarity attribution ($R^2=0.42), but little correlation between $L^1$ attribution and (normalized) loss per token ($R^2=0.01$).
+When we observe statistics across many samples, we find that there is a strong correlation between $L^1$ and cosine similarity attribution ($R^2=0.42$), but little correlation between $L^1$ attribution and (normalized) loss per token ($R^2=0.01$).
 
 ![memory decoder architectures](/deep-learning/attribution_scatters.png)
+
+There is somewhat stronger correlation when we compare the occlusion attribution of an embedding-augmented model that achieves low loss (CEL < 0.4) using a large $d_m=1024$ embedding (Large Embedding in the table below), but attributions for this embedding or embeddings from even larger models (same $d_m$, double the layers in both encoder and ecoder for CEL < 0.1) do not correlate strongly with the small-embedding model.
+
+| Y vs X  | $m$ | $b$ | $R^2$ |
+| -------- | ------- | ---------- | --------- |
+| $L^1$, cosine  | 0.9566 | 0.1431| 0.4195 |
+| $L^1$, loss| 0.0063 | 0.3894 | 0.0107 |
+| Large embedding $L^1$, loss   | 0.0172   | 0.4152 | 0.0688 |
+| Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
+| Largest embedding L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
