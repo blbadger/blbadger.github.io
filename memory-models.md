@@ -415,7 +415,22 @@ We approach the filtering of data at a very granular level, at the token rather 
 
 How can one perform this entropy-aware training? The first step is to be able to estimate what the entropy of each (conditional) token is, and happily model to be able to do so in an efficient manner: the embedding-augmented causal decoder model presented above.  To see why this is the case, first observe that any model trained for causal language prediction yields an entropy estimation for each conditional token, which is the model's cross-entropy loss on that token. The lower the model's loss across all tokens (which is usually mean reduced) the more accurate this entropy estimate is, such that the embedding-augmented entropy prediction model is a more accurate token entropy predictor than a purely causal model.
 
-What about when we use a strong entropy prediction model and effectively reduce the average loss to zero? The entropy estimatino model allows for another method to estimate token entropy in this case: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
+What if we train a strong entropy prediction model such that the causal decoder obtains zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? There is a nice direct way to do so: the token entropy (in bits) is the amount of information lost when predicting this token without the embedding. 
+
+The decomposition here is straightforward: if we have achieved a minimal embedding size such that the cross-entropy value between our model's output for a given token index $i$ and the true token $x_i$, the cross entropy of the encoder-decoder model and the token sequence element $H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i)$ is equal to the intrinsic entropy of $H(x_i)$ given the token sequence $x_{:i-1} = (x_0, x_1, ..., x_{i-1} \)$ (the decoder's loss if we withhold an encoder) minus the information stored in the decoder, H(O(x_{:i-1}, \theta_d), x_i), such that
+
+$$
+H(x_i | (x_0, x_1, ..., x_{i-1} \)) = H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i) + H(O(x_{:i-1}, \theta_d), x_i) \\
+H(O(O(x, \theta_e) \circ x_{:i-1}, \theta_d), x_i) = 0 \implies H(x_i \)) = H(O(x_{:i-1}, \theta_d), x_i)\))
+$$
+
+This is effectively a single-token decomposition of the idea that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; in the entropy estimation, we find out exactly how the bits in the embedding are distributed exactly among tokens.
+
+$$
+H(x) = \frac{|e|}{L_b}
+$$
+
+There is another method to estimate token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
 $$
 x = O(x, \theta_e) \oplus W_{wte}x \\
