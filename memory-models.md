@@ -415,18 +415,37 @@ We approach the filtering of data at a very granular level, at the token rather 
 
 How can one perform this entropy-aware training? The first step is to be able to estimate what the entropy of each (conditional) token is, and happily model to be able to do so in an efficient manner: the embedding-augmented causal decoder model presented above.  To see why this is the case, first observe that any model trained for causal language prediction yields an entropy estimation for each conditional token, which is the model's cross-entropy loss on that token. The lower the model's loss across all tokens (which is usually mean reduced) the more accurate this entropy estimate is, such that the embedding-augmented entropy prediction model is a more accurate token entropy predictor than a purely causal model.
 
-What if we train a strong entropy prediction model such that the causal decoder obtains zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? There is a nice direct way to do so: the token entropy (in bits) is the amount of information lost when predicting this token without the embedding. 
+What if we train a strong entropy prediction model such that the causal decoder obtains near-zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? Or even if this case is not met, how do we compute the conditional entropy of any given token using entropy estimation models, as the entropy estimation occurs over many tokens rather than one?
 
-The intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; for token-specific entropy estimation, we want to find out exactly how the bits in the embedding are distributed exactly among tokens.
+It may be wondered why one cannot simply train an entropy estimation model to minimal loss, observe the unreduced cross-entropy loss for each token with this trained model, and simply add the amortized embedding's entropy (in bits) to this loss value. This value will unfortunately be inaccurate for most tokens, however, as we cannot *a priori* know how many bits in the embedding correspond to each individual token. Recall that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; for token-specific entropy estimation, we want to find out exactly how the bits in the embedding are distributed exactly among tokens.
 
 $$
 1/i \sum_i H(x_n) = \frac{|e|}{L_b} \\
 \sum_i H(O(x_{:i-1}, \theta_d), x_i) = \frac{|e|}{L_b} * L_b = \sum_i H(x_n)
 $$
 
-Unfortunately this decomposition at the level of the token is difficult: we cannot simply remove the encoding and inference the decoder to find the left over entropy as the encoding is not linearly separable from the rest of the decoder's inputs (as the decoder is itself a nonlinear function). One way to calculate this value exactly is to find the smallest encoding size possible for all windows of the text corpus, and linearly decompose each window's amortized information.
+Unfortunately this decomposition at the level of the token is difficult if we restrict ourselves to one model alone: we cannot simply remove the encoding and inference the decoder to find the left over entropy being that the encoding is not linearly separable from the rest of the decoder's inputs (as the decoder is itself a nonlinear function). 
 
-Happily there is a way to obliquely estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
+To find a given token's conditional entropy exactly, we can instead use two models such that one entropy estimation model $\theta_1$ has a context window of size $N-1$ and the other $\theta_2$ has a context window of size $N$. With these models, we proceed in a different manner depending on whether or not we have a fixed encoder size $|e|$ (in bits) such that the model's cross-entropy loss for each segment of text is $\Bbb L \geq 0$ or a variable-size $|e|$ such that each segment of text has $\Bbb L = 0$. The latter would require a very subtle implementation in a single model, or many training runs using many fixed-size models, so we focus on the former as a more realistic scenario.
+
+Thus we have the following: two entropy estimation models, $\theta_1$ with context window $N-1$ and $\theta_2$ with context window $N$, and for simplicity we assume that the embeddings of these models are the same size, $\vert e_1 \vert = \vert e_2 \vert$ although this is certainly not a necessary condition. We can then compute the entropy of the token at position $N+1$ given the tokens at position $N$ using these models as follows:
+
+$$
+H(t_{N} \vert t_{0}, t_{1}, ..., t_{N-1}) = \vert e \vert \Bbb + L(O(t_{0}, t_{1}, ..., t_{N}, \theta_2)) - \left( \vert e \vert + L(O(t_{0}, t_{1}, ..., t_{N-1}, \theta_1)) \right) \\
+H(t_{N} \vert t_{:N-1}) = \Bbb L (O(t_{:N}, \theta_2) - \Bbb L \left( O(t_{:N-1}, \theta_1) \right)
+$$
+
+which follows from the definition of conditional entropy,
+
+$$
+H(C \vert A, B) = H(A, B, C) - H(A, B)
+$$
+
+to use this method in practice, we would slide two windows acros the text corpora as follows:
+
+![memory qat model training](/deep-learning/windowed_entropy.png)
+
+If we are limited to only one model, happily there is still a way to obliquely estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
 $$
 x = O(x, \theta_e) \oplus W_{wte}x \\
