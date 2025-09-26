@@ -417,21 +417,16 @@ How can one perform this entropy-aware training? The first step is to be able to
 
 What if we train a strong entropy prediction model such that the causal decoder obtains zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? There is a nice direct way to do so: the token entropy (in bits) is the amount of information lost when predicting this token without the embedding. 
 
-The decomposition here is straightforward: if we have achieved a minimal embedding size such that the cross-entropy value between our model's output for a given token index $i$ and the true token $x_i$, the cross entropy of the encoder-decoder model (using abbreviated notation for the encoding, $O(x, \theta_e) = e$) and the token sequence element $H(e \circ x_{:i-1}, \theta_d), x_i)$ is equal to the intrinsic entropy of $H(x_i)$ given the token sequence $x_{:i-1} = (x_0, x_1, ..., x_{i-1} \)$ (the decoder's loss if we withhold an encoder) minus the information stored in the decoder, $H(O(x_{:i-1}, \theta_d), x_i)$, such that
-
-$$
-H(x_i \vert (x_0, x_1, ..., x_{i-1} ) = H(O(e \circ x_{:i-1}, \theta_d), x_i) + H(O(x_{:i-1}, \theta_d), x_i) \\
-H(O(e \circ x_{:i-1}, \theta_d), x_i) = 0 \implies H(x_i ) = H(O(x_{:i-1}, \theta_d), x_i) )
-$$
-
-This is effectively a single-token decomposition of the idea that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; in the entropy estimation, we find out exactly how the bits in the embedding are distributed exactly among tokens.
+The intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; for token-specific entropy estimation, we want to find out exactly how the bits in the embedding are distributed exactly among tokens.
 
 $$
 1/i \sum_i H(x_n) = \frac{|e|}{L_b} \\
 \sum_i H(O(x_{:i-1}, \theta_d), x_i) = \frac{|e|}{L_b} * L_b = \sum_i H(x_n)
 $$
 
-There is another method to estimate token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
+Unfortunately this decomposition at the level of the token is difficult: we cannot simply remove the encoding and inference the decoder to find the left over entropy as the encoding is not linearly separable from the rest of the decoder's inputs (as the decoder is itself a nonlinear function). One way to calculate this value exactly is to find the smallest encoding size possible for all windows of the text corpus, and linearly decompose each window's amortized information.
+
+Happily there is a way to obliquely estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
 $$
 x = O(x, \theta_e) \oplus W_{wte}x \\
@@ -567,13 +562,13 @@ When we observe statistics across many samples, we find that there is a strong c
 
 There is somewhat stronger correlation when we compare the occlusion attribution of an embedding-augmented model that achieves low loss (CEL < 0.4) using a large $d_m=1024$ embedding (Large Embedding in the table below), but attributions for this embedding or embeddings from even larger models (same $d_m$, double the layers in both encoder and ecoder for CEL < 0.1) do not correlate strongly with the small-embedding model.
 
-| Y vs X  | $m$ | $b$ | $R^2$ |
+| y vs x  | $m$ | $b$ | $R^2$ |
 | -------- | ------- | ---------- | --------- |
 | $L^1$, cosine  | 0.9566 | 0.1431| 0.4195 |
 | $L^1$, loss| 0.0063 | 0.3894 | 0.0107 |
 | Large embedding $L^1$, loss   | 0.0172   | 0.4152 | 0.0688 |
 | Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
-| Largest embedding L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
+| Largest embedding $L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
