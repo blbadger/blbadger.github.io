@@ -431,17 +431,17 @@ To find a given token's conditional entropy exactly, we can instead use two mode
 Thus we have the following: two entropy estimation models, $\theta_1$ with context window $N-1$ and $\theta_2$ with context window $N$, and for simplicity we assume that the embeddings of these models are the same size, $\vert e_1 \vert = \vert e_2 \vert$ although this is certainly not a necessary condition. We can then compute the entropy of the token at position $N+1$ given the tokens at position $N$ using these models as follows:
 
 $$
-H(t_{N} \vert t_{0}, t_{1}, ..., t_{N-1}) = \vert e \vert \Bbb + L(O(t_{0}, t_{1}, ..., t_{N}, \theta_2)) - \left( \vert e \vert + L(O(t_{0}, t_{1}, ..., t_{N-1}, \theta_1)) \right) \\
+H(t_{N} \vert t_{0}, t_{1}, ..., t_{N-1}) = \vert e \vert + \Bbb L(O(t_{0}, t_{1}, ..., t_{N}, \theta_2)) - \left( \vert e \vert + \Bbb L(O(t_{0}, t_{1}, ..., t_{N-1}, \theta_1)) \right) \\
 H(t_{N} \vert t_{:N-1}) = \Bbb L (O(t_{:N}, \theta_2) - \Bbb L \left( O(t_{:N-1}, \theta_1) \right)
 $$
 
-which follows from the definition of conditional entropy,
+which follows from the chain rule of conditional entropy,
 
 $$
 H(C \vert A, B) = H(A, B, C) - H(A, B)
 $$
 
-to use this method in practice, we would slide two windows acros the text corpora as follows:
+To use this method in practice, we would slide two windows acros the text corpora as follows:
 
 ![memory qat model training](/deep-learning/windowed_entropy.png)
 
