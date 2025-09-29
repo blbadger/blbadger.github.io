@@ -593,6 +593,15 @@ Once the relative token entropy is estimated, the second step is to incorporate 
 
 Taking a step back, does it make sense to decrease the changes made to a model with respect to high- and low-entropy tokens? One approach to language modeling is to simply train on everything you can get your hands on, with the idea that a model can 'soak up' the data and will perform better than when trained on curated data. This is an inefficient way to train models, however, as it has been shown numerous times that models trained on filtered data far outperform models trained on unfiltered data. The reason for this is that it is not inaccurate to think of a model as a sponge that can indeed 'soak up' the training data, but that this sponge is finite in size and can only soak up so much given a fixed amount of compute (or data). In this analogy, we want the model to attempt to learn the aspects of a dataset that indeed learnable, rather than the ones that are fundamentally not such as token prediction where the tokens contain large intrinsic entropy.
 
+This idea is supported experimentally: if we train a $d_m=512, n_l=16$ llama-style transformer model on FineWeb-10BT and then repeat the training with the same model architecture but now using our entropy-weighted dataset, we have the following:
+
+| Model | Wikitext BPB (↓) | Swag | Hellaswag | Arc Easy | Mathqa | Glue | Lambada-Openai | GSM8k | Winograd | TruthfulQA | Ifeval |
+| -------- | ------- | ---------- | --------- | ------- | ------- | ---------- | ---------- | --------- | --------| ------------ | --------- |
+| Reference (no weights)  | 1.2887 | 0.3712 | 0.2963 | 0.4933 | 0.2231 | 0.5015 | 0.2490 | 0.2490 | 0.0159 | 0.5381 | 0.3963 | 0.1183 |
+| $L^1$ Attribution | 1.3025 | 0.3731 | 0.2994 | 0.4979 | 0.2228 | 0.5133 | 0.2546 | 0.2546 | 0.0190 | 0.5572 | 0.4155 | 0.1238 |
+
+It is interesting to note that the model trained on $L^1$ attribution-weighted data actually yields lower Wikitext compression than the reference model: this likely results from the lack of correlation between $L^1$ attribution and per-token loss.
+
 ### Memory Model Introduction
 
 The ability to compress information from a sequence of tokens into one embedding in an efficient manner has another utility: we can use these embeddings to provide exended context to a model without increasing its inference computation. Extensive research has been performed on methods to reduce the amount of computation and memory required to train and perform inference on a model applied to $n$ tokens, and this problem has been particularly relevant to recent advances in code generation, mathematical problem solving, and other domains benefitting from chain-of-thought test-time compute scaling. In this paradigm, the performance of a model scales with the number of tokens one generates (before generating a final answer) such that inference compute and memory become significant bottlenecks. 
