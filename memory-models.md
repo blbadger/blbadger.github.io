@@ -62,7 +62,7 @@ One indirect way we can test this is as follows: if a transformer were significa
 
 Given some evidence for our idea, how would one go about injecting an encoder's embedding to a transformer decoder while avoiding the identical attention problem? One simple but effective way to do this is to 'unroll' the embedding by projecting unique subsets of the encoder's embedding into each of the decoder's input positions. A relatively simple but flexible method to get unique subsets of a vector is to use a sliding window, where we project from a certain number of contiguous elements of a vector in our 'window' and shift the elements projected from at each of the decoder's indices, keeping the projection weights identical across all input windows. This requires an embedding vector satisfying $d_m \geq n_{ctx}$ for every decoder index vector to be unique, but we can simply add a projection to enlarge the $d_m$ of the embedding as required if necessary. 
 
-For cases where we want to project from $n_d$ elements and $d_m < n_d + n_{ctx} - 1$, or in other words where our window slides off our embedding vector to make all decoder inputs, we can simply wrap our window around to the first index of the embedding, concatenate, and project accordingly. For the case where $n_ctx=4, d_m=6, n_d = 4$, the following diagram illustrates the projection and wrapping process:
+For cases where we want to project from $n_d$ elements and $d_m < n_d + n_{ctx} - 1$, or in other words where our window slides off our embedding vector to make all decoder inputs, we can simply wrap our window around to the first index of the embedding, concatenate, and project accordingly. For the case where $n_{ctx}=4, d_m=6, n_d = 4$, the following diagram illustrates the projection and wrapping process:
 
 ![mixer autoencoder efficiencies](/deep-learning/sliding_window_embedding.png)
 
@@ -595,10 +595,10 @@ Taking a step back, does it make sense to decrease the changes made to a model w
 
 This idea is supported experimentally: if we train a $d_m=512, n_l=16$ llama-style transformer model on FineWeb-10BT and then repeat the training with the same model architecture but now using our entropy-weighted dataset, we have the following:
 
-| Model | Wikitext BPB (↓) | Swag | Hellaswag | Arc Easy | Mathqa | Glue | Lambada-Openai | GSM8k | Winograd | TruthfulQA | Ifeval |
+| Model | Wikitext BPB (↓) | Swag | Hellaswag | Arc Easy | Mathqa | Glue | Lambada Openai | GSM8k | Winograd | Truthful QA | Ifeval |
 | -------- | ------- | ---------- | --------- | ------- | ------- | ---------- | ---------- | --------- | --------| ------------ | --------- |
-| Reference (no weights)  | 1.2887 | 0.3712 | 0.2963 | 0.4933 | 0.2231 | 0.5015 | 0.2490 | 0.2490 | 0.0159 | 0.5381 | 0.3963 | 0.1183 |
-| $L^1$ Attribution | 1.3025 | 0.3731 | 0.2994 | 0.4979 | 0.2228 | 0.5133 | 0.2546 | 0.2546 | 0.0190 | 0.5572 | 0.4155 | 0.1238 |
+| Reference         | 1.2887 | 0.3712 | 0.2963 | 0.4933 | 0.2231 | 0.5015 | 0.2490 | 0.0159 | 0.5381 | 0.3963 | 0.1183 |
+| $L^1$ Attribution | 1.3025 | 0.3731 | 0.2994 | 0.4979 | 0.2228 | 0.5133 | 0.2546 | 0.0190 | 0.5572 | 0.4155 | 0.1238 |
 
 It is interesting to note that the model trained on $L^1$ attribution-weighted data actually yields lower Wikitext compression than the reference model: this likely results from the lack of correlation between $L^1$ attribution and per-token loss.
 
