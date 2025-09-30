@@ -585,7 +585,6 @@ When we observe statistics across many samples, we find that there is a strong c
 
 There is somewhat stronger correlation when we compare the occlusion attribution of an embedding-augmented model that achieves low loss (CEL < 0.4) using a large $d_m=1024$ embedding (Large Embedding in the table below), but attributions for this embedding or embeddings from even larger models (same $d_m$, double the layers in both encoder and ecoder for CEL < 0.1) do not correlate strongly with the small-embedding model.
 
-<center>
 | y vs x  | $m$ | $b$ | $R^2$ |
 | -------- | ------- | ---------- | --------- |
 | $L^1$, cosine  | 0.9566 | 0.1431| 0.4195 |
@@ -593,7 +592,6 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 | Large embedding $L^1$, loss   | 0.0172   | 0.4152 | 0.0688 |
 | Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
 | Largest embedding $L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
-</center>
 
 All this to say that both $L^1$ or cosine metric-based occlusion attribution as well as causal per-token loss exhibit some expected statistical properties of an entropy estimator, but while an $L^1$ metric may be substituted for a cosine similarity metric for attribution, there is little to no correlation between attribution-based and loss-based entropy estimations.
 
