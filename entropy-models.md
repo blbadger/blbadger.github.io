@@ -24,7 +24,7 @@ It is apparent that transformers scale badly in terms of samples per model, as a
 
 None of this is particularly surprising given the results and theory outlined in the masked mixer [introductory paper](https://arxiv.org/pdf/2409.01482). One major finding there is that transformers are relatively inefficient to train for tasks requiring retention of information present in the input, either in a single or multiple output embeddings. 
 
-### Why transformers struggle in this autoencoding paradigm
+### Why transformers struggle with repeated embeddings
 
 From the last section we observed that transformers make far worse autoencoders (with the architecture presented at least) than masked mixers. The next question to ask is why this is: why would transformers be so much worse than masked mixers, given that in previous work has shown more modest differences in information retention between transformers and masked mixers? More specifically, why would attention lead to poor autoencoding in this architecture?
 
@@ -393,7 +393,7 @@ When we re-train noise-injected (at the compressed embedding unless otherwise no
 
 To conclude, we find that embeddings can indeed be quantized to 8 bits per parameter with no real loss difference (using BitsandBytes Int8()) from the unquantized embedding using noise-injected QAT models. As this QAT method imparts minimal increase in evaluation loss compared to full-precision training, we conclude that the compressed embeddings of a QAT model are quantizable without loss, with little to no training efficiency difference from the full-precision model training detailed previously.
 
-### Estimation of language entropy with embedding-augmented models
+### Estimation of language entropy
 
 We seen that the introduction of an (oracle) embedding into a causal decoder allows for more efficient language compression than either a standard one-pass encoder-decoder or causal decoder-only architecture. It is particularly noteworthy that embedding-augmented models exhibit different asymptotic training characteristics relative to causal decoder models: for this section, it is important to observe that causal model loss during training is well approxiated by a log-linear relationship, where a constant decrease in loss occurs upon a fixed magnitude change in training inputs (ie number of tokens or training steps). For example, if we may see a 0.4 CEL decrease upon doubling of the number of input steps, we would expect to see another 0.4 CEL decrease upon another step doubling.
 
@@ -403,7 +403,7 @@ One straightforward way to estimate this intrinsic language entropy is to train 
 
 With the observation that embedding-augmented models experience linear rather than exponential decay during training, it is clear that these models are much more suitable for intrinsic language entropy estimation. The approach is straightforward, train sufficiently large encoder-augmented embedding models with smaller and smaller embedding sizes and observe the size required for convergence to 0 CEL. The smallest embedding size required for the model to achieve zero loss (on hold-out data) is the langauge entropy estimation.
 
-### Combining embeddings with causal decoders allows for token-specific entropy estimation
+### Token Entropy Estimation
 
 When large language models are trained, the current approach is to feed a large number (on the order of trillions) of tokens to these models, and doing so requires a very large amount of compute to process many forward and backward passes on this data. The paradigm of language model prediction ability scaling with the input data size has been observed since 2016 or so, and is likely to be observed further into the future as well. But the finite amount of language data available means that input data cannot be scaled without reaching a limit. More recently it has been observed that models trained on filtered data (selected for factual accuracy, informational content etc.) perform substantially better on downstream tasks such as those present in benchmarks used to measure large language models (MMLU etc). 
 
