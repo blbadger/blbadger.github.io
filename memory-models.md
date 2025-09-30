@@ -441,7 +441,7 @@ $$
 H(C \vert A, B) = H(A, B, C) - H(A, B)
 $$
 
-To use this method in practice, we would slide two windows acros the text corpora as follows:
+To use this method in practice, we would slide two windows across the text corpora as follows:
 
 ![memory qat model training](/deep-learning/windowed_entropy.png)
 
@@ -575,12 +575,17 @@ which is far less than state-of-the-art models like Deepseek V3, which achieve <
     </body>
 </html>
 
+Here we see some of the same qualitative features as we saw using $L^1$ and cosine attribution: for words composed of two or more tokens, the first token is invariably of higher entropy, less entropy for articles, etc. On the other hand, there is less shift in average entropy per index across our context window.
+
+![causal loss entropy estimation](/deep-learning/fineweb_causal_loss.png)
+
 When we observe statistics across many samples, we find that there is a strong correlation between $L^1$ and cosine similarity attribution ($R^2=0.42$), but little correlation between $L^1$ attribution and (normalized) loss per token ($R^2=0.01$).
 
-![memory decoder architectures](/deep-learning/attribution_scatters.png)
+![attribution vs loss](/deep-learning/attribution_scatters.png)
 
 There is somewhat stronger correlation when we compare the occlusion attribution of an embedding-augmented model that achieves low loss (CEL < 0.4) using a large $d_m=1024$ embedding (Large Embedding in the table below), but attributions for this embedding or embeddings from even larger models (same $d_m$, double the layers in both encoder and ecoder for CEL < 0.1) do not correlate strongly with the small-embedding model.
 
+<center>
 | y vs x  | $m$ | $b$ | $R^2$ |
 | -------- | ------- | ---------- | --------- |
 | $L^1$, cosine  | 0.9566 | 0.1431| 0.4195 |
@@ -588,6 +593,9 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 | Large embedding $L^1$, loss   | 0.0172   | 0.4152 | 0.0688 |
 | Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
 | Largest embedding $L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
+</center>
+
+All this to say that both $L^1$ or cosine metric-based occlusion attribution as well as causal per-token loss exhibit some expected statistical properties of an entropy estimator, but while an $L^1$ metric may be substituted for a cosine similarity metric for attribution, there is little to no correlation between attribution-based and loss-based entropy estimations.
 
 Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
@@ -595,10 +603,10 @@ Taking a step back, does it make sense to decrease the changes made to a model w
 
 This idea is supported experimentally: if we train a $d_m=512, n_l=16$ llama-style transformer model on FineWeb-10BT and then repeat the training with the same model architecture but now using our entropy-weighted dataset, we have the following:
 
-| Model | Wikitext BPB (↓) | Swag | Hellaswag | Arc Easy | Mathqa | Glue | Lambada Openai | GSM8k | Winograd | Truthful QA | Ifeval |
-| -------- | ------- | ---------- | --------- | ------- | ------- | ---------- | ---------- | --------- | --------| ------------ | --------- |
+| Model | Wikitext BPB (↓) | SWAG | HellaSwag| Arc Easy | MathQA | GLUE | Lambada OpenAI | GSM8k | Winograd | Truthful QA | Ifeval |
+| ------- | ------ | ------- | ------- | ------ | ------ | -------- | ------- | ------- | ------- | -------- | ------- |
 | Reference         | 1.2887 | 0.3712 | 0.2963 | 0.4933 | 0.2231 | 0.5015 | 0.2490 | 0.0159 | 0.5381 | 0.3963 | 0.1183 |
-| $L^1$ Attribution | 1.3025 | 0.3731 | 0.2994 | 0.4979 | 0.2228 | 0.5133 | 0.2546 | 0.0190 | 0.5572 | 0.4155 | 0.1238 |
+| $L^1$ Attr | 1.3025 | 0.3731 | 0.2994 | 0.4979 | 0.2228 | 0.5133 | 0.2546 | 0.0190 | 0.5572 | 0.4155 | 0.1238 |
 
 It is interesting to note that the model trained on $L^1$ attribution-weighted data actually yields lower Wikitext compression than the reference model: this likely results from the lack of correlation between $L^1$ attribution and per-token loss.
 
