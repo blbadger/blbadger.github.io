@@ -298,6 +298,7 @@ $$
 
 ![qutoencoder](/deep-learning/bidirectional_transformer_explained.png)
 
+
 ### [Language Mixers III: Optimization](/smaller-lms-3.md)
 
 $$
@@ -307,9 +308,17 @@ x_{(k+1)} = x_{(k)} - (J(x_{(k)})^{-1}F(x_{(k)}) \\
 X^+ = \lim_{\alpha \to 0^+} (X^TX + \alpha I)^{-1} X^T
 $$
 
-### [Language Mixers IV: Compression and Memory](/memory-models.md)
+
+### [Entropy Estimation](/entropy-models.md)
 
 ![Memory models](deep-learning/memory_encoder_options.png)
+
+
+### [Memory Models](/memory-models.md)
+
+$$
+I_e = 1 - \frac{H(p, q)}{H(p_0, q)} = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))}
+$$
 
 ### [Linear Language Models](/linear-lms.md)
 
