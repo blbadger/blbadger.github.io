@@ -415,11 +415,10 @@ How can one perform this entropy-aware training? The first step is to be able to
 
 What if we train a strong entropy prediction model such that the causal decoder obtains near-zero loss with a minimal embedding size, how then can we estimate each token's conditional entropy? Or even if this case is not met, how do we compute the conditional entropy of any given token using entropy estimation models, as the entropy estimation occurs over many tokens rather than one?
 
-It may be wondered why one cannot simply train an entropy estimation model to minimal loss, observe the unreduced cross-entropy loss for each token with this trained model, and simply add the amortized embedding's entropy (in bits) to this loss value. This value will unfortunately be inaccurate for most tokens, however, as we cannot *a priori* know how many bits in the embedding correspond to each individual token. Recall that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; for token-specific entropy estimation, we want to find out exactly how the bits in the embedding are distributed exactly among tokens.
+It may be wondered why one cannot simply train an entropy estimation model to minimal average loss, observe the unreduced cross-entropy loss for each token with this trained model, and simply add the amortized embedding's entropy (in bits) to this loss value. This value will unfortunately be inaccurate for most tokens, however, as we cannot *a priori* know how many bits in the embedding correspond to each individual token. Recall that the intrinsic entropy in a sequence $x$ is equivalent to the minimal embedding's amortized bits divided by the number of bits in the sequence (see the following). In that case, we average over all elements of $x$ during the amortization process; for token-specific entropy estimation, we want to find out exactly how the bits in the embedding are distributed exactly among tokens. 
 
 $$
-1/i \sum_i H(x_n) = \frac{|e|}{L_b} \\
-\sum_i H(O(x_{:i-1}, \theta_d), x_i) = \frac{|e|}{L_b} * L_b = \sum_i H(x_n)
+H(x_0, x_1, ..., x_{i-1}) = \vert e \vert + \sum_i H(O(x_{:i-1}, \theta_d), x_i) 
 $$
 
 Unfortunately this decomposition at the level of the token is difficult if we restrict ourselves to one model alone: we cannot simply remove the encoding and inference the decoder to find the left over entropy being that the encoding is not linearly separable from the rest of the decoder's inputs (as the decoder is itself a nonlinear function). 
@@ -443,7 +442,13 @@ To use this method in practice, we would slide two windows across the text corpo
 
 ![memory qat model training](/deep-learning/windowed_entropy.png)
 
-If we are limited to only one model, happily there is still a way to obliquely estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
+Instead of using two models, one can instead use one model and simply mask the first token and shift the $\theta_2$ model's context to start at the $t_{-1}$ index and proceed with the calcluation above.  We assume that the model is trained using left padding and that not all inputs are of length $n_{ctx}$ before padding such that the encoder and encoder have been exposed to pad tokens during the training process. In this single-model formulation, the calculation of the conditional entropy of token $t_N$ is as follows:
+
+$$
+H(t_{N} \vert t_{:N-1}) = \Bbb L (O(t_{0:N}, \theta) - \Bbb L \left( O(t_{-1:N-1}, \theta) \right)
+$$
+
+We also investigate ways to efficiently estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
 $$
 x = O(x, \theta_e) \oplus W_{wte}x \\
@@ -459,7 +464,7 @@ $$
 m_{l^1}(O(x, \theta_d), O(x_o, \theta_d)) = || O(x, \theta_d) - O(x_o, \theta_d) ||_1 = \sum_i | O_i(x, \theta_d) - O_i(x_o, \theta_d) | 
 $$
 
-where $i$ is indexed in the embedding dimension. Here we actually use the logit activations rather than the embeddings, so effectively $m_{l^1}$ measures the Manhattan metric bewteen the decoder's logits with versus without the encoder's embedding. For transformers, we also 
+where $i$ is indexed in the embedding dimension. Here we actually use the logit activations rather than the embeddings, so effectively $m_{l^1}$ measures the Manhattan metric bewteen the decoder's logits with versus without the encoder's embedding. For transformers, we can remove the embedding using an attention mask.
 
 An $L^1$ norm is sensitive to changes in scale between samples, which can be a problem as gradient descent is normally calculated batchwise such that scale inequalities between samples in a batch lead to biases in gradient magnitude once weights are applied. To normalize all token attributions to take values in $[0, 1]$, we use a simple linear minmax approach,
 
@@ -593,7 +598,15 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 
 All this to say that both $L^1$ or cosine metric-based occlusion attribution as well as causal per-token loss exhibit some expected statistical properties of an entropy estimator, but while an $L^1$ metric may be substituted for a cosine similarity metric for attribution, there is little to no correlation between attribution-based and loss-based entropy estimations.
 
-Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. This can be done by simply assigning cross-entropy loss weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
+Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. For normalized estimations, one way to do this is to assign weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
+
+If we do not normalize
+
+Weighting tokens by entropy estimates is notably a different concept from a standard cross-entropy loss weight, as there weights are applied per category (token for language modeling) whereas in this case we want to weight by token sequence index rather than token identity. We can obtain a total loss from the linear combination of these weighted unreduced losses as follows:
+
+$$
+\Bbb L (O(x, \theta), y) = \sum_i w_i*\Bbb L(O(x_{:i-1}, \theta), y_i)
+$$
 
 Taking a step back, does it make sense to decrease the changes made to a model with respect to high- and low-entropy tokens? One approach to language modeling is to simply train on everything you can get your hands on, with the idea that a model can 'soak up' the data and will perform better than when trained on curated data. This is an inefficient way to train models, however, as it has been shown numerous times that models trained on filtered data far outperform models trained on unfiltered data. The reason for this is that it is not inaccurate to think of a model as a sponge that can indeed 'soak up' the training data, but that this sponge is finite in size and can only soak up so much given a fixed amount of compute (or data). In this analogy, we want the model to attempt to learn the aspects of a dataset that indeed learnable, rather than the ones that are fundamentally not such as token prediction where the tokens contain large intrinsic entropy.
 
