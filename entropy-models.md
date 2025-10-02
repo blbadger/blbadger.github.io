@@ -598,14 +598,18 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 
 All this to say that both $L^1$ or cosine metric-based occlusion attribution as well as causal per-token loss exhibit some expected statistical properties of an entropy estimator, but while an $L^1$ metric may be substituted for a cosine similarity metric for attribution, there is little to no correlation between attribution-based and loss-based entropy estimations.
 
-Once the relative token entropy is estimated, the second step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. For normalized estimations, one way to do this is to assign weights to be the complement (1-x) of our relative entropy values such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
+Once the relative token entropy is estimated, the next step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. For normalized estimations, one way to do this is to assign weights to be the complement of our relative entropy values ($w_i = 1 - e_i$) such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
 
-If we do not normalize
-
-Weighting tokens by entropy estimates is notably a different concept from a standard cross-entropy loss weight, as there weights are applied per category (token for language modeling) whereas in this case we want to weight by token sequence index rather than token identity. We can obtain a total loss from the linear combination of these weighted unreduced losses as follows:
+Weighting tokens by entropy estimates is notably a different concept from a standard cross-entropy loss weight, as there weights are applied per category (token for language modeling) whereas in this case we want to weight by token sequence index rather than token identity. One way we obtain a total loss from the linear combination of these weighted unreduced losses as follows:
 
 $$
 \Bbb L (O(x, \theta), y) = \sum_i w_i*\Bbb L(O(x_{:i-1}, \theta), y_i)
+$$
+
+Alternatively, we can rescale the loss itself, for example
+
+$$
+\Bbb L (O(x, \theta), y) = \sum_i || \Bbb L(O(x_{:i-1}, \theta), y_i) - e_i ||_1
 $$
 
 Taking a step back, does it make sense to decrease the changes made to a model with respect to high- and low-entropy tokens? One approach to language modeling is to simply train on everything you can get your hands on, with the idea that a model can 'soak up' the data and will perform better than when trained on curated data. This is an inefficient way to train models, however, as it has been shown numerous times that models trained on filtered data far outperform models trained on unfiltered data. The reason for this is that it is not inaccurate to think of a model as a sponge that can indeed 'soak up' the training data, but that this sponge is finite in size and can only soak up so much given a fixed amount of compute (or data). In this analogy, we want the model to attempt to learn the aspects of a dataset that indeed learnable, rather than the ones that are fundamentally not such as token prediction where the tokens contain large intrinsic entropy.
