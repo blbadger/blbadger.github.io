@@ -287,6 +287,17 @@ But when we measure the ability of embedding-augmented masked mixers to compress
 
 ![memory decoder performances](/deep-learning/fineweb_memory_mixer_kernels.png)
 
+It should perhaps be noted that the dataset we use to train and evaluate tokenizes documents individually and pads if necessary, meaning that not all samples contain the full 1024 token context window of non-pad tokens. This makes our calculation of the amortized bits per byte from the embedding somewhat inaccurate, as that assumed full context in every sample. The reason this is important is because one would expect for smaller-context samples to exhibit lower loss for entropy models if the embeddings of those models were to be capable of retaining a constant amount of information regardless of the number of non-pad tokens present in the input.
+
+We can filter evaluation for only full-context samples for both entropy estimation and causal language models, and doing so yields the following Cross-Entropy Losses:
+
+|   |  200k Entropy | 500k Entropy | 200k CLM  | 500k CLM   |
+|---|---|---|---|---|
+|  All Samples | 2.379  | 2.1566  | 2.5801  |  2.515 |
+| Full Context  |  2.502 | 2.2968  | 2.6121  | 2.5492  |
+
+As expected, there is higher loss for entropy estimation models when applied to full-context inputs compared to all inputs, although this is also the case for causal models to a lesser extent. This is a relatively small loss difference, however, and is nearly constant per model over 300k training steps. 
+
 ### Embedding Quantization
 
 In the section above, we assumed an 8 bit per parameter quantization would be possible with minimal loss. Is this a reasonable assumption? 
