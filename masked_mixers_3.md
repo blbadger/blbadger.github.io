@@ -69,8 +69,9 @@ I like to use git inside docker, in which case we can add the path to our git ss
 $ docker run -i -t -v /path/to/rsa:/root/.ssh/id_rsa --gpus all blbadger/cuda120_pytorch240 /bin/bash
 ```
 
+This runs the docker container with a [volume](https://docs.docker.com/engine/storage/volumes/) via the `-v` flag, and specifies access to the key path via `/path/to/rsa:/root/.ssh/id_rsa`. Volumes can be used to access other host machine files as well; for example, one may specify `docker run -v /path/to/host/Desktop:/path/to/container/Desktop ...` to be able to access the host machine's Desktop files at the `/path/to/container/Desktop` location in the container.
+
 ### C and CUDA extensions for Pytorch
 
-To reiterate, the effort expended to 
 
 
