@@ -298,6 +298,8 @@ We can filter evaluation for only full-context samples for both entropy estimati
 
 As expected, there is higher loss for entropy estimation models when applied to full-context inputs compared to all inputs, although this is also the case for causal models to a lesser extent. This is a relatively small loss difference, however, and is nearly constant per model over 300k training steps. 
 
+We can also observe the cross-entropy losses of entropy estimation and causal language models when all inputs contain the full context window (here $n_{ctx}=1024$) of non-pad tokens, which can be done by packing tokens from various documents into each context window as necessary. In this case, each sample contains tokens from one or more (possibly several) documents concatenated into one sequence, and again we use the FineWeb as our data source. After training an encoder-decoder entropy estimation model and causal model on this dataset, we find a hearly identical difference in losses as the full-context loss above: the entropy estimation model reaches a CEL of 2.535 compared to 2.642 for the causal model at 200k training steps (7 billion tokens). 
+
 ### Embedding Quantization
 
 In the section above, we assumed an 8 bit per parameter quantization would be possible with minimal loss. Is this a reasonable assumption? 
