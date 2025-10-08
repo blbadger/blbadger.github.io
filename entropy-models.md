@@ -64,17 +64,18 @@ For cases where we want to project from $n_d$ elements and $d_m < n_d + n_{ctx} 
 
 ![mixer autoencoder efficiencies](/deep-learning/sliding_window_embedding.png)
 
-This can be implemented as follows: given a linear projection layer that assumes the input is half the size of the ouput, `self.projection = nn.Linear(dim//2, dim)`, we can replace the embedding repeat with
-our unrolled projections as follows:
+This approach can be generalized to inputs of arbitrary token length by re-assigning the slice indices to be the modulo division remainder of the index and the embedding dimension. We implement as follows: given a linear projection layer that assumes the input is half the size of the ouput, `self.projection = nn.Linear(dim//2, dim)`, we can replace the embedding repeat with
+our unrolled projections
 
 ```python
 encoder_embedding = x[:, -1, :].unsqueeze(1) # dim=[batch, token, hidden]
 embedding_stack = []
 # sliding window unroll over hidden dim
 for i in range(self.tokenized_length):
-    sliding_window = encoder_embedding[..., i:i+dim//2]
-    if i+dim//2 > dim:
-        residual = i+dim//2 - self.tokenized_length
+    index = i % dim
+    sliding_window = encoder_embedding[..., index:index+dim//2]
+    if index+dim//2 > dim:
+        residual = index+dim//2 - dim
         # loop around to first index
         sliding_window = torch.cat((sliding_window, encoder_embedding[..., :residual]), dim=2)
     embedding_stack.append(sliding_window)
@@ -83,6 +84,8 @@ encoder_embedding = self.projection(encoder_embedding)
 ```
 
 Note here that an implementation most faithful to our figure above would be to apply the projection at each index in the for loop before concatenation, but this is much less efficient as applying the projection to the pre-concatenated output allows us to make use of device (GPU) parallelization that is otherwise tricky to add to the loop via Pytorch primitives.
+
+The exact token indices that we use for the wrap are not important: we observe essentially identical results if we use a middle-out approach rather than a wrap-to-front, which can be implemented by ` residual = index+dim//2 - dim//2`.
 
 For a $d_m=512, n_l=8$ (eight layer for encoder, eight for decoder) applied to $n_{ctx}=512$ FineWeb-edu, we have the following:
 
