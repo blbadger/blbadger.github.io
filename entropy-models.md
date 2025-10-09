@@ -620,6 +620,23 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 | Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
 | Largest embedding $L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
 
+
+On the other hand, we find much stronger correlations between exact entropy estimations and the small causal model's losses ($R^2 = 0.3285$) and a somewhat weaker correlation between the model's exact entropy estimations and Llama 3.2 (1b) losses ($R^2 = 0.1360$).
+
+![attribution vs loss](/deep-learning/eem_vs_clms_fig.png)
+
+How can we simulate the use of a strong entropy estimation model?
+
+![attribution vs loss](/deep-learning/llama1b_loss_pertoken_fig.png)
+
+![attribution vs loss](/deep-learning/llama1b_vs_small_clm_scatter.png)
+
+| y vs x  | $m$ | $b$ | $R^2$ |
+| -------- | ------- | ---------- | --------- |
+| Entropy Estimation, Small CLM  | 1.4685 | -1.1879 | 0.3285 |
+| Entropy Estimation, Large CLM |  1.0540 | 0.1097| 0.1424 |
+| Small CLM, Large CLM   | 0.7334  | 0.8398 | 0.4922 |
+
 All this to say that both $L^1$ or cosine metric-based occlusion attribution as well as causal per-token loss exhibit some expected statistical properties of an entropy estimator, but while an $L^1$ metric may be substituted for a cosine similarity metric for attribution, there is little to no correlation between attribution-based and loss-based entropy estimations.
 
 Once the relative token entropy is estimated, the next step is to incorporate this information into the training algorithm such that the model is only marginally modified to fit the high-entropy tokens, while low-entropy tokens are more strongly fit. For normalized estimations, one way to do this is to assign weights to be the complement of our relative entropy values ($w_i = 1 - e_i$) such that larger loss weights are assigned to tokens with lower entropy. The idea here being that at the start of training, models predict all tokens with high entropy (see the cross-entropy loss at the start of training). Tokens that have high conditional entropy require less modification of this initial model state than tokens of low entropy, and thus smaller steps in the model's weights for these tokens relative to low-entropy tokens result in the model reaching the intrinsic entropy loss value for both tokens, assuming that model weight modification scaling is proportional to the scaling of loss per token.
