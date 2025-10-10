@@ -620,14 +620,17 @@ There is somewhat stronger correlation when we compare the occlusion attribution
 | Large embedding $L^1$, $L^1$ | 0.2308  | 0.3691 | 0.0424 |
 | Largest embedding $L^1$, $L^1$ | 0.2680  | 0.3629 | 0.0574 |
 
-
-On the other hand, we find much stronger correlations between exact entropy estimations and the small causal model's losses ($R^2 = 0.3285$) and a somewhat weaker correlation between the model's exact entropy estimations and Llama 3.2 (1b) losses ($R^2 = 0.1360$).
+We find much stronger correlation between exact entropy estimations via single model pad-based decomposition and the small causal model's losses ($R^2 = 0.3285$, below left). While it remains possible that a very strong entropy estimation model would yield similar entropy values for embedding occlusion-based entropy to a similarly strong causal language model, these results suggest that for our compute attribution-based esimates are not accurate.
 
 ![attribution vs loss](/deep-learning/eem_vs_clms_fig.png)
 
-How can we simulate the use of a strong entropy estimation model?
+How can we simulate the use of a strong entropy estimation model without dealing with the compute required to train this model or inference for entropy token estimations? One option is to use a causal model that has had an enormous amount of compute (around 100,000x what the models here have seen) applied during training in place of an entropy estimation model. This large compute results in significant differences in entropy estimation accuracy (or equivalently compression): for example, the small causal model above achieves 1.29 BPB on Wikitext, but the larger and heavily trained Llama 3.2 (1b) reaches 0.66 BPB on the same dataset. 
+
+The main difficulty with this approach is that these models use a different tokenizer: the Llama 3.2 model uses a 128k size tokenizer compared to the 8k size tokenizer used by the small models. To find the entropy estimations (losses) for the smaller tokenizer, we proceed as follows: first the losses per token are found for the large tokenizer, then the losses are applied to each character, and finally the average loss per character is found when characters are grouped according to the small tokenizer. 
 
 ![attribution vs loss](/deep-learning/llama1b_loss_pertoken_fig.png)
+
+and a somewhat weaker correlation between the model's exact entropy estimations and Llama 3.2 (1b) losses ($R^2 = 0.1360$).
 
 ![attribution vs loss](/deep-learning/llama1b_vs_small_clm_scatter.png)
 
