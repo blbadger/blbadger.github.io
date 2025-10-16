@@ -690,7 +690,33 @@ Our first hypothesis therefore is that training a causal model on entropy-inform
 
 Secondly, we can almost by definition expect for a causal model trained with rescaled loss to be more or less totally resistent to overfitting. This is in itself a useful application of entropy models as the usual method of preventing overfitting (evaluating on a hold-out data sample and taking a training checkpoint with the lowest evaluation loss) leads a number of difficulties: firstly one cannot train on the hold-out dataset, secondly one must assume that the hold-out data is identically and indepentently distributed to the training data (which is not always the case), and thirdly hold-outs become unreliable when they are used to optimize architectures or data sources as they effectively become the metrics one optimizes for and are thus themselves prone to overfitting.
 
+### Entropy-informed models generalize better
+
 But this is not the only utility provided by using rescaled losses with respect to overfitting: not only can we do away with hold-out datasets, but we can also expect for a model trained using entropy information to be more generalizable than a model trained without entropy information. To see why this is the case, consider the extreme case of a model trained on a single short token sequence. Without entropy information, we can expect for predictions for each token to be more or less equally optimized at each step (assuming a random initialization of our model) whereas with entropy information each token prediction is optimized according to the entropies provided. This means that these two models will embark on very different trajectories during training, where the generalization of the entropy-less model will be expected to be lower than the entropy-informed model even before the entropy estimation losses are achieved.
+
+Does it matter if a model is trained past the entropy of its training dataset? We can prove that such models will necessary exhibit higher hold-out test dataset cross-entropy loss (ie lower generalization) than models that are not trained to do so.
+
+**Theorem**: Generalization decreases when models are trained to minimize their losses below the entropy of the training dataset.
+
+**Proof:** We assume that some random variable $X$ exists and is sampled independent and identically distributed disjoint subsets, $X_{train}$ and $X_{text}$, where $\{X_{train}\} \; \bigcup \; \{X_{test}\} = \{X\}$ and $\{X_{train}\} \; \bigcap \; \{X_{test}\} = \emptyset$. For notational simplicity, we substitute $s = X_{train}$ and $t = X_{test}$. We assume that the entropy of the random variable is nonzero, $H(x) > 0$, and by the independence of $s, t$ we have $H(x) = H(s, t) = H(s) + H(t)$.  We also assume that model losses for random variables $s, t$ are cross-entropies on causal predictions, ie $1/i\sum_i\Bbb L(O(s_{[:i-1]}, \theta), s_i) = H(O(s, \theta), s)$ and the same for $t$. 
+
+From Gibbs' inequality, we know that $H(O(x, \theta), x) \geq H(x) \; \forall  x, \theta$. We decompose $x$ according to the independence of its subsets $s, t$ as follows:
+
+$$
+ H(O(s, \theta), s) + H(O(t, \theta), t) \geq H(s, t) = H(s) + H(t) \implies \\
+ H(O(s, \theta), s) - H(s) + \left( H(O(t, \theta), t) - H(t)  \right) \geq 0 
+$$
+
+Therefore as $\theta$ is modified such that $H(O(s, \theta), s) - H(s) < 0$ decreases, $H(O(t, \theta), t) - H(t)$ increases so that the inequality \ref{eq15} holds. We assumed that $H(t)$ is fixed, so necessarily $H(O(t, \theta), t)$ increases as $H(O(s, \theta), s)$ decreases past $H(s)$. 
+    
+In fact, due to the identical distribution of $s, t$ we know that $H(s) = H(t)$ and can put a lower bound on the loss of generalization as shown in Equation \ref{eq16}.
+
+$$
+H(O(s, \theta), s) - H(s) \geq - \left( H(O(t, \theta), t) - H(s) \right)
+$$
+    
+We conclude by restating the above equation in words: as the left side of the inequality is negative when $H(O(s, \theta), s) < H(s)$ which was previously assumed, the difference between the model's cross-entropy loss and the training dataset's entropy is at least as large as the difference between the test loss and the training entropy. $\square$.
+
 
 ### Benchmark performance with and without entropy
 
