@@ -707,9 +707,9 @@ $$
  H(O(s, \theta), s) - H(s) + \left( H(O(t, \theta), t) - H(t)  \right) \geq 0 
 $$
 
-Therefore as $\theta$ is modified such that $H(O(s, \theta), s) - H(s) < 0$ decreases, $H(O(t, \theta), t) - H(t)$ increases so that the inequality \ref{eq15} holds. We assumed that $H(t)$ is fixed, so necessarily $H(O(t, \theta), t)$ increases as $H(O(s, \theta), s)$ decreases past $H(s)$. 
+Therefore as $\theta$ is modified such that $H(O(s, \theta), s) - H(s) < 0$ decreases, $H(O(t, \theta), t) - H(t)$ increases so that the inequality above holds. We assumed that $H(t)$ is fixed, so necessarily $H(O(t, \theta), t)$ increases as $H(O(s, \theta), s)$ decreases past $H(s)$. 
     
-In fact, due to the identical distribution of $s, t$ we know that $H(s) = H(t)$ and can put a lower bound on the loss of generalization as shown in Equation \ref{eq16}.
+In fact, due to the identical distribution of $s, t$ we know that $H(s) = H(t)$ and can put a lower bound on the loss of generalization,
 
 $$
 H(O(s, \theta), s) - H(s) \geq - \left( H(O(t, \theta), t) - H(s) \right)
