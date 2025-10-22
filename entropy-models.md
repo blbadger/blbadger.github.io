@@ -87,7 +87,7 @@ encoder_embedding = self.projection(encoder_embedding)
 
 Note here that an implementation most faithful to our figure above would be to apply the projection at each index in the for loop before concatenation, but this is much less efficient as applying the projection to the pre-concatenated output allows us to make use of device (GPU) parallelization that is otherwise tricky to add to the loop via Pytorch primitives.
 
-The exact token indices that we use for the wrap are not important: we observe essentially identical results if we use a middle-out approach rather than a wrap-to-front, which can be implemented by ` residual = index+dim//2 - dim//2`.
+The exact token indices that we use for the wrap are not important: we observe essentially identical results if we use a middle-out approach rather than a wrap-to-front, which can be implemented by ``` residual = index+dim//2 - dim//2```.
 
 For a $d_m=512, n_l=8$ (eight layer for encoder, eight for decoder) applied to $n_{ctx}=512$ FineWeb-edu, we have the following:
 
