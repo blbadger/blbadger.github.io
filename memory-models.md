@@ -241,7 +241,7 @@ $$
 \mathtt{BPB} = (L_t/L_b) \Bbb L / \ln(2) = (1/3.92) * 0.1 / \ln(2) \approx 0.036
 $$
 
-meaning that the encoder is responsible for approximately 0.921 bits per byte, which is not very remarkable given that the encoder's amortized memory for these large models results in an amortized 8 bits per byte extra. This is not nearly enough to accurately compress the 512 token context window, however, as shown below:
+meaning that the encoder is responsible for approximately 0.921 bits per byte, which is not very remarkable given that the encoder's amortized memory for these large models results is 8 bits per byte extra. This is not nearly enough to accurately compress the 512 token context window, however, as shown below:
 
 ![mixer information recovery](/deep-learning/memory_model_information_fig.png)
 
@@ -255,7 +255,7 @@ If we compute the information metrics used previously
 
 Thus the large-dimensional oracle memory embeddings contain more input information than causal model embeddings and untrained models, but still only exhibit retention of a fraction of the total information in the input. Recall previous results showing that that this relatively low-information embedding results in better next token prediction than a frozen high-information autoencoder embedding when paired with a causal decoder. As the decoder is fed all previous tokens at each forward pass, this suggests that a small amount of input information is necessary to provide next token information when paried with this previous token information. 
 
-How much information does this memory model encoder embedding contain compared to its capacity in terms of bits per byted? After training our decoder, we have a BPB compression of
+How much information does this memory model encoder embedding contain compared to its capacity in terms of bits per bytes? After training our decoder, we have a BPB compression of
 
 $$
 \mathtt{BPB} = (L_t/L_b) \Bbb L / \ln(2) = (1/3.92) * 4.93 / \ln(2) \approx 1.81
