@@ -464,7 +464,7 @@ $$
 H(C \vert A, B) = H(A, B, C) - H(A, B)
 $$
 
-To use this method in practice, we would slide two windows across the text corpora as follows:
+To use this method in practice, we would slide two windows across the text corpora as shown below (left).
 
 ![memory qat model training](/deep-learning/windowed_entropy.png)
 
@@ -473,6 +473,8 @@ Instead of using two models, one can instead use one model and simply mask the f
 $$
 H(t_{N} \vert t_{:N-1}) = \Bbb L (O(t_{0:N-1}, \theta), t_{1:N}) - \Bbb L \left( O(t_{-1:N-2}, \theta), t_{0, N-1} \right)
 $$
+
+The token entropy measurements obtained using the above equation applied to a trained entropy estimation model are compared to those obtained from a causal language model above (right), and the correlation of $R^2 \approx 0.35$ indicates that these estimates are in some agreement.  
 
 We also investigate ways to efficiently estimate the token entropy given an embedding-augmented causal model: we can observe how much each output depends on the encoder's embedding, reasoning that lower entropy tokens will be less sensitive to encoder information loss. What we want is essentially a measure of input attribution, to be specific the attribution of all outputs to the embedding input. One way to calculate this attribution is by simply masking the embedding and measuring the change in output upon doing so, which is known as occlusion. This approach has a particularly beneficial property for our purposes: as we want to measure the effect of one input on all outputs, we can compute the occlusion value with only two forward passes (without forming gradients) per text segment. We can calculate the occlusion value using our entropy estimation model as follows:
 
