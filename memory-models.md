@@ -100,6 +100,26 @@ As we have seen in the text compression work that even trainable encoders are mu
 
 ![memory decoder architectures](/deep-learning/frozen_mixmem_transformer_fig.png)
 
+### How much embedding information can causal decoders learn to use?
+
+So far we have assessed memory embedding use by causal decoders by training these models on datasets like FineWeb and FineMath in order to be able to form an approximation of the training properties on large and diverse corpora typical of frontier model pretraining. It is evident, however, that modeling this dataset does not actually require much information from previous tokens, at least not for the training scales we investigate (10 to 30 billion tokens in total). This can be appreciated by observing that continued training of a memoryless model results in these models attaining the same loss as memory models achieve with somewhat less training samples, and that naturally models with a context window of 256 (without memory) need to be trained on more tokens to match memory models a total context of 1024 with memory compared to models with a context window of 512 without and 2048 with memory.
+
+What this means is that our training tests are not very effective measures of memory use by the decoder, as one would expect for only a little information to be required for the above observations. We can test this expectation directly by observing the training characteristics of a memory model in which the decoder is a frozen clm-trained decoder, as we know that these models contain a relatively small amount of input information across their entire context window. The results of this experiment are as expected: swapping out a clm-trained encoder for the autoencoder-trained encoder does not result in significant decreases in memory model training efficiency [add fig].
+
+This provides motivation for a more effective test of memory useage for decoders. What we want is the ability to determine whether or not a causal decoder can make use of all the information in each memory encoding, and one way to test this is to train memory models on an input copy task. Here, given a certain number of tokens (say 512) the task is to train the model to be able to copy these tokens causally. Here the input tokens to be copied are given in the first 512 indices, such that the decoder's third and fourth chunk must use only the information present in memory embeddings to perform this copy task. We mask the loss on the first two chunks so that the model is trained strictly to copy next tokens for which there can exist information in the embedding to perform perfect copying. A diagram of this experimental setting is given below, for the case where a 512-length input is copied (for a total of 1024 tokens) and a 256-context window memory model is applied to four chunks of this embedding. This depiction corresponds to the model's configuration for the third chunk.
+
+![memory decoder architectures](/deep-learning/memory_copy_schematic.png)
+
+We train memory models on this copy task where copied inputs are sampled from the FineWeb with pad tokens added as necessary such that not all inputs actually contain 512 nonpad tokens copied. Models are evaluated on hold-out samples that contain strictly 512 non-pad tokens, or in other words a full-context copy task, and the results for mixer and transformer-based memory models ($d_m=512$) are given below:
+
+![memory decoder architectures](/deep-learning/copy_memory_figure.png)
+
+The results are unexpected: although one might predict that a frozen causal embedding would not result in substantial increases in copy accuracy due to the low informational content of these models' embeddings, the frozen autoencoders obtain very low loss (corresponding to >95% autoencoding accuracy for their context windows) but curiously are also unable to inform the causal decoder to any significant degree. For mixers, autoencoders of multiple sizes were tested to ensure that the problem was not a malformed model or other model-specific implementation detail.
+
+![memory decoder architectures](/deep-learning/memory_blankcopy_schematic.png)
+
+
+
 ### Autoencoders and memory models do not learn trivial encodings
 
 Thus far we have seen curiously diverging training efficiencies with architectural changes for the case where the encoder's embedding is as large or larger than the context window, versus the case where an encoder's embedding is significantly smaller than the context window. For example, consider the widely different effect of using more mixer heads or a $k>1$ convolution for large embeddings (where this leads to much more efficient training) compared to small embeddings (where it leads to a decrease in training efficiency). Another example is the sharp drop in efficiency in both autoencoders and memory models as one decreases the encoder embedding size past the $n_{ctx}$ boundary.
