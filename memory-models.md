@@ -108,17 +108,24 @@ What this means is that our training tests are not very effective measures of me
 
 This provides motivation for a more effective test of memory useage for decoders. What we want is the ability to determine whether or not a causal decoder can make use of all the information in each memory encoding, and one way to test this is to train memory models on an input copy task. Here, given a certain number of tokens (say 512) the task is to train the model to be able to copy these tokens causally. Here the input tokens to be copied are given in the first 512 indices, such that the decoder's third and fourth chunk must use only the information present in memory embeddings to perform this copy task. We mask the loss on the first two chunks so that the model is trained strictly to copy next tokens for which there can exist information in the embedding to perform perfect copying. A diagram of this experimental setting is given below, for the case where a 512-length input is copied (for a total of 1024 tokens) and a 256-context window memory model is applied to four chunks of this embedding. This depiction corresponds to the model's configuration for the third chunk.
 
-![memory decoder architectures](/deep-learning/memory_copy_schematic.png)
+![copy architectures](/deep-learning/memory_copy_schematic.png)
 
 We train memory models on this copy task where copied inputs are sampled from the FineWeb with pad tokens added as necessary such that not all inputs actually contain 512 nonpad tokens copied. Models are evaluated on hold-out samples that contain strictly 512 non-pad tokens, or in other words a full-context copy task, and the results for mixer and transformer-based memory models ($d_m=512$) are given below:
 
-![memory decoder architectures](/deep-learning/copy_memory_figure.png)
+![copy figure](/deep-learning/copy_memory_figure.png)
 
 The results are unexpected: although one might predict that a frozen causal embedding would not result in substantial increases in copy accuracy due to the low informational content of these models' embeddings, the frozen autoencoders obtain very low loss (corresponding to >95% autoencoding accuracy for their context windows) but curiously are also unable to inform the causal decoder to any significant degree. For mixers, autoencoders of multiple sizes were tested to ensure that the problem was not a malformed model or other model-specific implementation detail.
 
-![memory decoder architectures](/deep-learning/memory_blankcopy_schematic.png)
 
+Why would a causal decoder be unable to use the information present in a rich embedding? There are three primary differences between the autoencoder architecture and the copy memory task: firstly that more than one embedding is fed to the decoder (and an unrolled projection is not applied), secondly that the decoder is causal in the sense that it predicts next rather than current tokens, and finally that the decoder receives both embedding information as well as current token information instead of only embedding information.
 
+The third difference may be considered to be most likely to be the case: causality would not be expected to be an issue in itself as the embedding should be processable in any orientation, and using two embeddings rather than one should make things easier for the decoder rather than harder. We can test this hypothesis by removing the input ids from the copy (which we call a 'blank copy') such that all input information must originate from the embeddings, and repeat the copy training experiments.
+
+![blank copy architectures](/deep-learning/memory_blankcopy_schematic.png)
+
+When this is done, we see that masked mixers indeed rapidly learn to decode a trained encoding (transformers do too, only much more slowly).
+
+![blank copy figure](/deep-learning/blank_copy_figure.png)
 
 ### Autoencoders and memory models do not learn trivial encodings
 
