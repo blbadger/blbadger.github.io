@@ -138,6 +138,7 @@ To start with, we train a relatively small encoder ($d_m=512, n_l=16, h=4$ trans
 Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training.
 
 **Llama 3.2 (1B)**
+
 |    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
 |--------------|------:|------|-----:|----------|---|-----:|---|-----:|
 |arc_easy      |      1|none  |     0|acc       |↑  |0.6633|±  |0.0097|
@@ -153,6 +154,7 @@ Given that copy training gives some ability for the decoder to access informatio
 | - stem           |      2|none  |      |acc   |↑  |0.3394|±  |0.0083|
 
 **Llama 3.2 (1B), trained for memory copy, 2k training steps**
+
 |    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
 |--------------|------:|------|-----:|----------|---|-----:|---|-----:|
 |arc_easy      |      1|none  |     0|acc       |↑  |0.6629|±  |0.0097|
@@ -170,6 +172,7 @@ Given that copy training gives some ability for the decoder to access informatio
 Thus we see in general that there is no decrease and actually a small increase in benchmark metrics at this stage. But if we continue training, we find that there is indeed a substantial degradation in benchmark accuracy as shown below:
 
 **Llama 3.2 (1B), trained for memory copy, 34k training steps**
+
 |    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
 |--------------|------:|------|-----:|----------|---|-----:|---|-----:|
 |arc_easy      |      1|none  |     0|acc       |↑  |0.6646|±  |0.0097|
