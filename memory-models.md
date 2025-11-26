@@ -127,6 +127,60 @@ When this is done, we see that masked mixers indeed rapidly learn to decode a tr
 
 ![blank copy figure](/deep-learning/blank_copy_figure.png)
 
+### Pretrained Causal Decoders and Memory
+
+So far we have investigated the introduction of memory embeddings into decoders that are initialized from scratch and then trained to make use of these memories. The next question to address is whether a pretrained decoder could also make use of memory embeddings as well, and we start by investigating this question with respect to trainable encoders and decoders.
+
+
+Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder.
+
+**Llama 3.2 (1B)**
+|    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
+|--------------|------:|------|-----:|----------|---|-----:|---|-----:|
+|arc_easy      |      1|none  |     0|acc       |↑  |0.6633|±  |0.0097|
+|              |       |none  |     0|acc_norm  |↑  |0.6170|±  |0.0100|
+|hellaswag     |      1|none  |     0|acc       |↑  |0.4805|±  |0.0050|
+|              |       |none  |     0|acc_norm  |↑  |0.6427|±  |0.0048|
+|lambada_openai|      1|none  |     0|acc       |↑  |0.6222|±  |0.0068|
+|              |       |none  |     0|perplexity|↓  |5.4344|±  |0.1288|
+|mmlu              |      2|none  |      |acc   |↑  |0.3775|±  |0.0040|
+| - humanities     |      2|none  |      |acc   |↑  |0.3515|±  |0.0069|
+| - other          |      2|none  |      |acc   |↑  |0.4303|±  |0.0088|
+| - social sciences|      2|none  |      |acc   |↑  |0.4030|±  |0.0087|
+| - stem           |      2|none  |      |acc   |↑  |0.3394|±  |0.0083|
+
+**Llama 3.2 (1B), trained for memory copy, 2k training steps**
+|    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
+|--------------|------:|------|-----:|----------|---|-----:|---|-----:|
+|arc_easy      |      1|none  |     0|acc       |↑  |0.6629|±  |0.0097|
+|              |       |none  |     0|acc_norm  |↑  |0.6174|±  |0.0100|
+|hellaswag     |      1|none  |     0|acc       |↑  |0.4816|±  |0.0050|
+|              |       |none  |     0|acc_norm  |↑  |0.6420|±  |0.0048|
+|lambada_openai|      1|none  |     0|acc       |↑  |0.6305|±  |0.0067|
+|              |       |none  |     0|perplexity|↓  |5.4167|±  |0.1283|
+|mmlu              |      2|none  |      |acc   |↑  |0.3858|±  |0.0040|
+| - humanities     |      2|none  |      |acc   |↑  |0.3558|±  |0.0069|
+| - other          |      2|none  |      |acc   |↑  |0.4419|±  |0.0088|
+| - social sciences|      2|none  |      |acc   |↑  |0.4176|±  |0.0088|
+| - stem           |      2|none  |      |acc   |↑  |0.3444|±  |0.0083|
+
+Thus we see in general that there is no decrease and actually a small increase in benchmark metrics at this stage. But if we continue training, we find that there is indeed a substantial degradation in benchmark accuracy as shown below:
+
+**Llama 3.2 (1B), trained for memory copy, 34k training steps**
+|    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
+|--------------|------:|------|-----:|----------|---|-----:|---|-----:|
+|arc_easy      |      1|none  |     0|acc       |↑  |0.6646|±  |0.0097|
+|              |       |none  |     0|acc_norm  |↑  |0.5976|±  |0.0101|
+|hellaswag     |      1|none  |     0|acc       |↑  |0.4638|±  |0.0050|
+|              |       |none  |     0|acc_norm  |↑  |0.6159|±  |0.0049|
+|lambada_openai|      1|none  |     0|acc       |↑  |0.5960|±  |0.0068|
+|              |       |none  |     0|perplexity|↓  |6.4017|±  |0.1668|
+|mmlu              |      2|none  |      |acc   |↑  |0.2872|±  |0.0038|
+| - humanities     |      2|none  |      |acc   |↑  |0.2837|±  |0.0066|
+| - other          |      2|none  |      |acc   |↑  |0.3238|±  |0.0083|
+| - social sciences|      2|none  |      |acc   |↑  |0.2912|±  |0.0082|
+| - stem           |      2|none  |      |acc   |↑  |0.2525|±  |0.0077|
+
 ### Autoencoders and memory models do not learn trivial encodings
 
 Thus far we have seen curiously diverging training efficiencies with architectural changes for the case where the encoder's embedding is as large or larger than the context window, versus the case where an encoder's embedding is significantly smaller than the context window. For example, consider the widely different effect of using more mixer heads or a $k>1$ convolution for large embeddings (where this leads to much more efficient training) compared to small embeddings (where it leads to a decrease in training efficiency). Another example is the sharp drop in efficiency in both autoencoders and memory models as one decreases the encoder embedding size past the $n_{ctx}$ boundary.
