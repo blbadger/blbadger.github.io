@@ -131,8 +131,11 @@ When this is done, we see that masked mixers indeed rapidly learn to decode a tr
 
 So far we have investigated the introduction of memory embeddings into decoders that are initialized from scratch and then trained to make use of these memories. The next question to address is whether a pretrained decoder could also make use of memory embeddings as well, and we start by investigating this question with respect to trainable encoders and decoders.
 
+To start with, we train a relatively small encoder ($d_m=512, n_l=16, h=4$ transformer) with a 1 billion parameter Llama 3.2, both using the 128k-size Llama 3.2 tokenizer, with a relatively small learning rate $5*10^{-6}$ with AdamW (larger learning rates were observed to result in divergence for this configuration). We observe a rapid increase in copy accuracy at the start of training, followed by a far more gradual increase in copy accuracy as training proceeds.
 
-Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder.
+![blank copy figure](/deep-learning/blank_copy_figure.png)
+
+Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training.
 
 **Llama 3.2 (1B)**
 |    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
