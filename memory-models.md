@@ -123,9 +123,15 @@ The third difference may be considered to be most likely to be the case: causali
 
 ![blank copy architectures](/deep-learning/memory_blankcopy_schematic.png)
 
-When this is done, we see that masked mixers indeed rapidly learn to decode a trained encoding (transformers do too, only much more slowly).
+We find that masked mixers do indeed learn to use the information in the embedding if copy tokens are not supplied, resulting in higher accuracy than the trainable encoder memory model at the end of our relatively short training.
 
 ![blank copy figure](/deep-learning/blank_copy_figure.png)
+
+In longer training runs, we find that blank-copy trained masked mixer and transformer memory models (with frozen encoders) are both able to outperform the same models when the copy tokens are supplied to the decoder. All this suggests that it is indeed the presence of the tokens given to the decoder that inhibits the use of frozen encoder information during training by the decoder. One may hypothesize that the ability to decode a frozen encoder's embedding is relatively difficult compared to next token prediction at the start of training, so the decoder learns to ignore the embedding as a result.
+
+![extended blank copy figure](/figures/extended_blank_copy_memory.png)
+
+We may test the above hypothesis as follows: first we train a memory model on the copy task (with decoder tokens supplied) with a trainable encoder until that model exhibits high accuracy before then swapping in a frozen encoder and retraining.
 
 ### Pretrained Causal Decoders and Memory
 
