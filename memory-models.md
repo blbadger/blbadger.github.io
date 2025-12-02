@@ -137,9 +137,13 @@ We may test the above hypothesis as follows: first we train a memory model on th
 
 So far we have investigated the introduction of memory embeddings into decoders that are initialized from scratch and then trained to make use of these memories. The next question to address is whether a pretrained decoder could also make use of memory embeddings as well, and we start by investigating this question with respect to trainable encoders and decoders.
 
-To start with, we train a relatively small encoder ($d_m=512, n_l=16, h=4$ transformer) with a 1 billion parameter Llama 3.2, both using the 128k-size Llama 3.2 tokenizer, with a relatively small learning rate $5*10^{-6}$ with AdamW (larger learning rates were observed to result in divergence for this configuration). We observe a rapid increase in copy accuracy at the start of training, followed by a far more gradual increase in copy accuracy as training proceeds.
+To start with, we train a relatively small encoder ($d_m=512, n_l=16, h=4$ transformer) with a 1 billion parameter Llama 3.2, both using the 128k-size Llama 3.2 tokenizer, with a relatively small learning rate $5*10^{-6}$ with AdamW (larger learning rates were observed to result in divergence for this configuration). We observe a rapid increase in copy accuracy at the start of training (notice the large loss gap between the untrained model and the first checkpoint), followed by a far more gradual increase in copy accuracy as training proceeds. 
+
+We can hypothesize that this is the result of the decoder learning to filter our most of the information from the (as-yet) untrained encoder model as that embedding is likely very different from any token embedding the decoder has learned to process, rather than actual memory use learning. This may be tested by training the same model where the encodings are randomly assigned and not from trained models (ie there is no actual memory at all), whereupon we see a near-identical loss gap.
 
 ![blank copy figure](/deep-learning/copy_llama.png)
+
+That said, it is clear that the decoder is able to extract useful information from the memory encoding: in the lower plots on the figure above, we see that the memory model quickly outstrips the copy accuracy of the memoryless model.
 
 Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training.
 
