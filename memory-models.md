@@ -139,13 +139,13 @@ So far we have investigated the introduction of memory embeddings into decoders 
 
 To start with, we train a relatively small encoder ($d_m=512, n_l=16, h=4$ transformer) with a 1 billion parameter Llama 3.2, both using the 128k-size Llama 3.2 tokenizer, with a relatively small learning rate $5*10^{-6}$ with AdamW (larger learning rates were observed to result in divergence for this configuration). We observe a rapid increase in copy accuracy at the start of training (notice the large loss gap between the untrained model and the first checkpoint), followed by a far more gradual increase in copy accuracy as training proceeds. 
 
-We can hypothesize that this is the result of the decoder learning to filter our most of the information from the (as-yet) untrained encoder model as that embedding is likely very different from any token embedding the decoder has learned to process, rather than actual memory use learning. This may be tested by training the same model where the encodings are randomly assigned and not from trained models (ie there is no actual memory at all), whereupon we see a near-identical loss gap.
+We can hypothesize that this is the result of the decoder learning to filter our most of the information from the (as-yet) untrained encoder model as that embedding is likely very different from any token embedding the decoder has learned to process, rather than actual memory use learning. This may be tested by training the same model where the encodings are randomly assigned and not from trained models (ie there is no actual memory at all), whereupon we see a near-identical loss gap early in training.
 
 ![blank copy figure](/deep-learning/copy_llama.png)
 
-That said, it is clear that the decoder is able to extract useful information from the memory encoding: in the lower plots on the figure above, we see that the memory model quickly outstrips the copy accuracy of the memoryless model.
+That said, it is clear that the decoder is able to extract useful information from the memory encoding: in the lower plots on the figure above, we see that the memory model quickly outstrips the copy accuracy of the memoryless model by around a thousand training steps (sixteen thousand samples).
 
-Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training.
+Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training. Early in training, we find that there is no decrease and actually a small increase in accuracy for most tasks.
 
 **Llama 3.2 (1B)**
 
@@ -163,6 +163,7 @@ Given that copy training gives some ability for the decoder to access informatio
 | - social sciences|      2|none  |      |acc   |↑  |0.4030|±  |0.0087|
 | - stem           |      2|none  |      |acc   |↑  |0.3394|±  |0.0083|
 
+
 **Llama 3.2 (1B), trained for memory copy, 2k training steps**
 
 |    Tasks     |Version|Filter|n-shot|  Metric  |   |Value |   |Stderr|
@@ -179,7 +180,7 @@ Given that copy training gives some ability for the decoder to access informatio
 | - social sciences|      2|none  |      |acc   |↑  |0.4176|±  |0.0088|
 | - stem           |      2|none  |      |acc   |↑  |0.3444|±  |0.0083|
 
-Thus we see in general that there is no decrease and actually a small increase in benchmark metrics at this stage. But if we continue training, we find that there is indeed a substantial degradation in benchmark accuracy as shown below:
+But if we continue training, we find that there is indeed a degradation in benchmark accuracy as shown below:
 
 **Llama 3.2 (1B), trained for memory copy, 34k training steps**
 
@@ -196,6 +197,8 @@ Thus we see in general that there is no decrease and actually a small increase i
 | - other          |      2|none  |      |acc   |↑  |0.3238|±  |0.0083|
 | - social sciences|      2|none  |      |acc   |↑  |0.2912|±  |0.0082|
 | - stem           |      2|none  |      |acc   |↑  |0.2525|±  |0.0077|
+
+It is curious that the decrease in benchmark performance is particularly evident for MMLU (with a ~10% accuracy decrease) whereas there is little to no decrease for Arc-easy or Hellaswag. Arc and MMLU are both question-answering benchmarks, so it is unlikely that the MMLU degradation is strictly the result of training on a datsaet that is not specifically geared towards answering questions. 
 
 ### Autoencoders and memory models do not learn trivial encodings
 
