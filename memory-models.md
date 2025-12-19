@@ -339,10 +339,9 @@ We test this as follows: a trained memory model is initialized and the decoder d
 
 When this experiment is done, we find that our hypothesis is indeed supported: masked mixer-based memory encoders exhibit nearly identical CELs to causal models with the same $d_m:n_{ctx}$ ratio, meaning that we can expect to recover around 5% of all tokens in the input sequence. For a transformer-based memory encoder with a smaller $d_m:n_{ctx}$ ratio than for causal models we find that the information retention is also correspondingly somewhat lower. 
 
-![mixer information recovery](/deep-learning/memory_model_information.png)
+![mixer information recovery](/figures/memory_model_information.png)
 
 Thus we find evidence for the idea that memory model encoders do not actually store much information from their inputs when these models are trained to predict next tokens.
-
 
 ### Oracle memories are compressed even if they don't need to be
 
