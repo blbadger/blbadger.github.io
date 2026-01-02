@@ -19,6 +19,8 @@ As previously mentioned, one substantial benefit of using masked mixers compared
 ![masked mixer weight overview](/figures/masked_mixer_weight_fig.png)
 
 
+![masked mixer weight overview](/figures/masked_mixer_fig2.png)
+
 
 
 
