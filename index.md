@@ -320,6 +320,11 @@ $$
 I_e = 1 - \frac{H(p, q)}{H(p_0, q)} = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))}
 $$
 
+### [Structured Recurrent Mixers](/structured-repeat-mixers.md)
+
+![linear architecture](/figures/mrm_cover.png)
+
+
 ### [Linear Language Models](/linear-lms.md)
 
 ![linear architecture](/deep-learning/linear_mixer_architecture.png)
