@@ -16,7 +16,7 @@ Our first hypothesis is as follows: adapting mixer layers for linear time and co
 
 As previously mentioned, one substantial benefit of using masked mixers compared to transformers as a starting architecture for linear-complexity modeling is that the former use explicit parameterizations of inter-token transformations, whereas the latter use implicit parameterizations. What this means is that the inter-token transformations in masked mixers are, once trained, fixed and constant for all possible inputs, whereas these transformations are in effect defined by the data itself for transformers.
 
-
+![masked mixer weight overview](/figures/masked_mixer_weight_fig.png)
 
 
 
