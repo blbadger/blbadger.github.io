@@ -116,7 +116,6 @@ We train memory models on this copy task where copied inputs are sampled from th
 
 The results are unexpected: although one might predict that a frozen causal embedding would not result in substantial increases in copy accuracy due to the low informational content of these models' embeddings, the frozen autoencoders obtain very low loss (corresponding to >95% autoencoding accuracy for their context windows) but curiously are also unable to inform the causal decoder to any significant degree. For mixers, autoencoders of multiple sizes were tested to ensure that the problem was not a malformed model or other model-specific implementation detail.
 
-
 Why would a causal decoder be unable to use the information present in a rich embedding? There are three primary differences between the autoencoder architecture and the copy memory task: firstly that more than one embedding is fed to the decoder (and an unrolled projection is not applied), secondly that the decoder is causal in the sense that it predicts next rather than current tokens, and finally that the decoder receives both embedding information as well as current token information instead of only embedding information.
 
 The third difference may be considered to be most likely to be the case: causality would not be expected to be an issue in itself as the embedding should be processable in any orientation, and using two embeddings rather than one should make things easier for the decoder rather than harder. We can test this hypothesis by removing the input ids from the copy (which we call a 'blank copy') such that all input information must originate from the embeddings, and repeat the copy training experiments.
@@ -131,7 +130,9 @@ In longer training runs, we find that blank-copy trained masked mixer and transf
 
 ![extended blank copy figure](/figures/extended_blank_copy_memory.png)
 
-We may test the above hypothesis as follows: first we train a memory model on the copy task (with decoder tokens supplied) with a trainable encoder until that model exhibits high accuracy before then swapping in a frozen encoder and retraining.
+We may test the above hypothesis a few different ways. One method could be to first train a memory model on the copy task (with decoder tokens supplied) with a trainable encoder until that model exhibits high accuracy before then swapping in a frozen encoder and retraining for the same task.  Another is to initialize a memory model with a frozen (pretrained) encoder, train the decoder without copy tokens provided (ie trained as a blank copy), and then train with copy tokens provided. The first of these approaches is essentially a transfer learning approach where the decoder's ability to use trainable memory embeddings upon copy training is the basis for being able to use frozen memory embeddings, and the second is a curriculum learning approach whereby one single model (frozen autoencoder encoder and trainable decoder) first learns to use the information present in the encoder's embeddings and then learns to use this information in combination with the information present in the tokens fed to the decoder.
+
+It may be guessed that the second method would be more efficient if token information were easier to decode than compressed embeddings, and the first if the converse is true. Previous results suggest that decoders generally find decoding tokens easier than compressed embeddings, so we proceed with the second method.
 
 ### Pretrained Causal Decoders and Memory
 
@@ -144,6 +145,11 @@ We can hypothesize that this is the result of the decoder learning to filter our
 ![blank copy figure](/deep-learning/copy_llama.png)
 
 That said, it is clear that the decoder is able to extract useful information from the memory encoding: in the lower plots on the figure above, we see that the memory model quickly outstrips the copy accuracy of the memoryless model by around a thousand training steps (sixteen thousand samples).
+
+Why do pretrained models train relatively inefficiently as memory model decoders compared to untrained decoders? We observe a 1% increase in copy accuracy after 30k steps of training a Llama 1B decoder with a trainable encoder, compared to an approximately 15% accuracy increase over the same number of steps and accuracy level for the llama-style trainable decoder. There are a number of possible reasons for this that spring immediately to mind: we are using a much smaller learning rate (as larger learning rates lead to catastrophic instabilities for pretrained decoders), the pretrained decoder has been trained to use only token embeddings and thus may be fundamentally unsuited for compressed memory embeddings, or the untrained encoder may be incapable of learning to encode efficiently as the decoder has not been trained to use embeddings.
+
+We may test the last idea by simply training a memory model that is initialized with a pretrained encoder, one that we already know is able to accurately encode most input information.
+
 
 Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training. Early in training, we find that there is no decrease and actually a small increase in accuracy for most tasks.
 
