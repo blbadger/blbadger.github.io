@@ -134,6 +134,8 @@ We may test the above hypothesis a few different ways. One method could be to fi
 
 It may be guessed that the second method would be more efficient if token information were easier to decode than compressed embeddings, and the first if the converse is true. Previous results suggest that decoders generally find decoding tokens easier than compressed embeddings, so we proceed with the second method.
 
+----
+
 ### Pretrained Causal Decoders and Memory
 
 So far we have investigated the introduction of memory embeddings into decoders that are initialized from scratch and then trained to make use of these memories. The next question to address is whether a pretrained decoder could also make use of memory embeddings as well, and we start by investigating this question with respect to trainable encoders and decoders.
@@ -148,8 +150,13 @@ That said, it is clear that the decoder is able to extract useful information fr
 
 Why do pretrained models train relatively inefficiently as memory model decoders compared to untrained decoders? We observe a 1% increase in copy accuracy after 30k steps of training a Llama 1B decoder with a trainable encoder, compared to an approximately 15% accuracy increase over the same number of steps and accuracy level for the llama-style trainable decoder. There are a number of possible reasons for this that spring immediately to mind: we are using a much smaller learning rate (as larger learning rates lead to catastrophic instabilities for pretrained decoders), the pretrained decoder has been trained to use only token embeddings and thus may be fundamentally unsuited for compressed memory embeddings, or the untrained encoder may be incapable of learning to encode efficiently as the decoder has not been trained to use embeddings.
 
-We may test the last idea by simply training a memory model that is initialized with a pretrained encoder, one that we already know is able to accurately encode most input information.
+We may test the last idea by simply training a memory model that is initialized with a pretrained encoder, one that we already know is able to accurately encode most input information. We train a d=512, nl=16 transformer autoencoder to capture information from context windows composed of 256 tokens using the Llama 3 tokenizer (of size 128k), which can be seen to result in relatively high-fidelity compression of those tokens into the encoder's output embedding.
 
+![frozen copy fig](/figures/llamatok_autoencoder_fig.png)
+
+We then freeze the autoencoder's encoder and feed the embeddings from this model to our pretrained Llama 3.2 (1b) memory model decoder and train on the same copy task as above. In the figure below, we provide a comparison to the trainable memory and no-memory Llama memory model training curves.
+
+![frozen copy fig](/figures/frozen_llama_copy_mem_fig.png)
 
 Given that copy training gives some ability for the decoder to access information in memory embeddings, it may be wondered whether this interferes with the modeling abilities of the pretrained decoder. We can test this by training the memory-enhanced Llama model, reformatting the decoder to match the original configurationa (ie a `LlamaForCausalLM` object), and benchmarking this model against the same model before copy memory model training. Early in training, we find that there is no decrease and actually a small increase in accuracy for most tasks.
 
