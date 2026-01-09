@@ -136,6 +136,11 @@ It may be guessed that the second method would be more efficient if token inform
 
 ![curriculum copy figure](/figures/curriculum_memory_fig.png)
 
+Can the same curriculum be applied to causal pretrained models? The answer appears to be no, at least not easily: as shown in the following figure, memory models train very poorly on frozen causal encoders when decoder tokens are not provided.
+
+![curriculum copy figure](/figures/blank_copy_clm_fig.png)
+
+
 ### Pretrained Causal Decoders and Memory
 
 So far we have investigated the introduction of memory embeddings into decoders that are initialized from scratch and then trained to make use of these memories. The next question to address is whether a pretrained decoder could also make use of memory embeddings as well, and we start by investigating this question with respect to trainable encoders and decoders.
