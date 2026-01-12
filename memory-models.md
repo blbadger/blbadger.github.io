@@ -369,11 +369,15 @@ The issue here is that memory model decoders are not exposed to perfect input in
 
 We test this as follows: a trained memory model is initialized and the decoder discareded, and the encoder is frozen and added to an autoencoder decoder such that the last token from the encoder is unrolled and fed to the decoder, and the decoder is then trained to regenerate in-distribution input sequences. Specifically we seek to mirror the ratio of $n_{ctx}:d_m$ that we have explored above, which for masked mixers is $1:2$ and for transformers $1:1$. For masked mixers we use a trained memory models with a $n_{ctx}=256, d_m=512$ encoder and for the transformer a $n_{ctx}=512, d_m=256$ encoder.
 
-When this experiment is done, we find that our hypothesis is indeed supported: masked mixer-based memory encoders exhibit nearly identical CELs to causal models with the same $d_m:n_{ctx}$ ratio, meaning that we can expect to recover around 5% of all tokens in the input sequence. For a transformer-based memory encoder with a smaller $d_m:n_{ctx}$ ratio than for causal models we find that the information retention is also correspondingly somewhat lower. 
+When this experiment is done, we find that our hypothesis is indeed supported: masked mixer-based memory encoders exhibit nearly identical CELs to causal models with the same $d_m:n_{ctx}$ ratio, meaning that we can expect to recover around 5% of all tokens in the input sequence. For a transformer-based memory encoder with a smaller $d_m:n_{ctx}$ ratio than for causal models we find that the information retention is also correspondingly somewhat lower (left, below).
+
+We can also perform a somewhat more direct experiment to address the question of how much information memory model (trained for next token prediction) encodings contain: we copy the first half of each FineWeb input to the second half, load and freeze the encoder from a trained memory transformer, and mask the second half the the inputs before each forward pass (the labels, ie the target values, remain exposed to the model). This is the 'blank copy' experimental procedure outlined previously, and this measures the amount of information that the encoder's embeddings are capable of relaying to the decoder as the decoder is not exposed to any other source. We can compare blank copy training efficiency using (frozen) causal, non-memory models, causal memory model encoders, and compressive autoencoders in order to understand the accessible informational content in each encoder.
+
+In the figure below (right), we see the results of doing so: autoencoder encoders are far more information-rich than causal or memory model encoders, the latter of which contain only a small fraction more information than the causal model.
 
 ![mixer information recovery](/figures/memory_model_information.png)
 
-Thus we find evidence for the idea that memory model encoders do not actually store much information from their inputs when these models are trained to predict next tokens.
+Thus we find evidence for the idea that memory model encoders do not actually store much information from their inputs when these models are trained to predict next tokens, presumably because the task of prediction of most next tokens in a general corpus does not actually require much information from previous tokens.
 
 ### Oracle memories are compressed even if they don't need to be
 
