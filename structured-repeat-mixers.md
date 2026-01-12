@@ -30,9 +30,45 @@ There are two advantages to this low memory complexity at inference. For single 
 
 These considerations provide motivation to aim at a different goal than previous linear-complexity approaches: instead of attempting to design an architecture capable of very long sequence modeling, we instead design an architecture that has a fixed context window for which we know the model should perform well from theoretical considerations with parallelized throughput in mind, and optimize this model for training efficiency and information retention characteristics. We then design efficient inference algorithms for this architecture, and show how this approach can be much more computationally efficient than the transformers of today.
 
-### Linear Time and Constant Space Complexity Mixer Constraints
+### How to adapt a Masked Mixer for Linear Time and Constant Space Complexity
 
-We start by briefly describing the architecture of the [masked mixer](https://arxiv.org/abs/2409.01482). 
+We start by briefly describing the architecture of the [masked mixer](https://arxiv.org/abs/2409.01482). In short, this is an MLP Mixer (a transformer-like model where attention is swapped for linear transformations) modified for causal language modeling by adding triangular masks to token mixing transformations. These token mixing operations are what has been called 'data-independent': for any given input, the weights of these operations are unchanged and only activations change. In constrast a transformer's attention is a 'data-dependent' transformation, as the token mixing 'weights' in attention are themselves dependent upon the input data. Much ado has been made about the difference between data-dependent and data-independent transformations, mostly around the fact that data-dependent transformations actually encode families of functions rather than individual functions and thus may explore a larger function space than the alternative. That argument is not convincing to this author both because the space explorable by data-independent deep nonlinear models is itself extremely large (actually complete for all computable functions), because the training process ends with a highly data-dependent model, and because emperical results suggest very little difference in training efficiency or ability between models of these two classes.
+
+Data-independency provides a very nice feature that we will use here for linear-complexity adaptation: we know what each transformation will be and indeed what the matrix values of each vector-matrix multiplication will be ahead of time, such that we can enforce the limitations we want directly to the transformation itself. Suppose we had a model that had a context window of size 3: in this case, our inter-token mixing operations for a non-headed model are as follows:
+
+$$
+Y = X M \\
+Y = \begin{pmatrix}
+  X_{0, 0} & X_{0, 1} & X_{0, 2} \\
+  X_{1, 0} & X_{1, 1} & X_{1, 2} \\
+  X_{2, 0} & X_{2, 1} & X_{2, 2}
+\end{pmatrix} 
+
+\begin{pmatrix}
+  a & b & m \\
+  d & e & f \\
+  h & j & k
+\end{pmatrix}
+$$
+
+
+where $X_{0, 0}, X{1, 0}, X{2, 0}$ correspond to the hidden layer activations of the 0th token, or in other words we multiply $X \in \Bbb R^{d \times n}$ by mixer parameters $M \in \Bbb R^{n \times n}$ as follows:
+
+$$
+Y = X M \\
+Y = \begin{pmatrix}
+    \vline & \vline & \vline \\
+    X_0 & X_1 & \X_2 \\
+    \vline & \vline & \vline
+\end{pmatrix} 
+
+\begin{pmatrix}
+  a & b & m \\
+  d & e & f \\
+  h & j & k
+\end{pmatrix}
+$$
+
 
 ### What Token Mixing Weights do Masked Mixers Learn?
 
