@@ -52,14 +52,14 @@ Y = \begin{pmatrix}
 $$
 
 
-where $X_{0, 0}, X{1, 0}, X{2, 0}$ correspond to the hidden layer activations of the 0th token, or in other words we multiply $X \in \Bbb R^{d \times n}$ by mixer parameters $M \in \Bbb R^{n \times n}$ as follows:
+where $X_{0, 0}, X_{1, 0}, X_{2, 0}$ correspond to the zeroth, first, and second hidden layer activations of the 0th token. In other words we multiply $X \in \Bbb R^{d \times n}$ by mixer parameters $M \in \Bbb R^{n \times n}$ as follows:
 
 $$
 Y = X M \\
 Y = \begin{pmatrix}
-    \vline & \vline & \vline \\
-    X_0 & X_1 & \X_2 \\
-    \vline & \vline & \vline
+    \vert & \vert & \vert \\
+    X_0 & X_1 & X_2 \\
+    \vert & \vert & \vert
 \end{pmatrix} 
 
 \begin{pmatrix}
