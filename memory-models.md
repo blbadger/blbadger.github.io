@@ -358,7 +358,7 @@ In addition to BERT-large we also investigate the causal language modeling-train
 | Model   | n_{ctx}=16 | 64 | 256 | 512 |
 | ------ | ----- | ---- | ----- | ----- | 
 | BERT large | 2.91 (40.2%) | 5.38 (11.6 %) | 6.16 (6.6 %) | 6.47 (5.96 %) |
-| Llama 3.1 (1B) |  | 6.02 (11.2 %) |  |  |
+| Llama 3.1 (1B) | 3.95 (34.8 %) | 6.02 (11.2 %) | 6.68 (6.0 %) |  |
 | BERT (FineMath) | 1.13 (72.3 %) |  |  | 5.28 (9.6 %) |
 
 It is clear that there is a substantial decrease in information retention as context length increases, but even for the small 16-token context we observe that only a minority of tokens may be accurately recovered from the last hidden layer with our compute applied. We observe a slight decrease in information retention for the larger and (much) more compute-trained Llama 3.1 than BERT, although both models exhibit near-identical accuracy for $n_{ctx}=512$ token context windows as our smaller causal transformers as shown in the last section.
@@ -367,9 +367,9 @@ As accurate small-context LLM information recovery using similar architectures (
 
 In conclusion, larger models trained with (vastly) more data and compute does not yield more accurate input representations, either for masked or causal language models. This implies that it is not compute or data scaling but the tasks themselves that determine information retention: causal and masked language models do not retain very much input information simply because these tasks do not require much input information to complete accurately. This is presumably because all input tokens are given to these models for each token prediction step, so the models are trained to filter rather than store the informatino present in the inputs.
 
-### Low information memory model memories
+### Causal Memory Models Memories don't have much Information
 
-The trainable memory models introduced earlier on this page have a severe disadvantage to full-context models: their memories, once made, are fixed. This is a significant problem because many tasks language models are applied to today require near-arbitrary lookup of previous tokens ('Can you tell me what day Bob was in town as mentioned in the document...'), but this lookup is essentially unpredictable without prior knowledge. Due to the inherent degrees of freedom of a user's input, lookup is fundamentally unpredictable in the sense that the model has no way of knowing what the user will ask for in the general case. 
+The trainable memory models introduced earlier on this page have a severe disadvan tage to full-context models: their memories, once made, are fixed. This is a significant problem because many tasks language models are applied to today require near-arbitrary lookup of previous tokens ('Can you tell me what day Bob was in town as mentioned in the document...'), but this lookup is essentially unpredictable without prior knowledge. Due to the inherent degrees of freedom of a user's input, lookup is fundamentally unpredictable in the sense that the model has no way of knowing what the user will ask for in the general case. 
 
 This is not a problem for full-context decoders because they are exposed to perfect input information, as all tokens are visible to the model at all times. This means that it does not matter (for autoregressive decoding purposes) that these models have rather poor input representation: as long as each single token predicted requires information from only a subset of previous tokens, accurate input representation is superflouous and probably detrimental to a causal decoder. A brief reflection may convince one that it is indeed the case that nearly all predicted tokens require knowledge of only one or a few previous tokens for most tasks (certainly for the question above). 
 
