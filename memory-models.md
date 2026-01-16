@@ -358,7 +358,7 @@ In addition to BERT-large we also investigate the causal language modeling-train
 | Model   | n_{ctx}=16 | 64 | 256 | 512 |
 | ------ | ----- | ---- | ----- | ----- | 
 | BERT large | 2.91 (40.2%) | 5.38 (11.6 %) | 6.16 (6.6 %) | 6.47 (5.96 %) |
-| Llama 3.1 (1B) | 3.95 (34.8 %) | 6.02 (11.2 %) | 6.68 (6.0 %) |  |
+| Llama 3.1 (1B) | 3.95 (34.8 %) | 6.02 (11.2 %) | 6.68 (6.0 %) | 6.86 (5.3 %) |
 | BERT (FineMath) | 1.13 (72.3 %) |  |  | 5.28 (9.6 %) |
 
 It is clear that there is a substantial decrease in information retention as context length increases, but even for the small 16-token context we observe that only a minority of tokens may be accurately recovered from the last hidden layer with our compute applied. We observe a slight decrease in information retention for the larger and (much) more compute-trained Llama 3.1 than BERT, although both models exhibit near-identical accuracy for $n_{ctx}=512$ token context windows as our smaller causal transformers as shown in the last section.
