@@ -302,7 +302,7 @@ $$
 h(x, y) = 1 - \frac{1}{j} \mathrm{Card} \left( \{ x_i \neq y_i \} \right) : x_i \neq t_{pad}
 $$
 
-Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathcal{U} \sim [0, 1)$ over token activations. As our tokenizer is of size 8000, we find the following for $n$ tokens:
+Alternatively, we can define information retention using the cross-entropy as the fraction of cross-entropy loss the model reaches over the loss of an 'informationless' model. In this definition we want to understand what the cross-entropy losses would be for a model with perfect information and a model with no information, and normalize our obtained losses by these values. A model with perfect information in its encoder will clearly obtain zero cross-entropy loss (assuming an arbitrarily powerful decoder). The distribution with the least Shannon information is the uniform ($\mathbf U$) distribution by definition, so we can compute the cross-entropy loss corresponding to an informationless model by simply assuming that the model exhibits a uniform distribution $\mathcal{U} \sim [0, 1)$ over token activations. As our tokenizer is of size $\vert t \vert =8000$, we compute the following for $n \to \infty$ tokens:
 
 $$
 H(p_0, q) = \frac{1}{n} \sum_{n} \Bbb L \left( \mathcal{U}(|t|), t \right) = 9.03
@@ -314,11 +314,13 @@ $$
 I_e = 1 - \frac{H(p, q)}{H(p_0, q)} = 1 - \frac{- \sum_x q(x) \log (p(x))}{- \sum_x q_0(x) \log (p(x))}
 $$
 
-which for our tokenizer simplifies to
+which for our 8k-size tokenizer we have
 
 $$
 I_e = 1 - \frac{H(p, q)}{9.03}
 $$
+
+Whereas for Llama 3.2 (1B) with a tokenizer of size 128256 we have $I_e = 1 - \frac{H(p, q)}{11.80}$, for BERT with a 30522 size tokenizer $I_e = 1 - \frac{H(p, q)}{10.37}$ and for Qwen 3 with a tokenizer of size 151688 we have $I_e = 1 - \frac{H(p, q)}{11.97}$
 
 For mixers, we have the following: 
 
