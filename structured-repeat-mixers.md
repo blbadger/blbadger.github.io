@@ -30,7 +30,7 @@ There are two advantages to this low memory complexity at inference. For single 
 
 These considerations provide motivation to aim at a different goal than previous linear-complexity approaches: instead of attempting to design an architecture capable of very long sequence modeling, we instead design an architecture that has a fixed context window for which we know the model should perform well from theoretical considerations with parallelized throughput in mind, and optimize this model for training efficiency and information retention characteristics. We then design efficient inference algorithms for this architecture, and show how this approach can be much more computationally efficient than the transformers of today.
 
-### How to adapt a Masked Mixer for Linear Time and Constant Space Complexity
+### Adapting a Masked Mixer for Linear Time and Constant Space Complexity
 
 We start by briefly describing the architecture of the [masked mixer](https://arxiv.org/abs/2409.01482). In short, this is an MLP Mixer (a transformer-like model where attention is swapped for linear transformations) modified for causal language modeling by adding triangular masks to token mixing transformations. These token mixing operations are what has been called 'data-independent': for any given input, the weights of these operations are unchanged and only activations change. In constrast a transformer's attention is a 'data-dependent' transformation, as the token mixing 'weights' in attention are themselves dependent upon the input data. Much ado has been made about the difference between data-dependent and data-independent transformations, mostly around the fact that data-dependent transformations actually encode families of functions rather than individual functions and thus may explore a larger function space than the alternative. That argument is not convincing to this author both because the space explorable by data-independent deep nonlinear models is itself extremely large (actually complete for all computable functions), because the training process ends with a highly data-dependent model, and because emperical results suggest very little difference in training efficiency or ability between models of these two classes.
 
@@ -56,7 +56,7 @@ Y = \begin{pmatrix}
 \end{pmatrix}
 $$
 
-where $X_{0, 0}, X_{1, 0}, X_{2, 0}$ correspond to the zeroth, first, and second hidden layer activations of the 0th token. In other words when we multiply $X \in \Bbb R^{d \times n}$ by mixer parameters $M \in \Bbb R^{n \times n}$ we have
+where $X_{0, 0}, X_{1, 0}, X_{2, 0}$ correspond to the zeroth, first, and second hidden layer activations of the 0th token. For causal models, the weight matrix is masked so that we multiply $X \in \Bbb R^{d \times n}$ by mixer parameters $M \in \Bbb R^{n \times n}$ as follows:
 
 $$
 Y = \begin{pmatrix}
@@ -67,33 +67,49 @@ Y = \begin{pmatrix}
 
 \begin{pmatrix}
   a & b & c \\
-  d & e & f \\
-  h & j & k
-\end{pmatrix} + \Beta
+  0 & e & f \\
+  0 & 0 & k
+\end{pmatrix} + \beta
 $$
 
-In general there is no way to accelerate this matrix multiplication beyond $\mathcal O(n^2.3...)$, and most algorithms for achieving smaller complexity than $\mathcal O(n^3)$ are galactic (impractical on any real hardware. A simple way one can ensure lower complexity is to restrict the structure of the weight matrix $M$ such that certain values appear in certain positions.
+In general there is no way to accelerate this matrix multiplication beyond $\mathcal O(n^2.3...)$, and most algorithms for achieving smaller complexity than $\mathcal O(n^3)$ are galactic (impractical on any real hardware. A simple way one can ensure lower complexity is to restrict the structure of the weight matrix $M$ such that certain values appear in certain positions. Perhaps the most straightforward way to enforce a linear-complexity mixing operation is to simply repeat one value per row of $M$. 
 
 $$
-Y = \begin{pmatrix}
-  X_{0, 0} & X_{0, 1} & X_{0, 2} \\
-  X_{1, 0} & X_{1, 1} & X_{1, 2} \\
-  X_{2, 0} & X_{2, 1} & X_{2, 2}
+\begin{pmatrix}
+    \vert & \vert & \vert \\
+    Y_0 & Y_1 & Y_2 \\
+    \vert & \vert & \vert
+\end{pmatrix} 
+= \begin{pmatrix}
+    \vert & \vert & \vert \\
+    X_0 & X_1 & X_2 \\
+    \vert & \vert & \vert
 \end{pmatrix} 
 
 \begin{pmatrix}
-  a & b & c \\
-  a & b & c \\
-  a & b & c
+  a & a & a \\
+  0 & b & b \\
+  0 & 0 & c
 \end{pmatrix}
 + 
 \begin{pmatrix}
-  \beta_0 & \beta_1 & \beta_2 \\
-  \beta_0 & \beta_1 & \beta_2 \\
-  \beta_0 & \beta_1 & \beta_2
-\end{pmatrix}
+    \vert & \vert & \vert \\
+    \beta_0 & \beta_1 & \beta_2 \\
+    \vert & \vert & \vert
+\end{pmatrix} 
 $$
 
+It is worth expanding the equations to convince ourselves that this is indeed a linear time and constant space complexity operation at inference, or equivalently a recurrent operation with constant memory. When we multiply and add, we have the following:
+
+$$
+Y_0 = a X_0 + \beta_0 \\
+Y_1 = b X_1 + a X_0 + \beta_1  \\
+Y_2 = c X_2 + b X_1 + a X_0 + \beta_2 \\
+... \\
+Y_n = \alpha_n X_n + \beta_m + \sum_{m=0}^{m=n-1} \alpha_m X_m 
+$$
+
+This shows us that we indeed have a linear-complexity operation: at inference for token $n$, we simply load the single value of $\sum_{m=0}^{m=n-1} \alpha_m X_m$ from memory, add the value of $ \alpha_n X_n$, and save the resulting vector $\sum_{m=0}^{m=n} \alpha_m X_m$ to memory. For token $n+1$, we load that sum and repeat.
 
 ### What Token Mixing Weights do Masked Mixers Learn?
 
