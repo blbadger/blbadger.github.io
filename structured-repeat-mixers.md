@@ -111,6 +111,8 @@ $$
 
 This shows us that we indeed have a linear-complexity operation: at inference for token $n$, we simply load the single value of $\sum_{m=0}^{m=n-1} \alpha_m X_m$ from memory, add the value of $ \alpha_n X_n$, and save the resulting vector $\sum_{m=0}^{m=n} \alpha_m X_m$ to memory. For token $n+1$, we load that sum and repeat.
 
+When we train this model, we see that there is a significant gap in loss achieved per compute applied relative to the unrestricted ($\mathcal O(n^2)$ complexity) masked mixer: with a four-headed model we see a loss of 3.311 at 200k steps, 
+
 ### What Token Mixing Weights do Masked Mixers Learn?
 
 As previously mentioned, one substantial benefit of using masked mixers compared to transformers as a starting architecture for linear-complexity modeling is that the former use explicit parameterizations of inter-token transformations, whereas the latter use implicit parameterizations. What this means is that the inter-token transformations in masked mixers are, once trained, fixed and constant for all possible inputs, whereas these transformations are in effect defined by the data itself for transformers.
