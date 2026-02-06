@@ -111,7 +111,7 @@ $$
 
 This shows us that we indeed have a linear-complexity operation: at inference for token $n$, we simply load the single value of $\sum_{m=0}^{m=n-1} \alpha_m X_m$ from memory, add the value of $ \alpha_n X_n$, and save the resulting vector $\sum_{m=0}^{m=n} \alpha_m X_m$ to memory. For token $n+1$, we load that sum and repeat.
 
-When we train this model, we see that there is a significant gap in loss achieved per compute applied relative to the unrestricted ($\mathcal O(n^2)$ complexity) masked mixer: with a four-headed model we see a loss of 3.311 at 200k steps, 
+When we train this model, we see that there is a significant gap in loss achieved per compute applied relative to the unrestricted ($\mathcal O(n^2)$ complexity) masked mixer: with a non-headed repeat model we have a cross-entropy loss of 3.465 at 200k steps, for a four-headed model we see a loss of 3.311, whereas the non-headed masked mixer we see a loss of 2.934 and for the four-headed masked mixer we have 
 
 ### What Token Mixing Weights do Masked Mixers Learn?
 
