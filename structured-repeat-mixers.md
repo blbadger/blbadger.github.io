@@ -111,19 +111,66 @@ $$
 
 This shows us that we indeed have a linear-complexity operation: at inference for token $n$, we simply load the single value of $\sum_{m=0}^{m=n-1} \alpha_m X_m$ from memory, add the value of $ \alpha_n X_n$, and save the resulting vector $\sum_{m=0}^{m=n} \alpha_m X_m$ to memory. For token $n+1$, we load that sum and repeat.
 
-When we train this model, we see that there is a significant gap in loss achieved per compute applied relative to the unrestricted ($\mathcal O(n^2)$ complexity) masked mixer: with a non-headed repeat model we have a cross-entropy loss of 3.465 at 200k steps, for a four-headed model we see a loss of 3.311, whereas the non-headed masked mixer we see a loss of 2.934 and for the four-headed masked mixer we have 
+When we train this model, we see that there is a significant gap in loss achieved per compute applied relative to the unrestricted ($\mathcal O(n^2)$ complexity) masked mixer: for models of size $n_{ctx}=512, n_l=16, d_m=512$, a repeat mixer achieves a cross-entropy loss of 3.465 at 200k steps,  whereas the non-headed masked mixer we see a loss of 2.934. There is a substantial improvement in loss achieved at 200k steps (with minimal training throughput decrease if we use four repeat mixer heads instead of one, in which case loss achieved is 3.311 (a four-headed masked mixer achieves 2.889 loss). Dense transformer architectures typically slightly (<5%) outperform masked mixer models given the same compute, so we would expect for the loss gap between repeat mixers and transformers to be somewhat larger than that observed with unrestricted mixers. 
+
+This gap in loss achieved motivates the approaches detailed in the next section, where attempts are made to increase the training efficiency characteristics of repeat mixers.
 
 ### What Token Mixing Weights do Masked Mixers Learn?
 
-As previously mentioned, one substantial benefit of using masked mixers compared to transformers as a starting architecture for linear-complexity modeling is that the former use explicit parameterizations of inter-token transformations, whereas the latter use implicit parameterizations. What this means is that the inter-token transformations in masked mixers are, once trained, fixed and constant for all possible inputs, whereas these transformations are in effect defined by the data itself for transformers.
+How can we make a repeat mixer more like a masked mixer without sacrificing the linear complexity characteristic of this model? One substantial benefit of using masked mixers compared to transformers as a starting architecture for linear-complexity modeling is that the former use explicit parameterizations of inter-token transformations, whereas the latter use implicit parameterizations. What this means is that the inter-token transformations in masked mixers are, once trained, fixed and constant for all possible inputs, whereas these transformations are in effect defined by the data itself for transformers. This is beneficial because one can feasibly attempt to learn the characteristics of the inter-token transformations present in an unrestricted masked mixer by simply observing the mixer matrices, rather than resorting to statistical techniques to glean information from populations of matrices.
+
+Let's observe a trained masked mixer's token mixing weight matrix. Note that this model is implemented via 1D convolutions rather than matrix multiplications, which effectively swaps the right-multiplication shown above ($Y = XM + B$) with left-multiplication $Y = MX + B$) which is why the matrices are lower rather than upper-triangular. When we clip weight values and plot via a two-tone scale (blue negative, orange positive) we have the following for all 16 layers of trained masked mixer:
 
 ![masked mixer weight overview](/figures/masked_mixer_weight_fig.png)
 
+In the upper left, we find the entire 512x512 mixing matrix weights for all layers of a causal (next token prediction)-trained masked mixer, and in the upper right we zoom in on the main diagonal for a better understanding of the values therin.
+
+The lower half of the above figure shows the weights for an autoencoder masked mixer, which are qualitatively substantially different.
+
+Now that we have observed some token mixing matrix weights, we can attempt to capture some of the qualitative features of these transformations in order to design repeat mixer matrices that reflect these features. In the figure below, qualitative patterns of these matrices are labeled on somewhat higher-resolution representations of the token mixing matrices from layers 4-12 shown in the last figure.
 
 ![masked mixer weight overview](/figures/masked_mixer_fig2.png)
 
+ We find three features to be predominant: column lines, row lines, and weight decay with increased distance from the main diagonal. As lines of similar color and intensity indicate near-constant values, we can substitute constants for these by simply repeating a single value in the row or column orientation. 
+ 
+ We have already explored row repeats and shown that these results in linear complexity models, but it is useful to observe that column repeats are as well. Consider the following:
 
+$$
+\begin{pmatrix}
+    \vert & \vert & \vert \\
+    Y_0 & Y_1 & Y_2 \\
+    \vert & \vert & \vert
+\end{pmatrix} 
+= \begin{pmatrix}
+    \vert & \vert & \vert \\
+    X_0 & X_1 & X_2 \\
+    \vert & \vert & \vert
+\end{pmatrix} 
 
+\begin{pmatrix}
+  a & b & c \\
+  0 & b & c \\
+  0 & 0 & c
+\end{pmatrix}
++ 
+\begin{pmatrix}
+    \vert & \vert & \vert \\
+    \beta_0 & \beta_1 & \beta_2 \\
+    \vert & \vert & \vert
+\end{pmatrix} 
+$$
+
+Now let's solve for each output. It becomes clear that this is indeed a linear-complexity operation as well, and all we need to do is to cache the unscaled value of $X_0 + X_1 + X_2 + \cdots + X_n$ and rescale at each step.
+
+$$
+Y_0 = a X_0 + \beta_0 \\
+Y_1 = b X_1 + b X_0 + \beta_1  \\
+Y_2 = c X_2 + c X_1 + c X_0 + \beta_2 \\
+... \\
+Y_n = \alpha_n X_n + \beta_m + \alpha_n \sum_{m=0}^{m=n-1} X_m 
+$$
+
+ 
 
 
 
