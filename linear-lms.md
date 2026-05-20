@@ -34,7 +34,7 @@ We can be confident that a linear model will not have the representational power
 
 ### Nearly Linear Models
 
-Before proceeding to fully linear models, it may be beneficial to observe how almost-linear models (with only one nonlinear activation) perform when modeling TinyStories. Recalling that single-hidden-layer (with practically any nonlinear activation) neural networks are universal for all computable functions, we would expect models of sufficient size of this architecture to be capable of arbitrarily good TinyStories modeling, but it remains to be seen whether or not these models are practically trainable given limited hardware.
+Before proceeding to fully linear models, it may be beneficial to observe how almost-linear models (with only one nonlinear activation layer) perform when modeling TinyStories. Recalling that single-hidden-layer (with practically any nonlinear activation) neural networks are universal for all computable functions, we would expect models of sufficient size of this architecture to be capable of arbitrarily good TinyStories modeling, but it remains to be seen whether or not these models are practically trainable given limited hardware.
 
 The following figure shows how a model with ReLU activations after the convolution scales: here we use a tokenizer of size 4096 and hidden dimensions as denoted.
 
@@ -48,7 +48,7 @@ This architecture performs in a superior manner to a linear mixer with inter-tok
 |  2e |  3.09 | 3.04  | 3.00  |
 |  3e | 3.02  | 2.94  | 2.87  |
 
-Whereas for a one-layer mixer (with nonlinearities in each intra-token transformation) or transformer, we have
+Whereas for a one-layer mixer or transformer (with nonlinearities between intra-token feedforward transformations), we have
 
 | dm  | Mixer 4096  | Mixer 8192  | Llama 4096 |
 |---|---|---|---|
@@ -58,15 +58,15 @@ Whereas for a one-layer mixer (with nonlinearities in each intra-token transform
 
 ### Linear models inference with O(log n) complexity
 
-What is necessary for efficient TinyStories modeling? Some experimentation can convince use that simply stacking linear layers does not increase training efficiency, and indeed decreases it slightly. This is true both when the entire linear mixer architecture (above) contains more than one module, or else when we use two or three or more linear transformations after the convolutional layer. 
+What is necessary for efficient TinyStories modeling in terms of model linearity? Some experimentation can convince use that simply stacking linear layers does not increase training efficiency, and indeed decreases it slightly. This is true both when the entire linear mixer architecture contains more than one module, or else when we use two or three or more linear transformations after the convolutional layer. 
 
-The above results are to be expected from the fundamentals of linear algebra where matrix multiplication is by definition linear such that multiplication by multiple matrices in succession may always be reduced to multiplication by a single matrix (assuming no nonlinearities are added between layers). This is true regardless of whether or not the weight matrices expand the vector's width at intermediate stages or not: for example if $W$ is a 8x2 (m by n, rows by columns) matrix and $H$ an 2x8 matrix such that $Wx$ expands $x$ by a factor of four and $H(Wx)$ reduces $Wx$ by a factor of four again then one can always make an equivalent matrix $Q$ that is 2x2. 
+These results are to be expected from the fundamentals of linear algebra, where multiplication by multiple matrices in succession may always be reduced to multiplication by a single matrix (assuming no nonlinearities are added between layers). This is true regardless of whether or not the weight matrices expand the vector's width at intermediate stages or not: for example if $W$ is a 8x2 (m by n, rows by columns) matrix and $H$ an 2x8 matrix such that $Wx$ expands $x$ by a factor of four and $H(Wx)$ reduces $Wx$ by a factor of four again then one can always make an equivalent matrix $Q$ that is 2x2. 
 
 Therefore one would not expect for matrices with 'expanded' hidden layers in a linear model to be beneficial, and this is true for TinyStories modeling when one uses a tokenizer of fixed size. To see why this is, consider the computational graph of an $n_{ctx}=3$ linear mixer. In the following figure, we assume that the tokens have been pre-converted to one-hot vectors and denote vectors in lower-case italic letters, constants in lower-case letters, and matrices in upper-case letters.
 
 ![linear mixer computation](/deep-learning/linear_mixer_computation.png)
 
-The equivalence in the top row to the second row may be seen as all convolutional weight elements are constants, and scaling a given matrices' row before multiplying to another matrices' column (ie forming a dot product) is equivalent to multiplying first and scaling after, and follows from the linearity of matrix multiplication. Now note that $HWx$ fulfills the same matrix multiplication we saw before: one should not expect to have any performance increase if $W$ expands the dimensionality of $x$ and $H$ decreases it, as one can always find a $Q$ that is equivalent that does not expand $x$. But we see above that increasing the hidden dimension (which is the expanded size of $x$ by $W$) actually vastly increases training efficiency.
+The equivalence in the top row to the second row may be seen as all convolutional weight elements are constants, and scaling a given matrices' row before multiplying to another matrices' column (ie forming a dot product) is equivalent to multiplying first and scaling after, and follows from the linearity of matrix multiplication. Now note that $HWx$ fulfills the same matrix multiplication we saw before: one should not expect to have any performance increase if $W$ expands the dimensionality of $x$ and $H$ decreases it, as one can always find a $Q$ that is equivalent that does not expand $x$. 
 
 For inference, the linear mixer can be further composed: given trained weight matrices $W$ and $H$, we can multiply these to find $Q$ that will be much smaller if we use a larger dimension than the tokenizer size $d_m > \lvert t\rvert$. Recalling that $t_n$ is a one-hot vector and $c_n$ a constant, computation of $c_n t_n$ is simply a scaled one-hot vector and is extremly fast as well, and furthermore adding these scaled one-hots together is fast and requires only $n$ operations, resulting in a vector $a$ of size $\lvert t \rvert$. All together, the computation of each next token is simply a single matrix-vector multiplication once the vector $a$ has been formed
 
@@ -85,7 +85,7 @@ t_2 = H(c_1Wt_0 + c_2W(HWc_0 t_0)) = Q(c_1 t_0) + Q^2(c_0 t_0) \\
 t_3 = Qc_3t_0 + Q^2c_4c_0t_0 + Q^2c_1c_5t_0 + Q^3c_0t_0
 $$
 
-This allows one to calculate $t_n$ and $t_{n+1}$ in parallel, and indeed one can calculate all next tokens in parallel because of the linearity of the model in question. To further save computational costs, for $N$ tokens one wants to generate one can compute the $N$ powers of $Q$ in $O(N \log m)$ time and then save the single column of each matrix that is required to compute the multiplication with $t_0$, which requires $mxN$ memory. If this is done, each polynomial term reduces to a single scaling of a vector and the computation of the polynomial as a whole is reducible to vector addition, which may be achieved in $O(\log N)$ time via prefix sum. In this sense, one can cache vectors and compute all next tokens required in parallel via cache lookups and addition with $O(log N)$ time complexity (and $O(N)$ space) without any modifications to the mixer architecture itself.
+This allows one to calculate $t_n$ and $t_{n+1}$ in parallel, and indeed one can calculate all next tokens in parallel because of the linearity of the model in question. To further save computational costs, for $N$ tokens one wants to generate one can compute the $N$ powers of $Q$ in $O(N \log m)$ time and then save the single column of each matrix that is required to compute the multiplication with $t_0$, which requires $m \times N$ memory. If this is done, each polynomial term reduces to a single scaling of a vector and the computation of the polynomial as a whole is reducible to vector addition, which may be achieved in $O(\log N)$ time via prefix sum. In this sense, one can cache vectors and compute all next tokens required in parallel via cache lookups and addition with $O(log N)$ time complexity (and $O(N)$ space) without any modifications to the mixer architecture itself.
 
 ### Linear Mixer Scaling
 
@@ -100,6 +100,16 @@ $$
 Now able to compare compression results between models with different tokenizers, we find that compression does increase as $d_m=\vert t \vert$ increases, but that there is rather fast saturation with respect to compression per sample trained upon relative to the nearly-linear models above.
 
 ![linear mixer computation](/deep-learning/linear_mixer_scaling.png)
+
+The increased compression (modeling ability) resulting from larger linear models suggests that a sufficiently large linear model would be capable of accurate language modeling. How can this be, given the well-known limitations of linear models? The answer is that dimensionality can overcome nearly all barriers, and to see why we turn to a classical challenge brought to fully linear models.
+
+When perceptrons were first introduced by Rosenblatt and colleagues, a criticism levelled at them by arguably the (at the time) most well known AI researcher (Minsky) was aas follows: these models may be capable of much but cannot be that good, as they cannot compute a function as simple as XOR. The reasoning is as follows: linear perceptrons define functions that linearly separate space, ie slice the input into parts along lines. A brief glance at XOR in two dimensions (variables) shows that clearly no line can separate the true from false points, and this criticism was successful enough to hinder research into perceptrons for some time.
+
+WIth more discernment, however, it is clear that this particular argument is somewhat specious: a linear function actually can indeed separate XOR points and the key to this is to observe what happens when we embed the two-dimensional XOR into three or more dimensinos: if there is a nonzero distance between either false or true points, a linear segmentation sucessfully separates the two pairs. 
+
+More generally, as the dimension of the embedding space increases it becomes less and less likely that any specific configuration of points cannot be linearly separated with some mild assumptions on the nature of those points. This phenomenon is essentially the mirror image to what statisticians refer to tas the 'curse of dimensionality', where accurate interpolation becomes difficult when the dimensionality of the data becomes large: if the number of embedding dimensions exceeds the number of data points, there will be a way to linearly divide any two or more sets of points unless they exist completely inside a smaller subspace. 
+
+
 
 
 
