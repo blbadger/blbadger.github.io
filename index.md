@@ -333,7 +333,7 @@ $$
 ### [Language Model Secrecy](/secret-lms.md)
 
 $$
-\mathtt{This\; is\; a\; secret\; message}
+\mathtt{This\; is\; a\; secret\; message} \\
 \mathtt{sign所所Batelizeomanip\;welt摄bebby\;Sob.ăng\;}
 $$
 
