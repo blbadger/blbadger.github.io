@@ -330,6 +330,13 @@ $$
 ![linear architecture](/deep-learning/linear_mixer_architecture.png)
 
 
+### [Language Model Secrecy](/secret-lms.md)
+
+$$
+\mathtt{This\; is\; a\; secret\; message}
+\mathtt{sign所所Batelizeomanip\;welt摄bebby\;Sob.ăng\;}
+$$
+
 ### [Vision Autoencoders](/autoencoder-representation.md)
 
 ![autoencoding of landscapes](/deep-learning/autoencoder_cover.png)
