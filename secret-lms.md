@@ -26,8 +26,14 @@ This motivates the following question: what is necessary for language modeling s
 
 ### Theory: Secrecy and Invertibility
 
-The two features of a model to fulfill perfect secrecy may be summarized as non-invertibility and good mixing.
+After [SHannon](https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf) first considder the case of perfect secrecy, defined as where the probability distribution of a message over all potential messages is unchanged after one recieves an encryption of that message. 
 
+In the context of secrecy models, perfect secrecy requires that the model be expressed as a non-invertibile (more precisely non-injective) function that sufficiently mixes input space. We examine the first quality before proceeding to the second. A non-injective is one in which maps many distinct inputs to one single output. As currently constructed, language models are highly non-invertible (composed of many layers of non-invertible transfomrations) and fulfill this criteria almost trivially, but in the sense of next token prediction these models are also funcitonally non-invertible, as ealier mentioned, because one cannot typically regenerate the input sequence of tokens given a vector sufficient to map to the output (the last hidden layer of the last token). The likelihood of invertibility in this functional sense drops precipitously as the number of tokens in th einput sequence increases as the relative amount of information present in the last token's last hidden layer decreases relative to the input's total information.
+
+As we shall see on this page, however, although strictly non-invertible next token prediction language models are functionally invertible if hidden layers from *all* tokens are supplied to a decoder. As a full-input embedding must be given for the provider to keep secret more than just the language modeling head transformation, this paradigm is particularly important for the following discussion of applications.
+
+
+### Impractical Secrecy
 
 ### Practical Secrecy
 
