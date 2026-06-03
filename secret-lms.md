@@ -38,7 +38,7 @@ $$
 T_iM_j = E_s
 $$
 
-with $s = i + j (\pmod  n), this results in $P(E) = P_M(E) = 1/n$ fulfilling the condition of perfect secrecy.
+with $s = i + j \pmod  n$, this results in $P(E) = P_M(E) = 1/n$ fulfilling the condition of perfect secrecy.
 
 We must adapt this theory to use with the language modeling scenario defined above because ciphering via $T$ must be restricted to generate encodings $E_s$ that are themselves useful natural language token sequences. We define a `useful' encoding as one that yields the same next token (or next token probability distribution for sampled models) when fed to a language model as the original message $M_j$. The language model $\theta$ performs a transformation of potential input sequences $a$ to a single output token $b$, denoted as $b = O(a, \theta)$, which in the context of a perfect secrecy system can be represented as follows:
 
