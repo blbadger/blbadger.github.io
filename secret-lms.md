@@ -38,7 +38,7 @@ $$
 T_iM_j = E_s
 $$
 
-with $s = i + j (\Mod  n), this results in $P(E) = P_M(E) = 1/n$ fulfilling the condition of perfect secrecy.
+with $s = i + j (\pmod  n), this results in $P(E) = P_M(E) = 1/n$ fulfilling the condition of perfect secrecy.
 
 We must adapt this theory to use with the language modeling scenario defined above because ciphering via $T$ must be restricted to generate encodings $E_s$ that are themselves useful natural language token sequences. We define a `useful' encoding as one that yields the same next token (or next token probability distribution for sampled models) when fed to a language model as the original message $M_j$. The language model $\theta$ performs a transformation of potential input sequences $a$ to a single output token $b$, denoted as $b = O(a, \theta)$, which in the context of a perfect secrecy system can be represented as follows:
 
@@ -62,11 +62,17 @@ For an example, suppose we had the following secret message:
 
 for a small 16-layer transformer model trained for next token prediction on FineWeb, if we perform this input generation procedure with three different random seeds (random initial states) we generate embeddings that map to the following tokens:
 
-```sign所所Batelizeomanip welt摄bebby Sob.ăng bby ofainathiselize inopleabweanik andOf of crest andeach.ofchina服obleoot Caldwellbyculo liesbybyAppearbyossal服ieuxof/original ofelize_ABI район/masterhaltainaainaoleonferenceselizeampa娘elize```
+```markdown
+sign所所Batelizeomanip welt摄bebby Sob.ăng bby ofainathiselize inopleabweanik andOf of crest andeach.ofchina服obleoot Caldwellbyculo liesbybyAppearbyossal服ieuxof/original ofelize_ABI район/masterhaltainaainaoleonferenceselizeampa娘elize
+```
 
-```sign所所 Carryelize(ns welt spiralRVby Sobelixăng bby ofainathiselize in висabweanik andOf of and andeach.of Zukoot visitorongsTo(nsbyculo易bybyAppearbyoyal服ieuxờiifth ofelizearchyspath/masterhaltainailtonoleonendoza"},ampa娘 cue```
+```markdown
+sign所所 Carryelize(ns welt spiralRVby Sobelixăng bby ofainathiselize in висabweanik andOf of and andeach.of Zukoot visitorongsTo(nsbyculo易bybyAppearbyoyal服ieuxờiifth ofelizearchyspath/masterhaltainailtonoleonendoza"},ampa娘 cue
+```
 
-```所`.`elizeapiro welt kRVяти Sob.ăng belize ofainathiselize in_soabwein andOf ofяб andeach.of ZukIobleongsTo Caldwellbyculo is andbyisetbyoyalidgeieuxofifth ofelizearchyspath khaltainailtonoleonferenceselizeampa娘 b```
+```markdown
+所`.`elizeapiro welt kRVяти Sob.ăng belize ofainathiselize in_soabwein andOf ofяб andeach.of ZukIobleongsTo Caldwellbyculo is andbyisetbyoyalidgeieuxofifth ofelizearchyspath khaltainailtonoleonferenceselizeampa娘 b
+```
 
 which are clearly distinct although they do contain a somewhat similar subset of input tokens, and in no way resemble the secret message. 
 
