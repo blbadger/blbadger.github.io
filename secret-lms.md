@@ -92,7 +92,7 @@ Nevertheless, it can be shown that even using sequential architectures can resul
 
 First consider an arbitrary sequential model trained for next token prediction, which we call $P$, composed of L layers in total. To share some but not all (or even most) of this model's information with the user, the provider can send them a certain number of layers starting with the token embedding transformation, which we can think of as an encoder $E = P_{0:n-1}$ while retaining the rest of the layers as a causal decoder $D = P_{n:L}$. In this paradigm, the user takes their message $M$ and encodes it via applying the layers they recieve from the provider to make $e = E(M) \in \Bbb R^{cd}$, where $c$ signifies the context size in terms of the number of tokens $n_{ctx}$ and $d$ the hidden layer dimension, and then sends this encoding to the provider who completes the forward pass and provides the next token to the user.
 
-The encoding $e$ is not strictly speaking in the clear in the sense that one would be able to recover $m$ with no effort, but it is also not a very good encoding for most model types because 
+The encoding $e$ is not strictly speaking in the clear in the sense that one would be able to recover $m$ with no effort, but it is also not a very good encoding for most model types because it can easily be broken. To do so, the provider only has to invert $E$ and can do this by training an inversion decoder $I$ to regenerate inputs given encodings (ie maps $I(e) = M$) in a generalizable way so that practically any natural language input the user provides as $M$ can be recovered, even if it is not in the provider's training datset. It turns out that this training is not difficult, and takes just a few minues for a small model with $d=512, l=16, c=612$ on the FineWeb-edu dataset. Once the provider has trained their inversion decoder, they can simply take every $e_i$ provided by the user and decode by running a forward pass through the inversion decoder. 
 
 ### Secrecy with Any Architecture
 
@@ -102,7 +102,7 @@ Happily both of these are features of sequential models rather than language mod
 
 It is apparent that a provider that retains many layers from such a model typically does not know the identity of the output token, as the output depends on both sequential stacks and the provider may retain only one. This means that the provider does not have knowledge of the user's next token upon each forward pass, which has the notable advantage of allowing for KV caching to greatly speed up inference. 
 
-This property of not knowing an output makes the training of secrecy encoders much simpler too. 
+This property of the provider not knowing the identity of each next token output makes the training of secrecy encoders much simpler too. 
 
 
 ### Applications
