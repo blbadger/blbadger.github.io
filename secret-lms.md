@@ -80,7 +80,25 @@ Now the more difficult question: can user and provider exchange minimal informat
 
 The difficulty here is that if the provider wishes to withold most of their model, and if we assume the provider uses a transformer model, the user must supply not just the last token's last hidden layer but all token's nth hidden layer embeddings to the provider. For causal transformers doing so results in a practically invertible system: we can train a decoder to take the output of all tokens of the user's portion of the model and regenerate the input sequence, which is notably not the case if a single token's embedding is used.
 
-It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs.
+It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs. A decoder trained to invert a language model's encoding turns out to be sufficient to decode these obfuscated inputs.
+
+### Secrecy with Current Architectures
+
+The structure of LLM architectures today is remarkably homogenous: practically every large model consists of a sequence of modues, each composed of a token mixing layer (usually self-attention or hybrid attention-state space) and a feedforward layer on each token. To simplify this discussion, we refer to the output activations of these modules as 'layers'. Architectural details are not particularly important for this discussion aside from the sequential nature of models, where the knowledge of one hidden layer (for all tokens) is sufficient to complete the forward pass and get a next token output. This means that the user can retain any first n layers to keep information from the provider, but retaining the last n layers cannot possibly keep information from the provider because they will always be able to simply complete the forward pass. 
+
+This is important because the provider will always know the identity of any output token if they retain any part of the model at all.
+
+
+### Secrecy with Any Architecture
+
+In the last section we considered sequential models and showed how one can perform secrecy obfuscation using combinations of secret encoders. The primary disadvantage of such efforts is that 1) the provider will still be able to obtain the next token, and because of this 2) the secret encoder training method is involved, requiring many models to be trained and utilized.
+
+Happily both of these are features of sequential models rather than language modeling in general. To show that this is the case, consider a counterexample in which a model had a sequential stack of layers similar to current transformers, but a parallel stack (say of many fewer layers) that took as inputs the output of the first layer of the first stack, and gave an output to the input of the last layer. This input can be as simple as a linear combination between layers or else a more complicated operation. In effect this is a model with both sequential and parallel modules, architectures which proved very effective for image modeling in the hands of Google (see GoogleNet). 
+
+It is apparent that a provider that retains many layers from such a model typically does not know the identity of the output token, as the output depends on both sequential stacks and the provider may retain only one. This means that the provider does not have knowledge of the user's next token upon each forward pass, which has the notable advantage of allowing for KV caching to greatly speed up inference. 
+
+This property of not knowing an output makes the training of secrecy encoders much simpler too. 
+
 
 ### Applications
 
