@@ -82,7 +82,7 @@ The difficulty here is that if the provider wishes to withold most of their mode
 
 It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs. A decoder trained to invert a language model's encoding turns out to be sufficient to decode these obfuscated inputs.
 
-### Secrecy with Current Architectures
+### Secrecy with many models (the Sicilian approach)
 
 The structure of LLM architectures today is remarkably homogenous: practically every large model consists of a sequence of modues, each composed of a token mixing layer (usually self-attention or hybrid attention-state space) and a feedforward layer on each token. To simplify this discussion, we refer to the output activations of these modules as 'layers'. Architectural details are not particularly important for this discussion aside from the sequential nature of models, where the knowledge of one hidden layer (for all tokens) is sufficient to complete the forward pass and get a next token output. This means that the user can retain any first n layers to keep information from the provider, but retaining the last n layers cannot possibly keep information from the provider because they will always be able to simply complete the forward pass. 
 
@@ -96,7 +96,7 @@ The encoding $e$ is not strictly speaking in the clear in the sense that one wou
 
 The question the user can ask is as follows: can a new encoder be trained such that the provider's decoder is incapable of accurately mapping the output of this new encoder to the original message $M$? The main constraint here is that thie new encoder, which we refer to as a 'secret' encoder $S$, must also be useful for next token prediction and in particular must have a similar next token distribution as the original encoder upon the forward pass of $D$.
 
-### Secrecy with Any Architecture
+### Secrecy with one model, (the Tortuga approach)
 
 In the last section we considered sequential models and showed how one can perform secrecy obfuscation using combinations of secret encoders. The primary disadvantage of such efforts is that 1) the provider will still be able to obtain the next token, and because of this 2) the secret encoder training method is involved, requiring many models to be trained and utilized.
 
@@ -104,12 +104,22 @@ Happily both of these are features of sequential models rather than language mod
 
 It is apparent that a provider that retains many layers from such a model typically does not know the identity of the output token, as the output depends on both sequential stacks and the provider may retain only one. This means that the provider does not have knowledge of the user's next token upon each forward pass, which has the notable advantage of allowing for KV caching to greatly speed up inference. 
 
-This property of the provider not knowing the identity of each next token output makes the training of secrecy encoders much simpler too. 
+This property of the provider not knowing the identity of each next token output allows one to train a new type of secrecy system that requires only one model, where the secrecy encoder is more or less unbreakable if the provider does not know the user's secret message ahead of time. This is somewhat analagous to the island of Tortuga as depicted in the Pirates of the Caribbean movies, where the island can only be found by those who already know where it is (and presumably share the secret as more than one person found the island). In our parlance, the provider can only train a secret inverter model if they know what the secret is.
+
+How can such a secret model be trained? There are theoretical reasons to suppose that any generalizable secret model $S$ (meaning that the user can apply $S$ to any set of messages $M$ and expect for a useful encoding) can be inverted by the provider, the strongest being that the provider only has to guess a corpus that contains $M$ and train inversion models on that corpus because of the generality of $S$ (we assume that there is no *a priori* reason that $S$ cannot be inverted, for example due to high compression from inputs to outputs). These arguments imply that the user must likely forego a general model if they want to use a single $S$, but happily the alternative can be shown to provide strong secrecy.
+
+The approach to training a secrecy model which is not general to many messages is as follows: first the messages $m \in M$ are selected and then a secrecy encoder $S$ is trained such that the provider's inversion decoder $D$ is 'fooled', and maps $S(m)$ to a random token sequence rather than $m$. This is identical to what was done for general models earlier on this page, but here we limit the number of messages and train to purposely overfit to these few messages. If the provider does now know the identity of these few messages but trains their own secret inverter $D$ knowing this method that the user employed, can they hope to decode $S(m)$? By definition, not if the model is sufficiently overfit to $m \in M$, as the model's behavior on the inputs that the provider is likely to use for training $D$ do not define the behavior of $S$ on $m$, the inputs that actually matter to the user. Empirically this can be shown as follows: for $\vert M \vert = 64$, each of length $512$ tokens, a provider can generate many (say 10) training runs' worth of data on a general corpus to train $D$ but when applied to the secret messages $M$ the inversion loss is high, with a CEL of 5.8 and a token reconstruction accuracy of around $12%$.
+
+The user can improve on this general idea by observing that the goal is really to train an $S$ to fool the provider's secret decoder **only on the inputs they care about**, and make all the other outputs of $S$ indistinguisheable from the original causal encoder $E_{clm}$. If such a model were trainable, the provider has no hope of recovering $M$ unless they already knew this input because training a secret decoder will result in a model identical to the original causal model inverter. The secrecy of $S(m)$ lies in the ability to be trained to approximate the causal inverter for all inputs except those $m \in M$, so the question remains: can such a model be trained?
+
+Perhaps the simplest way of training this model is to train identically to the causal inversion decoder model for all inputs except for one or a few $m$, which can be simply swapped in to each training minibatch. For those inputs in $M$, $S$ is trained to yield embeddings that give the correct next tokens when fed to the causal language decoder but map to arbitrary random token sequences when fed to the provider's inverter. This can be done in a similar way as explored above, where a combined causal + inversion objective function is applied to $S$ except that the inversion objective is the true inversion map $S(x_i) \to x_i$ for all inputs not in $M$, where $S(m)$ maps to random tokens. This can be trained to high precision (< 0.01% token reconstruction error) in 1k training steps, and is thus a feasible approach computationally speaking.
 
 
-### Applications
+### Utility
 
-Modern encryption typically falls short of perfect secrecy as defined in the last section because one usually seeks to use a smaller encryption cipher than the message. 
+Modern encryption typically falls short of perfect secrecy as defined in the last section because one usually seeks to use a smaller encryption cipher than the message. But they do ensure practical secrecy in the sense that the commonly used encryption functions are difficult to break, and thus for most purposes can be considered secure.
+
+
 
 
 
