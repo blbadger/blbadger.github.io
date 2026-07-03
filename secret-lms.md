@@ -97,7 +97,17 @@ The difficulty here is that if the provider wishes to withold most of their mode
 
 It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs. A decoder trained to invert a language model's encoding turns out to be sufficient to decode these obfuscated inputs.
 
-### Secrecy with many models
+### Selecting embeddings from multiple encoders does not impart secrecy
+
+Before turning to approaches involving model modification via gradient descent, it is first worth examining if secrecy can be obtained by simply using more than one encoder. The idea here is straightforward: if one were able to train a decoder to make use of embeddings from two separate encoders, each trained on different datasets, then an inverter for each model would fail on the embeddings from the other model. In particular, if one could mix embeddings per token for a sequence of size $n$, for two encoders there are $2^n$ possible sequences of identities for these embeddings. This number becomes much to large for anyone to guess and check which embeddings belonged to which model, and may be hoped to provide secrecy. 
+
+Can a decoder be trained to use sequences of randomly selected embeddings from substantially different causal language models, say one trained on FineWeb and one trained on FineMath? It turns out that training a decoder to do so is not particularly difficult, and reaches near-single model causal loss with less effort than required to train the model in the first place. 
+
+But what is required for a decoder to be able to use embeddings from two distinct encoders in a sequence? To accurately predict next tokens, a decoder would have to be able to accurately guess identity of each embedding with respect to which encoder it is likely to originate from, if the embeddings were sufficiently distinct. This apparently being the case, could a single inversion model be trained to perform the same embedding identity guessing procedure in order to invert the random embedding sequence?
+
+The answer is yes, and it is not difficult for an inversion model to learn to invert random sequences of embeddings from distinct models. From the argument that next token prediction (for many arbitrary tokens) requires the same information with respect to which embedding belonged to which encoder that inversion does, it is unlikely that any variation of multiple model embedding combination would lead to secrecy (assuming that each model is itself easily invertible).
+
+### Training sequences of encoders does not impart secrecy
 
 The structure of LLM architectures today is remarkably homogenous: practically every large model consists of a sequence of modues, each composed of a token mixing layer (usually self-attention or hybrid attention-state space) and a feedforward layer on each token. To simplify this discussion, we refer to the output activations of these modules as 'layers'. Architectural details are not particularly important for this discussion aside from the sequential nature of models, where the knowledge of one hidden layer (for all tokens) is sufficient to complete the forward pass and get a next token output. This means that the user can retain any first n layers to keep information from the provider, but retaining the last n layers cannot possibly keep information from the provider because they will always be able to simply complete the forward pass. 
 
@@ -131,7 +141,7 @@ When this training is performed, we find that the causal model reaches acceptabl
 
 Thus it appears to be very difficult to train a model that is inherently noninvertible over all its inputs, assuming that the inversion function receives all token's embeddings and is trained with the same dataset as the model and with sufficient compute. This provides more evidence for the idea that for any generalizable function for which no *a priori* reason exists to suggest effective noninvertibility, with sufficient compute one can indeed perform an inversion.
 
-### Secrecy with one model per message set: the Tortuga approach
+### Secrecy with one model per message: the Tortuga approach
 
 In the last section we considered sequential models and showed how one can perform secrecy obfuscation using combinations of secret encoders. The primary disadvantage of such efforts is that 1) the provider will still be able to obtain the next token, and because of this 2) the secret encoder training method is involved, requiring many models to be trained and utilized.
 
