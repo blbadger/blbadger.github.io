@@ -29,7 +29,7 @@ This motivates the following question: what is necessary for language modeling s
 5. The provider is able to guess the general language corpus that is representative of the user's secret messages, and in particular the provider can access an unlimited number of training examples from an in-distribution dataset of the user's messages.
 6. The provider can collect all information the user sends and use this for decoding purposes.
 
-
+With these assumptions, secrecy with respect to language modeling can be defined analagously to public key cryptography: for a secret message to remain secret, the user must be able to encode (embed) the message using a one-way function that is easy to compute and relatively easy to train, but is very difficult or impossible to invert. The added difficulty here is that this function must not interfere with next token prediction, whereas the usual public key algorithms applied to token integers certainly would. We define this one-way function as an 'effectively noninvertible' function, one that cannot be inverted over the input space by a machine learning model (a transformer) even when a very large amount of data and compute is applied.
 
 ### Theory: Secrecy and Invertibility
 
@@ -59,13 +59,11 @@ $$
 
 It is almost always safe to say that many distinct $b$ are mapped to one $a$ (which is certainly the case for natural language) such that $O: a \to b$ performs a non-invertible mapping. To create a perfect secrecy system, we proceed as follows: first for any given message $m$ we assemble a (potentially infinite) set of equivalent messages $M_j$ such that for all $k, l$ we have $O(M_k, \theta) = O(M_l, \theta), k \neq l$, then we map to an encoding via $T_i: M_j \to E_s$ ($E_s$ is also an element of $M$ by definition) to receive our encoding, which yields the same output when fed to the provider's model but reveals nothing about the actual input sequence. Conceptually this procedure may be stated as follows: if we can map our secret message to the set of all messages that yield the same next token when fed to a provider's model, we can simply swap our phrase for a randomly chosen element of this set and reveal nothing about our message assuming that the set is very large (typically it is infinitely large ignoring context window limitations). The two necessary elements for this procedure are non-invertibility of the model (so that the set $M$ is larger than 1) and input mixing (so that $m$ can be swapped with $M_j$). 
 
-There is a substantial practical problem with this approach, however: if we were to find a function $F$ to generate the set $M$ that results in the same next token as our message $m$, we end up with a function that infers the same next token as the provider's model. This means that the user would not actually need to use the provider's model at all, and the provider's information is effectively obtained by the user.
-
-This difficulty may be circumvented if the user instead obtains a causal language modeling (next token prediction) loss gradient from the provider, where the gradient is backpropegated through the provider's model portion and can be used to back-propegate through the user's model portion and inform how the user's model can be updated while still remaining accurate with respect to next token prediction.
+There is a substantial practical problem with this approach, however: if we were to find a function $F$ to generate the set $M$ that results in the same next token as our message $m$, we end up with a function that infers the same next token as the provider's model. This means that the user would not actually need to use the provider's model at all, and the provider's information is effectively obtained by the user. This difficulty may be circumvented if the user instead obtains a causal language modeling (next token prediction) loss gradient from the provider, where the gradient is backpropegated through the provider's model portion and can be used to back-propegate through the user's model portion and inform how the user's model can be updated while still remaining accurate with respect to next token prediction.
 
 We now turn to practical secrecy methods that do not require a recapitulation of the provider's model portion, assuming that the provider gives the appropriate gradients to the user when requested.
 
-### Practical Secrecy
+### Practical Secrecy Defined
 
 Practical secrecy for the user/provider language modeling paradigm may be defined as follows: can the user and provider share minimal information with each other while undergoing successful modeling, where the provider cannot realistically be expected to recover the user's information given the compute they may have access to? 
 
@@ -95,7 +93,7 @@ Now the more difficult question: can user and provider exchange minimal informat
 
 The difficulty here is that if the provider wishes to withold most of their model, and if we assume the provider uses a transformer model, the user must supply not just the last token's last hidden layer but all token's nth hidden layer embeddings to the provider. For causal transformers doing so results in a practically invertible system: we can train a decoder to take the output of all tokens of the user's portion of the model and regenerate the input sequence, which is notably not the case if a single token's embedding is used.
 
-It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs. A decoder trained to invert a language model's encoding turns out to be sufficient to decode these obfuscated inputs.
+It turns out that if the provider expends some compute and effort to decipher the obfuscated inputs given by the gradient descent method above, they can determine the original message without too much trouble. The intuition here is that although many inputs map to one output, the inputs generated above are never actually found in the training dataset and thus a trained model can simply map these back to the corresponding real inputs. An inversion decoder trained to invert a language model's encoding turns out to be sufficient to decode these obfuscated inputs, and this decoder is not difficult to train in terms of compute or data required.
 
 ### Selecting embeddings from multiple encoders does not impart secrecy
 
@@ -159,7 +157,13 @@ The user can improve on this general idea by observing that the goal is really t
 
 Perhaps the simplest way of training this model is to train identically to the causal inversion decoder model for all inputs except for one or a few $m$, which can be simply swapped in to each training minibatch. For those inputs in $M$, $S$ is trained to yield embeddings that give the correct next tokens when fed to the causal language decoder but map to arbitrary random token sequences when fed to the provider's inverter. This can be done in a similar way as explored above, where a combined causal + inversion objective function is applied to $S$ except that the inversion objective is the true inversion map $S(x_i) \to x_i$ for all inputs not in $M$, where $S(m)$ maps to random tokens. This can be trained to high precision (< 0.01% token reconstruction error) in 1k training steps, and is thus a feasible approach computationally speaking.
 
-Now that we have existence of inputs that satisfy secrecy using this approach, it is worth examining why this is at all possible in the first place. The first consideration here is that the space of large-dimensional models is huge, and one can find a point in this space that both a
+Now that we have existence of inputs that satisfy secrecy using this approach, it is worth examining why this is at all possible in the first place. The first consideration here is that the space of large-dimensional models is huge, and there are features of these spaces (notably rapid mixing) that all but ensure one can find a point (embedding) that satisfies the properties above.
+
+### Tagged Secrecy
+
+The one-model-per-message approach detailed in the last section is not very efficient, as a user would have to train a new encoder for each secret message or set of messages. Happily the approach can easily be modified so that this is not the case by simply introducing a unique sequence before each secret message, rather than relying on the uniqueness of the message itself.
+
+Now consider what this secret encoder is trained to do: it maps all inputs without a tag, or without the correct tag, to points that are identical to those from the original encoder with respect to model inversion, but for inputs with the secret tag the resulting inputs are mapped to a random sequence by the original encoder's inverter. Can an arbitrary secret encoder be inverted by an inversion model trained to generalize to any given random sequence? If the training process results in a sufficiently unique model for each and every tag, the answer is no for the same reason that the Tortuga approach is non-invertible, specifically because the provider must guess the exact secret sequence in order to train an inversion model.
 
 ### Utility
 
