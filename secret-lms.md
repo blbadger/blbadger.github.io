@@ -159,17 +159,49 @@ Perhaps the simplest way of training this model is to train identically to the c
 
 Now that we have existence of inputs that satisfy secrecy using this approach, it is worth examining why this is at all possible in the first place. The first consideration here is that the space of large-dimensional models is huge, and there are features of these spaces (notably rapid mixing) that all but ensure one can find a point (embedding) that satisfies the properties above.
 
-### Tagged Secrecy
+### Tag-based Secrecy
 
-The one-model-per-message approach detailed in the last section is not very efficient, as a user would have to train a new encoder for each secret message or set of messages. Happily the approach can easily be modified so that this is not the case by simply introducing a unique sequence before each secret message, rather than relying on the uniqueness of the message itself.
+The one-model-per-message approach detailed in the last section is not very efficient, as a user would have to train a new encoder for each secret message or set of messages. Happily the approach can easily be modified so that this is not the case by simply introducing a unique sequence before each secret message, rather than relying on the uniqueness of the message itself. This unique sequence tag is analagous to a secret key, that generates the encryption function (the overfitting-trained secret encoder) and must be kept secret from the provider.
 
 Now consider what this secret encoder is trained to do: it maps all inputs without a tag, or without the correct tag, to points that are identical to those from the original encoder with respect to model inversion, but for inputs with the secret tag the resulting inputs are mapped to a random sequence by the original encoder's inverter. Can an arbitrary secret encoder be inverted by an inversion model trained to generalize to any given random sequence? If the training process results in a sufficiently unique model for each and every tag, the answer is no for the same reason that the Tortuga approach is non-invertible, specifically because the provider must guess the exact secret sequence in order to train an inversion model.
+
+The question of whether this tagging method imbues secrecy therefore reduces to the question of whether the secrecy encoder training (with tags and a random inversion target per tag) results in sufficiently unique models for each tag. This can be tested in the same way that a provider would seek to break the secret encoder: by training many secret encoders (each with an associated tag and inversion target), obtaining the embeddings and corresponding inputs from these models, training a secret decoder inversion model, and observing the secret decoder's generalization to embeddings generated using unseen (secret)
+tags and input token sequences. If tags provide sufficient uniqueness, we expect to see that the secret decoder cannot generalize to samples with unseen tags.
+
+Recalling that without secrecy training data from a single encoder model yields near-perfect inversion decoder accuracy, and that samples from fewer than 10 secret models yield near-perfect accuracy for inherently generalizable secret encoders, we find the minimum hold-out evaluation (tagged secret message) loss and token accuracy of the secret decoder inversion model given samples from a variable number of trained secret encoders:
+
+| Number of $S_n$  |  Cross Entropy Loss | Token Accuracy  |
+|---|---|---|
+|  10 |  6.50 | 0.115  |
+|  100 |  6.07 |  0.168 |  
+|  400 |  5.60  |  0.190  | 
+|  1000 | 5.27  |  0.199 | 
+
+
+
+A natural question to ask is whether the size of the secret tag affects the invertibility of the embedding. This can be tested by increasing the number of tokens used for the secret tag by a factor of 10 (to 100 tokens) and repeating the above scaling experiment. The results are given below, and as one may expect there is indeed a decrease in inversion model accuracy with a larger secret tag, but the accuracy gap shrinks as the number of secret models trained increases. This results in the following:
+
+| Number of $S_n$  |  Cross Entropy Loss | Token Accuracy  |
+|---|---|---|
+|  10 |  7.21 | 0.089 |
+|  100 | 6.52 | 0.118 |  
+|  400 | 5.71  | 0.167  | 
+|  1000 | 5.33  |  0.192 | 
+
+Another question is whether the secret model's random target for $D_I$, the vector where each element is drawn from a uniform distribution, $y \in \mathcal U$, is actually ideal for secrecy. In particular, would an in-distribution target (drawn from token sequences in dataset inputs) result in lower secret decoder accuracy? Experimentally no, as for example with $\bar S_n \bar = 10$ an in-distribution tag results in a CEl of 6.44 and token accuracy of 0.126.
 
 ### Utility
 
 Returning to our original question: can a user, who wants to keep most of a message secret, and an LLM provider, who wants to keep most of their model's parameters secret, successfully undergo langauge modeling and get a next token while sharing only a small portion of their respective information?  We have seen that the answer to this question is yes (assuming that the provider and user work together), and that this is the case both when the provider trains a model with secrecy in mind (such that it is effectively non-invertible) and somewhat surprisingly is also the case when the provider's model was not trained for secrecy (and is easy to invert under normal circumstances), with somewhat less practical implementations.
 
 Modern encryption typically falls short of perfect secrecy as defined in the last section because one usually seeks to use a smaller encryption cipher than the message. But they do ensure practical secrecy in the sense that the commonly used encryption functions are difficult to break, and thus for most purposes can be considered secure.
+
+### Redaction Secrecy
+
+It is frequently the case that only part of a secret message is truly secret, in the sense that there are some words or for language models tokens that exist in the secret message but that are not essential to keep secret. We can modify the original assumptions of secrecy applied to language modeling above to capture this case by assuming that the provider
+
+
+
 
 
 
