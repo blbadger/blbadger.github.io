@@ -159,7 +159,7 @@ Perhaps the simplest way of training this model is to train identically to the c
 
 Now that we have existence of inputs that satisfy secrecy using this approach, it is worth examining why this is at all possible in the first place. The first consideration here is that the space of large-dimensional models is huge, and there are features of these spaces (notably rapid mixing) that all but ensure one can find a point (embedding) that satisfies the properties above.
 
-### Tag-based Secrecy
+### Tag-based Secrecy for Generalizable Noninvertibility
 
 The one-model-per-message approach detailed in the last section is not very efficient, as a user would have to train a new encoder for each secret message or set of messages. Happily the approach can easily be modified so that this is not the case by simply introducing a unique sequence before each secret message, rather than relying on the uniqueness of the message itself. This unique sequence tag is analagous to a secret key, that generates the encryption function (the overfitting-trained secret encoder) and must be kept secret from the provider.
 
@@ -177,8 +177,6 @@ Recalling that without secrecy training data from a single encoder model yields 
 |  400 |  5.60  |  0.190  | 
 |  1000 | 5.27  |  0.199 | 
 
-
-
 A natural question to ask is whether the size of the secret tag affects the invertibility of the embedding. This can be tested by increasing the number of tokens used for the secret tag by a factor of 10 (to 100 tokens) and repeating the above scaling experiment. The results are given below, and as one may expect there is indeed a decrease in inversion model accuracy with a larger secret tag, but the accuracy gap shrinks as the number of secret models trained increases. This results in the following:
 
 | Number of $S_n$  |  Cross Entropy Loss | Token Accuracy  |
@@ -189,6 +187,10 @@ A natural question to ask is whether the size of the secret tag affects the inve
 |  1000 | 5.33  |  0.192 | 
 
 Another question is whether the secret model's random target for $D_I$, the vector where each element is drawn from a uniform distribution, $y \in \mathcal U$, is actually ideal for secrecy. In particular, would an in-distribution target (drawn from token sequences in dataset inputs) result in lower secret decoder accuracy? Experimentally no, as for example with $\bar S_n \bar = 10$ an in-distribution tag results in a CEl of 6.44 and token accuracy of 0.126.
+
+These results support the idea that the use of secret tags and random inversion targets imparts noninvertibility properties on any tagged input, and in that way generalizes to any input that the user wishes to remain secret. This is the first method investigated on this page to do so, and suggests that there does exist a method by which a user can enforce secrecy in a generalizable way, where the provider cannot learn an inversion model even if they know how the user's model is trained. The necessary component of this method is the tag itself, which effectively creates a dataset that the 
+
+### Tags don't provide secrecy 
 
 ### Utility
 
