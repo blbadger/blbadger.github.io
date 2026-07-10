@@ -202,9 +202,21 @@ Returning to our original question: can a user, who wants to keep most of a mess
 
 Modern encryption typically falls short of perfect secrecy as defined in the last section because one usually seeks to use a smaller encryption cipher than the message. But they do ensure practical secrecy in the sense that the commonly used encryption functions are difficult to break, and thus for most purposes can be considered secure.
 
-### Redaction Secrecy
+## Redaction Secrecy
 
-It is frequently the case that only part of a secret message is truly secret, in the sense that there are some words or for language models tokens that exist in the secret message but that are not essential to keep secret. We can modify the original assumptions of secrecy applied to language modeling above to capture this case by assuming that the provider
+It is frequently the case that only part of a secret message is truly secret, in the sense that there are some words or for language models tokens that exist in the secret message but that are not essential to keep secret. We can modify the original assumptions of secrecy applied to language modeling above to capture this case by assuming that the provider.
+
+### Perfect Redaction Secrecy
+
+The user can betray no redacted information (beyond what is present in the non-redacted tokens) by simply replacing redacted inputs with a special token and sending the resulting token sequence to the provider, while keeping the undredacted token sequence for processing by the local portions of the model. One relatively straightforward architecture for this is as follows: the model consists of three modules, the user encoder, provider encoder, and combined decoder, where the encoders map token sequences to embedding sequences and the decoder maps both embedding sequences to output tokens.
+
+This approach is relatively computationally efficient for the user: it has the added benefit of requiring only one relatively slow network transfer step (embeddings sent from provider to user), which also has the benefit of being well matched with the usual pattern of higher download to upload speeds provided by non-fiber interconnect. Assuming the user caches embeddings, the provider needs to send only one embedding to the user, which further reduces latency due to networking requirements.
+
+### Imperfect Redaction Secrecy
+
+It is sometimes acceptable to provide some information about redacted inputs as long as this information is not sufficient to allow for unique identification of these inputs. For example, suppose one were to redact the phrase 'Once there was an ogre named Jerry who lived in a ' to 'Once there was an <mask> named <mask> who lived in a ' with the next word being 'swamp'. 
+
+
 
 
 
