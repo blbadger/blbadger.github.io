@@ -204,23 +204,24 @@ Modern encryption typically falls short of perfect secrecy as defined in the las
 
 ## Redaction Secrecy
 
-It is frequently the case that only part of a secret message is truly secret, in the sense that there are some words or for language models tokens that exist in the secret message but that are not essential to keep secret. We can modify the original assumptions of secrecy applied to language modeling above to capture this case by assuming that the provider.
+It is frequently the case that only part of a secret message is truly secret, in the sense that there are some words or for language models tokens that exist in the secret message but that are not essential to keep secret. We can modify the original assumptions of secrecy applied to language modeling above to capture this case by assuming that the user has identified the subset of tokens that must remain secret, and can provide secrecy by simply masking these tokens and retaining information locally. For a carefully designed parallel architecture, doing so results in the provider never accessing any redacted information at any step, and therefore secrecy of the redacted information is almost trivially guaranteed if the user simply redactes any output tokens necessary as they are generated. The questions of whether such a model may be efficiently trained and how much redaction can feasibly be performed before the provider's embedding becomes superfluous are addressed here.
 
-### Perfect Redaction Secrecy
+### Perfect Redaction Secrecy Design
 
-The user can betray no redacted information (beyond what is present in the non-redacted tokens) by simply replacing redacted inputs with a special token and sending the resulting token sequence to the provider, while keeping the undredacted token sequence for processing by the local portions of the model. One relatively straightforward architecture for this is as follows: the model consists of three modules, the user encoder, provider encoder, and combined decoder, where the encoders map token sequences to embedding sequences and the decoder maps both embedding sequences to output tokens.
+As stated above, the user can betray no redacted information (beyond what is present in the non-redacted tokens) by simply replacing redacted inputs with a special token and sending the resulting token sequence to the provider, while keeping the undredacted token sequence for processing by the local portions of the model. One relatively straightforward architecture for this is as follows: the model consists of three modules, the user encoder, provider encoder, and combined decoder, where the encoders map token sequences to embedding sequences and the decoder maps both embedding sequences to output tokens. This architecture is represented in the following diagram, for the case where the provider's model consists of 16 transformer layers, the user (client) encoder 3 layers, and the unified decoder 4 layers:
 
-This approach is relatively computationally efficient for the user: it has the added benefit of requiring only one relatively slow network transfer step (embeddings sent from provider to user), which also has the benefit of being well matched with the usual pattern of higher download to upload speeds provided by non-fiber interconnect. Assuming the user caches embeddings, the provider needs to send only one embedding to the user, which further reduces latency due to networking requirements.
-
-### Imperfect Redaction Secrecy
-
-It is sometimes acceptable to provide some information about redacted inputs as long as this information is not sufficient to allow for unique identification of these inputs. For example, suppose one were to redact the phrase 'Once there was an ogre named Jerry who lived in a ' to 'Once there was an <mask> named <mask> who lived in a ' with the next word being 'swamp'. 
+![model architecture]({{https://blbadger.github.io}}/deep-learning/perfect_redaction_model.png)
 
 
+This approach is relatively computationally efficient for the user: it has the added benefit of requiring only one relatively slow network transfer step (embeddings sent from provider to user), which also has the benefit of being well matched with the usual pattern of higher download to upload speeds provided by non-fiber interconnect. The user's computation to compute $E_c(x)$ occurs asynchronously to the provider's (much larger) computation of $E_p(x)$ and the provider's relatively heavy network embedding transfer to the user over the network. Assuming the user caches embeddings, the provider needs to send only one embedding to the user.
 
+We cannot include hidden layer mixing operations such as cross-attention between user and provider modules as these may send redacted information to the provider, but rather the user and provider encoder forward passes must be completely independent. The information mixing step occurs when the embeddings of these encoders is combined, but how can this be done most effectively? We investigated three approaches: a linear combination, an MLP layer applied per token, and cross-attention.
 
+A linear combination is as follows: each token embedding is of shape $E(x) \in \Bbb R^{n \times d_m}$, and we can simply add each token's embedding from the two encoders to make $aE_p(x) + bE_c(x) = E(x) \in \Bbb R^{n \times d_m}$. A simple MLP implementation is to concatenate embeddings in the embedding dimension to form $E_p(x) \circ E_c(x) = E(x) \in \Bbb R^{n \times 2d}$ and then define a linear transformation $M: \Bbb R^{2d} \to \Bbb R^d$ as our MLP. We find that models with linear combinations where $a=b=1$ (2.752 eval CEL at 200k steps for 90% redactions) empirically train with nearly identical efficiency (2.747 eval CEL at 200k steps again for 90% redactions) to this MLP implementation. Cross attention is commonly implemented by obtaining query projections from one hidden layer and key and value projections from another, and as we know that the output of $E_c(x)$ contains all the information we need it is reasonable to use this as the key/value source and $E_p(x)$ as the query source, and we normalize. We observe somewhat lower efficiency (~3.17 versus ~3.05 CEL at 20k steps) than the linear projection with higher compute required per step. 
 
+The next question to address is whether or not such an architecture may be efficiently trained.
 
+### Redaction Secrecy with Pretrained LLMs
 
 
 
