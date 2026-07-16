@@ -182,9 +182,9 @@ A natural question to ask is whether the size of the secret tag affects the inve
 | Number of $S_n$  |  Cross Entropy Loss | Token Accuracy  |
 |---|---|---|
 |  10 |  7.21 | 0.089 |
-|  100 | 6.52 | 0.118 |  
-|  400 | 5.71  | 0.167  | 
-|  1000 | 5.33  |  0.192 | 
+|  100 | 6.52 | 0.118 |
+|  400 | 5.71  | 0.167  |
+|  1000 | 5.33  |  0.192 |
 
 Another question is whether the secret model's random target for $D_I$, the vector where each element is drawn from a uniform distribution, $y \in \mathcal U$, is actually ideal for secrecy. In particular, would an in-distribution target (drawn from token sequences in dataset inputs) result in lower secret decoder accuracy? Experimentally no, as for example with $\bar S_n \bar = 10$ an in-distribution tag results in a CEl of 6.44 and token accuracy of 0.126.
 
@@ -217,7 +217,7 @@ This approach is relatively computationally efficient for the user: it has the a
 
 We cannot include hidden layer mixing operations such as cross-attention between user and provider modules as these may send redacted information to the provider, but rather the user and provider encoder forward passes must be completely independent. The information mixing step occurs when the embeddings of these encoders is combined, but how can this be done most effectively? We investigated three approaches: a linear combination, an MLP layer applied per token, and cross-attention.
 
-A linear combination is as follows: each token embedding is of shape $E(x) \in \Bbb R^{n \times d_m}$, and we can simply add each token's embedding from the two encoders to make $aE_p(x) + bE_c(x) = E(x) \in \Bbb R^{n \times d_m}$. A simple MLP implementation is to concatenate embeddings in the embedding dimension to form $E_p(x) \circ E_c(x) = E(x) \in \Bbb R^{n \times 2d}$ and then define a linear transformation $M: \Bbb R^{2d} \to \Bbb R^d$ as our MLP. We find that models with linear combinations where $a=b=1$ (2.752 eval CEL at 200k steps for 90% redactions) empirically train with nearly identical efficiency (2.747 eval CEL at 200k steps again for 90% redactions) to this MLP implementation. Cross attention is commonly implemented by obtaining query projections from one hidden layer and key and value projections from another, and as we know that the output of $E_c(x)$ contains all the information we need it is reasonable to use this as the key/value source and $E_p(x)$ as the query source, and we normalize. We observe somewhat lower efficiency (~3.17 versus ~3.05 CEL at 20k steps) than the linear projection with higher compute required per step. 
+A linear combination is as follows: each token embedding is of shape $E(x) \in \Bbb R^{n \times d_m}$, and we can simply add each token's embedding from the two encoders to make $aE_p(x) + bE_c(x) = E(x) \in \Bbb R^{n \times d_m}$. A simple MLP implementation is to concatenate embeddings in the embedding dimension to form $E_p(x) \circ E_c(x) = E(x) \in \Bbb R^{n \times 2d}$ and then define a linear transformation $M: \Bbb R^{2d} \to \Bbb R^d$ as our MLP. We find that models with linear combinations where $a=b=1$ (2.752 eval CEL at 200k steps for 90% redactions) empirically train with nearly identical efficiency (2.747 eval CEL at 200k steps again for 90% redactions) to this MLP implementation. Cross attention is commonly implemented by obtaining query projections from one hidden layer and key and value projections from another, and as we know that the output of $E_c(x)$ contains all the information we need it is reasonable to use this as the key/value source and $E_p(x)$ as the query source, and we normalize. We observe somewhat lower efficiency (3.250 CEL for cross-attention without versus 3.177 CEl for cross-attention with layernorm on output versus 3.079 CEL for a linear combination at 12k steps) than the linear projection with higher compute required per step. 
 
 The next question to address is whether or not such an architecture may be efficiently trained.
 
