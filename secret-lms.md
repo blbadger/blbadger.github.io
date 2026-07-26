@@ -223,11 +223,14 @@ We find that it does indeed: for the same model presented previously, we repeat 
 |  400 | 6.77  | 0.152 |
 |  1000 | 6.80  | 0.154 |
 
-### Utility
+It is also natural to wonder whether or not this approach (overfitting random tag training for noninvertibility followed by accessory model training for causal language modeling recovery) is only computationally feasible for small models, or if it can be applied to much larger models without increasing the burden of training on the user. In particular, it could be wondered whether or not the causal recovery training is only possible because the accessory modules are trained within an order of magnitude of (specifically 1/20th) the compute used to pretrained the original causal model, and whether that would be necessary for larger models trained with far more compute. 
+
+To investigate this question, we repeated the overfit tag secrecy training method with Llama 3.2 1b, which is around 15x the size and was trained with perhaps 50,000x the compute and 1,000x the data as the small FineWeb-trained transformer used elsewhere on this page. We found that training an inversion model required only slightly more (1.5-2x) the compute for Llama 1b as for our small model, and the same for secret tag overfitting training with respect to this inversion model. Before tag overfit training, Llama 3.2 achieves ~0.95 CEL with respect to its original predicted tokens, and it requires only 3.5k steps (rather than ~8k as for the small model) or ~56k sequences to reach this loss upon training to recover next token prediction using the same architecture noted above, which comes out to near-equivalent FLOPs as for the small model. This is strong evidence that pretraining scale does not affect the amount of data or compute required to 'undo' the noninvertibility training changes to a large model, but that this is balanced to the inversion training itself. As noninvertibility training is not substantially more difficult for large models, it stands to reason that this method could be applied to frontier models (typically with >1T parameters today) with a small increase in the user's compute and data requirements.
+
+### Recap
 
 Returning to our original question: can a user, who wants to keep most of a message secret, and an LLM provider, who wants to keep most of their model's parameters secret, successfully undergo langauge modeling and get a next token while sharing only a small portion of their respective information?  We have seen that the answer to this question is yes (assuming that the provider and user work together), and that this is the case both when the provider trains a model with secrecy in mind (such that it is effectively non-invertible) and somewhat surprisingly is also the case when the provider's model was not trained for secrecy (and is easy to invert under normal circumstances), with somewhat less practical implementations.
 
-Modern encryption typically falls short of perfect secrecy as defined in the last section because one usually seeks to use a smaller encryption cipher than the message. But they do ensure practical secrecy in the sense that the commonly used encryption functions are difficult to break, and thus for most purposes can be considered secure.
 
 ## Redaction Secrecy
 
