@@ -259,7 +259,7 @@ We cannot include hidden layer mixing operations such as cross-attention between
 
 A linear combination is as follows: each token embedding is of shape $E(x) \in \Bbb R^{n \times d_m}$, and we can simply add each token's embedding from the two encoders to make $aE_p(x) + bE_c(x) = E(x) \in \Bbb R^{n \times d_m}$. A simple MLP implementation is to concatenate embeddings in the embedding dimension to form $E_p(x) \circ E_c(x) = E(x) \in \Bbb R^{n \times 2d}$ and then define a linear transformation $M: \Bbb R^{2d} \to \Bbb R^d$ as our MLP. We find that models with linear combinations where $a=b=1$ (2.752 eval CEL at 200k steps for 90% redactions) empirically train with nearly identical efficiency (2.747 eval CEL at 200k steps again for 90% redactions) to this MLP implementation. Cross attention is commonly implemented by obtaining query projections from one hidden layer and key and value projections from another, and as we know that the output of $E_c(x)$ contains all the information we need it is reasonable to use this as the key/value source and $E_p(x)$ as the query source, and we normalize. We observe somewhat lower efficiency (3.250 CEL for cross-attention without versus 3.177 CEl for cross-attention with layernorm on output versus 3.079 CEL for a linear combination at 12k steps) than the linear projection with higher compute required per step. 
 
-The next question to address is whether or not such an architecture may be efficiently trained. We find that these models are indeed efficiently trainable as long as the proportion of redacted tokens to all tokens is well under a half. In the following table, we observe final losses 
+The next question to address is whether or not such an architecture may be efficiently trained. We find that these models are indeed efficiently trainable as long as the proportion of redacted tokens to all tokens is well under a half. In the following table, we observe final losses as follows:
 
 | Percent of tokens redacted  |  Cross Entropy Loss |
 |---|---|
@@ -271,6 +271,7 @@ The next question to address is whether or not such an architecture may be effic
 |  40 | 2.729  | 
 |  50 | 2.734  |
 |  90 | 2.742  |
+| No Provider | 2.746 |
 
 
 ### Redaction Secrecy with Pretrained LLMs
