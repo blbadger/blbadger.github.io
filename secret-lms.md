@@ -208,8 +208,8 @@ If we only train to predict next tokens for one or a few samples, however, there
 
 | Setting  |  Cross Entropy Loss | Token Accuracy  |
 |---|---|---|
-|  $\bar$ tag $\bar$=10 |  6.50 | 0.115 |
-|  $\bar$ tag $\bar$=10 | 7.21 | 0.089 |
+|  $\vert$ tag $\vert$=10 |  6.50 | 0.115 |
+|  $\vert$ tag $\vert$=10 | 7.21 | 0.089 |
 | IID tag | 6.44  | 0.126 |
 | w/ CLM CEL | 0.388  | 0.9387 |
 | w/ CLM CEL after Noninvertibility | 1.32  | 0.748 |
@@ -219,7 +219,7 @@ If we only train to predict next tokens for one or a few samples, however, there
 Another approach to attempt to maintain noninvertibility while training for token prediction recovery is to change the causal language modeling target to become more specific to each secret model, and in that way reflect the secret tag that defines the secret model training process. A straighforward way to do this is to replace the first $n$ tokens of each CLM target sequence with a random sequence, specifically the random target that the secret model learns to produce embeddings that the inversion decoder maps to, which we denote $r_0, r_1, r_2, ... r_n$. For example, if $n_{ctx}=6$ and $n=3$, we replace the original causal language modeling target sequence $y$ with $y'$ as follows:
 
 $$
-y = [t_0, t_1, t_2, t_3, t_4, t_5]
+y = [t_0, t_1, t_2, t_3, t_4, t_5] \\
 y' = [r_0, r_1, r_2, t_3, t_4, t_5]
 $$
 
@@ -230,7 +230,7 @@ The key idea here is that we can sacrifice a certain amount of the usable contex
 |  1  | 1.32  | 0.748 |
 | 1/2 | 4.684 | 0.3185 |
 | 1/4 | 5.951 | 0.1583 |
-| 1/8 |       |        |
+| 1/8 | 6.492 | 0.1237 |
 
 providing evidence for the idea that training for CLM recovery while maintaining uniqueness in each $S_c$ via this random target. 
 
@@ -256,7 +256,7 @@ On the other hand, if we train the same model but do not feed the provider decod
 
 | Model # | Loss @500 steps | Loss @5k steps | Loss @10k steps |
 |---|---|---|
-|  1 | 4.494 | 3.297 | 3.107 |
+| 1 | 4.494 | 3.297 | 3.107 |
 | 2 | 3.264 | 3.047 | 2.924 |
 | 3 | 3.204 | 2.935 | 2.832 |
 
