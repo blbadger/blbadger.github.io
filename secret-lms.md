@@ -244,6 +244,24 @@ Happily there is another way to re-train a secret model for next token predictio
 
 We can train the above architecture as follows: first $S_c$ is trained to be noninvertible via the random tag overfit approach, and then it is frozen (along with $D_p$) and $E_c$ and $D_u$ are added and trained for next token prediction, either by minimizing cross-entropy loss to the shifted token sequence or the unshifted original model's output sequence. When this is done, we find that training the accessory modules requires more steps (~8k) than the secret model (300), but that the model does learn to recapitulate the original model's next token prediction accuracy. As the provider recieves the same secret encoding as before the accessory modules were added, the provider can no more invert the secret embedding than they could before the model was re-trained for next token prediction. Furthermore, the provider does not have to receive any gradients during the accessory module training process (as the provider decoder and client encoders are both frozen) so the provider cannot get information from the client's training gradients either.
 
+The real question is whether the provider's decoder, when applied to the noninvertible input embeddings given by the secret encoder, actually produces a useful mapping. This can be tested by observing CLM recovery efficiency after noninvertibility training, where we save $E_c, D_u$ accessory modules between training runs to reduce the
+
+| Model # | Loss @500 steps | Loss @5k steps | Loss @10k steps |
+|---|---|---|
+|  1 | 4.76 | 3.524 | 3.268 |
+| 2 | 3.429 | 3.167 | 3.046 |
+| 3 | 3.285 | 3.040 | 2.941 |
+
+On the other hand, if we train the same model but do not feed the provider decoder's output to $D_u$ (instead relying only on $E_c$), we see the following:
+
+| Model # | Loss @500 steps | Loss @5k steps | Loss @10k steps |
+|---|---|---|
+|  1 | 4.494 | 3.297 | 3.107 |
+| 2 | 3.264 | 3.047 | 2.924 |
+| 3 | 3.204 | 2.935 | 2.832 |
+
+which suggests that the provider decoder's output is not helpful for caual language modeling after all. 
+
 It is also natural to wonder whether adding a noninvertible transformation to the user encoder (see the following figure) would increase secrecy strength. It is worth noting that simply adding a noninvertible transformation does not prevent effective inversion where a model learns to invert inputs from a finite dataset: for example, adding a $f: \Bbb R^{512} \to \Bbb R^{32}$ transformation mid-way through the model stack (just before the embedding layer sent to the provider) results in a relatively mild decrease in causal training efficiency, with 2.64 CEL with compression versus 2.57 CEL without  for 13B tokens trained on FineWeb. Including this transformation does not prevent inversion on those embeddings in the slightest (this can still be trained in a few thousand steps to high >99.9% precision), but does it help the random tag overfit training procedure?
 
 ![model architecture]({{https://blbadger.github.io}}/deep-learning/compression_clm.png)
