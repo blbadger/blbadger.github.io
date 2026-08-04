@@ -198,11 +198,41 @@ Another question is whether the secret model's random target for $D_I$, the vect
 
 These results support the idea that the use of secret tags and random inversion targets imparts noninvertibility properties on any tagged input, and in that way generalizes to any input that the user wishes to remain secret. This is the first method investigated on this page to do so, and suggests that there does exist a method by which a user can enforce secrecy in a generalizable way, where the provider cannot learn an inversion model even if they know how the user's model is trained. The necessary component of this method is the tag itself, which effectively creates a unique dataset that the user can access but remains hidden from the provider.
 
+### Causal Language Model Recovery via Secret Encoder Modification
+
 Noninvertibiliy training by itself is not particularly useful for language modeling as there is no guarantee that the resulting embeddings will yield accurate next tokens. Next token accuracy may be trained by finding the cross-entropy loss between the original model's predicted next tokens and the noninvertible model's predicted next tokens, which involves sending embeddings from user to provider and receiving gradients back. Noninvertibility training is clearly a prerequisite in order to ensure that the provider cannot simply take these embeddings and invert them. The gradient generation process here compares provider decoder outputs given invertible to noninvertible (original model) embeddings to the (shifted) actual output, with the optimization goal being to maximize the likelihood of correct next token prediction. Alternatively, one can compare the tokens predicted by the noninvertible embeddings to those predicted by the original model and minimize that distance, but this process cannot be done without sharing the (secret) input with the provider as the original model's embedding is assumed to be invertible.
 
-As noninvertibility training (via tagged inputs or otherwise) typically results in embeddings that have poor next token prediction power, one must follow noninvertibility training with next token prediction training to ameliorate this issue. If this is done for many inputs for generalizable modeling, however, there turns out to be a drastic increase in the ability of a provider's secret decoder to learn to decoder the original input: for example, for data from 10 models the secret decoder's input token accuracy increases from 11.5% for inversion training only to 74.8% with inversion training followed by next token prediction training (in this case training to match the original model's next token predictions).
+As noninvertibility training (via tagged inputs or otherwise) typically results in embeddings that have poor next token prediction power, one must follow noninvertibility training with next token prediction training to ameliorate this issue. One way to do this is to train the secret encoder to remain noninvertible (with respect to the original CLM's inversion model) but to also maximize next token prediction accuracy. If this is done for many inputs for generalizable modeling, however, there turns out to be a drastic increase in the ability of a provider's secret decoder to learn to decoder the original input: for example, for data from 10 models the secret decoder's input token accuracy increases from 11.5% for inversion training only to 74.8% with inversion training followed by next token prediction training (in this case training to match the original model's next token predictions) as shown in the table below.
 
-If we only train to predict next tokens for one or a few samples, however, there is much less increase in secret decoder accuracy (16.3%) that corresponds to poor next token prediction in held out samples. This once again demonstrates the tradeoff between generalization and invertibility, in this case we effectively overfit the encoder to produce usable embeddings (with respect to next token prediction) only for a relatively small set of secret messages, and no other inputs. 
+If we only train to predict next tokens for one or a few samples, however, there is much less increase in secret decoder accuracy (16.3% for n=8 samples) that corresponds to poor next token prediction in held out samples. This once again demonstrates the tradeoff between generalization and invertibility, in this case we effectively overfit the encoder to produce usable embeddings (with respect to next token prediction) only for a relatively small set of secret messages, and no other inputs (below). The downside to this approach is that is is not practical: for every small set of messages, one would have to re-train a new secret encoder which would not be expected to be computationally feasible.
+
+| Setting  |  Cross Entropy Loss | Token Accuracy  |
+|---|---|---|
+|  $\bar$ tag $\bar$=10 |  6.50 | 0.115 |
+|  $\bar$ tag $\bar$=10 | 7.21 | 0.089 |
+| IID tag | 6.44  | 0.126 |
+| w/ CLM CEL | 0.388  | 0.9387 |
+| w/ CLM CEL after Noninvertibility | 1.32  | 0.748 |
+| w/ CLM CEL (n=8 samples) after Noninvertibility | 6.20 | 0.163 |
+| w/ CLM CEL (n=2 samples) after Noninvertibility | 6.22 | 0.156 |
+
+Another approach to attempt to maintain noninvertibility while training for token prediction recovery is to change the causal language modeling target to become more specific to each secret model, and in that way reflect the secret tag that defines the secret model training process. A straighforward way to do this is to replace the first $n$ tokens of each CLM target sequence with a random sequence, specifically the random target that the secret model learns to produce embeddings that the inversion decoder maps to, which we denote $r_0, r_1, r_2, ... r_n$. For example, if $n_{ctx}=6$ and $n=3$, we replace the original causal language modeling target sequence $y$ with $y'$ as follows:
+
+$$
+y = [t_0, t_1, t_2, t_3, t_4, t_5]
+y' = [r_0, r_1, r_2, t_3, t_4, t_5]
+$$
+
+The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. For a model with $n_{ctx}=512$, the results of target token replacement with random sequences is as follows:
+
+| Non-random token fraction |  Cross Entropy Loss | Token Accuracy  |
+|---|---|---|
+|  1  | 1.32  | 0.748 |
+| 1/2 | 4.684 | 0.3185 |
+| 1/4 | 5.951 | 0.1583 |
+| 1/8 |       |        |
+
+providing evidence for the idea that training for CLM recovery while maintaining uniqueness in each $S_c$ via this random target. 
 
 ### Secrecy Accessory Models for Language Modeling
 
@@ -240,7 +270,6 @@ Returning to our original question: can a user, who wants to keep most of a mess
 How does this procedure relate to public key cryptography? It is in many ways closely analagous, and we can equate each component as follows: the secret key is equivalent to the secret tag prepended to the secret message, the public key and encryption method are bundled together as the secret encoder, the secret encoder's output is the encrypted message Alice sends to Bob, the provider's output given this secret encoder output as an input is simply a usefully transformed encryption, and the client's CLM accessory modules are the decryption method. 
 
 Both public key cryptography and this language model secrecy method rely on one-way functions (easily computable, not easily invertible) for secrecy. The process of secret encoder training defines this one-way function for the language modeling case, and this relies on the encoder learning via overfitting to the secret key so that the model's properties do not generalize to arbitrary keys.  Perhaps the most surprising aspect of secrecy training is that this encoder's embedding is capable of yielding useful outputs from the provider's decoder, assuming that these outputs can themselves be decoded by the client.  The main reason we may expect for this to be possible in the first place is the enormous size of language model hidden states, such that there exists multitudes of equivalent regions that are difficult to find but yield similar characteristics for a given forward pass. 
-
 
 ## Redaction Secrecy
 
