@@ -235,16 +235,14 @@ y = [t_0, t_1, t_2, t_3, t_4, t_5] \\
 y' = [r_0, r_1, r_2, t_3, t_4, t_5]
 $$
 
-The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. For a model with $n_{ctx}=512$, the results from noninvertibility training only of target token replacement with random sequences is as follows:
+The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. In practice, we find that replacing target tokens with random labels results in more difficult CLM recovery than masking, such that models typically have to be trained with <100 noninvertibility steps and even then there is a decrease in the token prediction accuracy compared to masking only. There is, however, also an increase in noninvertibility if a minority of tokens are not replaced with random targets. For a model with $n_{ctx}=512$, the results for a c=4 compression secret model, with 50 NI steps followed by 300 NI + CLM steps are as follows:
 
-| Non-random token fraction |  Cross Entropy Loss | Token Accuracy  |
+| Non-random token fraction |  Cross Entropy Loss | Token Accuracy  | CLM Loss |
 |---|---|---|
-|  1  | 1.32  | 0.748 |
-| 1/2 | 4.684 | 0.3185 |
-| 1/4 | 5.951 | 0.1583 |
-| 1/8 | 6.492 | 0.1237 |
-
-providing evidence for the idea that training for CLM recovery while maintaining uniqueness in each $S_c$ via this random target. 
+|  1  | 0.779  | 0.905 | 2.8 |
+| 1/2 | 3.419 | 0.5275 | 3.1 |
+| 1/4 | 5.493 | 0.274 | 3.5 |
+| 1/8 | 7.247 | 0.1233 | 4.1 |
 
 ### Secrecy Accessory Models for Language Modeling
 
