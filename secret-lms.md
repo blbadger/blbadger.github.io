@@ -216,6 +216,18 @@ If we only train to predict next tokens for one or a few samples, however, there
 | w/ CLM CEL (n=8 samples) after Noninvertibility | 6.20 | 0.163 |
 | w/ CLM CEL (n=2 samples) after Noninvertibility | 6.22 | 0.156 |
 
+In general we see that CLM recovery success (ie predicting next tokens accurately) is negatively correlated with noninvertibility, and this is true too if one varies the number of training steps taken for noninvertibility training before proceeding to combined CLM + NI training for causal recovery: for example, training on 300 or more steps for noninvertibility results in substantial difficulties in causal recovery but the resulting embeddings are highly non-invertible, whereas training for only 50 steps results in much easier causal recovery but the resulting embeddings are easier to invert. This leads to the question: can a (generalizable) causal language modeling recovery occur that does not also lead to substantial increases in noninvertibility?
+
+In other words, how can we make a $S_c$ useful for next token prediction while maintaining noninvertibility? One straightforward way to approach this problem is to recall that the prediction of a single next token only requires a fraction of input information, specifically only enough information to identify around 7% of input tokens (see [this link](https://arxiv.org/pdf/2602.13466) for more on this topic). We don't want to remove input information necessarily, only make it easier for our secret encoder to obfuscate it while remaining useful for token prediction, and this can be done by learning to predict only a fraction of next tokens of a given input (as the models are causal, the last fraction). Specifically, we can train for say n=100 steps for noninvertibility only and then n=300 steps for For a c=4 compressive model, the results of doing so for s=10 samples are as follows:
+
+| Non-masked token fraction |  Cross Entropy Loss | Token Accuracy  |
+|---|---|---|
+|  1  | 0.779  | 0.905 |
+| 1/2 | 2.749 | 0.6219 |
+| 1/4 | 5.219 | 0.2681 |
+| 1/8 | 5.852 | 0.2658 |
+| 1/16 | 5.489 | 0.2518 |
+
 Another approach to attempt to maintain noninvertibility while training for token prediction recovery is to change the causal language modeling target to become more specific to each secret model, and in that way reflect the secret tag that defines the secret model training process. A straighforward way to do this is to replace the first $n$ tokens of each CLM target sequence with a random sequence, specifically the random target that the secret model learns to produce embeddings that the inversion decoder maps to, which we denote $r_0, r_1, r_2, ... r_n$. For example, if $n_{ctx}=6$ and $n=3$, we replace the original causal language modeling target sequence $y$ with $y'$ as follows:
 
 $$
@@ -223,7 +235,7 @@ y = [t_0, t_1, t_2, t_3, t_4, t_5] \\
 y' = [r_0, r_1, r_2, t_3, t_4, t_5]
 $$
 
-The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. For a model with $n_{ctx}=512$, the results of target token replacement with random sequences is as follows:
+The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. For a model with $n_{ctx}=512$, the results from noninvertibility training only of target token replacement with random sequences is as follows:
 
 | Non-random token fraction |  Cross Entropy Loss | Token Accuracy  |
 |---|---|---|
