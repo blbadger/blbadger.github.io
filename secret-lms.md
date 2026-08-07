@@ -218,7 +218,7 @@ If we only train to predict next tokens for one or a few samples, however, there
 
 In general we see that CLM recovery success (ie predicting next tokens accurately) is negatively correlated with noninvertibility, and this is true too if one varies the number of training steps taken for noninvertibility training before proceeding to combined CLM + NI training for causal recovery: for example, training on 300 or more steps for noninvertibility results in substantial difficulties in causal recovery but the resulting embeddings are highly non-invertible, whereas training for only 50 steps results in much easier causal recovery but the resulting embeddings are easier to invert. This leads to the question: can a (generalizable) causal language modeling recovery occur that does not also lead to substantial increases in noninvertibility?
 
-In other words, how can we make a $S_c$ useful for next token prediction while maintaining noninvertibility? One straightforward way to approach this problem is to recall that the prediction of a single next token only requires a fraction of input information, specifically only enough information to identify around 7% of input tokens (see [this link](https://arxiv.org/pdf/2602.13466) for more on this topic). We don't want to remove input information necessarily, only make it easier for our secret encoder to obfuscate it while remaining useful for token prediction, and this can be done by learning to predict only a fraction of next tokens of a given input (as the models are causal, the last fraction). Specifically, we can train for say n=100 steps for noninvertibility only and then n=300 steps for For a c=4 compressive model, the results of doing so for s=10 samples are as follows:
+In other words, how can we make a $S_c$ useful for next token prediction while maintaining noninvertibility? One straightforward way to approach this problem is to recall that the prediction of a single next token only requires a fraction of input information, specifically only enough information to identify around 7% of input tokens (see [this link](https://arxiv.org/pdf/2602.13466) for more on this topic). We don't want to remove input information necessarily, only make it easier for our secret encoder to obfuscate it while remaining useful for token prediction, and this can be done by learning to predict only a fraction of next tokens of a given input (as the models are causal, the last fraction). Specifically, we can train for say n=100 steps for noninvertibility only and then n=300 steps for For a c=4 compressive model, the results of doing so for s=10 secret models (here the test dataset inputs are contained in the training dataset, such that the only difference between test and train data is the identity of the secret tag prepended) are as follows:
 
 | Non-masked token fraction |  Cross Entropy Loss | Token Accuracy  |
 |---|---|---|
@@ -235,7 +235,7 @@ y = [t_0, t_1, t_2, t_3, t_4, t_5] \\
 y' = [r_0, r_1, r_2, t_3, t_4, t_5]
 $$
 
-The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. In practice, we find that replacing target tokens with random labels results in more difficult CLM recovery than masking, such that models typically have to be trained with <100 noninvertibility steps and even then there is a decrease in the token prediction accuracy compared to masking only. There is, however, also an increase in noninvertibility if a minority of tokens are not replaced with random targets. For a model with $n_{ctx}=512$, the results for a c=4 compression secret model, with 50 NI steps followed by 300 NI + CLM steps are as follows:
+The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. In practice, we find that replacing target tokens with random labels results in more difficult CLM recovery than masking, such that models typically have to be trained with <100 noninvertibility steps and even then there is a decrease in the token prediction accuracy compared to masking only. There is, however, also an increase in noninvertibility if a minority of tokens are not replaced with random targets. For a model with $n_{ctx}=512$, the results for a c=4 compression secret model, with 50 NI steps followed by 300 NI + CLM steps are as follows (again with the only difference between test and train datasets being the secret tag prepended):
 
 | Non-random token fraction |  Cross Entropy Loss | Token Accuracy  | CLM Loss |
 |---|---|---|
@@ -243,6 +243,10 @@ The key idea here is that we can sacrifice a certain amount of the usable contex
 | 1/2 | 3.419 | 0.5275 | 3.1 |
 | 1/4 | 5.493 | 0.274 | 3.5 |
 | 1/8 | 7.247 | 0.1233 | 4.1 |
+
+Thus for random target sequence swapping there is a clear inverse correlation between how effective the CLM recovery is and how invertible the output is as the fraction of non-random tokens changes. Although random target replacement results in greater noninvertibility than sequence masking (above) the concomitant decreases in next token prediction accuracy make this approach less suitable for general secrecy modeling.
+
+Now for the strict test: does secret tag-based overfit training (with 100 steps of noninvertibility training followed by 300 steps of NI + CLM recovery using 7/8ths
 
 ### Secrecy Accessory Models for Language Modeling
 
