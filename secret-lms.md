@@ -238,7 +238,7 @@ $$
 The key idea here is that we can sacrifice a certain amount of the usable context window for uniqueness using this approach. In practice, we find that replacing target tokens with random labels results in more difficult CLM recovery than masking, such that models typically have to be trained with <100 noninvertibility steps and even then there is a decrease in the token prediction accuracy compared to masking only. There is, however, also an increase in noninvertibility if a minority of tokens are not replaced with random targets. For a model with $n_{ctx}=512$, the results for a c=4 compression secret model, with 50 NI steps followed by 300 NI + CLM steps are as follows (again with the only difference between test and train datasets being the secret tag prepended):
 
 | Non-random token fraction |  Cross Entropy Loss | Token Accuracy  | CLM Loss |
-|---|---|---|
+|---|---|---| ---- |
 |  1  | 0.779  | 0.905 | 2.8 |
 | 1/2 | 3.419 | 0.5275 | 3.1 |
 | 1/4 | 5.493 | 0.274 | 3.5 |
@@ -246,7 +246,17 @@ The key idea here is that we can sacrifice a certain amount of the usable contex
 
 Thus for random target sequence swapping there is a clear inverse correlation between how effective the CLM recovery is and how invertible the output is as the fraction of non-random tokens changes. Although random target replacement results in greater noninvertibility than sequence masking (above) the concomitant decreases in next token prediction accuracy make this approach less suitable for general secrecy modeling.
 
-Now for the strict test: does secret tag-based overfit training (with 100 steps of noninvertibility training followed by 300 steps of NI + CLM recovery using 7/8ths
+Now for the strict test: does secret tag-based overfit training (with 100 or 150 steps of noninvertibility training followed by 300 steps of NI + CLM recovery using 7/8ths masked inputs) require more computation to decode than was used to train the original model? We can train around 300 secret models using the same compute required to pretrain our CLM, and when we observe the minimal loss for secret inversion models for this model, we get the following:
+
+|  | NI=100 | NI=100 | NI=150 | NI=150 |
+| Samples| CEL | $H_c$| CEL | $H_c$|
+|---|---|---| ---- | ---- |
+|  s=1  | 6.578 | 0.2039 | 6.724 | 0.1824 |
+| s=10 | 3.987 | 0.4051 | 5.904 | 0.2714 |
+| s=100 | 1.050 | 0.7705 | 5.580 | 0.3038 |
+| s=300 | 0.729 | 0.8727 | 5.502 | 0.3064 |
+
+In either case inversion fails within the allotted compute limits, but the addition of 50 extra noninvertibility steps prior to NI+CLM recovery training results in a large increase in effective noninvertibility with little change in CLM recovery accuracy. In that case, the amount of compute necessary to generate a dataset that is capable of inverting a secret model appears to be orders of magnitude more than what was necessary to train the original model.
 
 ### Secrecy Accessory Models for Language Modeling
 
@@ -258,7 +268,7 @@ Happily there is another way to re-train a secret model for next token predictio
 
 We can train the above architecture as follows: first $S_c$ is trained to be noninvertible via the random tag overfit approach, and then it is frozen (along with $D_p$) and $E_c$ and $D_u$ are added and trained for next token prediction, either by minimizing cross-entropy loss to the shifted token sequence or the unshifted original model's output sequence. When this is done, we find that training the accessory modules requires more steps (~8k) than the secret model (300), but that the model does learn to recapitulate the original model's next token prediction accuracy. As the provider recieves the same secret encoding as before the accessory modules were added, the provider can no more invert the secret embedding than they could before the model was re-trained for next token prediction. Furthermore, the provider does not have to receive any gradients during the accessory module training process (as the provider decoder and client encoders are both frozen) so the provider cannot get information from the client's training gradients either.
 
-The real question is whether the provider's decoder, when applied to the noninvertible input embeddings given by the secret encoder, actually produces a useful mapping. This can be tested by observing CLM recovery efficiency after noninvertibility training, where we save $E_c, D_u$ accessory modules between training runs to reduce the
+The real question is whether the provider's decoder, when applied to the noninvertible input embeddings given by the secret encoder, actually produces a useful mapping. This can be tested by observing CLM recovery efficiency after noninvertibility training, where we save $E_c, D_u$ accessory modules between training runs to reduce recomputation.
 
 | Model # | Loss @500 steps | Loss @5k steps | Loss @10k steps |
 |---|---|---|
